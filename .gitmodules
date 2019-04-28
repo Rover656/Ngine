@@ -1,0 +1,4 @@
+[submodule "src/3rd-party/raylib"]
+	path = src/3rd-party/raylib
+	url = https://github.com/raysan5/raylib
+	branch = master
