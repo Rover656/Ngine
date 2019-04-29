@@ -32,23 +32,23 @@ namespace Ngine {
             /*
              * Create a new Scene
              */
-			Scene();
+            Scene();
 
             // Public Destructor
 
-			virtual ~Scene() = default;
+            virtual ~Scene() = default;
 
             // Public Methods
 
             /*
              * Draw the scene
              */
-			virtual void Draw();
+            virtual void Draw();
 
             /*
              * Update the scene
              */
-			virtual void Update();
+            virtual void Update();
         };
     }
 }

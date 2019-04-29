@@ -32,7 +32,7 @@ namespace Ngine {
             return false;
         }
 
-		void BaseEntity::Draw() {
+        void BaseEntity::Draw() {
             // Will do stuff soon
         }
 

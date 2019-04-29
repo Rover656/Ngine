@@ -24,16 +24,16 @@ namespace Ngine {
         void Scene::Draw() {
             // TODO: Culling system??
             for (auto entity : GetEntities()) {
-				entity->Draw();
+                entity->Draw();
             }
         }
 
         void Scene::Update() {
             // TODO: Culling system??
-			for (auto entity : GetEntities()) {
-				entity->Update();
-			}
-		}
+            for (auto entity : GetEntities()) {
+                entity->Update();
+            }
+        }
 
     }
 }

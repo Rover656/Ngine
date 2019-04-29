@@ -36,7 +36,7 @@ namespace Ngine {
 
         void Game::Draw() {
             if (_CurrentScene != nullptr) {
-				_CurrentScene->Draw();
+                _CurrentScene->Draw();
             }
         }
 
@@ -102,7 +102,7 @@ namespace Ngine {
 
         void Game::Update() {
             if (_CurrentScene != nullptr) {
-				_CurrentScene->Update();
+                _CurrentScene->Update();
             }
         }
     }

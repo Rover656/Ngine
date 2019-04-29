@@ -28,7 +28,7 @@ namespace Ngine {
             /*
              * The currently active scene
              */
-			Scene* _CurrentScene = nullptr;
+            Scene* _CurrentScene = nullptr;
 
             /*
              * The current FPS
@@ -60,7 +60,7 @@ namespace Ngine {
             /*
              * Set the currently active scene
              */
-			void SetScene(Scene* scene_);
+            void SetScene(Scene* scene_);
 
             /*
              * Set the target FPS

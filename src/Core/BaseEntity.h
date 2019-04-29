@@ -50,7 +50,7 @@ namespace Ngine {
             /*
              * Draw code for the entity
              */
-			virtual void Draw();
+            virtual void Draw();
 
             /*
              * Get a component by name.
@@ -77,7 +77,7 @@ namespace Ngine {
             /*
              * Update the entity
              */
-			virtual void Update();
+            virtual void Update();
         protected:
             // Protected Constructor(s)
 
