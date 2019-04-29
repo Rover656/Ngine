@@ -11,12 +11,6 @@
 
 #include "Game.h"
 
-// Include raylib
-#include "../3rd-party/raylib/src/raylib.h"
-
-// Threading
-#include <thread>
-
 namespace Ngine {
     namespace Core {
         // Public Constructor(s)
@@ -40,7 +34,11 @@ namespace Ngine {
 
         // Public Methods
 
-        void Game::Draw() { }
+        void Game::Draw() {
+            if (_CurrentScene != nullptr) {
+				_CurrentScene->Draw();
+            }
+        }
 
         void Game::Run() {
             #if !defined(PLATFORM_UWP)
@@ -50,7 +48,7 @@ namespace Ngine {
             std::chrono::nanoseconds lag(0);
             auto started = std::chrono::high_resolution_clock::now();
 
-            int lastFPS = _FPS;
+            auto lastFPS = _FPS;
             auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
             while (!WindowShouldClose()) {
@@ -102,6 +100,10 @@ namespace Ngine {
             SetTargetFPS(FPS_);
         }
 
-        void Game::Update() { }
+        void Game::Update() {
+            if (_CurrentScene != nullptr) {
+				_CurrentScene->Update();
+            }
+        }
     }
 }

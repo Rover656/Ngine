@@ -15,9 +15,15 @@
 // Include ngine
 #include "../ngine.h"
 
+#include "BaseEntity.h"         // Required for: BaseEntity
+#include "EntityContainer.h"    // Required for: EntityContainer
+
 namespace Ngine {
     namespace Core {
-        class NEAPI Scene {
+        /*
+         * A container for entities
+         */
+        class NEAPI Scene : public EntityContainer {
             // Private Fields
 
         public:
@@ -28,7 +34,21 @@ namespace Ngine {
              */
 			Scene();
 
+            // Public Destructor
+
+			virtual ~Scene() = default;
+
             // Public Methods
+
+            /*
+             * Draw the scene
+             */
+			virtual void Draw();
+
+            /*
+             * Update the scene
+             */
+			virtual void Update();
         };
     }
 }

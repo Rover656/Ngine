@@ -16,7 +16,24 @@ namespace Ngine {
         // Public Constructor(s)
 
         Scene::Scene() {
-            //TODO: Implementation
+            // Will we need stuff here??
         }
+
+        // Public Methods
+
+        void Scene::Draw() {
+            // TODO: Culling system??
+            for (auto entity : GetEntities()) {
+				entity->Draw();
+            }
+        }
+
+        void Scene::Update() {
+            // TODO: Culling system??
+			for (auto entity : GetEntities()) {
+				entity->Update();
+			}
+		}
+
     }
 }

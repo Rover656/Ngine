@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
-#include "3rd-party/raylib/src/raylib.h"
+//Temp while we don't have a drawing class
+#define INCLUDE_RAYLIB //To use raylib, we need to reference raylib in our project...
+#include "ngine.h"
+
 #include "Core/Game.h"
 
 class TestGame : public Ngine::Core::Game

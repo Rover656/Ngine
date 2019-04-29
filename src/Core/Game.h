@@ -15,15 +15,25 @@
 // Include ngine
 #include "../ngine.h"
 
+#include "Scene.h"
+
 namespace Ngine {
     namespace Core {
+        /*
+         * The main controller for your game
+         */
         class NEAPI Game {
             // Private Fields
 
             /*
+             * The currently active scene
+             */
+			Scene* _CurrentScene = nullptr;
+
+            /*
              * The current FPS
              */
-            int _FPS;
+            int _FPS = 0;
 
             //TODO: Decide to store width or height or leave it to raylib
 
@@ -46,6 +56,11 @@ namespace Ngine {
              * Run the game
              */
             void Run();
+
+            /*
+             * Set the currently active scene
+             */
+			void SetScene(Scene* scene_);
 
             /*
              * Set the target FPS
