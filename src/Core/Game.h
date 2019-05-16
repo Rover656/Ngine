@@ -15,27 +15,22 @@
 // Include ngine
 #include "../ngine.h"
 
-#include "Scene.h"
+#include "../Graphics/Drawing.h"
 
 namespace Ngine {
     namespace Core {
-        /*
-         * The main controller for your game
-         */
         class NEAPI Game {
             // Private Fields
 
             /*
-             * The currently active scene
+             * The currently loaded scene
              */
-            Scene* _CurrentScene = nullptr;
+            BaseScene* _CurrentScene = nullptr;
 
             /*
-             * The current FPS
+             * The target FPS
              */
             int _FPS = 0;
-
-            //TODO: Decide to store width or height or leave it to raylib
 
         public:
             // Public Constructor(s)
@@ -48,32 +43,45 @@ namespace Ngine {
             // Public Methods
 
             /*
-             * Draw a frame
+             * Draw a frame.
+             * This expects to be called after BeginDrawing
              */
             virtual void Draw();
 
             /*
-             * Run the game
+             * Get the target FPS
+             */
+            int GetFPS() const;
+
+            /*
+             * Start the game loop
              */
             void Run();
 
             /*
-             * Set the currently active scene
-             */
-            void SetScene(Scene* scene_);
-
-            /*
              * Set the target FPS
-             * The FPS determines how many times Update is called per second
              */
             void SetFPS(int FPS_);
 
             /*
-             * Update, this handles logic once per frame
+             * Set the current scene
+             */
+            void SetScene(BaseScene* scene_);
+
+            /*
+             * Update logic
              */
             virtual void Update();
+
+        protected:
+            // Protected Methods
+
+            /*
+             * Clear the game background
+             */
+            void Clear();
         };
     }
 }
 
-#endif // GAME_H
+#endif //GAME_H

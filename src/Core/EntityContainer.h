@@ -17,6 +17,7 @@
 
 namespace Ngine {
     namespace Core {
+        // We do this forward declaration instead of include because BaseEntity uses this.
         class NEAPI BaseEntity;
 
         /*

@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef SCENE_H
-#define SCENE_H
+#ifndef BASESCENE_H
+#define BASESCENE_H
 
 // Include ngine
 #include "../ngine.h"
@@ -23,20 +23,18 @@ namespace Ngine {
         /*
          * A container for entities
          */
-        class NEAPI Scene : public EntityContainer {
-            // Private Fields
-
+        class NEAPI BaseScene : public EntityContainer {
         public:
             // Public Constructor(s)
 
             /*
              * Create a new Scene
              */
-            Scene();
+            BaseScene();
 
             // Public Destructor
 
-            virtual ~Scene() = default;
+            virtual ~BaseScene() = default;
 
             // Public Methods
 
@@ -53,4 +51,4 @@ namespace Ngine {
     }
 }
 
-#endif //SCENE_H
+#endif //BASESCENE_H

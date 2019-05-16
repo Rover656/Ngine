@@ -11,12 +11,14 @@
 
 #include "BaseEntity.h"
 
+#include "Component.h"          // Required for: Component
+
 namespace Ngine {
     namespace Core {
         // Public Methods
 
         template <typename ComponentType>
-        bool BaseEntity::AddComponent(const std::string name_, ComponentType *component_) {
+        bool BaseEntity::AddComponent(static const std::string name_, ComponentType *component_) {
             // Check the name is not taken
             if (HasComponent(name_))
                 return false;
@@ -37,7 +39,7 @@ namespace Ngine {
         }
 
         template <typename ComponentType>
-        ComponentType *BaseEntity::GetComponent(const std::string name_) {
+        ComponentType *BaseEntity::GetComponent(static const std::string name_) {
             // Try to find the component
             if (HasComponent(name_)) {
                 return dynamic_cast<ComponentType*>(_Components.at(name_)); // Will return null if its the wrong type
@@ -56,11 +58,11 @@ namespace Ngine {
             return vec;
         }
 
-        bool BaseEntity::HasComponent(const std::string &name_) {
+        bool BaseEntity::HasComponent(static const std::string &name_) {
             return _Components.find(name_) != _Components.end();
         }
 
-        bool BaseEntity::RemoveComponent(const std::string &name_) {
+        bool BaseEntity::RemoveComponent(static const std::string &name_) {
             // Check that we actually have a component by the name
             if (HasComponent(name_)) {
                 // Remove component from map

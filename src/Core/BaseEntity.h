@@ -15,11 +15,12 @@
 // Include ngine
 #include "../ngine.h"
 
-#include "Component.h"          // Required for: Component
 #include "EntityContainer.h"    // Required for: EntityContainer
 
 namespace Ngine {
     namespace Core {
+        class NEAPI Component;
+
         /*
          * The root class for an entity within a scene
          */

@@ -9,31 +9,28 @@
 *
 **********************************************************************************************/
 
-#include "Scene.h"
+#include "Entity2D.h"
 
 namespace Ngine {
     namespace Core {
         // Public Constructor(s)
 
-        Scene::Scene() {
-            // Will we need stuff here??
+        Entity2D::Entity2D() {
+            _Position = TVector2();
+        }
+
+        Entity2D::Entity2D(const TVector2& _position) {
+            _Position = _position;
         }
 
         // Public Methods
 
-        void Scene::Draw() {
-            // TODO: Culling system??
-            for (auto entity : GetEntities()) {
-                entity->Draw();
-            }
+        TVector2 Entity2D::GetPosition() const {
+            return _Position;
         }
 
-        void Scene::Update() {
-            // TODO: Culling system??
-            for (auto entity : GetEntities()) {
-                entity->Update();
-            }
+        void Entity2D::SetPosition(TVector2 _position) {
+            _Position = _position;
         }
-
     }
 }
