@@ -14,9 +14,8 @@
 
 namespace Ngine {
     namespace Types {
-        // Not using NEAPI because we will implement all this in the header
         /*
-         * A 2 Component Vector
+         * A vector with 2 Components
          */
         struct TVector2 {
             // Public Fields
@@ -50,23 +49,101 @@ namespace Ngine {
 
             // Public Methods
 
-#ifdef INCLUDE_RAYLIB
+            #ifdef INCLUDE_RAYLIB
             /*
              * Convert to a raylib vector
              */
             Vector2 ToRaylibVec() const {
-                return { X, Y };
+                return {X, Y};
             }
 
             /*
              * Convert from a raylib vector
              */
-            static TVector2 FromRaylibVec(const Vector2& vec) {
-                return { vec.x, vec.y };
+            static TVector2 FromRaylibVec(const Vector2 &vec) {
+                return {vec.x, vec.y};
             }
-#endif
+            #endif
 
-            //TODO: Operators/Maths
+            // Operators
+
+            bool operator==(const TVector2 &b_) const {
+                return X == b_.X && Y == b_.Y;
+            }
+
+            bool operator!=(const TVector2 &b_) const {
+                return X != b_.X || Y != b_.Y;
+            }
+
+            friend TVector2 operator+(TVector2 a_, const TVector2 &b_) {
+                return {
+                    a_.X + b_.X,
+                    a_.Y + b_.Y
+                };
+            }
+
+            void operator+=(const TVector2 &b_) {
+                X += b_.X;
+                Y += b_.Y;
+            }
+
+            void operator+=(const float b_) {
+                X += b_;
+                Y += b_;
+            }
+
+            friend TVector2 operator-(TVector2 a_, const TVector2 &b_) {
+                return {
+                    a_.X - b_.X,
+                    a_.Y - b_.Y
+                };
+            }
+
+            void operator-=(const TVector2 &b_) {
+                X -= b_.X;
+                Y -= b_.Y;
+            }
+
+            void operator-=(const float b_) {
+                X -= b_;
+                Y -= b_;
+            }
+
+            friend TVector2 operator*(TVector2 a_, const TVector2 &b_) {
+                return {
+                    a_.X * b_.X,
+                    a_.Y * b_.Y
+                };
+            }
+
+            void operator*=(const TVector2 &b_) {
+                X *= b_.X;
+                Y *= b_.Y;
+            }
+
+            void operator*=(const float b_) {
+                X *= b_;
+                Y *= b_;
+            }
+
+            friend TVector2 operator/(TVector2 a_, const TVector2 &b_) {
+                return {
+                    a_.X / b_.X,
+                    a_.Y / b_.Y
+                };
+            }
+
+            void operator/=(const TVector2 &b_) {
+                X /= b_.X;
+                Y /= b_.Y;
+            }
+
+            void operator/=(const float b_) {
+                X /= b_;
+                Y /= b_;
+            }
+
+            //TODO: More Operators/Maths
         };
     }
 }

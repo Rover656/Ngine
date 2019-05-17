@@ -12,10 +12,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-// Include ngine
 #include "../ngine.h"
 
 #include "../Graphics/Drawing.h"
+#include "EventHandler.h"
 
 namespace Ngine {
     namespace Core {
@@ -25,7 +25,7 @@ namespace Ngine {
             RESIZEABLE_WINDOW = 4,
             FRAMELESS_WINDOW = 8,
             TRANSPARENT_WINDOW = 16,
-            HIDDEN_WINDOW = 128,
+            //HIDDEN_WINDOW = 128, // Removed for now because we can't unhide a window. Idk if we need this.
             MSAA_4X = 32,
             VSYNC = 64
         };
@@ -49,41 +49,66 @@ namespace Ngine {
             int _UpdateFPS = 0;
 
         public:
+            // Public Fields
+
+            /*
+             * Background clear color
+             */
+            Types::TColor ClearColor = Types::TColor::Black;
+
+            /*
+             * On update event
+             */
+            EventHandler<EventArgs> OnDraw;
+
+            /*
+             * On run event
+             */
+            EventHandler<EventArgs> OnRun;
+
+            /*
+             * On update event
+             */
+            EventHandler<EventArgs> OnUpdate;
+
             // Public Constructor(s)
 
             /*
              * Create a new Game
              */
-            Game(int width_, int height_, int FPS_, const std::string &title_, GameConfig config_ = None);
+            Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = None);
 
             /*
              * Create a new Game (Advanced)
              */
-            Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, GameConfig config_ = None);
+            Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = None);
+
+            // Destructor
+
+            virtual ~Game() = default;
 
             // Public Methods
 
             /*
              * Draw a frame.
-             * This expects to be called after BeginDrawing
              */
-            virtual void Draw();
+            void Draw();
 
             /*
              * Get the target FPS.
              * If using advanced game will return update FPS
              */
-            int GetFPS() const;
+            [[nodiscard]] int GetFPS() const;
 
             /*
              * Get the target draw FPS.
              */
-            int GetDrawFPS() const;
+            [[nodiscard]] int GetDrawFPS() const;
 
             /*
              * Get the target update FPS.
              */
-            int GetUpdateFPS() const;
+            [[nodiscard]] int GetUpdateFPS() const;
 
             /*
              * Start the game loop
@@ -114,7 +139,7 @@ namespace Ngine {
             /*
              * Update logic
              */
-            virtual void Update();
+            void Update();
 
         protected:
             // Protected Methods
@@ -122,7 +147,7 @@ namespace Ngine {
             /*
              * Clear the game background
              */
-            void Clear();
+            void Clear() const;
         };
     }
 }

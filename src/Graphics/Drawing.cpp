@@ -18,10 +18,6 @@
 namespace Ngine::Graphics {
     // Public Methods
 
-    void Drawing::BeginCamera2D(TCamera2D *camera_) {
-        BeginMode2D(camera_->ToRaylibCam());
-    }
-
     void Drawing::BeginDrawing() {
         ::BeginDrawing();
     }
@@ -526,16 +522,13 @@ namespace Ngine::Graphics {
         delete[] pts;
     }
 
-    void Drawing::DrawPoly(const TVector2 center_, const int sides_, const float radius_, const float rotation_, const TColor color_) {
+    void Drawing::DrawPoly(const TVector2 center_, const int sides_, const float radius_, const float rotation_,
+                           const TColor color_) {
         ::DrawPoly(center_.ToRaylibVec(),
                    sides_,
                    radius_,
                    rotation_,
                    color_.ToRaylibColor());
-    }
-
-    void Drawing::EndCamera2D() {
-        EndMode2D();
     }
 
     void Drawing::EndDrawing() {

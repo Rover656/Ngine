@@ -12,73 +12,69 @@
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
 
+#define TYPE_DECL_HEADER
+#include "../ngine.h"
+#undef TYPE_DECL_HEADER
+
 #include "Vector2.h"
 
-namespace Ngine {
-    namespace Types {
+namespace Ngine::Types {
+    /*
+     * A 2D Camera
+     */
+    struct TCamera2D {
+        // Public Fields
+
         /*
-         * A 2D Camera
+         * Camera offset/origin
          */
-        struct TCamera2D {
-            // Public Fields
+        TVector2 Origin;
 
-            /*
-             * Camera offset/origin
-             */
-            TVector2 Offset;
+        /*
+         * Camera rotation
+         */
+        float Rotation;
 
-            /*
-             * Camera rotation
-             */
-            float Rotation;
+        /*
+         * Camera target
+         */
+        TVector2 Target;
 
-            /*
-             * Camera target
-             */
-            TVector2 Target;
+        /*
+         * Camera zoom
+         */
+        float Zoom;
 
-            /*
-             * Camera zoom
-             */
-            float Zoom;
+        // Public Constructor(s)
 
-            // Public Constructor(s)
+        TCamera2D(float rotation_ = 0, float zoom_ = 0, Types::TVector2 target_ = Types::TVector2(), Types::TVector2 origin_ = Types::TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_), Origin(origin_) {}
 
-            TCamera2D(float rotation_ = 0, float zoom_ = 0) : Rotation(rotation_), Zoom(zoom_) {}
+        // Public Methods
 
-            // Public Methods
+        #ifdef INCLUDE_RAYLIB
 
-            #ifdef INCLUDE_RAYLIB
-            /*
-             * Convert to raylib camera
-             */
-            Camera2D ToRaylibCam() const {
-                Camera2D cam;
+        /*
+         * Convert to raylib camera
+         */
+        [[nodiscard]] Camera2D ToRaylibCam() const;
 
-                cam.rotation = Rotation;
-                cam.offset = Offset.ToRaylibVec();
-                cam.target = Target.ToRaylibVec();
-                cam.zoom = Zoom;
+        /*
+         * Convert from raylib camera
+         */
+        static TCamera2D FromRaylibCam(const Camera2D &cam_);
 
-                return cam;
-            }
+        #endif
 
-            /*
-             * Convert from raylib camera
-             */
-            static TCamera2D FromRaylibCam(const Camera2D &cam) {
-                TCamera2D tcam;
+        /*
+         * Begin using the camera
+         */
+        void BeginCamera() const;
 
-                tcam.Offset = TVector2::FromRaylibVec(cam.offset);
-                tcam.Rotation = cam.rotation;
-                tcam.Target = TVector2::FromRaylibVec(cam.target);
-                tcam.Zoom = cam.zoom;
-
-                return tcam;
-            }
-            #endif
-        };
-    }
+        /*
+         * Finish using the camera
+         */
+        static void EndCamera();
+    };
 }
 
 #endif //CAMERA2D_H

@@ -12,6 +12,14 @@
 #include "Mouse.h"
 
 namespace Ngine::Input {
+    // Public Fields
+
+    MouseState Mouse::LastMouseState;
+    Core::EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonPressed;
+    Core::EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonReleased;
+    Core::EventHandler<MouseMovedEventArgs> Mouse::OnMouseMoved;
+    Core::EventHandler<MouseScrollChangedEventArgs> Mouse::OnMouseScrollYChanged;
+
     // Public Methods
 
     TVector2 Mouse::GetMousePosition() {
@@ -47,5 +55,38 @@ namespace Ngine::Input {
 
     bool Mouse::IsButtonReleased(MouseButton button_) {
         return IsMouseButtonReleased(button_);
+    }
+
+    // Public Event Handles
+
+    void Mouse::OnGameRun(Core::EventArgs e_) {
+        LastMouseState = GetMouseState();
+    }
+
+    void Mouse::OnGameUpdate(Core::EventArgs e_) {
+        // Get current state
+        auto state = GetMouseState();
+
+        // Mouse position events
+        if (LastMouseState.Position != state.Position) {
+            OnMouseMoved.Invoke(MouseMovedEventArgs(state.Position, state.Position - LastMouseState.Position));
+        }
+
+        // Mouse button events
+        for (auto i = 0; i < 3; i++) {
+            if (state.ButtonsPressed[i]) {
+                OnMouseButtonPressed.Invoke(MouseButtonEventArgs(static_cast<MouseButton>(i), true));
+            } else if (state.ButtonsReleased[i]) {
+                OnMouseButtonReleased.Invoke(MouseButtonEventArgs(static_cast<MouseButton>(i), false));
+            }
+        }
+
+        // Scroll wheel events
+        if (state.MouseWheelMovementY != LastMouseState.MouseWheelMovementY) {
+            OnMouseScrollYChanged.Invoke(MouseScrollChangedEventArgs(state.MouseWheelMovementY));
+        }
+
+        // Update last frame state
+        LastMouseState = state;
     }
 }

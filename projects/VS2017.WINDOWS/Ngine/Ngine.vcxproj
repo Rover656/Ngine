@@ -26,6 +26,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\src\config.h" />
     <ClInclude Include="..\..\..\src\Core\BaseEntity.h" />
+    <ClInclude Include="..\..\..\src\Core\EventHandler.h" />
     <ClInclude Include="..\..\..\src\Core\Game.h" />
     <ClInclude Include="..\..\..\src\Core\Component.h" />
     <ClInclude Include="..\..\..\src\Core\Entity2D.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="..\..\..\src\Core\Scene2D.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Camera2D.cpp" />
     <ClCompile Include="..\..\..\src\Types\Color.cpp" />
     <ClCompile Include="..\..\..\src\Types\Font.cpp" />
     <ClCompile Include="..\..\..\src\Types\Texture2D.cpp" />

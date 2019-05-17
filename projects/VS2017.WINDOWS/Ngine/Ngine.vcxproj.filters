@@ -48,6 +48,9 @@
     <ClInclude Include="..\..\..\src\Input\Mouse.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Core\EventHandler.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -99,6 +102,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp">
       <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Camera2D.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

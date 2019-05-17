@@ -13,8 +13,8 @@
 #define COLOR_H
 
 #define TYPE_DECL_HEADER
-
 #include "../ngine.h"
+#undef TYPE_DECL_HEADER
 
 namespace Ngine {
     namespace Types {

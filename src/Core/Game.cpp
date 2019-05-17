@@ -11,14 +11,16 @@
 
 #include "Game.h"
 
+#include "../Input/Mouse.h"
+
 namespace Ngine::Core {
     // Public Constructor(s)
 
-    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, GameConfig config_)
+    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, int config_)
         : Game(width_, height_, FPS_, FPS_, title_, config_) {}
 
     Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_,
-               const std::string &title_, GameConfig config_) {
+               const std::string &title_, int config_) {
         #if !defined(PLATFORM_UWP)
 
         // Apply config
@@ -31,6 +33,10 @@ namespace Ngine::Core {
         SetDrawFPS(drawFPS_);
         SetUpdateFPS(updateFPS_);
 
+        // Register default events
+        OnRun.Bind(Input::Mouse::OnGameRun);
+        OnUpdate.Bind(Input::Mouse::OnGameUpdate);
+
         #else
 
         // TODO: UWP Support
@@ -41,18 +47,21 @@ namespace Ngine::Core {
     // Public Methods
 
     void Game::Draw() {
+        // OnDraw event
+        OnDraw.Invoke(EventArgs());
+
         // TODO: Some form of draw scaling system (keeping a target ratio or dimensions)
         if (_CurrentScene != nullptr) {
             const auto _2dScene = dynamic_cast<Scene2D*>(_CurrentScene);
 
             if (_2dScene != nullptr) {
-                Graphics::Drawing::BeginCamera2D(_2dScene->GetActiveCamera());
+                _2dScene->GetActiveCamera()->BeginCamera();
             } // TODO: 3D?
 
             _CurrentScene->Draw();
 
             if (_2dScene != nullptr) {
-                Graphics::Drawing::EndCamera2D();
+                TCamera2D::EndCamera();
             } // TODO: 3D?
         }
     }
@@ -79,6 +88,9 @@ namespace Ngine::Core {
 
         auto lastFPS = _UpdateFPS;
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
+
+        // Invoke OnRun
+        OnRun.Invoke(EventArgs());
 
         while (!WindowShouldClose()) {
             // Get the time since the last frame
@@ -145,27 +157,29 @@ namespace Ngine::Core {
     }
 
     void Game::Update() {
+        // Run update events
+        OnUpdate.Invoke(EventArgs());
+
         if (_CurrentScene != nullptr) {
             // We also set the camera here so that mouse translations etc. work
 
             const auto _2dScene = dynamic_cast<Scene2D*>(_CurrentScene);
 
             if (_2dScene != nullptr) {
-                Graphics::Drawing::BeginCamera2D(_2dScene->GetActiveCamera());
+                _2dScene->GetActiveCamera()->BeginCamera();
             } // TODO: 3D?
 
             _CurrentScene->Draw();
 
             if (_2dScene != nullptr) {
-                Graphics::Drawing::EndCamera2D();
+                TCamera2D::EndCamera();
             } // TODO: 3D?
         }
     }
 
     // Protected Methods
 
-    void Game::Clear() {
-        //TODO: Configurable
-        Graphics::Drawing::Clear(TColor::Black);
+    void Game::Clear() const {
+        Graphics::Drawing::Clear(ClearColor);
     }
 }
