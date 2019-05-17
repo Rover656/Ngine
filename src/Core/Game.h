@@ -19,6 +19,17 @@
 
 namespace Ngine {
     namespace Core {
+        enum GameConfig {
+            None = 0,
+            FULLSCREEN = 2,
+            RESIZEABLE_WINDOW = 4,
+            FRAMELESS_WINDOW = 8,
+            TRANSPARENT_WINDOW = 16,
+            HIDDEN_WINDOW = 128,
+            MSAA_4X = 32,
+            VSYNC = 64
+        };
+
         class NEAPI Game {
             // Private Fields
 
@@ -43,12 +54,12 @@ namespace Ngine {
             /*
              * Create a new Game
              */
-            Game(int width_, int height_, int FPS_, const std::string &title_);
+            Game(int width_, int height_, int FPS_, const std::string &title_, GameConfig config_ = None);
 
             /*
              * Create a new Game (Advanced)
              */
-            Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_);
+            Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, GameConfig config_ = None);
 
             // Public Methods
 

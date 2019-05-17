@@ -12,6 +12,12 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
+//#define TYPE_DECL_HEADER
+//#include "../ngine.h"
+//#undef TYPE_DECL_HEADER
+
+#include "Vector2.h"
+
 namespace Ngine {
     namespace Types {
         /*

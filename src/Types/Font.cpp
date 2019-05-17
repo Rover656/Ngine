@@ -52,6 +52,20 @@ namespace Ngine::Types {
     // TFont
     //----------------------------------------------------------------------------------
 
+    // Public Constructor(s)
+
+    TFont::TFont(TFont &&font_) noexcept {
+        Texture = std::move(font_.Texture);
+        BaseSize = font_.BaseSize;
+        CharacterCount = font_.CharacterCount;
+        Characters = font_.Characters;
+
+        font_.Texture = TTexture2D();
+        font_.BaseSize = 0;
+        font_.CharacterCount = 0;
+        font_.Characters = nullptr;
+    }
+
     // Public Methods
 
     #ifdef INCLUDE_RAYLIB
@@ -70,16 +84,12 @@ namespace Ngine::Types {
     }
 
     TFont TFont::FromRaylibFont(const Font &font_) {
-        TFont fnt;
-
-        fnt.Texture = TTexture2D::FromRaylibTex(font_.texture);
-        fnt.BaseSize = font_.baseSize;
-        fnt.CharacterCount = font_.charsCount;
-
-        // This works because all of the structs used follow the same structure
-        fnt.Characters = reinterpret_cast<TCharInfo*>(font_.chars);
-
-        return fnt;
+        return {
+            TTexture2D::FromRaylibTex(font_.texture),
+            font_.baseSize,
+            font_.charsCount,
+            reinterpret_cast<TCharInfo*>(font_.chars)
+        };
     }
 
     #endif

@@ -3,15 +3,19 @@
 #include "ngine.h"
 
 #include "Core/Game.h"
-#include "Core/Scene2D.h"
+#include "Input/Mouse.h"
 
 class TestGame : public Ngine::Core::Game
 {
     Ngine::Types::TFont def;
+    Ngine::Types::TTexture2D tex;
 public:
 	TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(width_, height_, DrawFPS_, UpdateFPS_, title_) {
         // Only works on windows for obvious reasons, this is just for me to test while adding the abstraction layer
         def = Ngine::Types::TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
+        //def = Ngine::Types::TFont::GetDefaultFont();
+
+        tex = Ngine::Types::TTexture2D::LoadTexture("A:\\Pictures\\Video Projects\\Rev3_399.png");
 	}
 
     void Draw() override {
@@ -20,6 +24,12 @@ public:
         Ngine::Graphics::Drawing::DrawText(def, "Hello World", { 10, 10 }, 48, 2, Ngine::Types::TColor::White);
 
         Ngine::Graphics::Drawing::DrawFPS({ 10, 100 });
+
+        auto pos = Ngine::Input::Mouse::GetMousePosition();
+
+        auto color = Ngine::Input::Mouse::IsButtonDown(Ngine::Input::LEFT);
+
+        Ngine::Graphics::Drawing::DrawTexture(tex, pos, 300, 200, color ? Ngine::Types::TColor::Orange : Ngine::Types::TColor::White);
 	}
 };
 

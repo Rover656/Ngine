@@ -23,6 +23,8 @@ namespace Ngine {
          */
         class NEAPI Drawing {
         public:
+            // TODO: Shader support
+
             // Public Methods
 
             /*
@@ -209,17 +211,42 @@ namespace Ngine {
             /*
              * Draw text
              */
-            static void DrawText(const Types::TFont& font_, std::string string_, Types::TVector2 position_, float fontSize_, float spacing_, Types::TColor color_);
+            static void DrawText(const Types::TFont& font_, const std::string &string_, Types::TVector2 position_, float fontSize_, float spacing_, Types::TColor color_);
 
             /*
              * Draw text with rectangle constraint
              */
-            static void DrawTextRect(const Types::TFont& font_, std::string string_, Types::TRectangle rectangle_, float fontSize_, float spacing_, Types::TColor color_, bool wordWrap_ = true);
+            static void DrawTextRect(const Types::TFont& font_, const std::string &string_, Types::TRectangle rectangle_, float fontSize_, float spacing_, Types::TColor color_, bool wordWrap_ = true);
 
             /*
              * Draw text with rectangle constraint and select support
              */
-            static void DrawTextRectEx(const Types::TFont& font_, std::string string_, Types::TRectangle rectangle_, float fontSize_, float spacing_, Types::TColor color_, int selectStart_, int selectLength_, Types::TColor selectText_, Types::TColor selectBack_, bool wordWrap_ = true);
+            static void DrawTextRectEx(const Types::TFont& font_, const std::string &string_, Types::TRectangle rectangle_, float fontSize_, float spacing_, Types::TColor color_, int selectStart_, int selectLength_, Types::TColor selectText_, Types::TColor selectBack_, bool wordWrap_ = true);
+
+            /*
+             * Draw a texture
+             */
+            static void DrawTexture(const Types::TTexture2D& texture_, Types::TVector2 position_, Types::TColor color_, float scale_ = 1, Types::TVector2 origin = Types::TVector2(), float rotation_ = 0);
+
+            /*
+             * Draw a texture with specified dimensions
+             */
+            static void DrawTexture(const Types::TTexture2D& texture_, Types::TVector2 position_, float width_, float height_, Types::TColor color_, Types::TVector2 origin_ = Types::TVector2(), float rotation_ = 0);
+
+            /*
+             * Draw a part of a texture
+             */
+            static void DrawTexture(const Types::TTexture2D& texture_, Types::TRectangle sourceRectangle_, Types::TVector2 position_, Types::TColor color_, Types::TVector2 origin_ = Types::TVector2(), float rotation_ = 0);
+
+            /*
+             * Draw a part of a texture with specified dimensions
+             */
+            static void DrawTexture(const Types::TTexture2D& texture_, Types::TRectangle sourceRectangle_, Types::TVector2 position_, float width_, float height_, Types::TColor color_, Types::TVector2 origin_ = Types::TVector2(), float rotation_ = 0);
+
+            /*
+             * Draw a texture with pro parameters
+             */
+            static void DrawTexture(const Types::TTexture2D& texture_, Types::TRectangle destRectangle_, Types::TRectangle sourceRectangle_, Types::TColor color_, Types::TVector2 origin_ = Types::TVector2(), float rotation_ = 0);
 
             /*
              * Draw a triangle
@@ -241,8 +268,6 @@ namespace Ngine {
              * Draw a polygon
              */
             static void DrawPoly(Types::TVector2 center_, int sides_, float radius_, float rotation_, Types::TColor color_);
-
-            // TODO: Textures drawing
 
             /*
              * Finish using 2D camera

@@ -12,10 +12,13 @@
 #ifndef FONT_H
 #define FONT_H
 
+#define TYPE_DECL_HEADER
 #include "../ngine.h"
+#undef TYPE_DECL_HEADER
 
 #include "Rectangle.h"
 #include "Texture2D.h"
+#include "Vector2.h"
 
 namespace Ngine::Types {
     /*
@@ -58,7 +61,6 @@ namespace Ngine::Types {
 
         TCharInfo()
             : Character(0),
-              Rectangle(TRectangle()),
               OffsetX(0),
               OffsetY(0),
               AdvanceX(0),
@@ -108,8 +110,22 @@ namespace Ngine::Types {
 
         // Public Constructor(s)
 
+        /*
+         * Create a null font
+         */
         TFont()
-            : Texture({}), BaseSize(0), CharacterCount(0), Characters(nullptr) {}
+            : BaseSize(0), CharacterCount(0), Characters(nullptr) {}
+
+        /*
+         * Move a font
+         */
+        TFont(TFont&& font_) noexcept;
+
+        /*
+         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
+         * Use with caution.
+         */
+        TFont(const TFont& font_) = default;
 
         // Public Methods
 
@@ -141,6 +157,39 @@ namespace Ngine::Types {
          * Measure the dimensions of a string
          */
         [[nodiscard]] TVector2 MeasureString(const std::string& string_, float fontSize_, float spacing_) const;
+
+        // Operators
+
+        /*
+         * Move a font
+         */
+        TFont& operator=(TFont&& font_) noexcept {
+            Texture = std::move(font_.Texture);
+            BaseSize = font_.BaseSize;
+            CharacterCount = font_.CharacterCount;
+            Characters = font_.Characters;
+
+            font_.Texture = TTexture2D();
+            font_.BaseSize = 0;
+            font_.CharacterCount = 0;
+            font_.Characters = nullptr;
+
+            return *this;
+        }
+
+        /*
+         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
+         * Use with caution.
+         */
+        TFont& operator=(const TFont& font_) = default;
+
+    private:
+        // Private Constructor(s)
+
+        TFont(TTexture2D tex_, int baseSize_, int charCount_, TCharInfo* chars_)
+            : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
+            Texture = std::move(tex_);
+        }
     };
 }
 

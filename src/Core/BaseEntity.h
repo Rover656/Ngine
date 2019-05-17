@@ -19,7 +19,7 @@
 
 namespace Ngine {
     namespace Core {
-        class NEAPI Component;
+        class Component;
 
         /*
          * The root class for an entity within a scene
@@ -46,7 +46,7 @@ namespace Ngine {
              * Returns whether or not the component was added
              */
             template <typename ComponentType>
-            bool AddComponent(const std::string name_, ComponentType *component_);
+            bool AddComponent(const std::string& name_, ComponentType *component_);
 
             /*
              * Draw code for the entity
@@ -57,7 +57,7 @@ namespace Ngine {
              * Get a component by name.
              */
             template <typename ComponentType>
-            ComponentType *GetComponent(const std::string name_);
+            ComponentType *GetComponent(const std::string& name_);
 
             /*
              * Get all components

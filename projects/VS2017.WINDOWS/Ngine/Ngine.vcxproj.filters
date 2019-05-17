@@ -45,6 +45,9 @@
     <ClInclude Include="..\..\..\src\Types\Texture2D.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Input\Mouse.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -90,6 +93,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Types\Color.cpp">
       <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Texture2D.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Input\Mouse.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

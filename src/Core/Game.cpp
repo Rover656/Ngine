@@ -14,12 +14,15 @@
 namespace Ngine::Core {
     // Public Constructor(s)
 
-    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_) : Game(width_, height_, FPS_, FPS_, title_) {}
+    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, GameConfig config_)
+        : Game(width_, height_, FPS_, FPS_, title_, config_) {}
 
-    Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_, const std::string &title_) {
+    Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_,
+               const std::string &title_, GameConfig config_) {
         #if !defined(PLATFORM_UWP)
 
-        // TODO: Config flags support
+        // Apply config
+        SetConfigFlags(config_);
 
         // Initialize raylib's window
         InitWindow(width_, height_, title_.c_str());

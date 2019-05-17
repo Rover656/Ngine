@@ -12,6 +12,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#define TYPE_DECL_HEADER
+
 #include "../ngine.h"
 
 namespace Ngine {

@@ -12,11 +12,15 @@
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
+#define TYPE_DECL_HEADER
+#include "../ngine.h"
+#undef TYPE_DECL_HEADER
+
 namespace Ngine::Types {
     /*
      * A 2D Texture stored in the GPU memory
      */
-    struct TTexture2D {
+    struct NEAPI TTexture2D {
         // Public Fields
 
         /*
@@ -46,35 +50,87 @@ namespace Ngine::Types {
 
         // Public Constructor(s)
 
+        /*
+         * Create a null texture
+         */
         TTexture2D()
             : ID(0), Width(0), Height(0), Mipmaps(1), Format(0) {}
 
-        // TODO: File load constructor?
+        /*
+         * Move a texture
+         */
+        TTexture2D(TTexture2D &&tex_) noexcept;
+
+        /*
+         * Copy a texture (Reference, if one is deleted, both will stop working correctly.)
+         * Use with caution.
+         */
+        TTexture2D(const TTexture2D &tex_) = default;
+
+        // Destructor
+
+        ~TTexture2D();
 
         // Public Methods
         #ifdef INCLUDE_RAYLIB
+
         /*
          * Convert to raylib texture
          */
-        Texture2D ToRaylibTex() const {
-            return { ID, Width, Height, Mipmaps, Format };
-        }
+        [[nodiscard]] Texture2D ToRaylibTex() const;
 
         /*
          * Convert from raylib texture
          */
-        static TTexture2D FromRaylibTex(Texture2D tex) {
-            TTexture2D ttex;
+        static TTexture2D FromRaylibTex(Texture2D tex_);
 
-            ttex.ID = tex.id;
-            ttex.Width = tex.width;
-            ttex.Height = tex.height;
-            ttex.Mipmaps = tex.mipmaps;
-            ttex.Format = tex.format;
-
-            return ttex;
-        }
         #endif
+
+        /*
+         * Generate texture mipmaps
+         */
+        void GenerateMipmaps() const;
+
+        // TODO: Add LoadTexture pixel data support
+        //static TTexture2D LoadPixels()
+
+        /*
+         * Load a texture from a file
+         */
+        static TTexture2D LoadTexture(const std::string &filename_);
+
+        // Operators
+
+        /*
+         * Move a texture
+         */
+        TTexture2D &operator=(TTexture2D &&tex_) noexcept {
+            ID = tex_.ID;
+            Width = tex_.Width;
+            Height = tex_.Height;
+            Mipmaps = tex_.Mipmaps;
+            Format = tex_.Format;
+
+            tex_.ID = 0;
+            tex_.Width = 0;
+            tex_.Height = 0;
+            tex_.Mipmaps = 0;
+            tex_.Format = 0;
+
+            return *this;
+        }
+
+        /*
+         * Copy a texture (Reference, if one is deleted, both will stop working correctly.)
+         * Use with caution.
+         */
+        TTexture2D &operator=(const TTexture2D &tex_) = default;
+
+    private:
+        // Private Constructor(s)
+
+        TTexture2D(unsigned int id_, int width_, int height_, int mipmaps_, int format_)
+            : ID(id_), Width(width_), Height(height_), Mipmaps(mipmaps_), Format(format_) {}
     };
 }
 
