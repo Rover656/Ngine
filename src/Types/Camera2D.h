@@ -48,7 +48,7 @@ namespace Ngine {
 
             // Public Methods
 
-#ifdef INCLUDE_RAYLIB
+            #ifdef INCLUDE_RAYLIB
             /*
              * Convert to raylib camera
              */
@@ -62,7 +62,21 @@ namespace Ngine {
 
                 return cam;
             }
-#endif
+
+            /*
+             * Convert from raylib camera
+             */
+            static TCamera2D FromRaylibCam(const Camera2D &cam) {
+                TCamera2D tcam;
+
+                tcam.Offset = TVector2::FromRaylibVec(cam.offset);
+                tcam.Rotation = cam.rotation;
+                tcam.Target = TVector2::FromRaylibVec(cam.target);
+                tcam.Zoom = cam.zoom;
+
+                return tcam;
+            }
+            #endif
         };
     }
 }

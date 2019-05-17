@@ -41,6 +41,7 @@
 //----------------------------------------------------------------------------------
 
 // C++ Includes
+#include <algorithm>                // Required for: std::clamp and alike methods
 #include <chrono>                   // Required for: std::chrono timings
 #include <string>                   // Required for: std::string
 #include <map>                      // Required for: std::map
@@ -55,7 +56,9 @@
 // Type includes
 #include "Types/Camera2D.h"
 #include "Types/Color.h"
+#include "Types/Font.h"
 #include "Types/Rectangle.h"
+#include "Types/Texture2D.h"
 #include "Types/Vector2.h"
 
 //----------------------------------------------------------------------------------

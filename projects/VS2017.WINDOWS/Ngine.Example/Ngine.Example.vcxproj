@@ -172,9 +172,6 @@
     <ProjectReference Include="..\Ngine\Ngine.vcxproj">
       <Project>{638e880b-9b5c-4248-b53e-46ddfa6bfdf7}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\raylib\raylib.vcxproj">
-      <Project>{f1cb961a-30ac-41a4-8766-4288f59d619d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -41,7 +41,7 @@ namespace Ngine {
             /*
              * Create a vector with a single value for all components
              */
-            TVector2(float val_) : X(val_), Y(val_) {}
+            explicit TVector2(float val_) : X(val_), Y(val_) {}
 
             /*
              * Create a 2D vector
@@ -56,6 +56,13 @@ namespace Ngine {
              */
             Vector2 ToRaylibVec() const {
                 return { X, Y };
+            }
+
+            /*
+             * Convert from a raylib vector
+             */
+            static TVector2 FromRaylibVec(const Vector2& vec) {
+                return { vec.x, vec.y };
             }
 #endif
 

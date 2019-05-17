@@ -36,7 +36,9 @@
     <ClInclude Include="..\..\..\src\ngine.h" />
     <ClInclude Include="..\..\..\src\Types\Camera2D.h" />
     <ClInclude Include="..\..\..\src\Types\Color.h" />
+    <ClInclude Include="..\..\..\src\Types\Font.h" />
     <ClInclude Include="..\..\..\src\Types\Rectangle.h" />
+    <ClInclude Include="..\..\..\src\Types\Texture2D.h" />
     <ClInclude Include="..\..\..\src\Types\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +50,8 @@
     <ClCompile Include="..\..\..\src\Core\BaseScene.cpp" />
     <ClCompile Include="..\..\..\src\Core\Scene2D.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Color.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Font.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

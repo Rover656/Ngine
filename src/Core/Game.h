@@ -28,9 +28,14 @@ namespace Ngine {
             BaseScene* _CurrentScene = nullptr;
 
             /*
-             * The target FPS
+             * The target draw FPS
              */
-            int _FPS = 0;
+            int _DrawFPS = 0;
+
+            /*
+             * The target update FPS
+             */
+            int _UpdateFPS = 0;
 
         public:
             // Public Constructor(s)
@@ -38,7 +43,12 @@ namespace Ngine {
             /*
              * Create a new Game
              */
-            Game(int width_, int height_, int FPS_, std::string title_);
+            Game(int width_, int height_, int FPS_, const std::string &title_);
+
+            /*
+             * Create a new Game (Advanced)
+             */
+            Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_);
 
             // Public Methods
 
@@ -49,9 +59,20 @@ namespace Ngine {
             virtual void Draw();
 
             /*
-             * Get the target FPS
+             * Get the target FPS.
+             * If using advanced game will return update FPS
              */
             int GetFPS() const;
+
+            /*
+             * Get the target draw FPS.
+             */
+            int GetDrawFPS() const;
+
+            /*
+             * Get the target update FPS.
+             */
+            int GetUpdateFPS() const;
 
             /*
              * Start the game loop
@@ -59,14 +80,25 @@ namespace Ngine {
             void Run();
 
             /*
-             * Set the target FPS
+             * Set the target FPS.
+             * If using advanced game, this will set both update and draw FPS
              */
             void SetFPS(int FPS_);
+
+            /*
+             * Set the target draw FPS
+             */
+            void SetDrawFPS(int FPS_);
 
             /*
              * Set the current scene
              */
             void SetScene(BaseScene* scene_);
+
+            /*
+             * Set the target update FPS
+             */
+            void SetUpdateFPS(int FPS_);
 
             /*
              * Update logic

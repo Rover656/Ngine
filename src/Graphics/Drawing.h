@@ -22,13 +22,6 @@ namespace Ngine {
          * Connect to the raylib renderer directly
          */
         class NEAPI Drawing {
-            // Private Methods
-
-            /*
-             * Unset the texture
-             */
-            static void UnsetTexture();
-
         public:
             // Public Methods
 
@@ -92,6 +85,11 @@ namespace Ngine {
              * Draw a circle sector outline
              */
             static void DrawCircleSectorLines(Types::TVector2 center_, float radius_, int startAngle_, int endAngle_, int segments_, Types::TColor color_);
+
+            /*
+             * Draw the current FPS (Should be used for debug only...)
+             */
+            static void DrawFPS(Types::TVector2 position_);
 
             /*
              * Draw a ring
@@ -209,6 +207,21 @@ namespace Ngine {
             static void DrawRectangleRoundedLines(Types::TRectangle rectangle_, float roundness_, int segments_, int lineThickness_, Types::TColor color_);
 
             /*
+             * Draw text
+             */
+            static void DrawText(const Types::TFont& font_, std::string string_, Types::TVector2 position_, float fontSize_, float spacing_, Types::TColor color_);
+
+            /*
+             * Draw text with rectangle constraint
+             */
+            static void DrawTextRect(const Types::TFont& font_, std::string string_, Types::TRectangle rectangle_, float fontSize_, float spacing_, Types::TColor color_, bool wordWrap_ = true);
+
+            /*
+             * Draw text with rectangle constraint and select support
+             */
+            static void DrawTextRectEx(const Types::TFont& font_, std::string string_, Types::TRectangle rectangle_, float fontSize_, float spacing_, Types::TColor color_, int selectStart_, int selectLength_, Types::TColor selectText_, Types::TColor selectBack_, bool wordWrap_ = true);
+
+            /*
              * Draw a triangle
              */
             static void DrawTriangle(Types::TVector2 v1_, Types::TVector2 v2_, Types::TVector2 v3_, Types::TColor color_);
@@ -229,7 +242,7 @@ namespace Ngine {
              */
             static void DrawPoly(Types::TVector2 center_, int sides_, float radius_, float rotation_, Types::TColor color_);
 
-            // TODO: Textures and text drawing
+            // TODO: Textures drawing
 
             /*
              * Finish using 2D camera

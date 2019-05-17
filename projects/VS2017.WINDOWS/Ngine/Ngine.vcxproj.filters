@@ -39,6 +39,12 @@
     <ClInclude Include="..\..\..\src\Types\Rectangle.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Font.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Texture2D.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -78,6 +84,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Core\Game.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Font.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Color.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

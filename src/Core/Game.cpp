@@ -14,7 +14,9 @@
 namespace Ngine::Core {
     // Public Constructor(s)
 
-    Game::Game(int width_, int height_, int FPS_, std::string title_) {
+    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_) : Game(width_, height_, FPS_, FPS_, title_) {}
+
+    Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_, const std::string &title_) {
         #if !defined(PLATFORM_UWP)
 
         // TODO: Config flags support
@@ -23,8 +25,8 @@ namespace Ngine::Core {
         InitWindow(width_, height_, title_.c_str());
 
         // Set Target FPS
-        _FPS = FPS_;
-        SetTargetFPS(FPS_);
+        SetDrawFPS(drawFPS_);
+        SetUpdateFPS(updateFPS_);
 
         #else
 
@@ -53,7 +55,15 @@ namespace Ngine::Core {
     }
 
     int Game::GetFPS() const {
-        return _FPS;
+        return _UpdateFPS;
+    }
+
+    int Game::GetDrawFPS() const {
+        return _DrawFPS;
+    }
+
+    int Game::GetUpdateFPS() const {
+        return _UpdateFPS;
     }
 
     void Game::Run() {
@@ -64,7 +74,7 @@ namespace Ngine::Core {
         std::chrono::nanoseconds lag(0);
         auto started = std::chrono::high_resolution_clock::now();
 
-        auto lastFPS = _FPS;
+        auto lastFPS = _UpdateFPS;
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
         while (!WindowShouldClose()) {
@@ -74,8 +84,8 @@ namespace Ngine::Core {
             lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
             // Update timestep if FPS has changed
-            if (_FPS != lastFPS) {
-                lastFPS = _FPS;
+            if (_UpdateFPS != lastFPS) {
+                lastFPS = _UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
             }
 
@@ -112,8 +122,23 @@ namespace Ngine::Core {
     }
 
     void Game::SetFPS(int FPS_) {
-        _FPS = FPS_;
+        _UpdateFPS = FPS_;
+        _DrawFPS = FPS_;
         SetTargetFPS(FPS_);
+    }
+
+    void Game::SetDrawFPS(int FPS_) {
+        _DrawFPS = FPS_;
+        SetTargetFPS(FPS_);
+    }
+
+    void Game::SetScene(BaseScene *scene_) {
+        _CurrentScene = scene_;
+        // TODO: Load and unload events
+    }
+
+    void Game::SetUpdateFPS(int FPS_) {
+        _UpdateFPS = FPS_;
     }
 
     void Game::Update() {
@@ -138,6 +163,6 @@ namespace Ngine::Core {
 
     void Game::Clear() {
         //TODO: Configurable
-        Graphics::Drawing::Clear(Black);
+        Graphics::Drawing::Clear(TColor::Black);
     }
 }

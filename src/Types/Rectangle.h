@@ -42,6 +42,9 @@ namespace Ngine {
 
             // Public Constructor(s)
 
+            TRectangle()
+                : X(0), Y(0), Width(0), Height(0) {}
+
             TRectangle(float x_, float y_, float width_, float height_)
                 : X(x_), Y(y_), Width(width_), Height(height_) {}
 
@@ -52,14 +55,23 @@ namespace Ngine {
                 : X(position_.X), Y(position_.Y), Width(size_.X), Height(size_.Y) {}
 
             // Public Methods
-#ifdef INCLUDE_RAYLIB
+            #ifdef INCLUDE_RAYLIB
+
             /*
              * Convert to Raylib Rectangle
              */
             Rectangle ToRaylibRect() const {
-                return { X, Y, Width, Height };
+                return {X, Y, Width, Height};
             }
-#endif
+
+            /*
+             * Convert from Raylib rectangle
+             */
+            static TRectangle FromRaylibRect(const Rectangle &rect) {
+                return {rect.x, rect.y, rect.width, rect.height};
+            }
+
+            #endif
         };
     }
 }
