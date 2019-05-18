@@ -11,7 +11,7 @@
 
 #include "Scene2D.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
     Scene2D::Scene2D() : BaseScene() {

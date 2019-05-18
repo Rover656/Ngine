@@ -17,7 +17,7 @@
 
 #include "EntityContainer.h"    // Required for: EntityContainer
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     class Component;
 
     /*

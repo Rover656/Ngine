@@ -11,7 +11,7 @@
 
 #include "Entity2D.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
     Entity2D::Entity2D() {

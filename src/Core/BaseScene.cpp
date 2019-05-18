@@ -11,7 +11,7 @@
 
 #include "BaseScene.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
     BaseScene::BaseScene() {

@@ -13,7 +13,7 @@
 
 #include "BaseEntity.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Methods
 
     // TODO: Test that this all works...

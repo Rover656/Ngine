@@ -13,7 +13,7 @@
 
 #include "Component.h"          // Required for: Component
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Methods
 
     template <typename ComponentType>

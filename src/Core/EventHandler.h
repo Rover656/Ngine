@@ -16,7 +16,7 @@
 
 #include <functional>
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Forward declare for EventHandleRef
     template <typename ArgsType = EventArgs>
     class EventHandler;

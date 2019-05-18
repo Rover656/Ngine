@@ -13,7 +13,7 @@
 
 #include "../Input/Mouse.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
     Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, int config_)

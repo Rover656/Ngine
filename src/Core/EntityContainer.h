@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // We do this forward declaration instead of include because BaseEntity uses this.
     class NEAPI BaseEntity;
 

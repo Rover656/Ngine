@@ -15,7 +15,7 @@
 // Include ngine
 #include "../ngine.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     class NEAPI BaseEntity;
 
     /*

@@ -16,7 +16,7 @@
 
 #include "../Core/EventHandler.h"
 
-namespace Ngine::Input {
+namespace NerdThings::Ngine::Input {
     struct MouseState {
         // Public Fields
 

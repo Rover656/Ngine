@@ -11,7 +11,7 @@
 
 #include "Component.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     // Public Methods
 
     BaseEntity *Component::GetParent() const {

@@ -5,7 +5,12 @@
 #include "Core/Game.h"
 #include "Input/Mouse.h"
 
-class TestGame : public Ngine::Core::Game {
+using namespace NGINE_NS;
+using namespace NGINE_NS::Core;
+using namespace NGINE_NS::Graphics;
+using namespace NGINE_NS::Input;
+
+class TestGame : public Game {
     TFont def;
     TTexture2D tex;
 public:
@@ -21,17 +26,17 @@ public:
     }
 
     void Draw(EventArgs &e_) {
-        Ngine::Graphics::Drawing::DrawTriangle({250, 0}, {100, 200}, {400, 200}, TColor::Yellow);
+        Drawing::DrawTriangle({250, 0}, {100, 200}, {400, 200}, TColor::Yellow);
 
-        Ngine::Graphics::Drawing::DrawText(def, "Hello World", {10, 10}, 48, 2, TColor::White);
+        Drawing::DrawText(def, "Hello World", {10, 10}, 48, 2, TColor::White);
 
-        Ngine::Graphics::Drawing::DrawFPS({10, 100});
+        Drawing::DrawFPS({10, 100});
 
-        auto pos = Ngine::Input::Mouse::GetMousePosition();
+        auto pos = Mouse::GetMousePosition();
 
-        auto color = Ngine::Input::Mouse::IsButtonDown(LEFT);
+        auto color = Mouse::IsButtonDown(LEFT);
 
-        Ngine::Graphics::Drawing::DrawTexture(tex, pos, 300, 200, color ? TColor::Orange : TColor::White);
+        Drawing::DrawTexture(tex, pos, 300, 200, color ? TColor::Orange : TColor::White);
     }
 };
 

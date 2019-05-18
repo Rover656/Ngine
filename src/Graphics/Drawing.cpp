@@ -15,7 +15,7 @@
 
 // TODO: Use rlgl to add custom vertex data support (i.e. custom shapes)
 
-namespace Ngine::Graphics {
+namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     void Drawing::BeginDrawing() {

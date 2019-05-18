@@ -17,7 +17,7 @@
 
 #include "EventHandler.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     /*
      * A 2D Game Scene
      */

@@ -11,7 +11,7 @@
 
 #include "Mouse.h"
 
-namespace Ngine::Input {
+namespace NerdThings::Ngine::Input {
     // Public Fields
 
     MouseState Mouse::LastMouseState;

@@ -18,7 +18,7 @@
 #include "BaseEntity.h"         // Required for: BaseEntity
 #include "EntityContainer.h"    // Required for: EntityContainer
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     /*
      * A container for entities
      */

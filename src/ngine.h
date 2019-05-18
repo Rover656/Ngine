@@ -36,21 +36,23 @@
 // Use raylib DLL
 #define USE_LIBTYPE_SHARED
 
+// Root Ngine namespace
+#define NGINE_NS NerdThings::Ngine
+
 //----------------------------------------------------------------------------------
-// Includes
+// Libraries
 //----------------------------------------------------------------------------------
 
 // C++ Includes
-#include <algorithm>                // Required for: std::clamp and alike methods
-#include <chrono>                   // Required for: std::chrono timings
-#include <string>                   // Required for: std::string
-#include <map>                      // Required for: std::map
-#include <thread>                   // Required for: std::this_thread sleep
-#include <vector>                   // Required for: std::vector
+#include <algorithm>                        // Required for: std::clamp and alike methods
+#include <chrono>                           // Required for: std::chrono timings
+#include <string>                           // Required for: std::string
+#include <map>                              // Required for: std::map
+#include <thread>                           // Required for: std::this_thread sleep
+#include <vector>                           // Required for: std::vector
 
-// Library Includes
 #if defined(INCLUDE_RAYLIB)
-#include "3rd-party/raylib/src/raylib.h"
+#include "3rd-party/raylib/src/raylib.h"    // Required for: raylib in its entirety
 #endif
 
 // Type includes

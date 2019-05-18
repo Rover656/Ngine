@@ -17,7 +17,7 @@
 #include "../Graphics/Drawing.h"
 #include "EventHandler.h"
 
-namespace Ngine::Core {
+namespace NerdThings::Ngine::Core {
     /*
      * The main container of the game
      */

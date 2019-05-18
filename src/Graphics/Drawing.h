@@ -15,7 +15,7 @@
 #include "../Core/Scene2D.h"
 #include "../ngine.h"
 
-namespace Ngine::Graphics {
+namespace NerdThings::Ngine::Graphics {
     /*
      * Connect to the raylib renderer directly
      */
