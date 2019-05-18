@@ -30,9 +30,9 @@ namespace Ngine::Input {
         MouseState state;
 
         for (auto i = 0; i < 3; i++) {
-            state.ButtonsDown[i] = IsButtonDown(static_cast<MouseButton>(i));
-            state.ButtonsPressed[i] = IsButtonPressed(static_cast<MouseButton>(i));
-            state.ButtonsReleased[i] = IsButtonReleased(static_cast<MouseButton>(i));
+            state.ButtonsDown[i] = IsButtonDown(static_cast<EMouseButton>(i));
+            state.ButtonsPressed[i] = IsButtonPressed(static_cast<EMouseButton>(i));
+            state.ButtonsReleased[i] = IsButtonReleased(static_cast<EMouseButton>(i));
         }
 
         state.MouseWheelMovementY = GetMouseWheelMovement();
@@ -45,25 +45,25 @@ namespace Ngine::Input {
         return GetMouseWheelMove();
     }
 
-    bool Mouse::IsButtonDown(MouseButton button_) {
+    bool Mouse::IsButtonDown(EMouseButton button_) {
         return IsMouseButtonDown(button_);
     }
 
-    bool Mouse::IsButtonPressed(MouseButton button_) {
+    bool Mouse::IsButtonPressed(EMouseButton button_) {
         return IsMouseButtonPressed(button_);
     }
 
-    bool Mouse::IsButtonReleased(MouseButton button_) {
+    bool Mouse::IsButtonReleased(EMouseButton button_) {
         return IsMouseButtonReleased(button_);
     }
 
     // Public Event Handles
 
-    void Mouse::OnGameRun(Core::EventArgs e_) {
+    void Mouse::OnGameRun(EventArgs& e_) {
         LastMouseState = GetMouseState();
     }
 
-    void Mouse::OnGameUpdate(Core::EventArgs e_) {
+    void Mouse::OnGameUpdate(EventArgs& e_) {
         // Get current state
         auto state = GetMouseState();
 
@@ -75,9 +75,9 @@ namespace Ngine::Input {
         // Mouse button events
         for (auto i = 0; i < 3; i++) {
             if (state.ButtonsPressed[i]) {
-                OnMouseButtonPressed.Invoke(MouseButtonEventArgs(static_cast<MouseButton>(i), true));
+                OnMouseButtonPressed.Invoke({static_cast<EMouseButton>(i), true});
             } else if (state.ButtonsReleased[i]) {
-                OnMouseButtonReleased.Invoke(MouseButtonEventArgs(static_cast<MouseButton>(i), false));
+                OnMouseButtonReleased.Invoke({static_cast<EMouseButton>(i), false});
             }
         }
 

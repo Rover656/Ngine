@@ -11,38 +11,36 @@
 
 #include "Component.h"
 
-namespace Ngine {
-    namespace Core {
-        // Public Methods
+namespace Ngine::Core {
+    // Public Methods
 
-        BaseEntity *Component::GetParent() const {
-            return _ParentEntity;
-        }
+    BaseEntity *Component::GetParent() const {
+        return _ParentEntity;
+    }
 
-        bool Component::HasParent() const {
-            return _ParentEntity != nullptr;
-        }
+    bool Component::HasParent() const {
+        return _ParentEntity != nullptr;
+    }
 
-        void Component::OnAttach(BaseEntity* _attachedEntity) {
-            _ParentEntity = _attachedEntity;
-        }
+    void Component::OnAttach(BaseEntity *_attachedEntity) {
+        _ParentEntity = _attachedEntity;
+    }
 
-        void Component::OnDetach() {
-            _ParentEntity = nullptr;
-        }
+    void Component::OnDetach() {
+        _ParentEntity = nullptr;
+    }
 
-        void Component::OnDraw() {
-            // Do nothing
-        }
+    void Component::OnDraw() {
+        // Do nothing
+    }
 
-        void Component::OnUpdate() {
-            // Do nothing
-        }
+    void Component::OnUpdate() {
+        // Do nothing
+    }
 
-        // Protected Constructor(s)
+    // Protected Constructor(s)
 
-        Component::Component() {
-            // Does nothing atm.
-        }
+    Component::Component() {
+        // Does nothing atm.
     }
 }

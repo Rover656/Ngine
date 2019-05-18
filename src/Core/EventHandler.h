@@ -17,11 +17,36 @@
 #include <functional>
 
 namespace Ngine::Core {
+    // Forward declare for EventHandleRef
+    template <typename ArgsType = EventArgs>
+    class EventHandler;
+
     /*
-     * Default event arguments
+     * A reference to an EventHandle attached to an EventHandler
      */
-    struct EventArgs {
-        // Contains nothing for the moment
+    template <typename ArgsType = EventArgs>
+    struct EventHandleRef {
+        // Public Fields
+
+        /*
+         * The handler that the handle is linked to
+         */
+        EventHandler<ArgsType>* AttachedHandler = nullptr;
+
+        /*
+         * The event handle ID
+         */
+        int ID = -1;
+
+        // Public Methods
+
+        /*
+         * Unattach the handler
+         */
+        void UnBind() {
+            AttachedHandler->UnBind(ID);
+            ID = -1;
+        }
     };
 
     /*
@@ -29,19 +54,12 @@ namespace Ngine::Core {
      */
     template <typename ArgsType = EventArgs>
     class EventHandler {
-        // Private Typedefs
-
-        /*
-         * An event handle function
-         */
-        typedef void (*EventHandle)(ArgsType e);
-
         // Private Fields
 
         /*
          * All of the handles for the event handler
          */
-        std::vector<std::function<void(ArgsType)>> _Handles;
+        std::vector<std::function<void(ArgsType&)>> _Handles;
 
         /*
          * Unused indices in the Handles vector
@@ -52,26 +70,10 @@ namespace Ngine::Core {
         // Public Methods
 
         /*
-         * Bind a handler to the event
+         * Bind a function
          */
-        int Bind(std::function<void(ArgsType)> handle) {
-            if (_UnusedIndices.size() > 0) {
-                auto id = _UnusedIndices.back();
-
-                _Handles[id] = handle;
-
-                _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
-
-                return id;
-            }
-
-            _Handles.push_back(handle);
-            return _Handles.size() - 1;
-        }
-
-        template <typename Class>
-        int Bind(Class* obj, void (Class::*func)(ArgsType e)) {
-            auto f = std::bind(func, obj, std::placeholders::_1);
+        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType& e)) {
+            auto f = std::bind(func_, std::placeholders::_1);
             if (_UnusedIndices.size() > 0) {
                 auto id = _UnusedIndices.back();
 
@@ -79,11 +81,49 @@ namespace Ngine::Core {
 
                 _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
 
-                return id;
+                EventHandleRef<ArgsType> ref;
+                ref.AttachedHandler = this;
+                ref.ID = id;
+
+                return ref;
             }
 
             _Handles.push_back(f);
-            return _Handles.size() - 1;
+
+            EventHandleRef<ArgsType> ref;
+            ref.AttachedHandler = this;
+            ref.ID = _Handles.size() - 1;
+
+            return ref;
+        }
+
+        /*
+         * Bind a class method
+         */
+        template <typename Class>
+        EventHandleRef<ArgsType> Bind(Class* obj_, void (Class::*func_)(ArgsType& e)) {
+            auto f = std::bind(func_, obj_, std::placeholders::_1);
+            if (_UnusedIndices.size() > 0) {
+                auto id = _UnusedIndices.back();
+
+                _Handles[id] = f;
+
+                _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
+
+                EventHandleRef<ArgsType> ref;
+                ref.AttachedHandler = this;
+                ref.ID = id;
+
+                return ref;
+            }
+
+            _Handles.push_back(f);
+
+            EventHandleRef<ArgsType> ref;
+            ref.AttachedHandler = this;
+            ref.ID = _Handles.size() - 1;
+
+            return ref;
         }
 
         /*
@@ -97,17 +137,22 @@ namespace Ngine::Core {
          * Invoke the handles attached to the event
          */
         void Invoke(ArgsType e) {
-            for (const auto &handle : _Handles) {
-                if (handle != nullptr)
-                    handle(e);
+            for (auto i = 0; i < _Handles.size(); i++) {
+                auto handle = _Handles[i];
+                if (handle != nullptr) {
+                    ArgsType sendE = e;
+                    handle(sendE);
+
+                    if (sendE.UnBind == true) {
+                        UnBind(i);
+                    }
+                }
             }
         }
 
-        void UnBind(std::function<void(ArgsType)> handle) {
-            _Handles.erase(std::remove(_Handles.begin(), _Handles.end(), handle), _Handles.end());
-        }
-
         void UnBind(int index) {
+            if (index < 0)
+                return;
             _Handles[index] = nullptr;
             _UnusedIndices.push_back(index);
         }

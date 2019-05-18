@@ -17,46 +17,44 @@
 
 #include "BaseEntity.h"
 
-namespace Ngine {
-    namespace Core {
+namespace Ngine::Core {
+    /*
+     * A 2D Entity
+     */
+    class NEAPI Entity2D : public BaseEntity {
+    public:
+        // Public Constructor(s)
+
         /*
-         * A 2D Entity
+         * Create a 2D Entity
          */
-        class NEAPI Entity2D : public BaseEntity {
-        public:
-            // Public Constructor(s)
+        Entity2D();
 
-            /*
-             * Create a 2D Entity
-             */
-            Entity2D();
+        /*
+         * Create a 2D Entity at a position
+         */
+        Entity2D(const TVector2 &_position);
 
-            /*
-             * Create a 2D Entity at a position
-             */
-            Entity2D(const TVector2& _position);
+        // Public Methods
 
-            // Public Methods
+        /*
+         * Get the entity position
+         */
+        TVector2 GetPosition() const;
 
-            /*
-             * Get the entity position
-             */
-            TVector2 GetPosition() const;
+        /*
+         * Set the entity position
+         */
+        void SetPosition(TVector2 _position);
 
-            /*
-             * Set the entity position
-             */
-            void SetPosition(TVector2 _position);
+    protected:
+        // Protected Fields
 
-        protected:
-            // Protected Fields
-
-            /*
-             * The entity position
-             */
-            TVector2 _Position;
-        };
-    }
+        /*
+         * The entity position
+         */
+        TVector2 _Position;
+    };
 }
 
 #endif //ENTITY2D_H

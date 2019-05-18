@@ -57,18 +57,12 @@
 #if !defined(TYPE_DECL_HEADER)
 #include "Types/Camera2D.h"
 #include "Types/Color.h"
+#include "Types/Enums.h"
+#include "Types/EventArgs.h"
 #include "Types/Font.h"
 #include "Types/Rectangle.h"
 #include "Types/Texture2D.h"
 #include "Types/Vector2.h"
-#endif
-
-//----------------------------------------------------------------------------------
-// Using Namespaces
-//----------------------------------------------------------------------------------
-
-#if defined(NGINE_EXPORTS) && !defined(TYPE_DECL_HEADER)
-using namespace Ngine::Types;
 #endif
 
 #endif // NGINE_H

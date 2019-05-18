@@ -38,9 +38,11 @@
     <ClInclude Include="..\..\..\src\ngine.h" />
     <ClInclude Include="..\..\..\src\Types\Camera2D.h" />
     <ClInclude Include="..\..\..\src\Types\Color.h" />
+    <ClInclude Include="..\..\..\src\Types\EventArgs.h" />
     <ClInclude Include="..\..\..\src\Types\Font.h" />
     <ClInclude Include="..\..\..\src\Types\Rectangle.h" />
     <ClInclude Include="..\..\..\src\Types\Texture2D.h" />
+    <ClInclude Include="..\..\..\src\Types\Enums.h" />
     <ClInclude Include="..\..\..\src\Types\Vector2.h" />
   </ItemGroup>
   <ItemGroup>

@@ -11,98 +11,98 @@
 
 #include "Font.h"
 
-namespace Ngine::Types {
-    //----------------------------------------------------------------------------------
-    // TCharInfo
-    //----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
+// TCharInfo
+//----------------------------------------------------------------------------------
 
-    // Public Methods
+// Public Methods
 
-    #ifdef INCLUDE_RAYLIB
+#ifdef INCLUDE_RAYLIB
 
-    CharInfo TCharInfo::ToRaylibInfo() const {
-        CharInfo inf;
+CharInfo TCharInfo::ToRaylibInfo() const {
+    CharInfo inf;
 
-        inf.value = Character;
-        inf.rec = Rectangle.ToRaylibRect();
-        inf.offsetX = OffsetX;
-        inf.offsetY = OffsetY;
-        inf.advanceX = AdvanceX;
-        inf.data = Data;
+    inf.value = Character;
+    inf.rec = Rectangle.ToRaylibRect();
+    inf.offsetX = OffsetX;
+    inf.offsetY = OffsetY;
+    inf.advanceX = AdvanceX;
+    inf.data = Data;
 
-        return inf;
-    }
+    return inf;
+}
 
-    TCharInfo TCharInfo::FromRaylibInfo(const CharInfo &info_) {
-        TCharInfo inf;
+TCharInfo TCharInfo::FromRaylibInfo(const CharInfo &info_) {
+    TCharInfo inf;
 
-        inf.Character = info_.value;
-        inf.Rectangle = TRectangle::FromRaylibRect(info_.rec);
-        inf.OffsetX = info_.offsetX;
-        inf.OffsetY = info_.offsetY;
-        inf.AdvanceX = info_.advanceX;
-        inf.Data = info_.data;
+    inf.Character = info_.value;
+    inf.Rectangle = TRectangle::FromRaylibRect(info_.rec);
+    inf.OffsetX = info_.offsetX;
+    inf.OffsetY = info_.offsetY;
+    inf.AdvanceX = info_.advanceX;
+    inf.Data = info_.data;
 
-        return inf;
-    }
+    return inf;
+}
 
-    #endif
+#endif
 
-    //----------------------------------------------------------------------------------
-    // TFont
-    //----------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------
+// TFont
+//----------------------------------------------------------------------------------
 
-    // Public Constructor(s)
+// Public Constructor(s)
 
-    TFont::TFont(TFont &&font_) noexcept {
-        Texture = std::move(font_.Texture);
-        BaseSize = font_.BaseSize;
-        CharacterCount = font_.CharacterCount;
-        Characters = font_.Characters;
+TFont::TFont(TFont && font_)
+noexcept
+ {
+    Texture = std::move(font_.Texture);
+    BaseSize = font_.BaseSize;
+    CharacterCount = font_.CharacterCount;
+    Characters = font_.Characters;
 
-        font_.Texture = TTexture2D();
-        font_.BaseSize = 0;
-        font_.CharacterCount = 0;
-        font_.Characters = nullptr;
-    }
+    font_.Texture = TTexture2D();
+    font_.BaseSize = 0;
+    font_.CharacterCount = 0;
+    font_.Characters = nullptr;
+}
 
-    // Public Methods
+// Public Methods
 
-    #ifdef INCLUDE_RAYLIB
+#ifdef INCLUDE_RAYLIB
 
-    Font TFont::ToRaylibFont() const {
-        Font fnt;
+Font TFont::ToRaylibFont() const {
+    Font fnt;
 
-        fnt.texture = Texture.ToRaylibTex();
-        fnt.baseSize = BaseSize;
-        fnt.charsCount = CharacterCount;
+    fnt.texture = Texture.ToRaylibTex();
+    fnt.baseSize = BaseSize;
+    fnt.charsCount = CharacterCount;
 
-        // This works because all of the structs used follow the same structure
-        fnt.chars = reinterpret_cast<CharInfo*>(Characters);
+    // This works because all of the structs used follow the same structure
+    fnt.chars = reinterpret_cast<CharInfo*>(Characters);
 
-        return fnt;
-    }
+    return fnt;
+}
 
-    TFont TFont::FromRaylibFont(const Font &font_) {
-        return {
-            TTexture2D::FromRaylibTex(font_.texture),
-            font_.baseSize,
-            font_.charsCount,
-            reinterpret_cast<TCharInfo*>(font_.chars)
-        };
-    }
+TFont TFont::FromRaylibFont(const Font &font_) {
+    return {
+        TTexture2D::FromRaylibTex(font_.texture),
+        font_.baseSize,
+        font_.charsCount,
+        reinterpret_cast<TCharInfo*>(font_.chars)
+    };
+}
 
-    #endif
+#endif
 
-    struct TFont TFont::GetDefaultFont() {
-        return FromRaylibFont(GetFontDefault());
-    }
+struct TFont TFont::GetDefaultFont() {
+    return FromRaylibFont(GetFontDefault());
+}
 
-    TFont TFont::LoadFont(const std::string &filename_) {
-        return TFont::FromRaylibFont(::LoadFont(filename_.c_str()));
-    }
+TFont TFont::LoadFont(const std::string &filename_) {
+    return TFont::FromRaylibFont(::LoadFont(filename_.c_str()));
+}
 
-    TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
-        return TVector2::FromRaylibVec(MeasureTextEx((*this).ToRaylibFont(), string_.c_str(), fontSize_, spacing_));
-    }
+TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
+    return TVector2::FromRaylibVec(MeasureTextEx((*this).ToRaylibFont(), string_.c_str(), fontSize_, spacing_));
 }

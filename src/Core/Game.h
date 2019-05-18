@@ -17,139 +17,129 @@
 #include "../Graphics/Drawing.h"
 #include "EventHandler.h"
 
-namespace Ngine {
-    namespace Core {
-        enum GameConfig {
-            None = 0,
-            FULLSCREEN = 2,
-            RESIZEABLE_WINDOW = 4,
-            FRAMELESS_WINDOW = 8,
-            TRANSPARENT_WINDOW = 16,
-            //HIDDEN_WINDOW = 128, // Removed for now because we can't unhide a window. Idk if we need this.
-            MSAA_4X = 32,
-            VSYNC = 64
-        };
+namespace Ngine::Core {
+    /*
+     * The main container of the game
+     */
+    class NEAPI Game {
+        // Private Fields
 
-        class NEAPI Game {
-            // Private Fields
+        /*
+         * The currently loaded scene
+         */
+        BaseScene *_CurrentScene = nullptr;
 
-            /*
-             * The currently loaded scene
-             */
-            BaseScene* _CurrentScene = nullptr;
+        /*
+         * The target draw FPS
+         */
+        int _DrawFPS = 0;
 
-            /*
-             * The target draw FPS
-             */
-            int _DrawFPS = 0;
+        /*
+         * The target update FPS
+         */
+        int _UpdateFPS = 0;
 
-            /*
-             * The target update FPS
-             */
-            int _UpdateFPS = 0;
+    public:
+        // Public Fields
 
-        public:
-            // Public Fields
+        /*
+         * Background clear color
+         */
+        TColor ClearColor = TColor::Black;
 
-            /*
-             * Background clear color
-             */
-            Types::TColor ClearColor = Types::TColor::Black;
+        /*
+         * On update event
+         */
+        EventHandler<EventArgs> OnDraw;
 
-            /*
-             * On update event
-             */
-            EventHandler<EventArgs> OnDraw;
+        /*
+         * On run event
+         */
+        EventHandler<EventArgs> OnRun;
 
-            /*
-             * On run event
-             */
-            EventHandler<EventArgs> OnRun;
+        /*
+         * On update event
+         */
+        EventHandler<EventArgs> OnUpdate;
 
-            /*
-             * On update event
-             */
-            EventHandler<EventArgs> OnUpdate;
+        // Public Constructor(s)
 
-            // Public Constructor(s)
+        /*
+         * Create a new Game
+         */
+        Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = None);
 
-            /*
-             * Create a new Game
-             */
-            Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = None);
+        /*
+         * Create a new Game (Advanced)
+         */
+        Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = None);
 
-            /*
-             * Create a new Game (Advanced)
-             */
-            Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = None);
+        // Destructor
 
-            // Destructor
+        virtual ~Game() = default;
 
-            virtual ~Game() = default;
+        // Public Methods
 
-            // Public Methods
+        /*
+         * Draw a frame.
+         */
+        void Draw();
 
-            /*
-             * Draw a frame.
-             */
-            void Draw();
+        /*
+         * Get the target FPS.
+         * If using advanced game will return update FPS
+         */
+        [[nodiscard]] int GetFPS() const;
 
-            /*
-             * Get the target FPS.
-             * If using advanced game will return update FPS
-             */
-            [[nodiscard]] int GetFPS() const;
+        /*
+         * Get the target draw FPS.
+         */
+        [[nodiscard]] int GetDrawFPS() const;
 
-            /*
-             * Get the target draw FPS.
-             */
-            [[nodiscard]] int GetDrawFPS() const;
+        /*
+         * Get the target update FPS.
+         */
+        [[nodiscard]] int GetUpdateFPS() const;
 
-            /*
-             * Get the target update FPS.
-             */
-            [[nodiscard]] int GetUpdateFPS() const;
+        /*
+         * Start the game loop
+         */
+        void Run();
 
-            /*
-             * Start the game loop
-             */
-            void Run();
+        /*
+         * Set the target FPS.
+         * If using advanced game, this will set both update and draw FPS
+         */
+        void SetFPS(int FPS_);
 
-            /*
-             * Set the target FPS.
-             * If using advanced game, this will set both update and draw FPS
-             */
-            void SetFPS(int FPS_);
+        /*
+         * Set the target draw FPS
+         */
+        void SetDrawFPS(int FPS_);
 
-            /*
-             * Set the target draw FPS
-             */
-            void SetDrawFPS(int FPS_);
+        /*
+         * Set the current scene
+         */
+        void SetScene(BaseScene *scene_);
 
-            /*
-             * Set the current scene
-             */
-            void SetScene(BaseScene* scene_);
+        /*
+         * Set the target update FPS
+         */
+        void SetUpdateFPS(int FPS_);
 
-            /*
-             * Set the target update FPS
-             */
-            void SetUpdateFPS(int FPS_);
+        /*
+         * Update logic
+         */
+        void Update();
 
-            /*
-             * Update logic
-             */
-            void Update();
+    protected:
+        // Protected Methods
 
-        protected:
-            // Protected Methods
-
-            /*
-             * Clear the game background
-             */
-            void Clear() const;
-        };
-    }
+        /*
+         * Clear the game background
+         */
+        void Clear() const;
+    };
 }
 
 #endif //GAME_H

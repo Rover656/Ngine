@@ -18,37 +18,35 @@
 #include "BaseEntity.h"         // Required for: BaseEntity
 #include "EntityContainer.h"    // Required for: EntityContainer
 
-namespace Ngine {
-    namespace Core {
+namespace Ngine::Core {
+    /*
+     * A container for entities
+     */
+    class NEAPI BaseScene : public EntityContainer {
+    public:
+        // Public Constructor(s)
+
         /*
-         * A container for entities
+         * Create a new Scene
          */
-        class NEAPI BaseScene : public EntityContainer {
-        public:
-            // Public Constructor(s)
+        BaseScene();
 
-            /*
-             * Create a new Scene
-             */
-            BaseScene();
+        // Public Destructor
 
-            // Public Destructor
+        virtual ~BaseScene() = default;
 
-            virtual ~BaseScene() = default;
+        // Public Methods
 
-            // Public Methods
+        /*
+         * Draw the scene
+         */
+        virtual void Draw();
 
-            /*
-             * Draw the scene
-             */
-            virtual void Draw();
-
-            /*
-             * Update the scene
-             */
-            virtual void Update();
-        };
-    }
+        /*
+         * Update the scene
+         */
+        virtual void Update();
+    };
 }
 
 #endif //BASESCENE_H

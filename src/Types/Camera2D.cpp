@@ -11,38 +11,36 @@
 
 #include "Camera2D.h"
 
-namespace Ngine::Types {
-    // Public Methods
+// Public Methods
 
-    #ifdef INCLUDE_RAYLIB
+#ifdef INCLUDE_RAYLIB
 
-    Camera2D TCamera2D::ToRaylibCam() const {
-        Camera2D cam;
+Camera2D TCamera2D::ToRaylibCam() const {
+    Camera2D cam;
 
-        cam.rotation = Rotation;
-        cam.offset = Origin.ToRaylibVec();
-        cam.target = Target.ToRaylibVec();
-        cam.zoom = Zoom;
+    cam.rotation = Rotation;
+    cam.offset = Origin.ToRaylibVec();
+    cam.target = Target.ToRaylibVec();
+    cam.zoom = Zoom;
 
-        return cam;
-    }
+    return cam;
+}
 
-    TCamera2D TCamera2D::FromRaylibCam(const Camera2D &cam_) {
-        return {
-            cam_.rotation,
-            cam_.zoom,
-            TVector2::FromRaylibVec(cam_.target),
-            TVector2::FromRaylibVec(cam_.offset)
-        };
-    }
+TCamera2D TCamera2D::FromRaylibCam(const Camera2D &cam_) {
+    return {
+        cam_.rotation,
+        cam_.zoom,
+        TVector2::FromRaylibVec(cam_.target),
+        TVector2::FromRaylibVec(cam_.offset)
+    };
+}
 
-    #endif
+#endif
 
-    void TCamera2D::BeginCamera() const {
-        BeginMode2D(ToRaylibCam());
-    }
+void TCamera2D::BeginCamera() const {
+    BeginMode2D(ToRaylibCam());
+}
 
-    void TCamera2D::EndCamera() {
-        EndMode2D();
-    }
+void TCamera2D::EndCamera() {
+    EndMode2D();
 }

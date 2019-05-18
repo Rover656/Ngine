@@ -18,63 +18,63 @@
 
 #include "Vector2.h"
 
-namespace Ngine::Types {
+/*
+ * A 2D Camera
+ */
+struct TCamera2D {
+    // Public Fields
+
     /*
-     * A 2D Camera
+     * Camera offset/origin
      */
-    struct TCamera2D {
-        // Public Fields
+    TVector2 Origin;
 
-        /*
-         * Camera offset/origin
-         */
-        TVector2 Origin;
+    /*
+     * Camera rotation
+     */
+    float Rotation;
 
-        /*
-         * Camera rotation
-         */
-        float Rotation;
+    /*
+     * Camera target
+     */
+    TVector2 Target;
 
-        /*
-         * Camera target
-         */
-        TVector2 Target;
+    /*
+     * Camera zoom
+     */
+    float Zoom;
 
-        /*
-         * Camera zoom
-         */
-        float Zoom;
+    // Public Constructor(s)
 
-        // Public Constructor(s)
+    TCamera2D(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
+              TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
+                                               Origin(origin_) {}
 
-        TCamera2D(float rotation_ = 0, float zoom_ = 0, Types::TVector2 target_ = Types::TVector2(), Types::TVector2 origin_ = Types::TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_), Origin(origin_) {}
+    // Public Methods
 
-        // Public Methods
+    #ifdef INCLUDE_RAYLIB
 
-        #ifdef INCLUDE_RAYLIB
+    /*
+     * Convert to raylib camera
+     */
+    [[nodiscard]] Camera2D ToRaylibCam() const;
 
-        /*
-         * Convert to raylib camera
-         */
-        [[nodiscard]] Camera2D ToRaylibCam() const;
+    /*
+     * Convert from raylib camera
+     */
+    static TCamera2D FromRaylibCam(const Camera2D &cam_);
 
-        /*
-         * Convert from raylib camera
-         */
-        static TCamera2D FromRaylibCam(const Camera2D &cam_);
+    #endif
 
-        #endif
+    /*
+     * Begin using the camera
+     */
+    void BeginCamera() const;
 
-        /*
-         * Begin using the camera
-         */
-        void BeginCamera() const;
-
-        /*
-         * Finish using the camera
-         */
-        static void EndCamera();
-    };
-}
+    /*
+     * Finish using the camera
+     */
+    static void EndCamera();
+};
 
 #endif //CAMERA2D_H

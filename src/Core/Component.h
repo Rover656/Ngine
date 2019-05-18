@@ -15,71 +15,69 @@
 // Include ngine
 #include "../ngine.h"
 
-namespace Ngine {
-    namespace Core {
-        class NEAPI BaseEntity;
+namespace Ngine::Core {
+    class NEAPI BaseEntity;
+
+    /*
+     * A component that can be attached to an entity
+     */
+    class NEAPI Component {
+        // Private Fields
 
         /*
-         * A component that can be attached to an entity
+         * The parent entity
          */
-        class NEAPI Component {
-            // Private Fields
+        BaseEntity *_ParentEntity = nullptr;
 
-            /*
-             * The parent entity
-             */
-            BaseEntity* _ParentEntity = nullptr;
+    public:
+        // Public Destructor
 
-        public:
-            // Public Destructor
+        /*
+         * Destruct component
+         */
+        virtual ~Component() = default;
 
-            /*
-             * Destruct component
-             */
-            virtual ~Component() = default;
+        // Public Methods
 
-            // Public Methods
+        /*
+         * Get the component parent
+         */
+        BaseEntity *GetParent() const;
 
-            /*
-             * Get the component parent
-             */
-            BaseEntity* GetParent() const;
+        /*
+         * Whether or not the component has a parent
+         */
+        bool HasParent() const;
 
-            /*
-             * Whether or not the component has a parent
-             */
-            bool HasParent() const;
+        /*
+         * Called when the component is added to an entity
+         */
+        void OnAttach(BaseEntity *_attachedEntity);
 
-            /*
-             * Called when the component is added to an entity
-             */
-            void OnAttach(BaseEntity* _attachedEntity);
+        /*
+         * Called when the component is removed from an entity
+         */
+        void OnDetach();
 
-            /*
-             * Called when the component is removed from an entity
-             */
-            void OnDetach();
+        /*
+         * Called when the entity draws
+         */
+        void OnDraw();
 
-            /*
-             * Called when the entity draws
-             */
-            void OnDraw();
+        /*
+         * Called when the entity updates
+         */
+        void OnUpdate();
 
-            /*
-             * Called when the entity updates
-             */
-            void OnUpdate();
+    protected:
 
-        protected:
+        // Protected Constructor(s)
 
-            // Protected Constructor(s)
-
-            /*
-             * Initialise component
-             */
-            Component();
-        };
-    }
+        /*
+         * Initialise component
+         */
+        Component();
+    };
 }
 
 #endif //COMPONENT_H

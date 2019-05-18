@@ -12,47 +12,48 @@
 #ifndef SCENE2D_H
 #define SCENE2D_H
 
-// Include ngine
 #include "../ngine.h"
 #include "BaseScene.h"
 
-namespace Ngine {
-    namespace Core {
+#include "EventHandler.h"
+
+namespace Ngine::Core {
+    /*
+     * A 2D Game Scene
+     */
+    class NEAPI Scene2D : public BaseScene {
+        // Private Fields
+
         /*
-         * A 2D Game Scene
+         * The currently active camera
          */
-        class NEAPI Scene2D : public BaseScene {
-            // Private Fields
+        TCamera2D *_ActiveCamera = nullptr;
 
-            /*
-             * The currently active camera
-             */
-            Types::TCamera2D* _ActiveCamera = nullptr;
+        /*
+         * The default camera for when there is no camera
+         */
+        TCamera2D _DefaultCamera = TCamera2D();
 
-            /*
-             * The default camera for when there is no camera
-             */
-            Types::TCamera2D _DefaultCamera = Types::TCamera2D();
+    public:
+        // Public Fields
 
-        public:
 
-            // Public Constructor(s)
+        // Public Constructor(s)
 
-            Scene2D();
+        Scene2D();
 
-            // Public Methods
+        // Public Methods
 
-            /*
-             * Get the current active camera
-             */
-            Types::TCamera2D* GetActiveCamera() const;
+        /*
+         * Get the current active camera
+         */
+        TCamera2D *GetActiveCamera() const;
 
-            /*
-             * Set the current active camera
-             */
-            void SetActiveCamera(Types::TCamera2D* camera_);
-        };
-    }
+        /*
+         * Set the current active camera
+         */
+        void SetActiveCamera(TCamera2D *camera_);
+    };
 }
 
 #endif //SCENE2D_H

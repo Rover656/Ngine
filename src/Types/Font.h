@@ -20,177 +20,175 @@
 #include "Texture2D.h"
 #include "Vector2.h"
 
-namespace Ngine::Types {
-    /*
-     * Character information
-     */
-    struct NEAPI TCharInfo {
-        // Public Fields
-
-        /*
-         * Character (Unicode)
-         */
-        int Character;
-
-        /*
-         * Sprite font source rectangle
-         */
-        TRectangle Rectangle;
-
-        /*
-         * Character X offset for drawing
-         */
-        int OffsetX;
-
-        /*
-         * Character Y offset for drawing
-         */
-        int OffsetY;
-
-        /*
-         * Character advance X position
-         */
-        int AdvanceX;
-
-        /*
-         * Greyscale pixel data
-         */
-        unsigned char *Data;
-
-        // Public Constructor
-
-        TCharInfo()
-            : Character(0),
-              OffsetX(0),
-              OffsetY(0),
-              AdvanceX(0),
-              Data(nullptr) {}
-
-        // Public Methods
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib charinfo
-         */
-        CharInfo ToRaylibInfo() const;
-
-        /*
-         * Convert from raylib charinfo
-         */
-        static TCharInfo FromRaylibInfo(const CharInfo &info_);
-
-        #endif
-    };
+/*
+ * Character information
+ */
+struct NEAPI TCharInfo {
+    // Public Fields
 
     /*
-     * A font
+     * Character (Unicode)
      */
-    struct NEAPI TFont {
-        // Public Fields
+    int Character;
 
-        /*
-         * Font texture
-         */
-        TTexture2D Texture;
+    /*
+     * Sprite font source rectangle
+     */
+    TRectangle Rectangle;
 
-        /*
-         * Base size (default char height)
-         */
-        int BaseSize;
+    /*
+     * Character X offset for drawing
+     */
+    int OffsetX;
 
-        /*
-         * Character count
-         */
-        int CharacterCount;
+    /*
+     * Character Y offset for drawing
+     */
+    int OffsetY;
 
-        /*
-         * Character data
-         */
-        TCharInfo *Characters;
+    /*
+     * Character advance X position
+     */
+    int AdvanceX;
 
-        // Public Constructor(s)
+    /*
+     * Greyscale pixel data
+     */
+    unsigned char *Data;
 
-        /*
-         * Create a null font
-         */
-        TFont()
-            : BaseSize(0), CharacterCount(0), Characters(nullptr) {}
+    // Public Constructor
 
-        /*
-         * Move a font
-         */
-        TFont(TFont&& font_) noexcept;
+    TCharInfo()
+        : Character(0),
+          OffsetX(0),
+          OffsetY(0),
+          AdvanceX(0),
+          Data(nullptr) {}
 
-        /*
-         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
-         */
-        TFont(const TFont& font_) = default;
+    // Public Methods
+    #ifdef INCLUDE_RAYLIB
 
-        // Public Methods
+    /*
+     * Convert to raylib charinfo
+     */
+    CharInfo ToRaylibInfo() const;
 
-        #ifdef INCLUDE_RAYLIB
+    /*
+     * Convert from raylib charinfo
+     */
+    static TCharInfo FromRaylibInfo(const CharInfo &info_);
 
-        /*
-         * Convert to raylib font
-         */
-        Font ToRaylibFont() const;
+    #endif
+};
 
-        /*
-         * Convert from raylib font
-         */
-        static TFont FromRaylibFont(const Font& font_);
+/*
+ * A font
+ */
+struct NEAPI TFont {
+    // Public Fields
 
-        #endif
+    /*
+     * Font texture
+     */
+    TTexture2D Texture;
 
-        /*
-         * Get the default font (Supplied by raylib)
-         */
-        static TFont GetDefaultFont();
+    /*
+     * Base size (default char height)
+     */
+    int BaseSize;
 
-        /*
-         * Load a font
-         */
-        static TFont LoadFont(const std::string& filename_);
+    /*
+     * Character count
+     */
+    int CharacterCount;
 
-        /*
-         * Measure the dimensions of a string
-         */
-        [[nodiscard]] TVector2 MeasureString(const std::string& string_, float fontSize_, float spacing_) const;
+    /*
+     * Character data
+     */
+    TCharInfo *Characters;
 
-        // Operators
+    // Public Constructor(s)
 
-        /*
-         * Move a font
-         */
-        TFont& operator=(TFont&& font_) noexcept {
-            Texture = std::move(font_.Texture);
-            BaseSize = font_.BaseSize;
-            CharacterCount = font_.CharacterCount;
-            Characters = font_.Characters;
+    /*
+     * Create a null font
+     */
+    TFont()
+        : BaseSize(0), CharacterCount(0), Characters(nullptr) {}
 
-            font_.Texture = TTexture2D();
-            font_.BaseSize = 0;
-            font_.CharacterCount = 0;
-            font_.Characters = nullptr;
+    /*
+     * Move a font
+     */
+    TFont(TFont &&font_) noexcept;
 
-            return *this;
-        }
+    /*
+     * Copy a font (Reference, if one is deleted, both will stop working correctly.)
+     * Use with caution.
+     */
+    TFont(const TFont &font_) = default;
 
-        /*
-         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
-         */
-        TFont& operator=(const TFont& font_) = default;
+    // Public Methods
 
-    private:
-        // Private Constructor(s)
+    #ifdef INCLUDE_RAYLIB
 
-        TFont(TTexture2D tex_, int baseSize_, int charCount_, TCharInfo* chars_)
-            : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
-            Texture = std::move(tex_);
-        }
-    };
-}
+    /*
+     * Convert to raylib font
+     */
+    Font ToRaylibFont() const;
+
+    /*
+     * Convert from raylib font
+     */
+    static TFont FromRaylibFont(const Font &font_);
+
+    #endif
+
+    /*
+     * Get the default font (Supplied by raylib)
+     */
+    static TFont GetDefaultFont();
+
+    /*
+     * Load a font
+     */
+    static TFont LoadFont(const std::string &filename_);
+
+    /*
+     * Measure the dimensions of a string
+     */
+    [[nodiscard]] TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
+
+    // Operators
+
+    /*
+     * Move a font
+     */
+    TFont &operator=(TFont &&font_) noexcept {
+        Texture = std::move(font_.Texture);
+        BaseSize = font_.BaseSize;
+        CharacterCount = font_.CharacterCount;
+        Characters = font_.Characters;
+
+        font_.Texture = TTexture2D();
+        font_.BaseSize = 0;
+        font_.CharacterCount = 0;
+        font_.Characters = nullptr;
+
+        return *this;
+    }
+
+    /*
+     * Copy a font (Reference, if one is deleted, both will stop working correctly.)
+     * Use with caution.
+     */
+    TFont &operator=(const TFont &font_) = default;
+
+private:
+    // Private Constructor(s)
+
+    TFont(TTexture2D tex_, int baseSize_, int charCount_, TCharInfo *chars_)
+        : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
+        Texture = std::move(tex_);
+    }
+};
 
 #endif //FONT_H

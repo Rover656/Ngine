@@ -11,26 +11,24 @@
 
 #include "Entity2D.h"
 
-namespace Ngine {
-    namespace Core {
-        // Public Constructor(s)
+namespace Ngine::Core {
+    // Public Constructor(s)
 
-        Entity2D::Entity2D() {
-            _Position = TVector2();
-        }
+    Entity2D::Entity2D() {
+        _Position = TVector2();
+    }
 
-        Entity2D::Entity2D(const TVector2& _position) {
-            _Position = _position;
-        }
+    Entity2D::Entity2D(const TVector2 &_position) {
+        _Position = _position;
+    }
 
-        // Public Methods
+    // Public Methods
 
-        TVector2 Entity2D::GetPosition() const {
-            return _Position;
-        }
+    TVector2 Entity2D::GetPosition() const {
+        return _Position;
+    }
 
-        void Entity2D::SetPosition(TVector2 _position) {
-            _Position = _position;
-        }
+    void Entity2D::SetPosition(TVector2 _position) {
+        _Position = _position;
     }
 }
