@@ -67,12 +67,12 @@ namespace NerdThings::Ngine::Core {
         /*
          * Create a new Game
          */
-        Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = None);
+        Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = NONE);
 
         /*
          * Create a new Game (Advanced)
          */
-        Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = None);
+        Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = NONE);
 
         // Destructor
 

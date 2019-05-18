@@ -1,0 +1,40 @@
+# Fetch source files
+file(GLOB Ngine_source
+    "*.h"
+    "*.cpp"
+	"Core/*.h"
+	"Core/*.cpp"
+	"Graphics/*.h"
+	"Graphics/*.cpp"
+	"Input/*.h"
+	"Input/*.cpp"
+	"Types/*.h"
+	"Types/*.cpp"
+)
+
+# Add 3rd-party libraries
+add_subdirectory("3rd-party")
+
+# Add library
+if (SHARED)
+	add_library(Ngine SHARED ${Ngine_source})
+else()
+	add_library(Ngine STATIC ${Ngine_source})
+endif()
+
+# Include directories
+target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
+
+# Link libraries
+target_link_libraries(Ngine raylib)
+
+# Compile definitions
+target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
+
+# Set output directory
+set_target_properties(Ngine
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine"
+)
