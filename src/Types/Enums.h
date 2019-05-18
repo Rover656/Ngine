@@ -16,7 +16,7 @@
  * Game config
  */
 enum EGameConfig {
-    None = 0,
+    NONE = 0,
     FULLSCREEN = 2,
     RESIZEABLE_WINDOW = 4,
     FRAMELESS_WINDOW = 8,
