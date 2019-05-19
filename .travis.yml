@@ -6,9 +6,6 @@ matrix:
     - os: linux
       env:
         - BUILD_SHARED=OFF
-    - os: linux
-      env:
-        - BUILD_SHARED=ON
 
     #- os: osx
     #  osx_image: xcode8
@@ -43,4 +40,3 @@ before_script:
 
 script:
   - make
-  - ls
