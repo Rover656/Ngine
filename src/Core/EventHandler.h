@@ -52,7 +52,7 @@ namespace NerdThings::Ngine::Core {
     /*
      * An event handler
      */
-    template <typename ArgsType = EventArgs>
+    template <typename ArgsType>
     class EventHandler {
         // Private Fields
 
