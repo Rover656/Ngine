@@ -41,27 +41,35 @@
 //----------------------------------------------------------------------------------
 
 // C++ Includes
-#include <algorithm>                        // Required for: std::clamp and alike methods
-#include <chrono>                           // Required for: std::chrono timings
-#include <string>                           // Required for: std::string
-#include <map>                              // Required for: std::map
-#include <thread>                           // Required for: std::this_thread sleep
-#include <vector>                           // Required for: std::vector
+#include <algorithm>                            // Required for: std::clamp and alike methods
+#include <chrono>                               // Required for: std::chrono timings
+#include <string>                               // Required for: std::string
+#include <map>                                  // Required for: std::map
+#include <thread>                               // Required for: std::this_thread sleep
+#include <vector>                               // Required for: std::vector
 
 #if defined(INCLUDE_RAYLIB)
-#include "3rd-party/raylib/src/raylib.h"    // Required for: raylib in its entirety
+    #include "3rd-party/raylib/src/raylib.h"    // Required for: raylib in its entirety
 #endif
 
 // Type includes
 #if !defined(TYPE_DECL_HEADER)
-#include "Types/Camera2D.h"
-#include "Types/Color.h"
-#include "Types/Enums.h"
-#include "Types/EventArgs.h"
-#include "Types/Font.h"
-#include "Types/Rectangle.h"
-#include "Types/Texture2D.h"
-#include "Types/Vector2.h"
+    #include "Types/Camera2D.h"
+    #include "Types/Color.h"
+    #include "Types/Enums.h"
+    #include "Types/EventArgs.h"
+    #include "Types/Font.h"
+    #include "Types/Rectangle.h"
+    #include "Types/Texture2D.h"
+    #include "Types/Vector2.h"
+#endif
+
+#if defined(_WIN32)
+    #define NOGDI
+    #define NODRAWTEXT
+    #define NOUSER
+    // Windows Header Files
+    #include <Windows.h>
 #endif
 
 #endif // NGINE_H
