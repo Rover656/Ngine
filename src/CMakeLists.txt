@@ -12,13 +12,18 @@ file(GLOB Ngine_source
 	"Types/*.cpp"
 )
 
+# Include options
+include("CMakeOptions.txt")
+
 # Add 3rd-party libraries
 add_subdirectory("3rd-party")
 
 # Add library
-if (SHARED)
+if (${BUILD_SHARED})
+	message("Building Ngine as a shared library.")
 	add_library(Ngine SHARED ${Ngine_source})
 else()
+	message("Building Ngine as a static library.")
 	add_library(Ngine STATIC ${Ngine_source})
 endif()
 
@@ -29,7 +34,11 @@ target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
 target_link_libraries(Ngine raylib)
 
 # Compile definitions
-target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
+target_compile_definitions(Ngine PUBLIC NGINE_EXPORTS=1)
+
+if (${BUILD_SHARED})
+	target_compile_definitions(Ngine PUBLIC USE_LIBTYPE_SHARED=1)
+endif()
 
 # Set output directory
 set_target_properties(Ngine

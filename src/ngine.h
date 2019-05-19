@@ -27,14 +27,11 @@
 
 #if defined(_WIN32) && defined(NGINE_EXPORTS)
 #define NEAPI __declspec(dllexport)         // Windows DLL Export
-#elif defined(_WIN32)
+#elif defined(_WIN32) && defined(NGINE_SHARED)
 #define NEAPI __declspec(dllimport)         // Windows DLL Import
 #else
 #define NEAPI
 #endif
-
-// Use raylib DLL
-#define USE_LIBTYPE_SHARED
 
 // Root Ngine namespace
 #define NGINE_NS NerdThings::Ngine

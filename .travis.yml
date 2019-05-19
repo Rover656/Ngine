@@ -1,0 +1,42 @@
+language: cpp
+
+matrix:
+  include:
+    #GCC with C++17 Support
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+    #- os: osx
+    #  osx_image: xcode8
+    #  env:
+    #    - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+    #CLANG with C++11 Support
+    #- os: linux
+    #  addons:
+    #    apt:
+    #      sources:
+    #        - ubuntu-toolchain-r-test
+    #        - llvm-toolchain-precise-3.6
+    #      packages:
+    #        - clang-3.6
+    #  env:
+    #    - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
+
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install cmake; brew install sdl2; fi
+  - mkdir build
+  - cd build
+  - cmake ..
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" || "$TRAVIS_OS_NAME" == "linux" ]]; then make; fi
