@@ -22,13 +22,25 @@ set_target_properties(NgineTest
 
 # Copy dependant dlls
 if (${BUILD_SHARED})
-	add_custom_command(TARGET NgineTest POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${CMAKE_BINARY_DIR}/Ngine/Ngine.dll"
-			"${CMAKE_BINARY_DIR}/NgineTest/Ngine.dll")
+	if (WIN32)
+		add_custom_command(TARGET NgineTest POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				"${CMAKE_BINARY_DIR}/Ngine/Ngine.dll"
+				"${CMAKE_BINARY_DIR}/NgineTest/Ngine.dll")
 
-	add_custom_command(TARGET NgineTest POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			"${CMAKE_BINARY_DIR}/Ngine/raylib.dll"
-			"${CMAKE_BINARY_DIR}/NgineTest/raylib.dll")
+		add_custom_command(TARGET NgineTest POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				"${CMAKE_BINARY_DIR}/Ngine/raylib.dll"
+				"${CMAKE_BINARY_DIR}/NgineTest/raylib.dll")
+	else()
+		add_custom_command(TARGET NgineTest POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				"${CMAKE_BINARY_DIR}/Ngine/Ngine.so"
+				"${CMAKE_BINARY_DIR}/NgineTest/Ngine.so")
+
+		add_custom_command(TARGET NgineTest POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				"${CMAKE_BINARY_DIR}/Ngine/raylib.so"
+				"${CMAKE_BINARY_DIR}/NgineTest/raylib.so")
+	endif()
 endif()
