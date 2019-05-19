@@ -11,8 +11,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
+         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6" BUILD_SHARED=OFF
 	- os: linux
       addons:
         apt:
@@ -21,7 +20,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6" BUILD_SHARED=ON
 
     #- os: osx
     #  osx_image: xcode8
