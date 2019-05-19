@@ -6,6 +6,8 @@ set (CMAKE_CXX_STANDARD 17)
 # Project details
 project("Ngine")
 
+# TODO: Platform enum
+
 # Add sub directories
 add_subdirectory(src)
 
