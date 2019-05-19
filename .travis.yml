@@ -11,7 +11,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6" BUILD_SHARED=OFF
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6" BUILD_SHARED=OFF
 	- os: linux
       addons:
         apt:
@@ -20,7 +20,7 @@ matrix:
           packages:
             - g++-6
       env:
-         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6" BUILD_SHARED=ON
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6" BUILD_SHARED=ON
 
     #- os: osx
     #  osx_image: xcode8
@@ -42,7 +42,6 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 before_script:
-  - if [ -z "$BUILD_SHARED" ]; then export BUILD_SHARED=ON ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install cmake; brew install sdl2; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install xorg-dev libglu1-mesa-dev; fi
