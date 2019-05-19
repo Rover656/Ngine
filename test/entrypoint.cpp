@@ -1,3 +1,4 @@
+#define INCLUDE_WINDOWS
 #include "ngine.h"
 
 #include "Core/Game.h"

@@ -11,8 +11,6 @@
 
 #include "Color.h"
 
-#include <climits>
-
 // Public Constructor(s)
 
 TColor::TColor(const int r_, const int g_, const int b_, const int a_) {
@@ -120,5 +118,5 @@ const TColor TColor::Red = TColor(0xff0000ff);
 const TColor TColor::SkyBlue = TColor(0xffebce87);
 const TColor TColor::Transparent = TColor(0);
 const TColor TColor::Violet = TColor(0xffee82ee);
-const TColor TColor::White = TColor(UINT_MAX);
+const TColor TColor::White = TColor(0xffffffff);
 const TColor TColor::Yellow = TColor(0xff00ffff);

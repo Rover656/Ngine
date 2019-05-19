@@ -34,10 +34,10 @@ target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
 target_link_libraries(Ngine raylib)
 
 # Compile definitions
-target_compile_definitions(Ngine PUBLIC NGINE_EXPORTS=1)
+target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
 
 if (${BUILD_SHARED})
-	target_compile_definitions(Ngine PUBLIC USE_LIBTYPE_SHARED=1)
+	target_compile_definitions(Ngine PRIVATE USE_LIBTYPE_SHARED=1)
 endif()
 
 # Set output directory

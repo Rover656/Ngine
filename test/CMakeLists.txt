@@ -9,7 +9,7 @@ target_link_libraries(NgineTest Ngine)
 
 # Use Ngine shared if building as shared
 if (${BUILD_SHARED})
-	target_compile_definitions(NgineTest PUBLIC NGINE_SHARED=1)
+	target_compile_definitions(NgineTest PRIVATE NGINE_SHARED=1)
 endif()
 
 # Set output directory
