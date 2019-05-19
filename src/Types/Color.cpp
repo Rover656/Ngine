@@ -11,6 +11,8 @@
 
 #include "Color.h"
 
+#include <climits>
+
 // Public Constructor(s)
 
 TColor::TColor(const int r_, const int g_, const int b_, const int a_) {
