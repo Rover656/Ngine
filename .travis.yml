@@ -42,7 +42,7 @@ before_install:
     - eval "${MATRIX_EVAL}"
 
 before_script:
-  - if [ -z "BUILD_SHARED" ]; then export BUILD_SHARED=ON ; fi
+  - if [ -z "$BUILD_SHARED" ]; then export BUILD_SHARED=ON ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install cmake; brew install sdl2; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install xorg-dev libglu1-mesa-dev; fi
