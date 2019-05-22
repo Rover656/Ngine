@@ -2,6 +2,7 @@
 #include "ngine.h"
 
 #include "Core/Game.h"
+#include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 
 using namespace NGINE_NS;
@@ -14,10 +15,10 @@ class TestGame : public Game {
     TTexture2D tex;
 public:
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
-        width_, height_, DrawFPS_, UpdateFPS_, title_, MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
+        width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_, MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
         // Only works on windows for obvious reasons, this is just for me to test while adding the abstraction layer
-        def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
-        //def = TFont::GetDefaultFont();
+        //def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
+        def = TFont::GetDefaultFont();
 
         tex = TTexture2D::LoadTexture("A:\\Pictures\\Video Projects\\Rev3_399.png");
 
@@ -27,7 +28,13 @@ public:
     void Draw(EventArgs &e_) {
         Drawing::DrawTriangle({250, 0}, {100, 200}, {400, 200}, TColor::Yellow);
 
-        Drawing::DrawText(def, "Hello World", {10, 10}, 48, 2, TColor::White);
+        auto tcol = TColor::White;
+
+        if (Keyboard::IsKeyDown(KEY_SPACE)) {
+            tcol = TColor::Red;
+        }
+
+        Drawing::DrawText(def, "Hello World", {10, 10}, 48, 2, tcol);
 
         Drawing::DrawFPS({10, 100});
 

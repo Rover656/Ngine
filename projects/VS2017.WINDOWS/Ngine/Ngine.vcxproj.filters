@@ -66,6 +66,9 @@
     <ClInclude Include="..\..\..\src\Input\Keyboard.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Input\Gamepad.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -126,6 +129,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Core\WindowManager.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Input\Keyboard.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Input\Gamepad.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

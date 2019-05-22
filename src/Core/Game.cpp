@@ -11,6 +11,7 @@
 
 #include "Game.h"
 
+#include "../Input/Keyboard.h"
 #include "../Input/Mouse.h"
 #include "WindowManager.h"
 
@@ -21,6 +22,10 @@ namespace NerdThings::Ngine::Core {
         : Game(width_, height_, FPS_, FPS_, title_, config_) {}
 
     Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_,
+               const std::string &title_, int config_)
+        : Game(width_, height_, width_, height_, drawFPS_, updateFPS_, title_, config_) {}
+
+    Game::Game(int windowWidth_, int windowHeight_, int targetWidth_, int targetHeight_, int drawFPS_, int updateFPS_,
                const std::string &title_, int config_) {
         #if !defined(PLATFORM_UWP)
 
@@ -31,11 +36,11 @@ namespace NerdThings::Ngine::Core {
         WindowManager::ApplyConfig(_Config);
 
         // Set intended dimensions
-        _IntendedHeight = height_;
-        _IntendedWidth = width_;
+        _IntendedHeight = targetHeight_;
+        _IntendedWidth = targetWidth_;
 
         // Initialize raylib's window
-        WindowManager::Init(width_, height_, title_);
+        WindowManager::Init(windowWidth_, windowHeight_, title_);
 
         // Set Target FPS
         SetDrawFPS(drawFPS_);
@@ -44,6 +49,9 @@ namespace NerdThings::Ngine::Core {
         // Register default events
         OnRun.Bind(Input::Mouse::OnGameRun);
         OnUpdate.Bind(Input::Mouse::OnGameUpdate);
+
+        // By default, disable exit key
+        Input::Keyboard::SetExitKey(KEY_NONE);
 
         #else
 
@@ -166,19 +174,19 @@ namespace NerdThings::Ngine::Core {
                 Graphics::Drawing::PopTarget(popped);
 
                 Graphics::Drawing::DrawTexture(_RenderTarget.Texture,
-                    { 
-                        (w - iw * scale) * 0.5f, 
-                        (h - ih * scale) * 0.5f, 
-                        iw * scale, 
-                        ih * scale
-                    },
-                    { 
-                        0, 
-                        0,
-                        static_cast<float>(_RenderTarget.Texture.Width),
-                        static_cast<float>(-_RenderTarget.Texture.Height)
-                    }, 
-                    TColor::White);
+                                               {
+                                                   (w - iw * scale) * 0.5f,
+                                                   (h - ih * scale) * 0.5f,
+                                                   iw * scale,
+                                                   ih * scale
+                                               },
+                                               {
+                                                   0,
+                                                   0,
+                                                   static_cast<float>(_RenderTarget.Texture.Width),
+                                                   static_cast<float>(-_RenderTarget.Texture.Height)
+                                               },
+                                               TColor::White);
             }
 
             // Reset mouse
