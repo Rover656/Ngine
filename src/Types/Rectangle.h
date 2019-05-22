@@ -19,64 +19,66 @@
 
 #include "Vector2.h"
 
-/*
- * A rectangle
- */
-struct TRectangle {
-    // Public Fields
-
+namespace NerdThings::Ngine {
     /*
-     * Rectangle X position
+     * A rectangle
      */
-    float X;
+    struct TRectangle {
+        // Public Fields
 
-    /*
-     * Rectangle Y position
-     */
-    float Y;
+        /*
+         * Rectangle X position
+         */
+        float X;
 
-    /*
-     * Rectangle Width
-     */
-    float Width;
+        /*
+         * Rectangle Y position
+         */
+        float Y;
 
-    /*
-     * Rectangle Height
-     */
-    float Height;
+        /*
+         * Rectangle Width
+         */
+        float Width;
 
-    // Public Constructor(s)
+        /*
+         * Rectangle Height
+         */
+        float Height;
 
-    TRectangle()
-        : X(0), Y(0), Width(0), Height(0) {}
+        // Public Constructor(s)
 
-    TRectangle(float x_, float y_, float width_, float height_)
-        : X(x_), Y(y_), Width(width_), Height(height_) {}
+        TRectangle()
+            : X(0), Y(0), Width(0), Height(0) {}
 
-    TRectangle(TVector2 position_, float width_, float height_)
-        : X(position_.X), Y(position_.Y), Width(width_), Height(height_) {}
+        TRectangle(float x_, float y_, float width_, float height_)
+            : X(x_), Y(y_), Width(width_), Height(height_) {}
 
-    TRectangle(TVector2 position_, TVector2 size_)
-        : X(position_.X), Y(position_.Y), Width(size_.X), Height(size_.Y) {}
+        TRectangle(TVector2 position_, float width_, float height_)
+            : X(position_.X), Y(position_.Y), Width(width_), Height(height_) {}
 
-    // Public Methods
-    #ifdef INCLUDE_RAYLIB
+        TRectangle(TVector2 position_, TVector2 size_)
+            : X(position_.X), Y(position_.Y), Width(size_.X), Height(size_.Y) {}
 
-    /*
-     * Convert to Raylib Rectangle
-     */
-    Rectangle ToRaylibRect() const {
-        return {X, Y, Width, Height};
-    }
+        // Public Methods
+        #ifdef INCLUDE_RAYLIB
 
-    /*
-     * Convert from Raylib rectangle
-     */
-    static TRectangle FromRaylibRect(const Rectangle &rect) {
-        return {rect.x, rect.y, rect.width, rect.height};
-    }
+        /*
+         * Convert to Raylib Rectangle
+         */
+        Rectangle ToRaylibRect() const {
+            return {X, Y, Width, Height};
+        }
 
-    #endif
-};
+        /*
+         * Convert from Raylib rectangle
+         */
+        static TRectangle FromRaylibRect(const Rectangle &rect) {
+            return {rect.x, rect.y, rect.width, rect.height};
+        }
+
+        #endif
+    };
+}
 
 #endif //RECTANGLE_H

@@ -60,6 +60,7 @@
 #include "Types/EventArgs.h"
 #include "Types/Font.h"
 #include "Types/Rectangle.h"
+#include "Types/RenderTarget.h"
 #include "Types/Texture2D.h"
 #include "Types/Vector2.h"
 #endif

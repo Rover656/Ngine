@@ -12,136 +12,138 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
-/*
- * A vector with 2 Components
- */
-struct TVector2 {
-    // Public Fields
-
+namespace NerdThings::Ngine {
     /*
-     * The X component
+     * A vector with 2 Components
      */
-    float X;
+    struct TVector2 {
+        // Public Fields
 
-    /*
-     * The Y component
-     */
-    float Y;
+        /*
+         * The X component
+         */
+        float X;
 
-    // Public Constructor(s)
+        /*
+         * The Y component
+         */
+        float Y;
 
-    /*
-     * Create a zero vector
-     */
-    TVector2() : X(0), Y(0) {}
+        // Public Constructor(s)
 
-    /*
-     * Create a vector with a single value for all components
-     */
-    explicit TVector2(float val_) : X(val_), Y(val_) {}
+        /*
+         * Create a zero vector
+         */
+        TVector2() : X(0), Y(0) {}
 
-    /*
-     * Create a 2D vector
-     */
-    TVector2(float x_, float y_) : X(x_), Y(y_) {}
+        /*
+         * Create a vector with a single value for all components
+         */
+        explicit TVector2(float val_) : X(val_), Y(val_) {}
 
-    // Public Methods
+        /*
+         * Create a 2D vector
+         */
+        TVector2(float x_, float y_) : X(x_), Y(y_) {}
 
-    #ifdef INCLUDE_RAYLIB
-    /*
-     * Convert to a raylib vector
-     */
-    Vector2 ToRaylibVec() const {
-        return {X, Y};
-    }
+        // Public Methods
 
-    /*
-     * Convert from a raylib vector
-     */
-    static TVector2 FromRaylibVec(const Vector2 &vec) {
-        return {vec.x, vec.y};
-    }
-    #endif
+        #ifdef INCLUDE_RAYLIB
+        /*
+         * Convert to a raylib vector
+         */
+        Vector2 ToRaylibVec() const {
+            return {X, Y};
+        }
 
-    // Operators
+        /*
+         * Convert from a raylib vector
+         */
+        static TVector2 FromRaylibVec(const Vector2 &vec) {
+            return {vec.x, vec.y};
+        }
+        #endif
 
-    bool operator==(const TVector2 &b_) const {
-        return X == b_.X && Y == b_.Y;
-    }
+        // Operators
 
-    bool operator!=(const TVector2 &b_) const {
-        return X != b_.X || Y != b_.Y;
-    }
+        bool operator==(const TVector2 &b_) const {
+            return X == b_.X && Y == b_.Y;
+        }
 
-    friend TVector2 operator+(TVector2 a_, const TVector2 &b_) {
-        return {
-            a_.X + b_.X,
-            a_.Y + b_.Y
-        };
-    }
+        bool operator!=(const TVector2 &b_) const {
+            return X != b_.X || Y != b_.Y;
+        }
 
-    void operator+=(const TVector2 &b_) {
-        X += b_.X;
-        Y += b_.Y;
-    }
+        friend TVector2 operator+(TVector2 a_, const TVector2 &b_) {
+            return {
+                a_.X + b_.X,
+                a_.Y + b_.Y
+            };
+        }
 
-    void operator+=(const float b_) {
-        X += b_;
-        Y += b_;
-    }
+        void operator+=(const TVector2 &b_) {
+            X += b_.X;
+            Y += b_.Y;
+        }
 
-    friend TVector2 operator-(TVector2 a_, const TVector2 &b_) {
-        return {
-            a_.X - b_.X,
-            a_.Y - b_.Y
-        };
-    }
+        void operator+=(const float b_) {
+            X += b_;
+            Y += b_;
+        }
 
-    void operator-=(const TVector2 &b_) {
-        X -= b_.X;
-        Y -= b_.Y;
-    }
+        friend TVector2 operator-(TVector2 a_, const TVector2 &b_) {
+            return {
+                a_.X - b_.X,
+                a_.Y - b_.Y
+            };
+        }
 
-    void operator-=(const float b_) {
-        X -= b_;
-        Y -= b_;
-    }
+        void operator-=(const TVector2 &b_) {
+            X -= b_.X;
+            Y -= b_.Y;
+        }
 
-    friend TVector2 operator*(TVector2 a_, const TVector2 &b_) {
-        return {
-            a_.X * b_.X,
-            a_.Y * b_.Y
-        };
-    }
+        void operator-=(const float b_) {
+            X -= b_;
+            Y -= b_;
+        }
 
-    void operator*=(const TVector2 &b_) {
-        X *= b_.X;
-        Y *= b_.Y;
-    }
+        friend TVector2 operator*(TVector2 a_, const TVector2 &b_) {
+            return {
+                a_.X * b_.X,
+                a_.Y * b_.Y
+            };
+        }
 
-    void operator*=(const float b_) {
-        X *= b_;
-        Y *= b_;
-    }
+        void operator*=(const TVector2 &b_) {
+            X *= b_.X;
+            Y *= b_.Y;
+        }
 
-    friend TVector2 operator/(TVector2 a_, const TVector2 &b_) {
-        return {
-            a_.X / b_.X,
-            a_.Y / b_.Y
-        };
-    }
+        void operator*=(const float b_) {
+            X *= b_;
+            Y *= b_;
+        }
 
-    void operator/=(const TVector2 &b_) {
-        X /= b_.X;
-        Y /= b_.Y;
-    }
+        friend TVector2 operator/(TVector2 a_, const TVector2 &b_) {
+            return {
+                a_.X / b_.X,
+                a_.Y / b_.Y
+            };
+        }
 
-    void operator/=(const float b_) {
-        X /= b_;
-        Y /= b_;
-    }
+        void operator/=(const TVector2 &b_) {
+            X /= b_.X;
+            Y /= b_.Y;
+        }
 
-    //TODO: More Operators/Maths
-};
+        void operator/=(const float b_) {
+            X /= b_;
+            Y /= b_;
+        }
+
+        //TODO: More Operators/Maths
+    };
+}
 
 #endif //VECTOR2_H

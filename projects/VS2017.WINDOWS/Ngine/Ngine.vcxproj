@@ -33,6 +33,7 @@
     <ClInclude Include="..\..\..\src\Core\EntityContainer.h" />
     <ClInclude Include="..\..\..\src\Core\BaseScene.h" />
     <ClInclude Include="..\..\..\src\Core\Scene2D.h" />
+    <ClInclude Include="..\..\..\src\Core\WindowManager.h" />
     <ClInclude Include="..\..\..\src\Graphics\Drawing.h" />
     <ClInclude Include="..\..\..\src\Input\Mouse.h" />
     <ClInclude Include="..\..\..\src\ngine.h" />
@@ -41,6 +42,7 @@
     <ClInclude Include="..\..\..\src\Types\EventArgs.h" />
     <ClInclude Include="..\..\..\src\Types\Font.h" />
     <ClInclude Include="..\..\..\src\Types\Rectangle.h" />
+    <ClInclude Include="..\..\..\src\Types\RenderTarget.h" />
     <ClInclude Include="..\..\..\src\Types\Texture2D.h" />
     <ClInclude Include="..\..\..\src\Types\Enums.h" />
     <ClInclude Include="..\..\..\src\Types\Vector2.h" />
@@ -53,11 +55,13 @@
     <ClCompile Include="..\..\..\src\Core\EntityContainer.cpp" />
     <ClCompile Include="..\..\..\src\Core\BaseScene.cpp" />
     <ClCompile Include="..\..\..\src\Core\Scene2D.cpp" />
+    <ClCompile Include="..\..\..\src\Core\WindowManager.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\..\src\Types\Camera2D.cpp" />
     <ClCompile Include="..\..\..\src\Types\Color.cpp" />
     <ClCompile Include="..\..\..\src\Types\Font.cpp" />
+    <ClCompile Include="..\..\..\src\Types\RenderTarget.cpp" />
     <ClCompile Include="..\..\..\src\Types\Texture2D.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

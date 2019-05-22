@@ -89,4 +89,12 @@ namespace NerdThings::Ngine::Input {
         // Update last frame state
         LastMouseState = state;
     }
+
+    void Mouse::SetOffset(float ox_, float oy_) {
+        SetMouseOffset(ox_, oy_);
+    }
+
+    void Mouse::SetScale(float sx_, float sy_) {
+        SetMouseScale(sx_, sy_);
+    }
 }

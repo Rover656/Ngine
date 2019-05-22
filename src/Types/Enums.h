@@ -12,27 +12,67 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
-/*
- * Game config
- */
-enum EGameConfig {
-    NONE = 0,
-    FULLSCREEN = 2,
-    RESIZEABLE_WINDOW = 4,
-    FRAMELESS_WINDOW = 8,
-    TRANSPARENT_WINDOW = 16,
-    //HIDDEN_WINDOW = 128, // Removed for now because we can't unhide a window. Idk if we need this.
-    MSAA_4X = 32,
-    VSYNC = 64
-};
+namespace NerdThings::Ngine {
+    /*
+     * Game config.
+     * Backward compatible with raylib as the same enums have the same values
+     */
+    enum EGameConfig {
+        /*
+         * None
+         */
+        NONE = 1,
 
-/*
- * Mouse button
- */
-enum EMouseButton {
-    LEFT = 0,
-    RIGHT,
-    MIDDLE
-};
+        /*
+         * Start in fullscreen?
+         */
+        FULLSCREEN = 2,
+
+        /*
+         * Have a resizeable window
+         * Should usually be used with MAINTAIN_DIMENSIONS
+         */
+        RESIZEABLE_WINDOW = 4,
+
+        /*
+         * Have a frameless window
+         */
+        FRAMELESS_WINDOW = 8,
+
+        /*
+         * Have a transparent window
+         */
+        TRANSPARENT_WINDOW = 16,
+
+        /*
+         * 4x Multi-sample Anti-aliasing
+         */
+        MSAA_4X = 32,
+
+        /*
+         * Vertical sync
+         */
+        VSYNC = 64,
+
+        /*
+         * Start the game with a hidden window
+         */
+        HIDDEN_WINDOW = 128,
+
+        /*
+         * Whether or not to maintain the dimensions provided to the game constructor
+         */
+        MAINTAIN_DIMENSIONS = 256
+    };
+
+    /*
+     * Mouse button
+     */
+    enum EMouseButton {
+        LEFT = 0,
+        RIGHT,
+        MIDDLE
+    };
+}
 
 #endif //ENUMS_H

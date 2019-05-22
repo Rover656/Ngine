@@ -12,6 +12,7 @@
 #include "Game.h"
 
 #include "../Input/Mouse.h"
+#include "WindowManager.h"
 
 namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
@@ -23,11 +24,18 @@ namespace NerdThings::Ngine::Core {
                const std::string &title_, int config_) {
         #if !defined(PLATFORM_UWP)
 
-        // Apply config
-        SetConfigFlags(config_);
+        // Save config
+        _Config = config_;
+
+        // Apply raylib config
+        WindowManager::ApplyConfig(_Config);
+
+        // Set intended dimensions
+        _IntendedHeight = height_;
+        _IntendedWidth = width_;
 
         // Initialize raylib's window
-        InitWindow(width_, height_, title_.c_str());
+        WindowManager::Init(width_, height_, title_);
 
         // Set Target FPS
         SetDrawFPS(drawFPS_);
@@ -81,18 +89,34 @@ namespace NerdThings::Ngine::Core {
     void Game::Run() {
         #if !defined(PLATFORM_UWP)
 
-        // Standard game loop
+        // Invoke OnRun
+        OnRun.Invoke(EventArgs());
 
+        // Create render target
+        if (_Config & MAINTAIN_DIMENSIONS) {
+            _RenderTarget = TRenderTarget(_IntendedWidth, _IntendedHeight);
+        }
+
+        // Timing
         std::chrono::nanoseconds lag(0);
         auto started = std::chrono::high_resolution_clock::now();
 
         auto lastFPS = _UpdateFPS;
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
-        // Invoke OnRun
-        OnRun.Invoke(EventArgs());
-
         while (!WindowShouldClose()) {
+            // Window/Game Size variables
+            const auto w = static_cast<float>(WindowManager::GetWindowWidth());
+            const auto h = static_cast<float>(WindowManager::GetWindowHeight());
+
+            const auto iw = static_cast<float>(_IntendedWidth);
+            const auto ih = static_cast<float>(_IntendedHeight);
+
+            const auto scale = std::min(w / iw, h / ih);
+
+            const auto offsetX = (w - iw * scale) * 0.5;
+            const auto offsetY = (h - ih * scale) * 0.5;
+
             // Get the time since the last frame
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
             started = std::chrono::high_resolution_clock::now();
@@ -102,6 +126,12 @@ namespace NerdThings::Ngine::Core {
             if (_UpdateFPS != lastFPS) {
                 lastFPS = _UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
+            }
+
+            // Setup mouse
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+                Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+                Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
 
             // Run Updates
@@ -114,20 +144,57 @@ namespace NerdThings::Ngine::Core {
             // Prep for drawing
             Graphics::Drawing::BeginDrawing();
 
+            // Clear
+            Graphics::Drawing::Clear(TColor::Black);
+
+            // If using, start using target
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+                // TODO: Texture function for this
+                SetTextureWrap(_RenderTarget.Texture.ToRaylibTex(), WRAP_CLAMP);
+                Graphics::Drawing::PushTarget(&_RenderTarget);
+            }
+
             // Clear the background
             Clear();
 
             // Draw
             Draw();
 
+            // If using a target, draw target
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+                auto popped = false;
+                Graphics::Drawing::PopTarget(popped);
+
+                Graphics::Drawing::DrawTexture(_RenderTarget.Texture,
+                    { 
+                        (w - iw * scale) * 0.5f, 
+                        (h - ih * scale) * 0.5f, 
+                        iw * scale, 
+                        ih * scale
+                    },
+                    { 
+                        0, 
+                        0,
+                        static_cast<float>(_RenderTarget.Texture.Width),
+                        static_cast<float>(-_RenderTarget.Texture.Height)
+                    }, 
+                    TColor::White);
+            }
+
+            // Reset mouse
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+                Input::Mouse::SetScale(1, 1);
+                Input::Mouse::SetOffset(0, 0);
+            }
+
             // Finish drawing
             Graphics::Drawing::EndDrawing();
 
-            // Release thread to CPU (Stops wierd idle cpu usage)
+            // Release thread to CPU (Stops weird idle cpu usage)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
-        CloseWindow();
+        WindowManager::Close();
 
         #else
 
@@ -139,12 +206,12 @@ namespace NerdThings::Ngine::Core {
     void Game::SetFPS(int FPS_) {
         _UpdateFPS = FPS_;
         _DrawFPS = FPS_;
-        SetTargetFPS(FPS_);
+        WindowManager::SetTargetFPS(FPS_);
     }
 
     void Game::SetDrawFPS(int FPS_) {
         _DrawFPS = FPS_;
-        SetTargetFPS(FPS_);
+        WindowManager::SetTargetFPS(FPS_);
     }
 
     void Game::SetScene(BaseScene *scene_) {

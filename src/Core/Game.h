@@ -25,6 +25,11 @@ namespace NerdThings::Ngine::Core {
         // Private Fields
 
         /*
+         * The game config (stored)
+         */
+        int _Config;
+
+        /*
          * The currently loaded scene
          */
         BaseScene *_CurrentScene = nullptr;
@@ -33,6 +38,21 @@ namespace NerdThings::Ngine::Core {
          * The target draw FPS
          */
         int _DrawFPS = 0;
+
+        /*
+         * The intended game height
+         */
+        int _IntendedHeight = 0;
+
+        /*
+         * The intended game width
+         */
+        int _IntendedWidth = 0;
+
+        /*
+         * The render target used for enforcing resolution
+         */
+        TRenderTarget _RenderTarget;
 
         /*
          * The target update FPS
@@ -116,6 +136,12 @@ namespace NerdThings::Ngine::Core {
          * Set the target draw FPS
          */
         void SetDrawFPS(int FPS_);
+
+        /*
+         * Set the intended game size.
+         * Resizes the framebuffer next frame.
+         */
+        void SetIntendedSize(TVector2 size_);
 
         /*
          * Set the current scene

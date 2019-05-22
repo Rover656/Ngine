@@ -112,6 +112,20 @@ namespace NerdThings::Ngine::Input {
          */
         static bool IsButtonReleased(EMouseButton button_);
 
+        /*
+         * Set mouse offset.
+         * This should only be used internally.
+         * This may produce unexpected results if used.
+         */
+        static void SetOffset(float ox_, float oy_);
+
+        /*
+         * Set mouse scale.
+         * This should only be used internally.
+         * This may produce unexpected results if used.
+         */
+        static void SetScale(float sx_, float sy_);
+
         // Public Event Handles
 
         /*

@@ -14,74 +14,76 @@
 
 #include "Enums.h"
 
-/*
- * Default event arguments
- */
-struct EventArgs {
-    // Public Fields
+namespace NerdThings::Ngine {
+    /*
+     * Default event arguments
+     */
+    struct EventArgs {
+        // Public Fields
+
+        /*
+         * Unbind event handle once run
+         */
+        bool UnBind = false;
+    };
 
     /*
-     * Unbind event handle once run
+     * Mouse button down event args
      */
-    bool UnBind = false;
-};
+    struct MouseButtonEventArgs : EventArgs {
+        // Public Fields
 
-/*
- * Mouse button down event args
- */
-struct MouseButtonEventArgs : EventArgs {
-    // Public Fields
+        /*
+         * The mouse button
+         */
+        EMouseButton Button;
+
+        /*
+         * Whether or not the button is pressed
+         */
+        bool Pressed;
+
+        // Public Constructor(s)
+
+        MouseButtonEventArgs(const EMouseButton button_, const bool pressed_)
+            : Button(button_), Pressed(pressed_) {}
+    };
 
     /*
-     * The mouse button
+     * Mouse moved event args
      */
-    EMouseButton Button;
+    struct MouseMovedEventArgs : EventArgs {
+        // Public Fields
 
-    /*
-     * Whether or not the button is pressed
-     */
-    bool Pressed;
+        /*
+         * The current mouse position
+         */
+        TVector2 MousePosition;
 
-    // Public Constructor(s)
+        /*
+         * The change in mouse position
+         */
+        TVector2 DeltaMousePosition;
 
-    MouseButtonEventArgs(const EMouseButton button_, const bool pressed_)
-        : Button(button_), Pressed(pressed_) {}
-};
+        // Public Constructor(s)
 
-/*
- * Mouse moved event args
- */
-struct MouseMovedEventArgs : EventArgs {
-    // Public Fields
+        MouseMovedEventArgs(TVector2 mousePosition_, TVector2 deltaMousePosition_)
+            : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
+    };
 
-    /*
-     * The current mouse position
-     */
-    TVector2 MousePosition;
+    struct MouseScrollChangedEventArgs : EventArgs {
+        // Public Fields
 
-    /*
-     * The change in mouse position
-     */
-    TVector2 DeltaMousePosition;
+        /*
+         * Scroll wheel value
+         */
+        int Value;
 
-    // Public Constructor(s)
+        // Public Constructor(s)
 
-    MouseMovedEventArgs(TVector2 mousePosition_, TVector2 deltaMousePosition_)
-        : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
-};
-
-struct MouseScrollChangedEventArgs : EventArgs {
-    // Public Fields
-
-    /*
-     * Scroll wheel value
-     */
-    int Value;
-
-    // Public Constructor(s)
-
-    MouseScrollChangedEventArgs(int value_)
-        : Value(value_) {}
-};
+        MouseScrollChangedEventArgs(int value_)
+            : Value(value_) {}
+    };
+}
 
 #endif //EVENTARGS_H
