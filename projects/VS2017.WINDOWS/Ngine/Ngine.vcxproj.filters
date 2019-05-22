@@ -63,6 +63,9 @@
     <ClInclude Include="..\..\..\src\Core\WindowManager.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Input\Keyboard.h">
+      <Filter>Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">

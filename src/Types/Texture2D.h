@@ -16,6 +16,8 @@
 #include "../ngine.h"
 #undef TYPE_DECL_HEADER
 
+#include "Enums.h"
+
 namespace NerdThings::Ngine {
     /*
      * A 2D Texture stored in the GPU memory
@@ -120,9 +122,15 @@ namespace NerdThings::Ngine {
             return *this;
         }
 
-        //void SetTextureFilter
+        /*
+         * Set the texture filter mode
+         */
+        void SetTextureFilter(ETextureFilterMode filterMode_) const;
 
-        //void SetTextureWrap
+        /*
+         * Set the texture wrap mode
+         */
+        void SetTextureWrap(ETextureWrapMode wrapMode_) const;
 
         /*
          * Copy a texture (Reference, if one is deleted, both will stop working correctly.)

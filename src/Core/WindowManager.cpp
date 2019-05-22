@@ -42,12 +42,20 @@ namespace NerdThings::Ngine::Core {
         return GetScreenWidth();
     }
 
+    void WindowManager::HideCursor() {
+        ::HideCursor();
+    }
+
     void WindowManager::HideWindow() {
         ::HideWindow();
     }
 
-    void WindowManager::Init(int width_, int height_, const std::string &title_) {
+    void WindowManager::Init(const int width_, const int height_, const std::string &title_) {
         InitWindow(width_, height_, title_.c_str());
+    }
+
+    bool WindowManager::IsCursorVisible() {
+        return IsCursorHidden();
     }
 
     bool WindowManager::IsHidden() {
@@ -58,23 +66,23 @@ namespace NerdThings::Ngine::Core {
         return IsWindowMinimized();
     }
 
-    void WindowManager::SetMinSize(int width_, int height_) {
+    void WindowManager::SetMinSize(const int width_, const int height_) {
         ::SetWindowMinSize(width_, height_);
     }
 
-    void WindowManager::SetMonitor(int monitor_) {
+    void WindowManager::SetMonitor(const int monitor_) {
         ::SetWindowMonitor(monitor_);
     }
 
-    void WindowManager::SetPosition(int x_, int y_) {
+    void WindowManager::SetPosition(const int x_, const int y_) {
         ::SetWindowPosition(x_, y_);
     }
 
-    void WindowManager::SetSize(int width_, int height_) {
+    void WindowManager::SetSize(const int width_, const int height_) {
         ::SetWindowSize(width_, height_);
     }
 
-    void WindowManager::SetTargetFPS(int fps_) {
+    void WindowManager::SetTargetFPS(const int fps_) {
         ::SetTargetFPS(fps_);
     }
 
@@ -82,11 +90,19 @@ namespace NerdThings::Ngine::Core {
         ::SetWindowTitle(title_.c_str());
     }
 
+    bool WindowManager::ShouldClose() {
+        return WindowShouldClose();
+    }
+
+    void WindowManager::ShowCursor() {
+        ::ShowCursor();
+    }
+
     void WindowManager::ToggleFullscreen() {
         ::ToggleFullscreen();
     }
 
-    void WindowManager::UnhideWindow() {
+    void WindowManager::UnHideWindow() {
         ::UnhideWindow();
     }
 

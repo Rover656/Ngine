@@ -44,6 +44,11 @@ namespace NerdThings::Ngine::Core {
         static int GetWindowWidth();
 
         /*
+         * Hide the cursor
+         */
+        static void HideCursor();
+
+        /*
          * Hide window (Desktop)
          */
         static void HideWindow();
@@ -52,6 +57,11 @@ namespace NerdThings::Ngine::Core {
          * Init the window
          */
         static void Init(int width_, int height_, const std::string& title_);
+
+        /*
+         * Is the cursor visible
+         */
+        static bool IsCursorVisible();
 
         /*
          * Is the window minimized (Desktop)
@@ -93,7 +103,17 @@ namespace NerdThings::Ngine::Core {
         /*
          * Set window title (Desktop)
          */
-        static void SetTitle(const std::string& title_);        
+        static void SetTitle(const std::string& title_);
+
+        /*
+         * Should the window close
+         */
+        static bool ShouldClose();
+
+        /*
+         * Make the cursor visible
+         */
+        static void ShowCursor();
 
         /*
          * Toggle fullscreen mode (Desktop)
@@ -103,7 +123,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Unhide window (Desktop)
          */
-        static void UnhideWindow();
+        static void UnHideWindow();
     };
 }
 

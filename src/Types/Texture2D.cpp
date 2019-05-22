@@ -74,4 +74,13 @@ namespace NerdThings::Ngine {
     TTexture2D TTexture2D::LoadTexture(const std::string &filename_) {
         return FromRaylibTex(::LoadTexture(filename_.c_str()));
     }
+
+    void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
+        ::SetTextureFilter(ToRaylibTex(), static_cast<int>(filterMode_));
+    }
+
+    void TTexture2D::SetTextureWrap(const ETextureWrapMode wrapMode_) const {
+        ::SetTextureWrap(ToRaylibTex(), static_cast<int>(wrapMode_));
+    }
+
 }

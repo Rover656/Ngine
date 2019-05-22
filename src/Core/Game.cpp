@@ -104,7 +104,7 @@ namespace NerdThings::Ngine::Core {
         auto lastFPS = _UpdateFPS;
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
-        while (!WindowShouldClose()) {
+        while (!WindowManager::ShouldClose()) {
             // Window/Game Size variables
             const auto w = static_cast<float>(WindowManager::GetWindowWidth());
             const auto h = static_cast<float>(WindowManager::GetWindowHeight());
@@ -149,8 +149,8 @@ namespace NerdThings::Ngine::Core {
 
             // If using, start using target
             if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
-                // TODO: Texture function for this
-                SetTextureWrap(_RenderTarget.Texture.ToRaylibTex(), WRAP_CLAMP);
+                _RenderTarget.Texture.SetTextureWrap(WRAP_CLAMP);
+                _RenderTarget.Texture.SetTextureFilter(FILTER_TRILINEAR);
                 Graphics::Drawing::PushTarget(&_RenderTarget);
             }
 
