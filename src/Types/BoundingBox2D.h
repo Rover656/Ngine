@@ -16,13 +16,14 @@
 #include "../ngine.h"
 #undef TYPE_DECL_HEADER
 
+#include "CollisionShape.h"
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
     /*
      * A 2D Bounding Box
      */
-    struct TBoundingBox2D {
+    struct NEAPI TBoundingBox2D : public ICollisionShape {
         // Public Fields
 
         /*
@@ -42,6 +43,13 @@ namespace NerdThings::Ngine {
          */
         TBoundingBox2D()
             : Max({}), Min({}) {}
+
+        // Public Methods
+
+        /*
+         * Check for collision against other shapes
+         */
+        bool CheckCollision(ICollisionShape *shape_) override;
     };
 }
 

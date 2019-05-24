@@ -27,6 +27,11 @@ public:
         TRectangle rect = { 10, 10, 50, 50 };
         auto test = rect.ToBoundingBox(0);
 
+        TRectangle rectB = { 20, 20, 40, 40 };
+        auto testB = rectB.ToBoundingBox(0);
+
+        auto collided = test.CheckCollision(&testB);
+
         def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
     }
 

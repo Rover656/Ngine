@@ -56,6 +56,7 @@
 #if !defined(TYPE_DECL_HEADER)
 #include "Types/BoundingBox2D.h"
 #include "Types/Camera2D.h"
+#include "Types/CollisionShape.h"
 #include "Types/Color.h"
 #include "Types/Enums.h"
 #include "Types/EventArgs.h"
