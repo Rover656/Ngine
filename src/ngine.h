@@ -6,7 +6,7 @@
 *   
 *   - #define INCLUDE_RAYLIB
 *       Include the raylib header
-*   
+*  
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0

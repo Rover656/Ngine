@@ -16,7 +16,20 @@ namespace NerdThings::Ngine {
     /*
      * A collision shape interface
      */
-    class ICollisionShape {
+    struct ICollisionShape {
+    private:
+        // Private Methods
+
+        /*
+         * Is a shape able to collide with this type of shape
+         */
+        virtual bool IsCompatible(ICollisionShape *shape_) = 0;
+
+        /*
+         * Run a collision check
+         */
+        virtual bool RunCollisionCheck(ICollisionShape *shape_) = 0;
+
     public:
         // Destructor
 
@@ -27,7 +40,18 @@ namespace NerdThings::Ngine {
         /*
          * Check collision against another collision shape.
          */
-        virtual bool CheckCollision(ICollisionShape* shape_) = 0;
+        bool CheckCollision(ICollisionShape *shape_) {
+            if (IsCompatible(shape_)) {
+                return RunCollisionCheck(shape_);
+            }
+            if (shape_->IsCompatible(this)) {
+                return shape_->RunCollisionCheck(this);
+            }
+            #ifndef DONT_RUN_ERRORS
+            throw std::runtime_error("Two shapes are unable to collide with each other!");
+            #endif
+            return false;
+        }
     };
 }
 

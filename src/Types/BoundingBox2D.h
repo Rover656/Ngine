@@ -24,6 +24,13 @@ namespace NerdThings::Ngine {
      * A 2D Bounding Box
      */
     struct NEAPI TBoundingBox2D : public ICollisionShape {
+    private:
+        // Private Methods
+
+        bool IsCompatible(ICollisionShape *shape_) override;
+
+        bool RunCollisionCheck(ICollisionShape *shape_) override;
+    public:
         // Public Fields
 
         /*
@@ -44,12 +51,6 @@ namespace NerdThings::Ngine {
         TBoundingBox2D()
             : Max({}), Min({}) {}
 
-        // Public Methods
-
-        /*
-         * Check for collision against other shapes
-         */
-        bool CheckCollision(ICollisionShape *shape_) override;
     };
 }
 
