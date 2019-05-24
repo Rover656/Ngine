@@ -160,5 +160,8 @@
     <ClCompile Include="..\..\..\src\Types\Circle.cpp">
       <Filter>Types</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Vector2.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -75,6 +75,7 @@
     <ClCompile Include="..\..\..\src\Types\Matrix.cpp" />
     <ClCompile Include="..\..\..\src\Types\RenderTarget.cpp" />
     <ClCompile Include="..\..\..\src\Types\Texture2D.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Vector2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

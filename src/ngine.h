@@ -70,6 +70,7 @@
 #include "Types/Vector3.h"
 #endif
 
+// Remove stuff from Windows.h that break Ngine and raylib
 #ifdef _WIN32
 #define NOGDI
 #define NODRAWTEXT

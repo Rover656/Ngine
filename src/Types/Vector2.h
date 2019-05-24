@@ -12,14 +12,28 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
+#define TYPE_DECL_HEADER
+#include "../ngine.h"
+#undef TYPE_DECL_HEADER
+
 #include "Matrix.h"
 
 namespace NerdThings::Ngine {
     /*
      * A vector with 2 Components
      */
-    struct TVector2 {
+    struct NEAPI TVector2 {
         // Public Fields
+
+        /*
+         * Unit Vector X
+         */
+        static const TVector2 UnitX;
+
+        /*
+         * Unit Vector Y
+         */
+        static const TVector2 UnitY;
 
         /*
          * The X component
@@ -30,6 +44,11 @@ namespace NerdThings::Ngine {
          * The Y component
          */
         float Y;
+
+        /*
+         * Zero vector
+         */
+        static const TVector2 Zero;
 
         // Public Constructor(s)
 
@@ -51,38 +70,49 @@ namespace NerdThings::Ngine {
         // Public Methods
 
         #ifdef INCLUDE_RAYLIB
+
         /*
          * Convert to a raylib vector
          */
-        Vector2 ToRaylibVec() const {
-            return {X, Y};
-        }
+        Vector2 ToRaylibVec() const;
 
         /*
          * Convert from a raylib vector
          */
-        static TVector2 FromRaylibVec(const Vector2 &vec) {
-            return {vec.x, vec.y};
-        }
+        static TVector2 FromRaylibVec(const Vector2 &vec);
+
         #endif
 
-        static TVector2 Clamp(TVector2 value_, TVector2 min_, TVector2 max_) {
-            return {
-                std::clamp(value_.X, min_.X, max_.X),
-                std::clamp(value_.Y, min_.Y, max_.Y)
-            };
-        }
+        /*
+         * Clamp a vector
+         */
+        static TVector2 Clamp(TVector2 value_, TVector2 min_, TVector2 max_);
 
-        float Dot(TVector2 b_) {
-            return (X * b_.X) + (Y * b_.Y);
-        }
+        /*
+         * Find the dot product between two vectors
+         */
+        [[nodiscard]] float Dot(TVector2 b_) const;
 
-        [[nodiscard]] TVector2 Transform(TMatrix matrix_) const {
-            return {
-                (X * matrix_.M0) + (Y * matrix_.M1) + matrix_.M3,
-                (X * matrix_.M4) + (Y * matrix_.M5) + matrix_.M6
-            };
-        }
+        /*
+         * Find the distance between two vectors
+         */
+        [[nodiscard]] float Distance(TVector2 b_) const;
+
+        /*
+         * Find the magnitude of a vector
+         */
+        [[nodiscard]] float Magnitude() const;
+
+        /*
+         * Find the magnitude of a vector squared.
+         * Does not use sqrt so it is better for comparisons.
+         */
+        [[nodiscard]] float MagnitudeSquared() const;
+
+        /*
+         * Transform by matrix
+         */
+        [[nodiscard]] TVector2 Transform(TMatrix matrix_) const;
 
         // Operators
 

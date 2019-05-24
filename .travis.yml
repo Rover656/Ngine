@@ -17,7 +17,7 @@ before_script:
   - if [ -z "$BUILD_SHARED" ]; then export BUILD_SHARED=ON; fi
   - mkdir build
   - cd build
-  - cmake -DBUILD_SHARED=$BUILD_SHARED ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=$BUILD_SHARED ..
 
 script:
   - make

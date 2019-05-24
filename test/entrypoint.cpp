@@ -12,15 +12,10 @@ using namespace NGINE_NS::Input;
 
 class TestGame : public Game {
     TFont def;
-    TTexture2D tex;
 public:
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
         width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_, MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
-        // Only works on windows for obvious reasons, this is just for me to test while adding the abstraction layer
-        //def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
         def = TFont::GetDefaultFont();
-
-        tex = TTexture2D::LoadTexture("A:\\Pictures\\Video Projects\\Rev3_399.png");
 
         OnDraw.Bind(this, &TestGame::Draw);
 
@@ -32,10 +27,11 @@ public:
 
         TCircle c = { {10, 10}, 20 };
 
+        TCircle cb = { {20, 20}, 30 };
+
         auto collided = test.CheckCollision(&testB);
         auto collB = test.CheckCollision(&c);
-
-        def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
+        auto collC = c.CheckCollision(&cb);
     }
 
     void Draw(EventArgs &e_) {
@@ -55,7 +51,7 @@ public:
 
         auto color = Mouse::IsButtonDown(LEFT);
 
-        Drawing::DrawTexture(tex, pos, 300, 200, color ? TColor::Orange : TColor::White);
+        Drawing::DrawCircle( pos, 15, color ? TColor::Orange : TColor::White);
     }
 };
 
