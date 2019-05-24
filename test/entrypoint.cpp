@@ -23,6 +23,11 @@ public:
         tex = TTexture2D::LoadTexture("A:\\Pictures\\Video Projects\\Rev3_399.png");
 
         OnDraw.Bind(this, &TestGame::Draw);
+
+        TRectangle rect = { 10, 10, 50, 50 };
+        auto test = rect.ToBoundingBox(0);
+
+        def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
     }
 
     void Draw(EventArgs &e_) {

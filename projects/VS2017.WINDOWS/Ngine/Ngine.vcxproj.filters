@@ -69,6 +69,15 @@
     <ClInclude Include="..\..\..\src\Input\Gamepad.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\BoundingBox2D.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Matrix.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Vector3.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -135,6 +144,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Input\Gamepad.cpp">
       <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Matrix.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

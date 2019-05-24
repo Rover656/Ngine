@@ -54,15 +54,18 @@
 
 // Type includes
 #if !defined(TYPE_DECL_HEADER)
+#include "Types/BoundingBox2D.h"
 #include "Types/Camera2D.h"
 #include "Types/Color.h"
 #include "Types/Enums.h"
 #include "Types/EventArgs.h"
 #include "Types/Font.h"
+#include "Types/Matrix.h"
 #include "Types/Rectangle.h"
 #include "Types/RenderTarget.h"
 #include "Types/Texture2D.h"
 #include "Types/Vector2.h"
+#include "Types/Vector3.h"
 #endif
 
 #ifdef _WIN32

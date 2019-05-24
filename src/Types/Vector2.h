@@ -12,6 +12,8 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
+#include "Matrix.h"
+
 namespace NerdThings::Ngine {
     /*
      * A vector with 2 Components
@@ -63,6 +65,13 @@ namespace NerdThings::Ngine {
             return {vec.x, vec.y};
         }
         #endif
+
+        [[nodiscard]] TVector2 Transform(TMatrix matrix_) const {
+            return {
+                (X * matrix_.M0) + (Y * matrix_.M1) + matrix_.M3,
+                (X * matrix_.M4) + (Y * matrix_.M5) + matrix_.M6
+            };
+        }
 
         // Operators
 
