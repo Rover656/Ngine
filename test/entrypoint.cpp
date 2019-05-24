@@ -30,7 +30,10 @@ public:
         TRectangle rectB = { 20, 20, 40, 40 };
         auto testB = rectB.ToBoundingBox(0);
 
+        TCircle c = { {10, 10}, 20 };
+
         auto collided = test.CheckCollision(&testB);
+        auto collB = test.CheckCollision(&c);
 
         def = TFont::LoadFont("C:\\windows\\Fonts\\Arial.ttf");
     }

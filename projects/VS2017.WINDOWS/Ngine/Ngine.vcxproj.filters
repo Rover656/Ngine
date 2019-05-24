@@ -81,6 +81,9 @@
     <ClInclude Include="..\..\..\src\Types\CollisionShape.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Circle.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -152,6 +155,9 @@
       <Filter>Types</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Types\BoundingBox2D.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Circle.cpp">
       <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>

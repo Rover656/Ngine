@@ -66,6 +66,17 @@ namespace NerdThings::Ngine {
         }
         #endif
 
+        static TVector2 Clamp(TVector2 value_, TVector2 min_, TVector2 max_) {
+            return {
+                std::clamp(value_.X, min_.X, max_.X),
+                std::clamp(value_.Y, min_.Y, max_.Y)
+            };
+        }
+
+        float Dot(TVector2 b_) {
+            return (X * b_.X) + (Y * b_.Y);
+        }
+
         [[nodiscard]] TVector2 Transform(TMatrix matrix_) const {
             return {
                 (X * matrix_.M0) + (Y * matrix_.M1) + matrix_.M3,

@@ -41,6 +41,7 @@
     <ClInclude Include="..\..\..\src\ngine.h" />
     <ClInclude Include="..\..\..\src\Types\BoundingBox2D.h" />
     <ClInclude Include="..\..\..\src\Types\Camera2D.h" />
+    <ClInclude Include="..\..\..\src\Types\Circle.h" />
     <ClInclude Include="..\..\..\src\Types\CollisionShape.h" />
     <ClInclude Include="..\..\..\src\Types\Color.h" />
     <ClInclude Include="..\..\..\src\Types\EventArgs.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\..\src\Types\BoundingBox2D.cpp" />
     <ClCompile Include="..\..\..\src\Types\Camera2D.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Circle.cpp" />
     <ClCompile Include="..\..\..\src\Types\Color.cpp" />
     <ClCompile Include="..\..\..\src\Types\Font.cpp" />
     <ClCompile Include="..\..\..\src\Types\Matrix.cpp" />

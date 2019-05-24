@@ -47,10 +47,7 @@ namespace NerdThings::Ngine {
             if (shape_->IsCompatible(this)) {
                 return shape_->RunCollisionCheck(this);
             }
-            #ifndef DONT_RUN_ERRORS
             throw std::runtime_error("Two shapes are unable to collide with each other!");
-            #endif
-            return false;
         }
     };
 }

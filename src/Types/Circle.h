@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef BOUNDINGBOX2D_H
-#define BOUNDINGBOX2D_H
+#ifndef CIRCLE_H
+#define CIRCLE_H
 
 #define TYPE_DECL_HEADER
 #include "../ngine.h"
@@ -20,10 +20,7 @@
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
-    /*
-     * A 2D Bounding Box
-     */
-    struct NEAPI TBoundingBox2D : public ICollisionShape {
+    struct NEAPI TCircle : public ICollisionShape {
     private:
         // Private Methods
 
@@ -34,23 +31,23 @@ namespace NerdThings::Ngine {
         // Public Fields
 
         /*
-         * Maximum coordinate
+         * Circle center
          */
-        TVector2 Max;
+        TVector2 Center;
 
         /*
-         * Minimum coordinate
+         * Circle radius
          */
-        TVector2 Min;
+        float Radius;
 
         // Public Constructor(s)
 
         /*
-         * Create a default bounding box
+         * Create a circle
          */
-        TBoundingBox2D()
-            : Max({}), Min({}) {}
+        TCircle(const TVector2 center_, const float radius_)
+            : Center(center_), Radius(radius_) {}
     };
 }
 
-#endif
+#endif //CIRCLE_H

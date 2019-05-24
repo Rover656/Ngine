@@ -12,7 +12,7 @@
 #include "BoundingBox2D.h"
 
 namespace NerdThings::Ngine {
-    // Public Methods
+    // Private Methods
 
     bool TBoundingBox2D::IsCompatible(ICollisionShape *shape_) {
         const auto boundingBox2D = dynamic_cast<TBoundingBox2D*>(shape_);
@@ -21,7 +21,7 @@ namespace NerdThings::Ngine {
         if (boundingBox2D != nullptr)
             return true;
 
-        // TODO: Other shapes
+        // No support for circle, bb2d against circle implemented in circle struct
 
         return false;
     }
