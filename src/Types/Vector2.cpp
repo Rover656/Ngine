@@ -11,6 +11,8 @@
 
 #include "Vector2.h"
 
+#include <cmath>
+
 namespace NerdThings::Ngine {
     // Public Fields
 
