@@ -83,6 +83,11 @@ namespace NerdThings::Ngine::Core {
          */
         EventHandler<EventArgs> OnUpdate;
 
+        /*
+         * Filter mode for scaling render target
+         */
+        ETextureFilterMode RenderTargetFilterMode = FILTER_BILINEAR;
+
         // Public Constructor(s)
 
         /*

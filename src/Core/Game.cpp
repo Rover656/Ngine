@@ -149,7 +149,7 @@ namespace NerdThings::Ngine::Core {
             // If using, start using target
             if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
                 _RenderTarget.Texture.SetTextureWrap(WRAP_CLAMP);
-                _RenderTarget.Texture.SetTextureFilter(FILTER_TRILINEAR);
+                _RenderTarget.Texture.SetTextureFilter(RenderTargetFilterMode);
                 Graphics::Drawing::PushTarget(&_RenderTarget);
             }
 
