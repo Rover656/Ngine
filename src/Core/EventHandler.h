@@ -150,11 +150,20 @@ namespace NerdThings::Ngine::Core {
             }
         }
 
+        /*
+         * Unbind an event handle by index
+         */
         void UnBind(int index) {
             if (index < 0)
                 return;
             _Handles[index] = nullptr;
             _UnusedIndices.push_back(index);
+        }
+
+        // Operators
+
+        void operator()(ArgsType e) {
+            Invoke(e);
         }
     };
 }

@@ -69,21 +69,21 @@ namespace NerdThings::Ngine::Input {
 
         // Mouse position events
         if (LastMouseState.Position != state.Position) {
-            OnMouseMoved.Invoke(MouseMovedEventArgs(state.Position, state.Position - LastMouseState.Position));
+            OnMouseMoved({state.Position, state.Position - LastMouseState.Position});
         }
 
         // Mouse button events
         for (auto i = 0; i < 3; i++) {
             if (state.ButtonsPressed[i]) {
-                OnMouseButtonPressed.Invoke({static_cast<EMouseButton>(i), true});
+                OnMouseButtonPressed({static_cast<EMouseButton>(i), true});
             } else if (state.ButtonsReleased[i]) {
-                OnMouseButtonReleased.Invoke({static_cast<EMouseButton>(i), false});
+                OnMouseButtonReleased({static_cast<EMouseButton>(i), false});
             }
         }
 
         // Scroll wheel events
         if (state.MouseWheelMovementY != LastMouseState.MouseWheelMovementY) {
-            OnMouseScrollYChanged.Invoke(MouseScrollChangedEventArgs(state.MouseWheelMovementY));
+            OnMouseScrollYChanged({state.MouseWheelMovementY});
         }
 
         // Update last frame state

@@ -64,12 +64,17 @@ namespace NerdThings::Ngine::Core {
 
     void Game::Draw() {
         // OnDraw event
-        OnDraw.Invoke(EventArgs());
+        OnDraw({});
 
         if (_CurrentScene != nullptr) {
-            _CurrentScene->GetActiveCamera()->BeginCamera();
-            _CurrentScene->Update();
-            _CurrentScene->GetActiveCamera()->EndCamera();
+            const auto cam = _CurrentScene->GetActiveCamera();
+            if (cam != nullptr)
+                cam->BeginCamera();
+
+            _CurrentScene->Draw();
+
+            if (cam != nullptr)
+                cam->EndCamera();
         }
     }
 
@@ -89,7 +94,7 @@ namespace NerdThings::Ngine::Core {
         #if !defined(PLATFORM_UWP)
 
         // Invoke OnRun
-        OnRun.Invoke(EventArgs());
+        OnRun({});
 
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
@@ -214,8 +219,13 @@ namespace NerdThings::Ngine::Core {
     }
 
     void Game::SetScene(Scene *scene_) {
+        if (_CurrentScene != nullptr)
+            _CurrentScene->OnUnLoad({this});
+
         _CurrentScene = scene_;
-        // TODO: Load and unload events
+
+        if (_CurrentScene != nullptr)
+            _CurrentScene->OnLoad({this});
     }
 
     void Game::SetUpdateFPS(int FPS_) {
@@ -224,13 +234,17 @@ namespace NerdThings::Ngine::Core {
 
     void Game::Update() {
         // Run update events
-        OnUpdate.Invoke(EventArgs());
+        OnUpdate({});
 
         if (_CurrentScene != nullptr) {
-            // We also set the camera here so that mouse translations etc. work
-            _CurrentScene->GetActiveCamera()->BeginCamera();
-            _CurrentScene->Update();
-            _CurrentScene->GetActiveCamera()->EndCamera();
+            const auto cam = _CurrentScene->GetActiveCamera();
+            if (cam != nullptr)
+                cam->BeginCamera();
+
+            _CurrentScene->Draw();
+
+            if (cam != nullptr)
+                cam->EndCamera();
         }
     }
 

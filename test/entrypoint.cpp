@@ -2,6 +2,7 @@
 #include "ngine.h"
 
 #include "Core/Game.h"
+#include "Core/Entity2D.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 
@@ -10,28 +11,42 @@ using namespace NGINE_NS::Core;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 
-class TestGame : public Game {
-    TFont def;
+class TestEntity : public Entity2D {
 public:
+    TFont def;
+
+    TestEntity(Scene* parentScene_, const TVector2 &pos_) : Entity2D(parentScene_, pos_) {
+        SubscribeToDraw();
+
+        def = TFont::GetDefaultFont();
+    }
+
+    void Draw(EventArgs &e) override {
+        Drawing::DrawText(def, "Hello World", GetPosition(), 48, 1, TColor::Red);
+        //Drawing::DrawCircle(GetPosition(), 10, TColor::Yellow);
+    }
+};
+
+class TestScene : public Scene {
+public:
+    TestScene() : Scene() {
+        AddEntity("TestEntity", new TestEntity(this, {50, 100}));
+    }
+};
+
+class TestGame : public Game {
+    TestScene* _Scene;
+public:
+    TFont def;
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
         width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_, MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
         def = TFont::GetDefaultFont();
 
         OnDraw.Bind(this, &TestGame::Draw);
 
-        TRectangle rect = { 10, 10, 50, 50 };
-        auto test = rect.ToBoundingBox(0);
+        _Scene = new TestScene();
 
-        TRectangle rectB = { 20, 20, 40, 40 };
-        auto testB = rectB.ToBoundingBox(0);
-
-        TCircle c = { {10, 10}, 20 };
-
-        TCircle cb = { {20, 20}, 30 };
-
-        auto collided = test.CheckCollision(&testB);
-        auto collB = test.CheckCollision(&c);
-        auto collC = c.CheckCollision(&cb);
+        SetScene(_Scene);
     }
 
     void Draw(EventArgs &e_) {

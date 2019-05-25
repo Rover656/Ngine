@@ -15,16 +15,14 @@ namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
     Scene::Scene() {
-        // Will we need stuff here??
+        // Not doing anything yet...
     }
 
     // Public Methods
 
     void Scene::Draw() {
-        // TODO: Culling system??
-        for (auto entity : GetEntities()) {
-            entity->Draw();
-        }
+        // Invoke draw calls
+        OnDraw({});
     }
 
     IBaseCamera *Scene::GetActiveCamera() const {
@@ -36,10 +34,10 @@ namespace NerdThings::Ngine::Core {
     }
 
     void Scene::Update() {
-        // TODO: Culling system??
-        for (auto entity : GetEntities()) {
-            entity->Update();
-        }
+        // TODO: Entity Auto Culling system??
+
+        // Invoke updates
+        OnUpdate({});
     }
 
 }

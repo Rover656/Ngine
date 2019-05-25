@@ -28,12 +28,12 @@ namespace NerdThings::Ngine::Core {
         /*
          * Create a 2D Entity
          */
-        Entity2D();
+        Entity2D(Scene *parentScene_);
 
         /*
          * Create a 2D Entity at a position
          */
-        Entity2D(const TVector2 &_position);
+        Entity2D(Scene *parentScene_, const TVector2 &_position);
 
         // Public Methods
 

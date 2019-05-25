@@ -15,7 +15,8 @@
 // Include ngine
 #include "../ngine.h"
 
-#include "EntityContainer.h"    // Required for: EntityContainer
+#include "EntityContainer.h"
+#include "Scene.h"
 
 namespace NerdThings::Ngine::Core {
     class Component;
@@ -32,7 +33,24 @@ namespace NerdThings::Ngine::Core {
          */
         std::map<std::string, Component*> _Components;
 
+        /*
+         * On draw event reference
+         */
+        EventHandleRef<EventArgs> _OnDrawRef;
+
+        /*
+         * On update event reference
+         */
+        EventHandleRef<EventArgs> _OnUpdateRef;
+
     public:
+        // Public Fields
+
+        /*
+         * Parent Scene
+         */
+        Scene *ParentScene;
+
         // Public Destructor
 
         virtual ~BaseEntity() = default;
@@ -50,7 +68,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Draw code for the entity
          */
-        virtual void Draw();
+        virtual void Draw(EventArgs &e);
 
         /*
          * Get a component by name.
@@ -75,16 +93,36 @@ namespace NerdThings::Ngine::Core {
         bool RemoveComponent(const std::string &name_);
 
         /*
+         * Subscribe to draw events in the 
+         */
+        bool SubscribeToDraw();
+
+        /*
+         * Subscribe to update events in the scene
+         */
+        bool SubscribeToUpdate();
+
+        /*
+         * Unsubscribe from update events in the scene
+         */
+        void UnsubscribeFromDraw();
+
+        /*
+         * Unsubscribe from update events in the scene
+         */
+        void UnsubscribeFromUpdate();
+
+        /*
          * Update the entity
          */
-        virtual void Update();
+        virtual void Update(EventArgs &e);
     protected:
         // Protected Constructor(s)
 
         /*
          * Create a BaseEntity.
          */
-        BaseEntity();
+        explicit BaseEntity(Scene *parentScene_);
     };
 }
 

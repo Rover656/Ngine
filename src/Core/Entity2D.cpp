@@ -14,11 +14,13 @@
 namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
-    Entity2D::Entity2D() {
+    Entity2D::Entity2D(Scene *parentScene_)
+        : BaseEntity(parentScene_) {
         _Position = TVector2();
     }
 
-    Entity2D::Entity2D(const TVector2 &_position) {
+    Entity2D::Entity2D(Scene *parentScene_, const TVector2 &_position)
+        : BaseEntity(parentScene_) {
         _Position = _position;
     }
 

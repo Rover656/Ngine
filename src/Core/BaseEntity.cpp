@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::Core {
         return false;
     }
 
-    void BaseEntity::Draw() {
+    void BaseEntity::Draw(EventArgs &e) {
         // Will do stuff soon
     }
 
@@ -74,11 +74,40 @@ namespace NerdThings::Ngine::Core {
         return false;
     }
 
-    void BaseEntity::Update() {
+    bool BaseEntity::SubscribeToDraw() {
+        if (ParentScene != nullptr) {
+            if (_OnDrawRef.ID == -1) {
+                _OnDrawRef = ParentScene->OnDraw.Bind<BaseEntity>(this, &BaseEntity::Draw);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool BaseEntity::SubscribeToUpdate() {
+        if (ParentScene != nullptr) {
+            if (_OnUpdateRef.ID == -1) {
+                _OnUpdateRef = ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void BaseEntity::UnsubscribeFromDraw() {
+        _OnDrawRef.UnBind();
+    }
+
+    void BaseEntity::UnsubscribeFromUpdate() {
+        _OnUpdateRef.UnBind();
+    }
+
+    void BaseEntity::Update(EventArgs &e) {
         // Do nothing for now... will run some stuff soon
     }
 
     // Protected Constructor(s)
 
-    BaseEntity::BaseEntity() = default; // May implement something later on
+    BaseEntity::BaseEntity(Scene *parentScene_)
+        : ParentScene(parentScene_) {}
 }

@@ -15,8 +15,8 @@
 // Include ngine
 #include "../ngine.h"
 
-#include "BaseEntity.h"         // Required for: BaseEntity
 #include "EntityContainer.h"    // Required for: EntityContainer
+#include "EventHandler.h"
 
 namespace NerdThings::Ngine::Core {
     /*
@@ -28,9 +28,31 @@ namespace NerdThings::Ngine::Core {
         /*
          * Currently active camera
          */
-        IBaseCamera *_ActiveCamera;
+        IBaseCamera *_ActiveCamera = nullptr;
 
     public:
+        // Public Fields
+
+        /*
+         * On draw event
+         */
+        EventHandler<EventArgs> OnDraw;
+
+        /*
+         * On scene load
+         */
+        EventHandler<SceneLoadEventArgs> OnLoad;
+
+        /*
+         * On scene unload
+         */
+        EventHandler<SceneLoadEventArgs> OnUnLoad;
+
+        /*
+         * On update event
+         */
+        EventHandler<EventArgs> OnUpdate;
+
         // Public Constructor(s)
 
         /*
@@ -52,7 +74,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the currently active camera
          */
-        IBaseCamera *GetActiveCamera() const;
+        [[nodiscard]] IBaseCamera *GetActiveCamera() const;
 
         /*
          * Set the currently active camera

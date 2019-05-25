@@ -30,7 +30,6 @@ namespace NerdThings::Ngine::Core {
          * Every entity has a name.
          */
         std::map<std::string, BaseEntity*> _Entities;
-
     public:
         // Public Methods
 
@@ -39,7 +38,21 @@ namespace NerdThings::Ngine::Core {
          * Returns success or fail.
          */
         template <typename EntityType>
-        bool AddEntity(std::string name_, EntityType *entity_);
+        bool AddEntity(std::string name_, EntityType *entity_) {
+            // Check the name is not taken
+            if (HasEntity(name_))
+                return false;
+
+            // Cast to BaseEntity to ensure this is a valid type
+            auto ent = dynamic_cast<BaseEntity*>(entity_);
+
+            if (ent != nullptr) {
+                _Entities.insert({ name_, ent });
+                return true;
+            }
+
+            return false;
+        }
 
         /*
          * Get all of the entities
@@ -50,7 +63,14 @@ namespace NerdThings::Ngine::Core {
          * Get an entity by name.
          */
         template <typename EntityType>
-        EntityType *GetEntity(std::string name_);
+        EntityType *GetEntity(const std::string &name_) {
+            // Try to find the entity
+            if (HasEntity(name_)) {
+                return dynamic_cast<EntityType*>(_Entities.at(name_)); // Will return null if its the wrong type
+            }
+
+            return nullptr;
+        }
 
         /*
          * Test whether there is an entity by this name.

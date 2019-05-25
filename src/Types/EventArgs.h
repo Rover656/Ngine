@@ -15,6 +15,15 @@
 #include "Enums.h"
 
 namespace NerdThings::Ngine {
+    // Forward declarations
+
+    namespace Core {
+        class Scene;
+        class Game;
+    }
+
+    // Base Event Args
+
     /*
      * Default event arguments
      */
@@ -27,6 +36,8 @@ namespace NerdThings::Ngine {
         bool UnBind = false;
     };
 
+    // Other event args
+    
     /*
      * Mouse button down event args
      */
@@ -83,6 +94,20 @@ namespace NerdThings::Ngine {
 
         MouseScrollChangedEventArgs(int value_)
             : Value(value_) {}
+    };
+
+    struct SceneLoadEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The game that the scene has been loaded into
+         */
+        Core::Game *Game;
+
+        // Public Constructor(s)
+
+        SceneLoadEventArgs(Core::Game *game_)
+            : Game(game_) {}
     };
 }
 
