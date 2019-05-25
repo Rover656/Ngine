@@ -17,7 +17,7 @@ namespace NerdThings::Ngine::Core {
     // Public Methods
 
     template <typename ComponentType>
-    bool BaseEntity::AddComponent(const std::string& name_, ComponentType *component_) {
+    bool BaseEntity::AddComponent(const std::string &name_, ComponentType *component_) {
         // Check the name is not taken
         if (HasComponent(name_))
             return false;
@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Core {
     }
 
     template <typename ComponentType>
-    ComponentType *BaseEntity::GetComponent(const std::string& name_) {
+    ComponentType *BaseEntity::GetComponent(const std::string &name_) {
         // Try to find the component
         if (HasComponent(name_)) {
             return dynamic_cast<ComponentType*>(_Components.at(name_)); // Will return null if its the wrong type

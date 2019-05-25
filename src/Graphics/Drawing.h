@@ -325,7 +325,7 @@ namespace NerdThings::Ngine::Graphics {
          * Pop a target off the stack (if present)
          * If not present, returns empty target
          */
-        static TRenderTarget* PopTarget(bool &popped_);
+        static TRenderTarget *PopTarget(bool &popped_);
 
         /*
          * Push a target onto the stack
@@ -335,7 +335,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Replace a target on the stack
          */
-        static void ReplaceTarget(TRenderTarget* old_, TRenderTarget* new_);
+        static void ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_);
     };
 }
 

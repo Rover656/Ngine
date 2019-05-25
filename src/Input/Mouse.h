@@ -131,12 +131,12 @@ namespace NerdThings::Ngine::Input {
         /*
          * On game run
          */
-        static void OnGameRun(EventArgs& e_);
+        static void OnGameRun(EventArgs &e_);
 
         /*
          * On game update
          */
-        static void OnGameUpdate(EventArgs& e_);
+        static void OnGameUpdate(EventArgs &e_);
     };
 }
 

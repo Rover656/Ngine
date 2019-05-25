@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Currently active camera
          */
-        IBaseCamera* _ActiveCamera;
+        IBaseCamera *_ActiveCamera;
 
     public:
         // Public Constructor(s)
@@ -52,12 +52,12 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the currently active camera
          */
-        IBaseCamera* GetActiveCamera() const;
+        IBaseCamera *GetActiveCamera() const;
 
         /*
          * Set the currently active camera
          */
-        void SetActiveCamera(IBaseCamera* camera_);
+        void SetActiveCamera(IBaseCamera *camera_);
 
         /*
          * Update the scene

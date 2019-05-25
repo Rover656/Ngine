@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Core {
         auto ent = dynamic_cast<BaseEntity*>(entity_);
 
         if (ent != nullptr) {
-            _Entities.insert({ name_, ent });
+            _Entities.insert({name_, ent});
             return true;
         }
 

@@ -56,7 +56,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Init the window
          */
-        static void Init(int width_, int height_, const std::string& title_);
+        static void Init(int width_, int height_, const std::string &title_);
 
         /*
          * Is the cursor visible
@@ -103,7 +103,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Set window title (Desktop)
          */
-        static void SetTitle(const std::string& title_);
+        static void SetTitle(const std::string &title_);
 
         /*
          * Should the window close

@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * The handler that the handle is linked to
          */
-        EventHandler<ArgsType>* AttachedHandler = nullptr;
+        EventHandler<ArgsType> *AttachedHandler = nullptr;
 
         /*
          * The event handle ID
@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * All of the handles for the event handler
          */
-        std::vector<std::function<void(ArgsType&)>> _Handles;
+        std::vector<std::function<void(ArgsType &)>> _Handles;
 
         /*
          * Unused indices in the Handles vector
@@ -72,7 +72,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Bind a function
          */
-        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType& e)) {
+        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType &e)) {
             auto f = std::bind(func_, std::placeholders::_1);
             if (_UnusedIndices.size() > 0) {
                 auto id = _UnusedIndices.back();
@@ -101,7 +101,7 @@ namespace NerdThings::Ngine::Core {
          * Bind a class method
          */
         template <typename Class>
-        EventHandleRef<ArgsType> Bind(Class* obj_, void (Class::*func_)(ArgsType& e)) {
+        EventHandleRef<ArgsType> Bind(Class *obj_, void (Class::*func_)(ArgsType &e)) {
             auto f = std::bind(func_, obj_, std::placeholders::_1);
             if (_UnusedIndices.size() > 0) {
                 auto id = _UnusedIndices.back();

@@ -539,7 +539,7 @@ namespace NerdThings::Ngine::Graphics {
         ::EndDrawing();
     }
 
-    TRenderTarget* Drawing::PopTarget(bool &popped_) {
+    TRenderTarget *Drawing::PopTarget(bool &popped_) {
         if (!_TargetStack.empty()) {
             // Get target
             auto pop = _TargetStack.back();
@@ -570,7 +570,7 @@ namespace NerdThings::Ngine::Graphics {
         BeginTextureMode(target_->ToRaylibTarget());
     }
 
-    void Drawing::ReplaceTarget(TRenderTarget* old_, TRenderTarget* new_) {
+    void Drawing::ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_) {
         const auto oldPos = std::find(_TargetStack.begin(), _TargetStack.end(), old_) - _TargetStack.begin();
 
         // If this is the currently active target, replace it too

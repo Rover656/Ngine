@@ -148,14 +148,13 @@ namespace NerdThings::Ngine {
     }
 
     TMatrix TMatrix::Rotate(const Vector3 axis_, const float angle_) {
-        TMatrix result = { 0 };
+        TMatrix result = {0};
 
         auto x = axis_.X, y = axis_.Y, z = axis_.Z;
 
-        auto length = sqrtf(x*x + y * y + z * z);
+        auto length = sqrtf(x * x + y * y + z * z);
 
-        if ((length != 1.0f) && (length != 0.0f))
-        {
+        if ((length != 1.0f) && (length != 0.0f)) {
             length = 1.0f / length;
             x *= length;
             y *= length;
@@ -166,19 +165,19 @@ namespace NerdThings::Ngine {
         const auto cosres = cosf(angle_);
         const auto t = 1.0f - cosres;
 
-        result.M0 = x * x*t + cosres;
-        result.M1 = y * x*t + z * sinres;
-        result.M2 = z * x*t - y * sinres;
+        result.M0 = x * x * t + cosres;
+        result.M1 = y * x * t + z * sinres;
+        result.M2 = z * x * t - y * sinres;
         result.M3 = 0.0f;
 
-        result.M4 = x * y*t - z * sinres;
-        result.M5 = y * y*t + cosres;
-        result.M6 = z * y*t + x * sinres;
+        result.M4 = x * y * t - z * sinres;
+        result.M5 = y * y * t + cosres;
+        result.M6 = z * y * t + x * sinres;
         result.M7 = 0.0f;
 
-        result.M8 = x * z*t + y * sinres;
-        result.M9 = y * z*t - x * sinres;
-        result.M10 = z * z*t + cosres;
+        result.M8 = x * z * t + y * sinres;
+        result.M9 = y * z * t - x * sinres;
+        result.M10 = z * z * t + cosres;
         result.M11 = 0.0f;
 
         result.M12 = 0.0f;
@@ -232,10 +231,12 @@ namespace NerdThings::Ngine {
     }
 
     TMatrix TMatrix::Scale(float x, float y, float z) {
-        const TMatrix result = { x, 0.0f, 0.0f, 0.0f,
-                      0.0f, y, 0.0f, 0.0f,
-                      0.0f, 0.0f, z, 0.0f,
-                      0.0f, 0.0f, 0.0f, 1.0f };
+        const TMatrix result = {
+            x, 0.0f, 0.0f, 0.0f,
+            0.0f, y, 0.0f, 0.0f,
+            0.0f, 0.0f, z, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
 
         return result;
     }
@@ -250,16 +251,18 @@ namespace NerdThings::Ngine {
     }
 
     TMatrix TMatrix::Translate(float x_, float y_, float z_) {
-        const TMatrix result = { 1.0f, 0.0f, 0.0f, x_,
-                      0.0f, 1.0f, 0.0f, y_,
-                      0.0f, 0.0f, 1.0f, z_,
-                      0.0f, 0.0f, 0.0f, 1.0f };
+        const TMatrix result = {
+            1.0f, 0.0f, 0.0f, x_,
+            0.0f, 1.0f, 0.0f, y_,
+            0.0f, 0.0f, 1.0f, z_,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
 
         return result;
     }
 
     TMatrix TMatrix::Transpose() const {
-        TMatrix result = { 0 };
+        TMatrix result = {0};
 
         result.M0 = M0;
         result.M1 = M4;
@@ -282,7 +285,7 @@ namespace NerdThings::Ngine {
     }
 
     TMatrix TMatrix::Invert() const {
-        TMatrix result = { 0 };
+        TMatrix result = {0};
 
         // Cache the matrix values (speed optimization)
         const auto a00 = M0, a01 = M1, a02 = M2, a03 = M3;
@@ -304,30 +307,30 @@ namespace NerdThings::Ngine {
         const auto b11 = a22 * a33 - a23 * a32;
 
         // Calculate the invert determinant (inlined to avoid double-caching)
-        const auto invDet = 1.0f / (b00*b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+        const auto invDet = 1.0f / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
 
-        result.M0 = (a11*b11 - a12 * b10 + a13 * b09)*invDet;
-        result.M1 = (-a01 * b11 + a02 * b10 - a03 * b09)*invDet;
-        result.M2 = (a31*b05 - a32 * b04 + a33 * b03)*invDet;
-        result.M3 = (-a21 * b05 + a22 * b04 - a23 * b03)*invDet;
-        result.M4 = (-a10 * b11 + a12 * b08 - a13 * b07)*invDet;
-        result.M5 = (a00*b11 - a02 * b08 + a03 * b07)*invDet;
-        result.M6 = (-a30 * b05 + a32 * b02 - a33 * b01)*invDet;
-        result.M7 = (a20*b05 - a22 * b02 + a23 * b01)*invDet;
-        result.M8 = (a10*b10 - a11 * b08 + a13 * b06)*invDet;
-        result.M9 = (-a00 * b10 + a01 * b08 - a03 * b06)*invDet;
-        result.M10 = (a30*b04 - a31 * b02 + a33 * b00)*invDet;
-        result.M11 = (-a20 * b04 + a21 * b02 - a23 * b00)*invDet;
-        result.M12 = (-a10 * b09 + a11 * b07 - a12 * b06)*invDet;
-        result.M13 = (a00*b09 - a01 * b07 + a02 * b06)*invDet;
-        result.M14 = (-a30 * b03 + a31 * b01 - a32 * b00)*invDet;
-        result.M15 = (a20*b03 - a21 * b01 + a22 * b00)*invDet;
+        result.M0 = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
+        result.M1 = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
+        result.M2 = (a31 * b05 - a32 * b04 + a33 * b03) * invDet;
+        result.M3 = (-a21 * b05 + a22 * b04 - a23 * b03) * invDet;
+        result.M4 = (-a10 * b11 + a12 * b08 - a13 * b07) * invDet;
+        result.M5 = (a00 * b11 - a02 * b08 + a03 * b07) * invDet;
+        result.M6 = (-a30 * b05 + a32 * b02 - a33 * b01) * invDet;
+        result.M7 = (a20 * b05 - a22 * b02 + a23 * b01) * invDet;
+        result.M8 = (a10 * b10 - a11 * b08 + a13 * b06) * invDet;
+        result.M9 = (-a00 * b10 + a01 * b08 - a03 * b06) * invDet;
+        result.M10 = (a30 * b04 - a31 * b02 + a33 * b00) * invDet;
+        result.M11 = (-a20 * b04 + a21 * b02 - a23 * b00) * invDet;
+        result.M12 = (-a10 * b09 + a11 * b07 - a12 * b06) * invDet;
+        result.M13 = (a00 * b09 - a01 * b07 + a02 * b06) * invDet;
+        result.M14 = (-a30 * b03 + a31 * b01 - a32 * b00) * invDet;
+        result.M15 = (a20 * b03 - a21 * b01 + a22 * b00) * invDet;
 
         return result;
     }
 
     TMatrix TMatrix::Normalize() const {
-        TMatrix result = { 0 };
+        TMatrix result = {0};
 
         const auto det = Determinant();
 

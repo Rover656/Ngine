@@ -59,11 +59,11 @@ namespace NerdThings::Ngine::Input {
 
     // Public Event Handles
 
-    void Mouse::OnGameRun(EventArgs& e_) {
+    void Mouse::OnGameRun(EventArgs &e_) {
         LastMouseState = GetMouseState();
     }
 
-    void Mouse::OnGameUpdate(EventArgs& e_) {
+    void Mouse::OnGameUpdate(EventArgs &e_) {
         // Get current state
         auto state = GetMouseState();
 
@@ -76,7 +76,8 @@ namespace NerdThings::Ngine::Input {
         for (auto i = 0; i < 3; i++) {
             if (state.ButtonsPressed[i]) {
                 OnMouseButtonPressed.Invoke({static_cast<EMouseButton>(i), true});
-            } else if (state.ButtonsReleased[i]) {
+            }
+            else if (state.ButtonsReleased[i]) {
                 OnMouseButtonReleased.Invoke({static_cast<EMouseButton>(i), false});
             }
         }
