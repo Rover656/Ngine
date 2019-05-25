@@ -76,8 +76,7 @@ namespace NerdThings::Ngine::Input {
         for (auto i = 0; i < 3; i++) {
             if (state.ButtonsPressed[i]) {
                 OnMouseButtonPressed.Invoke({static_cast<EMouseButton>(i), true});
-            }
-            else if (state.ButtonsReleased[i]) {
+            } else if (state.ButtonsReleased[i]) {
                 OnMouseButtonReleased.Invoke({static_cast<EMouseButton>(i), false});
             }
         }

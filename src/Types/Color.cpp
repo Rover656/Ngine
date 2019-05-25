@@ -25,8 +25,7 @@ namespace NerdThings::Ngine {
                 | clampedB << 16
                 | clampedG << 8
                 | clampedR;
-        }
-        else {
+        } else {
             this->PackedValue = static_cast<unsigned int>(a_) << 24
                 | static_cast<unsigned int>(b_) << 16
                 | static_cast<unsigned int>(g_) << 8
