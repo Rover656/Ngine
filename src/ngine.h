@@ -54,6 +54,7 @@
 
 // Type includes
 #if !defined(TYPE_DECL_HEADER)
+#include "Types/BaseCamera.h"
 #include "Types/BoundingBox2D.h"
 #include "Types/Camera2D.h"
 #include "Types/Circle.h"

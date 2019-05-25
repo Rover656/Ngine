@@ -22,30 +22,47 @@ namespace NerdThings::Ngine::Core {
     /*
      * A container for entities
      */
-    class NEAPI BaseScene : public EntityContainer {
+    class NEAPI Scene : public EntityContainer {
+        // Private Fields
+
+        /*
+         * Currently active camera
+         */
+        IBaseCamera* _ActiveCamera;
+
     public:
         // Public Constructor(s)
 
         /*
          * Create a new Scene
          */
-        BaseScene();
+        Scene();
 
         // Public Destructor
 
-        virtual ~BaseScene() = default;
+        virtual ~Scene() = default;
 
         // Public Methods
 
         /*
          * Draw the scene
          */
-        virtual void Draw();
+        void Draw();
+
+        /*
+         * Get the currently active camera
+         */
+        IBaseCamera* GetActiveCamera() const;
+
+        /*
+         * Set the currently active camera
+         */
+        void SetActiveCamera(IBaseCamera* camera_);
 
         /*
          * Update the scene
          */
-        virtual void Update();
+        void Update();
     };
 }
 

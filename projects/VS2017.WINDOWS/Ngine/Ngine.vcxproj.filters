@@ -27,12 +27,6 @@
     <ClInclude Include="..\..\..\src\Types\Color.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Core\BaseScene.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\Core\Scene2D.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\Core\Game.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -84,6 +78,12 @@
     <ClInclude Include="..\..\..\src\Types\Circle.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\BaseCamera.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Core\Scene.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -114,12 +114,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp">
       <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\Core\BaseScene.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\Core\Scene2D.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Core\Game.cpp">
       <Filter>Core</Filter>
@@ -162,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Types\Vector2.cpp">
       <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Core\Scene.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

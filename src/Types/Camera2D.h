@@ -16,13 +16,14 @@
 #include "../ngine.h"
 #undef TYPE_DECL_HEADER
 
+#include "BaseCamera.h"
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
     /*
      * A 2D Camera
      */
-    struct TCamera2D {
+    struct TCamera2D : public IBaseCamera {
         // Public Fields
 
         /*
@@ -70,12 +71,12 @@ namespace NerdThings::Ngine {
         /*
          * Begin using the camera
          */
-        void BeginCamera() const;
+        void BeginCamera() const override;
 
         /*
          * Finish using the camera
          */
-        static void EndCamera();
+        void EndCamera() const override;
     };
 }
 

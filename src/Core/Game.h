@@ -16,6 +16,7 @@
 
 #include "../Graphics/Drawing.h"
 #include "EventHandler.h"
+#include "Scene.h"
 
 namespace NerdThings::Ngine::Core {
     /*
@@ -32,7 +33,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * The currently loaded scene
          */
-        BaseScene *_CurrentScene = nullptr;
+        Scene *_CurrentScene = nullptr;
 
         /*
          * The target draw FPS
@@ -151,7 +152,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Set the current scene
          */
-        void SetScene(BaseScene *scene_);
+        void SetScene(Scene *scene_);
 
         /*
          * Set the target update FPS

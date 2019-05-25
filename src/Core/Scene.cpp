@@ -9,22 +9,37 @@
 *
 **********************************************************************************************/
 
-#include "Scene2D.h"
+#include "Scene.h"
 
 namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
 
-    Scene2D::Scene2D() : BaseScene() {
+    Scene::Scene() {
         // Will we need stuff here??
     }
 
     // Public Methods
 
-    TCamera2D *Scene2D::GetActiveCamera() const {
+    void Scene::Draw() {
+        // TODO: Culling system??
+        for (auto entity : GetEntities()) {
+            entity->Draw();
+        }
+    }
+
+    IBaseCamera *Scene::GetActiveCamera() const {
         return _ActiveCamera;
     }
 
-    void Scene2D::SetActiveCamera(TCamera2D *camera_) {
+    void Scene::SetActiveCamera(IBaseCamera *camera_) {
         _ActiveCamera = camera_;
     }
+
+    void Scene::Update() {
+        // TODO: Culling system??
+        for (auto entity : GetEntities()) {
+            entity->Update();
+        }
+    }
+
 }

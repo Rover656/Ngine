@@ -42,7 +42,7 @@ namespace NerdThings::Ngine {
         BeginMode2D(ToRaylibCam());
     }
 
-    void TCamera2D::EndCamera() {
+    void TCamera2D::EndCamera() const {
         EndMode2D();
     }
 }

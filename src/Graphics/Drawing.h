@@ -12,7 +12,6 @@
 #ifndef DRAWING_H
 #define DRAWING_H
 
-#include "../Core/Scene2D.h"
 #include "../ngine.h"
 
 namespace NerdThings::Ngine::Graphics {

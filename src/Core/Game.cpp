@@ -66,19 +66,10 @@ namespace NerdThings::Ngine::Core {
         // OnDraw event
         OnDraw.Invoke(EventArgs());
 
-        // TODO: Some form of draw scaling system (keeping a target ratio or dimensions)
         if (_CurrentScene != nullptr) {
-            const auto _2dScene = dynamic_cast<Scene2D*>(_CurrentScene);
-
-            if (_2dScene != nullptr) {
-                _2dScene->GetActiveCamera()->BeginCamera();
-            } // TODO: 3D?
-
-            _CurrentScene->Draw();
-
-            if (_2dScene != nullptr) {
-                TCamera2D::EndCamera();
-            } // TODO: 3D?
+            _CurrentScene->GetActiveCamera()->BeginCamera();
+            _CurrentScene->Update();
+            _CurrentScene->GetActiveCamera()->EndCamera();
         }
     }
 
@@ -222,7 +213,7 @@ namespace NerdThings::Ngine::Core {
         WindowManager::SetTargetFPS(FPS_);
     }
 
-    void Game::SetScene(BaseScene *scene_) {
+    void Game::SetScene(Scene *scene_) {
         _CurrentScene = scene_;
         // TODO: Load and unload events
     }
@@ -237,18 +228,9 @@ namespace NerdThings::Ngine::Core {
 
         if (_CurrentScene != nullptr) {
             // We also set the camera here so that mouse translations etc. work
-
-            const auto _2dScene = dynamic_cast<Scene2D*>(_CurrentScene);
-
-            if (_2dScene != nullptr) {
-                _2dScene->GetActiveCamera()->BeginCamera();
-            } // TODO: 3D?
-
-            _CurrentScene->Draw();
-
-            if (_2dScene != nullptr) {
-                TCamera2D::EndCamera();
-            } // TODO: 3D?
+            _CurrentScene->GetActiveCamera()->BeginCamera();
+            _CurrentScene->Update();
+            _CurrentScene->GetActiveCamera()->EndCamera();
         }
     }
 
