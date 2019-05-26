@@ -42,18 +42,27 @@ namespace NerdThings::Ngine::Core {
          * On update event reference
          */
         EventHandleRef<EventArgs> _OnUpdateRef;
-
     public:
         // Public Fields
+
+        /*
+         * On draw event
+         */
+        EventHandler<EventArgs> OnDraw;
+
+        /*
+         * On update event
+         */
+        EventHandler<EventArgs> OnUpdate;
 
         /*
          * Parent Scene
          */
         Scene *ParentScene;
 
-        // Public Destructor
+        // Destructor
 
-        virtual ~BaseEntity() = default;
+        virtual ~BaseEntity();
 
         // Public Methods
 
@@ -63,7 +72,21 @@ namespace NerdThings::Ngine::Core {
          * Returns whether or not the component was added
          */
         template <typename ComponentType>
-        bool AddComponent(const std::string &name_, ComponentType *component_);
+        bool AddComponent(const std::string &name_, ComponentType *component_) {
+            // Check the name is not taken
+            if (HasComponent(name_))
+                return false;
+
+            // Cast to component to ensure this is valid
+            auto comp = dynamic_cast<Component*>(component_);
+
+            if (comp != nullptr) {
+                _Components.insert({ name_, comp });
+                return true;
+            }
+
+            return false;
+        }
 
         /*
          * Draw code for the entity
@@ -74,7 +97,14 @@ namespace NerdThings::Ngine::Core {
          * Get a component by name.
          */
         template <typename ComponentType>
-        ComponentType *GetComponent(const std::string &name_);
+        ComponentType *GetComponent(const std::string &name_) {
+            // Try to find the component
+            if (HasComponent(name_)) {
+                return dynamic_cast<ComponentType*>(_Components.at(name_)); // Will return null if its the wrong type
+            }
+
+            return nullptr;
+        }
 
         /*
          * Get all components

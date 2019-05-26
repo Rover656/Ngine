@@ -44,7 +44,8 @@ namespace NerdThings::Ngine::Core {
          * Unattach the handler
          */
         void UnBind() {
-            AttachedHandler->UnBind(ID);
+            if (AttachedHandler != nullptr)
+                AttachedHandler->UnBind(ID);
             ID = -1;
         }
     };

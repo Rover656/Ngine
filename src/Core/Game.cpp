@@ -112,12 +112,9 @@ namespace NerdThings::Ngine::Core {
             // Window/Game Size variables
             const auto w = static_cast<float>(WindowManager::GetWindowWidth());
             const auto h = static_cast<float>(WindowManager::GetWindowHeight());
-
             const auto iw = static_cast<float>(_IntendedWidth);
             const auto ih = static_cast<float>(_IntendedHeight);
-
             const auto scale = std::min(w / iw, h / ih);
-
             const auto offsetX = (w - iw * scale) * 0.5;
             const auto offsetY = (h - ih * scale) * 0.5;
 
@@ -127,6 +124,7 @@ namespace NerdThings::Ngine::Core {
             lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
             // Update timestep if FPS has changed
+            // TODO: I want to change this, maybe to some form of delta time system instead
             if (_UpdateFPS != lastFPS) {
                 lastFPS = _UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
@@ -194,7 +192,7 @@ namespace NerdThings::Ngine::Core {
             // Finish drawing
             Graphics::Drawing::EndDrawing();
 
-            // Release thread to CPU (Stops weird idle cpu usage)
+            // Release thread to CPU (Stops weird idle cpu usage and fps drops)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
@@ -241,7 +239,7 @@ namespace NerdThings::Ngine::Core {
             if (cam != nullptr)
                 cam->BeginCamera();
 
-            _CurrentScene->Draw();
+            _CurrentScene->Update();
 
             if (cam != nullptr)
                 cam->EndCamera();

@@ -11,36 +11,52 @@
 
 #include "Component.h"
 
+#include "BaseEntity.h"
+
 namespace NerdThings::Ngine::Core {
     // Public Methods
 
-    BaseEntity *Component::GetParent() const {
-        return _ParentEntity;
-    }
+    void Component::Draw(EventArgs &e) { }
 
     bool Component::HasParent() const {
         return _ParentEntity != nullptr;
     }
 
-    void Component::OnAttach(BaseEntity *_attachedEntity) {
-        _ParentEntity = _attachedEntity;
+    void Component::SubscribeToDraw() {
+        if (HasParent()) {
+            // Check the entity subscribed to draw
+            // If not, subscribe
+            if (_ParentEntity->SubscribeToDraw()) {
+                _OnDrawRef = _ParentEntity->OnDraw.Bind(this, &Component::Draw);
+            }
+        }
     }
 
-    void Component::OnDetach() {
-        _ParentEntity = nullptr;
+    void Component::SubscribeToUpdate() {
+        if (HasParent()) {
+            // Check the entity subscribed to update
+            // If not, subscribe
+            if (_ParentEntity->SubscribeToUpdate()) {
+                _OnUpdateRef = _ParentEntity->OnUpdate.Bind(this, &Component::Update);
+            }
+        }
     }
 
-    void Component::OnDraw() {
-        // Do nothing
+    // TODO: Devise a way to allow the parent entity to unsubscribe from these events
+    // TODO: If they are no longer needed
+
+    void Component::UnsubscribeFromDraw() {
+        _OnDrawRef.UnBind();
     }
 
-    void Component::OnUpdate() {
-        // Do nothing
+    void Component::UnsubscribeFromUpdate() {
+        _OnUpdateRef.UnBind();
     }
+
+    void Component::Update(EventArgs &e) { }
 
     // Protected Constructor(s)
 
-    Component::Component() {
-        // Does nothing atm.
-    }
+    Component::Component(BaseEntity *parent_)
+        : _ParentEntity(parent_) {}
 }

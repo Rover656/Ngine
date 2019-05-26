@@ -30,7 +30,11 @@ namespace NerdThings::Ngine::Core {
         return _Position;
     }
 
-    void Entity2D::SetPosition(TVector2 _position) {
-        _Position = _position;
+    void Entity2D::MoveBy(const TVector2 moveBy_) {
+        _Position += moveBy_;
+    }
+
+    void Entity2D::SetPosition(const TVector2 position_) {
+        _Position = position_;
     }
 }

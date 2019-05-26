@@ -14,37 +14,20 @@
 #include "Component.h"          // Required for: Component
 
 namespace NerdThings::Ngine::Core {
+    // Destructor
+
+    BaseEntity::~BaseEntity() {
+        // Delete all components
+        for (auto comp : _Components) {
+            delete comp.second;
+        }
+    }
+
     // Public Methods
 
-    template <typename ComponentType>
-    bool BaseEntity::AddComponent(const std::string &name_, ComponentType *component_) {
-        // Check the name is not taken
-        if (HasComponent(name_))
-            return false;
-
-        // Cast to component to ensure this is valid
-        auto comp = dynamic_cast<Component*>(component_);
-
-        if (comp != nullptr) {
-            _Components.insert({name_, comp});
-            return true;
-        }
-
-        return false;
-    }
-
     void BaseEntity::Draw(EventArgs &e) {
-        // Will do stuff soon
-    }
-
-    template <typename ComponentType>
-    ComponentType *BaseEntity::GetComponent(const std::string &name_) {
-        // Try to find the component
-        if (HasComponent(name_)) {
-            return dynamic_cast<ComponentType*>(_Components.at(name_)); // Will return null if its the wrong type
-        }
-
-        return nullptr;
+        // Trigger draw
+        OnDraw({});
     }
 
     std::vector<Component *> BaseEntity::GetComponents() {
@@ -62,8 +45,9 @@ namespace NerdThings::Ngine::Core {
     }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
-        // Check that we actually have a component by the name
-        if (HasComponent(name_)) {
+        auto comp = GetComponent<Component>(name_);
+
+        if (comp != nullptr) {
             // Remove component from map
             _Components.erase(name_);
 
@@ -76,8 +60,11 @@ namespace NerdThings::Ngine::Core {
 
     bool BaseEntity::SubscribeToDraw() {
         if (ParentScene != nullptr) {
-            if (_OnDrawRef.ID == -1) {
+            if (_OnDrawRef.ID < 0) {
                 _OnDrawRef = ParentScene->OnDraw.Bind<BaseEntity>(this, &BaseEntity::Draw);
+                return true;
+            } else {
+                // We still have an event, soooo...
                 return true;
             }
         }
@@ -86,8 +73,11 @@ namespace NerdThings::Ngine::Core {
 
     bool BaseEntity::SubscribeToUpdate() {
         if (ParentScene != nullptr) {
-            if (_OnUpdateRef.ID == -1) {
+            if (_OnUpdateRef.ID < 0) {
                 _OnUpdateRef = ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
+                return true;
+            } else {
+                // We still have an event, soooo...
                 return true;
             }
         }
@@ -103,7 +93,8 @@ namespace NerdThings::Ngine::Core {
     }
 
     void BaseEntity::Update(EventArgs &e) {
-        // Do nothing for now... will run some stuff soon
+        // Trigger update
+        OnUpdate({});
     }
 
     // Protected Constructor(s)

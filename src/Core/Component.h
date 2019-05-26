@@ -12,8 +12,9 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-// Include ngine
 #include "../ngine.h"
+
+#include "EventHandler.h"
 
 namespace NerdThings::Ngine::Core {
     class NEAPI BaseEntity;
@@ -25,11 +26,32 @@ namespace NerdThings::Ngine::Core {
         // Private Fields
 
         /*
+         * On draw ref
+         */
+        EventHandleRef<EventArgs> _OnDrawRef;
+
+        /*
+         * On update ref
+         */
+        EventHandleRef<EventArgs> _OnUpdateRef;
+
+        /*
          * The parent entity
          */
         BaseEntity *_ParentEntity = nullptr;
-
     public:
+        // Public Fields
+
+        /*
+         * On attached to an entity
+         */
+        EventHandler<ComponentAttachedEventArgs> OnAttached;
+
+        /*
+         * On detached from an entity
+         */
+        EventHandler<EventArgs> OnDetached;
+
         // Public Destructor
 
         /*
@@ -40,34 +62,47 @@ namespace NerdThings::Ngine::Core {
         // Public Methods
 
         /*
-         * Get the component parent
+         * Draw
          */
-        BaseEntity *GetParent() const;
+        virtual void Draw(EventArgs &e);
+
+        /*
+         * Get the parent entity as a type
+         */
+        template <typename EntityType>
+        EntityType *GetParent() const {
+            return dynamic_cast<EntityType*>(_ParentEntity);
+        }
 
         /*
          * Whether or not the component has a parent
          */
-        bool HasParent() const;
+        [[nodiscard]] bool HasParent() const;
 
         /*
-         * Called when the component is added to an entity
+         * Subscribe to entity draw
          */
-        void OnAttach(BaseEntity *_attachedEntity);
+        void SubscribeToDraw();
 
         /*
-         * Called when the component is removed from an entity
+         * Subscribe to entity update
          */
-        void OnDetach();
+        void SubscribeToUpdate();
 
         /*
-         * Called when the entity draws
+         * Unsubscribe from entity draw
          */
-        void OnDraw();
+        void UnsubscribeFromDraw();
 
         /*
-         * Called when the entity updates
+         * Unsubscribe from entity update
          */
-        void OnUpdate();
+        void UnsubscribeFromUpdate();
+
+        /*
+         * Update
+         */
+        virtual void Update(EventArgs &e);
 
     protected:
 
@@ -76,7 +111,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Initialise component
          */
-        Component();
+        Component(BaseEntity *parent_);
     };
 }
 

@@ -40,12 +40,14 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the entity position
          */
-        TVector2 GetPosition() const;
+        [[nodiscard]] TVector2 GetPosition() const;
+
+        void MoveBy(TVector2 moveBy_);
 
         /*
          * Set the entity position
          */
-        void SetPosition(TVector2 _position);
+        void SetPosition(TVector2 position_);
 
     protected:
         // Protected Fields
