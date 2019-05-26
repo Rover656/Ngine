@@ -40,20 +40,6 @@ namespace NerdThings::Ngine {
     // Other event args
 
     /*
-     * Component attached event args
-     */
-    struct ComponentAttachedEventArgs : EventArgs {
-        // Public Fields
-
-        Core::BaseEntity *AttachedEntity;
-
-        // Public Constructor(s)
-
-        ComponentAttachedEventArgs(Core::BaseEntity *attachedEntity_)
-            : AttachedEntity(attachedEntity_) {}
-    };
-
-    /*
      * Mouse button down event args
      */
     struct MouseButtonEventArgs : EventArgs {

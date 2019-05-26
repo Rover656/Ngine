@@ -43,11 +43,6 @@ namespace NerdThings::Ngine::Core {
         // Public Fields
 
         /*
-         * On attached to an entity
-         */
-        EventHandler<ComponentAttachedEventArgs> OnAttached;
-
-        /*
          * On detached from an entity
          */
         EventHandler<EventArgs> OnDetached;
