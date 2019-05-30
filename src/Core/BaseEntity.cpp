@@ -58,10 +58,10 @@ namespace NerdThings::Ngine::Core {
         return _Components.find(name_) != _Components.end();
     }
 
-   void BaseEntity::MoveBy(const TVector2 moveBy_) {
-       _Position += moveBy_;
-       OnPositionChanged({ _Position });
-   }
+    void BaseEntity::MoveBy(const TVector2 moveBy_) {
+        _Position += moveBy_;
+        OnPositionChanged({_Position});
+    }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
         const auto comp = GetComponent<Component>(name_);
@@ -79,7 +79,7 @@ namespace NerdThings::Ngine::Core {
 
     void BaseEntity::SetPosition(const TVector2 position) {
         _Position = position;
-        OnPositionChanged({ _Position });
+        OnPositionChanged({_Position});
     }
 
     bool BaseEntity::SubscribeToCameraDraw() {
@@ -87,8 +87,7 @@ namespace NerdThings::Ngine::Core {
             if (_OnDrawCameraRef.ID < 0) {
                 _OnDrawCameraRef = ParentScene->OnDrawCamera.Bind<BaseEntity>(this, &BaseEntity::DrawCamera);
                 return true;
-            }
-            else {
+            } else {
                 // We still have an event, soooo...
                 return true;
             }

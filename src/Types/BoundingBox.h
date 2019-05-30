@@ -50,6 +50,13 @@ namespace NerdThings::Ngine {
          */
         TBoundingBox()
             : Max({}), Min({}) {}
+
+        // Public Methods
+
+        /*
+         * Offset the bounding box
+         */
+        void Offset(TVector2 offset_) override;
     };
 }
 

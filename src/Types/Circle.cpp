@@ -59,4 +59,10 @@ namespace NerdThings::Ngine {
 
         return collided;
     }
+
+    // Public Methods
+
+    void TCircle::Offset(TVector2 offset_) {
+        Center += offset_;
+    }
 }

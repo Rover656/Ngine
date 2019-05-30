@@ -1,6 +1,7 @@
 #define INCLUDE_WINDOWS
 #include "ngine.h"
 
+#include "Components/BoundingBoxComponent.h"
 #include "Components/CameraComponent.h"
 #include "Core/Component.h"
 #include "Core/Game.h"
@@ -63,6 +64,8 @@ public:
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {50, 50}));
 
         cam->Activate();
+
+        AddComponent("TestBoundingBox", new BoundingBoxComponent(this, 100, 100))->EnableDebugDraw(true);
     }
 };
 
@@ -107,6 +110,8 @@ class OtherEntity : public BaseEntity {
 public:
     OtherEntity(Scene* parentScene_) : BaseEntity(parentScene_, TVector2::Zero) {
         AddComponent("OtherComponent", new OtherComponent(this));
+
+        AddComponent("TestBoundingBox", new BoundingBoxComponent(this, 100, 100))->EnableDebugDraw(true);
     }
 };
 

@@ -1,3 +1,14 @@
+/**********************************************************************************************
+*
+*   Ngine - A (mainly) 2D game engine.
+*
+*   Copyright (C) 2019 NerdThings
+*
+*   LICENSE: Apache License 2.0
+*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*
+**********************************************************************************************/
+
 #include "CameraComponent.h"
 
 #include "../Core/BaseEntity.h"
@@ -18,7 +29,7 @@ namespace NerdThings::Ngine::Components {
 
     // Public Constructors
 
-    CameraComponent::CameraComponent(Core::BaseEntity* parent_, float zoom_, TVector2 origin_, float rotation_)
+    CameraComponent::CameraComponent(Core::BaseEntity *parent_, float zoom_, TVector2 origin_, float rotation_)
         : Component(parent_) {
         // Check our parent is valid
         if (parent_ == nullptr) {

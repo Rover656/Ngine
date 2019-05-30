@@ -43,4 +43,11 @@ namespace NerdThings::Ngine {
 
         return collided;
     }
+
+    // Public Fields
+
+    void TBoundingBox::Offset(TVector2 offset_) {
+        Max += offset_;
+        Min += offset_;
+    }
 }

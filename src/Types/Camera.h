@@ -48,8 +48,8 @@ namespace NerdThings::Ngine {
         // Public Constructor(s)
 
         TCamera(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
-                  TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
-                                                   Origin(origin_) {}
+                TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
+                                                 Origin(origin_) {}
 
         // Public Methods
 

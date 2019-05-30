@@ -12,6 +12,8 @@
 #ifndef COLLISIONSHAPE_H
 #define COLLISIONSHAPE_H
 
+#include "Vector2.h"
+
 namespace NerdThings::Ngine {
     /*
      * A collision shape interface
@@ -49,6 +51,11 @@ namespace NerdThings::Ngine {
             }
             throw std::runtime_error("Two shapes are unable to collide with each other!");
         }
+
+        /*
+         * Offset the shape position
+         */
+        virtual void Offset(TVector2 offset_) = 0;
     };
 }
 

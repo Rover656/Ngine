@@ -99,7 +99,7 @@ namespace NerdThings::Ngine::Core {
          * Returns the component if successful and null if not
          */
         template <typename ComponentType>
-        ComponentType* AddComponent(const std::string &name_, ComponentType *component_) {
+        ComponentType *AddComponent(const std::string &name_, ComponentType *component_) {
             // Check the name is not taken
             if (HasComponent(name_))
                 return nullptr;
@@ -108,7 +108,7 @@ namespace NerdThings::Ngine::Core {
             auto comp = dynamic_cast<Component*>(component_);
 
             if (comp != nullptr) {
-                _Components.insert({ name_, comp });
+                _Components.insert({name_, comp});
                 return component_;
             }
 

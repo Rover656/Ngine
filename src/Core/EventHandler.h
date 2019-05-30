@@ -73,7 +73,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Bind a function
          */
-        EventHandleRef<ArgsType> Bind(void(*func_)(ArgsType &e)) {
+        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType &e)) {
             auto f = std::bind(func_, std::placeholders::_1);
             if (_UnusedIndices.size() > 0) {
                 auto id = _UnusedIndices.back();

@@ -47,6 +47,13 @@ namespace NerdThings::Ngine {
          */
         TCircle(const TVector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
+
+        // Public Methods
+
+        /*
+         * Offset the circle
+         */
+        void Offset(TVector2 offset_) override;
     };
 }
 

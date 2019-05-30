@@ -19,7 +19,7 @@ namespace NerdThings::Ngine::Components {
     /*
      * Camera component
      */
-    class NEAPI CameraComponent : public Core::Component{
+    class NEAPI CameraComponent : public Core::Component {
         // Private Fields
 
         /*
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a camera component
          */
-        CameraComponent(Core::BaseEntity* parent_, float zoom_, TVector2 origin_ = TVector2::Zero, float rotation_ = 0);
+        CameraComponent(Core::BaseEntity *parent_, float zoom_, TVector2 origin_ = TVector2::Zero, float rotation_ = 0);
 
         // Destructor
 

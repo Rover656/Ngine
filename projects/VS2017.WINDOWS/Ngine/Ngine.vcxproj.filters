@@ -63,9 +63,6 @@
     <ClInclude Include="..\..\..\src\Types\Vector3.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Types\CollisionShape.h">
-      <Filter>Types</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\Types\Circle.h">
       <Filter>Types</Filter>
     </ClInclude>
@@ -79,6 +76,15 @@
       <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Components\CameraComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\CollisionShape.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Components\BaseCollisionShapeComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Components\BoundingBoxComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>

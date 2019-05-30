@@ -24,7 +24,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\Components\BoundingBoxComponent.h" />
     <ClInclude Include="..\..\..\src\Components\CameraComponent.h" />
+    <ClInclude Include="..\..\..\src\Components\BaseCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\config.h" />
     <ClInclude Include="..\..\..\src\Core\BaseEntity.h" />
     <ClInclude Include="..\..\..\src\Core\EventHandler.h" />

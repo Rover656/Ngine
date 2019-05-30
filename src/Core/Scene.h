@@ -34,6 +34,11 @@ namespace NerdThings::Ngine::Core {
         // Public Fields
 
         /*
+         * The collision map
+         */
+        std::map<std::string, std::vector<BaseEntity*>> CollisionMap;
+
+        /*
          * On draw event
          */
         EventHandler<EventArgs> OnDraw;
