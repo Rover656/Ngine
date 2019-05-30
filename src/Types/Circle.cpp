@@ -11,13 +11,13 @@
 
 #include "Circle.h"
 
-#include "BoundingBox2D.h"
+#include "BoundingBox.h"
 
 namespace NerdThings::Ngine {
     // Private Methods
 
     bool TCircle::IsCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<TBoundingBox2D*>(shape_);
+        const auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
         const auto circle = dynamic_cast<TCircle*>(shape_);
 
         // Circle against Circle
@@ -34,7 +34,7 @@ namespace NerdThings::Ngine {
     bool TCircle::RunCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
-        auto boundingBox2D = dynamic_cast<TBoundingBox2D*>(shape_);
+        auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
         const auto circle = dynamic_cast<TCircle*>(shape_);
 
         // Circle against Circle

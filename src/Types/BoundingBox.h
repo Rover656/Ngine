@@ -23,7 +23,7 @@ namespace NerdThings::Ngine {
     /*
      * A 2D Bounding Box
      */
-    struct NEAPI TBoundingBox2D : public ICollisionShape {
+    struct NEAPI TBoundingBox : public ICollisionShape {
     private:
         // Private Methods
 
@@ -48,7 +48,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a default bounding box
          */
-        TBoundingBox2D()
+        TBoundingBox()
             : Max({}), Min({}) {}
     };
 }

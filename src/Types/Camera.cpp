@@ -9,14 +9,14 @@
 *
 **********************************************************************************************/
 
-#include "Camera2D.h"
+#include "Camera.h"
 
 namespace NerdThings::Ngine {
     // Public Methods
 
     #ifdef INCLUDE_RAYLIB
 
-    Camera2D TCamera2D::ToRaylibCam() const {
+    Camera2D TCamera::ToRaylibCam() const {
         Camera2D cam;
 
         cam.rotation = Rotation;
@@ -27,7 +27,7 @@ namespace NerdThings::Ngine {
         return cam;
     }
 
-    TCamera2D TCamera2D::FromRaylibCam(const Camera2D &cam_) {
+    TCamera TCamera::FromRaylibCam(const Camera2D &cam_) {
         return {
             cam_.rotation,
             cam_.zoom,
@@ -38,11 +38,11 @@ namespace NerdThings::Ngine {
 
     #endif
 
-    void TCamera2D::BeginCamera() const {
+    void TCamera::BeginCamera() const {
         BeginMode2D(ToRaylibCam());
     }
 
-    void TCamera2D::EndCamera() const {
+    void TCamera::EndCamera() const {
         EndMode2D();
     }
 }

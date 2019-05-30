@@ -3,7 +3,7 @@
 
 #include "Core/Component.h"
 #include "Core/Game.h"
-#include "Core/Entity2D.h"
+#include "Core/BaseEntity.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 
@@ -15,26 +15,26 @@ using namespace NGINE_NS::Input;
 class HelloWorldComponent2D : public Component {
     TFont def;
 public:
-    HelloWorldComponent2D(Entity2D* parent_) : Component(parent_) {
+    HelloWorldComponent2D(BaseEntity* parent_) : Component(parent_) {
         SubscribeToDraw();
 
         def = TFont::GetDefaultFont();
     }
 
     void Draw(EventArgs &e) override {
-        Drawing::DrawText(def, "Hello World", GetParent<Entity2D>()->GetPosition(), 48, 1, TColor::Red);
+        Drawing::DrawText(def, "Hello World", GetParent<BaseEntity>()->GetPosition(), 48, 1, TColor::Red);
     }
 };
 
 class KeyboardMovementComponent2D : public Component {
 public:
     float MoveSpeed = 5;
-    KeyboardMovementComponent2D(Entity2D* parent_) : Component(parent_) {
+    KeyboardMovementComponent2D(BaseEntity* parent_) : Component(parent_) {
         SubscribeToUpdate();
     }
 
     void Update(EventArgs &e) override {
-        auto par = GetParent<Entity2D>();
+        auto par = GetParent<BaseEntity>();
         if (Keyboard::IsKeyDown(KEY_W)) {
             par->MoveBy({ 0, -MoveSpeed });
         }
@@ -53,9 +53,9 @@ public:
     }
 };
 
-class TestEntity : public Entity2D {
+class TestEntity : public BaseEntity {
 public:
-    TestEntity(Scene* parentScene_, const TVector2 &pos_) : Entity2D(parentScene_, pos_) {
+    TestEntity(Scene* parentScene_, const TVector2 &pos_) : BaseEntity(parentScene_, pos_) {
         AddComponent("HelloWorld", new HelloWorldComponent2D(this));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
     }

@@ -9,13 +9,13 @@
 *
 **********************************************************************************************/
 
-#include "BoundingBox2D.h"
+#include "BoundingBox.h"
 
 namespace NerdThings::Ngine {
     // Private Methods
 
-    bool TBoundingBox2D::IsCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<TBoundingBox2D*>(shape_);
+    bool TBoundingBox::IsCompatible(ICollisionShape *shape_) {
+        const auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
 
         // Bounding Box 2D against Bounding Box 2D
         if (boundingBox2D != nullptr)
@@ -26,10 +26,10 @@ namespace NerdThings::Ngine {
         return false;
     }
 
-    bool TBoundingBox2D::RunCollisionCheck(ICollisionShape *shape_) {
+    bool TBoundingBox::RunCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
-        auto boundingBox2D = dynamic_cast<TBoundingBox2D*>(shape_);
+        auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
 
         // Bounding Box 2D against Bounding Box 2D
         if (boundingBox2D != nullptr) {

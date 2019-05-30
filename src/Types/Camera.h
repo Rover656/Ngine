@@ -16,14 +16,13 @@
 #include "../ngine.h"
 #undef TYPE_DECL_HEADER
 
-#include "BaseCamera.h"
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
     /*
-     * A 2D Camera
+     * A Camera
      */
-    struct TCamera2D : public IBaseCamera {
+    struct TCamera {
         // Public Fields
 
         /*
@@ -48,7 +47,7 @@ namespace NerdThings::Ngine {
 
         // Public Constructor(s)
 
-        TCamera2D(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
+        TCamera(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
                   TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
                                                    Origin(origin_) {}
 
@@ -64,19 +63,19 @@ namespace NerdThings::Ngine {
         /*
          * Convert from raylib camera
          */
-        static TCamera2D FromRaylibCam(const Camera2D &cam_);
+        static TCamera FromRaylibCam(const Camera2D &cam_);
 
         #endif
 
         /*
          * Begin using the camera
          */
-        void BeginCamera() const override;
+        void BeginCamera() const;
 
         /*
          * Finish using the camera
          */
-        void EndCamera() const override;
+        void EndCamera() const;
     };
 }
 

@@ -42,6 +42,11 @@ namespace NerdThings::Ngine::Core {
          * On update event reference
          */
         EventHandleRef<EventArgs> _OnUpdateRef;
+
+        /*
+         * The entity position
+         */
+        TVector2 _Position;
     public:
         // Public Fields
 
@@ -59,6 +64,13 @@ namespace NerdThings::Ngine::Core {
          * Parent Scene
          */
         Scene *ParentScene;
+
+        // Public Constructor(s)
+
+        /*
+         * Create a BaseEntity.
+         */
+        BaseEntity(Scene *parentScene_, TVector2 position_);
 
         // Destructor
 
@@ -112,15 +124,30 @@ namespace NerdThings::Ngine::Core {
         std::vector<Component*> GetComponents();
 
         /*
+         * Get the entity position
+         */
+        [[nodiscard]] TVector2 GetPosition() const;
+
+        /*
          * Test if a component exists by a name.
          */
         bool HasComponent(const std::string &name_);
+
+        /*
+         * Move an entity
+         */
+        void MoveBy(TVector2 moveBy_);
 
         /*
          * Removes the entity from the component.
          * Returns success or fail.
          */
         bool RemoveComponent(const std::string &name_);
+
+        /*
+         * Set entity position
+         */
+        void SetPosition(TVector2 position);
 
         /*
          * Subscribe to draw events in the 
@@ -146,13 +173,6 @@ namespace NerdThings::Ngine::Core {
          * Update the entity
          */
         virtual void Update(EventArgs &e);
-    protected:
-        // Protected Constructor(s)
-
-        /*
-         * Create a BaseEntity.
-         */
-        explicit BaseEntity(Scene *parentScene_);
     };
 }
 

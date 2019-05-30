@@ -17,7 +17,7 @@
 // #include "../ngine.h"
 // #undef TYPE_DECL_HEADER
 
-#include "BoundingBox2D.h"
+#include "BoundingBox.h"
 #include "Matrix.h"
 #include "Vector2.h"
 
@@ -81,7 +81,7 @@ namespace NerdThings::Ngine {
 
         #endif
 
-        TBoundingBox2D ToBoundingBox(float rotation_) {
+        TBoundingBox ToBoundingBox(float rotation_) {
             // Create translation matrix
             auto mat = TMatrix::RotateZ(rotation_);
 
@@ -157,7 +157,7 @@ namespace NerdThings::Ngine {
             }
 
             // Create bounding box
-            TBoundingBox2D box;
+            TBoundingBox box;
             box.Min = {min_x, min_y};
             box.Max = {max_x, max_y};
             return box;

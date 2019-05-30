@@ -14,6 +14,11 @@
 #include "Component.h"          // Required for: Component
 
 namespace NerdThings::Ngine::Core {
+    // Public Constructor(s)
+
+    BaseEntity::BaseEntity(Scene *parentScene_, const TVector2 position_)
+        : _Position(position_), ParentScene(parentScene_) {}
+
     // Destructor
 
     BaseEntity::~BaseEntity() {
@@ -40,12 +45,20 @@ namespace NerdThings::Ngine::Core {
         return vec;
     }
 
+    TVector2 BaseEntity::GetPosition() const {
+        return _Position;
+    }
+
     bool BaseEntity::HasComponent(const std::string &name_) {
         return _Components.find(name_) != _Components.end();
     }
 
+   void BaseEntity::MoveBy(const TVector2 moveBy_) {
+       _Position += moveBy_;
+   }
+
     bool BaseEntity::RemoveComponent(const std::string &name_) {
-        auto comp = GetComponent<Component>(name_);
+        const auto comp = GetComponent<Component>(name_);
 
         if (comp != nullptr) {
             // Remove component from map
@@ -56,6 +69,10 @@ namespace NerdThings::Ngine::Core {
 
         // We don't have this component
         return false;
+    }
+
+    void BaseEntity::SetPosition(const TVector2 position) {
+        _Position = position;
     }
 
     bool BaseEntity::SubscribeToDraw() {
@@ -96,9 +113,4 @@ namespace NerdThings::Ngine::Core {
         // Trigger update
         OnUpdate({});
     }
-
-    // Protected Constructor(s)
-
-    BaseEntity::BaseEntity(Scene *parentScene_)
-        : ParentScene(parentScene_) {}
 }

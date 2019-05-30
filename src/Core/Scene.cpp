@@ -25,11 +25,11 @@ namespace NerdThings::Ngine::Core {
         OnDraw({});
     }
 
-    IBaseCamera *Scene::GetActiveCamera() const {
+    TCamera *Scene::GetActiveCamera() const {
         return _ActiveCamera;
     }
 
-    void Scene::SetActiveCamera(IBaseCamera *camera_) {
+    void Scene::SetActiveCamera(TCamera *camera_) {
         _ActiveCamera = camera_;
     }
 

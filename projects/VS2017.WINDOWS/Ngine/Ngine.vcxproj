@@ -29,7 +29,6 @@
     <ClInclude Include="..\..\..\src\Core\EventHandler.h" />
     <ClInclude Include="..\..\..\src\Core\Game.h" />
     <ClInclude Include="..\..\..\src\Core\Component.h" />
-    <ClInclude Include="..\..\..\src\Core\Entity2D.h" />
     <ClInclude Include="..\..\..\src\Core\EntityContainer.h" />
     <ClInclude Include="..\..\..\src\Core\Scene.h" />
     <ClInclude Include="..\..\..\src\Core\WindowManager.h" />
@@ -38,9 +37,8 @@
     <ClInclude Include="..\..\..\src\Input\Keyboard.h" />
     <ClInclude Include="..\..\..\src\Input\Mouse.h" />
     <ClInclude Include="..\..\..\src\ngine.h" />
-    <ClInclude Include="..\..\..\src\Types\BaseCamera.h" />
-    <ClInclude Include="..\..\..\src\Types\BoundingBox2D.h" />
-    <ClInclude Include="..\..\..\src\Types\Camera2D.h" />
+    <ClInclude Include="..\..\..\src\Types\BoundingBox.h" />
+    <ClInclude Include="..\..\..\src\Types\Camera.h" />
     <ClInclude Include="..\..\..\src\Types\Circle.h" />
     <ClInclude Include="..\..\..\src\Types\CollisionShape.h" />
     <ClInclude Include="..\..\..\src\Types\Color.h" />
@@ -58,7 +56,6 @@
     <ClCompile Include="..\..\..\src\Core\BaseEntity.cpp" />
     <ClCompile Include="..\..\..\src\Core\Game.cpp" />
     <ClCompile Include="..\..\..\src\Core\Component.cpp" />
-    <ClCompile Include="..\..\..\src\Core\Entity2D.cpp" />
     <ClCompile Include="..\..\..\src\Core\EntityContainer.cpp" />
     <ClCompile Include="..\..\..\src\Core\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Core\WindowManager.cpp" />
@@ -66,8 +63,8 @@
     <ClCompile Include="..\..\..\src\Input\Gamepad.cpp" />
     <ClCompile Include="..\..\..\src\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
-    <ClCompile Include="..\..\..\src\Types\BoundingBox2D.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Camera2D.cpp" />
+    <ClCompile Include="..\..\..\src\Types\BoundingBox.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Camera.cpp" />
     <ClCompile Include="..\..\..\src\Types\Circle.cpp" />
     <ClCompile Include="..\..\..\src\Types\Color.cpp" />
     <ClCompile Include="..\..\..\src\Types\Font.cpp" />

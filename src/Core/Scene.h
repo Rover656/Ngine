@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Currently active camera
          */
-        IBaseCamera *_ActiveCamera = nullptr;
+        TCamera *_ActiveCamera = nullptr;
 
     public:
         // Public Fields
@@ -74,12 +74,12 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the currently active camera
          */
-        [[nodiscard]] IBaseCamera *GetActiveCamera() const;
+        [[nodiscard]] TCamera *GetActiveCamera() const;
 
         /*
          * Set the currently active camera
          */
-        void SetActiveCamera(IBaseCamera *camera_);
+        void SetActiveCamera(TCamera *camera_);
 
         /*
          * Update the scene

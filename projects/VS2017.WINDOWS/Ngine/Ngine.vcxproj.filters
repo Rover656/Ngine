@@ -15,14 +15,8 @@
     <ClInclude Include="..\..\..\src\Types\Vector2.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Core\Entity2D.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\Graphics\Drawing.h">
       <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\Types\Camera2D.h">
-      <Filter>Types</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\Types\Color.h">
       <Filter>Types</Filter>
@@ -63,9 +57,6 @@
     <ClInclude Include="..\..\..\src\Input\Gamepad.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Types\BoundingBox2D.h">
-      <Filter>Types</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\Types\Matrix.h">
       <Filter>Types</Filter>
     </ClInclude>
@@ -78,11 +69,14 @@
     <ClInclude Include="..\..\..\src\Types\Circle.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Types\BaseCamera.h">
-      <Filter>Types</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\Core\Scene.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Camera.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\BoundingBox.h">
+      <Filter>Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +92,9 @@
     <Filter Include="Input">
       <UniqueIdentifier>{98a34e03-3741-401e-9deb-585ad46c428e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{4a544684-0538-4181-82a1-b4d834787c68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\Core\BaseEntity.cpp">
@@ -107,9 +104,6 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Core\Component.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\Core\Entity2D.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp">
@@ -130,9 +124,6 @@
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\Types\Camera2D.cpp">
-      <Filter>Types</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\Types\RenderTarget.cpp">
       <Filter>Types</Filter>
     </ClCompile>
@@ -148,9 +139,6 @@
     <ClCompile Include="..\..\..\src\Types\Matrix.cpp">
       <Filter>Types</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\Types\BoundingBox2D.cpp">
-      <Filter>Types</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\Types\Circle.cpp">
       <Filter>Types</Filter>
     </ClCompile>
@@ -159,6 +147,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Core\Scene.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\Camera.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Types\BoundingBox.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
