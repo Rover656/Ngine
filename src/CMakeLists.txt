@@ -2,6 +2,8 @@
 file(GLOB Ngine_source
     "*.h"
     "*.cpp"
+    "Components/*.h"
+    "Components/*.cpp"
     "Core/*.h"
     "Core/*.cpp"
     "Graphics/*.h"
