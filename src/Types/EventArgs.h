@@ -97,6 +97,20 @@ namespace NerdThings::Ngine {
             : Value(value_) {}
     };
 
+    struct EntityPositionChangedEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The new entity position
+         */
+        TVector2 EntityPosition;
+
+        // Public Constructor(s)
+
+        EntityPositionChangedEventArgs(TVector2 pos_)
+            : EntityPosition(pos_) {}
+    };
+
     struct SceneLoadEventArgs : EventArgs {
         // Public Fields
 

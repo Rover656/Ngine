@@ -39,6 +39,11 @@ namespace NerdThings::Ngine::Core {
         EventHandleRef<EventArgs> _OnDrawRef;
 
         /*
+         * On draw camera event reference
+         */
+        EventHandleRef<EventArgs> _OnDrawCameraRef;
+
+        /*
          * On update event reference
          */
         EventHandleRef<EventArgs> _OnUpdateRef;
@@ -54,6 +59,16 @@ namespace NerdThings::Ngine::Core {
          * On draw event
          */
         EventHandler<EventArgs> OnDraw;
+
+        /*
+         * On draw event with camera translation
+         */
+        EventHandler<EventArgs> OnDrawCamera;
+
+        /*
+         * On position changed event
+         */
+        EventHandler<EntityPositionChangedEventArgs> OnPositionChanged;
 
         /*
          * On update event
@@ -81,29 +96,34 @@ namespace NerdThings::Ngine::Core {
         /*
          * Add a component to the entity.
          * component_ must be derived from class Component.
-         * Returns whether or not the component was added
+         * Returns the component if successful and null if not
          */
         template <typename ComponentType>
-        bool AddComponent(const std::string &name_, ComponentType *component_) {
+        ComponentType* AddComponent(const std::string &name_, ComponentType *component_) {
             // Check the name is not taken
             if (HasComponent(name_))
-                return false;
+                return nullptr;
 
             // Cast to component to ensure this is valid
             auto comp = dynamic_cast<Component*>(component_);
 
             if (comp != nullptr) {
                 _Components.insert({ name_, comp });
-                return true;
+                return component_;
             }
 
-            return false;
+            return nullptr;
         }
 
         /*
          * Draw code for the entity
          */
         virtual void Draw(EventArgs &e);
+
+        /*
+         * Draw code for the entity with camera translation
+         */
+        virtual void DrawCamera(EventArgs &e);
 
         /*
          * Get a component by name.
@@ -150,7 +170,12 @@ namespace NerdThings::Ngine::Core {
         void SetPosition(TVector2 position);
 
         /*
-         * Subscribe to draw events in the 
+         * Subscribe to draw events in the scene with camera translation
+         */
+        bool SubscribeToCameraDraw();
+
+        /*
+         * Subscribe to draw events in the scene
          */
         bool SubscribeToDraw();
 
@@ -158,6 +183,11 @@ namespace NerdThings::Ngine::Core {
          * Subscribe to update events in the scene
          */
         bool SubscribeToUpdate();
+
+        /*
+         * Unsubscribe from update events in the scene with camera translation
+         */
+        void UnsubscribeFromCameraDraw();
 
         /*
          * Unsubscribe from update events in the scene

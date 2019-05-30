@@ -73,7 +73,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Bind a function
          */
-        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType &e)) {
+        EventHandleRef<ArgsType> Bind(void(*func_)(ArgsType &e)) {
             auto f = std::bind(func_, std::placeholders::_1);
             if (_UnusedIndices.size() > 0) {
                 auto id = _UnusedIndices.back();
@@ -104,7 +104,7 @@ namespace NerdThings::Ngine::Core {
         template <typename Class>
         EventHandleRef<ArgsType> Bind(Class *obj_, void (Class::*func_)(ArgsType &e)) {
             auto f = std::bind(func_, obj_, std::placeholders::_1);
-            if (_UnusedIndices.size() > 0) {
+            if (!_UnusedIndices.empty()) {
                 auto id = _UnusedIndices.back();
 
                 _Handles[id] = f;
@@ -130,7 +130,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Clear all event handles
          */
-        void Clear() {
+        [[deprecated("Clearing is unsafe and will be removed on the next release.")]] void Clear() {
             _Handles.clear();
         }
 
@@ -144,9 +144,8 @@ namespace NerdThings::Ngine::Core {
                     ArgsType sendE = e;
                     handle(sendE);
 
-                    if (sendE.UnBind == true) {
+                    if (sendE.UnBind)
                         UnBind(i);
-                    }
                 }
             }
         }

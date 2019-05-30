@@ -39,6 +39,11 @@ namespace NerdThings::Ngine::Core {
         EventHandler<EventArgs> OnDraw;
 
         /*
+         * On draw with the camera
+         */
+        EventHandler<EventArgs> OnDrawCamera;
+
+        /*
          * On scene load
          */
         EventHandler<SceneLoadEventArgs> OnLoad;

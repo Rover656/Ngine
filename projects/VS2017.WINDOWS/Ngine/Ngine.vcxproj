@@ -24,6 +24,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\Components\CameraComponent.h" />
     <ClInclude Include="..\..\..\src\config.h" />
     <ClInclude Include="..\..\..\src\Core\BaseEntity.h" />
     <ClInclude Include="..\..\..\src\Core\EventHandler.h" />
@@ -53,6 +54,7 @@
     <ClInclude Include="..\..\..\src\Types\Vector3.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\Components\CameraComponent.cpp" />
     <ClCompile Include="..\..\..\src\Core\BaseEntity.cpp" />
     <ClCompile Include="..\..\..\src\Core\Game.cpp" />
     <ClCompile Include="..\..\..\src\Core\Component.cpp" />

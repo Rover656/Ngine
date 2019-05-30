@@ -11,6 +11,8 @@
 
 #include "Camera.h"
 
+#include "../3rd-party/raylib/src/rlgl.h"
+
 namespace NerdThings::Ngine {
     // Public Methods
 
@@ -39,7 +41,16 @@ namespace NerdThings::Ngine {
     #endif
 
     void TCamera::BeginCamera() const {
-        BeginMode2D(ToRaylibCam());
+        EndMode2D(); //Ironic, isn't it.
+
+        // This works how we want, raylib's doesn't work as well
+        TMatrix ret = TMatrix::Identity;
+        ret = ret * TMatrix::Translate(-Target.X, -Target.Y, 0);
+        ret = ret * TMatrix::RotateZ(Rotation);
+        ret = ret * TMatrix::Scale(Zoom, Zoom, 1);
+        ret = ret * TMatrix::Translate(Origin.X, Origin.Y, 0);
+
+        rlMultMatrixf(MatrixToFloat(*reinterpret_cast<Matrix*>(&ret))); //Hacky, but sure
     }
 
     void TCamera::EndCamera() const {

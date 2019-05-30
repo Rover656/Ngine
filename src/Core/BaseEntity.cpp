@@ -35,6 +35,11 @@ namespace NerdThings::Ngine::Core {
         OnDraw({});
     }
 
+    void BaseEntity::DrawCamera(EventArgs &e) {
+        // Trigger drawcamera
+        OnDrawCamera({});
+    }
+
     std::vector<Component *> BaseEntity::GetComponents() {
         std::vector<Component*> vec;
 
@@ -55,6 +60,7 @@ namespace NerdThings::Ngine::Core {
 
    void BaseEntity::MoveBy(const TVector2 moveBy_) {
        _Position += moveBy_;
+       OnPositionChanged({ _Position });
    }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
@@ -73,6 +79,21 @@ namespace NerdThings::Ngine::Core {
 
     void BaseEntity::SetPosition(const TVector2 position) {
         _Position = position;
+        OnPositionChanged({ _Position });
+    }
+
+    bool BaseEntity::SubscribeToCameraDraw() {
+        if (ParentScene != nullptr) {
+            if (_OnDrawCameraRef.ID < 0) {
+                _OnDrawCameraRef = ParentScene->OnDrawCamera.Bind<BaseEntity>(this, &BaseEntity::DrawCamera);
+                return true;
+            }
+            else {
+                // We still have an event, soooo...
+                return true;
+            }
+        }
+        return false;
     }
 
     bool BaseEntity::SubscribeToDraw() {
@@ -99,6 +120,10 @@ namespace NerdThings::Ngine::Core {
             }
         }
         return false;
+    }
+
+    void BaseEntity::UnsubscribeFromCameraDraw() {
+        _OnDrawCameraRef.UnBind();
     }
 
     void BaseEntity::UnsubscribeFromDraw() {

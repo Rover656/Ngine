@@ -23,6 +23,15 @@ namespace NerdThings::Ngine::Core {
     void Scene::Draw() {
         // Invoke draw calls
         OnDraw({});
+
+        // Draw with camera
+        if (_ActiveCamera != nullptr)
+            _ActiveCamera->BeginCamera();
+
+        OnDrawCamera({});
+
+        if (_ActiveCamera != nullptr)
+            _ActiveCamera->EndCamera();
     }
 
     TCamera *Scene::GetActiveCamera() const {

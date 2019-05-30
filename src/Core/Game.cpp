@@ -63,18 +63,9 @@ namespace NerdThings::Ngine::Core {
     // Public Methods
 
     void Game::Draw() {
-        // OnDraw event
-        OnDraw({});
-
         if (_CurrentScene != nullptr) {
-            const auto cam = _CurrentScene->GetActiveCamera();
-            if (cam != nullptr)
-                cam->BeginCamera();
-
+            OnDraw({});
             _CurrentScene->Draw();
-
-            if (cam != nullptr)
-                cam->EndCamera();
         }
     }
 
@@ -235,14 +226,7 @@ namespace NerdThings::Ngine::Core {
         OnUpdate({});
 
         if (_CurrentScene != nullptr) {
-            const auto cam = _CurrentScene->GetActiveCamera();
-            if (cam != nullptr)
-                cam->BeginCamera();
-
             _CurrentScene->Update();
-
-            if (cam != nullptr)
-                cam->EndCamera();
         }
     }
 
