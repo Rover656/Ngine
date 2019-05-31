@@ -83,12 +83,12 @@ public:
 
         cam->Activate();
 
-        //AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, 100, 100))->EnableDebugDraw(true);
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw(true);
 
         TRectangle bounds = { 0, 0, 100, 100 };
         std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
 
-        AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, vertices))->EnableDebugDraw(true);
+        //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, vertices))->EnableDebugDraw(true);
     }
 };
 

@@ -62,6 +62,9 @@ namespace NerdThings::Ngine::Components {
             Graphics::Drawing::DrawLine({ _BoundingBox.Max.X, _BoundingBox.Min.Y }, _BoundingBox.Max, col);
             Graphics::Drawing::DrawLine(_BoundingBox.Max, { _BoundingBox.Min.X, _BoundingBox.Max.Y }, col);
             Graphics::Drawing::DrawLine({ _BoundingBox.Min.X, _BoundingBox.Max.Y }, _BoundingBox.Min, col);
+
+            if (DebugDrawInternalRectangle)
+                Graphics::Drawing::DrawRectangle(TRectangle(par->GetPosition() + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width, _Rectangle.Height), TColor::Orange, par->GetRotation(), par->GetOrigin());
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {
@@ -76,14 +79,16 @@ namespace NerdThings::Ngine::Components {
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
-            SetRectangle(CreateRectangle());
-        }
-
-        TRectangle CreateRectangle() const {
-            const auto par = GetParent<Core::BaseEntity>();
-            return TRectangle(par->GetPosition() - par->GetOrigin() + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width, _Rectangle.Height);
+            _BoundingBox = TRectangle(e.EntityPosition - e.EntityOrigin + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width, _Rectangle.Height).ToBoundingBox(e.EntityRotation, e.EntityOrigin);
         }
     public:
+
+        // Public Fields
+
+        /*
+         * Whether or not to draw the internal rectangle
+         */
+        bool DebugDrawInternalRectangle = true;
 
         // Public Constructors
 
@@ -94,7 +99,7 @@ namespace NerdThings::Ngine::Components {
             : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Rectangle(rectangle_) {
             const auto par = GetParent<Core::BaseEntity>();
 
-            SetRectangle(CreateRectangle());
+            SetRectangle(rectangle_);
         }
 
         // Public Methods
