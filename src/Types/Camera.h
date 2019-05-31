@@ -22,7 +22,7 @@ namespace NerdThings::Ngine {
     /*
      * A Camera
      */
-    struct TCamera {
+    struct NEAPI TCamera {
         // Public Fields
 
         /*
@@ -76,6 +76,11 @@ namespace NerdThings::Ngine {
          * Finish using the camera
          */
         void EndCamera() const;
+
+        /*
+         * Get the translation matrix
+         */
+        TMatrix GetTranslationMatrix() const;
     };
 }
 

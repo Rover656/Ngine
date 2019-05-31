@@ -97,18 +97,33 @@ namespace NerdThings::Ngine {
             : Value(value_) {}
     };
 
-    struct EntityPositionChangedEventArgs : EventArgs {
+    struct EntityTransformChangedEventArgs : EventArgs {
         // Public Fields
+
+        /*
+         * Entity origin
+         */
+        TVector2 EntityOrigin;
 
         /*
          * The new entity position
          */
         TVector2 EntityPosition;
 
+        /*
+         * The new rotation
+         */
+        float EntityRotation;
+
+        /*
+         * The new scale
+         */
+        float EntityScale;
+
         // Public Constructor(s)
 
-        EntityPositionChangedEventArgs(TVector2 pos_)
-            : EntityPosition(pos_) {}
+        EntityTransformChangedEventArgs(TVector2 origin_, TVector2 pos_, float rot_, float scale_)
+            : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
     };
 
     struct SceneLoadEventArgs : EventArgs {

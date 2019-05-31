@@ -24,9 +24,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\Components\BoundingBoxComponent.h" />
+    <ClInclude Include="..\..\..\src\Components\BoundingBoxCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\CameraComponent.h" />
     <ClInclude Include="..\..\..\src\Components\BaseCollisionShapeComponent.h" />
+    <ClInclude Include="..\..\..\src\Components\CircleCollisionShapeComponent.h" />
+    <ClInclude Include="..\..\..\src\Components\PolygonCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\config.h" />
     <ClInclude Include="..\..\..\src\Core\BaseEntity.h" />
     <ClInclude Include="..\..\..\src\Core\EventHandler.h" />
@@ -48,6 +50,7 @@
     <ClInclude Include="..\..\..\src\Types\EventArgs.h" />
     <ClInclude Include="..\..\..\src\Types\Font.h" />
     <ClInclude Include="..\..\..\src\Types\Matrix.h" />
+    <ClInclude Include="..\..\..\src\Types\Polygon.h" />
     <ClInclude Include="..\..\..\src\Types\Rectangle.h" />
     <ClInclude Include="..\..\..\src\Types\RenderTarget.h" />
     <ClInclude Include="..\..\..\src\Types\Texture2D.h" />
@@ -67,12 +70,14 @@
     <ClCompile Include="..\..\..\src\Input\Gamepad.cpp" />
     <ClCompile Include="..\..\..\src\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
+    <ClCompile Include="..\..\..\src\ngine.cpp" />
     <ClCompile Include="..\..\..\src\Types\BoundingBox.cpp" />
     <ClCompile Include="..\..\..\src\Types\Camera.cpp" />
     <ClCompile Include="..\..\..\src\Types\Circle.cpp" />
     <ClCompile Include="..\..\..\src\Types\Color.cpp" />
     <ClCompile Include="..\..\..\src\Types\Font.cpp" />
     <ClCompile Include="..\..\..\src\Types\Matrix.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Polygon.cpp" />
     <ClCompile Include="..\..\..\src\Types\RenderTarget.cpp" />
     <ClCompile Include="..\..\..\src\Types\Texture2D.cpp" />
     <ClCompile Include="..\..\..\src\Types\Vector2.cpp" />

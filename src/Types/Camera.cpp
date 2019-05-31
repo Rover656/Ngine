@@ -44,16 +44,21 @@ namespace NerdThings::Ngine {
         EndMode2D(); //Ironic, isn't it.
 
         // This works how we want, raylib's doesn't work as well
+        auto mat = GetTranslationMatrix();
+
+        rlMultMatrixf(MatrixToFloat(*reinterpret_cast<Matrix*>(&mat))); //Hacky, but sure
+    }
+
+    void TCamera::EndCamera() const {
+        EndMode2D();
+    }
+
+    TMatrix TCamera::GetTranslationMatrix() const {
         TMatrix ret = TMatrix::Identity;
         ret = ret * TMatrix::Translate(-Target.X, -Target.Y, 0);
         ret = ret * TMatrix::RotateZ(Rotation);
         ret = ret * TMatrix::Scale(Zoom, Zoom, 1);
         ret = ret * TMatrix::Translate(Origin.X, Origin.Y, 0);
-
-        rlMultMatrixf(MatrixToFloat(*reinterpret_cast<Matrix*>(&ret))); //Hacky, but sure
-    }
-
-    void TCamera::EndCamera() const {
-        EndMode2D();
+        return ret;
     }
 }

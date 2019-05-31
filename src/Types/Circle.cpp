@@ -12,6 +12,7 @@
 #include "Circle.h"
 
 #include "BoundingBox.h"
+#include "../3rd-party/cute-headers/cute_c2.h"
 
 namespace NerdThings::Ngine {
     // Private Methods
@@ -39,22 +40,41 @@ namespace NerdThings::Ngine {
 
         // Circle against Circle
         if (circle != nullptr) {
-            // https://github.com/RandyGaul/cute_headers/blob/master/cute_c2.h#L1127
-            auto c = Center - circle->Center;
-            float d2 = c.Dot(c);
-            float r2 = Radius + circle->Radius;
-            r2 = r2 * r2;
-            collided = d2 < r2;
+            collided = c2CircletoCircle({
+                                            {
+                                                Center.X,
+                                                Center.Y
+                                            },
+                                            Radius
+                                        },
+                                        {
+                                            {
+                                                circle->Center.X,
+                                                circle->Center.Y
+                                            },
+                                            circle->Radius
+                                        });
         }
 
         // Bounding Box 2D against Circle
         if (boundingBox2D != nullptr) {
-            // https://github.com/RandyGaul/cute_headers/blob/master/cute_c2.h#L1136
-            auto L = TVector2::Clamp(Center, boundingBox2D->Min, boundingBox2D->Max);
-            auto ab = Center - L;
-            float d2 = ab.Dot(ab);
-            float r2 = Radius * Radius;
-            collided = d2 < r2;
+            collided = c2CircletoAABB({
+                                          {
+                                              Center.X,
+                                              Center.Y
+                                          },
+                                          Radius
+                                      },
+                                      {
+                                          {
+                                              boundingBox2D->Min.X,
+                                              boundingBox2D->Min.Y
+                                          },
+                                          {
+                                              boundingBox2D->Max.X,
+                                              boundingBox2D->Max.Y
+                                          }
+                                      });
         }
 
         return collided;

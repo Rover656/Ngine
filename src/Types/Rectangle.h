@@ -18,7 +18,7 @@
 // #undef TYPE_DECL_HEADER
 
 #include "BoundingBox.h"
-#include "Matrix.h"
+#include "Polygon.h"
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
@@ -81,86 +81,39 @@ namespace NerdThings::Ngine {
 
         #endif
 
-        TBoundingBox ToBoundingBox(float rotation_) {
-            // Create translation matrix
-            auto mat = TMatrix::RotateZ(rotation_);
+        TBoundingBox ToBoundingBox(float rotation_ = 0, TVector2 origin = TVector2::Zero) const {
+            // Fix origin
+            origin += {X, Y};
 
-            // Transform all coordinates
-            TVector2 topleft = {X, Y};
-            TVector2 topright = {X + Width, Y};
-            TVector2 bottomleft = {X, Y + Height};
-            TVector2 bottomright = {X + Width, Y + Height};
+            // Get rectangle coords rotated
+            auto tl = TVector2(X, Y).Rotate(origin, rotation_);
+            auto tr = TVector2(X + Width, Y).Rotate(origin, rotation_);
+            auto bl = TVector2(X, Y + Height).Rotate(origin, rotation_);
+            auto br = TVector2(X + Width, Y + Height).Rotate(origin, rotation_);
 
-            topleft = topleft.Transform(mat);
-            topright = topright.Transform(mat);
-            bottomleft = bottomleft.Transform(mat);
-            bottomright = bottomright.Transform(mat);
-
-            // Find min x
-            auto min_x = topleft.X;
-
-            if (min_x > topright.X) {
-                min_x = topright.X;
-            }
-
-            if (min_x > bottomleft.X) {
-                min_x = bottomleft.X;
-            }
-
-            if (min_x > bottomright.X) {
-                min_x = bottomright.X;
-            }
-
-            // Find max x
-            auto max_x = topleft.X;
-
-            if (max_x < topright.X) {
-                max_x = topright.X;
-            }
-
-            if (max_x < bottomleft.X) {
-                max_x = bottomleft.X;
-            }
-
-            if (max_x < bottomright.X) {
-                max_x = bottomright.X;
-            }
-
-            // Find min y
-            auto min_y = topleft.Y;
-
-            if (min_y > topright.Y) {
-                min_y = topright.Y;
-            }
-
-            if (min_y > bottomleft.Y) {
-                min_y = bottomleft.Y;
-            }
-
-            if (min_y > bottomright.Y) {
-                min_y = bottomright.Y;
-            }
-
-            // Find max y
-            auto max_y = topleft.Y;
-
-            if (max_y < topright.Y) {
-                max_y = topright.Y;
-            }
-
-            if (max_y < bottomleft.Y) {
-                max_y = bottomleft.Y;
-            }
-
-            if (max_y < bottomright.Y) {
-                max_y = bottomright.Y;
-            }
+            // Find min and max
+            auto minX = std::min(tl.X, std::min(tr.X, std::min(bl.X, br.X)));
+            auto maxX = std::max(tl.X, std::max(tr.X, std::max(bl.X, br.X)));
+            auto minY = std::min(tl.Y, std::min(tr.Y, std::min(bl.Y, br.Y)));
+            auto maxY = std::max(tl.Y, std::max(tr.Y, std::max(bl.Y, br.Y)));
 
             // Create bounding box
             TBoundingBox box;
-            box.Min = {min_x, min_y};
-            box.Max = {max_x, max_y};
+            box.Min = {minX, minY};
+            box.Max = {maxX, maxY};
             return box;
+        }
+
+        TPolygon ToPolygon(float rotation_ = 0, TVector2 origin = TVector2::Zero) {
+            // Fix origin
+            origin += {X, Y};
+
+            // Make polygon
+            std::vector<TVector2> vertices = { {X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height} };
+            for (auto i = 0; i < vertices.size(); i++) {
+                vertices[i] = vertices[i].Rotate(origin, rotation_);
+            }
+            return TPolygon(vertices);
         }
     };
 }

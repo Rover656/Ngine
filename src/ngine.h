@@ -36,6 +36,10 @@
 // Root Ngine namespace
 #define NGINE_NS NerdThings::Ngine
 
+// Angle maths
+#define RadToDeg(rad) rad * 180/3.14
+#define DegToRad(deg) deg * 3.14/180
+
 //----------------------------------------------------------------------------------
 // Libraries
 //----------------------------------------------------------------------------------
@@ -63,6 +67,7 @@
 #include "Types/EventArgs.h"
 #include "Types/Font.h"
 #include "Types/Matrix.h"
+#include "Types/Polygon.h"
 #include "Types/Rectangle.h"
 #include "Types/RenderTarget.h"
 #include "Types/Texture2D.h"

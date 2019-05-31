@@ -110,6 +110,11 @@ namespace NerdThings::Ngine {
         [[nodiscard]] float MagnitudeSquared() const;
 
         /*
+         * Rotate this point around another
+         */
+        TVector2 Rotate(TVector2 center, float rotation_);
+
+        /*
          * Transform by matrix
          */
         [[nodiscard]] TVector2 Transform(TMatrix matrix_) const;

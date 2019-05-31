@@ -60,6 +60,26 @@ namespace NerdThings::Ngine {
         return (X * X) + (Y * Y);
     }
 
+    struct TVector2 TVector2::Rotate(TVector2 center, float rotation_) {
+        TVector2 ret = {X, Y};
+
+        float s = sinf(rotation_);
+        float c = cosf(rotation_);
+
+        // Translate point back to origin
+        ret.X -= center.X;
+        ret.Y -= center.Y;
+
+        // Rotate point
+        float xnew = ret.X * c - ret.Y * s;
+        float ynew = ret.X * s + ret.Y * c;
+
+        // Translate point back
+        ret.X = xnew + center.X;
+        ret.Y = ynew + center.Y;
+        return ret;
+    }
+
     TVector2 TVector2::Transform(TMatrix matrix_) const {
         return {
             (X * matrix_.M0) + (Y * matrix_.M1) + matrix_.M3,

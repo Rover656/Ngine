@@ -84,7 +84,16 @@
     <ClInclude Include="..\..\..\src\Components\BaseCollisionShapeComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\Components\BoundingBoxComponent.h">
+    <ClInclude Include="..\..\..\src\Components\BoundingBoxCollisionShapeComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Components\CircleCollisionShapeComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Types\Polygon.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Components\PolygonCollisionShapeComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -165,6 +174,10 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Components\CameraComponent.cpp">
       <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ngine.cpp" />
+    <ClCompile Include="..\..\..\src\Types\Polygon.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

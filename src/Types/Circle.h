@@ -45,6 +45,12 @@ namespace NerdThings::Ngine {
         /*
          * Create a circle
          */
+        TCircle()
+            : Center(TVector2::Zero), Radius(0) {}
+
+        /*
+         * Create a circle
+         */
         TCircle(const TVector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
 

@@ -49,9 +49,25 @@ namespace NerdThings::Ngine::Core {
         EventHandleRef<EventArgs> _OnUpdateRef;
 
         /*
+         * The entity origin
+         */
+        TVector2 _Origin;
+
+        /*
          * The entity position
          */
-        TVector2 _Position;
+        TVector2 _Position = TVector2::Zero;
+
+        /*
+         * The entity rotation (in radians)
+         */
+        float _Rotation = 0;
+
+        // TODO: Add logic and draw scaling
+        // /*
+        //  * The entity scale (Used for rendering and physics)
+        //  */
+        // float _Scale = 1;
     public:
         // Public Fields
 
@@ -68,7 +84,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * On position changed event
          */
-        EventHandler<EntityPositionChangedEventArgs> OnPositionChanged;
+        EventHandler<EntityTransformChangedEventArgs> OnTransformChanged;
 
         /*
          * On update event
@@ -144,9 +160,24 @@ namespace NerdThings::Ngine::Core {
         std::vector<Component*> GetComponents();
 
         /*
+         * Get entity origin
+         */
+        [[nodiscard]] TVector2 GetOrigin() const;
+
+        /*
          * Get the entity position
          */
         [[nodiscard]] TVector2 GetPosition() const;
+
+        /*
+         * Get the entity rotation
+         */
+        [[nodiscard]] float GetRotation() const;
+
+        // /*
+        //  * Get the entity scale
+        //  */
+        // [[nodiscard]] float GetScale() const;
 
         /*
          * Test if a component exists by a name.
@@ -165,9 +196,24 @@ namespace NerdThings::Ngine::Core {
         bool RemoveComponent(const std::string &name_);
 
         /*
+         * Set entity origin
+         */
+        void SetOrigin(TVector2 origin_);
+
+        /*
          * Set entity position
          */
-        void SetPosition(TVector2 position);
+        void SetPosition(TVector2 position_);
+
+        /*
+         * Set entity rotation
+         */
+        void SetRotation(float rotation_);
+
+        // /*
+        //  * Set entity scale
+        //  */
+        // void SetScale(float scale_);
 
         /*
          * Subscribe to draw events in the scene with camera translation

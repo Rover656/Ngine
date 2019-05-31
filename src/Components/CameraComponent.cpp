@@ -16,15 +16,17 @@
 namespace NerdThings::Ngine::Components {
     // Private Methods
 
-    void CameraComponent::UpdateCamera(EntityPositionChangedEventArgs &e) {
+    void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs &e) {
         // Update target
         _Camera.Target = e.EntityPosition;
+
+        // We ignore scale and rotation as this is independent
     }
 
     // Destructor
 
     CameraComponent::~CameraComponent() {
-        _PosChangeEvent.UnBind();
+        _TransformChangeEvent.UnBind();
     }
 
     // Public Constructors
@@ -43,7 +45,7 @@ namespace NerdThings::Ngine::Components {
         _Camera = TCamera(rotation_, zoom_, par->GetPosition(), origin_);;
 
         // Attach to on position changed
-        _PosChangeEvent = par->OnPositionChanged.Bind(this, &CameraComponent::UpdateCamera);
+        _TransformChangeEvent = par->OnTransformChanged.Bind(this, &CameraComponent::UpdateCamera);
     }
 
     // Public Methods

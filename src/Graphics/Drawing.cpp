@@ -170,7 +170,7 @@ namespace NerdThings::Ngine::Graphics {
                                 const TVector2 origin_) {
         DrawRectanglePro(rectangle_.ToRaylibRect(),
                          origin_.ToRaylibVec(),
-                         rotation_,
+                         RadToDeg(rotation_),
                          color_.ToRaylibColor());
     }
 
@@ -492,7 +492,7 @@ namespace NerdThings::Ngine::Graphics {
                        sourceRectangle_.ToRaylibRect(),
                        destRectangle_.ToRaylibRect(),
                        origin_.ToRaylibVec(),
-                       rotation_,
+                       RadToDeg(rotation_),
                        color_.ToRaylibColor());
     }
 
@@ -531,7 +531,7 @@ namespace NerdThings::Ngine::Graphics {
         ::DrawPoly(center_.ToRaylibVec(),
                    sides_,
                    radius_,
-                   rotation_,
+                   RadToDeg(rotation_),
                    color_.ToRaylibColor());
     }
 

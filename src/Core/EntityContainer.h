@@ -35,23 +35,23 @@ namespace NerdThings::Ngine::Core {
 
         /*
          * Add an entity.
-         * Returns success or fail.
+         * Returns entity if success, null if fail
          */
         template <typename EntityType>
-        bool AddEntity(std::string name_, EntityType *entity_) {
+        EntityType* AddEntity(std::string name_, EntityType *entity_) {
             // Check the name is not taken
             if (HasEntity(name_))
-                return false;
+                return nullptr;
 
             // Cast to BaseEntity to ensure this is a valid type
             auto ent = dynamic_cast<BaseEntity*>(entity_);
 
             if (ent != nullptr) {
                 _Entities.insert({name_, ent});
-                return true;
+                return entity_;
             }
 
-            return false;
+            return nullptr;
         }
 
         /*

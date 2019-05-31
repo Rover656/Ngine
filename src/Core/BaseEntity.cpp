@@ -50,9 +50,21 @@ namespace NerdThings::Ngine::Core {
         return vec;
     }
 
+    TVector2 BaseEntity::GetOrigin() const {
+        return _Origin;
+    }
+
     TVector2 BaseEntity::GetPosition() const {
         return _Position;
     }
+
+    float BaseEntity::GetRotation() const {
+        return _Rotation;
+    }
+
+    // float BaseEntity::GetScale() const {
+    //     return _Scale;
+    // }
 
     bool BaseEntity::HasComponent(const std::string &name_) {
         return _Components.find(name_) != _Components.end();
@@ -60,7 +72,7 @@ namespace NerdThings::Ngine::Core {
 
     void BaseEntity::MoveBy(const TVector2 moveBy_) {
         _Position += moveBy_;
-        OnPositionChanged({_Position});
+        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
     }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
@@ -77,10 +89,25 @@ namespace NerdThings::Ngine::Core {
         return false;
     }
 
-    void BaseEntity::SetPosition(const TVector2 position) {
-        _Position = position;
-        OnPositionChanged({_Position});
+    void BaseEntity::SetOrigin(TVector2 origin_) {
+        _Origin = origin_;
+        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
     }
+
+    void BaseEntity::SetPosition(const TVector2 position_) {
+        _Position = position_;
+        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
+    }
+
+    void BaseEntity::SetRotation(float rotation_) {
+        _Rotation = rotation_;
+        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
+    }
+
+    // void BaseEntity::SetScale(float scale_) {
+    //     _Scale = scale_;
+    //     OnTransformChanged({ _Origin, _Position, _Rotation, _Scale });
+    // }
 
     bool BaseEntity::SubscribeToCameraDraw() {
         if (ParentScene != nullptr) {

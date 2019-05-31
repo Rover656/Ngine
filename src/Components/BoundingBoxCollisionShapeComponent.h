@@ -20,7 +20,7 @@
 
 namespace NerdThings::Ngine::Components {
     /*
-     * Bounding Box Component
+     * Bounding Box Collider Component
      */
     class BoundingBoxCollisionShapeComponent : public BaseCollisionShapeComponent {
         // Private Fields
@@ -31,25 +31,13 @@ namespace NerdThings::Ngine::Components {
         TBoundingBox _BoundingBox;
 
         /*
-         * Bounding box height
+         * The rectangle to use
          */
-        float _Height;
-
-        /*
-         * The offset
-         */
-        TVector2 _Offset;
-
-        /*
-         * Bounding box width
-         */
-        float _Width;
+        TRectangle _Rectangle;
 
         // Private Methods
 
         bool CollisionCheck(BaseCollisionShapeComponent *b) override {
-            if (this == b) return false;
-
             auto col = false;
 
             auto bbox = dynamic_cast<BoundingBoxCollisionShapeComponent*>(b);
@@ -70,16 +58,30 @@ namespace NerdThings::Ngine::Components {
             if (CheckCollision<Core::BaseEntity>())
                 col = TColor::Green;
 
-            Graphics::Drawing::DrawRectangleLines(par->GetPosition(), _Width, _Height, col, 1);
+            Graphics::Drawing::DrawLine(_BoundingBox.Min, { _BoundingBox.Max.X, _BoundingBox.Min.Y }, col);
+            Graphics::Drawing::DrawLine({ _BoundingBox.Max.X, _BoundingBox.Min.Y }, _BoundingBox.Max, col);
+            Graphics::Drawing::DrawLine(_BoundingBox.Max, { _BoundingBox.Min.X, _BoundingBox.Max.Y }, col);
+            Graphics::Drawing::DrawLine({ _BoundingBox.Min.X, _BoundingBox.Max.Y }, _BoundingBox.Min, col);
+        }
+
+        bool IsCompatible(BaseCollisionShapeComponent *b) override {
+            auto bbox = dynamic_cast<BoundingBoxCollisionShapeComponent*>(b);
+            if (bbox != nullptr)
+                return true;
+            return false;
         }
 
         void Offset(TVector2 offset_) override {
             _BoundingBox.Offset(offset_);
         }
 
-        void UpdateShape(EntityPositionChangedEventArgs &e) override {
-            auto par = GetParent<Core::BaseEntity>();
-            _BoundingBox = TRectangle(par->GetPosition() + _Offset, _Width, _Height).ToBoundingBox(0);
+        void UpdateShape(EntityTransformChangedEventArgs &e) override {
+            SetRectangle(CreateRectangle());
+        }
+
+        TRectangle CreateRectangle() const {
+            const auto par = GetParent<Core::BaseEntity>();
+            return TRectangle(par->GetPosition() - par->GetOrigin() + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width, _Rectangle.Height);
         }
     public:
 
@@ -88,11 +90,29 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a bounding box component
          */
-        BoundingBoxCollisionShapeComponent(Core::BaseEntity *parent_, float width_, float height_, TVector2 offset_ = TVector2::Zero, std::string collisionGroup_ = "General")
-            : BaseCollisionShapeComponent(parent_, collisionGroup_), _Height(height_), _Offset(offset_), _Width(width_) {
-            auto par = GetParent<Core::BaseEntity>();
+        BoundingBoxCollisionShapeComponent(Core::BaseEntity *parent_, TRectangle rectangle_, std::string collisionGroup_ = "General")
+            : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Rectangle(rectangle_) {
+            const auto par = GetParent<Core::BaseEntity>();
 
-            _BoundingBox = TRectangle(par->GetPosition() + _Offset, _Width, _Height).ToBoundingBox(0);
+            SetRectangle(CreateRectangle());
+        }
+
+        // Public Methods
+
+        /*
+         * Get the bounding box
+         */
+        [[nodiscard]] TBoundingBox GetBoundingBox() const {
+            return _BoundingBox;
+        }
+
+        /*
+         * Set the bounding box height
+         */
+        void SetRectangle(TRectangle rectangle_) {
+            const auto par = GetParent<Core::BaseEntity>();
+            _Rectangle = rectangle_;
+            _BoundingBox = TRectangle(par->GetPosition() - par->GetOrigin() + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width, _Rectangle.Height).ToBoundingBox(par->GetRotation(), par->GetOrigin());
         }
     };
 }

@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * The collision map
          */
-        std::map<std::string, std::vector<BaseEntity*>> CollisionMap;
+        std::unordered_map<std::string, std::vector<BaseEntity*>> CollisionMap;
 
         /*
          * On draw event
