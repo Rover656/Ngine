@@ -97,7 +97,7 @@ namespace NerdThings::Ngine::Components {
     public:
         // Public Constructor(s)
 
-        CircleCollisionShapeComponent(Core::BaseEntity *parent_, float radius_, std::string collisionGroup_= "General")
+        CircleCollisionShapeComponent(Core::BaseEntity *parent_, float radius_, std::string collisionGroup_ = "General")
             : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Radius(radius_) {
             const auto par = GetParent<Core::BaseEntity>();
 

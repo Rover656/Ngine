@@ -196,7 +196,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the parent scene
          */
-        [[nodiscard]] Scene* GetParentScene() const;
+        [[nodiscard]] Scene *GetParentScene() const;
 
         /*
          * Get the entity position

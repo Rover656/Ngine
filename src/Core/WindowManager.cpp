@@ -11,12 +11,6 @@
 
 #include "WindowManager.h"
 
-#ifdef _WIN32
-#include "Windows.h"
-#elif defined(__linux__)
-#include <libgen.h>
-#endif
-
 namespace NerdThings::Ngine::Core {
     // Public Methods
 
@@ -38,36 +32,6 @@ namespace NerdThings::Ngine::Core {
 
     void WindowManager::Close() {
         CloseWindow();
-    }
-
-    std::string WindowManager::GetExecutableDirectory() {
-        // TODO: Finish adding from https://github.com/Quintus/pathie-cpp/blob/master/src/path.cpp#L927
-#ifdef _WIN32
-        char buf[MAX_PATH];
-        if (GetModuleFileNameA(NULL, buf, MAX_PATH) == 0) {
-            throw std::runtime_error("Failed to get path.");
-        }
-        return ::GetDirectoryPath(buf);
-#elif defined(__linux__)
-        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-        const char *path;
-        if (count != -1) {
-            path = dirname(result);
-        }
-        return std::string(path); // TODO: Test
-#elif defined(__APPLE__)
-        // TODO: Find some way of testing...
-        char buf[PATH_MAX];
-        uint32_t size = sizeof(buf);
-
-        if (_NSGetExecutablePath(buf, &size) == 0)
-            // Might contain symlinks or extra slashes. Shouldn't be an issue though
-            // https://stackoverflow.com/questions/799679/programmatically-retrieving-the-absolute-path-of-an-os-x-command-line-app/1024933#1024933
-            return ::GetDirectoryPath(buf);
-        else
-            throw std::runtime_error("An error occurred getting the executable location.");
-#endif
-        throw std::runtime_error("Need to add other platforms");
     }
 
     int WindowManager::GetWindowHeight() {

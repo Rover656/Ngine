@@ -11,4 +11,4 @@
 
 // cute_c2 definitions
 #define CUTE_C2_IMPLEMENTATION
-#include "3rd-party/cute-headers/cute_c2.h"
+#include <cute_c2.h>

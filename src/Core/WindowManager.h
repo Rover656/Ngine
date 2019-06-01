@@ -34,12 +34,6 @@ namespace NerdThings::Ngine::Core {
         static void Close();
 
         /*
-         * Get the working directory
-         * TODO: Move into a resources class
-         */
-        static std::string GetExecutableDirectory();
-
-        /*
          * Get the window height
          */
         static int GetWindowHeight();

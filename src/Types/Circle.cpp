@@ -12,7 +12,8 @@
 #include "Circle.h"
 
 #include "BoundingBox.h"
-#include "../3rd-party/cute-headers/cute_c2.h"
+
+#include <cute_c2.h>
 
 namespace NerdThings::Ngine {
     // Private Methods

@@ -22,9 +22,6 @@ namespace NerdThings::Ngine::Components {
         // Update the target
         _Camera.Target = e.EntityPosition;
 
-        // Update origin
-        _Camera.Origin = e.EntityOrigin;
-
         // We ignore scale and rotation as this is independently controlled
     }
 
@@ -36,7 +33,8 @@ namespace NerdThings::Ngine::Components {
 
     // Public Constructors
 
-    CameraComponent::CameraComponent(Core::BaseEntity *parent_, const float zoom_, const TVector2 origin_, const float rotation_)
+    CameraComponent::CameraComponent(Core::BaseEntity *parent_, const float zoom_, const TVector2 origin_,
+                                     const float rotation_)
         : Component(parent_) {
         auto par = GetParent<Core::BaseEntity>();
 

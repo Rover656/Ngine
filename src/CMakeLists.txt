@@ -31,6 +31,7 @@ endif()
 
 # Include directories
 target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
+target_include_directories(Ngine PUBLIC "3rd-party/cute-headers")
 
 # Link libraries
 target_link_libraries(Ngine raylib)

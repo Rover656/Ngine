@@ -11,9 +11,10 @@
 
 #include "Polygon.h"
 
-#include "../3rd-party/cute-headers/cute_c2.h"
 #include "BoundingBox.h"
 #include "Circle.h"
+
+#include <cute_c2.h>
 
 // Helper functions
 

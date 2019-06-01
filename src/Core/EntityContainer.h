@@ -38,12 +38,12 @@ namespace NerdThings::Ngine::Core {
         /*
          * Remove an entity parent
          */
-        virtual void RemoveEntityParent(BaseEntity* ent_) = 0;
+        virtual void RemoveEntityParent(BaseEntity *ent_) = 0;
 
         /*
          * Set the entity parent
          */
-        virtual void SetEntityParent(BaseEntity* ent_) = 0;
+        virtual void SetEntityParent(BaseEntity *ent_) = 0;
     public:
         // Public Methods
 
@@ -52,7 +52,7 @@ namespace NerdThings::Ngine::Core {
          * Returns entity if success, null if fail
          */
         template <typename EntityType>
-        EntityType* AddEntity(std::string name_, EntityType *entity_) {
+        EntityType *AddEntity(std::string name_, EntityType *entity_) {
             // Check the name is not taken
             if (HasEntity(name_))
                 return nullptr;

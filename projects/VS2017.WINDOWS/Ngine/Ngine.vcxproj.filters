@@ -105,6 +105,9 @@
     <ClInclude Include="..\..\..\src\Components\SpriteComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Core\Resources.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -193,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Graphics\Sprite.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Core\Resources.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

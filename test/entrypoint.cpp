@@ -9,7 +9,7 @@
 #include "Core/BaseEntity.h"
 #include "Core/Component.h"
 #include "Core/Game.h"
-#include "Core/WindowManager.h"
+#include "Core/Resources.h"
 #include "Graphics/Sprite.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
@@ -20,7 +20,7 @@ using namespace NGINE_NS::Core;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 
-class Resources {
+class GameResources {
 public:
     static TFont DefaultFont;
     static TTexture2D *TestTexture;
@@ -28,13 +28,18 @@ public:
     static void Init() {
         DefaultFont = TFont::GetDefaultFont();
 
-        auto path = WindowManager::GetExecutableDirectory() + "\\content\\test_spritesheet.png";
-        TestTexture = TTexture2D::LoadTexture(path);
+        auto success = false;
+        auto path = Resources::GetExecutableDirectory(success) + "\\content\\test_spritesheet.png";
+
+        if (success)
+            TestTexture = TTexture2D::LoadTexture(path);
+        else
+            throw std::runtime_error("Failed to load test texture.");
     }
 };
 
-TFont Resources::DefaultFont;
-TTexture2D *Resources::TestTexture;
+TFont GameResources::DefaultFont;
+TTexture2D *GameResources::TestTexture;
 
 class HelloWorldComponent2D : public Component {
 public:
@@ -43,7 +48,8 @@ public:
     }
 
     void DrawCamera(EventArgs &e) override {
-        Drawing::DrawText(Resources::DefaultFont, "I'm in the scene, controlling the camera\nI am also affected by said camera.",
+        Drawing::DrawText(GameResources::DefaultFont,
+                          "I'm in the scene, controlling the camera\nI am also affected by said camera.",
                           GetParent<BaseEntity>()->GetPosition(), 48, 1, TColor::Red);
     }
 };
@@ -109,11 +115,12 @@ class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, TVector2 position_)
         : BaseEntity(parentScene_, position_) {
-        SetOrigin({ 32, 32 });
+        SetOrigin({32, 32});
 
-        AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::TestTexture, 16, 16, 64, 64, 30, 0)));
+        AddComponent("Sprite", new SpriteComponent(this, Sprite(GameResources::TestTexture, 16, 16, 64, 64, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->EnableDebugDraw(true);
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->
+            EnableDebugDraw(true);
 
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1920 / 2.0f, 1080 / 2.0f}));
 
@@ -138,7 +145,8 @@ public:
 
         Drawing::DrawCircle(pos, 15, color ? TColor::Orange : TColor::White);
 
-        Drawing::DrawText(Resources::DefaultFont, "I am in the scene, not affected by the camera", {25, 300}, 48, 2, TColor::Purple);
+        Drawing::DrawText(GameResources::DefaultFont, "I am in the scene, not affected by the camera", {25, 300}, 48, 2,
+                          TColor::Purple);
     }
 
     void Update(EventArgs &e) override {
@@ -157,7 +165,8 @@ public:
             tcol = TColor::Red;
         }
 
-        Drawing::DrawText(Resources::DefaultFont, "I am in the scene, affected by the camera", {10, 10}, 48, 2, tcol);
+        Drawing::DrawText(GameResources::DefaultFont, "I am in the scene, affected by the camera", {10, 10}, 48, 2,
+                          tcol);
 
         Drawing::DrawFPS({10, 100});
     }
@@ -190,7 +199,7 @@ public:
 
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
-        AddEntity("Player", new PlayerEntity(this, { 100, 100 }));
+        AddEntity("Player", new PlayerEntity(this, {100, 100}));
     }
 };
 
@@ -202,7 +211,7 @@ public:
         width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_,
         MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW | VSYNC) {
         // Load resources
-        Resources::Init();
+        GameResources::Init();
 
         _Scene = new TestScene();
 

@@ -109,7 +109,7 @@ namespace NerdThings::Ngine {
             origin += {X, Y};
 
             // Make polygon
-            std::vector<TVector2> vertices = { {X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height} };
+            std::vector<TVector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
             for (auto i = 0; i < vertices.size(); i++) {
                 vertices[i] = vertices[i].Rotate(origin, rotation_);
             }

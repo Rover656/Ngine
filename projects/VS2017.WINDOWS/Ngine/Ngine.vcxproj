@@ -36,6 +36,7 @@
     <ClInclude Include="..\..\..\src\Core\Game.h" />
     <ClInclude Include="..\..\..\src\Core\Component.h" />
     <ClInclude Include="..\..\..\src\Core\EntityContainer.h" />
+    <ClInclude Include="..\..\..\src\Core\Resources.h" />
     <ClInclude Include="..\..\..\src\Core\Scene.h" />
     <ClInclude Include="..\..\..\src\Core\WindowManager.h" />
     <ClInclude Include="..\..\..\src\Graphics\Drawing.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="..\..\..\src\Core\Game.cpp" />
     <ClCompile Include="..\..\..\src\Core\Component.cpp" />
     <ClCompile Include="..\..\..\src\Core\EntityContainer.cpp" />
+    <ClCompile Include="..\..\..\src\Core\Resources.cpp" />
     <ClCompile Include="..\..\..\src\Core\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Core\WindowManager.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp" />
@@ -164,7 +166,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;..\..\..\src\3rd-party\cute-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,7 +182,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;_DEBUG;NGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;..\..\..\src\3rd-party\cute-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -198,7 +200,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;WIN32;NDEBUG;NGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;..\..\..\src\3rd-party\cute-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -218,7 +220,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;NDEBUG;NGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;..\..\..\src\3rd-party\cute-headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

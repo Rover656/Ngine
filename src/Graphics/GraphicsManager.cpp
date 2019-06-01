@@ -50,7 +50,8 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void GraphicsManager::ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_) {
-        const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.begin();
+        const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.
+            begin();
 
         // If this is the currently active target, replace it too
         if (oldPos == _RenderTargetStack.size() - 1) {
