@@ -11,6 +11,8 @@
 
 #include "Sprite.h"
 
+#include <cmath>
+
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
