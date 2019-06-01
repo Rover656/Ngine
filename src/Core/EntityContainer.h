@@ -6,6 +6,8 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -30,6 +32,18 @@ namespace NerdThings::Ngine::Core {
          * Every entity has a name.
          */
         std::map<std::string, BaseEntity*> _Entities;
+
+        // Private Methods
+
+        /*
+         * Remove an entity parent
+         */
+        virtual void RemoveEntityParent(BaseEntity* ent_) = 0;
+
+        /*
+         * Set the entity parent
+         */
+        virtual void SetEntityParent(BaseEntity* ent_) = 0;
     public:
         // Public Methods
 
@@ -48,6 +62,10 @@ namespace NerdThings::Ngine::Core {
 
             if (ent != nullptr) {
                 _Entities.insert({name_, ent});
+
+                // Set parent
+                SetEntityParent(ent);
+
                 return entity_;
             }
 

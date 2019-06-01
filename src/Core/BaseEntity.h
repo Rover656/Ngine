@@ -6,6 +6,10 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
+*       Will need to review again once scaling is added
+*       Entity parenting also needs reviewing to decide what we do about positioning and origins
 *
 **********************************************************************************************/
 
@@ -54,6 +58,16 @@ namespace NerdThings::Ngine::Core {
         TVector2 _Origin;
 
         /*
+         * The parent entity
+         */
+        BaseEntity *_ParentEntity = nullptr;
+
+        /*
+         * Parent Scene
+         */
+        Scene *_ParentScene = nullptr;
+
+        /*
          * The entity position
          */
         TVector2 _Position = TVector2::Zero;
@@ -68,6 +82,12 @@ namespace NerdThings::Ngine::Core {
         //  * The entity scale (Used for rendering and physics)
         //  */
         // float _Scale = 1;
+
+        // Private Methods
+
+        void RemoveEntityParent(BaseEntity *ent_) override;
+
+        void SetEntityParent(BaseEntity *ent_) override;
     public:
         // Public Fields
 
@@ -90,11 +110,6 @@ namespace NerdThings::Ngine::Core {
          * On update event
          */
         EventHandler<EventArgs> OnUpdate;
-
-        /*
-         * Parent Scene
-         */
-        Scene *ParentScene;
 
         // Public Constructor(s)
 
@@ -163,6 +178,25 @@ namespace NerdThings::Ngine::Core {
          * Get entity origin
          */
         [[nodiscard]] TVector2 GetOrigin() const;
+
+        /*
+         * Get the parent entity
+         */
+        [[nodiscard]] BaseEntity *GetParentEntity() const;
+
+        /*
+         * Get the parent entity as.
+         * If there is no parent or the parent is not of this type it returns null
+         */
+        template <typename EntityType>
+        [[nodiscard]] EntityType *GetParentEntityAs() const {
+            return dynamic_cast<EntityType*>(_ParentEntity);
+        }
+
+        /*
+         * Get the parent scene
+         */
+        [[nodiscard]] Scene* GetParentScene() const;
 
         /*
          * Get the entity position

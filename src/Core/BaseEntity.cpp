@@ -6,6 +6,8 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -14,10 +16,23 @@
 #include "Component.h"          // Required for: Component
 
 namespace NerdThings::Ngine::Core {
+    // Private Methods
+
+    void BaseEntity::RemoveEntityParent(BaseEntity *ent_) {
+        ent_->_ParentEntity = nullptr;
+    }
+
+    void BaseEntity::SetEntityParent(BaseEntity *ent_) {
+        ent_->_ParentEntity = this;
+    }
+
     // Public Constructor(s)
 
     BaseEntity::BaseEntity(Scene *parentScene_, const TVector2 position_)
-        : _Position(position_), ParentScene(parentScene_) {}
+        : _Position(position_), _ParentScene(parentScene_) {
+        if (parentScene_ == nullptr)
+            throw std::runtime_error("Cannot give an entity a null parent scene.");
+    }
 
     // Destructor
 
@@ -26,6 +41,11 @@ namespace NerdThings::Ngine::Core {
         for (auto comp : _Components) {
             delete comp.second;
         }
+
+        // Unbind all events
+        UnsubscribeFromCameraDraw();
+        UnsubscribeFromDraw();
+        UnsubscribeFromUpdate();
     }
 
     // Public Methods
@@ -54,6 +74,14 @@ namespace NerdThings::Ngine::Core {
         return _Origin;
     }
 
+    BaseEntity *BaseEntity::GetParentEntity() const {
+        return _ParentEntity;
+    }
+
+    Scene *BaseEntity::GetParentScene() const {
+        return _ParentScene;
+    }
+
     TVector2 BaseEntity::GetPosition() const {
         return _Position;
     }
@@ -72,7 +100,7 @@ namespace NerdThings::Ngine::Core {
 
     void BaseEntity::MoveBy(const TVector2 moveBy_) {
         _Position += moveBy_;
-        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
+        OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
@@ -91,17 +119,17 @@ namespace NerdThings::Ngine::Core {
 
     void BaseEntity::SetOrigin(TVector2 origin_) {
         _Origin = origin_;
-        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
+        OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
     void BaseEntity::SetPosition(const TVector2 position_) {
         _Position = position_;
-        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
+        OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
     void BaseEntity::SetRotation(float rotation_) {
         _Rotation = rotation_;
-        OnTransformChanged({ _Origin, _Position, _Rotation, 1 });
+        OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
     // void BaseEntity::SetScale(float scale_) {
@@ -110,9 +138,9 @@ namespace NerdThings::Ngine::Core {
     // }
 
     bool BaseEntity::SubscribeToCameraDraw() {
-        if (ParentScene != nullptr) {
+        if (_ParentScene != nullptr) {
             if (_OnDrawCameraRef.ID < 0) {
-                _OnDrawCameraRef = ParentScene->OnDrawCamera.Bind<BaseEntity>(this, &BaseEntity::DrawCamera);
+                _OnDrawCameraRef = _ParentScene->OnDrawCamera.Bind<BaseEntity>(this, &BaseEntity::DrawCamera);
                 return true;
             } else {
                 // We still have an event, soooo...
@@ -123,9 +151,9 @@ namespace NerdThings::Ngine::Core {
     }
 
     bool BaseEntity::SubscribeToDraw() {
-        if (ParentScene != nullptr) {
+        if (_ParentScene != nullptr) {
             if (_OnDrawRef.ID < 0) {
-                _OnDrawRef = ParentScene->OnDraw.Bind<BaseEntity>(this, &BaseEntity::Draw);
+                _OnDrawRef = _ParentScene->OnDraw.Bind<BaseEntity>(this, &BaseEntity::Draw);
                 return true;
             } else {
                 // We still have an event, soooo...
@@ -136,9 +164,9 @@ namespace NerdThings::Ngine::Core {
     }
 
     bool BaseEntity::SubscribeToUpdate() {
-        if (ParentScene != nullptr) {
+        if (_ParentScene != nullptr) {
             if (_OnUpdateRef.ID < 0) {
-                _OnUpdateRef = ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
+                _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 return true;
             } else {
                 // We still have an event, soooo...

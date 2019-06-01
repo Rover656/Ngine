@@ -23,7 +23,7 @@ set_target_properties(NgineTest
 # Copy dependant dlls
 if (${BUILD_SHARED})
     if (WIN32)
-        if(MSVC)
+        if(MSVC AND NOT ${CMAKE_MAKE_PROGRAM} MATCHES "ninja.exe")
             add_custom_command(TARGET NgineTest POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     "${CMAKE_BINARY_DIR}/Ngine/$<CONFIG>/Ngine.dll"
@@ -54,3 +54,9 @@ if (${BUILD_SHARED})
                 "${CMAKE_BINARY_DIR}/NgineTest/raylib.so")
     endif()
 endif()
+
+# Copy content
+add_custom_command(TARGET NgineTest PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/test/content"
+        "${CMAKE_BINARY_DIR}/NgineTest/content")

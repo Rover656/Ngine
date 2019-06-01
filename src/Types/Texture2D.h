@@ -97,9 +97,9 @@ namespace NerdThings::Ngine {
         //static TTexture2D LoadPixels()
 
         /*
-         * Load a texture from a file
+         * Load a texture and get a pointer
          */
-        static TTexture2D LoadTexture(const std::string &filename_);
+        static TTexture2D *LoadTexture(const std::string &filename_);
 
         // Operators
 

@@ -32,12 +32,14 @@ namespace NerdThings::Ngine {
     // Destructor
 
     TTexture2D::~TTexture2D() {
-        UnloadTexture((*this).ToRaylibTex());
-        ID = 0;
-        Width = 0;
-        Height = 0;
-        Mipmaps = 0;
-        Format = 0;
+        if (ID > 0) {
+            UnloadTexture((*this).ToRaylibTex());
+            ID = 0;
+            Width = 0;
+            Height = 0;
+            Mipmaps = 0;
+            Format = 0;
+        }
     }
 
     // Public Methods
@@ -71,8 +73,15 @@ namespace NerdThings::Ngine {
         GenTextureMipmaps(&tex);
     }
 
-    TTexture2D TTexture2D::LoadTexture(const std::string &filename_) {
-        return FromRaylibTex(::LoadTexture(filename_.c_str()));
+    TTexture2D *TTexture2D::LoadTexture(const std::string &filename_) {
+        auto tex = FromRaylibTex(::LoadTexture(filename_.c_str()));
+        auto ret = new TTexture2D(tex.ID, tex.Width, tex.Height, tex.Mipmaps, tex.Format);
+        tex.ID = 0;
+        tex.Width = 0;
+        tex.Height = 0;
+        tex.Mipmaps = 0;
+        tex.Format = 0;
+        return ret;
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {

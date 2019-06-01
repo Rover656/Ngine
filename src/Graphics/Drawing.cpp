@@ -16,10 +16,6 @@
 // TODO: Use rlgl to add custom vertex data support (i.e. custom shapes)
 
 namespace NerdThings::Ngine::Graphics {
-    // Private Fields
-
-    std::vector<TRenderTarget*> Drawing::_TargetStack;
-
     // Public Methods
 
     void Drawing::BeginDrawing() {
@@ -411,28 +407,28 @@ namespace NerdThings::Ngine::Graphics {
                       selectBack_.ToRaylibColor());
     }
 
-    void Drawing::DrawTexture(const TTexture2D &texture_, const TVector2 position_, const TColor color_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TVector2 position_, const TColor color_,
                               const float scale_,
                               const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
                     {
                         position_.X,
                         position_.Y,
-                        static_cast<float>(texture_.Width) * scale_,
-                        static_cast<float>(texture_.Height) * scale_
+                        static_cast<float>(texture_->Width) * scale_,
+                        static_cast<float>(texture_->Height) * scale_
                     },
                     {
                         0,
                         0,
-                        static_cast<float>(texture_.Width),
-                        static_cast<float>(texture_.Height)
+                        static_cast<float>(texture_->Width),
+                        static_cast<float>(texture_->Height)
                     },
                     color_,
                     origin_,
                     rotation_);
     }
 
-    void Drawing::DrawTexture(const TTexture2D &texture_, const TVector2 position_, const float width_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TVector2 position_, const float width_,
                               const float height_,
                               const TColor color_, const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
@@ -445,15 +441,15 @@ namespace NerdThings::Ngine::Graphics {
                     {
                         0,
                         0,
-                        static_cast<float>(texture_.Width),
-                        static_cast<float>(texture_.Height)
+                        static_cast<float>(texture_->Width),
+                        static_cast<float>(texture_->Height)
                     },
                     color_,
                     origin_,
                     rotation_);
     }
 
-    void Drawing::DrawTexture(const TTexture2D &texture_, const TRectangle sourceRectangle_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle sourceRectangle_,
                               const TVector2 position_, const TColor color_, const TVector2 origin_,
                               const float rotation_) {
         DrawTexture(texture_,
@@ -469,7 +465,7 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(const TTexture2D &texture_, const TRectangle sourceRectangle_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle sourceRectangle_,
                               const TVector2 position_, const float width_, const float height_, const TColor color_,
                               const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
@@ -485,10 +481,12 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(const TTexture2D &texture_, const TRectangle destRectangle_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle destRectangle_,
                               const TRectangle sourceRectangle_, const TColor color_, const TVector2 origin_,
                               const float rotation_) {
-        DrawTexturePro(texture_.ToRaylibTex(),
+        if (texture_ == nullptr) return;
+
+        DrawTexturePro(texture_->ToRaylibTex(),
                        sourceRectangle_.ToRaylibRect(),
                        destRectangle_.ToRaylibRect(),
                        origin_.ToRaylibVec(),
@@ -538,49 +536,4 @@ namespace NerdThings::Ngine::Graphics {
     void Drawing::EndDrawing() {
         ::EndDrawing();
     }
-
-    TRenderTarget *Drawing::PopTarget(bool &popped_) {
-        if (!_TargetStack.empty()) {
-            // Get target
-            auto pop = _TargetStack.back();
-
-            // Remove target
-            _TargetStack.pop_back();
-
-            // Start using another if it is available
-            if (!_TargetStack.empty()) {
-                BeginTextureMode(_TargetStack.back()->ToRaylibTarget());
-            }
-
-            EndTextureMode();
-
-            popped_ = true;
-            return pop;
-        }
-
-        popped_ = false;
-        return nullptr;
-    }
-
-    void Drawing::PushTarget(TRenderTarget *target_) {
-        // Add to target stack
-        _TargetStack.emplace_back(target_);
-
-        // Use the target
-        BeginTextureMode(target_->ToRaylibTarget());
-    }
-
-    void Drawing::ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_) {
-        const auto oldPos = std::find(_TargetStack.begin(), _TargetStack.end(), old_) - _TargetStack.begin();
-
-        // If this is the currently active target, replace it too
-        if (oldPos == _TargetStack.size() - 1) {
-            EndTextureMode();
-            BeginTextureMode(new_->ToRaylibTarget());
-        }
-
-        // Send to stack
-        _TargetStack[oldPos] = new_;
-    }
-
 }

@@ -6,6 +6,8 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -17,10 +19,13 @@ namespace NerdThings::Ngine::Components {
     // Private Methods
 
     void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs &e) {
-        // Update target
+        // Update the target
         _Camera.Target = e.EntityPosition;
 
-        // We ignore scale and rotation as this is independent
+        // Update origin
+        _Camera.Origin = e.EntityOrigin;
+
+        // We ignore scale and rotation as this is independently controlled
     }
 
     // Destructor
@@ -31,14 +36,8 @@ namespace NerdThings::Ngine::Components {
 
     // Public Constructors
 
-    CameraComponent::CameraComponent(Core::BaseEntity *parent_, float zoom_, TVector2 origin_, float rotation_)
+    CameraComponent::CameraComponent(Core::BaseEntity *parent_, const float zoom_, const TVector2 origin_, const float rotation_)
         : Component(parent_) {
-        // Check our parent is valid
-        if (parent_ == nullptr) {
-            // TODO: Maybe add as a general error in component constructor
-            throw std::runtime_error("A valid parent must be attached to this component.");
-        }
-
         auto par = GetParent<Core::BaseEntity>();
 
         // Setup camera
@@ -51,18 +50,18 @@ namespace NerdThings::Ngine::Components {
     // Public Methods
 
     void CameraComponent::Activate() {
-        GetParent<Core::BaseEntity>()->ParentScene->SetActiveCamera(&_Camera);
+        GetParent<Core::BaseEntity>()->GetParentScene()->SetActiveCamera(&_Camera);
     }
 
-    void CameraComponent::SetOrigin(TVector2 origin_) {
+    void CameraComponent::SetOrigin(const TVector2 origin_) {
         _Camera.Origin = origin_;
     }
 
-    void CameraComponent::SetRotation(float rotation_) {
+    void CameraComponent::SetRotation(const float rotation_) {
         _Camera.Rotation = rotation_;
     }
 
-    void CameraComponent::SetZoom(float zoom_) {
+    void CameraComponent::SetZoom(const float zoom_) {
         _Camera.Zoom = zoom_;
     }
 }

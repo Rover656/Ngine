@@ -6,16 +6,17 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef BASESCENE_H
 #define BASESCENE_H
 
-// Include ngine
 #include "../ngine.h"
 
-#include "EntityContainer.h"    // Required for: EntityContainer
+#include "EntityContainer.h"
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine::Core {
@@ -30,11 +31,17 @@ namespace NerdThings::Ngine::Core {
          */
         TCamera *_ActiveCamera = nullptr;
 
+        // Private Methods
+
+        void RemoveEntityParent(BaseEntity *ent_) override;
+
+        void SetEntityParent(BaseEntity *ent_) override;
     public:
         // Public Fields
 
         /*
-         * The collision map
+         * The collision map.
+         * This is controlled by collision components
          */
         std::unordered_map<std::string, std::vector<BaseEntity*>> CollisionMap;
 

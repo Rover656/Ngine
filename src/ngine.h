@@ -53,7 +53,7 @@
 #include <vector>                               // Required for: std::vector
 
 #if defined(INCLUDE_RAYLIB)
-#include "3rd-party/raylib/src/raylib.h"    // Required for: raylib in its entirety
+#include <raylib.h>    // Required for: raylib in its entirety
 #endif
 
 // Type includes

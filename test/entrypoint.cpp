@@ -5,9 +5,12 @@
 #include "Components/CameraComponent.h"
 #include "Components/CircleCollisionShapeComponent.h"
 #include "Components/PolygonCollisionShapeComponent.h"
+#include "Components/SpriteComponent.h"
+#include "Core/BaseEntity.h"
 #include "Core/Component.h"
 #include "Core/Game.h"
-#include "Core/BaseEntity.h"
+#include "Core/WindowManager.h"
+#include "Graphics/Sprite.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 
@@ -17,17 +20,30 @@ using namespace NGINE_NS::Core;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 
+class Resources {
+public:
+    static TFont DefaultFont;
+    static TTexture2D *TestTexture;
+
+    static void Init() {
+        DefaultFont = TFont::GetDefaultFont();
+
+        auto path = WindowManager::GetExecutableDirectory() + "\\content\\test_spritesheet.png";
+        TestTexture = TTexture2D::LoadTexture(path);
+    }
+};
+
+TFont Resources::DefaultFont;
+TTexture2D *Resources::TestTexture;
+
 class HelloWorldComponent2D : public Component {
-    TFont def;
 public:
     HelloWorldComponent2D(BaseEntity *parent_) : Component(parent_) {
         SubscribeToCameraDraw();
-
-        def = TFont::GetDefaultFont();
     }
 
     void DrawCamera(EventArgs &e) override {
-        Drawing::DrawText(def, "I'm in the scene, controlling the camera\nI am also affected by said camera.",
+        Drawing::DrawText(Resources::DefaultFont, "I'm in the scene, controlling the camera\nI am also affected by said camera.",
                           GetParent<BaseEntity>()->GetPosition(), 48, 1, TColor::Red);
     }
 };
@@ -78,28 +94,40 @@ class TestEntity : public BaseEntity {
 public:
     TestEntity(Scene *parentScene_, const TVector2 &pos_) : BaseEntity(parentScene_, pos_) {
         AddComponent("HelloWorld", new HelloWorldComponent2D(this));
-        AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1920 / 2.0f, 1080 / 2.0f}));
 
-        cam->Activate();
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->
+            EnableDebugDraw(true);
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw(true);
-
-        TRectangle bounds = { 0, 0, 100, 100 };
-        std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
+        TRectangle bounds = {0, 0, 100, 100};
+        std::vector<TVector2> vertices = {{0, 0}, {100, 0}, {100, 100}, {0, 100}};
 
         //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, vertices))->EnableDebugDraw(true);
     }
 };
 
+class PlayerEntity : public BaseEntity {
+public:
+    PlayerEntity(Scene *parentScene_, TVector2 position_)
+        : BaseEntity(parentScene_, position_) {
+        SetOrigin({ 32, 32 });
+
+        AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::TestTexture, 16, 16, 64, 64, 30, 0)));
+        AddComponent("Movement", new KeyboardMovementComponent2D(this));
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->EnableDebugDraw(true);
+
+        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1920 / 2.0f, 1080 / 2.0f}));
+
+        cam->Activate();
+    }
+};
+
 class OtherComponent : public Component {
-    TFont def;
+    Sprite tst;
 public:
     OtherComponent(BaseEntity *parent_) : Component(parent_) {
         SubscribeToCameraDraw();
         SubscribeToDraw();
-
-        def = TFont::GetDefaultFont();
+        SubscribeToUpdate();
     }
 
     void Draw(EventArgs &e) override {
@@ -110,10 +138,16 @@ public:
 
         Drawing::DrawCircle(pos, 15, color ? TColor::Orange : TColor::White);
 
-        Drawing::DrawText(def, "I am in the scene, not affected by the camera", {25, 300}, 48, 2, TColor::Purple);
+        Drawing::DrawText(Resources::DefaultFont, "I am in the scene, not affected by the camera", {25, 300}, 48, 2, TColor::Purple);
+    }
+
+    void Update(EventArgs &e) override {
+        //tst.Update();
     }
 
     void DrawCamera(EventArgs &e) override {
+        //tst.Draw({100, 250}, 0);
+
         // This is all affected by the camera
         Drawing::DrawTriangle({250, 0}, {100, 200}, {400, 200}, TColor::Yellow);
 
@@ -123,7 +157,7 @@ public:
             tcol = TColor::Red;
         }
 
-        Drawing::DrawText(def, "I am in the scene, affected by the camera", {10, 10}, 48, 2, tcol);
+        Drawing::DrawText(Resources::DefaultFont, "I am in the scene, affected by the camera", {10, 10}, 48, 2, tcol);
 
         Drawing::DrawFPS({10, 100});
     }
@@ -134,12 +168,13 @@ public:
     OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero) {
         AddComponent("OtherComponent", new OtherComponent(this));
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw(true);
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->
+            EnableDebugDraw(true);
         //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw(true);
 
         //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
 
-        TRectangle rect = { 0, 0, 100, 100 };
+        TRectangle rect = {0, 0, 100, 100};
 
         //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw(true);
     }
@@ -154,27 +189,25 @@ public:
         test->SetOrigin(TVector2(50, 50));
 
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
+
+        AddEntity("Player", new PlayerEntity(this, { 100, 100 }));
     }
 };
 
 class TestGame : public Game {
     TestScene *_Scene;
 public:
-    TFont def;
 
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
         width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_,
         MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW | VSYNC) {
-        def = TFont::GetDefaultFont();
-
-        //OnDraw.Bind(this, &TestGame::Draw);
+        // Load resources
+        Resources::Init();
 
         _Scene = new TestScene();
 
         SetScene(_Scene);
     }
-
-    void Draw(EventArgs &e_) { }
 };
 
 #ifdef _WIN32

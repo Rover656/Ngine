@@ -101,6 +101,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)\content</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders>
+      <RootFolder>content</RootFolder>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -117,6 +123,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)\content</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders>
+      <RootFolder>content</RootFolder>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,6 +149,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)\content</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders>
+      <RootFolder>content</RootFolder>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -157,6 +175,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)\content</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders>
+      <RootFolder>content</RootFolder>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ngine\Ngine.vcxproj">
@@ -165,6 +189,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\entrypoint.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\..\test\content\test_spritesheet.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

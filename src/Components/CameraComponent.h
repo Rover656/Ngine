@@ -6,6 +6,8 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -54,7 +56,8 @@ namespace NerdThings::Ngine::Components {
         // Public Fields
 
         /*
-         * Mark this camera as the currently active camera
+         * Mark this camera as the currently active camera.
+         * Overrides any other active camera
          */
         void Activate();
 

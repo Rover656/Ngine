@@ -6,13 +6,14 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef CIRCLECOLLISIONSHAPECOMPONENT_H
 #define CIRCLECOLLISIONSHAPECOMPONENT_H
 
-#include <utility>
 #include "../ngine.h"
 
 #include "../Graphics/Drawing.h"
@@ -60,15 +61,17 @@ namespace NerdThings::Ngine::Components {
         void DrawDebug() override {
             auto par = GetParent<Core::BaseEntity>();
 
-            // Draw circle
+            // Determine color
             auto col = TColor::Red;
             if (CheckCollision<Core::BaseEntity>())
                 col = TColor::Green;
 
+            // Draw the circle outline
             Graphics::Drawing::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {
+            // We handle bounding boxes and circles here
             auto bbox = dynamic_cast<BoundingBoxCollisionShapeComponent*>(b);
             auto circle = dynamic_cast<CircleCollisionShapeComponent*>(b);
 
@@ -80,11 +83,15 @@ namespace NerdThings::Ngine::Components {
         }
 
         void Offset(TVector2 offset_) override {
-            _Circle.Offset(offset_);
+            const auto par = GetParent<Core::BaseEntity>();
+
+            // Rebuild with offset
+            _Circle = TCircle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
-            SetRadius(_Radius);
+            const auto par = GetParent<Core::BaseEntity>();
+            _Circle = TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
 
     public:
@@ -107,7 +114,7 @@ namespace NerdThings::Ngine::Components {
         void SetRadius(float radius_) {
             const auto par = GetParent<Core::BaseEntity>();
             _Radius = radius_;
-            _Circle = TCircle(par->GetPosition(), _Radius);
+            _Circle = TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
     };
 }

@@ -6,6 +6,8 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -35,6 +37,9 @@ namespace NerdThings::Ngine::Core {
         const auto ent = GetEntity<BaseEntity>(name_);
 
         if (ent != nullptr) {
+            // Remove parent
+            RemoveEntityParent(ent);
+
             // Remove entity from map
             _Entities.erase(name_);
 

@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\..\src\Components\BaseCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\CircleCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\PolygonCollisionShapeComponent.h" />
+    <ClInclude Include="..\..\..\src\Components\SpriteComponent.h" />
     <ClInclude Include="..\..\..\src\config.h" />
     <ClInclude Include="..\..\..\src\Core\BaseEntity.h" />
     <ClInclude Include="..\..\..\src\Core\EventHandler.h" />
@@ -38,6 +39,8 @@
     <ClInclude Include="..\..\..\src\Core\Scene.h" />
     <ClInclude Include="..\..\..\src\Core\WindowManager.h" />
     <ClInclude Include="..\..\..\src\Graphics\Drawing.h" />
+    <ClInclude Include="..\..\..\src\Graphics\GraphicsManager.h" />
+    <ClInclude Include="..\..\..\src\Graphics\Sprite.h" />
     <ClInclude Include="..\..\..\src\Input\Gamepad.h" />
     <ClInclude Include="..\..\..\src\Input\Keyboard.h" />
     <ClInclude Include="..\..\..\src\Input\Mouse.h" />
@@ -67,6 +70,8 @@
     <ClCompile Include="..\..\..\src\Core\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Core\WindowManager.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\GraphicsManager.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\Sprite.cpp" />
     <ClCompile Include="..\..\..\src\Input\Gamepad.cpp" />
     <ClCompile Include="..\..\..\src\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
@@ -159,6 +164,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,6 +180,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;_DEBUG;NGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -191,6 +198,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;WIN32;NDEBUG;NGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -210,6 +218,7 @@
       <PreprocessorDefinitions>NGINE_EXPORTS;NDEBUG;NGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\..\..\src\3rd-party\raylib\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

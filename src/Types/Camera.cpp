@@ -11,7 +11,7 @@
 
 #include "Camera.h"
 
-#include "../3rd-party/raylib/src/rlgl.h"
+#include <rlgl.h>
 
 namespace NerdThings::Ngine {
     // Public Methods

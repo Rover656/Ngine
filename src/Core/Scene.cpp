@@ -6,17 +6,26 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
+*       Needs a review again after adding physics engine
 *
 **********************************************************************************************/
 
 #include "Scene.h"
 
 namespace NerdThings::Ngine::Core {
+    // Private Methods
+
+    // The following two functions do nothing
+    // This method is here for adding an entity parent
+    void Scene::RemoveEntityParent(BaseEntity *ent_) {}
+
+    void Scene::SetEntityParent(BaseEntity *ent_) {}
+
     // Public Constructor(s)
 
-    Scene::Scene() {
-        // Not doing anything yet...
-    }
+    Scene::Scene() = default;
 
     // Public Methods
 

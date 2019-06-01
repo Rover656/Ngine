@@ -74,5 +74,10 @@ namespace NerdThings::Ngine::Core {
     // Protected Constructor(s)
 
     Component::Component(BaseEntity *parent_)
-        : _ParentEntity(parent_) {}
+        : _ParentEntity(parent_) {
+        // Check our parent is valid
+        if (parent_ == nullptr) {
+            throw std::runtime_error("A valid parent must be attached to this component.");
+        }
+    }
 }

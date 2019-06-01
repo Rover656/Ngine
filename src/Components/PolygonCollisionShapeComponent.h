@@ -6,6 +6,9 @@
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   
+*   File reviewed on 01/06/2019 by R.M
+*       May require further review at a later date
 *
 **********************************************************************************************/
 
@@ -63,11 +66,12 @@ namespace NerdThings::Ngine::Components {
         }
 
         void DrawDebug() override {
-            // Draw rectangle
+            // Determine color
             auto col = TColor::Red;
             if (CheckCollision<Core::BaseEntity>())
                 col = TColor::Green;
 
+            // Draw every vertex of the polygon
             Graphics::Drawing::DrawLine(_Polygon.Vertices[0], _Polygon.Vertices[1], col);
             for (auto i = 1; i < _Polygon.VertexCount - 1; i++) {
                 Graphics::Drawing::DrawLine(_Polygon.Vertices[i], _Polygon.Vertices[i + 1], col);
@@ -76,6 +80,7 @@ namespace NerdThings::Ngine::Components {
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {
+            // We handle collisions with bounding boxes, circles and ourselves
             auto bbox = dynamic_cast<BoundingBoxCollisionShapeComponent*>(b);
             auto circle = dynamic_cast<CircleCollisionShapeComponent*>(b);
             auto polygon = dynamic_cast<PolygonCollisionShapeComponent*>(b);
@@ -90,11 +95,29 @@ namespace NerdThings::Ngine::Components {
         }
 
         void Offset(TVector2 offset_) override {
-            _Polygon.Offset(offset_);
+            // This could be expensive in some cases, so only do it if necessary
+            if (offset_.X != 0 && offset_.Y != 0) {
+                const auto par = GetParent<Core::BaseEntity>();
+
+                // Offset vertices
+                std::vector<TVector2> vertices(_Vertices.size());
+                for (auto i = 0; i < _Vertices.size(); i++) {
+                    vertices[i] = _Vertices[i];
+                    vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
+                    vertices[i] += par->GetPosition() - par->GetOrigin() + offset_;
+                }
+                _Polygon = TPolygon(vertices);
+            }
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
-            SetPolygon(TPolygon(_Vertices));
+            std::vector<TVector2> vertices(_Vertices.size());
+            for (auto i = 0; i < _Vertices.size(); i++) {
+                vertices[i] = _Vertices[i];
+                vertices[i] = vertices[i].Rotate(e.EntityOrigin, e.EntityRotation);
+                vertices[i] += e.EntityPosition - e.EntityOrigin;
+            }
+            _Polygon = TPolygon(vertices);
         }
 
     public:
@@ -103,7 +126,7 @@ namespace NerdThings::Ngine::Components {
 
         PolygonCollisionShapeComponent(Core::BaseEntity *parent_, std::vector<TVector2> vertices_,
                                        std::string collisionGroup_ = "General")
-            : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Vertices(vertices_) {
+            : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Vertices(std::move(vertices_)) {
             const auto par = GetParent<Core::BaseEntity>();
 
             // Create polygon
@@ -115,16 +138,16 @@ namespace NerdThings::Ngine::Components {
             : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)) {
             const auto par = GetParent<Core::BaseEntity>();
 
-            SetPolygon(polygon_);
+            SetPolygon(std::move(polygon_));
         }
 
         // Public Methods
 
-        TPolygon GetPolygon() {
+        TPolygon GetPolygon() const {
             return _Polygon;
         }
 
-        void SetPolygon(TPolygon polygon_) {
+        void SetPolygon(const TPolygon &polygon_) {
             const auto par = GetParent<Core::BaseEntity>();
 
             // Grab vertices
@@ -137,7 +160,7 @@ namespace NerdThings::Ngine::Components {
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
                 vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
-                vertices[i] += par->GetPosition();
+                vertices[i] += par->GetPosition() - par->GetOrigin();
             }
             _Polygon = TPolygon(vertices);
         }

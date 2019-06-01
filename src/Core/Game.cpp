@@ -11,6 +11,7 @@
 
 #include "Game.h"
 
+#include "../Graphics/GraphicsManager.h"
 #include "../Input/Keyboard.h"
 #include "../Input/Mouse.h"
 #include "WindowManager.h"
@@ -144,7 +145,7 @@ namespace NerdThings::Ngine::Core {
             if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
                 _RenderTarget.Texture.SetTextureWrap(WRAP_CLAMP);
                 _RenderTarget.Texture.SetTextureFilter(RenderTargetFilterMode);
-                Graphics::Drawing::PushTarget(&_RenderTarget);
+                Graphics::GraphicsManager::PushTarget(&_RenderTarget);
             }
 
             // Clear the background
@@ -156,9 +157,9 @@ namespace NerdThings::Ngine::Core {
             // If using a target, draw target
             if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
                 auto popped = false;
-                Graphics::Drawing::PopTarget(popped);
+                Graphics::GraphicsManager::PopTarget(popped);
 
-                Graphics::Drawing::DrawTexture(_RenderTarget.Texture,
+                Graphics::Drawing::DrawTexture(&_RenderTarget.Texture,
                                                {
                                                    (w - iw * scale) * 0.5f,
                                                    (h - ih * scale) * 0.5f,

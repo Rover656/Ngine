@@ -96,6 +96,15 @@
     <ClInclude Include="..\..\..\src\Components\PolygonCollisionShapeComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Graphics\Sprite.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Graphics\GraphicsManager.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\Components\SpriteComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -178,6 +187,12 @@
     <ClCompile Include="..\..\..\src\ngine.cpp" />
     <ClCompile Include="..\..\..\src\Types\Polygon.cpp">
       <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Graphics\GraphicsManager.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Graphics\Sprite.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
