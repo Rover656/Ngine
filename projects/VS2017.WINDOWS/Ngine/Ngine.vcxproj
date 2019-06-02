@@ -84,6 +84,7 @@
     <ClCompile Include="..\..\..\src\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\..\src\Math\Matrix.cpp" />
+    <ClCompile Include="..\..\..\src\Math\Rectangle.cpp" />
     <ClCompile Include="..\..\..\src\Math\Vector2.cpp" />
     <ClCompile Include="..\..\..\src\ngine.cpp" />
     <ClCompile Include="..\..\..\src\Physics\BoundingBox.cpp" />

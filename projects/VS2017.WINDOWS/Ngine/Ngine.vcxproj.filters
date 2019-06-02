@@ -209,5 +209,8 @@
     <ClCompile Include="..\..\..\src\Graphics\Camera.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\Math\Rectangle.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
