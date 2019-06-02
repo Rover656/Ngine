@@ -49,7 +49,7 @@ namespace NerdThings::Ngine::Math {
         return box;
     }
 
-    Physics::TPolygon TRectangle::ToPolygon(const float rotation_, TVector2 origin_) {
+    Physics::TPolygon TRectangle::ToPolygon(const float rotation_, TVector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 

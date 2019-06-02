@@ -11,6 +11,7 @@
 
 #include "Game.h"
 
+#include "../Audio/AudioManager.h"
 #include "../Graphics/GraphicsManager.h"
 #include "../Input/Keyboard.h"
 #include "../Input/Mouse.h"
@@ -50,6 +51,7 @@ namespace NerdThings::Ngine::Core {
         // Register default events
         OnRun.Bind(Input::Mouse::OnGameRun);
         OnUpdate.Bind(Input::Mouse::OnGameUpdate);
+        OnUpdate.Bind(Audio::AudioManager::Update);
 
         // By default, disable exit key
         Input::Keyboard::SetExitKey(KEY_NONE);
@@ -85,9 +87,6 @@ namespace NerdThings::Ngine::Core {
     void Game::Run() {
         #if !defined(PLATFORM_UWP)
 
-        // Invoke OnRun
-        OnRun({});
-
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
             _RenderTarget = Graphics::TRenderTarget(_IntendedWidth, _IntendedHeight);
@@ -99,6 +98,15 @@ namespace NerdThings::Ngine::Core {
 
         auto lastFPS = _UpdateFPS;
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
+
+        // Init audio
+        Audio::AudioManager::InitDevice();
+
+        // Wait for device to be created
+        while(!Audio::AudioManager::IsReady()) {}
+
+        // Invoke OnRun
+        OnRun({});
 
         while (!WindowManager::ShouldClose()) {
             // Window/Game Size variables
@@ -188,6 +196,10 @@ namespace NerdThings::Ngine::Core {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
+        // Close audio
+        Audio::AudioManager::CloseDevice();
+
+        // Close window
         WindowManager::Close();
 
         #else

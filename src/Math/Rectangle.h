@@ -82,7 +82,7 @@ namespace NerdThings::Ngine::Math {
         /*
          * Convert rectangle to polygon
          */
-        Physics::TPolygon ToPolygon(float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
+        Physics::TPolygon ToPolygon(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
     };
 }
 

@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\Audio\AudioManager.h" />
+    <ClInclude Include="..\..\..\src\Audio\Music.h" />
     <ClInclude Include="..\..\..\src\Audio\Sound.h" />
     <ClInclude Include="..\..\..\src\Components\BoundingBoxCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\CameraComponent.h" />
@@ -64,6 +65,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\Audio\AudioManager.cpp" />
+    <ClCompile Include="..\..\..\src\Audio\Music.cpp" />
+    <ClCompile Include="..\..\..\src\Audio\Sound.cpp" />
     <ClCompile Include="..\..\..\src\Components\CameraComponent.cpp" />
     <ClCompile Include="..\..\..\src\Core\BaseEntity.cpp" />
     <ClCompile Include="..\..\..\src\Core\Game.cpp" />

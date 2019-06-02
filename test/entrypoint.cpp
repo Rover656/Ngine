@@ -1,24 +1,28 @@
 #define INCLUDE_WINDOWS
 #include "ngine.h"
 
-#include "Components/BoundingBoxCollisionShapeComponent.h"
-#include "Components/CameraComponent.h"
-#include "Components/CircleCollisionShapeComponent.h"
-#include "Components/PolygonCollisionShapeComponent.h"
-#include "Components/SpriteComponent.h"
-#include "Core/BaseEntity.h"
-#include "Core/Component.h"
-#include "Core/Game.h"
-#include "Core/Resources.h"
-#include "Graphics/Sprite.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
-#include "Math/Vector2.h"
-#include "Physics/BoundingBox.h"
-#include "Physics/Circle.h"
-#include "Physics/Polygon.h"
+#include <Audio/AudioManager.h>
+#include <Audio/Music.h>
+#include <Audio/Sound.h>
+#include <Components/BoundingBoxCollisionShapeComponent.h>
+#include <Components/CameraComponent.h>
+#include <Components/CircleCollisionShapeComponent.h>
+#include <Components/PolygonCollisionShapeComponent.h>
+#include <Components/SpriteComponent.h>
+#include <Core/BaseEntity.h>
+#include <Core/Component.h>
+#include <Core/Game.h>
+#include <Core/Resources.h>
+#include <Graphics/Sprite.h>
+#include <Input/Keyboard.h>
+#include <Input/Mouse.h>
+#include <Math/Vector2.h>
+#include <Physics/BoundingBox.h>
+#include <Physics/Circle.h>
+#include <Physics/Polygon.h>
 
 using namespace NGINE_NS;
+using namespace NGINE_NS::Audio;
 using namespace NGINE_NS::Components;
 using namespace NGINE_NS::Core;
 using namespace NGINE_NS::Graphics;
@@ -30,6 +34,8 @@ class GameResources {
 public:
     static TFont DefaultFont;
     static TTexture2D *TestTexture;
+    static TMusic *TestMusic;
+    static TSound *TestSound;
 
     static void Init() {
         DefaultFont = TFont::GetDefaultFont();
@@ -41,11 +47,27 @@ public:
             TestTexture = TTexture2D::LoadTexture(path);
         else
             throw std::runtime_error("Failed to load test texture.");
+
+        success = false;
+        path = Resources::GetExecutableDirectory(success) + "\\content\\test_music.mp3";
+        if (success)
+            TestMusic = TMusic::LoadMusic(path);
+        else
+            throw std::runtime_error("Failed to load test music.");
+
+        success = false;
+        path = Resources::GetExecutableDirectory(success) + "\\content\\test_sound.wav";
+        if (success)
+            TestSound = TSound::LoadSound(path);
+        else
+            throw std::runtime_error("Failed to load test sound.");
     }
 };
 
 TFont GameResources::DefaultFont;
 TTexture2D *GameResources::TestTexture;
+TMusic *GameResources::TestMusic;
+TSound *GameResources::TestSound;
 
 class HelloWorldComponent2D : public Component {
 public:
@@ -157,6 +179,10 @@ public:
 
     void Update(EventArgs &e) override {
         //tst.Update();
+
+        if (Keyboard::IsKeyPressed(KEY_SPACE)) {
+            AudioManager::Play(GameResources::TestSound);
+        }
     }
 
     void DrawCamera(EventArgs &e) override {
@@ -206,6 +232,12 @@ public:
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
         AddEntity("Player", new PlayerEntity(this, {100, 100}));
+
+        OnLoad.Bind(this, &TestScene::OnLoaded);
+    }
+
+    void OnLoaded(SceneLoadEventArgs &e) {
+        AudioManager::Play(GameResources::TestMusic);
     }
 };
 
@@ -216,11 +248,17 @@ public:
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
         width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_,
         MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW | VSYNC) {
+        OnRun.Bind(this, &TestGame::Init);
+    }
+
+    void Init(EventArgs &e) {
         // Load resources
         GameResources::Init();
 
+        // Create scene
         _Scene = new TestScene();
 
+        // Set scene
         SetScene(_Scene);
     }
 };

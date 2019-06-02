@@ -22,5 +22,14 @@
     <CopyFileToFolders Include="..\..\..\test\content\test_spritesheet.png">
       <Filter>Content</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\test\content\test_sound.wav">
+      <Filter>Content</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\test\content\readme.txt">
+      <Filter>Content</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\test\content\test_music.mp3">
+      <Filter>Content</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
