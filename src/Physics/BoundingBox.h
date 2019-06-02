@@ -12,14 +12,12 @@
 #ifndef BOUNDINGBOX2D_H
 #define BOUNDINGBOX2D_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
+#include "../Math/Vector2.h"
 #include "CollisionShape.h"
-#include "Vector2.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Physics {
     /*
      * A 2D Bounding Box
      */
@@ -36,12 +34,12 @@ namespace NerdThings::Ngine {
         /*
          * Maximum coordinate
          */
-        TVector2 Max;
+        Math::TVector2 Max;
 
         /*
          * Minimum coordinate
          */
-        TVector2 Min;
+        Math::TVector2 Min;
 
         // Public Constructor(s)
 
@@ -50,13 +48,6 @@ namespace NerdThings::Ngine {
          */
         TBoundingBox()
             : Max({}), Min({}) {}
-
-        // Public Methods
-
-        /*
-         * Offset the bounding box
-         */
-        void Offset(TVector2 offset_) override;
     };
 }
 

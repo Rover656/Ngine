@@ -11,7 +11,7 @@
 
 #include "Color.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     TColor::TColor(const int r_, const int g_, const int b_, const int a_) {

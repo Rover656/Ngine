@@ -11,7 +11,10 @@
 
 #include "Font.h"
 
-namespace NerdThings::Ngine {
+#include "../Math/Rectangle.h"
+#include "../Math/Vector2.h"
+
+namespace NerdThings::Ngine::Graphics {
     //----------------------------------------------------------------------------------
     // TCharInfo
     //----------------------------------------------------------------------------------
@@ -37,7 +40,7 @@ namespace NerdThings::Ngine {
         TCharInfo inf;
 
         inf.Character = info_.value;
-        inf.Rectangle = TRectangle::FromRaylibRect(info_.rec);
+        inf.Rectangle = Math::TRectangle::FromRaylibRect(info_.rec);
         inf.OffsetX = info_.offsetX;
         inf.OffsetY = info_.offsetY;
         inf.AdvanceX = info_.advanceX;
@@ -103,7 +106,8 @@ namespace NerdThings::Ngine {
         return TFont::FromRaylibFont(::LoadFont(filename_.c_str()));
     }
 
-    TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
-        return TVector2::FromRaylibVec(MeasureTextEx((*this).ToRaylibFont(), string_.c_str(), fontSize_, spacing_));
+    Math::TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
+        return Math::TVector2::FromRaylibVec(
+            MeasureTextEx((*this).ToRaylibFont(), string_.c_str(), fontSize_, spacing_));
     }
 }

@@ -24,13 +24,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\src\Audio\AudioManager.h" />
+    <ClInclude Include="..\..\..\src\Audio\Sound.h" />
     <ClInclude Include="..\..\..\src\Components\BoundingBoxCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\CameraComponent.h" />
     <ClInclude Include="..\..\..\src\Components\BaseCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\CircleCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\PolygonCollisionShapeComponent.h" />
     <ClInclude Include="..\..\..\src\Components\SpriteComponent.h" />
-    <ClInclude Include="..\..\..\src\config.h" />
     <ClInclude Include="..\..\..\src\Core\BaseEntity.h" />
     <ClInclude Include="..\..\..\src\Core\EventHandler.h" />
     <ClInclude Include="..\..\..\src\Core\Game.h" />
@@ -39,30 +40,30 @@
     <ClInclude Include="..\..\..\src\Core\Resources.h" />
     <ClInclude Include="..\..\..\src\Core\Scene.h" />
     <ClInclude Include="..\..\..\src\Core\WindowManager.h" />
+    <ClInclude Include="..\..\..\src\EventArgs.h" />
+    <ClInclude Include="..\..\..\src\Graphics\Camera.h" />
+    <ClInclude Include="..\..\..\src\Graphics\Color.h" />
     <ClInclude Include="..\..\..\src\Graphics\Drawing.h" />
+    <ClInclude Include="..\..\..\src\Graphics\Font.h" />
     <ClInclude Include="..\..\..\src\Graphics\GraphicsManager.h" />
+    <ClInclude Include="..\..\..\src\Graphics\RenderTarget.h" />
     <ClInclude Include="..\..\..\src\Graphics\Sprite.h" />
+    <ClInclude Include="..\..\..\src\Graphics\Texture2D.h" />
     <ClInclude Include="..\..\..\src\Input\Gamepad.h" />
     <ClInclude Include="..\..\..\src\Input\Keyboard.h" />
     <ClInclude Include="..\..\..\src\Input\Mouse.h" />
+    <ClInclude Include="..\..\..\src\Math\Matrix.h" />
+    <ClInclude Include="..\..\..\src\Math\Rectangle.h" />
+    <ClInclude Include="..\..\..\src\Math\Vector2.h" />
+    <ClInclude Include="..\..\..\src\Math\Vector3.h" />
     <ClInclude Include="..\..\..\src\ngine.h" />
-    <ClInclude Include="..\..\..\src\Types\BoundingBox.h" />
-    <ClInclude Include="..\..\..\src\Types\Camera.h" />
-    <ClInclude Include="..\..\..\src\Types\Circle.h" />
-    <ClInclude Include="..\..\..\src\Types\CollisionShape.h" />
-    <ClInclude Include="..\..\..\src\Types\Color.h" />
-    <ClInclude Include="..\..\..\src\Types\EventArgs.h" />
-    <ClInclude Include="..\..\..\src\Types\Font.h" />
-    <ClInclude Include="..\..\..\src\Types\Matrix.h" />
-    <ClInclude Include="..\..\..\src\Types\Polygon.h" />
-    <ClInclude Include="..\..\..\src\Types\Rectangle.h" />
-    <ClInclude Include="..\..\..\src\Types\RenderTarget.h" />
-    <ClInclude Include="..\..\..\src\Types\Texture2D.h" />
-    <ClInclude Include="..\..\..\src\Types\Enums.h" />
-    <ClInclude Include="..\..\..\src\Types\Vector2.h" />
-    <ClInclude Include="..\..\..\src\Types\Vector3.h" />
+    <ClInclude Include="..\..\..\src\Physics\BoundingBox.h" />
+    <ClInclude Include="..\..\..\src\Physics\Circle.h" />
+    <ClInclude Include="..\..\..\src\Physics\CollisionShape.h" />
+    <ClInclude Include="..\..\..\src\Physics\Polygon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\Audio\AudioManager.cpp" />
     <ClCompile Include="..\..\..\src\Components\CameraComponent.cpp" />
     <ClCompile Include="..\..\..\src\Core\BaseEntity.cpp" />
     <ClCompile Include="..\..\..\src\Core\Game.cpp" />
@@ -71,23 +72,23 @@
     <ClCompile Include="..\..\..\src\Core\Resources.cpp" />
     <ClCompile Include="..\..\..\src\Core\Scene.cpp" />
     <ClCompile Include="..\..\..\src\Core\WindowManager.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\Camera.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\Color.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Drawing.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\Font.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\GraphicsManager.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\RenderTarget.cpp" />
     <ClCompile Include="..\..\..\src\Graphics\Sprite.cpp" />
+    <ClCompile Include="..\..\..\src\Graphics\Texture2D.cpp" />
     <ClCompile Include="..\..\..\src\Input\Gamepad.cpp" />
     <ClCompile Include="..\..\..\src\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\..\src\Input\Mouse.cpp" />
+    <ClCompile Include="..\..\..\src\Math\Matrix.cpp" />
+    <ClCompile Include="..\..\..\src\Math\Vector2.cpp" />
     <ClCompile Include="..\..\..\src\ngine.cpp" />
-    <ClCompile Include="..\..\..\src\Types\BoundingBox.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Camera.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Circle.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Color.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Font.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Matrix.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Polygon.cpp" />
-    <ClCompile Include="..\..\..\src\Types\RenderTarget.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Texture2D.cpp" />
-    <ClCompile Include="..\..\..\src\Types\Vector2.cpp" />
+    <ClCompile Include="..\..\..\src\Physics\BoundingBox.cpp" />
+    <ClCompile Include="..\..\..\src\Physics\Circle.cpp" />
+    <ClCompile Include="..\..\..\src\Physics\Polygon.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

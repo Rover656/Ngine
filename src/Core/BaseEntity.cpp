@@ -13,7 +13,7 @@
 
 #include "BaseEntity.h"
 
-#include "Component.h"          // Required for: Component
+#include "Component.h"
 
 namespace NerdThings::Ngine::Core {
     // Private Methods
@@ -28,8 +28,8 @@ namespace NerdThings::Ngine::Core {
 
     // Public Constructor(s)
 
-    BaseEntity::BaseEntity(Scene *parentScene_, const TVector2 position_)
-        : _Position(position_), _ParentScene(parentScene_) {
+    BaseEntity::BaseEntity(Scene *parentScene_, const Math::TVector2 position_)
+        : _ParentScene(parentScene_), _Position(position_) {
         if (parentScene_ == nullptr)
             throw std::runtime_error("Cannot give an entity a null parent scene.");
     }
@@ -70,7 +70,7 @@ namespace NerdThings::Ngine::Core {
         return vec;
     }
 
-    TVector2 BaseEntity::GetOrigin() const {
+    Math::TVector2 BaseEntity::GetOrigin() const {
         return _Origin;
     }
 
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine::Core {
         return _ParentScene;
     }
 
-    TVector2 BaseEntity::GetPosition() const {
+    Math::TVector2 BaseEntity::GetPosition() const {
         return _Position;
     }
 
@@ -98,7 +98,7 @@ namespace NerdThings::Ngine::Core {
         return _Components.find(name_) != _Components.end();
     }
 
-    void BaseEntity::MoveBy(const TVector2 moveBy_) {
+    void BaseEntity::MoveBy(const Math::TVector2 moveBy_) {
         _Position += moveBy_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
@@ -117,12 +117,12 @@ namespace NerdThings::Ngine::Core {
         return false;
     }
 
-    void BaseEntity::SetOrigin(TVector2 origin_) {
+    void BaseEntity::SetOrigin(Math::TVector2 origin_) {
         _Origin = origin_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
-    void BaseEntity::SetPosition(const TVector2 position_) {
+    void BaseEntity::SetPosition(const Math::TVector2 position_) {
         _Position = position_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }

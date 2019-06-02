@@ -18,7 +18,7 @@
 
 #include "Vector3.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Math {
     /*
      * A mathematical matrix
      */

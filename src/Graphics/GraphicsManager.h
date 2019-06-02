@@ -14,6 +14,8 @@
 
 #include "../ngine.h"
 
+#include "RenderTarget.h"
+
 namespace NerdThings::Ngine::Graphics {
     /*
      * Graphics management class

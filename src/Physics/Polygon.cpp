@@ -11,27 +11,27 @@
 
 #include "Polygon.h"
 
+#include <cute_c2.h>
+
 #include "BoundingBox.h"
 #include "Circle.h"
 
-#include <cute_c2.h>
-
 // Helper functions
 
-c2Poly createC2Poly(int count, NerdThings::Ngine::TVector2 data[]) {
+c2Poly createC2Poly(int count, NerdThings::Ngine::Math::TVector2 data[]) {
     c2Poly tmpPoly;
     tmpPoly.count = count;
     for (auto i = 0; i < count; i++) tmpPoly.verts[i] = {data[i].X, data[i].Y};
     return tmpPoly;
 }
 
-c2Poly createC2Poly(int count, NerdThings::Ngine::TVector2 data[], NerdThings::Ngine::TVector2 norms[]) {
+c2Poly createC2Poly(int count, NerdThings::Ngine::Math::TVector2 data[], NerdThings::Ngine::Math::TVector2 norms[]) {
     c2Poly tmpPoly = createC2Poly(count, data);
     for (auto i = 0; i < count; i++) tmpPoly.norms[i] = {norms[i].X, norms[i].Y};
     return tmpPoly;
 }
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Physics {
     // Private Methods
 
     bool TPolygon::IsCompatible(ICollisionShape *shape_) {
@@ -100,12 +100,5 @@ namespace NerdThings::Ngine {
 
         // Bring back in our data
         for (auto i = 0; i < VertexCount; i++) Vertices[i] = {tmpPoly.verts[i].x, tmpPoly.verts[i].y};
-    }
-
-    void TPolygon::Offset(TVector2 offset_) {
-        for (auto i = 0; i < VertexCount; i++) Vertices[i] += offset_;
-
-        // Do this just in case
-        GenerateNormals();
     }
 }

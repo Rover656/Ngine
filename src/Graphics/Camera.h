@@ -12,13 +12,12 @@
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
-#include "Vector2.h"
+#include "../Math/Matrix.h"
+#include "../Math/Vector2.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     /*
      * A Camera
      */
@@ -28,7 +27,7 @@ namespace NerdThings::Ngine {
         /*
          * Camera offset/origin
          */
-        TVector2 Origin;
+        Math::TVector2 Origin;
 
         /*
          * Camera rotation
@@ -38,7 +37,7 @@ namespace NerdThings::Ngine {
         /*
          * Camera target
          */
-        TVector2 Target;
+        Math::TVector2 Target;
 
         /*
          * Camera zoom
@@ -47,9 +46,9 @@ namespace NerdThings::Ngine {
 
         // Public Constructor(s)
 
-        TCamera(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
-                TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
-                                                 Origin(origin_) {}
+        TCamera(float rotation_ = 0, float zoom_ = 0, Math::TVector2 target_ = Math::TVector2(),
+                Math::TVector2 origin_ = Math::TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
+                                                             Origin(origin_) {}
 
         // Public Methods
 
@@ -80,7 +79,7 @@ namespace NerdThings::Ngine {
         /*
          * Get the translation matrix
          */
-        TMatrix GetTranslationMatrix() const;
+        Math::TMatrix GetTranslationMatrix() const;
     };
 }
 

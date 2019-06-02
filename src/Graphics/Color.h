@@ -12,11 +12,9 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     /*
      * A 32-bit packed color
      */

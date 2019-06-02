@@ -13,7 +13,7 @@
 
 #include <cute_c2.h>
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Physics {
     // Private Methods
 
     bool TBoundingBox::IsCompatible(ICollisionShape *shape_) {
@@ -58,12 +58,5 @@ namespace NerdThings::Ngine {
         }
 
         return collided;
-    }
-
-    // Public Fields
-
-    void TBoundingBox::Offset(TVector2 offset_) {
-        Max += offset_;
-        Min += offset_;
     }
 }

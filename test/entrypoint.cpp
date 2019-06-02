@@ -13,12 +13,18 @@
 #include "Graphics/Sprite.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
+#include "Math/Vector2.h"
+#include "Physics/BoundingBox.h"
+#include "Physics/Circle.h"
+#include "Physics/Polygon.h"
 
 using namespace NGINE_NS;
 using namespace NGINE_NS::Components;
 using namespace NGINE_NS::Core;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
+using namespace NGINE_NS::Math;
+using namespace NGINE_NS::Physics;
 
 class GameResources {
 public:
@@ -117,7 +123,7 @@ public:
         : BaseEntity(parentScene_, position_) {
         SetOrigin({32, 32});
 
-        AddComponent("Sprite", new SpriteComponent(this, Sprite(GameResources::TestTexture, 16, 16, 64, 64, 30, 0)));
+        AddComponent("Sprite", new SpriteComponent(this, TSprite(GameResources::TestTexture, 16, 16, 64, 64, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
         AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->
             EnableDebugDraw(true);
@@ -129,7 +135,7 @@ public:
 };
 
 class OtherComponent : public Component {
-    Sprite tst;
+    TSprite tst;
 public:
     OtherComponent(BaseEntity *parent_) : Component(parent_) {
         SubscribeToCameraDraw();

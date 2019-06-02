@@ -12,13 +12,9 @@
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
-#include "Enums.h"
-
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture stored in the GPU memory
      */

@@ -13,10 +13,13 @@
 #define SPRITE_H
 
 #include "../ngine.h"
-#include "Drawing.h"
+
+#include "../Math/Rectangle.h"
+#include "../Math/Vector2.h"
+#include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
-    class NEAPI Sprite {
+    class NEAPI TSprite {
         // Private Fields
 
         /*
@@ -72,34 +75,34 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Null sprite
          */
-        Sprite() = default;
+        TSprite() = default;
 
         /*
          * Create a sprite
          */
-        Sprite(TTexture2D *texture_);
+        TSprite(TTexture2D *texture_);
 
         /*
          * Create an animated sprite sheet
          */
-        Sprite(TTexture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
-               float imageSpeed_ = 30, int startingFrame = 0);
+        TSprite(TTexture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+                float imageSpeed_ = 30, int startingFrame = 0);
 
         /*
          * Create an animated sequence of textures
          */
-        Sprite(std::vector<TTexture2D*> textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
+        TSprite(std::vector<TTexture2D*> textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
 
         // Destructor
 
-        virtual ~Sprite() = default;
+        virtual ~TSprite() = default;
 
         // Public Methods
 
         /*
          * Draw the sprite
          */
-        void Draw(TVector2 position_, float rotation_, TVector2 origin_ = TVector2::Zero);
+        void Draw(Math::TVector2 position_, float rotation_, Math::TVector2 origin_ = Math::TVector2::Zero);
 
         /*
          * Get the current X coordinate
@@ -119,7 +122,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the source rectangle for drawing with
          */
-        TRectangle GetSourceRectangle();
+        Math::TRectangle GetSourceRectangle();
 
         /*
          * Whether or not the sprite is animated

@@ -12,14 +12,12 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
+#include "../Math/Vector2.h"
 #include "CollisionShape.h"
-#include "Vector2.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Physics {
     struct NEAPI TCircle : public ICollisionShape {
     private:
         // Private Methods
@@ -33,7 +31,7 @@ namespace NerdThings::Ngine {
         /*
          * Circle center
          */
-        TVector2 Center;
+        Math::TVector2 Center;
 
         /*
          * Circle radius
@@ -46,20 +44,13 @@ namespace NerdThings::Ngine {
          * Create a circle
          */
         TCircle()
-            : Center(TVector2::Zero), Radius(0) {}
+            : Center(Math::TVector2::Zero), Radius(0) {}
 
         /*
          * Create a circle
          */
-        TCircle(const TVector2 center_, const float radius_)
+        TCircle(const Math::TVector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
-
-        // Public Methods
-
-        /*
-         * Offset the circle
-         */
-        void Offset(TVector2 offset_) override;
     };
 }
 

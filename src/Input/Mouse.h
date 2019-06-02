@@ -15,6 +15,8 @@
 #include "../ngine.h"
 
 #include "../Core/EventHandler.h"
+#include "../Math/Vector2.h"
+#include "../EventArgs.h"
 
 namespace NerdThings::Ngine::Input {
     struct MouseState {
@@ -43,7 +45,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Mouse cursor position
          */
-        TVector2 Position = {0, 0};
+        Math::TVector2 Position = {0, 0};
     };
 
     /*
@@ -85,7 +87,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Get mouse position
          */
-        static TVector2 GetMousePosition();
+        static Math::TVector2 GetMousePosition();
 
         /*
          * Get the mouse state
@@ -131,12 +133,12 @@ namespace NerdThings::Ngine::Input {
         /*
          * On game run
          */
-        static void OnGameRun(EventArgs &e_);
+        static void OnGameRun(Core::EventArgs &e_);
 
         /*
          * On game update
          */
-        static void OnGameUpdate(EventArgs &e_);
+        static void OnGameUpdate(Core::EventArgs &e_);
     };
 }
 

@@ -17,7 +17,9 @@
 #include "../ngine.h"
 
 #include "../Graphics/Drawing.h"
-#include "../Types/BoundingBox.h"
+#include "../Physics/BoundingBox.h"
+#include "../Physics/Circle.h"
+#include "../Math/Vector2.h"
 #include "BaseCollisionShapeComponent.h"
 #include "BoundingBoxCollisionShapeComponent.h"
 
@@ -31,7 +33,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * The circle used
          */
-        TCircle _Circle;
+        Physics::TCircle _Circle;
 
         /*
          * The circle radius
@@ -62,9 +64,9 @@ namespace NerdThings::Ngine::Components {
             auto par = GetParent<Core::BaseEntity>();
 
             // Determine color
-            auto col = TColor::Red;
+            auto col = Graphics::TColor::Red;
             if (CheckCollision<Core::BaseEntity>())
-                col = TColor::Green;
+                col = Graphics::TColor::Green;
 
             // Draw the circle outline
             Graphics::Drawing::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
@@ -82,16 +84,16 @@ namespace NerdThings::Ngine::Components {
             return false;
         }
 
-        void Offset(TVector2 offset_) override {
+        void Offset(Math::TVector2 offset_) override {
             const auto par = GetParent<Core::BaseEntity>();
 
             // Rebuild with offset
-            _Circle = TCircle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
+            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             const auto par = GetParent<Core::BaseEntity>();
-            _Circle = TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
 
     public:
@@ -107,14 +109,14 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        TCircle GetCircle() const {
+        Physics::TCircle GetCircle() const {
             return _Circle;
         }
 
         void SetRadius(float radius_) {
             const auto par = GetParent<Core::BaseEntity>();
             _Radius = radius_;
-            _Circle = TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
     };
 }

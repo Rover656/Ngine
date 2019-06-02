@@ -15,7 +15,7 @@
 
 #include <cute_c2.h>
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Physics {
     // Private Methods
 
     bool TCircle::IsCompatible(ICollisionShape *shape_) {
@@ -79,11 +79,5 @@ namespace NerdThings::Ngine {
         }
 
         return collided;
-    }
-
-    // Public Methods
-
-    void TCircle::Offset(TVector2 offset_) {
-        Center += offset_;
     }
 }

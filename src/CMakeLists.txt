@@ -2,6 +2,8 @@
 file(GLOB Ngine_source
     "*.h"
     "*.cpp"
+    "Audio/*.h"
+    "Audio/*.cpp"
     "Components/*.h"
     "Components/*.cpp"
     "Core/*.h"
@@ -10,6 +12,10 @@ file(GLOB Ngine_source
     "Graphics/*.cpp"
     "Input/*.h"
     "Input/*.cpp"
+    "Math/*.h"
+    "Math/*.cpp"
+    "Physics/*.h"
+    "Physics/*.cpp"
     "Types/*.h"
     "Types/*.cpp"
 )

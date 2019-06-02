@@ -67,7 +67,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Offset shape
          */
-        virtual void Offset(TVector2 offset_) = 0;
+        virtual void Offset(Math::TVector2 offset_) = 0;
 
         /*
          * Update shape information
@@ -108,7 +108,7 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision at a position
          */
         template <typename EntityType>
-        bool CheckCollisionAt(TVector2 position_) {
+        bool CheckCollisionAt(Math::TVector2 position_) {
             auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
             auto diff = curPos - position_;
 
@@ -168,7 +168,7 @@ namespace NerdThings::Ngine::Components {
          * Component must have the collision group to work
          */
         template <typename EntityType>
-        bool CheckCollisionWithAt(const std::string &collisionGroup_, TVector2 position_) {
+        bool CheckCollisionWithAt(const std::string &collisionGroup_, Math::TVector2 position_) {
             auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
             auto diff = curPos - position_;
 
@@ -220,7 +220,7 @@ namespace NerdThings::Ngine::Components {
             }
         }
 
-        void Draw(EventArgs &e) override {
+        void Draw(Core::EventArgs &e) override {
             if (_DebugDraw) {
                 if (!_DebugDrawCamera) {
                     DrawDebug();
@@ -228,7 +228,7 @@ namespace NerdThings::Ngine::Components {
             }
         }
 
-        void DrawCamera(EventArgs &e) override {
+        void DrawCamera(Core::EventArgs &e) override {
             if (_DebugDraw) {
                 if (_DebugDrawCamera) {
                     DrawDebug();

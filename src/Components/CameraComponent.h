@@ -15,7 +15,11 @@
 #define CAMERACOMPONENT_H
 
 #include "../ngine.h"
+
 #include "../Core/Component.h"
+#include "../Graphics/Camera.h"
+#include "../Math/Vector2.h"
+#include "../EventArgs.h"
 
 namespace NerdThings::Ngine::Components {
     /*
@@ -27,7 +31,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * The internal camera
          */
-        TCamera _Camera;
+        Graphics::TCamera _Camera;
 
         /*
          * Reference to on position changed event
@@ -47,7 +51,8 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a camera component
          */
-        CameraComponent(Core::BaseEntity *parent_, float zoom_, TVector2 origin_ = TVector2::Zero, float rotation_ = 0);
+        CameraComponent(Core::BaseEntity *parent_, float zoom_, Math::TVector2 origin_ = Math::TVector2::Zero,
+                        float rotation_ = 0);
 
         // Destructor
 
@@ -64,7 +69,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Set the camera origin
          */
-        void SetOrigin(TVector2 origin_);
+        void SetOrigin(Math::TVector2 origin_);
 
         /*
          * Set camera rotation

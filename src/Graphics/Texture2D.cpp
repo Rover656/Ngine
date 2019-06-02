@@ -11,7 +11,7 @@
 
 #include "Texture2D.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     TTexture2D::TTexture2D(TTexture2D &&tex_)

@@ -9,13 +9,15 @@
 *
 **********************************************************************************************/
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef SOUND_H
+#define SOUND_H
 
-//----------------------------------------------------------------------------------
-// Project Info
-//----------------------------------------------------------------------------------
+#include "../ngine.h"
 
-#define NGINE_VERSION "0.1a"
+namespace NerdThings::Ngine::Audio {
+    struct Sound {
+        
+    };
+}
 
-#endif //CONFIG_H
+#endif //SOUND_H

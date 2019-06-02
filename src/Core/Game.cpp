@@ -90,7 +90,7 @@ namespace NerdThings::Ngine::Core {
 
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
-            _RenderTarget = TRenderTarget(_IntendedWidth, _IntendedHeight);
+            _RenderTarget = Graphics::TRenderTarget(_IntendedWidth, _IntendedHeight);
         }
 
         // Timing
@@ -139,7 +139,7 @@ namespace NerdThings::Ngine::Core {
             Graphics::Drawing::BeginDrawing();
 
             // Clear
-            Graphics::Drawing::Clear(TColor::Black);
+            Graphics::Drawing::Clear(Graphics::TColor::Black);
 
             // If using, start using target
             if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
@@ -172,7 +172,7 @@ namespace NerdThings::Ngine::Core {
                                                    static_cast<float>(_RenderTarget.Texture.Width),
                                                    static_cast<float>(-_RenderTarget.Texture.Height)
                                                },
-                                               TColor::White);
+                                               Graphics::TColor::White);
             }
 
             // Reset mouse

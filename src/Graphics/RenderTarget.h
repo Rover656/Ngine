@@ -12,13 +12,11 @@
 #ifndef RENDERTARGET_H
 #define RENDERTARGET_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
 #include "Texture2D.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture in the GPU that can be rendered to
      */

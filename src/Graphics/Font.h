@@ -12,15 +12,13 @@
 #ifndef FONT_H
 #define FONT_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
-#include "Rectangle.h"
+#include "../Math/Rectangle.h"
+#include "../Math/Vector2.h"
 #include "Texture2D.h"
-#include "Vector2.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     /*
      * Character information
      */
@@ -35,7 +33,7 @@ namespace NerdThings::Ngine {
         /*
          * Sprite font source rectangle
          */
-        TRectangle Rectangle;
+        Math::TRectangle Rectangle;
 
         /*
          * Character X offset for drawing
@@ -156,7 +154,7 @@ namespace NerdThings::Ngine {
         /*
          * Measure the dimensions of a string
          */
-        [[nodiscard]] TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
+        [[nodiscard]] Math::TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
 
         // Operators
 

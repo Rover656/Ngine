@@ -11,7 +11,7 @@
 
 #include "RenderTarget.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     TRenderTarget::TRenderTarget(const int width_, const int height_) {

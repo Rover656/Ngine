@@ -18,6 +18,7 @@
 
 #include "../Core/Component.h"
 #include "../Core/BaseEntity.h"
+#include "../Core/EventHandler.h"
 #include "../Graphics/Sprite.h"
 
 namespace NerdThings::Ngine::Components {
@@ -30,7 +31,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Sprite used
          */
-        Graphics::Sprite _Sprite;
+        Graphics::TSprite _Sprite;
 
         /*
          * Whether or not to draw using the camera
@@ -43,7 +44,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a sprite component
          */
-        SpriteComponent(Core::BaseEntity *parent_, const Graphics::Sprite &sprite_, const bool useCamera_ = true)
+        SpriteComponent(Core::BaseEntity *parent_, const Graphics::TSprite &sprite_, const bool useCamera_ = true)
             : Component(parent_), _Sprite(sprite_), _UsingCamera(useCamera_) {
             if (_UsingCamera)
                 SubscribeToCameraDraw();
@@ -55,21 +56,21 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        void Draw(EventArgs &e) override {
+        void Draw(Core::EventArgs &e) override {
             if (!_UsingCamera) {
                 const auto par = GetParent<Core::BaseEntity>();
                 _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
             }
         }
 
-        void DrawCamera(EventArgs &e) override {
+        void DrawCamera(Core::EventArgs &e) override {
             if (_UsingCamera) {
                 const auto par = GetParent<Core::BaseEntity>();
                 _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
             }
         }
 
-        void Update(EventArgs &e) override {
+        void Update(Core::EventArgs &e) override {
             _Sprite.Update();
         }
     };

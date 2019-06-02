@@ -17,6 +17,18 @@
 #include <functional>
 
 namespace NerdThings::Ngine::Core {
+    /*
+     * Default event arguments
+     */
+    struct EventArgs {
+        // Public Fields
+
+        /*
+         * Unbind event handle once run
+         */
+        bool UnBind = false;
+    };
+
     // Forward declare for EventHandleRef
     template <typename ArgsType = EventArgs>
     class EventHandler;
@@ -68,6 +80,10 @@ namespace NerdThings::Ngine::Core {
         std::vector<int> _UnusedIndices;
 
     public:
+        // Public Constructor(s)
+
+        EventHandler<ArgsType>() = default;
+
         // Public Methods
 
         /*

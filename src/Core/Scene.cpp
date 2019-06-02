@@ -43,11 +43,11 @@ namespace NerdThings::Ngine::Core {
             _ActiveCamera->EndCamera();
     }
 
-    TCamera *Scene::GetActiveCamera() const {
+    Graphics::TCamera *Scene::GetActiveCamera() const {
         return _ActiveCamera;
     }
 
-    void Scene::SetActiveCamera(TCamera *camera_) {
+    void Scene::SetActiveCamera(Graphics::TCamera *camera_) {
         _ActiveCamera = camera_;
     }
 

@@ -16,6 +16,8 @@
 
 #include "../ngine.h"
 
+#include "../Graphics/Camera.h"
+#include "../EventArgs.h"
 #include "EntityContainer.h"
 #include "EventHandler.h"
 
@@ -29,7 +31,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Currently active camera
          */
-        TCamera *_ActiveCamera = nullptr;
+        Graphics::TCamera *_ActiveCamera = nullptr;
 
         // Private Methods
 
@@ -91,12 +93,12 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the currently active camera
          */
-        [[nodiscard]] TCamera *GetActiveCamera() const;
+        [[nodiscard]] Graphics::TCamera *GetActiveCamera() const;
 
         /*
          * Set the currently active camera
          */
-        void SetActiveCamera(TCamera *camera_);
+        void SetActiveCamera(Graphics::TCamera *camera_);
 
         /*
          * Update the scene

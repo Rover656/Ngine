@@ -13,7 +13,7 @@
 
 #include <rlgl.h>
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     #ifdef INCLUDE_RAYLIB
@@ -33,8 +33,8 @@ namespace NerdThings::Ngine {
         return {
             cam_.rotation,
             cam_.zoom,
-            TVector2::FromRaylibVec(cam_.target),
-            TVector2::FromRaylibVec(cam_.offset)
+            Math::TVector2::FromRaylibVec(cam_.target),
+            Math::TVector2::FromRaylibVec(cam_.offset)
         };
     }
 
@@ -53,12 +53,12 @@ namespace NerdThings::Ngine {
         EndMode2D();
     }
 
-    TMatrix TCamera::GetTranslationMatrix() const {
-        TMatrix ret = TMatrix::Identity;
-        ret = ret * TMatrix::Translate(-Target.X, -Target.Y, 0);
-        ret = ret * TMatrix::RotateZ(Rotation);
-        ret = ret * TMatrix::Scale(Zoom, Zoom, 1);
-        ret = ret * TMatrix::Translate(Origin.X, Origin.Y, 0);
+    Math::TMatrix TCamera::GetTranslationMatrix() const {
+        Math::TMatrix ret = Math::TMatrix::Identity;
+        ret = ret * Math::TMatrix::Translate(-Target.X, -Target.Y, 0);
+        ret = ret * Math::TMatrix::RotateZ(Rotation);
+        ret = ret * Math::TMatrix::Scale(Zoom, Zoom, 1);
+        ret = ret * Math::TMatrix::Translate(Origin.X, Origin.Y, 0);
         return ret;
     }
 }

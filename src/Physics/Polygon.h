@@ -12,16 +12,14 @@
 #ifndef POLYGON_H
 #define POLYGON_H
 
-#define TYPE_DECL_HEADER
 #include "../ngine.h"
-#undef TYPE_DECL_HEADER
 
+#include "../Math/Vector2.h"
 #include "CollisionShape.h"
-#include "Vector2.h"
 
 #define MAX_POLY_VERTS 8
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Physics {
     struct NEAPI TPolygon : public ICollisionShape {
     private:
         // Private Methods
@@ -40,12 +38,12 @@ namespace NerdThings::Ngine {
         /*
          * Polygon vertices
          */
-        TVector2 Vertices[MAX_POLY_VERTS];
+        Math::TVector2 Vertices[MAX_POLY_VERTS];
 
         /*
          * Polygon normals
          */
-        TVector2 Normals[MAX_POLY_VERTS];
+        Math::TVector2 Normals[MAX_POLY_VERTS];
 
         // Public Constructor(s)
 
@@ -58,7 +56,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a polygon from vertices
          */
-        TPolygon(const std::vector<TVector2> &vertices_) {
+        TPolygon(const std::vector<Math::TVector2> &vertices_) {
             if (vertices_.size() > MAX_POLY_VERTS)
                 throw std::runtime_error("Too many vertices");
 
@@ -77,11 +75,6 @@ namespace NerdThings::Ngine {
          * Generate normals
          */
         void GenerateNormals();
-
-        /*
-         * Offset the polygon
-         */
-        void Offset(TVector2 offset_) override;
     };
 }
 

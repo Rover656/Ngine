@@ -22,8 +22,8 @@ namespace NerdThings::Ngine::Input {
 
     // Public Methods
 
-    TVector2 Mouse::GetMousePosition() {
-        return TVector2::FromRaylibVec(::GetMousePosition());
+    Math::TVector2 Mouse::GetMousePosition() {
+        return Math::TVector2::FromRaylibVec(::GetMousePosition());
     }
 
     MouseState Mouse::GetMouseState() {
@@ -59,11 +59,11 @@ namespace NerdThings::Ngine::Input {
 
     // Public Event Handles
 
-    void Mouse::OnGameRun(EventArgs &e_) {
+    void Mouse::OnGameRun(Core::EventArgs &e_) {
         LastMouseState = GetMouseState();
     }
 
-    void Mouse::OnGameUpdate(EventArgs &e_) {
+    void Mouse::OnGameUpdate(Core::EventArgs &e_) {
         // Get current state
         auto state = GetMouseState();
 

@@ -12,7 +12,7 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Math {
     /*
      * A 3 component vector
      */

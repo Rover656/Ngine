@@ -14,7 +14,10 @@
 
 #include "../ngine.h"
 
+#include "../Graphics/Color.h"
 #include "../Graphics/Drawing.h"
+#include "../Graphics/RenderTarget.h"
+#include "../Math/Vector2.h"
 #include "EventHandler.h"
 #include "Scene.h"
 
@@ -53,7 +56,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * The render target used for enforcing resolution
          */
-        TRenderTarget _RenderTarget;
+        Graphics::TRenderTarget _RenderTarget;
 
         /*
          * The target update FPS
@@ -66,7 +69,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Background clear color
          */
-        TColor ClearColor = TColor::Black;
+        Graphics::TColor ClearColor = Graphics::TColor::Black;
 
         /*
          * On update event
@@ -153,7 +156,7 @@ namespace NerdThings::Ngine::Core {
          * Set the intended game size.
          * Resizes the framebuffer next frame.
          */
-        void SetIntendedSize(TVector2 size_);
+        void SetIntendedSize(Math::TVector2 size_);
 
         /*
          * Set the current scene

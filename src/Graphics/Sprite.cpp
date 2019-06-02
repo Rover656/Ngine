@@ -13,17 +13,23 @@
 
 #include <cmath>
 
+#include "../Graphics/Color.h"
+#include "../Graphics/Texture2D.h"
+#include "../Math/Rectangle.h"
+#include "../Math/Vector2.h"
+#include "Drawing.h"
+
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    Sprite::Sprite(TTexture2D *texture_) {
+    TSprite::TSprite(TTexture2D *texture_) {
         _Textures.push_back(texture_);
 
         DrawHeight = texture_->Height;
         DrawWidth = texture_->Width;
     }
 
-    Sprite::Sprite(TTexture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+    TSprite::TSprite(TTexture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                    float imageSpeed_, int startingFrame)
         : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
           ImageSpeed(imageSpeed_) {
@@ -31,13 +37,13 @@ namespace NerdThings::Ngine::Graphics {
         CurrentFrame = startingFrame;
     }
 
-    Sprite::Sprite(std::vector<TTexture2D*> textures_, float imageSpeed_, int startingFrame_) { }
+    TSprite::TSprite(std::vector<TTexture2D*> textures_, float imageSpeed_, int startingFrame_) { }
 
     // Public Methods
 
-    void Sprite::Draw(TVector2 position_, float rotation_, TVector2 origin_) {
+    void TSprite::Draw(Math::TVector2 position_, float rotation_, Math::TVector2 origin_) {
         Drawing::DrawTexture(GetCurrentTexture(),
-                             TRectangle(
+                             Math::TRectangle(
                                  position_,
                                  static_cast<float>(DrawWidth),
                                  static_cast<float>(DrawHeight)),
@@ -47,7 +53,7 @@ namespace NerdThings::Ngine::Graphics {
                              rotation_);
     }
 
-    int Sprite::FrameX() {
+    int TSprite::FrameX() {
         if (!_SpriteSheet)
             return 0;
 
@@ -61,7 +67,7 @@ namespace NerdThings::Ngine::Graphics {
         return x;
     }
 
-    int Sprite::FrameY() {
+    int TSprite::FrameY() {
         if (!_SpriteSheet)
             return 0;
 
@@ -78,7 +84,7 @@ namespace NerdThings::Ngine::Graphics {
         return y;
     }
 
-    TTexture2D *Sprite::GetCurrentTexture() {
+    TTexture2D *TSprite::GetCurrentTexture() {
         if (_Textures.empty())
             return nullptr;
 
@@ -89,7 +95,7 @@ namespace NerdThings::Ngine::Graphics {
         return _Textures[CurrentFrame];
     }
 
-    TRectangle Sprite::GetSourceRectangle() {
+    Math::TRectangle TSprite::GetSourceRectangle() {
         if (_SpriteSheet)
             return {
                 static_cast<float>(FrameX()),
@@ -106,7 +112,7 @@ namespace NerdThings::Ngine::Graphics {
             };
     }
 
-    bool Sprite::IsAnimated() {
+    bool TSprite::IsAnimated() {
         if (_SpriteSheet) {
             if (GetCurrentTexture() != nullptr)
                 return FrameHeight != GetCurrentTexture()->Height || FrameWidth != GetCurrentTexture()->Width;
@@ -117,7 +123,7 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void Sprite::Update() {
+    void TSprite::Update() {
         if (IsAnimated()) {
             // Increment timer
             _AnimationTimer++;
