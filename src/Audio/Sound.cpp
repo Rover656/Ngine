@@ -49,16 +49,12 @@ namespace NerdThings::Ngine::Audio {
     #endif
 
     TSound *TSound::LoadSound(const std::string &filename_) {
-        auto snd = FromRaylibSound(::LoadSound(filename_.c_str()));
+        const auto snd = ::LoadSound(filename_.c_str());
         auto ret = new TSound();
-        ret->AudioBuffer = snd.AudioBuffer;
-        ret->Buffer = snd.Buffer;
-        ret->Format = snd.Format;
-        ret->Source = snd.Source;
-        snd.AudioBuffer = nullptr;
-        snd.Buffer = 0;
-        snd.Format = 0;
-        snd.Source = 0;
+        ret->AudioBuffer = snd.audioBuffer;
+        ret->Buffer = snd.buffer;
+        ret->Format = snd.format;
+        ret->Source = snd.source;
         return ret;
     }
 

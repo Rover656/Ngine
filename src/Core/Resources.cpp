@@ -30,8 +30,33 @@
 #include <pwd.h>
 #endif
 
+#include <filesystem>
+
 namespace NerdThings::Ngine::Core {
+    // Private Fields
+
+    std::unordered_map<std::string, Graphics::TFont *> Resources::_Fonts;
+    std::unordered_map<std::string, Audio::TMusic *> Resources::_Music;
+    std::unordered_map<std::string, Audio::TSound *> Resources::_Sounds;
+    std::unordered_map<std::string, Graphics::TTexture2D *> Resources::_Textures;
+
     // Public Methods
+
+    void Resources::DeleteFont(const std::string &name_) {
+        _Fonts.erase(name_);
+    }
+
+    void Resources::DeleteMusic(const std::string &name_) {
+        _Music.erase(name_);
+    }
+
+    void Resources::DeleteSound(const std::string &name_) {
+        _Sounds.erase(name_);
+    }
+
+    void Resources::DeleteTexture(const std::string &name_) {
+        _Textures.erase(name_);
+    }
 
     std::string Resources::GetExecutableDirectory(bool &success_) {
         const auto exePath = GetExecutablePath(success_);
@@ -39,6 +64,7 @@ namespace NerdThings::Ngine::Core {
         if (success_) {
             return std::string(GetDirectoryPath(exePath.c_str()));
         }
+
         return "";
     }
 
@@ -121,4 +147,104 @@ namespace NerdThings::Ngine::Core {
         #endif
     }
 
+    std::string Resources::GetFileExtension(const std::string &path_) {
+        return std::string(::GetExtension(path_.c_str()));
+    }
+
+    Graphics::TFont *Resources::GetFont(const std::string &name_) {
+        if (_Fonts.find(name_) != _Fonts.end())
+            return _Fonts[name_];
+        return nullptr;
+    }
+
+    Audio::TMusic *Resources::GetMusic(const std::string &name_) {
+        if (_Music.find(name_) != _Music.end())
+            return _Music[name_];
+        return nullptr;
+    }
+
+    Audio::TSound *Resources::GetSound(const std::string &name_) {
+        if (_Sounds.find(name_) != _Sounds.end())
+            return _Sounds[name_];
+        return nullptr;
+    }
+
+    Graphics::TTexture2D *Resources::GetTexture(const std::string &name_) {
+        if (_Textures.find(name_) != _Textures.end())
+            return _Textures[name_];
+        return nullptr;
+    }
+
+    std::string Resources::GetWorkingDirectory() {
+        return std::string(::GetWorkingDirectory());
+    }
+
+    void Resources::LoadDirectory(const std::string &directory_) {
+        std::vector<std::string> files;
+
+        // Get all files
+        for (std::filesystem::recursive_directory_iterator i(directory_), end; i != end; ++i)
+            if (!std::filesystem::is_directory(i->path())) {
+                files.push_back(std::filesystem::relative(i->path(), directory_).string());
+        }
+
+        // File extension definitions
+        std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
+        std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
+        std::vector<std::string> texExts = {"png", "bmp", "tga", "pic"};
+
+
+        // Load all files
+        for (auto file : files) {
+            auto name = file.substr(0, file.find_last_of("."));
+            auto ext = GetFileExtension(file);
+
+            auto actualPath = std::filesystem::path(directory_);
+            actualPath /= file;
+
+            if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
+                LoadMusic(actualPath.string(), name);
+            } else if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
+                LoadSound(actualPath.string(), name);
+            } else if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end()) { // Texture
+                LoadTexture(actualPath.string(), name);
+            }
+        }
+    }
+
+    bool Resources::LoadFont(const std::string &inPath_, const std::string &name_) {
+        auto fnt = Graphics::TFont::LoadFont(inPath_);
+        if (fnt->Texture.ID > 0) {
+            _Fonts.insert({ name_, fnt });
+            return true;
+        }
+        return false;
+    }
+
+    bool Resources::LoadMusic(const std::string &inPath_, const std::string &name_) {
+        auto mus = Audio::TMusic::LoadMusic(inPath_);
+        if (mus->MusicData != nullptr) {
+            _Music.insert({ name_, mus });
+            return true;
+        }
+        return false;
+    }
+
+    bool Resources::LoadSound(const std::string &inPath_, const std::string &name_) {
+        auto snd = Audio::TSound::LoadSound(inPath_);
+        if (snd->AudioBuffer != nullptr) {
+            _Sounds.insert({ name_, snd });
+            return true;
+        }
+        return false;
+    }
+
+    bool Resources::LoadTexture(const std::string &inPath_, const std::string &name_) {
+        auto tex = Graphics::TTexture2D::LoadTexture(inPath_);
+        if (tex->ID > 0) {
+            _Textures.insert({ name_, tex });
+            return true;
+        }
+        return false;
+    }
 }

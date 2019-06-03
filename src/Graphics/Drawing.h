@@ -238,20 +238,20 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw text
          */
-        static void DrawText(const TFont &font_, const std::string &string_, Math::TVector2 position_,
+        static void DrawText(TFont *font_, const std::string &string_, Math::TVector2 position_,
                              float fontSize_, float spacing_, TColor color_);
 
         /*
          * Draw text with rectangle constraint
          */
-        static void DrawTextRect(const TFont &font_, const std::string &string_,
+        static void DrawTextRect(TFont *font_, const std::string &string_,
                                  Math::TRectangle rectangle_, float fontSize_, float spacing_,
                                  TColor color_, bool wordWrap_ = true);
 
         /*
          * Draw text with rectangle constraint and select support
          */
-        static void DrawTextRectEx(const TFont &font_, const std::string &string_,
+        static void DrawTextRectEx(TFont *font_, const std::string &string_,
                                    Math::TRectangle rectangle_, float fontSize_, float spacing_,
                                    TColor color_, int selectStart_, int selectLength_,
                                    TColor selectText_, TColor selectBack_, bool wordWrap_ = true);

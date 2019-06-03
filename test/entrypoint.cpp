@@ -14,6 +14,7 @@
 #include <Core/Game.h>
 #include <Core/Resources.h>
 #include <Graphics/Sprite.h>
+#include <Graphics/SpriteBatch.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
 #include <Math/Vector2.h>
@@ -30,45 +31,6 @@ using namespace NGINE_NS::Input;
 using namespace NGINE_NS::Math;
 using namespace NGINE_NS::Physics;
 
-class GameResources {
-public:
-    static TFont DefaultFont;
-    static TTexture2D *TestTexture;
-    static TMusic *TestMusic;
-    static TSound *TestSound;
-
-    static void Init() {
-        DefaultFont = TFont::GetDefaultFont();
-
-        auto success = false;
-        auto path = Resources::GetExecutableDirectory(success) + "\\content\\test_spritesheet.png";
-
-        if (success)
-            TestTexture = TTexture2D::LoadTexture(path);
-        else
-            throw std::runtime_error("Failed to load test texture.");
-
-        success = false;
-        path = Resources::GetExecutableDirectory(success) + "\\content\\test_music.mp3";
-        if (success)
-            TestMusic = TMusic::LoadMusic(path);
-        else
-            throw std::runtime_error("Failed to load test music.");
-
-        success = false;
-        path = Resources::GetExecutableDirectory(success) + "\\content\\test_sound.wav";
-        if (success)
-            TestSound = TSound::LoadSound(path);
-        else
-            throw std::runtime_error("Failed to load test sound.");
-    }
-};
-
-TFont GameResources::DefaultFont;
-TTexture2D *GameResources::TestTexture;
-TMusic *GameResources::TestMusic;
-TSound *GameResources::TestSound;
-
 class HelloWorldComponent2D : public Component {
 public:
     HelloWorldComponent2D(BaseEntity *parent_) : Component(parent_) {
@@ -76,7 +38,7 @@ public:
     }
 
     void DrawCamera(EventArgs &e) override {
-        Drawing::DrawText(GameResources::DefaultFont,
+        Drawing::DrawText(TFont::GetDefaultFont(),
                           "I'm in the scene, controlling the camera\nI am also affected by said camera.",
                           GetParent<BaseEntity>()->GetPosition(), 48, 1, TColor::Red);
     }
@@ -145,12 +107,12 @@ public:
         : BaseEntity(parentScene_, position_) {
         SetOrigin({32, 32});
 
-        AddComponent("Sprite", new SpriteComponent(this, TSprite(GameResources::TestTexture, 16, 16, 64, 64, 30, 0)));
+        AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
         AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->
             EnableDebugDraw(true);
 
-        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1920 / 2.0f, 1080 / 2.0f}));
+        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1920/2.0f, 1080/2.0f}));
 
         cam->Activate();
     }
@@ -173,7 +135,7 @@ public:
 
         Drawing::DrawCircle(pos, 15, color ? TColor::Orange : TColor::White);
 
-        Drawing::DrawText(GameResources::DefaultFont, "I am in the scene, not affected by the camera", {25, 300}, 48, 2,
+        Drawing::DrawText(TFont::GetDefaultFont(), "I am in the scene, not affected by the camera", {25, 300}, 48, 2,
                           TColor::Purple);
     }
 
@@ -181,7 +143,7 @@ public:
         //tst.Update();
 
         if (Keyboard::IsKeyPressed(KEY_SPACE)) {
-            AudioManager::Play(GameResources::TestSound);
+            AudioManager::Play(Resources::GetSound("test_sound"));
         }
     }
 
@@ -197,7 +159,7 @@ public:
             tcol = TColor::Red;
         }
 
-        Drawing::DrawText(GameResources::DefaultFont, "I am in the scene, affected by the camera", {10, 10}, 48, 2,
+        Drawing::DrawText(TFont::GetDefaultFont(), "I am in the scene, affected by the camera", {10, 10}, 48, 2,
                           tcol);
 
         Drawing::DrawFPS({10, 100});
@@ -225,6 +187,8 @@ class TestScene : public Scene {
 public:
     TCamera cam;
 
+    Graphics::SpriteBatch sb;
+
     TestScene() : Scene() {
         auto test = AddEntity("TestEntity", new TestEntity(this, {50, 100}));
         test->SetOrigin(TVector2(50, 50));
@@ -234,10 +198,21 @@ public:
         AddEntity("Player", new PlayerEntity(this, {100, 100}));
 
         OnLoad.Bind(this, &TestScene::OnLoaded);
+
+        OnDraw.Bind(this, &TestScene::Draw);
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
-        AudioManager::Play(GameResources::TestMusic);
+        //AudioManager::Play(Resources::GetMusic("test_music"));
+
+        AudioManager::SetMasterVolume(0.5);
+    }
+
+    void Draw(EventArgs &e) {
+        sb.Begin();
+        sb.DrawFPS(120, 120);
+        sb.DrawRectangle({ 100, 100 }, { 100, 50 }, TColor::Orange, 0, TVector2::Zero, -1);
+        sb.End();
     }
 };
 
@@ -252,8 +227,10 @@ public:
     }
 
     void Init(EventArgs &e) {
-        // Load resources
-        GameResources::Init();
+        // Load all content
+        auto succ = false;
+        auto exeDir = Resources::GetExecutableDirectory(succ);
+        Resources::LoadDirectory(exeDir + "\\content");
 
         // Create scene
         _Scene = new TestScene();

@@ -124,7 +124,6 @@ namespace NerdThings::Ngine::Core {
             lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
             // Update timestep if FPS has changed
-            // TODO: I want to change this, maybe to some form of delta time system instead
             if (_UpdateFPS != lastFPS) {
                 lastFPS = _UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));

@@ -111,6 +111,9 @@
     <ClInclude Include="..\..\..\src\Audio\Music.h">
       <Filter>Audio</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\Graphics\SpriteBatch.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -220,6 +223,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\Audio\Music.cpp">
       <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\Graphics\SpriteBatch.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

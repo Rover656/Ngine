@@ -55,6 +55,10 @@ namespace NerdThings::Ngine::Graphics {
     // TFont
     //----------------------------------------------------------------------------------
 
+    // Private Fields
+
+    TFont* TFont::_DefaultFont;
+
     // Public Constructor(s)
 
     TFont::TFont(TFont &&font_)
@@ -87,23 +91,27 @@ namespace NerdThings::Ngine::Graphics {
         return fnt;
     }
 
-    TFont TFont::FromRaylibFont(const Font &font_) {
-        return {
+    TFont *TFont::FromRaylibFont(const Font &font_) {
+        return new TFont(
             TTexture2D::FromRaylibTex(font_.texture),
             font_.baseSize,
             font_.charsCount,
             reinterpret_cast<TCharInfo*>(font_.chars)
-        };
+        );
     }
 
     #endif
 
-    struct TFont TFont::GetDefaultFont() {
-        return FromRaylibFont(GetFontDefault());
+    struct TFont *TFont::GetDefaultFont() {
+        if (_DefaultFont == nullptr) {
+            _DefaultFont = FromRaylibFont(GetFontDefault());
+        }
+
+        return _DefaultFont;
     }
 
-    TFont TFont::LoadFont(const std::string &filename_) {
-        return TFont::FromRaylibFont(::LoadFont(filename_.c_str()));
+    TFont *TFont::LoadFont(const std::string &filename_) {
+        return FromRaylibFont(::LoadFont(filename_.c_str()));
     }
 
     Math::TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {

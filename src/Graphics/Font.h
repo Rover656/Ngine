@@ -84,6 +84,13 @@ namespace NerdThings::Ngine::Graphics {
      * A font
      */
     struct NEAPI TFont {
+    private:
+        /*
+         * The default font
+         */
+        static TFont* _DefaultFont;
+    public:
+
         // Public Fields
 
         /*
@@ -137,19 +144,19 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert from raylib font
          */
-        static TFont FromRaylibFont(const Font &font_);
+        static TFont *FromRaylibFont(const Font &font_);
 
         #endif
 
         /*
          * Get the default font (Supplied by raylib)
          */
-        static TFont GetDefaultFont();
+        static TFont *GetDefaultFont();
 
         /*
          * Load a font
          */
-        static TFont LoadFont(const std::string &filename_);
+        static TFont *LoadFont(const std::string &filename_);
 
         /*
          * Measure the dimensions of a string

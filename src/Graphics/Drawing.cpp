@@ -376,10 +376,10 @@ namespace NerdThings::Ngine::Graphics {
                                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawText(const TFont &font_, const std::string &string_, const Math::TVector2 position_,
+    void Drawing::DrawText(TFont *font_, const std::string &string_, const Math::TVector2 position_,
                            const float fontSize_,
                            const float spacing_, const TColor color_) {
-        DrawTextEx(font_.ToRaylibFont(),
+        DrawTextEx(font_->ToRaylibFont(),
                    string_.c_str(),
                    position_.ToRaylibVec(),
                    fontSize_,
@@ -387,9 +387,9 @@ namespace NerdThings::Ngine::Graphics {
                    color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTextRect(const TFont &font_, const std::string &string_, const Math::TRectangle rectangle_,
+    void Drawing::DrawTextRect(TFont *font_, const std::string &string_, const Math::TRectangle rectangle_,
                                const float fontSize_, const float spacing_, const TColor color_, const bool wordWrap_) {
-        DrawTextRec(font_.ToRaylibFont(),
+        DrawTextRec(font_->ToRaylibFont(),
                     string_.c_str(),
                     rectangle_.ToRaylibRect(),
                     fontSize_,
@@ -398,12 +398,12 @@ namespace NerdThings::Ngine::Graphics {
                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTextRectEx(const TFont &font_, const std::string &string_, const Math::TRectangle rectangle_,
+    void Drawing::DrawTextRectEx(TFont *font_, const std::string &string_, const Math::TRectangle rectangle_,
                                  const float fontSize_, const float spacing_, const TColor color_,
                                  const int selectStart_,
                                  const int selectLength_, const TColor selectText_, const TColor selectBack_,
                                  const bool wordWrap_) {
-        DrawTextRecEx(font_.ToRaylibFont(),
+        DrawTextRecEx(font_->ToRaylibFont(),
                       string_.c_str(),
                       rectangle_.ToRaylibRect(),
                       fontSize_,
