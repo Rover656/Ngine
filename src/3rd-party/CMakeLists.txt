@@ -10,6 +10,16 @@ if (${BUILD_SHARED})
 	set(SHARED ON CACHE INTERNAL "Build raylib as a shared library" FORCE)
 endif()
 
+# Raylib options
+set(SUPPORT_FILEFORMAT_BMP ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_TGA ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_JPG ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_GIF ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_PSD ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_PKM ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_PVR ON CACHE INTERNAL "Support this file format" FORCE)
+set(SUPPORT_FILEFORMAT_FLAC ON CACHE INTERNAL "Support this format" FORCE)
+
 # Add libraries
 add_subdirectory("raylib")
 
