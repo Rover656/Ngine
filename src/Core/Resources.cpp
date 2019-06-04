@@ -189,9 +189,10 @@ namespace NerdThings::Ngine::Core {
         }
 
         // File extension definitions
+        std::vector<std::string> fntExts = {".ttf", ".otf", ".fnt"}; // TODO: Spritefont support
         std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
-        std::vector<std::string> texExts = {"png", "bmp", "tga", "pic"};
+        std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc};
 
 
         // Load all files
@@ -202,7 +203,9 @@ namespace NerdThings::Ngine::Core {
             auto actualPath = std::filesystem::path(directory_);
             actualPath /= file;
 
-            if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
+            if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
+                LoadFont(actualPath.string(), name);
+            } else if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
                 LoadMusic(actualPath.string(), name);
             } else if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
                 LoadSound(actualPath.string(), name);
