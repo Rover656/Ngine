@@ -53,9 +53,10 @@
 // C++ Includes
 #include <algorithm>                            // Required for: std::clamp and alike methods
 #include <chrono>                               // Required for: std::chrono timings
-#include <string>                               // Required for: std::string
 #include <map>                                  // Required for: std::map
+#include <string>                               // Required for: std::string
 #include <thread>                               // Required for: std::this_thread sleep
+#include <unordered_map>                        // Required for: std::unordered_map
 #include <vector>                               // Required for: std::vector
 
 #if defined(INCLUDE_RAYLIB)
