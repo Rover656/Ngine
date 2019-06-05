@@ -14,7 +14,6 @@
 #include <Core/Game.h>
 #include <Core/Resources.h>
 #include <Graphics/Sprite.h>
-#include <Graphics/SpriteBatch.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
 #include <Math/Vector2.h>
