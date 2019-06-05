@@ -187,8 +187,6 @@ class TestScene : public Scene {
 public:
     TCamera cam;
 
-    Graphics::SpriteBatch sb;
-
     TestScene() : Scene() {
         auto test = AddEntity("TestEntity", new TestEntity(this, {50, 100}));
         test->SetOrigin(TVector2(50, 50));
