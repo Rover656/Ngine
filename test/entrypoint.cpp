@@ -209,10 +209,7 @@ public:
     }
 
     void Draw(EventArgs &e) {
-        sb.Begin();
-        sb.DrawFPS(120, 120);
-        sb.DrawRectangle({ 100, 100 }, { 100, 50 }, TColor::Orange, 0, TVector2::Zero, -1);
-        sb.End();
+        
     }
 };
 
