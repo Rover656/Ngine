@@ -162,6 +162,10 @@ public:
                           tcol);
 
         Drawing::DrawFPS({10, 100});
+
+        // for (auto i = 0; i < 800; i++) {
+        //     Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
+        // }
     }
 };
 
@@ -200,13 +204,17 @@ public:
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
-        //AudioManager::Play(Resources::GetMusic("test_music"));
+        // AudioManager::Play(Resources::GetMusic("test_music"));
 
         AudioManager::SetMasterVolume(0.5);
     }
 
     void Draw(EventArgs &e) {
-        
+        // for (auto i = 0; i < 800; i++) {
+        //     Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
+        // }
+
+        //Drawing::DrawFPS({ 500, 300 });
     }
 };
 
@@ -216,7 +224,7 @@ public:
 
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
         width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_,
-        MSAA_4X | MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW | VSYNC) {
+        MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
         OnRun.Bind(this, &TestGame::Init);
     }
 

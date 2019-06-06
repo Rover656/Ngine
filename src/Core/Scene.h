@@ -33,6 +33,12 @@ namespace NerdThings::Ngine::Core {
          */
         Graphics::TCamera *_ActiveCamera = nullptr;
 
+        /*
+         * Depth key list containing entities.
+         * This is used for drawing.
+         */
+        std::map<int, std::vector<BaseEntity *>> _EntityDepths;
+
         // Private Methods
 
         void RemoveEntityParent(BaseEntity *ent_) override;
@@ -94,6 +100,16 @@ namespace NerdThings::Ngine::Core {
          * Get the currently active camera
          */
         [[nodiscard]] Graphics::TCamera *GetActiveCamera() const;
+
+        /*
+         * Set the entity depth in the scene (internally used)
+         */
+        void InternalSetEntityDepth(int depth_, BaseEntity *ent_);
+
+        /*
+         * Update the entity depth in the scene (internally used)
+         */
+        void InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_);
 
         /*
          * Set the currently active camera

@@ -28,10 +28,13 @@ namespace NerdThings::Ngine::Core {
 
     // Public Constructor(s)
 
-    BaseEntity::BaseEntity(Scene *parentScene_, const Math::TVector2 position_)
-        : _ParentScene(parentScene_), _Position(position_) {
+    BaseEntity::BaseEntity(Scene *parentScene_, const Math::TVector2 position_, int depth_)
+        : _Depth(depth_), _ParentScene(parentScene_), _Position(position_) {
         if (parentScene_ == nullptr)
             throw std::runtime_error("Cannot give an entity a null parent scene.");
+
+        // Set initial depth
+        _ParentScene->InternalSetEntityDepth(_Depth, this);
     }
 
     // Destructor
@@ -43,19 +46,17 @@ namespace NerdThings::Ngine::Core {
         }
 
         // Unbind all events
-        UnsubscribeFromCameraDraw();
-        UnsubscribeFromDraw();
         UnsubscribeFromUpdate();
     }
 
     // Public Methods
 
-    void BaseEntity::Draw(EventArgs &e) {
+    void BaseEntity::Draw() {
         // Trigger draw
         OnDraw({});
     }
 
-    void BaseEntity::DrawCamera(EventArgs &e) {
+    void BaseEntity::DrawCamera() {
         // Trigger drawcamera
         OnDrawCamera({});
     }
@@ -68,6 +69,10 @@ namespace NerdThings::Ngine::Core {
         }
 
         return vec;
+    }
+
+    int BaseEntity::GetDepth() const {
+        return _Depth;
     }
 
     Math::TVector2 BaseEntity::GetOrigin() const {
@@ -117,6 +122,11 @@ namespace NerdThings::Ngine::Core {
         return false;
     }
 
+    void BaseEntity::SetDepth(int depth_) {
+        _ParentScene->InternalUpdateEntityDepth(_Depth, depth_, this);
+        _Depth = depth_;
+    }
+
     void BaseEntity::SetOrigin(Math::TVector2 origin_) {
         _Origin = origin_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
@@ -137,32 +147,6 @@ namespace NerdThings::Ngine::Core {
     //     OnTransformChanged({ _Origin, _Position, _Rotation, _Scale });
     // }
 
-    bool BaseEntity::SubscribeToCameraDraw() {
-        if (_ParentScene != nullptr) {
-            if (_OnDrawCameraRef.ID < 0) {
-                _OnDrawCameraRef = _ParentScene->OnDrawCamera.Bind<BaseEntity>(this, &BaseEntity::DrawCamera);
-                return true;
-            } else {
-                // We still have an event, soooo...
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool BaseEntity::SubscribeToDraw() {
-        if (_ParentScene != nullptr) {
-            if (_OnDrawRef.ID < 0) {
-                _OnDrawRef = _ParentScene->OnDraw.Bind<BaseEntity>(this, &BaseEntity::Draw);
-                return true;
-            } else {
-                // We still have an event, soooo...
-                return true;
-            }
-        }
-        return false;
-    }
-
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
             if (_OnUpdateRef.ID < 0) {
@@ -174,14 +158,6 @@ namespace NerdThings::Ngine::Core {
             }
         }
         return false;
-    }
-
-    void BaseEntity::UnsubscribeFromCameraDraw() {
-        _OnDrawCameraRef.UnBind();
-    }
-
-    void BaseEntity::UnsubscribeFromDraw() {
-        _OnDrawRef.UnBind();
     }
 
     void BaseEntity::UnsubscribeFromUpdate() {
