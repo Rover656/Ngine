@@ -72,6 +72,8 @@ namespace NerdThings::Ngine::Core {
     }
 
     void Scene::InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_) {
+        if (oldDepth_ == newDepth)
+            return; // Short circuit if depth's are the same because we don't want to remove and re-add
         _EntityDepths[oldDepth_].erase(std::remove(_EntityDepths[oldDepth_].begin(), _EntityDepths[oldDepth_].end(), ent_), _EntityDepths[oldDepth_].end());
 
         if (_EntityDepths.find(newDepth_) == _EntityDepths.end())
