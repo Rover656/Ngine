@@ -26,6 +26,13 @@ namespace NerdThings::Ngine::Math {
 
     #endif
 
+    bool TRectangle::Contains(TVector2 point_) const {
+        return X <= point_.X
+            && point_.X < X + Width
+            && Y <= point_.Y
+            && point_.Y < Y + Height;
+    }
+
     Physics::TBoundingBox TRectangle::ToBoundingBox(const float rotation_, TVector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};

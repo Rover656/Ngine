@@ -34,20 +34,20 @@ namespace NerdThings::Ngine::Core {
         // Private fields
 
         /*
+         * Whether or not this entity can be culled
+         */
+        bool _CanCull = false;
+
+        /*
          * The list of all components.
          * All components are given a name for easy identification.
          */
         std::map<std::string, Component*> _Components;
 
         /*
-         * On draw event reference
+         * Depth layer
          */
-        EventHandleRef<EventArgs> _OnDrawRef;
-
-        /*
-         * On draw camera event reference
-         */
-        EventHandleRef<EventArgs> _OnDrawCameraRef;
+        int _Depth;
 
         /*
          * On update event reference
@@ -118,7 +118,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Create a BaseEntity.
          */
-        BaseEntity(Scene *parentScene_, Math::TVector2 position_);
+        BaseEntity(Scene *parentScene_, Math::TVector2 position_, int depth_ = 0, bool canCull_ = false);
 
         // Destructor
 
@@ -149,14 +149,20 @@ namespace NerdThings::Ngine::Core {
         }
 
         /*
+         * This is used to determine if this entity should be culled.
+         * This can allow you to hide this if the collision box is not contained instead.
+         */
+        virtual bool CheckForCulling(Math::TRectangle cullArea_);
+
+        /*
          * Draw code for the entity
          */
-        virtual void Draw(EventArgs &e);
+        virtual void Draw();
 
         /*
          * Draw code for the entity with camera translation
          */
-        virtual void DrawCamera(EventArgs &e);
+        virtual void DrawCamera();
 
         /*
          * Get a component by name.
@@ -172,9 +178,19 @@ namespace NerdThings::Ngine::Core {
         }
 
         /*
+         * Check if this entity can be culled
+         */
+        bool GetCanCull();
+
+        /*
          * Get all components
          */
         std::vector<Component*> GetComponents();
+
+        /*
+         * Get the entity depth
+         */
+        int GetDepth() const;
 
         /*
          * Get entity origin
@@ -232,6 +248,11 @@ namespace NerdThings::Ngine::Core {
         bool RemoveComponent(const std::string &name_);
 
         /*
+         * Set the entity depth
+         */
+        void SetDepth(int depth_);
+
+        /*
          * Set entity origin
          */
         void SetOrigin(Math::TVector2 origin_);
@@ -252,29 +273,9 @@ namespace NerdThings::Ngine::Core {
         // void SetScale(float scale_);
 
         /*
-         * Subscribe to draw events in the scene with camera translation
-         */
-        bool SubscribeToCameraDraw();
-
-        /*
-         * Subscribe to draw events in the scene
-         */
-        bool SubscribeToDraw();
-
-        /*
          * Subscribe to update events in the scene
          */
         bool SubscribeToUpdate();
-
-        /*
-         * Unsubscribe from update events in the scene with camera translation
-         */
-        void UnsubscribeFromCameraDraw();
-
-        /*
-         * Unsubscribe from update events in the scene
-         */
-        void UnsubscribeFromDraw();
 
         /*
          * Unsubscribe from update events in the scene

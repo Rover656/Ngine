@@ -26,21 +26,13 @@ namespace NerdThings::Ngine::Core {
 
     void Component::SubscribeToCameraDraw() {
         if (HasParent()) {
-            // Check the entity subscribed to draw
-            // If not, subscribe
-            if (_ParentEntity->SubscribeToCameraDraw()) {
-                _OnDrawCameraRef = _ParentEntity->OnDrawCamera.Bind(this, &Component::DrawCamera);
-            }
+            _OnDrawCameraRef = _ParentEntity->OnDrawCamera.Bind(this, &Component::DrawCamera);
         }
     }
 
     void Component::SubscribeToDraw() {
         if (HasParent()) {
-            // Check the entity subscribed to draw
-            // If not, subscribe
-            if (_ParentEntity->SubscribeToDraw()) {
-                _OnDrawRef = _ParentEntity->OnDraw.Bind(this, &Component::Draw);
-            }
+            _OnDrawRef = _ParentEntity->OnDraw.Bind(this, &Component::Draw);
         }
     }
 
@@ -53,9 +45,6 @@ namespace NerdThings::Ngine::Core {
             }
         }
     }
-
-    // TODO: Devise a way to allow the parent entity to unsubscribe from these events
-    // TODO: If they are no longer needed
 
     void Component::UnsubscribeFromCameraDraw() {
         _OnDrawCameraRef.UnBind();
