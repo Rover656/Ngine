@@ -34,6 +34,11 @@ namespace NerdThings::Ngine::Core {
         // Private fields
 
         /*
+         * Whether or not this entity can be culled
+         */
+        bool _CanCull = false;
+
+        /*
          * The list of all components.
          * All components are given a name for easy identification.
          */
@@ -113,7 +118,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Create a BaseEntity.
          */
-        BaseEntity(Scene *parentScene_, Math::TVector2 position_, int depth_ = 0);
+        BaseEntity(Scene *parentScene_, Math::TVector2 position_, int depth_ = 0, bool canCull_ = false);
 
         // Destructor
 
@@ -144,6 +149,12 @@ namespace NerdThings::Ngine::Core {
         }
 
         /*
+         * This is used to determine if this entity should be culled.
+         * This can allow you to hide this if the collision box is not contained instead.
+         */
+        virtual bool CheckForCulling(Math::TRectangle cullArea_);
+
+        /*
          * Draw code for the entity
          */
         virtual void Draw();
@@ -165,6 +176,11 @@ namespace NerdThings::Ngine::Core {
 
             return nullptr;
         }
+
+        /*
+         * Check if this entity can be culled
+         */
+        bool GetCanCull();
 
         /*
          * Get all components

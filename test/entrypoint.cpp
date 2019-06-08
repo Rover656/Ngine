@@ -90,8 +90,7 @@ public:
     TestEntity(Scene *parentScene_, const TVector2 &pos_) : BaseEntity(parentScene_, pos_) {
         AddComponent("HelloWorld", new HelloWorldComponent2D(this));
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->
-            EnableDebugDraw(true);
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, { 0, 0, 100, 100 }));
 
         TRectangle bounds = {0, 0, 100, 100};
         std::vector<TVector2> vertices = {{0, 0}, {100, 0}, {100, 100}, {0, 100}};
@@ -163,15 +162,15 @@ public:
 
         Drawing::DrawFPS({10, 100});
 
-        // for (auto i = 0; i < 800; i++) {
-        //     Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
-        // }
+        for (auto i = 0; i < 800; i++) {
+            Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
+        }
     }
 };
 
 class OtherEntity : public BaseEntity {
 public:
-    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero) {
+    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
 
         AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->
@@ -184,13 +183,19 @@ public:
 
         //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw(true);
     }
+
+    bool CheckForCulling(Math::TRectangle cullArea_) override {
+        auto a = cullArea_.ToPolygon();
+        auto b = TRectangle(GetPosition(), { 100, 100 }).ToPolygon();
+        return a.CheckCollision(&b);
+    }
 };
 
 class TestScene : public Scene {
 public:
     TCamera cam;
 
-    TestScene() : Scene() {
+    TestScene(Game* game) : Scene(game) {
         auto test = AddEntity("TestEntity", new TestEntity(this, {50, 100}));
         test->SetOrigin(TVector2(50, 50));
 
@@ -201,6 +206,10 @@ public:
         OnLoad.Bind(this, &TestScene::OnLoaded);
 
         OnDraw.Bind(this, &TestScene::Draw);
+
+        OnDrawCamera.Bind(this, &TestScene::DrawCam);
+
+        SetCullArea(1920 - 50, 1080 - 50, true);
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
@@ -214,7 +223,11 @@ public:
         //     Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
         // }
 
-        //Drawing::DrawFPS({ 500, 300 });
+        Drawing::DrawFPS({ 500, 300 });
+    }
+
+    void DrawCam(EventArgs &e) {
+        Drawing::DrawRectangleLines(GetCullArea(), TColor::Green, 1);
     }
 };
 
@@ -235,7 +248,7 @@ public:
         Resources::LoadDirectory(exeDir + "\\content");
 
         // Create scene
-        _Scene = new TestScene();
+        _Scene = new TestScene(this);
 
         // Set scene
         SetScene(_Scene);

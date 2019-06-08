@@ -75,6 +75,11 @@ namespace NerdThings::Ngine::Math {
         #endif
 
         /*
+         * Whether or not the rectangle contains the point
+         */
+        bool Contains(TVector2 point_) const;
+
+        /*
          * Convert rectangle to bounding box
          */
         Physics::TBoundingBox ToBoundingBox(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;

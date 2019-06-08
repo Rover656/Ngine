@@ -28,8 +28,8 @@ namespace NerdThings::Ngine::Core {
 
     // Public Constructor(s)
 
-    BaseEntity::BaseEntity(Scene *parentScene_, const Math::TVector2 position_, int depth_)
-        : _Depth(depth_), _ParentScene(parentScene_), _Position(position_) {
+    BaseEntity::BaseEntity(Scene *parentScene_, const Math::TVector2 position_, int depth_, bool canCull_)
+        : _CanCull(canCull_), _Depth(depth_), _ParentScene(parentScene_), _Position(position_) {
         if (parentScene_ == nullptr)
             throw std::runtime_error("Cannot give an entity a null parent scene.");
 
@@ -51,6 +51,10 @@ namespace NerdThings::Ngine::Core {
 
     // Public Methods
 
+    bool BaseEntity::CheckForCulling(Math::TRectangle cullArea_) {
+        return cullArea_.Contains(GetPosition());
+    }
+
     void BaseEntity::Draw() {
         // Trigger draw
         OnDraw({});
@@ -59,6 +63,10 @@ namespace NerdThings::Ngine::Core {
     void BaseEntity::DrawCamera() {
         // Trigger drawcamera
         OnDrawCamera({});
+    }
+
+    bool BaseEntity::GetCanCull() {
+        return _CanCull;
     }
 
     std::vector<Component *> BaseEntity::GetComponents() {

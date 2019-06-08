@@ -16,6 +16,7 @@
 
 #include "../ngine.h"
 
+#include "../Math/Rectangle.h"
 #include "../Graphics/Camera.h"
 #include "../EventArgs.h"
 #include "EntityContainer.h"
@@ -34,10 +35,41 @@ namespace NerdThings::Ngine::Core {
         Graphics::TCamera *_ActiveCamera = nullptr;
 
         /*
+         * Whether or not the cull area centers around
+         */
+        bool _CullAreaCenter = false;
+
+        /*
+         * The culling area height
+         */
+        float _CullAreaHeight;
+
+        /*
+         * The culling area width
+         */
+        float _CullAreaWidth;
+
+        /*
+         * Whether or not an entity is active
+         */
+        std::unordered_map<BaseEntity *, bool> _EntityActivities;
+
+        /*
          * Depth key list containing entities.
          * This is used for drawing.
          */
         std::map<int, std::vector<BaseEntity *>> _EntityDepths;
+
+        /*
+         * The parent game
+         */
+        Game* _ParentGame = nullptr;
+
+        /*
+         *
+         * The update counter
+         */
+        int _UpdateCounter = 0;
 
         // Private Methods
 
@@ -83,7 +115,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Create a new Scene
          */
-        Scene();
+        Scene(Game* parentGame_);
 
         // Public Destructor
 
@@ -102,6 +134,11 @@ namespace NerdThings::Ngine::Core {
         [[nodiscard]] Graphics::TCamera *GetActiveCamera() const;
 
         /*
+         * Get the culling area
+         */
+        Math::TRectangle GetCullArea() const;
+
+        /*
          * Set the entity depth in the scene (internally used)
          */
         void InternalSetEntityDepth(int depth_, BaseEntity *ent_);
@@ -115,6 +152,11 @@ namespace NerdThings::Ngine::Core {
          * Set the currently active camera
          */
         void SetActiveCamera(Graphics::TCamera *camera_);
+
+        /*
+         * Set the entity culling area
+         */
+        void SetCullArea(float width_, float height_, bool centerOnCamera_);
 
         /*
          * Update the scene

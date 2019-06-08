@@ -127,6 +127,11 @@ namespace NerdThings::Ngine::Core {
         [[nodiscard]] int GetFPS() const;
 
         /*
+         * Get game dimensions
+         */
+        Math::TVector2 GetDimensions() const;
+
+        /*
          * Get the target draw FPS.
          */
         [[nodiscard]] int GetDrawFPS() const;

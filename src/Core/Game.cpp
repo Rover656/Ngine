@@ -76,6 +76,10 @@ namespace NerdThings::Ngine::Core {
         return _UpdateFPS;
     }
 
+    Math::TVector2 Game::GetDimensions() const {
+        return { (float)_IntendedWidth, (float)_IntendedHeight };
+    }
+
     int Game::GetDrawFPS() const {
         return _DrawFPS;
     }
