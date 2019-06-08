@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Core {
 
     void Scene::SetEntityParent(BaseEntity *ent_) {
         // When an entity is added, mark as active
-        _EntityActivities.insert({ ent_, true });
+        _EntityActivities.insert({ent_, true});
     }
 
     // Public Constructor(s)
@@ -49,7 +49,7 @@ namespace NerdThings::Ngine::Core {
             for (auto ent : vec) {
                 if (ent != nullptr) {
                     if (_EntityActivities.find(ent) == _EntityActivities.end())
-                        _EntityActivities.insert({ ent, true });
+                        _EntityActivities.insert({ent, true});
 
                     if (_EntityActivities[ent])
                         ent->Draw();
@@ -86,8 +86,11 @@ namespace NerdThings::Ngine::Core {
         auto cam = GetActiveCamera();
 
         if (_CullAreaCenter)
-            return { cam->Target.X - _CullAreaWidth * 0.5f, cam->Target.Y - _CullAreaHeight * 0.5f, _CullAreaWidth, _CullAreaHeight };
-        return { cam->Target.X - cam->Origin.X, cam->Target.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight };
+            return {
+                cam->Target.X - _CullAreaWidth * 0.5f, cam->Target.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,
+                _CullAreaHeight
+            };
+        return {cam->Target.X - cam->Origin.X, cam->Target.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
     }
 
     void Scene::InternalSetEntityDepth(int depth_, BaseEntity *ent_) {
@@ -97,6 +100,8 @@ namespace NerdThings::Ngine::Core {
     }
 
     void Scene::InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_) {
+        if (oldDepth_ == newDepth_)
+            return; // Short circuit if depth's are the same because we don't want to remove and re-add
         _EntityDepths[oldDepth_].erase(
             std::remove(_EntityDepths[oldDepth_].begin(), _EntityDepths[oldDepth_].end(), ent_),
             _EntityDepths[oldDepth_].end());
@@ -131,7 +136,7 @@ namespace NerdThings::Ngine::Core {
                     if (ent->GetCanCull()) {
                         auto area = GetCullArea();
                         if (_EntityActivities.find(ent) == _EntityActivities.end())
-                            _EntityActivities.insert({ ent, true });
+                            _EntityActivities.insert({ent, true});
                         if (ent->CheckForCulling(area)) {
                             _EntityActivities[ent] = true;
                         } else {
