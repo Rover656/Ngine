@@ -62,6 +62,9 @@
     <ClInclude Include="..\..\..\src\Physics\Circle.h" />
     <ClInclude Include="..\..\..\src\Physics\CollisionShape.h" />
     <ClInclude Include="..\..\..\src\Physics\Polygon.h" />
+    <ClInclude Include="..\..\..\src\UI\UIControl.h" />
+    <ClInclude Include="..\..\..\src\UI\UIPanel.h" />
+    <ClInclude Include="..\..\..\src\UI\UIWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\Audio\AudioManager.cpp" />

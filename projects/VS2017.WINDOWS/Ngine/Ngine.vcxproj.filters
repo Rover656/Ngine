@@ -111,6 +111,15 @@
     <ClInclude Include="..\..\..\src\Audio\Music.h">
       <Filter>Audio</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\UI\UIWidget.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\UI\UIControl.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\UI\UIPanel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
@@ -133,6 +142,9 @@
     </Filter>
     <Filter Include="Physics">
       <UniqueIdentifier>{180ba8d2-abdc-4fbf-9774-574190caccb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{8a242af3-c381-45d5-8f2e-9a9975f446cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
