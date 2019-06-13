@@ -18,6 +18,8 @@ file(GLOB Ngine_source
     "Physics/*.cpp"
     "Types/*.h"
     "Types/*.cpp"
+    "UI/*.h"
+    "UI/*.cpp"
 )
 
 # Include options

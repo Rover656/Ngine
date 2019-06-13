@@ -475,6 +475,26 @@ namespace NerdThings::Ngine {
          */
         WRAP_MIRROR_CLAMP
     };
+
+    /*
+     * UI Panel Type
+     */
+    enum EUIPanelType {
+        /*
+         * Display children horizontally
+         */
+        TYPE_HORIZONTAL = 0,
+
+        /*
+         * Display children vertically
+         */
+        TYPE_VERTICAL,
+
+        /*
+         * Display children in a grid
+         */
+        TYPE_GRID
+    };
 }
 
 #endif // NGINE_H
