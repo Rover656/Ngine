@@ -8,5 +8,8 @@ A (mainly) 2D game engine written in C++ with raylib at its heart.
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20Mac%20OS%20X%20%7C%20Linux-brightgreen.svg)
 
+More information about this project will be available once version 0.1.0 is released.
 
-This is a work in progress. This file will be updated once progress has been made.
+[<img src="https://assets.nerdthings.co.uk/img/logo-big-transparent-dark.png" width="200" alt="NerdThings Logo">](https://nerdthings.co.uk)
+
+Ngine is created and maintained by NerdThings.
