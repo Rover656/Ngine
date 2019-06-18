@@ -54,6 +54,7 @@
 #include <algorithm>                            // Required for: std::clamp and alike methods
 #include <chrono>                               // Required for: std::chrono timings
 #include <map>                                  // Required for: std::map
+#include <stdexcept>                            // Required for: std::runtime_error
 #include <string>                               // Required for: std::string
 #include <thread>                               // Required for: std::this_thread sleep
 #include <unordered_map>                        // Required for: std::unordered_map
@@ -68,6 +69,7 @@
 #define NOGDI
 #define NODRAWTEXT
 #define NOUSER
+#define NOCRYPT
 #endif
 
 //----------------------------------------------------------------------------------
@@ -122,9 +124,14 @@ namespace NerdThings::Ngine {
         HIDDEN_WINDOW = 128,
 
         /*
+         * Continue running game when minimized
+         */
+        ALWAYS_RUN_MINIMIZED = 256,
+
+        /*
          * Whether or not to maintain the dimensions provided to the game constructor
          */
-        MAINTAIN_DIMENSIONS = 256
+        MAINTAIN_DIMENSIONS = 512
     };
 
     /*
@@ -474,26 +481,6 @@ namespace NerdThings::Ngine {
          * Mirrors and clamps to the border
          */
         WRAP_MIRROR_CLAMP
-    };
-
-    /*
-     * UI Panel Type
-     */
-    enum EUIPanelType {
-        /*
-         * Display children horizontally
-         */
-        TYPE_HORIZONTAL = 0,
-
-        /*
-         * Display children vertically
-         */
-        TYPE_VERTICAL,
-
-        /*
-         * Display children in a grid
-         */
-        TYPE_GRID
     };
 }
 

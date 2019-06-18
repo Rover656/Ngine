@@ -23,35 +23,25 @@ set_target_properties(NgineTest
 # Copy dependant dlls
 if (${BUILD_SHARED})
     if (WIN32)
-        if(MSVC AND NOT ${CMAKE_MAKE_PROGRAM} MATCHES "ninja.exe")
-            add_custom_command(TARGET NgineTest POST_BUILD
+        add_custom_command(TARGET NgineTest POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${CMAKE_BINARY_DIR}/Ngine/$<CONFIG>/Ngine.dll"
-                    "${CMAKE_BINARY_DIR}/NgineTest/$<CONFIG>/Ngine.dll")
-            add_custom_command(TARGET NgineTest POST_BUILD
+                $<TARGET_FILE:Ngine>
+                $<TARGET_FILE_DIR:NgineTest>)
+
+        add_custom_command(TARGET NgineTest POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${CMAKE_BINARY_DIR}/Ngine/$<CONFIG>/raylib.dll"
-                    "${CMAKE_BINARY_DIR}/NgineTest/$<CONFIG>/raylib.dll")
-        else()
-            add_custom_command(TARGET NgineTest POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${CMAKE_BINARY_DIR}/Ngine/Ngine.dll"
-                    "${CMAKE_BINARY_DIR}/NgineTest/Ngine.dll")
-            add_custom_command(TARGET NgineTest POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "${CMAKE_BINARY_DIR}/Ngine/raylib.dll"
-                    "${CMAKE_BINARY_DIR}/NgineTest/raylib.dll")
-        endif()
+                $<TARGET_FILE:raylib>
+                $<TARGET_FILE_DIR:NgineTest>)
     else()
         add_custom_command(TARGET NgineTest POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${CMAKE_BINARY_DIR}/Ngine/Ngine.so"
-                "${CMAKE_BINARY_DIR}/NgineTest/Ngine.so")
+                $<TARGET_FILE:Ngine>
+                $<TARGET_FILE_DIR:NgineTest>)
 
         add_custom_command(TARGET NgineTest POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${CMAKE_BINARY_DIR}/Ngine/raylib.so"
-                "${CMAKE_BINARY_DIR}/NgineTest/raylib.so")
+                $<TARGET_FILE:raylib_static>
+                $<TARGET_FILE_DIR:NgineTest>)
     endif()
 endif()
 

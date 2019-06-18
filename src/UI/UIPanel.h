@@ -15,23 +15,28 @@
 #include "../ngine.h"
 
 #include "../Math/Vector2.h"
+#include "UIControl.h"
 
 namespace NerdThings::Ngine::UI {
     /*
-     * A UI panel, contains all controls
+     * A UI Panel base, contains entities
      */
-    class NEAPI UIPanel {
+    class NEAPI UIPanel : public UIControl {
         // Private Fields
 
         /*
-         * The panel type
+         * Panel children
          */
-        EUIPanelType _Type;
-
+        std::vector<UIControl *> _Children;
     public:
         // Public Constructor(s)
 
         // Public Methods
+
+        /*
+         * Add a child to the panel
+         */
+        void AddChild(UIControl *);
     };
 }
 

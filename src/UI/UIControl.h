@@ -23,10 +23,31 @@ namespace NerdThings::Ngine::UI {
     class NEAPI UIControl {
         // Private Fields
 
+        /*
+         * Control parent, may be null
+         */
+        UIControl *_Parent;
     public:
+
         // Public Constructor(s)
 
         // Public Methods
+
+        /*
+         * Get parent as type
+         */
+        template<typename ParentType>
+        ParentType* GetParent() {
+            return dynamic_cast<ParentType*>(_Parent);
+        }
+    protected:
+
+        // Protected Methods
+
+        /*
+         * Set parent, used by panels mostly
+         */
+        void SetParent(UIControl *parent_);
     };
 }
 
