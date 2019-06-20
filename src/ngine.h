@@ -51,14 +51,15 @@
 //----------------------------------------------------------------------------------
 
 // C++ Includes
-#include <algorithm>                            // Required for: std::clamp and alike methods
-#include <chrono>                               // Required for: std::chrono timings
-#include <map>                                  // Required for: std::map
-#include <stdexcept>                            // Required for: std::runtime_error
-#include <string>                               // Required for: std::string
-#include <thread>                               // Required for: std::this_thread sleep
-#include <unordered_map>                        // Required for: std::unordered_map
-#include <vector>                               // Required for: std::vector
+#include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <unordered_map>
+#include <vector>
 
 #if defined(INCLUDE_RAYLIB)
 #include <raylib.h>    // Required for: raylib in its entirety
@@ -71,6 +72,12 @@
 #define NOUSER
 #define NOCRYPT
 #endif
+
+//----------------------------------------------------------------------------------
+// Helper Functions
+//----------------------------------------------------------------------------------
+
+void ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
 
 //----------------------------------------------------------------------------------
 // Enums

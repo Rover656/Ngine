@@ -27,16 +27,46 @@ namespace NerdThings::Ngine::UI {
         /*
          * Panel children
          */
-        std::vector<UIControl *> _Children;
+        std::unordered_map<std::string, UIControl *> _Children;
     public:
-        // Public Constructor(s)
-
         // Public Methods
 
         /*
          * Add a child to the panel
          */
-        void AddChild(UIControl *);
+        void AddChild(std::string name, UIControl *control_);
+
+        /*
+         * Focus the next element
+         */
+        virtual void FocusNext() = 0;
+
+        /*
+         * Focus the last element.
+         */
+        virtual void FocusPrev() = 0;
+
+        /*
+         * Get child by name and type
+         */
+        template<typename ControlType>
+        ControlType *GetChild(const std::string &name) {
+            return dynamic_cast<ControlType *>(_Children[name]);
+        }
+
+        /*
+         * Remove a child control
+         */
+        void RemoveChild(std::string name);
+
+    protected:
+
+        // Protected Constructor(s)
+
+        /*
+         * Create a UI Panel
+         */
+        UIPanel();
     };
 }
 

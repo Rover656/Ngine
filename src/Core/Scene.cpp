@@ -33,8 +33,10 @@ namespace NerdThings::Ngine::Core {
 
     Scene::Scene(Game *parentGame_)
         : _ParentGame(parentGame_) {
-        if (parentGame_ == nullptr)
+        if (parentGame_ == nullptr) {
+            ConsoleMessage("A scene has been fed null for the parent game.", "FATAL", "SCENE");
             throw std::runtime_error("Cannot have a null game.");
+        }
     }
 
     // Public Methods

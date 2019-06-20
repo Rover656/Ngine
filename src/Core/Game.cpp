@@ -36,6 +36,7 @@ namespace NerdThings::Ngine::Core {
 
         // Apply raylib config
         WindowManager::ApplyConfig(_Config);
+        ConsoleMessage("Window config has been applied.", "NOTICE", "GAME");
 
         // Set intended dimensions
         _IntendedHeight = targetHeight_;
@@ -43,6 +44,7 @@ namespace NerdThings::Ngine::Core {
 
         // Initialize raylib's window
         WindowManager::Init(windowWidth_, windowHeight_, title_);
+        ConsoleMessage("Window has been initialized.", "NOTICE", "GAME");
 
         // Set Target FPS
         SetDrawFPS(drawFPS_);
@@ -52,6 +54,7 @@ namespace NerdThings::Ngine::Core {
         OnRun.Bind(Input::Mouse::OnGameRun);
         OnUpdate.Bind(Input::Mouse::OnGameUpdate);
         OnUpdate.Bind(Audio::AudioManager::Update);
+        ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
 
         // By default, disable exit key
         Input::Keyboard::SetExitKey(KEY_NONE);
@@ -104,10 +107,15 @@ namespace NerdThings::Ngine::Core {
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
         // Init audio
+        ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "GAME");
         Audio::AudioManager::InitDevice();
 
-        // Wait for device to be created
-        while(!Audio::AudioManager::IsReady()) {}
+        // Check if the device was created
+        if (Audio::AudioManager::IsReady()) {
+            ConsoleMessage("Audio device initialized successfully..", "NOTICE", "GAME");
+        } else {
+            ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARNING", "GAME");
+        }
 
         // Invoke OnRun
         OnRun({});
@@ -131,6 +139,8 @@ namespace NerdThings::Ngine::Core {
             if (_UpdateFPS != lastFPS) {
                 lastFPS = _UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
+
+                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "GAME");
             }
 
             // Setup mouse
@@ -200,10 +210,14 @@ namespace NerdThings::Ngine::Core {
         }
 
         // Close audio
+        ConsoleMessage("Closing audio device.", "NOTICE", "GAME");
         Audio::AudioManager::CloseDevice();
 
         // Close window
+        ConsoleMessage("Closing window.", "NOTICE", "GAME");
         WindowManager::Close();
+
+        ConsoleMessage("Game successfully shut down.", "NOTICE", "GAME");
 
         #else
 
@@ -231,6 +245,8 @@ namespace NerdThings::Ngine::Core {
 
         if (_CurrentScene != nullptr)
             _CurrentScene->OnLoad({this});
+
+        ConsoleMessage("A new scene has been loaded.", "NOTICE", "GAME");
     }
 
     void Game::SetUpdateFPS(int FPS_) {

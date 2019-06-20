@@ -20,6 +20,8 @@ file(GLOB Ngine_source
     "Types/*.cpp"
     "UI/*.h"
     "UI/*.cpp"
+    "UI/Controls/*.h"
+    "UI/Controls/*.cpp"
 )
 
 # Include options

@@ -9,15 +9,20 @@
 *
 **********************************************************************************************/
 
-#include "ngine.h"
+#ifndef NGINE_VERTICALPANEL_H
+#define NGINE_VERTICALPANEL_H
 
-// cute_c2 definitions
-#define CUTE_C2_IMPLEMENTATION
-#include <cute_c2.h>
+#include "../../ngine.h"
 
-// ConsoleMessage
-void ConsoleMessage(std::string message, std::string severity, std::string module) {
-    {
-        std::cout << "[" + module + "] " + severity + ": " + message << std::endl;
-    }
+#include "../UIPanel.h"
+
+namespace NerdThings::Ngine::UI::Controls {
+    /*
+     * A panel that displays its children vertically
+     */
+    class VerticalPanel : public UIPanel {
+
+    };
 }
+
+#endif //NGINE_VERTICALPANEL_H
