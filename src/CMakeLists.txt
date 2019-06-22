@@ -45,8 +45,12 @@ target_include_directories(Ngine PUBLIC "3rd-party/cute-headers")
 
 # Link libraries
 target_link_libraries(Ngine raylib)
-target_link_libraries(Ngine stdc++fs)
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+
+if (UNIX OR MINGW)
+    target_link_libraries(Ngine stdc++fs)
+endif()
+
+if (MINGW)
     target_link_libraries(Ngine -static)
 endif()
 
