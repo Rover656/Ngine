@@ -15,8 +15,11 @@
 #include "../ngine.h"
 
 #include "../Math/Vector2.h"
+#include "UIStyle.h"
 
 namespace NerdThings::Ngine::UI {
+    class NEAPI UIPanel;
+
     /*
      * A UI component, parented by a panel
      */
@@ -24,30 +27,87 @@ namespace NerdThings::Ngine::UI {
         // Private Fields
 
         /*
-         * Control parent, may be null
+         * Globally defined styles
          */
-        UIControl *_Parent;
-    public:
+        static std::unordered_map<std::type_index, TUIStyle> _GlobalStyles;
 
-        // Public Constructor(s)
+        /*
+         * Panel parent, may be null
+         */
+        UIPanel *_Parent;
+
+        /*
+         * The currently applied style
+         */
+        TUIStyle _Style;
+    public:
 
         // Public Methods
 
         /*
+         * Draw the control
+         */
+        virtual void Draw();
+
+        /*
+         * Get a global style for a control
+         */
+        static TUIStyle GetGlobalStyle(std::type_index type_);
+
+        /*
+         * Get height of control (no padding applied).
+         */
+        virtual float GetHeight() = 0;
+
+        /*
          * Get parent as type
          */
-        template<typename ParentType>
+        template<typename ParentType = UIPanel>
         ParentType* GetParent() {
             return dynamic_cast<ParentType*>(_Parent);
         }
-    protected:
-
-        // Protected Methods
 
         /*
-         * Set parent, used by panels mostly
+         * Set a global style, will not be applied to existing controls
          */
-        void SetParent(UIControl *parent_);
+        void SetGlobalStyle(std::type_index type_, TUIStyle style_);
+
+        /*
+         * Get the screen position.
+         * This has the panel offset applied.
+         */
+        virtual Math::TVector2 GetScreenPosition();
+
+        /*
+         * Get the screen rectangle
+         */
+        Math::TRectangle GetScreenRectangle();
+
+        /*
+         * Get the current style
+         */
+        TUIStyle GetStyle();
+
+        /*
+         * Get width of control (no padding applied).
+         */
+        virtual float GetWidth() = 0;
+
+        /*
+         * Set parent panel.
+         * Intended for internal use only.
+         */
+        void InternalSetParent(UIPanel *parent_);
+
+        /*
+         * Set the style
+         */
+        virtual void SetStyle(TUIStyle style_);
+
+        /*
+         * Run update logic on the control
+         */
+        virtual void Update();
     };
 }
 

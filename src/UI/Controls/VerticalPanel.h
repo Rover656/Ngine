@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef NGINE_VERTICALPANEL_H
-#define NGINE_VERTICALPANEL_H
+#ifndef VERTICALPANEL_H
+#define VERTICALPANEL_H
 
 #include "../../ngine.h"
 
@@ -21,8 +21,72 @@ namespace NerdThings::Ngine::UI::Controls {
      * A panel that displays its children vertically
      */
     class VerticalPanel : public UIPanel {
+    public:
+        // Public Fields
 
+        /*
+         * Element horizontal alignment
+         */
+        EUIPanelHorizontalAlignment HorizontalAlignment = ALIGN_LEFT;
+
+        // Public Constructor(s)
+
+        VerticalPanel(float width_, float height_)
+                : UIPanel(width_, height_) {}
+
+        // Public Methods
+
+        void FocusNext() override {
+
+        }
+
+        void FocusPrev() override {
+
+        }
+
+        float GetOffsetAbove(UIControl *control_) override {
+            // This returns the heights of everything before this control
+
+            auto children = GetChildren();
+            auto iterator = std::find(children.begin(), children.end(), control_);
+
+            if (iterator == children.end())
+                return 0;
+
+            auto index = std::distance(children.begin(), iterator);
+
+            auto style = GetStyle();
+
+            auto offset = style.Padding[0];
+
+            for (auto i = index - 1; i >= 0; i--) {
+                auto child = children[i];
+                auto style = child->GetStyle();
+
+                // Margins TODO: Is this right
+                offset += style.Margin[0];
+                offset += style.Margin[2];
+
+                // Height
+                offset += style.GetBorderRect(child->GetScreenRectangle()).Height;
+            }
+
+            return offset;
+        }
+
+        float GetOffsetBeside(UIControl *control_) override {
+            switch (HorizontalAlignment) {
+                case ALIGN_LEFT:
+                    return 0;
+                case ALIGN_CENTER:
+                    return (GetWidth() / 2.0f)  - (control_->GetWidth() / 2.0f);
+                case ALIGN_RIGHT:
+                    return GetWidth() - control_->GetWidth();
+            }
+
+            return 0;
+        }
     };
 }
 
-#endif //NGINE_VERTICALPANEL_H
+#endif //VERTICALPANEL_H

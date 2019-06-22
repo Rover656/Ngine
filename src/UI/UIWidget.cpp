@@ -12,28 +12,38 @@
 #include "UIWidget.h"
 
 namespace NerdThings::Ngine::UI {
-    // Public Constructor(s)
+    // Destructor
 
-    UIWidget::UIWidget(Math::TVector2 pos_, UIPanel *panel_)
-            : _Position(pos_), _Panel(panel_) {}
-
-    void UIWidget::Draw() {
-
+    UIWidget::~UIWidget() {
+        delete _Panel;
     }
 
-    UIPanel* UIWidget::GetPanel() {
+    // Public Method(s)
 
+    void UIWidget::Draw() {
+        if (_Panel == nullptr)
+            throw std::runtime_error("Panel is null...");
+        else
+            _Panel->Draw();
     }
 
     Math::TVector2 UIWidget::GetPosition() {
+        return _Position;
+    }
 
+    void UIWidget::SetPanel(UIPanel *panel_) {
+        _Panel = panel_;
+        _Panel->InternalSetParentWidget(this);
     }
 
     void UIWidget::SetPosition(Math::TVector2 pos_) {
-
+        _Position = pos_;
     }
 
     void UIWidget::Update() {
-
+        if (_Panel == nullptr)
+            throw std::runtime_error("Panel is null...");
+        else
+            _Panel->Update();
     }
 }

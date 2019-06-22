@@ -16,20 +16,39 @@
 
 #include "../Math/Vector2.h"
 #include "UIControl.h"
+#include "UIControlSized.h"
 
 namespace NerdThings::Ngine::UI {
+    class NEAPI UIWidget;
+
     /*
      * A UI Panel base, contains entities
      */
-    class NEAPI UIPanel : public UIControl {
+    class NEAPI UIPanel : public UIControlSized {
         // Private Fields
 
         /*
          * Panel children
          */
         std::unordered_map<std::string, UIControl *> _Children;
+
+        /*
+         * Children stored in a vector that is ordered on add time.
+         */
+        std::vector<UIControl *> _ChildrenOrdered;
+
+        /*
+         * Parent widget (If this is the root panel)
+         */
+        UIWidget *_ParentWidget;
     public:
+
         // Public Methods
+
+        /*
+         * Draw the panel
+         */
+        void Draw() override;
 
         /*
          * Add a child to the panel
@@ -54,10 +73,55 @@ namespace NerdThings::Ngine::UI {
             return dynamic_cast<ControlType *>(_Children[name]);
         }
 
+        std::vector<UIControl *> GetChildren() {
+            return _ChildrenOrdered;
+        }
+
+        /*
+         * Get positional offset on screen
+         */
+        Math::TVector2 GetOffset();
+
+        /*
+         * Get space above a control
+         */
+        float GetOffsetAbove(std::string &name_);
+
+        /*
+         * Get space above a control
+         */
+        virtual float GetOffsetAbove(UIControl *control_) = 0;
+
+        /*
+         * Get space beside a control
+         */
+        float GetOffsetBeside(std::string &name_);
+
+        /*
+         * Get space beside a control
+         */
+        virtual float GetOffsetBeside(UIControl *control_) = 0;
+
+        /*
+         * Get the panel position
+         */
+        Math::TVector2 GetScreenPosition() override;
+
+        /*
+         * Set the parent widget.
+         * For internal use only.
+         */
+        void InternalSetParentWidget(UIWidget *widget_);
+
         /*
          * Remove a child control
          */
         void RemoveChild(std::string name);
+
+        /*
+         * Update the panel
+         */
+        void Update() override;
 
     protected:
 
@@ -66,7 +130,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Create a UI Panel
          */
-        UIPanel();
+        UIPanel(float width_, float height_);
     };
 }
 

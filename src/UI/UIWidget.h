@@ -20,14 +20,14 @@
 namespace NerdThings::Ngine::UI {
     /*
      * A simple UI widget, containing panels and controls.
-     */
+    */
     class NEAPI UIWidget {
         // Private Fields
 
         /*
          * The panel
          */
-        UIPanel *_Panel;
+        UIPanel *_Panel = nullptr;
 
         /*
          * Widget position
@@ -39,7 +39,12 @@ namespace NerdThings::Ngine::UI {
         /*
          * Create a UI widget
          */
-        UIWidget(Math::TVector2 pos_, UIPanel *panel_);
+        UIWidget(Math::TVector2 pos_)
+                : _Position(pos_) {}
+
+        // Destructor
+
+        virtual ~UIWidget();
 
         // Public Methods
 
@@ -51,12 +56,20 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the panel within the widget
          */
-        UIPanel *GetPanel();
+        template<typename PanelType = UIPanel>
+        PanelType *GetPanel() {
+            return dynamic_cast<PanelType *>(_Panel);
+        }
 
         /*
          * Get the position of the widget
          */
         Math::TVector2 GetPosition();
+
+        /*
+         * Set the panel
+         */
+        void SetPanel(UIPanel *panel_);
 
         /*
          * Set the position of the widget

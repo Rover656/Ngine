@@ -17,7 +17,9 @@
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine::Core {
+    #ifndef BASEENTITY_H
     class NEAPI BaseEntity;
+    #endif
 
     /*
      * A component that can be attached to an entity

@@ -58,6 +58,8 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <typeindex>
+#include <typeinfo>
 #include <unordered_map>
 #include <vector>
 
@@ -488,6 +490,26 @@ namespace NerdThings::Ngine {
          * Mirrors and clamps to the border
          */
         WRAP_MIRROR_CLAMP
+    };
+
+    /*
+     * UI Panel horizontal alignment
+     */
+    enum EUIPanelHorizontalAlignment {
+        /*
+         * Align elements with the left side of the panel
+         */
+        ALIGN_LEFT = 0,
+
+        /*
+         * Align elements with the middle of the panel
+         */
+        ALIGN_CENTER,
+
+        /*
+         * Align elements with the right side of the panel
+         */
+        ALIGN_RIGHT
     };
 }
 

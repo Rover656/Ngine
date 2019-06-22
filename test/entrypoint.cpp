@@ -20,6 +20,11 @@
 #include <Physics/BoundingBox.h>
 #include <Physics/Circle.h>
 #include <Physics/Polygon.h>
+#include <UI/Controls/Label.h>
+#include <UI/Controls/VerticalPanel.h>
+#include <UI/UIControl.h>
+#include <UI/UIPanel.h>
+#include <UI/UIWidget.h>
 
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
@@ -29,6 +34,8 @@ using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 using namespace NGINE_NS::Math;
 using namespace NGINE_NS::Physics;
+using namespace NGINE_NS::UI;
+using namespace NGINE_NS::UI::Controls;
 
 class HelloWorldComponent2D : public Component {
 public:
@@ -90,7 +97,7 @@ public:
     TestEntity(Scene *parentScene_, const TVector2 &pos_) : BaseEntity(parentScene_, pos_) {
         AddComponent("HelloWorld", new HelloWorldComponent2D(this));
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, { 0, 0, 100, 100 }));
+        //AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, { 0, 0, 100, 100 }));
 
         TRectangle bounds = {0, 0, 100, 100};
         std::vector<TVector2> vertices = {{0, 0}, {100, 0}, {100, 100}, {0, 100}};
@@ -110,7 +117,7 @@ public:
         AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->
             EnableDebugDraw(true);
 
-        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1920/2.0f, 1080/2.0f}));
+        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
 
         cam->Activate();
     }
@@ -133,8 +140,8 @@ public:
 
         Drawing::DrawCircle(pos, 15, color ? TColor::Orange : TColor::White);
 
-        Drawing::DrawText(TFont::GetDefaultFont(), "I am in the scene, not affected by the camera", {25, 300}, 48, 2,
-                          TColor::Purple);
+        //Drawing::DrawText(TFont::GetDefaultFont(), "I am in the scene, not affected by the camera", {25, 300}, 48, 2,
+        //                  TColor::Purple);
     }
 
     void Update(EventArgs &e) override {
@@ -191,11 +198,46 @@ public:
     }
 };
 
+class TestWidget : public UIWidget {
+public:
+    TestWidget(TVector2 pos_) : UIWidget(pos_) {
+        auto panelStyle = TUIStyle();
+        panelStyle.BackColor = TColor::White;
+        panelStyle.BorderColor = TColor::Gray;
+        panelStyle.BorderThickness = 2;
+        panelStyle.Padding[0] = 5;
+        SetPanel(new VerticalPanel(250.0f, 500.0f));
+        GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
+        GetPanel()->SetStyle(panelStyle);
+
+        auto style = TUIStyle();
+        style.BorderThickness = 2;
+        style.BorderColor = TColor(0, 0, 255, 255 / 4);
+        style.Padding[0] = style.Padding[1] = style.Padding[2] = style.Padding[3] = 5;
+        style.BackColor = TColor::Green;
+        style.Margin[2] = 5; // 5 bottom margin
+
+        auto l = new Label("Hello world", TFont::GetDefaultFont());
+        style.ForeColor = Graphics::TColor::Orange;
+        l->SetFontSize(32);
+        l->SetStyle(style);
+        GetPanel()->AddChild("testLabel", l);
+
+        l = new Label("Hello world", TFont::GetDefaultFont());
+        style.ForeColor = Graphics::TColor::Blue;
+        l->SetFontSize(48);
+        l->SetStyle(style);
+        GetPanel()->AddChild("testLabel1", l);
+    }
+};
+
 class TestScene : public Scene {
 public:
     TCamera cam;
 
-    TestScene(Game* game) : Scene(game) {
+    TestWidget widg;
+
+    TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
         auto test = AddEntity("TestEntity", new TestEntity(this, {50, 100}));
         test->SetOrigin(TVector2(50, 50));
 
@@ -209,7 +251,7 @@ public:
 
         OnDrawCamera.Bind(this, &TestScene::DrawCam);
 
-        SetCullArea(1920 - 50, 1080 - 50, true);
+        SetCullArea(1280 - 50, 768 - 50, true);
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
@@ -224,10 +266,16 @@ public:
         // }
 
         Drawing::DrawFPS({ 500, 300 });
+
+        widg.Draw();
     }
 
     void DrawCam(EventArgs &e) {
         Drawing::DrawRectangleLines(GetCullArea(), TColor::Green, 1);
+    }
+
+    void Update(EventArgs &e) {
+        widg.Update();
     }
 };
 
@@ -236,7 +284,7 @@ class TestGame : public Game {
 public:
 
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
-        width_, height_, 1920, 1080, DrawFPS_, UpdateFPS_, title_,
+        width_, height_, 1280, 768, DrawFPS_, UpdateFPS_, title_,
         MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
         OnRun.Bind(this, &TestGame::Init);
     }
