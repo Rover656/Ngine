@@ -212,7 +212,7 @@ public:
 
         auto style = TUIStyle();
         style.BorderThickness = 2;
-        style.BorderColor = TColor(0, 0, 255, 255 / 4);
+        style.BorderColor = TColor::Blue;
         style.Padding[0] = style.Padding[1] = style.Padding[2] = style.Padding[3] = 5;
         style.BackColor = TColor::Green;
         style.Margin[2] = 5; // 5 bottom margin
@@ -225,8 +225,9 @@ public:
 
         l = new Label("Hello world", TFont::GetDefaultFont());
         style.ForeColor = Graphics::TColor::Blue;
-        l->SetFontSize(48);
+        l->SetFontSize(62);
         l->SetStyle(style);
+        l->SetConstrainToPanel(true);
         GetPanel()->AddChild("testLabel1", l);
     }
 };

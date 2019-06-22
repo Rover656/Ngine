@@ -37,11 +37,11 @@ namespace NerdThings::Ngine::UI::Controls {
         // Public Methods
 
         void FocusNext() override {
-
+            // TODO: Will be done in feature/advanced-ui later. This is for controller and tab support
         }
 
         void FocusPrev() override {
-
+            // TODO: Will be done in feature/advanced-ui later. This is for controller and tab support
         }
 
         float GetOffsetAbove(UIControl *control_) override {
@@ -61,32 +61,37 @@ namespace NerdThings::Ngine::UI::Controls {
 
             for (auto i = index - 1; i >= 0; i--) {
                 auto child = children[i];
-                auto style = child->GetStyle();
+                auto childStyle = child->GetStyle();
 
                 // Margins TODO: Is this right
-                offset += style.Margin[0];
-                offset += style.Margin[2];
+                offset += childStyle.Margin[0];
+                offset += childStyle.Margin[2];
 
                 // Height
-                offset += style.GetBorderRect(child->GetScreenRectangle()).Height;
+                offset += childStyle.GetBorderRect(child->GetScreenRectangle()).Height;
             }
 
             return offset;
         }
 
         float GetOffsetBeside(UIControl *control_) override {
+            if (control_ == nullptr || control_ == this)
+                return 0;
+
+            auto style = control_->GetStyle();
+            auto dims = style.GetBorderDimensions({control_->GetWidth(), control_->GetHeight()});
             switch (HorizontalAlignment) {
                 case ALIGN_LEFT:
                     return 0;
                 case ALIGN_CENTER:
-                    return (GetWidth() / 2.0f)  - (control_->GetWidth() / 2.0f);
+                    return (GetWidth() / 2.0f)  - (dims.X / 2.0f);
                 case ALIGN_RIGHT:
-                    return GetWidth() - control_->GetWidth();
+                    return GetWidth() - dims.X;
             }
 
-            return 0;
+            return 0; // Shut the compilers up
         }
     };
 }
 
-#endif //VERTICALPANEL_H
+#endif // VERTICALPANEL_H

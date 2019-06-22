@@ -40,7 +40,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Parent widget (If this is the root panel)
          */
-        UIWidget *_ParentWidget;
+        UIWidget *_ParentWidget = nullptr;
     public:
 
         // Public Methods

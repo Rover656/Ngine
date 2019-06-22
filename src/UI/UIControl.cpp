@@ -68,6 +68,8 @@ namespace NerdThings::Ngine::UI {
     Math::TVector2 UIControl::GetScreenPosition() {
         // TODO: Cache this
         auto par = GetParent<UIPanel>();
+        if (par == nullptr)
+            return {0, 0};
         auto pos = par->GetOffset();
         pos.X += par->GetOffsetBeside(this);
         pos.Y += par->GetOffsetAbove(this);

@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Panel parent, may be null
          */
-        UIPanel *_Parent;
+        UIPanel *_Parent = nullptr;
 
         /*
          * The currently applied style
