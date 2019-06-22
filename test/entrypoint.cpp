@@ -205,7 +205,7 @@ public:
         panelStyle.BackColor = TColor::White;
         panelStyle.BorderColor = TColor::Gray;
         panelStyle.BorderThickness = 2;
-        panelStyle.Padding[0] = 5;
+        panelStyle.SetPadding(5, 0, 5, 0);
         SetPanel(new VerticalPanel(250.0f, 500.0f));
         GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
         GetPanel()->SetStyle(panelStyle);
@@ -213,7 +213,7 @@ public:
         auto style = TUIStyle();
         style.BorderThickness = 2;
         style.BorderColor = TColor::Blue;
-        style.Padding[0] = style.Padding[1] = style.Padding[2] = style.Padding[3] = 5;
+        style.SetPadding(5);
         style.BackColor = TColor::Green;
         style.Margin[2] = 5; // 5 bottom margin
 
@@ -227,7 +227,7 @@ public:
         style.ForeColor = Graphics::TColor::Blue;
         l->SetFontSize(62);
         l->SetStyle(style);
-        l->SetConstrainToPanel(true);
+        //l->SetConstrainToPanel(true);
         GetPanel()->AddChild("testLabel1", l);
     }
 };

@@ -169,6 +169,62 @@ namespace NerdThings::Ngine::UI {
 
             return controlRect_;
         }
+
+        /*
+         * Set margin for all four values
+         */
+        void SetMargin(float all_) {
+            for (auto i = 0; i < 4; i++)
+                Margin[i] = all_;
+        }
+
+        /*
+         * Set margin with a value for top and bottom and a value for the sides
+         */
+        void SetMargin(float ups_, float sides_) {
+            Margin[0] = ups_;
+            Margin[2] = ups_;
+            Margin[1] = sides_;
+            Margin[3] = sides_;
+        }
+
+        /*
+         * Set margin values
+         */
+        void SetMargin(float up_, float right_, float down_, float left_) {
+            Margin[0] = up_;
+            Margin[1] = right_;
+            Margin[2] = down_;
+            Margin[3] = left_;
+        }
+
+        /*
+         * Set padding for all four values
+         */
+        void SetPadding(float all_) {
+            for (auto i = 0; i < 4; i++)
+                Padding[i] = all_;
+        }
+
+        /*
+         * Set padding with a value for top and bottom and a value for the sides
+         */
+        void SetPadding(float ups_, float sides_) {
+            Padding[0] = ups_;
+            Padding[2] = ups_;
+            Padding[1] = sides_;
+            Padding[3] = sides_;
+        }
+
+        /*
+         * Set padding values
+         */
+        void SetPadding(float up_, float right_, float down_, float left_) {
+            Padding[0] = up_;
+            Padding[1] = right_;
+            Padding[2] = down_;
+            Padding[3] = left_;
+        }
     };
 }
 
