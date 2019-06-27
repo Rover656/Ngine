@@ -62,11 +62,6 @@ namespace NerdThings::Ngine::UI {
         virtual void FocusPrev() = 0;
 
         /*
-         * Get positional offset on screen
-         */
-        Math::TVector2 GetOffset();
-
-        /*
          * Get space above a control
          */
         float GetOffsetAbove(std::string &name_);

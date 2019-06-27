@@ -48,23 +48,6 @@ namespace NerdThings::Ngine::UI {
                                        Graphics::TColor::White);
     }
 
-    Math::TVector2 UIPanel::GetOffset() {
-        // TODO: Cache this
-
-        /*auto style = GetStyle();
-        if (_ParentWidget != nullptr) {
-            return style.GetContentPosition(_ParentWidget->GetPosition());
-        } else {
-            auto par = GetParent<UIPanel>();
-            auto parOff = par->GetOffset();
-            parOff.X += par->GetOffsetBeside(this);
-            parOff.Y += par->GetOffsetAbove(this);
-            return style.GetContentPosition(parOff);
-        }*/
-
-        return {0, 0};
-    }
-
     float UIPanel::GetOffsetAbove(std::string &name_) {
         return GetOffsetAbove(GetChild<UIControl>(name_));
     }
