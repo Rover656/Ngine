@@ -20,7 +20,7 @@ namespace NerdThings::Ngine::UI {
     /*
      * A control that has a fixed size
      */
-    class NEAPI UIControlSized : public UIControl {
+    class NEAPI UIControlSized : virtual public UIControl {
         // Private Fields
 
         /*

@@ -20,6 +20,8 @@
 #include <Physics/BoundingBox.h>
 #include <Physics/Circle.h>
 #include <Physics/Polygon.h>
+#include <UI/Controls/BasicButton.h>
+#include <UI/Controls/HorizontalPanel.h>
 #include <UI/Controls/Label.h>
 #include <UI/Controls/VerticalPanel.h>
 #include <UI/UIControl.h>
@@ -136,7 +138,7 @@ public:
         // This is like UI, it is not affected by the camera
         auto pos = Mouse::GetMousePosition();
 
-        auto color = Mouse::IsButtonDown(LEFT);
+        auto color = Mouse::IsButtonDown(MOUSE_BUTTON_LEFT);
 
         Drawing::DrawCircle(pos, 15, color ? TColor::Orange : TColor::White);
 
@@ -208,6 +210,8 @@ public:
         panelStyle.SetPadding(5, 0, 5, 0);
         SetPanel(new VerticalPanel(250.0f, 500.0f));
         GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
+        //SetPanel(new HorizontalPanel(550.0f, 250.0f));
+        //GetPanel<HorizontalPanel>()->VerticalAlignment = ALIGN_MIDDLE;
         GetPanel()->SetStyle(panelStyle);
 
         auto style = TUIStyle();
@@ -216,6 +220,7 @@ public:
         style.SetPadding(5);
         style.BackColor = TColor::Green;
         style.Margin[2] = 5; // 5 bottom margin
+        style.Margin[3] = 5; // 5 left margin
 
         auto l = new Label("Hello world", TFont::GetDefaultFont());
         style.ForeColor = Graphics::TColor::Orange;
@@ -229,6 +234,19 @@ public:
         l->SetStyle(style);
         //l->SetConstrainToPanel(true);
         GetPanel()->AddChild("testLabel1", l);
+
+        auto bStyle = TUIStyle();
+        bStyle.BackColor = TColor::Blue;
+
+        auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 150, 75);
+        btn->OnClick.Bind(&TestWidget::Test);
+        btn->SetStyle(bStyle);
+
+        GetPanel()->AddChild("testButton", (UIControl *)btn);
+    }
+
+    static void Test(EventArgs &e) {
+        ConsoleMessage("Button was clicked", "NOTICE", "TestGame Entrypoint");
     }
 };
 
@@ -249,6 +267,8 @@ public:
         OnLoad.Bind(this, &TestScene::OnLoaded);
 
         OnDraw.Bind(this, &TestScene::Draw);
+
+        OnUpdate.Bind(this, &TestScene::Update);
 
         OnDrawCamera.Bind(this, &TestScene::DrawCam);
 

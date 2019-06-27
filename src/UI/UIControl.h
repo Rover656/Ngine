@@ -20,11 +20,25 @@
 namespace NerdThings::Ngine::UI {
     class NEAPI UIPanel;
 
+    ////////////////////
+    // TODO: Add a way for a control to resize to the size of its children (optional)
+    ///////////////////
+
     /*
      * A UI component, parented by a panel
      */
     class NEAPI UIControl {
         // Private Fields
+
+        /*
+         * Children
+         */
+        std::unordered_map<std::string, UIControl *> _Children;
+
+        /*
+         * Children stored in a vector that is ordered on add time.
+         */
+        std::vector<UIControl *> _ChildrenOrdered;
 
         /*
          * Globally defined styles
@@ -34,7 +48,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Panel parent, may be null
          */
-        UIPanel *_Parent = nullptr;
+        UIControl *_Parent = nullptr;
 
         /*
          * The currently applied style
@@ -45,9 +59,26 @@ namespace NerdThings::Ngine::UI {
         // Public Methods
 
         /*
+         * Add a child
+         */
+        void AddChild(std::string name, UIControl *control_);
+
+        /*
          * Draw the control
          */
         virtual void Draw();
+
+        /*
+         * Get child by name and type
+         */
+        template<typename ControlType>
+        ControlType *GetChild(const std::string &name) {
+            return dynamic_cast<ControlType *>(_Children[name]);
+        }
+
+        std::vector<UIControl *> GetChildren() {
+            return _ChildrenOrdered;
+        }
 
         /*
          * Get a global style for a control
@@ -62,7 +93,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get parent as type
          */
-        template<typename ParentType = UIPanel>
+        template<typename ParentType>
         ParentType* GetParent() {
             return dynamic_cast<ParentType*>(_Parent);
         }
@@ -73,15 +104,24 @@ namespace NerdThings::Ngine::UI {
         void SetGlobalStyle(std::type_index type_, TUIStyle style_);
 
         /*
-         * Get the screen position.
-         * This has the panel offset applied.
+         * Get the render position.
          */
-        virtual Math::TVector2 GetScreenPosition();
+        virtual Math::TVector2 GetLogicPosition();
 
         /*
-         * Get the screen rectangle
+         * Get the render rectangle
          */
-        Math::TRectangle GetScreenRectangle();
+        Math::TRectangle GetLogicRectangle();
+
+        /*
+         * Get the render position.
+         */
+        virtual Math::TVector2 GetRenderPosition();
+
+        /*
+         * Get the render rectangle
+         */
+        Math::TRectangle GetRenderRectangle();
 
         /*
          * Get the current style
@@ -94,10 +134,9 @@ namespace NerdThings::Ngine::UI {
         virtual float GetWidth() = 0;
 
         /*
-         * Set parent panel.
-         * Intended for internal use only.
+         * Remove a child control
          */
-        void InternalSetParent(UIPanel *parent_);
+        void RemoveChild(std::string name);
 
         /*
          * Set the style
@@ -108,6 +147,16 @@ namespace NerdThings::Ngine::UI {
          * Run update logic on the control
          */
         virtual void Update();
+    protected:
+        // Protected Fields
+
+        /*
+         * Children rules.
+         * 0 - No children
+         * 1 - 1 Child
+         * 2 - Many children
+         */
+        char _ChildrenConfig = 0;
     };
 }
 

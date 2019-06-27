@@ -79,7 +79,7 @@
 // Helper Functions
 //----------------------------------------------------------------------------------
 
-void ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
+void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
 
 //----------------------------------------------------------------------------------
 // Enums
@@ -307,9 +307,9 @@ namespace NerdThings::Ngine {
      * Mouse button
      */
     enum EMouseButton {
-        LEFT = 0,
-        RIGHT,
-        MIDDLE
+        MOUSE_BUTTON_LEFT = 0,
+        MOUSE_BUTTON_RIGHT,
+        MOUSE_BUTTON_MIDDLE
     };
 
     /*
@@ -510,6 +510,26 @@ namespace NerdThings::Ngine {
          * Align elements with the right side of the panel
          */
         ALIGN_RIGHT
+    };
+
+    /*
+     * UI Panel vertical alignment
+     */
+    enum EUIPanelVerticalAlignment {
+        /*
+         * Align elements with top of panel
+         */
+        ALIGN_TOP = 0,
+
+        /*
+         * Align elements with middle of panel
+         */
+        ALIGN_MIDDLE,
+
+        /*
+         * Align elements with bottom of panel
+         */
+        ALIGN_BOTTOM
     };
 }
 

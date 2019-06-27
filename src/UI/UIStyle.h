@@ -47,6 +47,11 @@ namespace NerdThings::Ngine::UI {
         float BorderThickness = 0;
 
         /*
+         * Draw the default control geometry
+         */
+        bool DrawDefaults = true;
+
+        /*
          * Foreground color
          */
         Graphics::TColor ForeColor = Graphics::TColor::Black;
@@ -72,6 +77,10 @@ namespace NerdThings::Ngine::UI {
             // Apply border
             pos_ += BorderThickness;
 
+            // Apply margin
+            pos_.X += Margin[3];
+            pos_.Y += Margin[0];
+
             return pos_;
         }
 
@@ -79,6 +88,12 @@ namespace NerdThings::Ngine::UI {
             // Apply border
             controlRect_.X += BorderThickness;
             controlRect_.Y += BorderThickness;
+
+            // Apply margin
+            controlRect_.X += Margin[3];
+            controlRect_.Y += Margin[0];
+
+            // TODO: Do we need to take from width and height too???
 
             return controlRect_;
         }

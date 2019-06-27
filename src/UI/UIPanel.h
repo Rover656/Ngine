@@ -14,6 +14,8 @@
 
 #include "../ngine.h"
 
+#include "../Graphics/RenderTarget.h"
+#include "../Graphics/GraphicsManager.h"
 #include "../Math/Vector2.h"
 #include "UIControl.h"
 #include "UIControlSized.h"
@@ -24,24 +26,23 @@ namespace NerdThings::Ngine::UI {
     /*
      * A UI Panel base, contains entities
      */
-    class NEAPI UIPanel : public UIControlSized {
+    class NEAPI UIPanel : virtual public UIControlSized {
         // Private Fields
-
-        /*
-         * Panel children
-         */
-        std::unordered_map<std::string, UIControl *> _Children;
-
-        /*
-         * Children stored in a vector that is ordered on add time.
-         */
-        std::vector<UIControl *> _ChildrenOrdered;
 
         /*
          * Parent widget (If this is the root panel)
          */
         UIWidget *_ParentWidget = nullptr;
+
+        /*
+         * The panel render target
+         */
+        Graphics::TRenderTarget *_RenderTarget = nullptr;
     public:
+
+        // Destructor
+
+        ~UIPanel();
 
         // Public Methods
 
@@ -49,11 +50,6 @@ namespace NerdThings::Ngine::UI {
          * Draw the panel
          */
         void Draw() override;
-
-        /*
-         * Add a child to the panel
-         */
-        void AddChild(std::string name, UIControl *control_);
 
         /*
          * Focus the next element
@@ -64,18 +60,6 @@ namespace NerdThings::Ngine::UI {
          * Focus the last element.
          */
         virtual void FocusPrev() = 0;
-
-        /*
-         * Get child by name and type
-         */
-        template<typename ControlType>
-        ControlType *GetChild(const std::string &name) {
-            return dynamic_cast<ControlType *>(_Children[name]);
-        }
-
-        std::vector<UIControl *> GetChildren() {
-            return _ChildrenOrdered;
-        }
 
         /*
          * Get positional offset on screen
@@ -103,9 +87,14 @@ namespace NerdThings::Ngine::UI {
         virtual float GetOffsetBeside(UIControl *control_) = 0;
 
         /*
-         * Get the panel position
+         * Get the position of the panel on screen
          */
-        Math::TVector2 GetScreenPosition() override;
+        Math::TVector2 GetLogicPosition();
+
+        /*
+         * Gets the panel position relative to the render target (0, 0)
+         */
+        Math::TVector2 GetRenderPosition() override;
 
         /*
          * Set the parent widget.
@@ -114,9 +103,14 @@ namespace NerdThings::Ngine::UI {
         void InternalSetParentWidget(UIWidget *widget_);
 
         /*
-         * Remove a child control
+         * Set panel height
          */
-        void RemoveChild(std::string name);
+        void SetHeight(float height_) override;
+
+        /*
+         * Set panel width
+         */
+        void SetWidth(float width_) override;
 
         /*
          * Update the panel

@@ -15,28 +15,43 @@
 #include "UIWidget.h"
 
 namespace NerdThings::Ngine::UI {
-    // Public Methods
+    // Destructor
 
-    void UIPanel::AddChild(std::string name, UIControl *control_) {
-        if (_Children.find(name) != _Children.end())
-            throw std::runtime_error("Cannot add a child by the same name.");
-        _Children.insert({name, control_});
-        _ChildrenOrdered.push_back(control_);
-        control_->InternalSetParent(this);
+    UIPanel::~UIPanel() {
+        delete _RenderTarget;
     }
 
+    // Public Methods
+
     void UIPanel::Draw() {
+        Graphics::GraphicsManager::PushTarget(_RenderTarget);
+
         UIControl::Draw();
 
-        for (auto pair : _Children) {
-            pair.second->Draw();
-        }
+        bool popped = false;
+        Graphics::GraphicsManager::PopTarget(popped);
+
+        // Draw target
+        Graphics::Drawing::DrawTexture(&_RenderTarget->Texture,
+                                       {
+                                               GetLogicPosition().X,
+                                               GetLogicPosition().Y,
+                                               GetWidth(),
+                                               GetHeight()
+                                       },
+                                       {
+                                               0,
+                                               0,
+                                               static_cast<float>(_RenderTarget->Texture.Width),
+                                               static_cast<float>(-_RenderTarget->Texture.Height)
+                                       },
+                                       Graphics::TColor::White);
     }
 
     Math::TVector2 UIPanel::GetOffset() {
         // TODO: Cache this
 
-        auto style = GetStyle();
+        /*auto style = GetStyle();
         if (_ParentWidget != nullptr) {
             return style.GetContentPosition(_ParentWidget->GetPosition());
         } else {
@@ -45,7 +60,9 @@ namespace NerdThings::Ngine::UI {
             parOff.X += par->GetOffsetBeside(this);
             parOff.Y += par->GetOffsetAbove(this);
             return style.GetContentPosition(parOff);
-        }
+        }*/
+
+        return {0, 0};
     }
 
     float UIPanel::GetOffsetAbove(std::string &name_) {
@@ -56,25 +73,37 @@ namespace NerdThings::Ngine::UI {
         return GetOffsetBeside(GetChild<UIControl>(name_));
     }
 
+    Math::TVector2 UIPanel::GetLogicPosition() {
+        if (_ParentWidget != nullptr)
+            return _ParentWidget->GetPosition();
+        else
+            return UIControl::GetLogicPosition();
+    }
+
+    Math::TVector2 UIPanel::GetRenderPosition() {
+        return {0, 0};
+    }
+
     void UIPanel::InternalSetParentWidget(UIWidget *widget_) {
         _ParentWidget = widget_;
     }
 
-    void UIPanel::RemoveChild(std::string name) {
-        if (_Children.find(name) == _Children.end())
-            throw std::runtime_error("Cannot remove a child that does not exist.");
-        auto child = _Children[name];
-        child->InternalSetParent(nullptr);
-        _ChildrenOrdered.erase(std::remove(_ChildrenOrdered.begin(), _ChildrenOrdered.end(), child), _ChildrenOrdered.end());
-        _Children.erase(name);
+    void UIPanel::SetHeight(float height_) {
+        UIControlSized::SetHeight(height_);
+
+        delete _RenderTarget;
+        _RenderTarget = new Graphics::TRenderTarget(static_cast<int>(GetWidth()), static_cast<int>(height_));
+    }
+
+    void UIPanel::SetWidth(float width_) {
+        UIControlSized::SetWidth(width_);
+
+        delete _RenderTarget;
+        _RenderTarget = new Graphics::TRenderTarget(static_cast<int>(width_), static_cast<int>(GetHeight()));
     }
 
     void UIPanel::Update() {
         UIControl::Update();
-
-        for (auto pair : _Children) {
-            pair.second->Update();
-        }
     }
 
     // Protected Constructor(s)
@@ -82,13 +111,9 @@ namespace NerdThings::Ngine::UI {
     UIPanel::UIPanel(float width_, float height_) {
         SetHeight(height_);
         SetWidth(width_);
-    }
+        _ChildrenConfig = 3; // Allow multiple children
 
-    Math::TVector2 UIPanel::GetScreenPosition() {
-        if (_ParentWidget != nullptr)
-            return _ParentWidget->GetPosition();
-        else {
-            return UIControl::GetScreenPosition();
-        }
+        // Create render target
+        _RenderTarget = new Graphics::TRenderTarget(static_cast<int>(width_), static_cast<int>(height_));
     }
 }

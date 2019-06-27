@@ -54,13 +54,26 @@ namespace NerdThings::Ngine::Input {
      * Currently does not support touch platforms. Will see if raylib is moving touch into mouse first.
      */
     class NEAPI Mouse {
-    public:
-        // Public Fields
+        // Private Fields
+
+        /*
+         * The current mouse state
+         */
+        static MouseState _CurrentMouseState;
 
         /*
          * The last frame mouse position
          */
-        static MouseState LastMouseState;
+        static MouseState _LastMouseState;
+
+        // Private Methods
+
+        /*
+         * Fetch the mouse state
+         */
+        static MouseState FetchState();
+    public:
+        // Public Fields
 
         /*
          * On mouse button pressed
@@ -85,32 +98,38 @@ namespace NerdThings::Ngine::Input {
         // Public Methods
 
         /*
+         * Cancel button press (Prevents double event checks).
+         */
+        static void CancelButton(EMouseButton button_);
+
+        /*
          * Get mouse position
          */
         static Math::TVector2 GetMousePosition();
 
         /*
-         * Get the mouse state
+         * Get the mouse state.
+         * Use this if you use cancellable events.
          */
         static MouseState GetMouseState();
 
         /*
-         * Get mouse wheel movement
+         * Get mouse wheel movement.
          */
         static int GetMouseWheelMovement();
 
         /*
-         * Is button down
+         * Is button down (even if cancelled).
          */
         static bool IsButtonDown(EMouseButton button_);
 
         /*
-         * Was button pushed this frame
+         * Was button pushed this frame (even if cancelled).
          */
         static bool IsButtonPressed(EMouseButton button_);
 
         /*
-         * Was button released this frame
+         * Was button released this frame (even if cancelled).
          */
         static bool IsButtonReleased(EMouseButton button_);
 

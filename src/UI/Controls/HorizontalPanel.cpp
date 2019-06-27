@@ -9,21 +9,39 @@
 *
 **********************************************************************************************/
 
-#include "VerticalPanel.h"
+#include "HorizontalPanel.h"
 
 namespace NerdThings::Ngine::UI::Controls {
     // Public Methods
 
-    void VerticalPanel::FocusNext() {
+    void HorizontalPanel::FocusNext() {
         // TODO: Add this functionality in feature/advanced-ui for controller/tabbing support.
     }
 
-    void VerticalPanel::FocusPrev() {
+    void HorizontalPanel::FocusPrev() {
         // TODO: Add this functionality in feature/advanced-ui for controller/tabbing support.
     }
 
-    float VerticalPanel::GetOffsetAbove(UIControl *control_) {
-        // This returns the heights of everything before this control
+    float HorizontalPanel::GetOffsetAbove(UIControl *control_) {
+        if (control_ == nullptr || control_ == this)
+            return 0;
+
+        auto style = control_->GetStyle();
+        auto dims = style.GetBorderDimensions({control_->GetWidth(), control_->GetHeight()});
+        switch (VerticalAlignment) {
+            case ALIGN_TOP:
+                return 0;
+            case ALIGN_MIDDLE:
+                return (GetHeight() / 2.0f)  - (dims.Y / 2.0f);
+            case ALIGN_BOTTOM:
+                return GetHeight() - dims.Y;
+        }
+
+        return 0; // Shut the compilers up
+    }
+
+    float HorizontalPanel::GetOffsetBeside(UIControl *control_) {
+        // This returns the widths of everything before this control
 
         auto children = GetChildren();
         auto iterator = std::find(children.begin(), children.end(), control_);
@@ -42,31 +60,13 @@ namespace NerdThings::Ngine::UI::Controls {
             auto childStyle = child->GetStyle();
 
             // Margins TODO: Is this right
-            offset += childStyle.Margin[0];
-            offset += childStyle.Margin[2];
+            offset += childStyle.Margin[1];
+            offset += childStyle.Margin[3];
 
-            // Height
-            offset += childStyle.GetBorderRect(child->GetRenderRectangle()).Height;
+            // Width
+            offset += childStyle.GetBorderRect(child->GetRenderRectangle()).Width;
         }
 
         return offset;
-    }
-
-    float VerticalPanel::GetOffsetBeside(UIControl *control_) {
-        if (control_ == nullptr || control_ == this)
-            return 0;
-
-        auto style = control_->GetStyle();
-        auto dims = style.GetBorderDimensions({control_->GetWidth(), control_->GetHeight()});
-        switch (HorizontalAlignment) {
-            case ALIGN_LEFT:
-                return 0;
-            case ALIGN_CENTER:
-                return (GetWidth() / 2.0f)  - (dims.X / 2.0f);
-            case ALIGN_RIGHT:
-                return GetWidth() - dims.X;
-        }
-
-        return 0; // Shut the compilers up
     }
 }

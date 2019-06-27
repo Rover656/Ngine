@@ -89,9 +89,9 @@ namespace NerdThings::Ngine::UI::Controls {
 
             UIControl::Draw();
 
-            auto controlContentRect = style.GetContentRect(GetScreenRectangle());
+            auto controlContentRect = style.GetContentRect(GetRenderRectangle());
 
-            if (_Font != nullptr)
+            if (_Font != nullptr && style.DrawDefaults)
                 Graphics::Drawing::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
                                                 style.ForeColor); // TODO: Wordwrap option
         }

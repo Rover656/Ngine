@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::UI {
             auto style = GetStyle();
 
             auto panelStyle = panel->GetStyle();
-            auto rect = panelStyle.GetContentRect(panel->GetScreenRectangle());
+            auto rect = panelStyle.GetContentRect(panel->GetRenderRectangle());
             if (_Height > rect.Height)
                 _Height = rect.Height - style.BorderThickness * 2;
 
