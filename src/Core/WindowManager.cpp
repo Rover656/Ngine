@@ -16,7 +16,7 @@ namespace NerdThings::Ngine::Core {
 
     void WindowManager::ApplyConfig(int config_) {
         // Build raylib flags
-        unsigned char raylibFlags = 0;
+        unsigned int raylibFlags = 0;
 
         if (config_ & FULLSCREEN) raylibFlags |= FULLSCREEN;
         if (config_ & RESIZEABLE_WINDOW) raylibFlags |= RESIZEABLE_WINDOW;
@@ -25,6 +25,7 @@ namespace NerdThings::Ngine::Core {
         if (config_ & HIDDEN_WINDOW) raylibFlags |= HIDDEN_WINDOW;
         if (config_ & MSAA_4X) raylibFlags |= MSAA_4X;
         if (config_ & VSYNC) raylibFlags |= VSYNC;
+        if (config_ & ALWAYS_RUN_MINIMIZED) raylibFlags |= ALWAYS_RUN_MINIMIZED;
 
         // Apply raylib flags
         SetConfigFlags(raylibFlags);

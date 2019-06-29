@@ -26,12 +26,13 @@ namespace NerdThings::Ngine::Graphics {
             // Remove target
             _RenderTargetStack.pop_back();
 
+            // Stop using target
+            EndTextureMode();
+
             // Start using another if it is available
             if (!_RenderTargetStack.empty()) {
                 BeginTextureMode(_RenderTargetStack.back()->ToRaylibTarget());
             }
-
-            EndTextureMode();
 
             popped_ = true;
             return pop;
@@ -42,6 +43,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void GraphicsManager::PushTarget(TRenderTarget *target_) {
+        // Stop using current target
+        if (!_RenderTargetStack.empty())
+            EndTextureMode();
+
         // Add to target stack
         _RenderTargetStack.emplace_back(target_);
 

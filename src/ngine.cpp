@@ -9,6 +9,15 @@
 *
 **********************************************************************************************/
 
+#include "ngine.h"
+
 // cute_c2 definitions
 #define CUTE_C2_IMPLEMENTATION
 #include <cute_c2.h>
+
+// ConsoleMessage
+void ConsoleMessage(std::string message, std::string severity, std::string module) {
+    {
+        std::cout << "[" + module + "] " + severity + ": " + message << std::endl;
+    }
+}

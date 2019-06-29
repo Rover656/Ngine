@@ -51,13 +51,17 @@
 //----------------------------------------------------------------------------------
 
 // C++ Includes
-#include <algorithm>                            // Required for: std::clamp and alike methods
-#include <chrono>                               // Required for: std::chrono timings
-#include <map>                                  // Required for: std::map
-#include <string>                               // Required for: std::string
-#include <thread>                               // Required for: std::this_thread sleep
-#include <unordered_map>                        // Required for: std::unordered_map
-#include <vector>                               // Required for: std::vector
+#include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
+#include <vector>
 
 #if defined(INCLUDE_RAYLIB)
 #include <raylib.h>    // Required for: raylib in its entirety
@@ -68,7 +72,14 @@
 #define NOGDI
 #define NODRAWTEXT
 #define NOUSER
+#define NOCRYPT
 #endif
+
+//----------------------------------------------------------------------------------
+// Helper Functions
+//----------------------------------------------------------------------------------
+
+void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
 
 //----------------------------------------------------------------------------------
 // Enums
@@ -122,9 +133,14 @@ namespace NerdThings::Ngine {
         HIDDEN_WINDOW = 128,
 
         /*
+         * Continue running game when minimized
+         */
+        ALWAYS_RUN_MINIMIZED = 256,
+
+        /*
          * Whether or not to maintain the dimensions provided to the game constructor
          */
-        MAINTAIN_DIMENSIONS = 256
+        MAINTAIN_DIMENSIONS = 512
     };
 
     /*
@@ -291,9 +307,9 @@ namespace NerdThings::Ngine {
      * Mouse button
      */
     enum EMouseButton {
-        LEFT = 0,
-        RIGHT,
-        MIDDLE
+        MOUSE_BUTTON_LEFT = 0,
+        MOUSE_BUTTON_RIGHT,
+        MOUSE_BUTTON_MIDDLE
     };
 
     /*
@@ -474,6 +490,46 @@ namespace NerdThings::Ngine {
          * Mirrors and clamps to the border
          */
         WRAP_MIRROR_CLAMP
+    };
+
+    /*
+     * UI Panel horizontal alignment
+     */
+    enum EUIPanelHorizontalAlignment {
+        /*
+         * Align elements with the left side of the panel
+         */
+        ALIGN_LEFT = 0,
+
+        /*
+         * Align elements with the middle of the panel
+         */
+        ALIGN_CENTER,
+
+        /*
+         * Align elements with the right side of the panel
+         */
+        ALIGN_RIGHT
+    };
+
+    /*
+     * UI Panel vertical alignment
+     */
+    enum EUIPanelVerticalAlignment {
+        /*
+         * Align elements with top of panel
+         */
+        ALIGN_TOP = 0,
+
+        /*
+         * Align elements with middle of panel
+         */
+        ALIGN_MIDDLE,
+
+        /*
+         * Align elements with bottom of panel
+         */
+        ALIGN_BOTTOM
     };
 }
 

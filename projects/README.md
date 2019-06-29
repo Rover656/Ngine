@@ -1,5 +1,5 @@
 ## Projects
 
-This directory contains all of the projects that can be used to build NGine.
+This directory will contain projects for targets that do not support cmake, for example UWP.
 
 Feel free to add new projects.

@@ -18,6 +18,10 @@ file(GLOB Ngine_source
     "Physics/*.cpp"
     "Types/*.h"
     "Types/*.cpp"
+    "UI/*.h"
+    "UI/*.cpp"
+    "UI/Controls/*.h"
+    "UI/Controls/*.cpp"
 )
 
 # Include options
@@ -41,6 +45,14 @@ target_include_directories(Ngine PUBLIC "3rd-party/cute-headers")
 
 # Link libraries
 target_link_libraries(Ngine raylib)
+
+if (UNIX OR MINGW)
+    target_link_libraries(Ngine stdc++fs)
+endif()
+
+if (MINGW)
+    target_link_libraries(Ngine -static)
+endif()
 
 # Compile definitions
 target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
