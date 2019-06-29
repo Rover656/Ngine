@@ -22,6 +22,7 @@
 #include <Physics/Polygon.h>
 #include <UI/Controls/BasicButton.h>
 #include <UI/Controls/HorizontalPanel.h>
+#include <UI/Controls/Image.h>
 #include <UI/Controls/Label.h>
 #include <UI/Controls/VerticalPanel.h>
 #include <UI/UIControl.h>
@@ -243,6 +244,12 @@ public:
         btn->SetStyle(bStyle);
 
         GetPanel()->AddChild("testButton", (UIControl *)btn);
+
+        auto imgStyle = TUIStyle();
+        imgStyle.Margin[0] = 5;
+        auto img = new Image(TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
+        img->SetStyle(imgStyle);
+        GetPanel()->AddChild("testImage", img);
     }
 
     static void Test(EventArgs &e) {

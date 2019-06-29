@@ -55,6 +55,8 @@ namespace NerdThings::Ngine::UI::Controls {
             return UIControlSized::GetWidth();
         }
 
+        // Major TODO: Account for styling in the below code
+
         void SetMaxHeight(float height_) override {
             auto l = UIControlSized::GetChild<Label>("label");
             l->SetMaxHeight(height_);

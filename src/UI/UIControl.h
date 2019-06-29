@@ -46,7 +46,7 @@ namespace NerdThings::Ngine::UI {
         static std::unordered_map<std::type_index, TUIStyle> _GlobalStyles;
 
         /*
-         * Panel parent, may be null
+         * Control parent, may be null
          */
         UIControl *_Parent = nullptr;
 
@@ -76,6 +76,9 @@ namespace NerdThings::Ngine::UI {
             return dynamic_cast<ControlType *>(_Children[name]);
         }
 
+        /*
+         * Get all of the children in add order
+         */
         std::vector<UIControl *> GetChildren() {
             return _ChildrenOrdered;
         }
