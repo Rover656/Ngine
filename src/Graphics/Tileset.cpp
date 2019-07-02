@@ -58,7 +58,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Tileset::SetTileData(std::vector<int> data_) {
-        if (data_.size() != GetWidth() * GetHeight()) {
+        if (data_.size() != GetWidth() / _TilesetSprite.FrameWidth * GetHeight() / _TilesetSprite.FrameHeight) {
             throw std::runtime_error("Tile data does not match dimensions.");
         }
         _Tiles = data_;
