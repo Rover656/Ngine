@@ -139,6 +139,11 @@ namespace NerdThings::Ngine::Core {
         Math::TRectangle GetCullArea() const;
 
         /*
+         * Get the parent game
+         */
+        Game *GetParentGame();
+
+        /*
          * Set the entity depth in the scene (internally used)
          */
         void InternalSetEntityDepth(int depth_, BaseEntity *ent_);

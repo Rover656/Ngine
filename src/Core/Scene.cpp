@@ -95,6 +95,10 @@ namespace NerdThings::Ngine::Core {
         return {cam->Target.X - cam->Origin.X, cam->Target.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
     }
 
+    Game *Scene::GetParentGame() {
+        return _ParentGame;
+    }
+
     void Scene::InternalSetEntityDepth(int depth_, BaseEntity *ent_) {
         if (_EntityDepths.find(depth_) == _EntityDepths.end())
             _EntityDepths.insert({depth_, {}});
