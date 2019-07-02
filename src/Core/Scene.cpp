@@ -53,7 +53,7 @@ namespace NerdThings::Ngine::Core {
                     if (_EntityActivities.find(ent) == _EntityActivities.end())
                         _EntityActivities.insert({ent, true});
 
-                    if (_EntityActivities[ent])
+                    if (_EntityActivities[ent] && !ent->DrawWithCamera)
                         ent->Draw();
                 }
             }
@@ -70,8 +70,8 @@ namespace NerdThings::Ngine::Core {
             auto vec = pair.second;
             for (auto ent : vec) {
                 if (ent != nullptr) {
-                    if (_EntityActivities[ent])
-                        ent->DrawCamera();
+                    if (_EntityActivities[ent] && ent->DrawWithCamera)
+                        ent->Draw();
                 }
             }
         }

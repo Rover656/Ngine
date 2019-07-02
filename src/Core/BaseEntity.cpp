@@ -60,11 +60,6 @@ namespace NerdThings::Ngine::Core {
         OnDraw({});
     }
 
-    void BaseEntity::DrawCamera() {
-        // Trigger drawcamera
-        OnDrawCamera({});
-    }
-
     bool BaseEntity::GetCanCull() {
         return _CanCull;
     }

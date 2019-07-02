@@ -14,6 +14,7 @@
 #include <Core/Game.h>
 #include <Core/Resources.h>
 #include <Graphics/Sprite.h>
+#include <Graphics/Tileset.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
 #include <Math/Vector2.h>
@@ -39,19 +40,6 @@ using namespace NGINE_NS::Math;
 using namespace NGINE_NS::Physics;
 using namespace NGINE_NS::UI;
 using namespace NGINE_NS::UI::Controls;
-
-class HelloWorldComponent2D : public Component {
-public:
-    HelloWorldComponent2D(BaseEntity *parent_) : Component(parent_) {
-        SubscribeToCameraDraw();
-    }
-
-    void DrawCamera(EventArgs &e) override {
-        Drawing::DrawText(TFont::GetDefaultFont(),
-                          "I'm in the scene, controlling the camera\nI am also affected by said camera.",
-                          GetParent<BaseEntity>()->GetPosition(), 48, 1, TColor::Red);
-    }
-};
 
 class KeyboardMovementComponent2D : public Component {
 public:
@@ -95,20 +83,6 @@ public:
     }
 };
 
-class TestEntity : public BaseEntity {
-public:
-    TestEntity(Scene *parentScene_, const TVector2 &pos_) : BaseEntity(parentScene_, pos_) {
-        AddComponent("HelloWorld", new HelloWorldComponent2D(this));
-
-        //AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, { 0, 0, 100, 100 }));
-
-        TRectangle bounds = {0, 0, 100, 100};
-        std::vector<TVector2> vertices = {{0, 0}, {100, 0}, {100, 100}, {0, 100}};
-
-        //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, vertices))->EnableDebugDraw(true);
-    }
-};
-
 class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, TVector2 position_)
@@ -118,7 +92,7 @@ public:
         AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
         AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->
-            EnableDebugDraw(true);
+            EnableDebugDraw();
 
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
 
@@ -127,24 +101,9 @@ public:
 };
 
 class OtherComponent : public Component {
-    TSprite tst;
 public:
     OtherComponent(BaseEntity *parent_) : Component(parent_) {
-        SubscribeToCameraDraw();
-        SubscribeToDraw();
         SubscribeToUpdate();
-    }
-
-    void Draw(EventArgs &e) override {
-        // This is like UI, it is not affected by the camera
-        auto pos = Mouse::GetMousePosition();
-
-        auto color = Mouse::IsButtonDown(MOUSE_BUTTON_LEFT);
-
-        Drawing::DrawCircle(pos, 15, color ? TColor::Orange : TColor::White);
-
-        //Drawing::DrawText(TFont::GetDefaultFont(), "I am in the scene, not affected by the camera", {25, 300}, 48, 2,
-        //                  TColor::Purple);
     }
 
     void Update(EventArgs &e) override {
@@ -152,28 +111,6 @@ public:
 
         if (Keyboard::IsKeyPressed(KEY_SPACE)) {
             AudioManager::Play(Resources::GetSound("test_sound"));
-        }
-    }
-
-    void DrawCamera(EventArgs &e) override {
-        //tst.Draw({100, 250}, 0);
-
-        // This is all affected by the camera
-        Drawing::DrawTriangle({250, 0}, {100, 200}, {400, 200}, TColor::Yellow);
-
-        auto tcol = TColor::White;
-
-        if (Keyboard::IsKeyDown(KEY_SPACE)) {
-            tcol = TColor::Red;
-        }
-
-        Drawing::DrawText(TFont::GetDefaultFont(), "I am in the scene, affected by the camera", {10, 10}, 48, 2,
-                          tcol);
-
-        Drawing::DrawFPS({10, 100});
-
-        for (auto i = 0; i < 800; i++) {
-            Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
         }
     }
 };
@@ -184,7 +121,7 @@ public:
         AddComponent("OtherComponent", new OtherComponent(this));
 
         AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->
-            EnableDebugDraw(true);
+            EnableDebugDraw();
         //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw(true);
 
         //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
@@ -263,9 +200,9 @@ public:
 
     TestWidget widg;
 
+    Tileset *testTiles;
+
     TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
-        auto test = AddEntity("TestEntity", new TestEntity(this, {50, 100}));
-        test->SetOrigin(TVector2(50, 50));
 
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
@@ -280,6 +217,21 @@ public:
         OnDrawCamera.Bind(this, &TestScene::DrawCam);
 
         SetCullArea(1280 - 50, 768 - 50, true);
+
+        std::vector<int> tileData;
+        for (auto i = 0; i < 50; i++) {
+            tileData.push_back(1);
+        }
+        for (auto i = 50; i < 100; i++) {
+            tileData.push_back(2);
+        }
+
+        testTiles = new Tileset(TSprite(Resources::GetTexture("test_tiles"), 32, 32, 32, 32, 0, 0), 10, 10, tileData);
+        testTiles->SetTileAt({5, 5}, 13);
+    }
+
+    ~TestScene() {
+        delete testTiles;
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
@@ -295,7 +247,9 @@ public:
 
         Drawing::DrawFPS({ 500, 300 });
 
-        widg.Draw();
+        //widg.Draw();
+
+        testTiles->Draw({100, 100});
     }
 
     void DrawCam(EventArgs &e) {

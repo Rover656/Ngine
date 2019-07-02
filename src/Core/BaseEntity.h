@@ -94,14 +94,14 @@ namespace NerdThings::Ngine::Core {
         // Public Fields
 
         /*
+         * Whether or not this entity is drawn with the camera
+         */
+        bool DrawWithCamera = true;
+
+        /*
          * On draw event
          */
         EventHandler<EventArgs> OnDraw;
-
-        /*
-         * On draw event with camera translation
-         */
-        EventHandler<EventArgs> OnDrawCamera;
 
         /*
          * On position changed event
@@ -158,11 +158,6 @@ namespace NerdThings::Ngine::Core {
          * Draw code for the entity
          */
         virtual void Draw();
-
-        /*
-         * Draw code for the entity with camera translation
-         */
-        virtual void DrawCamera();
 
         /*
          * Get a component by name.

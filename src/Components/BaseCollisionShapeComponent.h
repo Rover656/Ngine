@@ -37,11 +37,6 @@ namespace NerdThings::Ngine::Components {
         bool _DebugDraw = false;
 
         /*
-         * Whether or not drawing with the camera
-         */
-        bool _DebugDrawCamera = false;
-
-        /*
          * On position changed
          */
         Core::EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
@@ -216,38 +211,21 @@ namespace NerdThings::Ngine::Components {
                 _DebugDraw = false;
 
                 UnsubscribeFromDraw();
-                UnsubscribeFromCameraDraw();
             }
         }
 
         void Draw(Core::EventArgs &e) override {
             if (_DebugDraw) {
-                if (!_DebugDrawCamera) {
-                    DrawDebug();
-                }
-            }
-        }
-
-        void DrawCamera(Core::EventArgs &e) override {
-            if (_DebugDraw) {
-                if (_DebugDrawCamera) {
-                    DrawDebug();
-                }
+                DrawDebug();
             }
         }
 
         /*
          * Enable debug geometry drawing
          */
-        void EnableDebugDraw(bool withCamera_ = false) {
+        void EnableDebugDraw() {
             if (!_DebugDraw) {
-                _DebugDrawCamera = withCamera_;
-
-                if (_DebugDrawCamera) {
-                    SubscribeToCameraDraw();
-                } else {
-                    SubscribeToDraw();
-                }
+                SubscribeToDraw();
 
                 _DebugDraw = true;
             }

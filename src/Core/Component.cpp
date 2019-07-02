@@ -18,16 +18,8 @@ namespace NerdThings::Ngine::Core {
 
     void Component::Draw(EventArgs &e) { }
 
-    void Component::DrawCamera(EventArgs &e) {}
-
     bool Component::HasParent() const {
         return _ParentEntity != nullptr;
-    }
-
-    void Component::SubscribeToCameraDraw() {
-        if (HasParent()) {
-            _OnDrawCameraRef = _ParentEntity->OnDrawCamera.Bind(this, &Component::DrawCamera);
-        }
     }
 
     void Component::SubscribeToDraw() {
@@ -44,10 +36,6 @@ namespace NerdThings::Ngine::Core {
                 _OnUpdateRef = _ParentEntity->OnUpdate.Bind(this, &Component::Update);
             }
         }
-    }
-
-    void Component::UnsubscribeFromCameraDraw() {
-        _OnDrawCameraRef.UnBind();
     }
 
     void Component::UnsubscribeFromDraw() {

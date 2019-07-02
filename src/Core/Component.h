@@ -33,11 +33,6 @@ namespace NerdThings::Ngine::Core {
         EventHandleRef<EventArgs> _OnDrawRef;
 
         /*
-         * On draw camera ref
-         */
-        EventHandleRef<EventArgs> _OnDrawCameraRef;
-
-        /*
          * On update ref
          */
         EventHandleRef<EventArgs> _OnUpdateRef;
@@ -69,11 +64,6 @@ namespace NerdThings::Ngine::Core {
         virtual void Draw(EventArgs &e);
 
         /*
-         * Draw with camera translation
-         */
-        virtual void DrawCamera(EventArgs &e);
-
-        /*
          * Get the parent entity as a type
          */
         template <typename EntityType>
@@ -87,11 +77,6 @@ namespace NerdThings::Ngine::Core {
         [[nodiscard]] bool HasParent() const;
 
         /*
-         * Subscribe to entity draw with camera translation
-         */
-        void SubscribeToCameraDraw();
-
-        /*
          * Subscribe to entity draw
          */
         void SubscribeToDraw();
@@ -100,11 +85,6 @@ namespace NerdThings::Ngine::Core {
          * Subscribe to entity update
          */
         void SubscribeToUpdate();
-
-        /*
-         * Unsubscribe from entity draw with camera translation
-         */
-        void UnsubscribeFromCameraDraw();
 
         /*
          * Unsubscribe from entity draw

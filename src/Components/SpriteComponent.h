@@ -32,11 +32,6 @@ namespace NerdThings::Ngine::Components {
          * Sprite used
          */
         Graphics::TSprite _Sprite;
-
-        /*
-         * Whether or not to draw using the camera
-         */
-        bool _UsingCamera = true;
     public:
 
         // Public Constructor(s)
@@ -44,30 +39,17 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a sprite component
          */
-        SpriteComponent(Core::BaseEntity *parent_, const Graphics::TSprite &sprite_, const bool useCamera_ = true)
-            : Component(parent_), _Sprite(sprite_), _UsingCamera(useCamera_) {
-            if (_UsingCamera)
-                SubscribeToCameraDraw();
-            else
-                SubscribeToDraw();
-
+        SpriteComponent(Core::BaseEntity *parent_, const Graphics::TSprite &sprite_)
+            : Component(parent_), _Sprite(sprite_) {
+            SubscribeToDraw();
             SubscribeToUpdate();
         }
 
         // Public Methods
 
         void Draw(Core::EventArgs &e) override {
-            if (!_UsingCamera) {
-                const auto par = GetParent<Core::BaseEntity>();
-                _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
-            }
-        }
-
-        void DrawCamera(Core::EventArgs &e) override {
-            if (_UsingCamera) {
-                const auto par = GetParent<Core::BaseEntity>();
-                _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
-            }
+            const auto par = GetParent<Core::BaseEntity>();
+            _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
         }
 
         void Update(Core::EventArgs &e) override {
