@@ -91,6 +91,10 @@ namespace NerdThings::Ngine::Core {
         return _UpdateFPS;
     }
 
+    void Game::Quit() {
+        _Running = false;
+    }
+
     void Game::Run() {
         #if !defined(PLATFORM_UWP)
 
@@ -120,7 +124,9 @@ namespace NerdThings::Ngine::Core {
         // Invoke OnRun
         OnRun({});
 
-        while (!WindowManager::ShouldClose()) {
+        _Running = true;
+
+        while (!WindowManager::ShouldClose() && _Running) {
             // Window/Game Size variables
             const auto w = static_cast<float>(WindowManager::GetWindowWidth());
             const auto h = static_cast<float>(WindowManager::GetWindowHeight());

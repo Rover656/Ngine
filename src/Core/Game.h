@@ -59,6 +59,11 @@ namespace NerdThings::Ngine::Core {
         Graphics::TRenderTarget _RenderTarget;
 
         /*
+         * Is the game loop running
+         */
+        bool _Running = false;
+
+        /*
          * The target update FPS
          */
         int _UpdateFPS = 0;
@@ -140,6 +145,11 @@ namespace NerdThings::Ngine::Core {
          * Get the target update FPS.
          */
         [[nodiscard]] int GetUpdateFPS() const;
+
+        /*
+         * Quit the game
+         */
+        void Quit();
 
         /*
          * Start the game loop
