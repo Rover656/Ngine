@@ -57,6 +57,12 @@ namespace NerdThings::Ngine::UI::Controls {
 
         // Major TODO: Account for styling in the below code
 
+        void SetHeight(float height_) override {
+            auto l = UIControlSized::GetChild<Label>("label");
+            l->SetHeight(height_);
+            UIControlSized::SetHeight(height_);
+        }
+
         void SetMaxHeight(float height_) override {
             auto l = UIControlSized::GetChild<Label>("label");
             l->SetMaxHeight(height_);
@@ -81,10 +87,8 @@ namespace NerdThings::Ngine::UI::Controls {
             UIControlSized::SetMinWidth(width_);
         }
 
-        void SetHeight(float height_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetHeight(height_);
-            UIControlSized::SetHeight(height_);
+        void SetLabelStyle(TUIStyle style_) {
+            UIControlSized::GetChild<Label>("label")->SetStyle(style_);
         }
 
         void SetWidth(float width_) override {
