@@ -60,6 +60,11 @@ namespace NerdThings::Ngine::Graphics {
          * Set the tile value at a position.
          */
         void SetTileAt(Math::TVector2 pos_, int tile_);
+
+        /*
+         * Set all tile data
+         */
+        void SetTileData(std::vector<int> data_);
     protected:
 
         // Protected Methods

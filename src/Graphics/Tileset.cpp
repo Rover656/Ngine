@@ -57,6 +57,14 @@ namespace NerdThings::Ngine::Graphics {
         ReDraw(); // TODO: Batch set tiles to avoid this messy call
     }
 
+    void Tileset::SetTileData(std::vector<int> data_) {
+        if (data_.size() != GetWidth() * GetHeight()) {
+            throw std::runtime_error("Tile data does not match dimensions.");
+        }
+        _Tiles = data_;
+        ReDraw();
+    }
+
     // Protected Method(s)
 
     void Tileset::RenderTargetRedraw() {
