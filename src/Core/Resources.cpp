@@ -189,7 +189,7 @@ namespace NerdThings::Ngine::Core {
         }
 
         // File extension definitions
-        std::vector<std::string> fntExts = {".ttf", ".otf", ".fnt"}; // TODO: Spritefont support
+        std::vector<std::string> fntExts = {"ttf", "otf", "fnt"}; // TODO: Spritefont support
         std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
         std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc"};
