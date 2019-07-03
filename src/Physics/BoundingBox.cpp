@@ -11,8 +11,6 @@
 
 #include "BoundingBox.h"
 
-#include <cute_c2.h>
-
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
@@ -34,29 +32,31 @@ namespace NerdThings::Ngine::Physics {
         auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
 
         // Bounding Box 2D against Bounding Box 2D
+        auto myAABB = ToB2Shape();
         if (boundingBox2D != nullptr) {
-            collided = c2AABBtoAABB({
-                                        {
-                                            Min.X,
-                                            Min.Y
-                                        },
-                                        {
-                                            Max.X,
-                                            Max.Y
-                                        }
-                                    },
-                                    {
-                                        {
-                                            boundingBox2D->Min.X,
-                                            boundingBox2D->Min.Y
-                                        },
-                                        {
-                                            boundingBox2D->Max.X,
-                                            boundingBox2D->Max.Y
-                                        }
-                                    });
+            auto theirAABB = boundingBox2D->ToB2Shape();
+            collided = b2TestOverlap(&myAABB, &theirAABB);
         }
 
         return collided;
     }
+
+    // Public Methods
+
+#ifdef INCLUDE_BOX2D
+
+    b2PolygonShape TBoundingBox::ToB2Shape() {
+        b2PolygonShape tmpShape;
+        b2Vec2 vertices[4];
+
+        vertices[0] = {Min.X, Min.Y};
+        vertices[1] = {Min.X, Max.Y};
+        vertices[2] = {Max.X, Max.Y};
+        vertices[3] = {Max.X, Min.Y};
+
+        tmpShape.Set(vertices, 4);
+        return tmpShape;
+    }
+
+#endif
 }

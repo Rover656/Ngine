@@ -41,10 +41,11 @@ endif()
 
 # Include directories
 target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
-target_include_directories(Ngine PUBLIC "3rd-party/cute-headers")
+target_include_directories(Ngine PUBLIC "3rd-party/Box2D-cmake/Box2D")
 
 # Link libraries
 target_link_libraries(Ngine raylib)
+target_link_libraries(Ngine tobanteGaming::Box2D)
 
 if (UNIX OR MINGW)
     target_link_libraries(Ngine stdc++fs)

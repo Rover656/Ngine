@@ -2,3 +2,6 @@
 	path = src/3rd-party/raylib
 	url = https://github.com/raysan5/raylib
 	branch = master
+[submodule "src/3rd-party/Box2D-cmake"]
+	path = src/3rd-party/Box2D-cmake
+	url = https://github.com/tobanteGaming/Box2D-cmake.git

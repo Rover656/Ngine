@@ -13,8 +13,6 @@
 
 #include "BoundingBox.h"
 
-#include <cute_c2.h>
-
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
@@ -40,44 +38,30 @@ namespace NerdThings::Ngine::Physics {
         const auto circle = dynamic_cast<TCircle*>(shape_);
 
         // Circle against Circle
+
+        auto myCircle = ToB2Shape();
         if (circle != nullptr) {
-            collided = c2CircletoCircle({
-                                            {
-                                                Center.X,
-                                                Center.Y
-                                            },
-                                            Radius
-                                        },
-                                        {
-                                            {
-                                                circle->Center.X,
-                                                circle->Center.Y
-                                            },
-                                            circle->Radius
-                                        });
+            auto theirCircle = circle->ToB2Shape();
+            collided = b2TestOverlap(&myCircle, &theirCircle);
         }
 
         // Bounding Box 2D against Circle
         if (boundingBox2D != nullptr) {
-            collided = c2CircletoAABB({
-                                          {
-                                              Center.X,
-                                              Center.Y
-                                          },
-                                          Radius
-                                      },
-                                      {
-                                          {
-                                              boundingBox2D->Min.X,
-                                              boundingBox2D->Min.Y
-                                          },
-                                          {
-                                              boundingBox2D->Max.X,
-                                              boundingBox2D->Max.Y
-                                          }
-                                      });
+            auto theirAABB = boundingBox2D->ToB2Shape();
+            collided = b2TestOverlap(&myCircle, &theirAABB);
         }
 
         return collided;
     }
+
+    // Public Methods
+
+#ifdef INCLUDE_BOX2D
+    b2CircleShape TCircle::ToB2Shape() {
+        b2CircleShape shape;
+        shape.m_p.Set(Center.X, Center.Y);
+        shape.m_radius = Radius;
+        return shape;
+    }
+#endif
 }
