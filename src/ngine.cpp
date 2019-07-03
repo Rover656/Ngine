@@ -11,9 +11,13 @@
 
 #include "ngine.h"
 
-// cute_c2 definitions
-#define CUTE_C2_IMPLEMENTATION
-#include <cute_c2.h>
+#ifdef INCLUDE_BOX2D
+bool b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB) {
+    b2Transform nope;
+    nope.SetIdentity();
+    return b2TestOverlap(shapeA, 0, shapeB, 0, nope, nope);
+}
+#endif
 
 // ConsoleMessage
 void ConsoleMessage(std::string message, std::string severity, std::string module) {

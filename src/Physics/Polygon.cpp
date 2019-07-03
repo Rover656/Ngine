@@ -11,25 +11,8 @@
 
 #include "Polygon.h"
 
-#include <cute_c2.h>
-
 #include "BoundingBox.h"
 #include "Circle.h"
-
-// Helper functions
-
-c2Poly createC2Poly(int count, NerdThings::Ngine::Math::TVector2 data[]) {
-    c2Poly tmpPoly;
-    tmpPoly.count = count;
-    for (auto i = 0; i < count; i++) tmpPoly.verts[i] = {data[i].X, data[i].Y};
-    return tmpPoly;
-}
-
-c2Poly createC2Poly(int count, NerdThings::Ngine::Math::TVector2 data[], NerdThings::Ngine::Math::TVector2 norms[]) {
-    c2Poly tmpPoly = createC2Poly(count, data);
-    for (auto i = 0; i < count; i++) tmpPoly.norms[i] = {norms[i].X, norms[i].Y};
-    return tmpPoly;
-}
 
 namespace NerdThings::Ngine::Physics {
     // Private Methods
@@ -55,35 +38,17 @@ namespace NerdThings::Ngine::Physics {
         const auto circle = dynamic_cast<TCircle*>(shape_);
         const auto polygon = dynamic_cast<TPolygon*>(shape_);
 
-        auto myPoly = createC2Poly(VertexCount, Vertices, Normals);
+        auto myPoly = ToB2Shape();
 
         if (boundingBox2D != nullptr) {
-            // Bounding 
-            collided = c2AABBtoPoly({
-                                        {
-                                            boundingBox2D->Min.X,
-                                            boundingBox2D->Min.Y
-                                        },
-                                        {
-                                            boundingBox2D->Max.X,
-                                            boundingBox2D->Max.Y
-                                        }
-                                    },
-                                    &myPoly,
-                                    0);
+            auto theirAABB = boundingBox2D->ToB2Shape();
+            collided = b2TestOverlap(&myPoly, &theirAABB);
         } else if (circle != nullptr) {
-            collided = c2CircletoPoly({
-                                          {
-                                              circle->Center.X,
-                                              circle->Center.Y
-                                          },
-                                          circle->Radius
-                                      },
-                                      &myPoly,
-                                      0);
+            auto theirCircle = circle->ToB2Shape();
+            collided = b2TestOverlap(&myPoly, &theirCircle);
         } else if (polygon != nullptr) {
-            auto theirPoly = createC2Poly(polygon->VertexCount, polygon->Vertices, polygon->Normals);
-            collided = c2PolytoPoly(&myPoly, 0, &theirPoly, 0);
+            auto theirPoly = polygon->ToB2Shape();
+            collided = b2TestOverlap(&myPoly, &theirPoly);
         }
 
         return collided;
@@ -91,14 +56,21 @@ namespace NerdThings::Ngine::Physics {
 
     // Public Methods
 
+#ifdef INCLUDE_BOX2D
+    b2PolygonShape TPolygon::ToB2Shape() {
+        b2PolygonShape tmpShape;
+        b2Vec2 vertices[VertexCount];
+        for (auto i = 0; i < VertexCount; i++) vertices[i] = {Vertices[i].X, Vertices[i].Y};
+        tmpShape.Set(vertices, VertexCount);
+        return tmpShape;
+    }
+#endif
+
     void TPolygon::GenerateNormals() {
         // Create c2 poly
-        c2Poly tmpPoly = createC2Poly(VertexCount, Vertices);
+        auto tmpPoly = ToB2Shape();
 
-        // Make vertices
-        c2MakePoly(&tmpPoly);
-
-        // Bring back in our data
-        for (auto i = 0; i < VertexCount; i++) Vertices[i] = {tmpPoly.verts[i].x, tmpPoly.verts[i].y};
+        // Bring in normals
+        for (auto i = 0; i < VertexCount; i++) Normals[i] = {tmpPoly.m_normals[i].x, tmpPoly.m_normals[i].y};
     }
 }

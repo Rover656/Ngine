@@ -48,6 +48,12 @@ namespace NerdThings::Ngine::Physics {
          */
         TBoundingBox()
             : Max({}), Min({}) {}
+
+        // Public Methods
+
+#ifdef INCLUDE_BOX2D
+        b2PolygonShape ToB2Shape();
+#endif
     };
 }
 

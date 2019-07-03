@@ -22,6 +22,7 @@ set(SUPPORT_FILEFORMAT_FLAC ON CACHE INTERNAL "Support this format" FORCE)
 
 # Add libraries
 add_subdirectory("raylib")
+add_subdirectory("Box2D-cmake")
 
 # Set output directories
 if (${BUILD_SHARED})

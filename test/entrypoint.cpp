@@ -43,7 +43,7 @@ using namespace NGINE_NS::UI::Controls;
 
 class KeyboardMovementComponent2D : public Component {
 public:
-    float MoveSpeed = 5;
+    float MoveSpeed = 1;//5;
 
     KeyboardMovementComponent2D(BaseEntity *parent_) : Component(parent_) {
         SubscribeToUpdate();
@@ -87,11 +87,11 @@ class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, TVector2 position_)
         : BaseEntity(parentScene_, position_) {
-        SetOrigin({32, 32});
+        SetOrigin({16, 16});
 
-        AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0)));
+        AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 64, 64).ToPolygon()))->
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()))->
             EnableDebugDraw();
 
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
@@ -120,15 +120,14 @@ public:
     OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->
-            EnableDebugDraw();
-        //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw(true);
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
+        //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
 
         //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
 
-        TRectangle rect = {0, 0, 100, 100};
+        TRectangle rect = {0, 0, 32, 32};
 
-        //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw(true);
+        //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw();
     }
 
     bool CheckForCulling(Math::TRectangle cullArea_) override {

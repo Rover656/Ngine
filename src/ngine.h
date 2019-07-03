@@ -23,6 +23,7 @@
 
 #if defined(NGINE_EXPORTS)
 #define INCLUDE_RAYLIB
+#define INCLUDE_BOX2D
 #endif
 
 #if defined(_WIN32) && defined(NGINE_EXPORTS)
@@ -65,6 +66,14 @@
 
 #if defined(INCLUDE_RAYLIB)
 #include <raylib.h>    // Required for: raylib in its entirety
+#endif
+
+#if defined(INCLUDE_BOX2D)
+#include <Box2D/Box2D.h>
+
+// For simpler testing while we have a janky box2d impl
+// Will be removed and used properly after the game jam, this is a quick fix because it is important
+bool NEAPI b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB);
 #endif
 
 // Remove stuff from Windows.h that break Ngine and raylib

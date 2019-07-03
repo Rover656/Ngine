@@ -27,6 +27,7 @@ namespace NerdThings::Ngine::Physics {
         bool IsCompatible(ICollisionShape *shape_) override;
 
         bool RunCollisionCheck(ICollisionShape *shape_) override;
+
     public:
         // Public Fields
 
@@ -51,7 +52,7 @@ namespace NerdThings::Ngine::Physics {
          * Create an empty polygon
          */
         TPolygon()
-            : VertexCount(0) {}
+                : VertexCount(0) {}
 
         /*
          * Create a polygon from vertices
@@ -70,6 +71,10 @@ namespace NerdThings::Ngine::Physics {
         }
 
         // Public Methods
+
+#ifdef INCLUDE_BOX2D
+        b2PolygonShape ToB2Shape();
+#endif
 
         /*
          * Generate normals

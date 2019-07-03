@@ -51,6 +51,12 @@ namespace NerdThings::Ngine::Physics {
          */
         TCircle(const Math::TVector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
+
+        // Public Methods
+
+#ifdef INCLUDE_BOX2D
+        b2CircleShape ToB2Shape();
+#endif
     };
 }
 
