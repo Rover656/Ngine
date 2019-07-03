@@ -60,7 +60,7 @@ namespace NerdThings::Ngine::Graphics {
         auto x = 0;
         for (auto i = 0; i < CurrentFrame; i++) {
             x += FrameWidth;
-            if (x > GetCurrentTexture()->Width)
+            if (x >= GetCurrentTexture()->Width)
                 x = 0;
         }
 
@@ -75,7 +75,7 @@ namespace NerdThings::Ngine::Graphics {
         auto y = 0;
         for (auto i = 0; i < CurrentFrame; i++) {
             x += FrameWidth;
-            if (x > GetCurrentTexture()->Width) {
+            if (x >= GetCurrentTexture()->Width) {
                 x = 0;
                 y += FrameHeight;
             }
