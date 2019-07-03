@@ -25,25 +25,31 @@ namespace NerdThings::Ngine::Components {
         /*
          * The tileset
          */
-        Graphics::Tileset _Tileset;
+        Graphics::Tileset *_Tileset;
     public:
 
         // Public Constructor(s)
 
-        TilesetComponent(Core::BaseEntity *parent_, const Graphics::Tileset& tileset_)
+        TilesetComponent(Core::BaseEntity *parent_, Graphics::Tileset *tileset_)
          : Component(parent_), _Tileset(tileset_) {
             SubscribeToDraw();
+        }
+
+        // Destructor
+
+        ~TilesetComponent() {
+            delete _Tileset;
         }
 
         // Public Methods
 
         void Draw(Core::EventArgs &e) override {
             auto par = GetParent<Core::BaseEntity>();
-            _Tileset.Draw(par->GetPosition());
+            _Tileset->Draw(par->GetPosition());
         }
 
         Graphics::Tileset *GetTileset() {
-            return &_Tileset;
+            return _Tileset;
         }
     };
 }
