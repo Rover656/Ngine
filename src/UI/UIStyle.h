@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Background color
          */
-        Graphics::TColor BackColor = Graphics::TColor::Transparent;
+        Graphics::TColor BackColor = Graphics::TColor::White;
 
         /*
          * The background texture
