@@ -54,7 +54,7 @@ namespace NerdThings::Ngine::UI::Controls {
             return UIControlSized::GetHeight();
         }
 
-        Label *GetPanel() {
+        Label *GetLabel() {
             return GetChild<CentrePanel>("panel")->GetChild<Label>("label");
         }
 
