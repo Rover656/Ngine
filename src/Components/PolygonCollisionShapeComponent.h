@@ -149,6 +149,10 @@ namespace NerdThings::Ngine::Components {
             return _Polygon;
         }
 
+        std::vector<Math::TVector2> GetSourceVertices() {
+            return _Vertices;
+        }
+
         void SetPolygon(const Physics::TPolygon &polygon_) {
             const auto par = GetParent<Core::BaseEntity>();
 
