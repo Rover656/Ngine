@@ -69,6 +69,16 @@ namespace NerdThings::Ngine::UI {
         virtual void Draw();
 
         /*
+         * Draw the children
+         */
+        void DrawChildren();
+
+        /*
+         * Draw the style instructions
+         */
+        void DrawStyles();
+
+        /*
          * Get child by name and type
          */
         template<typename ControlType>

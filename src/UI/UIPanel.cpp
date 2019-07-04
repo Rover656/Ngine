@@ -24,18 +24,23 @@ namespace NerdThings::Ngine::UI {
     // Public Methods
 
     void UIPanel::Draw() {
+
+        DrawStyles();
+
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
 
-        UIControl::Draw();
+        DrawChildren();
 
         bool popped = false;
         Graphics::GraphicsManager::PopTarget(popped);
 
+        auto rPos = GetRenderPosition();
+
         // Draw target
         Graphics::Drawing::DrawTexture(&_RenderTarget->Texture,
                                        {
-                                               GetLogicPosition().X,
-                                               GetLogicPosition().Y,
+                                               rPos.X,
+                                               rPos.Y,
                                                GetWidth(),
                                                GetHeight()
                                        },
@@ -64,7 +69,10 @@ namespace NerdThings::Ngine::UI {
     }
 
     Math::TVector2 UIPanel::GetRenderPosition() {
-        return {0, 0};
+        if (_ParentWidget != nullptr)
+            return _ParentWidget->GetPosition();
+        else
+            return UIControl::GetRenderPosition();
     }
 
     void UIPanel::InternalSetParentWidget(UIWidget *widget_) {

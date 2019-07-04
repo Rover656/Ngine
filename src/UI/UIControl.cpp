@@ -36,6 +36,20 @@ namespace NerdThings::Ngine::UI {
     }
 
     void UIControl::Draw() {
+        DrawStyles();
+
+        DrawChildren();
+    }
+
+    void UIControl::DrawChildren() {
+        // Draw children
+
+        for (auto pair : _Children) {
+            pair.second->Draw();
+        }
+    }
+
+    void UIControl::DrawStyles() {
         // Draw default styles
 
         auto style = GetStyle();
@@ -65,12 +79,6 @@ namespace NerdThings::Ngine::UI {
                 Graphics::Drawing::DrawRectangleLines(controlBorderRect, style.BorderColor,
                                                       static_cast<int>(style.BorderThickness));
             }
-        }
-
-        // Draw children
-
-        for (auto pair : _Children) {
-            pair.second->Draw();
         }
     }
 

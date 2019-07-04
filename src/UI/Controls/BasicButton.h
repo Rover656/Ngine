@@ -1,5 +1,3 @@
-#include <utility>
-
 /**********************************************************************************************
 *
 *   Ngine - A (mainly) 2D game engine.
@@ -19,6 +17,7 @@
 #include "../UIControlInteractible.h"
 #include "../UIControlSized.h"
 #include "Label.h"
+#include "CentrePanel.h"
 
 namespace NerdThings::Ngine::UI::Controls {
     /*
@@ -39,10 +38,14 @@ namespace NerdThings::Ngine::UI::Controls {
             _ChildrenConfig = 1;
 
             // Add label
-            auto label = new Label(std::move(buttonText_), font_, UIControlSized::GetWidth(), UIControlSized::GetHeight());
+            auto panel = new CentrePanel(width_, height_);
+
+            auto label = new Label(std::move(buttonText_), font_);
             label->SetFontSize(fontSize_);
             label->SetFontSpacing(fontSpacing_);
-            UIControlSized::AddChild("label", label);
+            panel->AddChild("label", label);
+
+            UIControlSized::AddChild("panel", panel);
         }
 
         // Public Methods
@@ -51,50 +54,50 @@ namespace NerdThings::Ngine::UI::Controls {
             return UIControlSized::GetHeight();
         }
 
-        Label *GetLabel() {
-            return GetChild<Label>("label");
+        Label *GetPanel() {
+            return GetChild<CentrePanel>("panel")->GetChild<Label>("label");
+        }
+
+        CentrePanel *GetLabelPanel() {
+            return GetChild<CentrePanel>("panel");
         }
 
         float GetWidth() override {
             return UIControlSized::GetWidth();
         }
 
-        // Major TODO: Account for styling in the below code
-
         void SetHeight(float height_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetHeight(height_);
             UIControlSized::SetHeight(height_);
+            GetLabelPanel()->SetHeight(height_);
         }
 
         void SetMaxHeight(float height_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetMaxHeight(height_);
             UIControlSized::SetMaxHeight(height_);
+            GetLabelPanel()->SetMaxHeight(height_);
         }
 
         void SetMaxWidth(float width_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetMaxWidth(width_);
             UIControlSized::SetMaxWidth(width_);
+            GetLabelPanel()->SetMaxWidth(width_);
         }
 
         void SetMinHeight(float height_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetMinHeight(height_);
             UIControlSized::SetMinHeight(height_);
+            GetLabelPanel()->SetMinHeight(height_);
         }
 
         void SetMinWidth(float width_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetMinWidth(width_);
             UIControlSized::SetMinWidth(width_);
+            GetLabelPanel()->SetMinWidth(width_);
         }
 
         void SetWidth(float width_) override {
-            auto l = UIControlSized::GetChild<Label>("label");
-            l->SetWidth(width_);
             UIControlSized::SetWidth(width_);
+            GetLabelPanel()->SetWidth(width_);
+        }
+
+        void Draw() override {
+            UIControl::Draw();
         }
     };
 }

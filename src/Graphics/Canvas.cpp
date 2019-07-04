@@ -57,6 +57,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Canvas::ReDraw() {
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
+        Graphics::Drawing::Clear(TColor::Transparent);
         RenderTargetRedraw();
         bool popped = false;
         Graphics::GraphicsManager::PopTarget(popped);

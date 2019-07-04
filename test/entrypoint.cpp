@@ -175,11 +175,9 @@ public:
         auto bStyle = TUIStyle();
         bStyle.BackColor = TColor::Blue;
 
-        auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 150, 75);
+        auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 200, 100);
         btn->OnClick.Bind(&TestWidget::Test);
         btn->SetStyle(bStyle);
-        btn->GetLabel()->SetTextHorizontalAlignment(ALIGN_CENTER);
-        btn->GetLabel()->SetTextVerticalAlignment(ALIGN_MIDDLE);
 
         GetPanel()->AddChild("testButton", (UIControl *)btn);
 
@@ -187,7 +185,7 @@ public:
         imgStyle.Margin[0] = 5;
         auto img = new Image(TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
         img->SetStyle(imgStyle);
-        GetPanel()->AddChild("testImage", img);
+        //GetPanel()->AddChild("testImage", img);
     }
 
     static void Test(EventArgs &e) {
