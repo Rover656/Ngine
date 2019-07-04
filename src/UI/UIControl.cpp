@@ -70,7 +70,7 @@ namespace NerdThings::Ngine::UI {
                                                        static_cast<float>(style.BackgroundTexture->Width),
                                                        static_cast<float>(style.BackgroundTexture->Height)
                                                },
-                                               style.BackColor);
+                                               Graphics::TColor::White);
             else
                 Graphics::Drawing::DrawRectangle(controlBackgroundRect, style.BackColor);
 
