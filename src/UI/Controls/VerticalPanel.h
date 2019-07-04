@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * Element horizontal alignment
          */
-        EUIPanelHorizontalAlignment HorizontalAlignment = ALIGN_LEFT;
+        EHorizontalAlignment HorizontalAlignment = ALIGN_LEFT;
 
         // Public Constructor(s)
 

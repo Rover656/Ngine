@@ -148,7 +148,7 @@ public:
         SetPanel(new VerticalPanel(250.0f, 500.0f));
         GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
         //SetPanel(new HorizontalPanel(550.0f, 250.0f));
-        //GetPanel<HorizontalPanel>()->VerticalAlignment = ALIGN_MIDDLE;
+        //GetPanel<HorizontalPanel>()->EVerticalAlignment = ALIGN_MIDDLE;
         GetPanel()->SetStyle(panelStyle);
 
         auto style = TUIStyle();
@@ -178,6 +178,8 @@ public:
         auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 150, 75);
         btn->OnClick.Bind(&TestWidget::Test);
         btn->SetStyle(bStyle);
+        btn->GetLabel()->SetTextHorizontalAlignment(ALIGN_CENTER);
+        btn->GetLabel()->SetTextVerticalAlignment(ALIGN_MIDDLE);
 
         GetPanel()->AddChild("testButton", (UIControl *)btn);
 
@@ -246,7 +248,7 @@ public:
 
         Drawing::DrawFPS({ 500, 300 });
 
-        //widg.Draw();
+        widg.Draw();
 
         //testTiles->Draw({100, 100});
     }

@@ -51,6 +51,10 @@ namespace NerdThings::Ngine::UI::Controls {
             return UIControlSized::GetHeight();
         }
 
+        Label *GetLabel() {
+            return GetChild<Label>("label");
+        }
+
         float GetWidth() override {
             return UIControlSized::GetWidth();
         }
@@ -85,10 +89,6 @@ namespace NerdThings::Ngine::UI::Controls {
             auto l = UIControlSized::GetChild<Label>("label");
             l->SetMinWidth(width_);
             UIControlSized::SetMinWidth(width_);
-        }
-
-        void SetLabelStyle(TUIStyle style_) {
-            UIControlSized::GetChild<Label>("label")->SetStyle(style_);
         }
 
         void SetWidth(float width_) override {

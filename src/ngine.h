@@ -502,41 +502,41 @@ namespace NerdThings::Ngine {
     };
 
     /*
-     * UI Panel horizontal alignment
+     * Horizontal alignment enum
      */
-    enum EUIPanelHorizontalAlignment {
+    enum EHorizontalAlignment {
         /*
-         * Align elements with the left side of the panel
+         * Align elements with the left side
          */
         ALIGN_LEFT = 0,
 
         /*
-         * Align elements with the middle of the panel
+         * Align elements with the middle
          */
         ALIGN_CENTER,
 
         /*
-         * Align elements with the right side of the panel
+         * Align elements with the right side
          */
         ALIGN_RIGHT
     };
 
     /*
-     * UI Panel vertical alignment
+     * Vertical alignment enum
      */
-    enum EUIPanelVerticalAlignment {
+    enum EVerticalAlignment {
         /*
-         * Align elements with top of panel
+         * Align elements with top
          */
         ALIGN_TOP = 0,
 
         /*
-         * Align elements with middle of panel
+         * Align elements with middle
          */
         ALIGN_MIDDLE,
 
         /*
-         * Align elements with bottom of panel
+         * Align elements with bottom
          */
         ALIGN_BOTTOM
     };

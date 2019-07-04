@@ -55,6 +55,16 @@ namespace NerdThings::Ngine::UI::Controls {
          */
         std::string _Text;
 
+        /*
+         * Text alignment within the control
+         */
+        EHorizontalAlignment _TextHorizontalAlignment;
+
+        /*
+         * Text alignment within the control
+         */
+        EVerticalAlignment _TextVerticalAlignment;
+
         // Private Methods
 
         void SetDynamicSize() {
@@ -91,6 +101,26 @@ namespace NerdThings::Ngine::UI::Controls {
 
             auto controlContentRect = style.GetContentRect(GetRenderRectangle());
 
+            auto textSize = _Font->MeasureString(_Text, _FontSize, _FontSpacing);
+
+            switch (_TextHorizontalAlignment) {
+                case ALIGN_CENTER:
+                    controlContentRect.X += textSize.X / 2.0f;
+                    break;
+                case ALIGN_RIGHT:
+                    controlContentRect.X += controlContentRect.Width - textSize.X;
+                    break;
+            }
+
+            switch (_TextVerticalAlignment) {
+                case ALIGN_MIDDLE:
+                    controlContentRect.Y += textSize.Y / 2.0f;
+                    break;
+                case ALIGN_BOTTOM:
+                    controlContentRect.Y += controlContentRect.Height - textSize.Y;
+                    break;
+            }
+
             if (_Font != nullptr && style.DrawDefaults)
                 Graphics::Drawing::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
                                                 style.ForeColor); // TODO: Wordwrap option
@@ -114,6 +144,14 @@ namespace NerdThings::Ngine::UI::Controls {
 
         std::string GetText() {
             return _Text;
+        }
+
+        EHorizontalAlignment GetTextHorizontalAlignment() {
+            return _TextHorizontalAlignment;
+        }
+
+        EVerticalAlignment GetTextVerticalAlignment() {
+            return _TextVerticalAlignment;
         }
 
         void SetFont(Graphics::TFont *font_) {
@@ -154,6 +192,14 @@ namespace NerdThings::Ngine::UI::Controls {
             _Text = std::move(text_);
             if (!_IsFixedSize)
                 SetDynamicSize();
+        }
+
+        void SetTextHorizontalAlignment(EHorizontalAlignment align) {
+            _TextHorizontalAlignment = align;
+        }
+
+        void SetTextVerticalAlignment(EVerticalAlignment align) {
+            _TextVerticalAlignment = align;
         }
 
         void SetWidth(float width_) override {

@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * Element horizontal alignment
          */
-        EUIPanelVerticalAlignment VerticalAlignment = ALIGN_TOP;
+        EVerticalAlignment VerticalAlignment = ALIGN_TOP;
 
         // Public Constructor(s)
 
