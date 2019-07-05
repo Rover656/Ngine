@@ -52,6 +52,10 @@ namespace NerdThings::Ngine::Components {
             _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
         }
 
+        void SetSprite(const Graphics::TSprite &sprite_) {
+            _Sprite = sprite_;
+        }
+
         void Update(Core::EventArgs &e) override {
             _Sprite.Update();
         }
