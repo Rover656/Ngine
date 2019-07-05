@@ -54,7 +54,7 @@ namespace NerdThings::Ngine::Graphics {
 
         _Tiles[i] = tile_;
 
-        ReDraw(); // TODO: Batch set tiles to avoid this messy call
+        ReDraw();
     }
 
     void Tileset::SetTileData(std::vector<int> data_) {
@@ -72,7 +72,9 @@ namespace NerdThings::Ngine::Graphics {
         auto h = GetHeight() / _TilesetSprite.FrameHeight;
 
         for (auto i = 0; i < w * h; i++) {
-            _TilesetSprite.CurrentFrame = _Tiles[i];
+            if (_Tiles[i] - 1 < 0) // Skip negatives
+                continue;
+            _TilesetSprite.CurrentFrame = _Tiles[i] - 1;
             Math::TVector2 pos = {static_cast<float>(fmod(i, w)) * _TilesetSprite.FrameWidth, static_cast<float>(i / static_cast<int>(w)) * _TilesetSprite.FrameHeight};
             _TilesetSprite.Draw(pos, 0);
         }

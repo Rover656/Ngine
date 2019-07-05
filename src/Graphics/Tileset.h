@@ -39,13 +39,15 @@ namespace NerdThings::Ngine::Graphics {
 
         /*
          * Create a tileset.
-         * Width and height is in tile space multiplied by tilesetSprite frame width and height
+         * Width and height is in tile space multiplied by tilesetSprite frame width and height.
+         * Tiles indices start from 1, so tile one is index 1.
          */
         Tileset(const TSprite& tilesetSprite_, float width_, float height_);
 
         /*
          * Create a tileset with data.
          * Width and height is in tile space multiplied by tilesetSprite frame width and height
+         * Tiles indices start from 1, so tile one is index 1.
          */
         Tileset(const TSprite& tilesetSprite_, float width_, float height_, std::vector<int> tiles_);
 

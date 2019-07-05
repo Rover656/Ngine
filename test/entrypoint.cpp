@@ -246,9 +246,9 @@ public:
 
         Drawing::DrawFPS({ 500, 300 });
 
-        widg.Draw();
+        //widg.Draw();
 
-        //testTiles->Draw({100, 100});
+        testTiles->Draw({100, 100});
     }
 
     void DrawCam(EventArgs &e) {
