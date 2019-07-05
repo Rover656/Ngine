@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Physics {
 #ifdef INCLUDE_BOX2D
     b2PolygonShape TPolygon::ToB2Shape() {
         b2PolygonShape tmpShape;
-        b2Vec2 vertices[VertexCount];
+        b2Vec2 vertices[b2_maxPolygonVertices];
         for (auto i = 0; i < VertexCount; i++) vertices[i] = {Vertices[i].X, Vertices[i].Y};
         tmpShape.Set(vertices, VertexCount);
         return tmpShape;
