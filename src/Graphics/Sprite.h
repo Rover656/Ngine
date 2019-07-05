@@ -134,6 +134,11 @@ namespace NerdThings::Ngine::Graphics {
          * Should be called every frame
          */
         void Update();
+
+        // Operators
+
+        bool operator==(const TSprite &b);
+        bool operator!=(const TSprite &b);
     };
 }
 

@@ -148,4 +148,14 @@ namespace NerdThings::Ngine::Graphics {
             }
         }
     }
+
+    // Operators
+
+    bool TSprite::operator==(const TSprite &b) {
+        return _Textures == b._Textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth && FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;
+    }
+
+    bool TSprite::operator!=(const TSprite &b) {
+        return _Textures != b._Textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth || FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || ImageSpeed != b.ImageSpeed;
+    }
 }
