@@ -188,7 +188,7 @@ public:
         //GetPanel()->AddChild("testImage", img);
     }
 
-    static void Test(EventArgs &e) {
+    static void Test(UIControlEventArgs &e) {
         ConsoleMessage("Button was clicked", "NOTICE", "TestGame Entrypoint");
     }
 };

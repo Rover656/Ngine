@@ -21,8 +21,14 @@ namespace NerdThings::Ngine {
 
     namespace Core {
         class BaseEntity;
+
         class Scene;
+
         class Game;
+    }
+
+    namespace UI {
+        class UIControl;
     }
 
     // Other event args
@@ -46,7 +52,7 @@ namespace NerdThings::Ngine {
         // Public Constructor(s)
 
         MouseButtonEventArgs(const EMouseButton button_, const bool pressed_)
-            : Button(button_), Pressed(pressed_) {}
+                : Button(button_), Pressed(pressed_) {}
     };
 
     /*
@@ -68,7 +74,7 @@ namespace NerdThings::Ngine {
         // Public Constructor(s)
 
         MouseMovedEventArgs(Math::TVector2 mousePosition_, Math::TVector2 deltaMousePosition_)
-            : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
+                : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
     };
 
     struct MouseScrollChangedEventArgs : Core::EventArgs {
@@ -82,7 +88,7 @@ namespace NerdThings::Ngine {
         // Public Constructor(s)
 
         MouseScrollChangedEventArgs(int value_)
-            : Value(value_) {}
+                : Value(value_) {}
     };
 
     struct EntityTransformChangedEventArgs : Core::EventArgs {
@@ -111,7 +117,7 @@ namespace NerdThings::Ngine {
         // Public Constructor(s)
 
         EntityTransformChangedEventArgs(Math::TVector2 origin_, Math::TVector2 pos_, float rot_, float scale_)
-            : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
+                : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
     };
 
     struct SceneLoadEventArgs : Core::EventArgs {
@@ -125,7 +131,21 @@ namespace NerdThings::Ngine {
         // Public Constructor(s)
 
         SceneLoadEventArgs(Core::Game *game_)
-            : Game(game_) {}
+                : Game(game_) {}
+    };
+
+    struct UIControlEventArgs : Core::EventArgs {
+        // Public Fields
+
+        /*
+         * The control this belongs to
+         */
+        UI::UIControl *Control;
+
+        // Public Constructor(s)
+
+        UIControlEventArgs(UI::UIControl *control_)
+                : Control(control_) {}
     };
 }
 

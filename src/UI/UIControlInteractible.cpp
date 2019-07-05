@@ -37,17 +37,17 @@ namespace NerdThings::Ngine::UI {
             // The mouse is over the button
             if (mState.ButtonsPressed[MOUSE_BUTTON_LEFT]) {
                 // Clicked
-                OnClick({});
+                OnClick({this});
 
                 // Deregister click so double events dont happen
                 Input::Mouse::CancelButton(MOUSE_BUTTON_LEFT);
             } else {
                 // Hovered
-                OnHover({});
+                OnHover({this});
                 _Hovered = true;
             }
         } else if (_Hovered) {
-            OnUnHover({});
+            OnUnHover({this});
             _Hovered = false;
         }
     }

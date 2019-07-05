@@ -15,6 +15,7 @@
 #include "../ngine.h"
 
 #include "../Core/EventHandler.h"
+#include "../EventArgs.h"
 #include "UIControl.h"
 
 namespace NerdThings::Ngine::UI {
@@ -34,17 +35,17 @@ namespace NerdThings::Ngine::UI {
         /*
          * On click
          */
-        Core::EventHandler<Core::EventArgs> OnClick;
+        Core::EventHandler<UIControlEventArgs> OnClick;
 
         /*
          * On hover
          */
-        Core::EventHandler<Core::EventArgs> OnHover;
+        Core::EventHandler<UIControlEventArgs> OnHover;
 
         /*
          * On un hover/mouse out
          */
-        Core::EventHandler<Core::EventArgs> OnUnHover;
+        Core::EventHandler<UIControlEventArgs> OnUnHover;
 
         // Public Methods
 
