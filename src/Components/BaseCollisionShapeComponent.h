@@ -179,6 +179,9 @@ namespace NerdThings::Ngine::Components {
                 auto candidates = scene->CollisionMap[collisionGroup_];
 
                 for (auto candidate : candidates) {
+                    if (candidate == this || candidate == nullptr)
+                        continue;
+
                     auto components = candidate->GetComponents();
 
                     for (auto component : components) {
