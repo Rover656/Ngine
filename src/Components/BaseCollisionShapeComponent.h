@@ -179,7 +179,7 @@ namespace NerdThings::Ngine::Components {
                 auto candidates = scene->CollisionMap[collisionGroup_];
 
                 for (auto candidate : candidates) {
-                    if (candidate == this || candidate == nullptr)
+                    if (candidate == GetParent<Core::BaseEntity>() || candidate == nullptr)
                         continue;
 
                     auto components = candidate->GetComponents();
