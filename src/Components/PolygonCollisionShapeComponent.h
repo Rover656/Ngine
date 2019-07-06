@@ -97,19 +97,16 @@ namespace NerdThings::Ngine::Components {
         }
 
         void Offset(Math::TVector2 offset_) override {
-            // This could be expensive in some cases, so only do it if necessary
-            if (offset_.X != 0 && offset_.Y != 0) {
-                const auto par = GetParent<Core::BaseEntity>();
+            const auto par = GetParent<Core::BaseEntity>();
 
-                // Offset vertices
-                std::vector<Math::TVector2> vertices(_Vertices.size());
-                for (auto i = 0; i < _Vertices.size(); i++) {
-                    vertices[i] = _Vertices[i];
-                    vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
-                    vertices[i] += par->GetPosition() - par->GetOrigin() + offset_;
-                }
-                _Polygon = Physics::TPolygon(vertices);
+            // Offset vertices
+            std::vector<Math::TVector2> vertices(_Vertices.size());
+            for (auto i = 0; i < _Vertices.size(); i++) {
+                vertices[i] = _Vertices[i];
+                vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
+                vertices[i] += par->GetPosition() - par->GetOrigin() + offset_;
             }
+            _Polygon = Physics::TPolygon(vertices);
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {

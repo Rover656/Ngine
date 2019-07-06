@@ -187,7 +187,11 @@ namespace NerdThings::Ngine::Components {
                     for (auto component : components) {
                         auto colShapeComp = dynamic_cast<BaseCollisionShapeComponent*>(component);
                         if (colShapeComp != nullptr) {
-                            collision = CollisionCheck(colShapeComp);
+                            if (IsCompatible(colShapeComp)) {
+                                collision = CollisionCheck(colShapeComp);
+                            } else if (colShapeComp->IsCompatible(this)) {
+                                collision = colShapeComp->CollisionCheck(this);
+                            }
 
                             if (collision) break;
                         }
