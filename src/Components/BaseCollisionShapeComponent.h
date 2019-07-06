@@ -175,10 +175,7 @@ namespace NerdThings::Ngine::Components {
 
             auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
 
-            auto myGroups = GetCollisionGroups();
-
-            if (scene->CollisionMap.find(collisionGroup_) != scene->CollisionMap.end() && std::find(
-                myGroups.begin(), myGroups.end(), collisionGroup_) != myGroups.end()) {
+            if (scene->CollisionMap.find(collisionGroup_) != scene->CollisionMap.end()) {
                 auto candidates = scene->CollisionMap[collisionGroup_];
 
                 for (auto candidate : candidates) {
