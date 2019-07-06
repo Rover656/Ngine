@@ -105,7 +105,7 @@ namespace NerdThings::Ngine::Components {
         template <typename EntityType>
         bool CheckCollisionAt(Math::TVector2 position_) {
             auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
-            auto diff = curPos - position_;
+            auto diff = position_ - curPos;
 
             // Offset shape
             Offset(diff);
@@ -165,7 +165,7 @@ namespace NerdThings::Ngine::Components {
         template <typename EntityType>
         bool CheckCollisionWithAt(const std::string &collisionGroup_, Math::TVector2 position_) {
             auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
-            auto diff = curPos - position_;
+            auto diff = position_ - curPos;
 
             // Offset shape
             Offset(diff);
