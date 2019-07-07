@@ -47,6 +47,11 @@ namespace NerdThings::Ngine::Core {
         // Public Methods
 
         /*
+         * Delete all resources
+         */
+        static void DeleteAll();
+
+        /*
          * Delete a named font
          */
         static void DeleteFont(const std::string &name_);

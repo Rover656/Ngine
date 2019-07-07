@@ -15,6 +15,7 @@
 #include "../Graphics/GraphicsManager.h"
 #include "../Input/Keyboard.h"
 #include "../Input/Mouse.h"
+#include "Resources.h"
 #include "WindowManager.h"
 
 namespace NerdThings::Ngine::Core {
@@ -214,6 +215,9 @@ namespace NerdThings::Ngine::Core {
             // Release thread to CPU (Stops weird idle cpu usage and fps drops)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
+
+        // Delete loaded resources
+        Resources::DeleteAll();
 
         // Close audio
         ConsoleMessage("Closing audio device.", "NOTICE", "GAME");
