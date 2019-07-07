@@ -45,20 +45,6 @@ namespace NerdThings::Ngine::Core {
         // Invoke draw calls
         OnDraw({});
 
-        // Draw entities
-        for (auto pair : _EntityDepths) {
-            auto vec = pair.second;
-            for (auto ent : vec) {
-                if (ent != nullptr) {
-                    if (_EntityActivities.find(ent) == _EntityActivities.end())
-                        _EntityActivities.insert({ent, true});
-
-                    if (_EntityActivities[ent] && !ent->DrawWithCamera)
-                        ent->Draw();
-                }
-            }
-        }
-
         // Draw with camera
         if (_ActiveCamera != nullptr)
             _ActiveCamera->BeginCamera();
@@ -78,6 +64,20 @@ namespace NerdThings::Ngine::Core {
 
         if (_ActiveCamera != nullptr)
             _ActiveCamera->EndCamera();
+
+        // Draw entities
+        for (auto pair : _EntityDepths) {
+            auto vec = pair.second;
+            for (auto ent : vec) {
+                if (ent != nullptr) {
+                    if (_EntityActivities.find(ent) == _EntityActivities.end())
+                        _EntityActivities.insert({ent, true});
+
+                    if (_EntityActivities[ent] && !ent->DrawWithCamera)
+                        ent->Draw();
+                }
+            }
+        }
     }
 
     Graphics::TCamera *Scene::GetActiveCamera() const {
