@@ -63,10 +63,10 @@ namespace NerdThings::Ngine::Graphics {
 
     Math::TMatrix TCamera::GetTranslationMatrix() const {
         Math::TMatrix ret = Math::TMatrix::Identity;
-        ret = ret * Math::TMatrix::Translate(Target.X, Target.Y, 0);
+        ret = ret * Math::TMatrix::Translate(-Target.X, -Target.Y, 0);
         ret = ret * Math::TMatrix::RotateZ(Rotation);
         ret = ret * Math::TMatrix::Scale(Zoom, Zoom, 1);
-        ret = ret * Math::TMatrix::Translate(-Origin.X, -Origin.Y, 0);
+        ret = ret * Math::TMatrix::Translate(Origin.X, Origin.Y, 0);
         return ret;
     }
 }
