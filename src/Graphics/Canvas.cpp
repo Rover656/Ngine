@@ -66,6 +66,7 @@ namespace NerdThings::Ngine::Graphics {
     void Canvas::SetDimensions(float width_, float height_) {
         _Width = width_;
         _Height = height_;
+        delete _RenderTarget;
         _RenderTarget = new TRenderTarget(_Width, _Height);
         ReDraw();
     }
