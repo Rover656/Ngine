@@ -39,6 +39,14 @@ namespace NerdThings::Ngine::Core {
         }
     }
 
+    // Destructor
+
+    Scene::~Scene() {
+        for (auto ent : GetEntities()) {
+            delete ent;
+        }
+    }
+
     // Public Methods
 
     void Scene::Draw() {

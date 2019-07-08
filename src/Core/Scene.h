@@ -129,7 +129,7 @@ namespace NerdThings::Ngine::Core {
 
         // Public Destructor
 
-        virtual ~Scene() = default;
+        virtual ~Scene();
 
         // Public Methods
 
