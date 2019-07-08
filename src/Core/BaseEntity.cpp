@@ -41,6 +41,7 @@ namespace NerdThings::Ngine::Core {
 
     BaseEntity::~BaseEntity() {
         // Delete all components
+        ConsoleMessage("Deleting components and removing update subscription.", "NOTICE", "BASEENTITY");
         for (auto comp : _Components) {
             delete comp.second;
         }

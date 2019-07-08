@@ -42,6 +42,7 @@ namespace NerdThings::Ngine::Core {
     // Destructor
 
     Scene::~Scene() {
+        ConsoleMessage("Deleting entities.", "NOTICE", "SCENE");
         for (auto ent : GetEntities()) {
             delete ent;
         }

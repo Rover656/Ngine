@@ -33,6 +33,7 @@ namespace NerdThings::Ngine::Graphics {
 
     TTexture2D::~TTexture2D() {
         if (ID > 0) {
+            ConsoleMessage("Unloading and deleting texture.", "NOTICE", "TEXTURE");
             UnloadTexture((*this).ToRaylibTex());
             ID = 0;
             Width = 0;

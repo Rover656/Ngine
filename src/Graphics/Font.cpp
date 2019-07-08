@@ -74,6 +74,13 @@ namespace NerdThings::Ngine::Graphics {
         font_.Characters = nullptr;
     }
 
+    // Destructor
+
+    TFont::~TFont() {
+        ConsoleMessage("Unloading and deleting font.", "NOTICE", "FONT");
+        UnloadFont(ToRaylibFont());
+    }
+
     // Public Methods
 
     #ifdef INCLUDE_RAYLIB

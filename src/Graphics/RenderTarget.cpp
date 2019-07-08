@@ -36,6 +36,7 @@ namespace NerdThings::Ngine::Graphics {
     // Destructor
 
     TRenderTarget::~TRenderTarget() {
+        ConsoleMessage("Unloading and deleting render target.", "NOTICE", "RENDER TARGET");
         UnloadRenderTexture(ToRaylibTarget());
         ID = 0;
         Texture = TTexture2D();

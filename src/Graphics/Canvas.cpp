@@ -25,6 +25,7 @@ namespace NerdThings::Ngine::Graphics {
     // Destructor
 
     Canvas::~Canvas() {
+        ConsoleMessage("Deleting canvas.", "NOTICE", "CANVAS");
         delete _RenderTarget;
     }
 
@@ -64,6 +65,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Canvas::SetDimensions(float width_, float height_) {
+        ConsoleMessage("Resizing canvas.", "NOTICE", "CANVAS");
         _Width = width_;
         _Height = height_;
         delete _RenderTarget;

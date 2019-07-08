@@ -132,6 +132,10 @@ namespace NerdThings::Ngine::Graphics {
          */
         TFont(const TFont &font_) = default;
 
+        // Destructor
+
+        virtual ~TFont();
+
         // Public Methods
 
         #ifdef INCLUDE_RAYLIB
