@@ -19,6 +19,14 @@ namespace NerdThings::Ngine::UI {
 
     std::unordered_map<std::type_index, TUIStyle> UIControl::_GlobalStyles;
 
+    // Destructor
+
+    UIControl::~UIControl() {
+        for (auto child : _Children) {
+            delete child.second;
+        }
+    }
+
     // Public Method(s)
 
     void UIControl::AddChild(std::string name, UIControl *control_) {

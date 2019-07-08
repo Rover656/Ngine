@@ -56,6 +56,10 @@ namespace NerdThings::Ngine::UI {
         TUIStyle _Style;
     public:
 
+        // Destructor
+
+        virtual ~UIControl();
+
         // Public Methods
 
         /*

@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::UI {
 
         // Destructor
 
-        ~UIPanel();
+        virtual ~UIPanel();
 
         // Public Methods
 
