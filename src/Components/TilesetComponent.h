@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::Components {
 
         // Destructor
 
-        ~TilesetComponent() {
+        virtual ~TilesetComponent() {
             delete _Tileset;
         }
 
