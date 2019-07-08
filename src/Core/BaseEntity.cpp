@@ -90,6 +90,10 @@ namespace NerdThings::Ngine::Core {
         return _ParentScene;
     }
 
+    bool BaseEntity::GetDoPersistentUpdates() {
+        return _PersistentUpdates;
+    }
+
     Math::TVector2 BaseEntity::GetPosition() const {
         return _Position;
     }
@@ -135,6 +139,12 @@ namespace NerdThings::Ngine::Core {
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
+    void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
+        if (_OnUpdateRef.ID > 0)
+            throw std::runtime_error("This property cannot be changed once update has been subscribed.");
+        _PersistentUpdates = persistentUpdates_;
+    }
+
     void BaseEntity::SetPosition(const Math::TVector2 position_) {
         _Position = position_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
@@ -153,7 +163,8 @@ namespace NerdThings::Ngine::Core {
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
             if (_OnUpdateRef.ID < 0) {
-                _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
+                if (_PersistentUpdates) _OnUpdateRef = _ParentScene->OnPersistentUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
+                else _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 return true;
             } else {
                 // We still have an event, soooo...

@@ -70,6 +70,11 @@ namespace NerdThings::Ngine::Core {
         Scene *_ParentScene = nullptr;
 
         /*
+         * Whether or not we update when paused
+         */
+        bool _PersistentUpdates = false;
+
+        /*
          * The entity position
          */
         Math::TVector2 _Position = Math::TVector2::Zero;
@@ -212,6 +217,11 @@ namespace NerdThings::Ngine::Core {
         [[nodiscard]] Scene *GetParentScene() const;
 
         /*
+         * Test if we update when the scene is paused
+         */
+        bool GetDoPersistentUpdates();
+
+        /*
          * Get the entity position
          */
         [[nodiscard]] Math::TVector2 GetPosition() const;
@@ -251,6 +261,11 @@ namespace NerdThings::Ngine::Core {
          * Set entity origin
          */
         void SetOrigin(Math::TVector2 origin_);
+
+        /*
+         * Set whether or not we update when the scene is paused
+         */
+        void SetDoPersistentUpdates(bool persistentUpdates_);
 
         /*
          * Set entity position

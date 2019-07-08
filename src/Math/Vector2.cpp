@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::Math {
 
     // Public Fields
 
-    #ifdef INCLUDE_RAYLIB
+#ifdef INCLUDE_RAYLIB
 
     Vector2 TVector2::ToRaylibVec() const {
         return {X, Y};
@@ -32,12 +32,12 @@ namespace NerdThings::Ngine::Math {
         return {vec.x, vec.y};
     }
 
-    #endif
+#endif
 
     TVector2 TVector2::Clamp(TVector2 value_, TVector2 min_, TVector2 max_) {
         return {
-            std::clamp(value_.X, min_.X, max_.X),
-            std::clamp(value_.Y, min_.Y, max_.Y)
+                std::clamp(value_.X, min_.X, max_.X),
+                std::clamp(value_.Y, min_.Y, max_.Y)
         };
     }
 
@@ -82,8 +82,8 @@ namespace NerdThings::Ngine::Math {
 
     TVector2 TVector2::Transform(TMatrix matrix_) const {
         return {
-            (X * matrix_.M0) + (Y * matrix_.M1) + matrix_.M3,
-            (X * matrix_.M4) + (Y * matrix_.M5) + matrix_.M6
+                (X * matrix_.M0) + (Y * matrix_.M4) + matrix_.M12,
+                (X * matrix_.M1) + (Y * matrix_.M5) + matrix_.M13
         };
     }
 

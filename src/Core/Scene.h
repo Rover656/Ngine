@@ -66,7 +66,11 @@ namespace NerdThings::Ngine::Core {
         Game* _ParentGame = nullptr;
 
         /*
-         *
+         * Whether or not the scene is paused.
+         */
+        bool _Paused = false;
+
+        /*
          * The update counter
          */
         int _UpdateCounter = 0;
@@ -99,6 +103,12 @@ namespace NerdThings::Ngine::Core {
          * On scene load
          */
         EventHandler<SceneLoadEventArgs> OnLoad;
+
+        /*
+         * On persistent update event.
+         * This means updates will run through pauses.
+         */
+        EventHandler<EventArgs> OnPersistentUpdate;
 
         /*
          * On scene unload
@@ -152,6 +162,21 @@ namespace NerdThings::Ngine::Core {
          * Update the entity depth in the scene (internally used)
          */
         void InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_);
+
+        /*
+         * Is the scene paused
+         */
+        bool IsPaused();
+
+        /*
+         * Pause the scene
+         */
+        void Pause();
+
+        /*
+         * Unpause the scene
+         */
+        void Resume();
 
         /*
          * Set the currently active camera

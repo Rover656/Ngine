@@ -117,6 +117,18 @@ namespace NerdThings::Ngine::Core {
         _EntityDepths[newDepth_].push_back(ent_);
     }
 
+    bool Scene::IsPaused() {
+        return _Paused;
+    }
+
+    void Scene::Pause() {
+        _Paused = true;
+    }
+
+    void Scene::Resume() {
+        _Paused = false;
+    }
+
     void Scene::SetActiveCamera(Graphics::TCamera *camera_) {
         _ActiveCamera = camera_;
     }
@@ -128,6 +140,11 @@ namespace NerdThings::Ngine::Core {
     }
 
     void Scene::Update() {
+        if (_Paused) {
+            OnPersistentUpdate({});
+            return;
+        }
+
         auto fps = _ParentGame->GetUpdateFPS();
 
         _UpdateCounter++;
@@ -158,5 +175,6 @@ namespace NerdThings::Ngine::Core {
 
         // Invoke updates
         OnUpdate({});
+        OnPersistentUpdate({});
     }
 }

@@ -77,6 +77,16 @@ namespace NerdThings::Ngine::Graphics {
         void EndCamera() const;
 
         /*
+         * Convert a screen/window position to a world position
+         */
+        Math::TVector2 ScreenToWorld(Math::TVector2 pos_);
+
+        /*
+         * Convert a world position to a screen/window position
+         */
+        Math::TVector2 WorldToScreen(Math::TVector2 pos_);
+
+        /*
          * Get the translation matrix
          */
         Math::TMatrix GetTranslationMatrix() const;
