@@ -130,6 +130,10 @@ namespace NerdThings::Ngine::Core {
         return false;
     }
 
+    void BaseEntity::SetCanCull(bool canCull_) {
+        _CanCull = canCull_;
+    }
+
     void BaseEntity::SetDepth(int depth_) {
         _ParentScene->InternalUpdateEntityDepth(_Depth, depth_, this);
         _Depth = depth_;

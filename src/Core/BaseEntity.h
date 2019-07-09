@@ -253,6 +253,11 @@ namespace NerdThings::Ngine::Core {
         bool RemoveComponent(const std::string &name_);
 
         /*
+         * Set whether or not this entity can be culled
+         */
+        void SetCanCull(bool canCull_);
+
+        /*
          * Set the entity depth
          */
         void SetDepth(int depth_);
