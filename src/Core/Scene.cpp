@@ -169,7 +169,7 @@ namespace NerdThings::Ngine::Core {
                         auto area = GetCullArea();
                         if (_EntityActivities.find(ent) == _EntityActivities.end())
                             _EntityActivities.insert({ent, true});
-                        if (ent->CheckForCulling(area)) {
+                        if (!ent->CheckForCulling(area)) {
                             _EntityActivities[ent] = true;
                         } else {
                             _EntityActivities[ent] = false;

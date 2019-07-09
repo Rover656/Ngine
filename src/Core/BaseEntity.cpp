@@ -53,7 +53,7 @@ namespace NerdThings::Ngine::Core {
     // Public Methods
 
     bool BaseEntity::CheckForCulling(Math::TRectangle cullArea_) {
-        return cullArea_.Contains(GetPosition());
+        return !cullArea_.Contains(GetPosition());
     }
 
     void BaseEntity::Draw() {
