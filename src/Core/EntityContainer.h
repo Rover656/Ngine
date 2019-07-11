@@ -73,9 +73,34 @@ namespace NerdThings::Ngine::Core {
         }
 
         /*
+         * Count all of the entities by type
+         */
+        template <typename EntityType>
+        int CountEntitiesOfType() {
+            int c = 0;
+            for (auto e : _Entities) {
+                if (dynamic_cast<EntityType*>(e) != nullptr) c++;
+            }
+            return c;
+        }
+
+        /*
          * Get all of the entities
          */
         std::vector<BaseEntity*> GetEntities();
+
+        /*
+         * Get all of the entities of type
+         */
+        template <typename EntityType>
+        std::vector<EntityType*> GetEntitiesByType() {
+            std::vector<EntityType*> ents;
+            for (auto e : _Entities) {
+                auto t = dynamic_cast<EntityType*>(e);
+                if (t != nullptr) ents.push_back(t);
+            }
+            return ents;
+        }
 
         /*
          * Get an entity by name.
