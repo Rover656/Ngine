@@ -37,6 +37,9 @@ namespace NerdThings::Ngine::Core {
         const auto ent = GetEntity<BaseEntity>(name_);
 
         if (ent != nullptr) {
+            // Unsubscribe from updates
+            ent->UnsubscribeFromUpdate();
+
             // Remove parent
             RemoveEntityParent(ent);
 
@@ -44,6 +47,18 @@ namespace NerdThings::Ngine::Core {
             _Entities.erase(name_);
 
             return true;
+        }
+
+        // We don't have this entity
+        return false;
+    }
+
+    bool EntityContainer::RemoveEntity(BaseEntity *entity_) {
+        // Search for the entity
+        for (const auto& ent : _Entities) {
+            if (ent.second == entity_) {
+                return RemoveEntity(ent.first);;
+            }
         }
 
         // We don't have this entity

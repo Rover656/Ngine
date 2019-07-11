@@ -56,6 +56,14 @@ namespace NerdThings::Ngine::Core {
         return !cullArea_.Contains(GetPosition());
     }
 
+    void BaseEntity::Destroy() {
+        // Remove from our parent
+        GetParentContainer()->RemoveEntity(this);
+
+        // Delete ourselves. THIS IS DANGEROUS, NO CALLS MUST BE MADE ANYMORE
+        delete this;
+    }
+
     void BaseEntity::Draw() {
         // Trigger draw
         OnDraw({});
@@ -81,6 +89,14 @@ namespace NerdThings::Ngine::Core {
 
     Math::TVector2 BaseEntity::GetOrigin() const {
         return _Origin;
+    }
+
+    EntityContainer *BaseEntity::GetParentContainer() const {
+        if (_ParentEntity != nullptr)
+            return static_cast<EntityContainer *>(_ParentEntity);
+        else if (_ParentScene != nullptr)
+            return static_cast<EntityContainer *>(_ParentScene);
+        return nullptr;
     }
 
     BaseEntity *BaseEntity::GetParentEntity() const {

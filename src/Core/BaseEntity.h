@@ -160,6 +160,12 @@ namespace NerdThings::Ngine::Core {
         virtual bool CheckForCulling(Math::TRectangle cullArea_);
 
         /*
+         * Remove from our parent and delete ourselves.
+         * NO MORE CALLS MUST BE MADE TO THE ENTITY AFTER THIS.
+         */
+        void Destroy();
+
+        /*
          * Draw code for the entity
          */
         virtual void Draw();
@@ -196,6 +202,12 @@ namespace NerdThings::Ngine::Core {
          * Get entity origin
          */
         [[nodiscard]] Math::TVector2 GetOrigin() const;
+
+        /*
+         * Get our parent container.
+         * This will either be another entity or the scene
+         */
+        EntityContainer *GetParentContainer() const;
 
         /*
          * Get the parent entity

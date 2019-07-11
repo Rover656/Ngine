@@ -125,6 +125,11 @@ namespace NerdThings::Ngine::Core {
          * Returns success or fail.
          */
         bool RemoveEntity(const std::string &name_);
+
+        /*
+         * Remove entity by pointer.
+         */
+        bool RemoveEntity(BaseEntity *entity_);
     };
 }
 
