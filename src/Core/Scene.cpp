@@ -22,7 +22,15 @@ namespace NerdThings::Ngine::Core {
 
     // The following two functions do nothing
     // This method is here for adding an entity parent
-    void Scene::RemoveEntityParent(BaseEntity *ent_) {}
+    void Scene::RemoveEntityParent(BaseEntity *ent_) {
+        for (auto vec : _EntityDepths) {
+            for (auto ent : vec.second) {
+                if (ent == ent_) {
+                    _EntityDepths[vec.first].erase(std::remove(_EntityDepths[vec.first].begin(), _EntityDepths[vec.first].end(), ent_), _EntityDepths[vec.first].end());
+                }
+            }
+        }
+    }
 
     void Scene::SetEntityParent(BaseEntity *ent_) {
         // When an entity is added, mark as active
