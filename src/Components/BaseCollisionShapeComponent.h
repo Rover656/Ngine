@@ -169,7 +169,6 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision with a collision group.
          * Component must have the collision group to work
          */
-        template <typename EntityType>
         bool CheckCollisionFrom(std::vector<Physics::ICollisionShape> shapes) {
             return CheckCollisionFromAt<EntityType>(shapes, GetParent<Core::BaseEntity>()->GetPosition());
         }
@@ -178,7 +177,6 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision with a collision group at a position
          * Component must have the collision group to work
          */
-        template <typename EntityType>
         bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape> shapes, Math::TVector2 position_) {
             auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
