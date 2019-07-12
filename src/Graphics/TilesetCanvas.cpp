@@ -97,8 +97,8 @@ namespace NerdThings::Ngine::Graphics {
 
         for (auto x = sX; x < eX; x++) {
             for (auto y = sY; y < eY; y++) {
-                auto t = GetTileAt({(float) x, (float) y}));
-                if (t >= min_, t <= max_) {
+                auto t = GetTileAt({(float) x, (float) y});
+                if (t >= min_ && t <= max_) {
                     // Get polygon with world coordinates
                     auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
                                                  y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
