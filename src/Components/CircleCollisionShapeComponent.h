@@ -51,13 +51,17 @@ namespace NerdThings::Ngine::Components {
             if (bbox != nullptr) {
                 // Bounding box collision
                 auto bboxCol = bbox->GetBoundingBox();
-                col = _Circle.CheckCollision(&bboxCol);
+                col = CollisionCheck(&bboxCol);
             } else if (circle != nullptr) {
                 // Circle collision
-                col = _Circle.CheckCollision(&circle->_Circle);
+                col = CollisionCheck(&circle->_Circle);
             }
 
             return col;
+        }
+
+        bool CollisionCheck(Physics::ICollisionShape *b) override {
+            return _Circle.CheckCollision(b);
         }
 
         void DrawDebug() override {

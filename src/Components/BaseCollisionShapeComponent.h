@@ -49,6 +49,11 @@ namespace NerdThings::Ngine::Components {
         virtual bool CollisionCheck(BaseCollisionShapeComponent *b) = 0;
 
         /*
+         * Check for a collision against a shape
+         */
+        virtual bool CollisionCheck(Physics::ICollisionShape *b) = 0;
+
+        /*
          * Draw debug geometry
          */
         virtual void DrawDebug() = 0;
@@ -151,6 +156,43 @@ namespace NerdThings::Ngine::Components {
                     if (collision) break;
                 }
 
+                if (collision) break;
+            }
+
+            // Un-offset shape
+            Offset({-diff.X, -diff.Y});
+
+            return collision;
+        }
+
+        /*
+         * Check for a collision with a collision group.
+         * Component must have the collision group to work
+         */
+        template <typename EntityType>
+        bool CheckCollisionFrom(std::vector<Physics::ICollisionShape> shapes) {
+            return CheckCollisionFromAt<EntityType>(shapes, GetParent<Core::BaseEntity>()->GetPosition());
+        }
+
+        /*
+         * Check for a collision with a collision group at a position
+         * Component must have the collision group to work
+         */
+        template <typename EntityType>
+        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape> shapes, Math::TVector2 position_) {
+            auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
+            auto diff = position_ - curPos;
+
+            // Offset shape
+            Offset(diff);
+
+            // Check for collision
+            auto collision = false;
+
+            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+
+            for (auto i = 0; i < shapes.size(); i++) {
+                collision = CollisionCheck(&shapes[i]);
                 if (collision) break;
             }
 
