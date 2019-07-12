@@ -24,10 +24,11 @@ namespace NerdThings::Ngine::UI {
     // Public Methods
 
     void UIPanel::Draw() {
-
         DrawStyles();
 
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
+
+        Graphics::Drawing::Clear(Graphics::TColor::Transparent);
 
         DrawChildren();
 
