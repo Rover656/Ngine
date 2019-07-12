@@ -44,9 +44,22 @@ namespace NerdThings::Ngine::Graphics {
         int eX = range_.X + range_.Width;
         int eY = range_.Y + range_.Height;
 
+        // Validate
+        auto w = GetWidth() / _Tileset.GetTileWidth();
+        auto h = GetHeight() / _Tileset.GetTileHeight();
+
+        if (sX < 0) sX = 0;
+        if (sY < 0) sY = 0;
+        if (sX >= w) sX = w - 1;
+        if (sY >= h) sX = h - 1;
+
+        if (eX < 0) eX = 0;
+        if (eY < 0) eY = 0;
+        if (eX >= w) eX = w - 1;
+        if (eY >= h) eY = h - 1;
+
         for (auto x = sX; x < eX; x++) {
             for (auto y = sY; y < eY; y++) {
-                if (x < 0 || x >= GetWidth() / _Tileset.GetTileWidth() || y < 0 || y >= GetHeight() / _Tileset.GetTileHeight()) continue;
                 if (GetTileAt({(float) x, (float) y}) == tile_) {
                     // Get polygon with world coordinates
                     auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
@@ -71,9 +84,22 @@ namespace NerdThings::Ngine::Graphics {
         int eX = range_.X + range_.Width;
         int eY = range_.Y + range_.Height;
 
+        // Validate
+        auto w = GetWidth() / _Tileset.GetTileWidth();
+        auto h = GetHeight() / _Tileset.GetTileHeight();
+
+        if (sX < 0) sX = 0;
+        if (sY < 0) sY = 0;
+        if (sX >= w) sX = w - 1;
+        if (sY >= h) sX = h - 1;
+
+        if (eX < 0) eX = 0;
+        if (eY < 0) eY = 0;
+        if (eX >= w) eX = w - 1;
+        if (eY >= h) eY = h - 1;
+
         for (auto x = sX; x < eX; x++) {
             for (auto y = sY; y < eY; y++) {
-                if (x < 0 || x >= GetWidth() / _Tileset.GetTileWidth() || y < 0 || y >= GetHeight() / _Tileset.GetTileHeight()) continue;
                 if (std::find(tiles_.begin(), tiles_.end(), GetTileAt({(float) x, (float) y})) != tiles_.end()) {
                     // Get polygon with world coordinates
                     auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
@@ -97,9 +123,22 @@ namespace NerdThings::Ngine::Graphics {
         int eX = range_.X + range_.Width;
         int eY = range_.Y + range_.Height;
 
+        // Validate
+        auto w = GetWidth() / _Tileset.GetTileWidth();
+        auto h = GetHeight() / _Tileset.GetTileHeight();
+
+        if (sX < 0) sX = 0;
+        if (sY < 0) sY = 0;
+        if (sX >= w) sX = w - 1;
+        if (sY >= h) sX = h - 1;
+
+        if (eX < 0) eX = 0;
+        if (eY < 0) eY = 0;
+        if (eX >= w) eX = w - 1;
+        if (eY >= h) eY = h - 1;
+
         for (auto x = sX; x < eX; x++) {
             for (auto y = sY; y < eY; y++) {
-                if (x < 0 || x >= GetWidth() / _Tileset.GetTileWidth() || y < 0 || y >= GetHeight() / _Tileset.GetTileHeight()) continue;
                 auto t = GetTileAt({(float) x, (float) y});
                 if (t >= min_ && t <= max_) {
                     // Get polygon with world coordinates
