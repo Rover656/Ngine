@@ -62,6 +62,19 @@ namespace NerdThings::Ngine::Graphics {
         std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int tile_, Math::TRectangle range_, Math::TVector2 tilesetPosition_ = Math::TVector2::Zero);
 
         /*
+         * Get collision shapes for tiles in a range.
+         * All shapes must be deleted afterwards.
+         */
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(std::vector<int> tiles_, Math::TRectangle range_, Math::TVector2 tilesetPosition_ = Math::TVector2::Zero);
+
+        /*
+         * Get collision shapes for tiles in a range.
+         * min_ <= tile <= max_.
+         * All shapes must be deleted afterwards.
+         */
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, Math::TRectangle range_, Math::TVector2 tilesetPosition_ = Math::TVector2::Zero);
+
+        /*
          * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
          */
         int GetTileAt(Math::TVector2 pos_);
