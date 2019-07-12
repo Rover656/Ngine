@@ -85,9 +85,21 @@ namespace NerdThings::Ngine::Math {
         Physics::TBoundingBox ToBoundingBox(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
 
         /*
+         * Convert rectangle to bounding box pointer.
+         * Must be deleted
+         */
+        Physics::TBoundingBox *ToBoundingBoxPtr(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
+
+        /*
          * Convert rectangle to polygon
          */
         Physics::TPolygon ToPolygon(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
+
+        /*
+         * Convert rectangle to polygon pointer.
+         * Must be deleted.
+         */
+        Physics::TPolygon *ToPolygonPtr(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
     };
 }
 

@@ -47,10 +47,14 @@ namespace NerdThings::Ngine::Components {
 
             if (bbox != nullptr) {
                 //bbox col
-                col = _BoundingBox.CheckCollision(&bbox->_BoundingBox);
+                col = CollisionCheck(&bbox->_BoundingBox);
             }
 
             return col;
+        }
+
+        bool CollisionCheck(Physics::ICollisionShape *b) override {
+            return _BoundingBox.CheckCollision(b);
         }
 
         void DrawDebug() override {
