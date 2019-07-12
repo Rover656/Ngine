@@ -56,6 +56,14 @@ namespace NerdThings::Ngine::Math {
         return box;
     }
 
+    Physics::TBoundingBox *TRectangle::ToBoundingBoxPtr(float rotation_, TVector2 origin_) const {
+        auto valbbox = ToBoundingBox(rotation_, origin_);
+        auto bbox = new Physics::TBoundingBox();
+        bbox->Min = valbbox.Min;
+        bbox->Max = valbbox.Max;
+        return bbox;
+    }
+
     Physics::TPolygon TRectangle::ToPolygon(const float rotation_, TVector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
@@ -68,4 +76,15 @@ namespace NerdThings::Ngine::Math {
         return Physics::TPolygon(vertices);
     }
 
+    Physics::TPolygon *TRectangle::ToPolygonPtr(const float rotation_, TVector2 origin_) const {
+        // Fix origin
+        origin_ += {X, Y};
+
+        // Make polygon
+        std::vector<TVector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
+        for (auto &vertex : vertices) {
+            vertex = vertex.Rotate(origin_, rotation_);
+        }
+        return new Physics::TPolygon(vertices);
+    }
 }

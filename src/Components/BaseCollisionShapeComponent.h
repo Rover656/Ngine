@@ -169,15 +169,15 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision with a collision group.
          * Component must have the collision group to work
          */
-        bool CheckCollisionFrom(std::vector<Physics::ICollisionShape> shapes) {
-            return CheckCollisionFromAt<EntityType>(shapes, GetParent<Core::BaseEntity>()->GetPosition());
+        bool CheckCollisionFrom(std::vector<Physics::ICollisionShape *> shapes) {
+            return CheckCollisionFromAt(shapes, GetParent<Core::BaseEntity>()->GetPosition());
         }
 
         /*
          * Check for a collision with a collision group at a position
          * Component must have the collision group to work
          */
-        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape> shapes, Math::TVector2 position_) {
+        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, Math::TVector2 position_) {
             auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
@@ -190,7 +190,7 @@ namespace NerdThings::Ngine::Components {
             auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
 
             for (auto i = 0; i < shapes.size(); i++) {
-                collision = CollisionCheck(&shapes[i]);
+                collision = CollisionCheck(shapes[i]);
                 if (collision) break;
             }
 

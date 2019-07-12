@@ -33,9 +33,9 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    std::vector<Physics::TPolygon> TilesetCanvas::GetCollisionShapesFor(int tile_, Math::TRectangle range_) {
+    std::vector<Physics::ICollisionShape *> TilesetCanvas::GetCollisionShapesFor(int tile_, Math::TRectangle range_) {
         // EXPERIMENTAL, MAY NOT BE WORKING YET NOR BE PERFORMANT
-        std::vector<Physics::TPolygon> shapes;
+        std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -45,7 +45,8 @@ namespace NerdThings::Ngine::Graphics {
         for (auto x = sX; x < eX; x++) {
             for (auto y = sY; y < eY; y++) {
                 if (GetTileAt({(float)x, (float)y}) == tile_) {
-                    shapes.push_back(Math::TRectangle(x, y, _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygon());
+                    auto poly = Math::TRectangle(x, y, _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
+                    shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
                 }
             }
         }
