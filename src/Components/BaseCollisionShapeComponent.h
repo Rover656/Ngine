@@ -73,6 +73,17 @@ namespace NerdThings::Ngine::Components {
 
         virtual ~BaseCollisionShapeComponent() {
             _OnTransformChangeRef.UnBind();
+
+            // Remove from collision map
+            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+
+            for (auto cVec : scene->CollisionMap) {
+                for (auto ent : cVec.second) {
+                    if (ent == GetParent<Core::BaseEntity>()) {
+                        scene->CollisionMap[cVec.first].erase(std::remove(scene->CollisionMap[cVec.first].begin(), scene->CollisionMap[cVec.first].end(), ent), scene->CollisionMap[cVec.first].end());
+                    }
+                }
+            }
         }
 
         // Public Methods
