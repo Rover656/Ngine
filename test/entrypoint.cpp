@@ -14,7 +14,7 @@
 #include <Core/Game.h>
 #include <Core/Resources.h>
 #include <Graphics/Sprite.h>
-#include <Graphics/Tileset.h>
+#include <Graphics/TilesetCanvas.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
 #include <Math/Vector2.h>
@@ -199,7 +199,7 @@ public:
 
     TestWidget widg;
 
-    Tileset *testTiles;
+    TilesetCanvas *testTiles;
 
     TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
 
@@ -225,7 +225,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new Tileset(TSprite(Resources::GetTexture("test_tiles"), 32, 32, 32, 32, 0, 0), 10, 10, tileData);
+        testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 

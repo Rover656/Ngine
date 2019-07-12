@@ -1,78 +1,46 @@
-/**********************************************************************************************
-*
-*   Ngine - A (mainly) 2D game engine.
-*
-*   Copyright (C) 2019 NerdThings
-*
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*
-**********************************************************************************************/
-
 #ifndef TILESET_H
 #define TILESET_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
-#include "Canvas.h"
-#include "Sprite.h"
+#include "../Math/Vector2.h"
+#include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
+    // TODO: Animated tilesets
     /*
-     * A tileset canvas
+     * A tileset
      */
-    class NEAPI Tileset : public Canvas {
-        // Private Fields
+    struct NEAPI TTileset {
+        // Public Fields
 
         /*
-         * The tile data
+         * The tileset texture
          */
-        std::vector<int> _Tiles;
+        TTexture2D *_Texture;
 
         /*
-         * The tileset sprite and data
+         * Tile width
          */
-        TSprite _TilesetSprite;
+        float _TileHeight;
 
-    public:
+        /*
+         * Tile height
+         */
+        float _TileWidth;
+
         // Public Constructor(s)
 
-        /*
-         * Create a tileset.
-         * Width and height is in tile space multiplied by tilesetSprite frame width and height.
-         * Tiles indices start from 1, so tile one is index 1.
-         */
-        Tileset(const TSprite& tilesetSprite_, float width_, float height_);
-
-        /*
-         * Create a tileset with data.
-         * Width and height is in tile space multiplied by tilesetSprite frame width and height
-         * Tiles indices start from 1, so tile one is index 1.
-         */
-        Tileset(const TSprite& tilesetSprite_, float width_, float height_, std::vector<int> tiles_);
+        TTileset(TTexture2D *texture_, float tileWidth_, float tileHeight_);
 
         // Public Methods
 
-        /*
-         * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
-         */
-        int GetTileAt(Math::TVector2 pos_);
+        void DrawTile(Math::TVector2 position_, int tile_);
 
-        /*
-         * Set the tile value at a position.
-         */
-        void SetTileAt(Math::TVector2 pos_, int tile_);
+        float GetTileHeight() const;
 
-        /*
-         * Set all tile data
-         */
-        void SetTileData(std::vector<int> data_);
-    protected:
-
-        // Protected Methods
-
-        void RenderTargetRedraw() override;
+        float GetTileWidth() const;
     };
 }
 
-#endif // TILESET_H
+#endif //TILESET_H

@@ -16,7 +16,7 @@
 
 #include "../Core/BaseEntity.h"
 #include "../Core/Component.h"
-#include "../Graphics/Tileset.h"
+#include "Graphics/TilesetCanvas.h"
 
 namespace NerdThings::Ngine::Components {
     class TilesetComponent : public Core::Component {
@@ -25,12 +25,12 @@ namespace NerdThings::Ngine::Components {
         /*
          * The tileset
          */
-        Graphics::Tileset *_Tileset;
+        Graphics::TilesetCanvas *_Tileset;
     public:
 
         // Public Constructor(s)
 
-        TilesetComponent(Core::BaseEntity *parent_, Graphics::Tileset *tileset_)
+        TilesetComponent(Core::BaseEntity *parent_, Graphics::TilesetCanvas *tileset_)
          : Component(parent_), _Tileset(tileset_) {
             SubscribeToDraw();
         }
@@ -48,7 +48,7 @@ namespace NerdThings::Ngine::Components {
             _Tileset->Draw(par->GetPosition());
         }
 
-        Graphics::Tileset *GetTileset() {
+        Graphics::TilesetCanvas *GetTileset() {
             return _Tileset;
         }
     };

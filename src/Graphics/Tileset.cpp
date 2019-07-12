@@ -1,82 +1,46 @@
-/**********************************************************************************************
-*
-*   Ngine - A (mainly) 2D game engine.
-*
-*   Copyright (C) 2019 NerdThings
-*
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*
-**********************************************************************************************/
-
 #include "Tileset.h"
 
-#include <cmath>
+#include "../Math/Rectangle.h"
+#include "Drawing.h"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    Tileset::Tileset(const TSprite& tilesetSprite_, float width_, float height_)
-            : _TilesetSprite(tilesetSprite_), Canvas(width_ * tilesetSprite_.FrameWidth, height_ * tilesetSprite_.FrameHeight), _Tiles(width_ * height_) {
-        _TilesetSprite.ImageSpeed = 0;
-
-        ReDraw();
-    }
-
-    Tileset::Tileset(const TSprite& tilesetSprite_, float width_, float height_, std::vector<int> tiles_)
-            : _TilesetSprite(tilesetSprite_), Canvas(width_ * tilesetSprite_.FrameWidth, height_ * tilesetSprite_.FrameHeight) {
-        if (tiles_.size() != width_ * height_) {
-            throw std::runtime_error("Tile data does not match dimensions.");
-        }
-        _Tiles = tiles_;
-
-        _TilesetSprite.ImageSpeed = 0;
-
-        ReDraw();
-    }
+    TTileset::TTileset(TTexture2D *texture_, float tileWidth_, float tileHeight_)
+            : _Texture(texture_), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
 
     // Public Methods
 
-    int Tileset::GetTileAt(Math::TVector2 pos_) {
-        auto w = GetWidth() / _TilesetSprite.FrameWidth;
-        auto h = GetHeight() / _TilesetSprite.FrameHeight;
+    void TTileset::DrawTile(Math::TVector2 position_, int tile_) {
+        // Tile's start from 1 to allow 0 to mean nothing
+        tile_ -= 1;
 
-        auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
+        // Skip if negative
+        if (tile_ < 0) return;
 
-        return _Tiles[i];
-    }
-
-    void Tileset::SetTileAt(Math::TVector2 pos_, int tile_) {
-        auto w = GetWidth() / _TilesetSprite.FrameWidth;
-        auto h = GetHeight() / _TilesetSprite.FrameHeight;
-
-        auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
-
-        _Tiles[i] = tile_;
-
-        ReDraw();
-    }
-
-    void Tileset::SetTileData(std::vector<int> data_) {
-        if (data_.size() != GetWidth() / _TilesetSprite.FrameWidth * GetHeight() / _TilesetSprite.FrameHeight) {
-            throw std::runtime_error("Tile data does not match dimensions.");
+        // Get coords
+        auto x = 0.0f;
+        auto y = 0.0f;
+        for (auto i = 0; i < tile_; i++) {
+            x += _TileWidth;
+            if (x >= _Texture->Width) {
+                x = 0;
+                y += _TileHeight;
+            }
         }
-        _Tiles = data_;
-        ReDraw();
+
+        // Get source rectangle
+        Math::TRectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
+
+        // Draw
+        Drawing::DrawTexture(_Texture, sourceRectangle, position_, TColor::White);
     }
 
-    // Protected Method(s)
+    float TTileset::GetTileHeight() const {
+        return _TileHeight;
+    }
 
-    void Tileset::RenderTargetRedraw() {
-        auto w = GetWidth() / _TilesetSprite.FrameWidth;
-        auto h = GetHeight() / _TilesetSprite.FrameHeight;
-
-        for (auto i = 0; i < w * h; i++) {
-            if (_Tiles[i] - 1 < 0) // Skip negatives
-                continue;
-            _TilesetSprite.CurrentFrame = _Tiles[i] - 1;
-            Math::TVector2 pos = {static_cast<float>(fmod(i, w)) * _TilesetSprite.FrameWidth, static_cast<float>(i / static_cast<int>(w)) * _TilesetSprite.FrameHeight};
-            _TilesetSprite.Draw(pos, 0);
-        }
+    float TTileset::GetTileWidth() const {
+        return _TileWidth;
     }
 }
