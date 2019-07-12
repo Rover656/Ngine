@@ -36,7 +36,6 @@ namespace NerdThings::Ngine::Graphics {
 
     std::vector<Physics::ICollisionShape *>
     TilesetCanvas::GetCollisionShapesFor(int tile_, Math::TRectangle range_, Math::TVector2 tilesetPosition_) {
-        // EXPERIMENTAL, MAY NOT BE WORKING YET NOR BE PERFORMANT
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -76,7 +75,6 @@ namespace NerdThings::Ngine::Graphics {
     std::vector<Physics::ICollisionShape *>
     TilesetCanvas::GetCollisionShapesFor(std::vector<int> tiles_, Math::TRectangle range_,
                                          Math::TVector2 tilesetPosition_) {
-        // EXPERIMENTAL, MAY NOT BE WORKING YET NOR BE PERFORMANT
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -115,7 +113,6 @@ namespace NerdThings::Ngine::Graphics {
 
     std::vector<Physics::ICollisionShape *>
     TilesetCanvas::GetCollisionShapesFor(int min_, int max_, Math::TRectangle range_, Math::TVector2 tilesetPosition_) {
-        // EXPERIMENTAL, MAY NOT BE WORKING YET NOR BE PERFORMANT
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
