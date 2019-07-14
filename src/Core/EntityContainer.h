@@ -63,7 +63,7 @@ namespace NerdThings::Ngine::Core {
             auto ent = dynamic_cast<BaseEntity*>(entity_);
 
             if (ent != nullptr) {
-                auto name = "Unique" + std::to_string(_Counter)
+                auto name = "Unique" + std::to_string(_Counter);
                 _Entities.insert({name, ent});
                 _Counter++;
 
