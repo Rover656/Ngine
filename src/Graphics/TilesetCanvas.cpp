@@ -57,8 +57,8 @@ namespace NerdThings::Ngine::Graphics {
         if (eX >= w) eX = w - 1;
         if (eY >= h) eY = h - 1;
 
-        for (auto x = sX; x < eX; x++) {
-            for (auto y = sY; y < eY; y++) {
+        for (auto x = sX; x <= eX; x++) {
+            for (auto y = sY; y <= eY; y++) {
                 if (GetTileAt({(float) x, (float) y}) == tile_) {
                     // Get polygon with world coordinates
                     auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
@@ -134,8 +134,8 @@ namespace NerdThings::Ngine::Graphics {
         if (eX >= w) eX = w - 1;
         if (eY >= h) eY = h - 1;
 
-        for (auto x = sX; x < eX; x++) {
-            for (auto y = sY; y < eY; y++) {
+        for (auto x = sX; x <= eX; x++) {
+            for (auto y = sY; y <= eY; y++) {
                 auto t = GetTileAt({(float) x, (float) y});
                 if (t >= min_ && t <= max_) {
                     // Get polygon with world coordinates
