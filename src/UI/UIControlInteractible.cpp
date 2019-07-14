@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::UI {
 
                 // Deregister click so double events dont happen
                 Input::Mouse::CancelButton(MOUSE_BUTTON_LEFT);
-            } else {
+            } else if (!_Hovered) {
                 // Hovered
                 OnHover({this});
                 _Hovered = true;
