@@ -96,8 +96,8 @@ namespace NerdThings::Ngine::Graphics {
         if (eX >= w) eX = w - 1;
         if (eY >= h) eY = h - 1;
 
-        for (auto x = sX; x < eX; x++) {
-            for (auto y = sY; y < eY; y++) {
+        for (auto x = sX; x <= eX; x++) {
+            for (auto y = sY; y <= eY; y++) {
                 if (std::find(tiles_.begin(), tiles_.end(), GetTileAt({(float) x, (float) y})) != tiles_.end()) {
                     // Get polygon with world coordinates
                     auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
