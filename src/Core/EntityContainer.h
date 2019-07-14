@@ -28,6 +28,11 @@ namespace NerdThings::Ngine::Core {
         // Private Fields
 
         /*
+         * The counter for unnamed entities
+         */
+        int _Counter = 0;
+
+        /*
          * All of the entities in the scene.
          * Every entity has a name.
          */
@@ -46,6 +51,30 @@ namespace NerdThings::Ngine::Core {
         virtual void SetEntityParent(BaseEntity *ent_) = 0;
     public:
         // Public Methods
+
+        /*
+         * Add an entity without a name.
+         * This will give the entity name a numerical value.
+         * Returns pair of name and entity if success, null for both if fail
+         */
+        template <typename EntityType>
+        std::pair<std::string, EntityType *> AddEntity(EntityType *entity_) {
+            // Cast to BaseEntity to ensure this is a valid type
+            auto ent = dynamic_cast<BaseEntity*>(entity_);
+
+            if (ent != nullptr) {
+                auto name = "Unique" + std::to_string(_Counter)
+                _Entities.insert({name, ent});
+                _Counter++;
+
+                // Set parent
+                SetEntityParent(ent);
+
+                return {name, ent};
+            }
+
+            return {"", nullptr};
+        }
 
         /*
          * Add an entity.
