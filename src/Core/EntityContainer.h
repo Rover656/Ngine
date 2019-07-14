@@ -63,17 +63,17 @@ namespace NerdThings::Ngine::Core {
             auto ent = dynamic_cast<BaseEntity*>(entity_);
 
             if (ent != nullptr) {
-                auto name = "Unique" + std::to_string(_Counter);
+                std::string name = "Unique" + std::to_string(_Counter);
                 _Entities.insert({name, ent});
                 _Counter++;
 
                 // Set parent
                 SetEntityParent(ent);
 
-                return std::pair<std::string, EntityType *>(name, ent);
+                return std::make_pair(name, ent);
             }
 
-            return std::pair<std::string, EntityType *>("", nullptr);
+            return std::make_pair("", nullptr);
         }
 
         /*
