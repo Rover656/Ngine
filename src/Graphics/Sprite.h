@@ -130,6 +130,16 @@ namespace NerdThings::Ngine::Graphics {
         bool IsAnimated();
 
         /*
+         * Set the sprite texture
+         */
+        void SetTexture(TTexture2D *texture_);
+
+        /*
+         * Set the sprite textures
+         */
+        void SetTextures(std::vector<TTexture2D *> textures_);
+
+        /*
          * Update the sprite timer
          * Should be called every frame
          */

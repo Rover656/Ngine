@@ -123,6 +123,15 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
+    void TSprite::SetTexture(TTexture2D *texture_) {
+        _Textures.clear();
+        _Textures.push_back(texture_);
+    }
+
+    void TSprite::SetTextures(std::vector<TTexture2D *> textures_) {
+        _Textures = textures_;
+    }
+
     void TSprite::Update() {
         if (IsAnimated()) {
             // Increment timer
