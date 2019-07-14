@@ -70,7 +70,7 @@ namespace NerdThings::Ngine::Core {
                 // Set parent
                 SetEntityParent(ent);
 
-                return std::make_pair(name, ent);
+                return std::make_pair(name, entity_);
             }
 
             return std::make_pair("", nullptr);
