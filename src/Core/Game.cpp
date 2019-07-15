@@ -17,6 +17,7 @@
 #include "../Input/Mouse.h"
 #include "Resources.h"
 #include "WindowManager.h"
+#include "../../../../../../../Dev/msys64/mingw64/include/c++/8.3.0/chrono"
 
 namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
@@ -155,6 +156,9 @@ namespace NerdThings::Ngine::Core {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
+
+            // Skip if we are going to catch up more than 5 seconds, that is too much (May not fix what I am experiencing)
+            if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
             // Run Updates
             while (lag >= timeStep) {
