@@ -17,7 +17,6 @@
 #include "../Input/Mouse.h"
 #include "Resources.h"
 #include "WindowManager.h"
-#include "../../../../../../../Dev/msys64/mingw64/include/c++/8.3.0/chrono"
 
 namespace NerdThings::Ngine::Core {
     // Public Constructor(s)
