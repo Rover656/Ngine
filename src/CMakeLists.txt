@@ -4,9 +4,6 @@ file(GLOB_RECURSE Ngine_source
     "*.cpp"
 )
 
-# Include options
-include("CMakeOptions.txt")
-
 # Add library
 if (${BUILD_SHARED})
     message("Building Ngine as a shared library.")
