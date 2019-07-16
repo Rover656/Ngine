@@ -1,34 +1,11 @@
 # Fetch source files
-file(GLOB Ngine_source
+file(GLOB_RECURSE Ngine_source
     "*.h"
     "*.cpp"
-    "Audio/*.h"
-    "Audio/*.cpp"
-    "Components/*.h"
-    "Components/*.cpp"
-    "Core/*.h"
-    "Core/*.cpp"
-    "Graphics/*.h"
-    "Graphics/*.cpp"
-    "Input/*.h"
-    "Input/*.cpp"
-    "Math/*.h"
-    "Math/*.cpp"
-    "Physics/*.h"
-    "Physics/*.cpp"
-    "Types/*.h"
-    "Types/*.cpp"
-    "UI/*.h"
-    "UI/*.cpp"
-    "UI/Controls/*.h"
-    "UI/Controls/*.cpp"
 )
 
 # Include options
 include("CMakeOptions.txt")
-
-# Add 3rd-party libraries
-add_subdirectory("3rd-party")
 
 # Add library
 if (${BUILD_SHARED})
@@ -44,7 +21,13 @@ target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
 target_include_directories(Ngine PUBLIC "3rd-party/Box2D-cmake/Box2D")
 
 # Link libraries
-target_link_libraries(Ngine raylib)
+if (${BUILD_SHARED})
+    message("Linking raylib shared")
+    target_link_libraries(Ngine raylib)
+else()
+    message("Linking raylib static")
+    target_link_libraries(Ngine raylib_static)
+endif()
 target_link_libraries(Ngine tobanteGaming::Box2D)
 
 if (UNIX OR MINGW)
@@ -59,5 +42,6 @@ endif()
 target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
 
 if (${BUILD_SHARED})
+    message("Using shared libtype")
     target_compile_definitions(Ngine PRIVATE USE_LIBTYPE_SHARED=1)
 endif()
