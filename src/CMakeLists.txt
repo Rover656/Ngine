@@ -4,13 +4,25 @@ file(GLOB_RECURSE Ngine_source
     "*.cpp"
 )
 
+# Generate product info
+include(generate_product_version)
+generate_product_version(
+        VersionFilesOutputVariable
+        NAME "Ngine"
+        VERSION_MAJOR 0
+        VERSION_MINOR 1
+        VERSION_PATCH 0
+        VERSION_REVISION 0
+        COMPANY_NAME "NerdThings"
+)
+
 # Add library
 if (${BUILD_SHARED})
     message("Building Ngine as a shared library.")
-    add_library(Ngine SHARED ${Ngine_source})
+    add_library(Ngine SHARED ${Ngine_source} ${VersionFilesOutputVariable})
 else()
     message("Building Ngine as a static library.")
-    add_library(Ngine STATIC ${Ngine_source})
+    add_library(Ngine STATIC ${Ngine_source} ${VersionFilesOutputVariable})
 endif()
 
 # Include directories
