@@ -26,8 +26,8 @@ else()
 endif()
 
 # Include directories
-target_include_directories(Ngine PUBLIC "3rd-party/raylib/src")
-target_include_directories(Ngine PUBLIC "3rd-party/Box2D-cmake/Box2D")
+target_include_directories(Ngine PUBLIC "../third-party/raylib/src")
+target_include_directories(Ngine PUBLIC "../third-party/Box2D-cmake/Box2D")
 
 # Link libraries
 if (${BUILD_SHARED})

@@ -106,7 +106,7 @@ namespace NerdThings::Ngine::Core {
         // https://github.com/cginternals/cpplocate/blob/master/source/liblocate/source/liblocate.c#L39
         // I trust this works as there are no issues about it...
         success_ = false;
-        #if defined (_WIN32)
+        #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
 
         char exePath[MAX_PATH];
         unsigned int len = GetModuleFileNameA(GetModuleHandleA(0x0), exePath, MAX_PATH);
