@@ -122,12 +122,12 @@ namespace NerdThings::Ngine {
         /*
          * The game that the scene has been loaded into
          */
-        Game *Game;
+        Game *ParentGame;
 
         // Public Constructor(s)
 
-        SceneLoadEventArgs(Ngine::Game *game_)
-                : Game(game_) {}
+        SceneLoadEventArgs(Game *game_)
+                : ParentGame(game_) {}
     };
 
     struct UIControlEventArgs : EventArgs {
