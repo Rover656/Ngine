@@ -126,7 +126,7 @@ namespace NerdThings::Ngine {
 
         // Public Constructor(s)
 
-        SceneLoadEventArgs(class Game *game_)
+        SceneLoadEventArgs(Ngine::Game *game_)
                 : Game(game_) {}
     };
 
