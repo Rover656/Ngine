@@ -15,7 +15,7 @@
 
 #include "BaseEntity.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // Public Methods
 
     std::vector<BaseEntity *> EntityContainer::GetEntities() {

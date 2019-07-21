@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Rectangle.h"
+#include "Rectangle.h"
 #include "../Physics/Polygon.h"
 #include "Canvas.h"
 #include "Tileset.h"
@@ -59,25 +59,25 @@ namespace NerdThings::Ngine::Graphics {
          * Get collision shapes for a tile in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int tile_, Math::TRectangle range_, Math::TVector2 tilesetPosition_ = Math::TVector2::Zero);
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int tile_, TRectangle range_, TVector2 tilesetPosition_ = TVector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(std::vector<int> tiles_, Math::TRectangle range_, Math::TVector2 tilesetPosition_ = Math::TVector2::Zero);
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(std::vector<int> tiles_, TRectangle range_, TVector2 tilesetPosition_ = TVector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * min_ <= tile <= max_.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, Math::TRectangle range_, Math::TVector2 tilesetPosition_ = Math::TVector2::Zero);
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, TRectangle range_, TVector2 tilesetPosition_ = TVector2::Zero);
 
         /*
          * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
          */
-        int GetTileAt(Math::TVector2 pos_);
+        int GetTileAt(TVector2 pos_);
 
         /*
          * Get the tileset being used
@@ -87,7 +87,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Set the tile value at a position.
          */
-        void SetTileAt(Math::TVector2 pos_, int tile_);
+        void SetTileAt(TVector2 pos_, int tile_);
 
         /*
          * Set all tile data

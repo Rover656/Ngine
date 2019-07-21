@@ -35,7 +35,7 @@ namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     std::vector<Physics::ICollisionShape *>
-    TilesetCanvas::GetCollisionShapesFor(int tile_, Math::TRectangle range_, Math::TVector2 tilesetPosition_) {
+    TilesetCanvas::GetCollisionShapesFor(int tile_, TRectangle range_, TVector2 tilesetPosition_) {
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -61,7 +61,7 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = sY; y <= eY; y++) {
                 if (GetTileAt({(float) x, (float) y}) == tile_) {
                     // Get polygon with world coordinates
-                    auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
+                    auto poly = TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
                                                  y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
                                                  _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
                     shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
@@ -73,8 +73,8 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     std::vector<Physics::ICollisionShape *>
-    TilesetCanvas::GetCollisionShapesFor(std::vector<int> tiles_, Math::TRectangle range_,
-                                         Math::TVector2 tilesetPosition_) {
+    TilesetCanvas::GetCollisionShapesFor(std::vector<int> tiles_, TRectangle range_,
+                                         TVector2 tilesetPosition_) {
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -100,7 +100,7 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = sY; y <= eY; y++) {
                 if (std::find(tiles_.begin(), tiles_.end(), GetTileAt({(float) x, (float) y})) != tiles_.end()) {
                     // Get polygon with world coordinates
-                    auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
+                    auto poly = TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
                                                  y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
                                                  _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
                     shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
@@ -112,7 +112,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     std::vector<Physics::ICollisionShape *>
-    TilesetCanvas::GetCollisionShapesFor(int min_, int max_, Math::TRectangle range_, Math::TVector2 tilesetPosition_) {
+    TilesetCanvas::GetCollisionShapesFor(int min_, int max_, TRectangle range_, TVector2 tilesetPosition_) {
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -139,7 +139,7 @@ namespace NerdThings::Ngine::Graphics {
                 auto t = GetTileAt({(float) x, (float) y});
                 if (t >= min_ && t <= max_) {
                     // Get polygon with world coordinates
-                    auto poly = Math::TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
+                    auto poly = TRectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
                                                  y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
                                                  _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
                     shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
@@ -150,7 +150,7 @@ namespace NerdThings::Ngine::Graphics {
         return shapes;
     }
 
-    int TilesetCanvas::GetTileAt(Math::TVector2 pos_) {
+    int TilesetCanvas::GetTileAt(TVector2 pos_) {
         auto w = GetWidth() / _Tileset.GetTileWidth();
         auto h = GetHeight() / _Tileset.GetTileHeight();
 
@@ -163,7 +163,7 @@ namespace NerdThings::Ngine::Graphics {
         return &_Tileset;
     }
 
-    void TilesetCanvas::SetTileAt(Math::TVector2 pos_, int tile_) {
+    void TilesetCanvas::SetTileAt(TVector2 pos_, int tile_) {
         auto w = GetWidth() / _Tileset.GetTileWidth();
         auto h = GetHeight() / _Tileset.GetTileHeight();
 
@@ -189,7 +189,7 @@ namespace NerdThings::Ngine::Graphics {
         auto h = GetHeight() / _Tileset.GetTileHeight();
 
         for (auto i = 0; i < w * h; i++) {
-            Math::TVector2 pos = {static_cast<float>(fmod(i, w)) * _Tileset.GetTileWidth(),
+            TVector2 pos = {static_cast<float>(fmod(i, w)) * _Tileset.GetTileWidth(),
                                   static_cast<float>(i / static_cast<int>(w)) * _Tileset.GetTileHeight()};
             _Tileset.DrawTile(pos, _Tiles[i]);
         }

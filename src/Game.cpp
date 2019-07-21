@@ -11,14 +11,14 @@
 
 #include "Game.h"
 
-#include "../Audio/AudioManager.h"
-#include "../Graphics/GraphicsManager.h"
-#include "../Input/Keyboard.h"
-#include "../Input/Mouse.h"
+#include "Audio/AudioManager.h"
+#include "Graphics/GraphicsManager.h"
+#include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 #include "Resources.h"
 #include "WindowManager.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // Public Constructor(s)
 
     Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, int config_)
@@ -80,7 +80,7 @@ namespace NerdThings::Ngine::Core {
         return _UpdateFPS;
     }
 
-    Math::TVector2 Game::GetDimensions() const {
+    TVector2 Game::GetDimensions() const {
         return { (float)_IntendedWidth, (float)_IntendedHeight };
     }
 

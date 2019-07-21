@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void Canvas::Draw(Math::TVector2 pos_) {
+    void Canvas::Draw(TVector2 pos_) {
         Graphics::Drawing::DrawTexture(&_RenderTarget->Texture,
                                        {
                                                pos_.X,

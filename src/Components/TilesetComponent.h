@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "../Core/BaseEntity.h"
-#include "../Core/Component.h"
+#include "BaseEntity.h"
+#include "Component.h"
 #include "Graphics/TilesetCanvas.h"
 
 namespace NerdThings::Ngine::Components {

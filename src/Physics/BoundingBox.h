@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "CollisionShape.h"
 
 namespace NerdThings::Ngine::Physics {
@@ -34,12 +34,12 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Maximum coordinate
          */
-        Math::TVector2 Max;
+        TVector2 Max;
 
         /*
          * Minimum coordinate
          */
-        Math::TVector2 Min;
+        TVector2 Min;
 
         // Public Constructor(s)
 

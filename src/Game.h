@@ -12,16 +12,16 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
-#include "../Graphics/Color.h"
-#include "../Graphics/Drawing.h"
-#include "../Graphics/RenderTarget.h"
-#include "../Math/Vector2.h"
+#include "Graphics/Color.h"
+#include "Graphics/Drawing.h"
+#include "Graphics/RenderTarget.h"
+#include "Vector2.h"
 #include "EventHandler.h"
 #include "Scene.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     /*
      * The main container of the game
      */
@@ -134,7 +134,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get game dimensions
          */
-        Math::TVector2 GetDimensions() const;
+        TVector2 GetDimensions() const;
 
         /*
          * Get the target draw FPS.
@@ -171,7 +171,7 @@ namespace NerdThings::Ngine::Core {
          * Set the intended game size.
          * Resizes the framebuffer next frame.
          */
-        void SetIntendedSize(Math::TVector2 size_);
+        void SetIntendedSize(TVector2 size_);
 
         /*
          * Set the current scene

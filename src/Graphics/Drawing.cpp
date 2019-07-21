@@ -27,13 +27,13 @@ namespace NerdThings::Ngine::Graphics {
         ClearBackground(color_.ToRaylibColor());
     }
 
-    void Drawing::DrawPixel(const Math::TVector2 position_, const TColor color_) {
+    void Drawing::DrawPixel(const TVector2 position_, const TColor color_) {
         DrawPixelV(position_.ToRaylibVec(),
                    color_.ToRaylibColor());
     }
 
 
-    void Drawing::DrawLine(const Math::TVector2 startPos_, const Math::TVector2 endPos_, const TColor color_,
+    void Drawing::DrawLine(const TVector2 startPos_, const TVector2 endPos_, const TColor color_,
                            const float thickness_) {
         DrawLineEx(startPos_.ToRaylibVec(),
                    endPos_.ToRaylibVec(),
@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Graphics {
                    color_.ToRaylibColor());
     }
 
-    void Drawing::DrawLineStrip(std::vector<Math::TVector2> points_, const TColor color_) {
+    void Drawing::DrawLineStrip(std::vector<TVector2> points_, const TColor color_) {
         //Build points array
         auto pts = new Vector2[points_.size()];
         for (unsigned int i = 0; i < points_.size(); i++) {
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Graphics {
         delete[] pts;
     }
 
-    void Drawing::DrawLineBezier(const Math::TVector2 startPos_, const Math::TVector2 endPos_, const TColor color_,
+    void Drawing::DrawLineBezier(const TVector2 startPos_, const TVector2 endPos_, const TColor color_,
                                  const float thickness_) {
         ::DrawLineBezier(startPos_.ToRaylibVec(),
                          endPos_.ToRaylibVec(),
@@ -65,13 +65,13 @@ namespace NerdThings::Ngine::Graphics {
                          color_.ToRaylibColor());
     }
 
-    void Drawing::DrawCircle(const Math::TVector2 center_, const float radius_, const TColor color_) {
+    void Drawing::DrawCircle(const TVector2 center_, const float radius_, const TColor color_) {
         DrawCircleV(center_.ToRaylibVec(),
                     radius_,
                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawCircleGradient(const Math::TVector2 center_, const float radius_, const TColor color1_,
+    void Drawing::DrawCircleGradient(const TVector2 center_, const float radius_, const TColor color1_,
                                      const TColor color2_) {
         ::DrawCircleGradient(static_cast<int>(center_.X),
                              static_cast<int>(center_.Y),
@@ -80,14 +80,14 @@ namespace NerdThings::Ngine::Graphics {
                              color2_.ToRaylibColor());
     }
 
-    void Drawing::DrawCircleLines(const Math::TVector2 center_, const float radius_, const TColor color_) {
+    void Drawing::DrawCircleLines(const TVector2 center_, const float radius_, const TColor color_) {
         ::DrawCircleLines(static_cast<int>(center_.X),
                           static_cast<int>(center_.Y),
                           radius_,
                           color_.ToRaylibColor());
     }
 
-    void Drawing::DrawCircleSector(const Math::TVector2 center_, const float radius_, const int startAngle_,
+    void Drawing::DrawCircleSector(const TVector2 center_, const float radius_, const int startAngle_,
                                    const int endAngle_, const int segments_,
                                    const TColor color_) {
         ::DrawCircleSector(center_.ToRaylibVec(),
@@ -98,7 +98,7 @@ namespace NerdThings::Ngine::Graphics {
                            color_.ToRaylibColor());
     }
 
-    void Drawing::DrawCircleSectorLines(const Math::TVector2 center_, const float radius_, const int startAngle_,
+    void Drawing::DrawCircleSectorLines(const TVector2 center_, const float radius_, const int startAngle_,
                                         const int endAngle_, const int segments_,
                                         const TColor color_) {
         ::DrawCircleSectorLines(center_.ToRaylibVec(),
@@ -109,12 +109,12 @@ namespace NerdThings::Ngine::Graphics {
                                 color_.ToRaylibColor());
     }
 
-    void Drawing::DrawFPS(const Math::TVector2 position_) {
+    void Drawing::DrawFPS(const TVector2 position_) {
         ::DrawFPS(static_cast<int>(position_.X),
                   static_cast<int>(position_.Y));
     }
 
-    void Drawing::DrawRing(const Math::TVector2 center_, const float innerRadius_, const float outerRadius_,
+    void Drawing::DrawRing(const TVector2 center_, const float innerRadius_, const float outerRadius_,
                            const int startAngle_, const int endAngle_,
                            const int segments_, const TColor color_) {
         ::DrawRing(center_.ToRaylibVec(),
@@ -126,7 +126,7 @@ namespace NerdThings::Ngine::Graphics {
                    color_.ToRaylibColor());
     }
 
-    void Drawing::DrawRingLines(const Math::TVector2 center_, const float innerRadius_, const float outerRadius_,
+    void Drawing::DrawRingLines(const TVector2 center_, const float innerRadius_, const float outerRadius_,
                                 const int startAngle_,
                                 const int endAngle_, const int segments_, const TColor color_) {
         ::DrawRingLines(center_.ToRaylibVec(),
@@ -138,10 +138,10 @@ namespace NerdThings::Ngine::Graphics {
                         color_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangle(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangle(const TVector2 position_, const float width_, const float height_,
                                 const TColor color_,
                                 const float rotation_,
-                                const Math::TVector2 origin_) {
+                                const TVector2 origin_) {
         DrawRectangle({
                           position_,
                           width_,
@@ -152,8 +152,8 @@ namespace NerdThings::Ngine::Graphics {
                       origin_);
     }
 
-    void Drawing::DrawRectangle(const Math::TVector2 position_, const Math::TVector2 size_, const TColor color_,
-                                const float rotation_, const Math::TVector2 origin_) {
+    void Drawing::DrawRectangle(const TVector2 position_, const TVector2 size_, const TColor color_,
+                                const float rotation_, const TVector2 origin_) {
         DrawRectangle({
                           position_,
                           size_
@@ -163,15 +163,15 @@ namespace NerdThings::Ngine::Graphics {
                       origin_);
     }
 
-    void Drawing::DrawRectangle(const Math::TRectangle rectangle_, const TColor color_, const float rotation_,
-                                const Math::TVector2 origin_) {
+    void Drawing::DrawRectangle(const TRectangle rectangle_, const TColor color_, const float rotation_,
+                                const TVector2 origin_) {
         DrawRectanglePro(rectangle_.ToRaylibRect(),
                          origin_.ToRaylibVec(),
                          RadToDeg(rotation_),
                          color_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangleGradientV(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangleGradientV(const TVector2 position_, const float width_, const float height_,
                                          const TColor color1_,
                                          const TColor color2_) {
         DrawRectangleGradientV({
@@ -183,7 +183,7 @@ namespace NerdThings::Ngine::Graphics {
                                color2_);
     }
 
-    void Drawing::DrawRectangleGradientV(const Math::TVector2 position_, const Math::TVector2 size_,
+    void Drawing::DrawRectangleGradientV(const TVector2 position_, const TVector2 size_,
                                          const TColor color1_,
                                          const TColor color2_) {
         DrawRectangleGradientV({
@@ -194,7 +194,7 @@ namespace NerdThings::Ngine::Graphics {
                                color2_);
     }
 
-    void Drawing::DrawRectangleGradientV(const Math::TRectangle rectangle_, const TColor color1_,
+    void Drawing::DrawRectangleGradientV(const TRectangle rectangle_, const TColor color1_,
                                          const TColor color2_) {
         ::DrawRectangleGradientV(static_cast<int>(rectangle_.X),
                                  static_cast<int>(rectangle_.Y),
@@ -204,7 +204,7 @@ namespace NerdThings::Ngine::Graphics {
                                  color2_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangleGradientH(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangleGradientH(const TVector2 position_, const float width_, const float height_,
                                          const TColor color1_,
                                          const TColor color2_) {
         DrawRectangleGradientH({
@@ -216,7 +216,7 @@ namespace NerdThings::Ngine::Graphics {
                                color2_);
     }
 
-    void Drawing::DrawRectangleGradientH(const Math::TVector2 position_, const Math::TVector2 size_,
+    void Drawing::DrawRectangleGradientH(const TVector2 position_, const TVector2 size_,
                                          const TColor color1_,
                                          const TColor color2_) {
         DrawRectangleGradientH({
@@ -227,7 +227,7 @@ namespace NerdThings::Ngine::Graphics {
                                color2_);
     }
 
-    void Drawing::DrawRectangleGradientH(const Math::TRectangle rectangle_, const TColor color1_,
+    void Drawing::DrawRectangleGradientH(const TRectangle rectangle_, const TColor color1_,
                                          const TColor color2_) {
         ::DrawRectangleGradientH(static_cast<int>(rectangle_.X),
                                  static_cast<int>(rectangle_.Y),
@@ -237,7 +237,7 @@ namespace NerdThings::Ngine::Graphics {
                                  color2_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangleGradientEx(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangleGradientEx(const TVector2 position_, const float width_, const float height_,
                                           const TColor color1_,
                                           const TColor color2_, const TColor color3_, const TColor color4_) {
         DrawRectangleGradientEx({
@@ -251,7 +251,7 @@ namespace NerdThings::Ngine::Graphics {
                                 color4_);
     }
 
-    void Drawing::DrawRectangleGradientEx(const Math::TVector2 position_, const Math::TVector2 size_,
+    void Drawing::DrawRectangleGradientEx(const TVector2 position_, const TVector2 size_,
                                           const TColor color1_,
                                           const TColor color2_,
                                           const TColor color3_, const TColor color4_) {
@@ -265,7 +265,7 @@ namespace NerdThings::Ngine::Graphics {
                                 color4_);
     }
 
-    void Drawing::DrawRectangleGradientEx(const Math::TRectangle rectangle_, const TColor color1_, const TColor color2_,
+    void Drawing::DrawRectangleGradientEx(const TRectangle rectangle_, const TColor color1_, const TColor color2_,
                                           const TColor color3_,
                                           const TColor color4_) {
         ::DrawRectangleGradientEx(rectangle_.ToRaylibRect(),
@@ -275,7 +275,7 @@ namespace NerdThings::Ngine::Graphics {
                                   color4_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangleLines(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangleLines(const TVector2 position_, const float width_, const float height_,
                                      const TColor color_,
                                      const int lineThickness_) {
         DrawRectangleLines({
@@ -287,7 +287,7 @@ namespace NerdThings::Ngine::Graphics {
                            lineThickness_);
     }
 
-    void Drawing::DrawRectangleLines(const Math::TVector2 position_, const Math::TVector2 size_, const TColor color_,
+    void Drawing::DrawRectangleLines(const TVector2 position_, const TVector2 size_, const TColor color_,
                                      const int lineThickness_) {
         DrawRectangleLines({
                                position_,
@@ -297,13 +297,13 @@ namespace NerdThings::Ngine::Graphics {
                            lineThickness_);
     }
 
-    void Drawing::DrawRectangleLines(const Math::TRectangle rectangle_, const TColor color_, const int lineThickness_) {
+    void Drawing::DrawRectangleLines(const TRectangle rectangle_, const TColor color_, const int lineThickness_) {
         ::DrawRectangleLinesEx(rectangle_.ToRaylibRect(),
                                lineThickness_,
                                color_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangleRounded(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangleRounded(const TVector2 position_, const float width_, const float height_,
                                        const float roundness_, const int segments_,
                                        const TColor color_) {
         DrawRectangleRounded({
@@ -316,7 +316,7 @@ namespace NerdThings::Ngine::Graphics {
                              color_);
     }
 
-    void Drawing::DrawRectangleRounded(const Math::TVector2 position_, const Math::TVector2 size_,
+    void Drawing::DrawRectangleRounded(const TVector2 position_, const TVector2 size_,
                                        const float roundness_,
                                        const int segments_,
                                        const TColor color_) {
@@ -329,7 +329,7 @@ namespace NerdThings::Ngine::Graphics {
                              color_);
     }
 
-    void Drawing::DrawRectangleRounded(const Math::TRectangle rectangle_, const float roundness_, const int segments_,
+    void Drawing::DrawRectangleRounded(const TRectangle rectangle_, const float roundness_, const int segments_,
                                        const TColor color_) {
         ::DrawRectangleRounded(rectangle_.ToRaylibRect(),
                                roundness_,
@@ -337,7 +337,7 @@ namespace NerdThings::Ngine::Graphics {
                                color_.ToRaylibColor());
     }
 
-    void Drawing::DrawRectangleRoundedLines(const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawRectangleRoundedLines(const TVector2 position_, const float width_, const float height_,
                                             const float roundness_,
                                             const int segments_, const int lineThickness_, const TColor color_) {
         DrawRectangleRoundedLines({
@@ -351,7 +351,7 @@ namespace NerdThings::Ngine::Graphics {
                                   color_);
     }
 
-    void Drawing::DrawRectangleRoundedLines(const Math::TVector2 position_, const Math::TVector2 size_,
+    void Drawing::DrawRectangleRoundedLines(const TVector2 position_, const TVector2 size_,
                                             const float roundness_,
                                             const int segments_,
                                             const int lineThickness_, const TColor color_) {
@@ -365,7 +365,7 @@ namespace NerdThings::Ngine::Graphics {
                                   color_);
     }
 
-    void Drawing::DrawRectangleRoundedLines(const Math::TRectangle rectangle_, const float roundness_,
+    void Drawing::DrawRectangleRoundedLines(const TRectangle rectangle_, const float roundness_,
                                             const int segments_,
                                             const int lineThickness_,
                                             const TColor color_) {
@@ -376,7 +376,7 @@ namespace NerdThings::Ngine::Graphics {
                                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawText(TFont *font_, const std::string &string_, const Math::TVector2 position_,
+    void Drawing::DrawText(TFont *font_, const std::string &string_, const TVector2 position_,
                            const float fontSize_,
                            const float spacing_, const TColor color_) {
         DrawTextEx(font_->ToRaylibFont(),
@@ -387,7 +387,7 @@ namespace NerdThings::Ngine::Graphics {
                    color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTextRect(TFont *font_, const std::string &string_, const Math::TRectangle rectangle_,
+    void Drawing::DrawTextRect(TFont *font_, const std::string &string_, const TRectangle rectangle_,
                                const float fontSize_, const float spacing_, const TColor color_, const bool wordWrap_) {
         DrawTextRec(font_->ToRaylibFont(),
                     string_.c_str(),
@@ -398,7 +398,7 @@ namespace NerdThings::Ngine::Graphics {
                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTextRectEx(TFont *font_, const std::string &string_, const Math::TRectangle rectangle_,
+    void Drawing::DrawTextRectEx(TFont *font_, const std::string &string_, const TRectangle rectangle_,
                                  const float fontSize_, const float spacing_, const TColor color_,
                                  const int selectStart_,
                                  const int selectLength_, const TColor selectText_, const TColor selectBack_,
@@ -416,9 +416,9 @@ namespace NerdThings::Ngine::Graphics {
                       selectBack_.ToRaylibColor());
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const Math::TVector2 position_, const TColor color_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TVector2 position_, const TColor color_,
                               const float scale_,
-                              const Math::TVector2 origin_, const float rotation_) {
+                              const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
                     {
                         position_.X,
@@ -437,9 +437,9 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const Math::TVector2 position_, const float width_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TVector2 position_, const float width_,
                               const float height_,
-                              const TColor color_, const Math::TVector2 origin_, const float rotation_) {
+                              const TColor color_, const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
                     {
                         position_.X,
@@ -458,8 +458,8 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const Math::TRectangle sourceRectangle_,
-                              const Math::TVector2 position_, const TColor color_, const Math::TVector2 origin_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle sourceRectangle_,
+                              const TVector2 position_, const TColor color_, const TVector2 origin_,
                               const float rotation_) {
         DrawTexture(texture_,
                     {
@@ -474,10 +474,10 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const Math::TRectangle sourceRectangle_,
-                              const Math::TVector2 position_, const float width_, const float height_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle sourceRectangle_,
+                              const TVector2 position_, const float width_, const float height_,
                               const TColor color_,
-                              const Math::TVector2 origin_, const float rotation_) {
+                              const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
                     {
                         position_.X,
@@ -491,9 +491,9 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const Math::TRectangle destRectangle_,
-                              const Math::TRectangle sourceRectangle_, const TColor color_,
-                              const Math::TVector2 origin_,
+    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle destRectangle_,
+                              const TRectangle sourceRectangle_, const TColor color_,
+                              const TVector2 origin_,
                               const float rotation_) {
         if (texture_ == nullptr) return;
 
@@ -505,7 +505,7 @@ namespace NerdThings::Ngine::Graphics {
                        color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTriangle(const Math::TVector2 v1_, const Math::TVector2 v2_, const Math::TVector2 v3_,
+    void Drawing::DrawTriangle(const TVector2 v1_, const TVector2 v2_, const TVector2 v3_,
                                const TColor color_) {
         ::DrawTriangle(v1_.ToRaylibVec(),
                        v2_.ToRaylibVec(),
@@ -513,7 +513,7 @@ namespace NerdThings::Ngine::Graphics {
                        color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTriangleLines(const Math::TVector2 v1_, const Math::TVector2 v2_, const Math::TVector2 v3_,
+    void Drawing::DrawTriangleLines(const TVector2 v1_, const TVector2 v2_, const TVector2 v3_,
                                     const TColor color_) {
         ::DrawTriangleLines(v1_.ToRaylibVec(),
                             v2_.ToRaylibVec(),
@@ -521,7 +521,7 @@ namespace NerdThings::Ngine::Graphics {
                             color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTriangleFan(std::vector<Math::TVector2> points_, const TColor color_) {
+    void Drawing::DrawTriangleFan(std::vector<TVector2> points_, const TColor color_) {
         //Build points array
         auto pts = new Vector2[points_.size()];
         for (unsigned int i = 0; i < points_.size(); i++) {
@@ -537,7 +537,7 @@ namespace NerdThings::Ngine::Graphics {
         delete[] pts;
     }
 
-    void Drawing::DrawPoly(const Math::TVector2 center_, const int sides_, const float radius_, const float rotation_,
+    void Drawing::DrawPoly(const TVector2 center_, const int sides_, const float radius_, const float rotation_,
                            const TColor color_) {
         ::DrawPoly(center_.ToRaylibVec(),
                    sides_,

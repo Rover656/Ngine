@@ -32,7 +32,7 @@
 
 #include <filesystem>
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // Private Fields
 
     std::unordered_map<std::string, Graphics::TFont *> Resources::_Fonts;

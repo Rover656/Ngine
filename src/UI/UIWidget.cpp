@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::UI {
             _Panel->Draw();
     }
 
-    Math::TVector2 UIWidget::GetPosition() {
+    TVector2 UIWidget::GetPosition() {
         return _Position;
     }
 
@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::UI {
         _Panel->InternalSetParentWidget(this);
     }
 
-    void UIWidget::SetPosition(Math::TVector2 pos_) {
+    void UIWidget::SetPosition(TVector2 pos_) {
         _Position = pos_;
     }
 

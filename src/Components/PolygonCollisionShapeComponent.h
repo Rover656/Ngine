@@ -20,7 +20,7 @@
 #include "../Graphics/Drawing.h"
 #include "../Physics/BoundingBox.h"
 #include "../Physics/Polygon.h"
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "BaseCollisionShapeComponent.h"
 #include "CircleCollisionShapeComponent.h"
 
@@ -39,7 +39,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Polygon vertices
          */
-        std::vector<Math::TVector2> _Vertices;
+        std::vector<TVector2> _Vertices;
 
         // Private Methods
 
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine::Components {
         void DrawDebug() override {
             // Determine color
             auto col = Graphics::TColor::Red;
-            if (CheckCollision<Core::BaseEntity>())
+            if (CheckCollision<BaseEntity>())
                 col = Graphics::TColor::Green;
 
             // Draw every vertex of the polygon
@@ -100,11 +100,11 @@ namespace NerdThings::Ngine::Components {
             return false;
         }
 
-        void Offset(Math::TVector2 offset_) override {
-            const auto par = GetParent<Core::BaseEntity>();
+        void Offset(TVector2 offset_) override {
+            const auto par = GetParent<BaseEntity>();
 
             // Offset vertices
-            std::vector<Math::TVector2> vertices(_Vertices.size());
+            std::vector<TVector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
                 vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
@@ -114,7 +114,7 @@ namespace NerdThings::Ngine::Components {
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
-            std::vector<Math::TVector2> vertices(_Vertices.size());
+            std::vector<TVector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
                 vertices[i] = vertices[i].Rotate(e.EntityOrigin, e.EntityRotation);
@@ -127,19 +127,19 @@ namespace NerdThings::Ngine::Components {
 
         // Public Constructor(s)
 
-        PolygonCollisionShapeComponent(Core::BaseEntity *parent_, std::vector<Math::TVector2> vertices_,
+        PolygonCollisionShapeComponent(BaseEntity *parent_, std::vector<TVector2> vertices_,
                                        std::string collisionGroup_ = "General")
             : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Vertices(std::move(vertices_)) {
-            const auto par = GetParent<Core::BaseEntity>();
+            const auto par = GetParent<BaseEntity>();
 
             // Create polygon
             SetPolygon(Physics::TPolygon(_Vertices));
         }
 
-        PolygonCollisionShapeComponent(Core::BaseEntity *parent_, Physics::TPolygon polygon_,
+        PolygonCollisionShapeComponent(BaseEntity *parent_, Physics::TPolygon polygon_,
                                        std::string collisionGroup_ = "General")
             : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)) {
-            const auto par = GetParent<Core::BaseEntity>();
+            const auto par = GetParent<BaseEntity>();
 
             SetPolygon(std::move(polygon_));
         }
@@ -150,12 +150,12 @@ namespace NerdThings::Ngine::Components {
             return _Polygon;
         }
 
-        std::vector<Math::TVector2> GetSourceVertices() {
+        std::vector<TVector2> GetSourceVertices() {
             return _Vertices;
         }
 
         void SetPolygon(const Physics::TPolygon &polygon_) {
-            const auto par = GetParent<Core::BaseEntity>();
+            const auto par = GetParent<BaseEntity>();
 
             // Grab vertices
             _Vertices.resize(polygon_.VertexCount);
@@ -163,7 +163,7 @@ namespace NerdThings::Ngine::Components {
                 _Vertices[i] = polygon_.Vertices[i];
             }
 
-            std::vector<Math::TVector2> vertices(_Vertices.size());
+            std::vector<TVector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
                 vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());

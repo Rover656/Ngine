@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "../Math/Rectangle.h"
-#include "../Math/Vector2.h"
+#include "Rectangle.h"
+#include "Vector2.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Sprite font source rectangle
          */
-        Math::TRectangle Rectangle;
+        TRectangle Rectangle;
 
         /*
          * Character X offset for drawing
@@ -165,7 +165,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Measure the dimensions of a string
          */
-        [[nodiscard]] Math::TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
+        [[nodiscard]] TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
 
         // Operators
 

@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "CollisionShape.h"
 
 #define MAX_POLY_VERTS 8
@@ -39,12 +39,12 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Polygon vertices
          */
-        Math::TVector2 Vertices[MAX_POLY_VERTS];
+        TVector2 Vertices[MAX_POLY_VERTS];
 
         /*
          * Polygon normals
          */
-        Math::TVector2 Normals[MAX_POLY_VERTS];
+        TVector2 Normals[MAX_POLY_VERTS];
 
         // Public Constructor(s)
 
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Create a polygon from vertices
          */
-        TPolygon(const std::vector<Math::TVector2> &vertices_) {
+        TPolygon(const std::vector<TVector2> &vertices_) {
             if (vertices_.size() > MAX_POLY_VERTS)
                 throw std::runtime_error("Too many vertices");
 

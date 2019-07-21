@@ -12,9 +12,9 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     /*
      * Window management
      */

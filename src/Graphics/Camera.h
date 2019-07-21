@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "../Math/Matrix.h"
-#include "../Math/Vector2.h"
+#include "Matrix.h"
+#include "Vector2.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Camera offset/origin
          */
-        Math::TVector2 Origin;
+        TVector2 Origin;
 
         /*
          * Camera rotation
@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Camera target
          */
-        Math::TVector2 Target;
+        TVector2 Target;
 
         /*
          * Camera zoom
@@ -46,8 +46,8 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TCamera(float rotation_ = 0, float zoom_ = 0, Math::TVector2 target_ = Math::TVector2(),
-                Math::TVector2 origin_ = Math::TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
+        TCamera(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
+                TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
                                                              Origin(origin_) {}
 
         // Public Methods
@@ -79,17 +79,17 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert a screen/window position to a world position
          */
-        Math::TVector2 ScreenToWorld(Math::TVector2 pos_);
+        TVector2 ScreenToWorld(TVector2 pos_);
 
         /*
          * Convert a world position to a screen/window position
          */
-        Math::TVector2 WorldToScreen(Math::TVector2 pos_);
+        TVector2 WorldToScreen(TVector2 pos_);
 
         /*
          * Get the translation matrix
          */
-        Math::TMatrix GetTranslationMatrix() const;
+        TMatrix GetTranslationMatrix() const;
     };
 }
 

@@ -98,7 +98,7 @@ namespace NerdThings::Ngine::Audio {
         StopSound(snd_->ToRaylibSound());
     }
 
-    void AudioManager::Update(Core::EventArgs &e) {
+    void AudioManager::Update(EventArgs &e) {
         for (auto music : _ActiveMusic) {
             music->Update();
         }

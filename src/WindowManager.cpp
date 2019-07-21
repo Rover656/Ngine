@@ -11,7 +11,7 @@
 
 #include "WindowManager.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // Public Methods
 
     void WindowManager::ApplyConfig(int config_) {

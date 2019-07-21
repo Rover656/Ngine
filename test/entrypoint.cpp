@@ -9,15 +9,15 @@
 #include <Components/CircleCollisionShapeComponent.h>
 #include <Components/PolygonCollisionShapeComponent.h>
 #include <Components/SpriteComponent.h>
-#include <Core/BaseEntity.h>
-#include <Core/Component.h>
-#include <Core/Game.h>
-#include <Core/Resources.h>
+#include <BaseEntity.h>
+#include <Component.h>
+#include <Game.h>
+#include <Resources.h>
 #include <Graphics/Sprite.h>
 #include <Graphics/TilesetCanvas.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
-#include <Math/Vector2.h>
+#include <Vector2.h>
 #include <Physics/BoundingBox.h>
 #include <Physics/Circle.h>
 #include <Physics/Polygon.h>
@@ -33,10 +33,8 @@
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
 using namespace NGINE_NS::Components;
-using namespace NGINE_NS::Core;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
-using namespace NGINE_NS::Math;
 using namespace NGINE_NS::Physics;
 using namespace NGINE_NS::UI;
 using namespace NGINE_NS::UI::Controls;
@@ -130,7 +128,7 @@ public:
         //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw();
     }
 
-    bool CheckForCulling(Math::TRectangle cullArea_) override {
+    bool CheckForCulling(TRectangle cullArea_) override {
         auto a = cullArea_.ToPolygon();
         auto b = TRectangle(GetPosition(), { 100, 100 }).ToPolygon();
         return a.CheckCollision(&b);

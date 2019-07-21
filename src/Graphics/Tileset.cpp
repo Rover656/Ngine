@@ -11,7 +11,7 @@
 
 #include "Tileset.h"
 
-#include "../Math/Rectangle.h"
+#include "Rectangle.h"
 #include "Drawing.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void TTileset::DrawTile(Math::TVector2 position_, int tile_) {
+    void TTileset::DrawTile(TVector2 position_, int tile_) {
         // Tile's start from 1 to allow 0 to mean nothing
         tile_ -= 1;
 
@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Graphics {
         }
 
         // Get source rectangle
-        Math::TRectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
+        TRectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
 
         // Draw
         Drawing::DrawTexture(_Texture, sourceRectangle, position_, TColor::White);

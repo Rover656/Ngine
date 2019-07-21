@@ -11,7 +11,7 @@
 
 #include "Rectangle.h"
 
-namespace NerdThings::Ngine::Math {
+namespace NerdThings::Ngine {
     // Public Methods
 
     #ifdef INCLUDE_RAYLIB

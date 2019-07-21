@@ -33,8 +33,8 @@ namespace NerdThings::Ngine::Graphics {
         return {
             cam_.rotation,
             cam_.zoom,
-            Math::TVector2::FromRaylibVec(cam_.target),
-            Math::TVector2::FromRaylibVec(cam_.offset)
+            TVector2::FromRaylibVec(cam_.target),
+            TVector2::FromRaylibVec(cam_.offset)
         };
     }
 
@@ -53,20 +53,20 @@ namespace NerdThings::Ngine::Graphics {
         EndMode2D();
     }
 
-    Math::TVector2 TCamera::ScreenToWorld(Math::TVector2 pos_) {
+    TVector2 TCamera::ScreenToWorld(TVector2 pos_) {
         return pos_.Transform(GetTranslationMatrix().Invert());
     }
 
-    Math::TVector2 TCamera::WorldToScreen(Math::TVector2 pos_) {
+    TVector2 TCamera::WorldToScreen(TVector2 pos_) {
         return pos_.Transform(GetTranslationMatrix());
     }
 
-    Math::TMatrix TCamera::GetTranslationMatrix() const {
-        Math::TMatrix ret = Math::TMatrix::Identity;
-        ret = ret * Math::TMatrix::Translate(-Target.X, -Target.Y, 0);
-        ret = ret * Math::TMatrix::RotateZ(Rotation);
-        ret = ret * Math::TMatrix::Scale(Zoom, Zoom, 1);
-        ret = ret * Math::TMatrix::Translate(Origin.X, Origin.Y, 0);
+    TMatrix TCamera::GetTranslationMatrix() const {
+        TMatrix ret = TMatrix::Identity;
+        ret = ret * TMatrix::Translate(-Target.X, -Target.Y, 0);
+        ret = ret * TMatrix::RotateZ(Rotation);
+        ret = ret * TMatrix::Scale(Zoom, Zoom, 1);
+        ret = ret * TMatrix::Translate(Origin.X, Origin.Y, 0);
         return ret;
     }
 }

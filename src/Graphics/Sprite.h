@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "../Math/Rectangle.h"
-#include "../Math/Vector2.h"
+#include "Rectangle.h"
+#include "Vector2.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -102,7 +102,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw the sprite
          */
-        void Draw(Math::TVector2 position_, float rotation_, Math::TVector2 origin_ = Math::TVector2::Zero);
+        void Draw(TVector2 position_, float rotation_, TVector2 origin_ = TVector2::Zero);
 
         /*
          * Get the current X coordinate
@@ -122,7 +122,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the source rectangle for drawing with
          */
-        Math::TRectangle GetSourceRectangle();
+        TRectangle GetSourceRectangle();
 
         /*
          * Whether or not the sprite is animated

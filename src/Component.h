@@ -12,11 +12,11 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
 #include "EventHandler.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     #ifndef BASEENTITY_H
     class NEAPI BaseEntity;
     #endif

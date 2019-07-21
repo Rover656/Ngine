@@ -16,16 +16,16 @@
 
 #include "../ngine.h"
 
-#include "../Core/Component.h"
+#include "Component.h"
 #include "../Graphics/Camera.h"
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "../EventArgs.h"
 
 namespace NerdThings::Ngine::Components {
     /*
      * Camera component
      */
-    class NEAPI CameraComponent : public Core::Component {
+    class NEAPI CameraComponent : public Component {
         // Private Fields
 
         /*
@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Reference to on position changed event
          */
-        Core::EventHandleRef<EntityTransformChangedEventArgs> _TransformChangeEvent;
+        EventHandleRef<EntityTransformChangedEventArgs> _TransformChangeEvent;
 
         // Private Methods
 
@@ -51,7 +51,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a camera component
          */
-        CameraComponent(Core::BaseEntity *parent_, float zoom_, Math::TVector2 origin_ = Math::TVector2::Zero,
+        CameraComponent(BaseEntity *parent_, float zoom_, TVector2 origin_ = TVector2::Zero,
                         float rotation_ = 0);
 
         // Destructor
@@ -69,7 +69,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Set the camera origin
          */
-        void SetOrigin(Math::TVector2 origin_);
+        void SetOrigin(TVector2 origin_);
 
         /*
          * Set camera rotation

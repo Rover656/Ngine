@@ -15,8 +15,8 @@
 
 #include "../Graphics/Color.h"
 #include "../Graphics/Texture2D.h"
-#include "../Math/Rectangle.h"
-#include "../Math/Vector2.h"
+#include "Rectangle.h"
+#include "Vector2.h"
 #include "Drawing.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -41,9 +41,9 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void TSprite::Draw(Math::TVector2 position_, float rotation_, Math::TVector2 origin_) {
+    void TSprite::Draw(TVector2 position_, float rotation_, TVector2 origin_) {
         Drawing::DrawTexture(GetCurrentTexture(),
-                             Math::TRectangle(
+                             TRectangle(
                                  position_,
                                  static_cast<float>(DrawWidth),
                                  static_cast<float>(DrawHeight)),
@@ -95,7 +95,7 @@ namespace NerdThings::Ngine::Graphics {
         return _Textures[CurrentFrame];
     }
 
-    Math::TRectangle TSprite::GetSourceRectangle() {
+    TRectangle TSprite::GetSourceRectangle() {
         if (_SpriteSheet)
             return {
                 static_cast<float>(FrameX()),

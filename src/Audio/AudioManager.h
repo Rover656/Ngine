@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Core/EventHandler.h"
+#include "EventHandler.h"
 #include "Music.h"
 #include "Sound.h"
 
@@ -139,7 +139,7 @@ namespace NerdThings::Ngine::Audio {
          * Update
          * Handles music updating
          */
-        static void Update(Core::EventArgs &e);
+        static void Update(EventArgs &e);
     };
 }
 

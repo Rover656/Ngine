@@ -16,7 +16,7 @@
 
 #include "../Graphics/Color.h"
 #include "../Graphics/Texture2D.h"
-#include "../Math/Rectangle.h"
+#include "Rectangle.h"
 
 namespace NerdThings::Ngine::UI {
     /*
@@ -73,7 +73,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Must be passed the border position
          */
-        Math::TVector2 GetBackgroundPosition(Math::TVector2 pos_) {
+        TVector2 GetBackgroundPosition(TVector2 pos_) {
             // Apply border
             pos_ += BorderThickness;
 
@@ -84,7 +84,7 @@ namespace NerdThings::Ngine::UI {
             return pos_;
         }
 
-        Math::TRectangle GetBackgroundRect(Math::TRectangle controlRect_) {
+        TRectangle GetBackgroundRect(TRectangle controlRect_) {
             // Apply border
             controlRect_.X += BorderThickness;
             controlRect_.Y += BorderThickness;
@@ -101,7 +101,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the dimensions of the border
          */
-        Math::TVector2 GetBorderDimensions(Math::TVector2 dimensions_) {
+        TVector2 GetBorderDimensions(TVector2 dimensions_) {
             // Apply border
             dimensions_ += BorderThickness * 2;
 
@@ -111,7 +111,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the border rectangle
          */
-        Math::TRectangle GetBorderRect(Math::TRectangle controlRect_) {
+        TRectangle GetBorderRect(TRectangle controlRect_) {
             // Apply border
             controlRect_.Width += BorderThickness * 2;
             controlRect_.Height += BorderThickness * 2;
@@ -126,7 +126,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the border
          */
-        Math::TVector2 GetBorderPosition(Math::TVector2 pos_) {
+        TVector2 GetBorderPosition(TVector2 pos_) {
             // Apply margin TODO: Check this is right
             pos_.X += Margin[3];
             pos_.Y += Margin[0];
@@ -137,7 +137,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The size of the content
          */
-        Math::TVector2 GetContentDimensions(Math::TVector2 dimensions_) {
+        TVector2 GetContentDimensions(TVector2 dimensions_) {
             // Apply padding
             dimensions_.X -= Padding[1];
             dimensions_.X -= Padding[3];
@@ -150,7 +150,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the start position for content inside the control.
          */
-        Math::TVector2 GetContentPosition(Math::TVector2 pos_) {
+        TVector2 GetContentPosition(TVector2 pos_) {
             // Apply border
             pos_ += BorderThickness;
 
@@ -165,7 +165,7 @@ namespace NerdThings::Ngine::UI {
             return pos_;
         }
 
-        Math::TRectangle GetContentRect(Math::TRectangle controlRect_) {
+        TRectangle GetContentRect(TRectangle controlRect_) {
             // Apply border
             controlRect_.X += BorderThickness;
             controlRect_.Y += BorderThickness;

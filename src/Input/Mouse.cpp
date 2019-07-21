@@ -36,10 +36,10 @@ namespace NerdThings::Ngine::Input {
 
     // Public Fields
 
-    Core::EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonPressed;
-    Core::EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonReleased;
-    Core::EventHandler<MouseMovedEventArgs> Mouse::OnMouseMoved;
-    Core::EventHandler<MouseScrollChangedEventArgs> Mouse::OnMouseScrollYChanged;
+    EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonPressed;
+    EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonReleased;
+    EventHandler<MouseMovedEventArgs> Mouse::OnMouseMoved;
+    EventHandler<MouseScrollChangedEventArgs> Mouse::OnMouseScrollYChanged;
 
     // Public Methods
 
@@ -49,8 +49,8 @@ namespace NerdThings::Ngine::Input {
         _CurrentMouseState.ButtonsReleased[button_] = true;
     }
 
-    Math::TVector2 Mouse::GetMousePosition() {
-        return Math::TVector2::FromRaylibVec(::GetMousePosition());
+    TVector2 Mouse::GetMousePosition() {
+        return TVector2::FromRaylibVec(::GetMousePosition());
     }
 
     MouseState Mouse::GetMouseState() {
@@ -75,11 +75,11 @@ namespace NerdThings::Ngine::Input {
 
     // Public Event Handles
 
-    void Mouse::OnGameRun(Core::EventArgs &e_) {
+    void Mouse::OnGameRun(EventArgs &e_) {
         _LastMouseState = FetchState();
     }
 
-    void Mouse::OnGameUpdate(Core::EventArgs &e_) {
+    void Mouse::OnGameUpdate(EventArgs &e_) {
         // Get current state
         _CurrentMouseState = FetchState();
 

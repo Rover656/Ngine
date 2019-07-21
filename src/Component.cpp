@@ -13,7 +13,7 @@
 
 #include "BaseEntity.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // Public Methods
 
     void Component::Draw(EventArgs &e) { }

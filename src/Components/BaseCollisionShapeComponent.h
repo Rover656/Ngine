@@ -16,14 +16,14 @@
 
 #include "../ngine.h"
 
-#include "../Core/BaseEntity.h"
-#include "../Core/Component.h"
+#include "BaseEntity.h"
+#include "Component.h"
 
 namespace NerdThings::Ngine::Components {
     /*
      * Base Collision Shape Component
      */
-    class BaseCollisionShapeComponent : public Core::Component {
+    class BaseCollisionShapeComponent : public Component {
         // Private Fields
 
         /*
@@ -39,7 +39,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * On position changed
          */
-        Core::EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
+        EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
 
         // Private Methods
 
@@ -67,7 +67,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Offset shape
          */
-        virtual void Offset(Math::TVector2 offset_) = 0;
+        virtual void Offset(TVector2 offset_) = 0;
 
         /*
          * Update shape information
@@ -80,11 +80,11 @@ namespace NerdThings::Ngine::Components {
             _OnTransformChangeRef.UnBind();
 
             // Remove from collision map
-            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+            auto scene = GetParent<BaseEntity>()->GetParentScene();
 
             for (auto cVec : scene->CollisionMap) {
                 for (auto ent : cVec.second) {
-                    if (ent == GetParent<Core::BaseEntity>()) {
+                    if (ent == GetParent<BaseEntity>()) {
                         scene->CollisionMap[cVec.first].erase(std::remove(scene->CollisionMap[cVec.first].begin(), scene->CollisionMap[cVec.first].end(), ent), scene->CollisionMap[cVec.first].end());
                     }
                 }
@@ -100,11 +100,11 @@ namespace NerdThings::Ngine::Components {
             _CollisionGroups.push_back(collisionGroup_);
 
             // Add to scene
-            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+            auto scene = GetParent<BaseEntity>()->GetParentScene();
             if (scene->CollisionMap.find(collisionGroup_) == scene->CollisionMap.end()) {
-                scene->CollisionMap[collisionGroup_] = std::vector<Core::BaseEntity*>();
+                scene->CollisionMap[collisionGroup_] = std::vector<BaseEntity*>();
             }
-            scene->CollisionMap[collisionGroup_].push_back(GetParent<Core::BaseEntity>());
+            scene->CollisionMap[collisionGroup_].push_back(GetParent<BaseEntity>());
         }
 
         /*
@@ -112,15 +112,15 @@ namespace NerdThings::Ngine::Components {
          */
         template <typename EntityType>
         bool CheckCollision() {
-            return CheckCollisionAt<EntityType>(GetParent<Core::BaseEntity>()->GetPosition());
+            return CheckCollisionAt<EntityType>(GetParent<BaseEntity>()->GetPosition());
         }
 
         /*
          * Check for a collision at a position
          */
         template <typename EntityType>
-        bool CheckCollisionAt(Math::TVector2 position_) {
-            auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
+        bool CheckCollisionAt(TVector2 position_) {
+            auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
             // Offset shape
@@ -129,13 +129,13 @@ namespace NerdThings::Ngine::Components {
             // Check for collision
             auto collision = false;
 
-            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+            auto scene = GetParent<BaseEntity>()->GetParentScene();
 
             for (auto group : GetCollisionGroups()) {
                 auto candidates = scene->CollisionMap[group];
 
                 for (auto candidate : candidates) {
-                    if (candidate == GetParent<Core::BaseEntity>())
+                    if (candidate == GetParent<BaseEntity>())
                         continue;
 
                     auto components = candidate->GetComponents();
@@ -170,15 +170,15 @@ namespace NerdThings::Ngine::Components {
          * Component must have the collision group to work
          */
         bool CheckCollisionFrom(std::vector<Physics::ICollisionShape *> shapes) {
-            return CheckCollisionFromAt(shapes, GetParent<Core::BaseEntity>()->GetPosition());
+            return CheckCollisionFromAt(shapes, GetParent<BaseEntity>()->GetPosition());
         }
 
         /*
          * Check for a collision with a collision group at a position
          * Component must have the collision group to work
          */
-        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, Math::TVector2 position_) {
-            auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
+        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, TVector2 position_) {
+            auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
             // Offset shape
@@ -187,7 +187,7 @@ namespace NerdThings::Ngine::Components {
             // Check for collision
             auto collision = false;
 
-            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+            auto scene = GetParent<BaseEntity>()->GetParentScene();
 
             for (auto i = 0; i < shapes.size(); i++) {
                 collision = CollisionCheck(shapes[i]);
@@ -206,7 +206,7 @@ namespace NerdThings::Ngine::Components {
          */
         template <typename EntityType>
         bool CheckCollisionWith(const std::string &collisionGroup_) {
-            return CheckCollisionWithAt<EntityType>(collisionGroup_, GetParent<Core::BaseEntity>()->GetPosition());
+            return CheckCollisionWithAt<EntityType>(collisionGroup_, GetParent<BaseEntity>()->GetPosition());
         }
 
         /*
@@ -214,8 +214,8 @@ namespace NerdThings::Ngine::Components {
          * Component must have the collision group to work
          */
         template <typename EntityType>
-        bool CheckCollisionWithAt(const std::string &collisionGroup_, Math::TVector2 position_) {
-            auto curPos = GetParent<Core::BaseEntity>()->GetPosition();
+        bool CheckCollisionWithAt(const std::string &collisionGroup_, TVector2 position_) {
+            auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
             // Offset shape
@@ -224,13 +224,13 @@ namespace NerdThings::Ngine::Components {
             // Check for collision
             auto collision = false;
 
-            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+            auto scene = GetParent<BaseEntity>()->GetParentScene();
 
             if (scene->CollisionMap.find(collisionGroup_) != scene->CollisionMap.end()) {
                 auto candidates = scene->CollisionMap[collisionGroup_];
 
                 for (auto candidate : candidates) {
-                    if (candidate == GetParent<Core::BaseEntity>() || candidate == nullptr)
+                    if (candidate == GetParent<BaseEntity>() || candidate == nullptr)
                         continue;
 
                     auto components = candidate->GetComponents();
@@ -269,7 +269,7 @@ namespace NerdThings::Ngine::Components {
             }
         }
 
-        void Draw(Core::EventArgs &e) override {
+        void Draw(EventArgs &e) override {
             if (_DebugDraw) {
                 DrawDebug();
             }
@@ -301,10 +301,10 @@ namespace NerdThings::Ngine::Components {
                                    _CollisionGroups.end());
 
             // Remove from scene
-            auto scene = GetParent<Core::BaseEntity>()->GetParentScene();
+            auto scene = GetParent<BaseEntity>()->GetParentScene();
             if (scene->CollisionMap.find(collisionGroup_) != scene->CollisionMap.end()) {
                 auto colVec = scene->CollisionMap[collisionGroup_];
-                colVec.erase(std::remove(colVec.begin(), colVec.end(), GetParent<Core::BaseEntity>()), colVec.end());
+                colVec.erase(std::remove(colVec.begin(), colVec.end(), GetParent<BaseEntity>()), colVec.end());
             }
         }
 
@@ -315,9 +315,9 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a base collision shape component.
          */
-        BaseCollisionShapeComponent(Core::BaseEntity *parent_, std::string collisionGroup_ = "General")
+        BaseCollisionShapeComponent(BaseEntity *parent_, std::string collisionGroup_ = "General")
             : Component(parent_) {
-            _OnTransformChangeRef = GetParent<Core::BaseEntity>()->OnTransformChanged.Bind(
+            _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged.Bind(
                 this, &BaseCollisionShapeComponent::UpdateShape);
 
             AddCollisionGroup(std::move(collisionGroup_));

@@ -12,11 +12,11 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
 #include "Matrix.h"
 
-namespace NerdThings::Ngine::Math {
+namespace NerdThings::Ngine {
     /*
      * A vector with 2 Components
      */

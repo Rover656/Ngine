@@ -13,7 +13,7 @@
 
 #include "CameraComponent.h"
 
-#include "../Core/BaseEntity.h"
+#include "BaseEntity.h"
 #include "../Graphics/Camera.h"
 
 namespace NerdThings::Ngine::Components {
@@ -34,10 +34,10 @@ namespace NerdThings::Ngine::Components {
 
     // Public Constructors
 
-    CameraComponent::CameraComponent(Core::BaseEntity *parent_, const float zoom_, const Math::TVector2 origin_,
+    CameraComponent::CameraComponent(BaseEntity *parent_, const float zoom_, const TVector2 origin_,
                                      const float rotation_)
         : Component(parent_) {
-        auto par = GetParent<Core::BaseEntity>();
+        auto par = GetParent<BaseEntity>();
 
         // Setup camera
         _Camera = Graphics::TCamera(rotation_, zoom_, par->GetPosition(), origin_);;
@@ -49,10 +49,10 @@ namespace NerdThings::Ngine::Components {
     // Public Methods
 
     void CameraComponent::Activate() {
-        GetParent<Core::BaseEntity>()->GetParentScene()->SetActiveCamera(&_Camera);
+        GetParent<BaseEntity>()->GetParentScene()->SetActiveCamera(&_Camera);
     }
 
-    void CameraComponent::SetOrigin(const Math::TVector2 origin_) {
+    void CameraComponent::SetOrigin(const TVector2 origin_) {
         _Camera.Origin = origin_;
     }
 

@@ -16,16 +16,16 @@
 
 #include "../ngine.h"
 
-#include "../Core/Component.h"
-#include "../Core/BaseEntity.h"
-#include "../Core/EventHandler.h"
+#include "Component.h"
+#include "BaseEntity.h"
+#include "EventHandler.h"
 #include "../Graphics/Sprite.h"
 
 namespace NerdThings::Ngine::Components {
     /*
      * Sprite component
      */
-    class SpriteComponent : public Core::Component {
+    class SpriteComponent : public Component {
         // Private Fields
 
         /*
@@ -39,7 +39,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a sprite component
          */
-        SpriteComponent(Core::BaseEntity *parent_, const Graphics::TSprite &sprite_)
+        SpriteComponent(BaseEntity *parent_, const Graphics::TSprite &sprite_)
             : Component(parent_), _Sprite(sprite_) {
             SubscribeToDraw();
             SubscribeToUpdate();
@@ -47,8 +47,8 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        void Draw(Core::EventArgs &e) override {
-            const auto par = GetParent<Core::BaseEntity>();
+        void Draw(EventArgs &e) override {
+            const auto par = GetParent<BaseEntity>();
             _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
         }
 
@@ -61,7 +61,7 @@ namespace NerdThings::Ngine::Components {
                 _Sprite = sprite_;
         }
 
-        void Update(Core::EventArgs &e) override {
+        void Update(EventArgs &e) override {
             _Sprite.Update();
         }
     };

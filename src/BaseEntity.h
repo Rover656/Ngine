@@ -17,14 +17,14 @@
 #define BASEENTITY_H
 
 // Include ngine
-#include "../ngine.h"
+#include "ngine.h"
 
-#include "../Math/Vector2.h"
-#include "../EventArgs.h"
+#include "Vector2.h"
+#include "EventArgs.h"
 #include "EntityContainer.h"
 #include "Scene.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     class Component;
 
     /*
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * The entity origin
          */
-        Math::TVector2 _Origin;
+        TVector2 _Origin;
 
         /*
          * The parent entity
@@ -77,7 +77,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * The entity position
          */
-        Math::TVector2 _Position = Math::TVector2::Zero;
+        TVector2 _Position = TVector2::Zero;
 
         /*
          * The entity rotation (in radians)
@@ -123,7 +123,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Create a BaseEntity.
          */
-        BaseEntity(Scene *parentScene_, Math::TVector2 position_, int depth_ = 0, bool canCull_ = false);
+        BaseEntity(Scene *parentScene_, TVector2 position_, int depth_ = 0, bool canCull_ = false);
 
         // Destructor
 
@@ -157,7 +157,7 @@ namespace NerdThings::Ngine::Core {
          * This is used to determine if this entity should be culled.
          * This can allow you to hide this if the collision box is not contained instead.
          */
-        virtual bool CheckForCulling(Math::TRectangle cullArea_);
+        virtual bool CheckForCulling(TRectangle cullArea_);
 
         /*
          * Remove from our parent and delete ourselves.
@@ -201,7 +201,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get entity origin
          */
-        [[nodiscard]] Math::TVector2 GetOrigin() const;
+        [[nodiscard]] TVector2 GetOrigin() const;
 
         /*
          * Get our parent container.
@@ -236,7 +236,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the entity position
          */
-        [[nodiscard]] Math::TVector2 GetPosition() const;
+        [[nodiscard]] TVector2 GetPosition() const;
 
         /*
          * Get the entity rotation
@@ -256,7 +256,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Move an entity
          */
-        void MoveBy(Math::TVector2 moveBy_);
+        void MoveBy(TVector2 moveBy_);
 
         /*
          * Removes the entity from the component.
@@ -277,7 +277,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Set entity origin
          */
-        void SetOrigin(Math::TVector2 origin_);
+        void SetOrigin(TVector2 origin_);
 
         /*
          * Set whether or not we update when the scene is paused
@@ -287,7 +287,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Set entity position
          */
-        void SetPosition(Math::TVector2 position_);
+        void SetPosition(TVector2 position_);
 
         /*
          * Set entity rotation

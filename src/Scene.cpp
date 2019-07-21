@@ -17,7 +17,7 @@
 #include "BaseEntity.h"
 #include "Game.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // Private Methods
 
     // The following two functions do nothing
@@ -101,7 +101,7 @@ namespace NerdThings::Ngine::Core {
         return _ActiveCamera;
     }
 
-    Math::TRectangle Scene::GetCullArea() const {
+    TRectangle Scene::GetCullArea() const {
         auto cam = GetActiveCamera();
 
         if (_CullAreaCenter)

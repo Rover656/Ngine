@@ -14,9 +14,9 @@
 #ifndef ENTITYCONTAINER_H
 #define ENTITYCONTAINER_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     // We do this forward declaration instead of include because BaseEntity uses this.
     class NEAPI BaseEntity;
 

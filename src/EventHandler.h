@@ -12,11 +12,11 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
 #include <functional>
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     /*
      * Default event arguments
      */

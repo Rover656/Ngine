@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "UIPanel.h"
 
 namespace NerdThings::Ngine::UI {
@@ -32,14 +32,14 @@ namespace NerdThings::Ngine::UI {
         /*
          * Widget position
          */
-        Math::TVector2 _Position;
+        TVector2 _Position;
     public:
         // Public Constructor(s)
 
         /*
          * Create a UI widget
          */
-        UIWidget(Math::TVector2 pos_)
+        UIWidget(TVector2 pos_)
                 : _Position(pos_) {}
 
         // Destructor
@@ -64,7 +64,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the widget
          */
-        Math::TVector2 GetPosition();
+        TVector2 GetPosition();
 
         /*
          * Set the panel
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Set the position of the widget
          */
-        void SetPosition(Math::TVector2 pos_);
+        void SetPosition(TVector2 pos_);
 
         /*
          * Update the widget

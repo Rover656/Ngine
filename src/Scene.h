@@ -14,15 +14,15 @@
 #ifndef BASESCENE_H
 #define BASESCENE_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
-#include "../Math/Rectangle.h"
-#include "../Graphics/Camera.h"
-#include "../EventArgs.h"
+#include "Rectangle.h"
+#include "Graphics/Camera.h"
+#include "EventArgs.h"
 #include "EntityContainer.h"
 #include "EventHandler.h"
 
-namespace NerdThings::Ngine::Core {
+namespace NerdThings::Ngine {
     /*
      * A container for entities
      */
@@ -146,7 +146,7 @@ namespace NerdThings::Ngine::Core {
         /*
          * Get the culling area
          */
-        Math::TRectangle GetCullArea() const;
+        TRectangle GetCullArea() const;
 
         /*
          * Get the parent game

@@ -12,13 +12,13 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include "../ngine.h"
+#include "ngine.h"
 
-#include "../Physics/BoundingBox.h"
-#include "../Physics/Polygon.h"
+#include "Physics/BoundingBox.h"
+#include "Physics/Polygon.h"
 #include "Vector2.h"
 
-namespace NerdThings::Ngine::Math {
+namespace NerdThings::Ngine {
     /*
      * A rectangle
      */

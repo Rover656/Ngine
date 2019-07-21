@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "CollisionShape.h"
 
 namespace NerdThings::Ngine::Physics {
@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Circle center
          */
-        Math::TVector2 Center;
+        TVector2 Center;
 
         /*
          * Circle radius
@@ -44,12 +44,12 @@ namespace NerdThings::Ngine::Physics {
          * Create a circle
          */
         TCircle()
-            : Center(Math::TVector2::Zero), Radius(0) {}
+            : Center(TVector2::Zero), Radius(0) {}
 
         /*
          * Create a circle
          */
-        TCircle(const Math::TVector2 center_, const float radius_)
+        TCircle(const TVector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
 
         // Public Methods

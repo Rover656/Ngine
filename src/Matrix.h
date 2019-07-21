@@ -13,12 +13,12 @@
 #define MATRIX_H
 
 #define TYPE_DECL_HEADER
-#include "../ngine.h"
+#include "ngine.h"
 #undef TYPE_DECL_HEADER
 
 #include "Vector3.h"
 
-namespace NerdThings::Ngine::Math {
+namespace NerdThings::Ngine {
     /*
      * A mathematical matrix
      */

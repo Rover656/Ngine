@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-namespace NerdThings::Ngine::Math {
+namespace NerdThings::Ngine {
     // Note: This is a direct copy of raymath.h
 
     // Public Fields

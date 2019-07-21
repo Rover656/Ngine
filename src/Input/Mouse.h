@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "../Core/EventHandler.h"
-#include "../Math/Vector2.h"
+#include "EventHandler.h"
+#include "Vector2.h"
 #include "../EventArgs.h"
 
 namespace NerdThings::Ngine::Input {
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Mouse cursor position
          */
-        Math::TVector2 Position = {0, 0};
+        TVector2 Position = {0, 0};
     };
 
     /*
@@ -78,22 +78,22 @@ namespace NerdThings::Ngine::Input {
         /*
          * On mouse button pressed
          */
-        static Core::EventHandler<MouseButtonEventArgs> OnMouseButtonPressed;
+        static EventHandler<MouseButtonEventArgs> OnMouseButtonPressed;
 
         /*
          * On mouse button released
          */
-        static Core::EventHandler<MouseButtonEventArgs> OnMouseButtonReleased;
+        static EventHandler<MouseButtonEventArgs> OnMouseButtonReleased;
 
         /*
          * On mouse moved event
          */
-        static Core::EventHandler<MouseMovedEventArgs> OnMouseMoved;
+        static EventHandler<MouseMovedEventArgs> OnMouseMoved;
 
         /*
          * On mouse scroll Y changed
          */
-        static Core::EventHandler<MouseScrollChangedEventArgs> OnMouseScrollYChanged;
+        static EventHandler<MouseScrollChangedEventArgs> OnMouseScrollYChanged;
 
         // Public Methods
 
@@ -105,7 +105,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Get mouse position
          */
-        static Math::TVector2 GetMousePosition();
+        static TVector2 GetMousePosition();
 
         /*
          * Get the mouse state.
@@ -152,12 +152,12 @@ namespace NerdThings::Ngine::Input {
         /*
          * On game run
          */
-        static void OnGameRun(Core::EventArgs &e_);
+        static void OnGameRun(EventArgs &e_);
 
         /*
          * On game update
          */
-        static void OnGameUpdate(Core::EventArgs &e_);
+        static void OnGameUpdate(EventArgs &e_);
     };
 }
 

@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -46,7 +46,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Methods
 
-        void DrawTile(Math::TVector2 position_, int tile_);
+        void DrawTile(TVector2 position_, int tile_);
 
         float GetTileHeight() const;
 

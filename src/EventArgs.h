@@ -13,19 +13,15 @@
 #define EVENTARGS_H
 
 #include "ngine.h"
-#include "Core/EventHandler.h"
-#include "Math/Vector2.h"
+#include "EventHandler.h"
+#include "Vector2.h"
 
 namespace NerdThings::Ngine {
     // Forward declarations
 
-    namespace Core {
-        class BaseEntity;
-
-        class Scene;
-
-        class Game;
-    }
+    class BaseEntity;
+    class Scene;
+    class Game;
 
     namespace UI {
         class UIControl;
@@ -36,7 +32,7 @@ namespace NerdThings::Ngine {
     /*
      * Mouse button down event args
      */
-    struct MouseButtonEventArgs : Core::EventArgs {
+    struct MouseButtonEventArgs : EventArgs {
         // Public Fields
 
         /*
@@ -58,26 +54,26 @@ namespace NerdThings::Ngine {
     /*
      * Mouse moved event args
      */
-    struct MouseMovedEventArgs : Core::EventArgs {
+    struct MouseMovedEventArgs : EventArgs {
         // Public Fields
 
         /*
          * The current mouse position
          */
-        Math::TVector2 MousePosition;
+        TVector2 MousePosition;
 
         /*
          * The change in mouse position
          */
-        Math::TVector2 DeltaMousePosition;
+        TVector2 DeltaMousePosition;
 
         // Public Constructor(s)
 
-        MouseMovedEventArgs(Math::TVector2 mousePosition_, Math::TVector2 deltaMousePosition_)
+        MouseMovedEventArgs(TVector2 mousePosition_, TVector2 deltaMousePosition_)
                 : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
     };
 
-    struct MouseScrollChangedEventArgs : Core::EventArgs {
+    struct MouseScrollChangedEventArgs : EventArgs {
         // Public Fields
 
         /*
@@ -91,18 +87,18 @@ namespace NerdThings::Ngine {
                 : Value(value_) {}
     };
 
-    struct EntityTransformChangedEventArgs : Core::EventArgs {
+    struct EntityTransformChangedEventArgs : EventArgs {
         // Public Fields
 
         /*
          * Entity origin
          */
-        Math::TVector2 EntityOrigin;
+        TVector2 EntityOrigin;
 
         /*
          * The new entity position
          */
-        Math::TVector2 EntityPosition;
+        TVector2 EntityPosition;
 
         /*
          * The new rotation
@@ -116,25 +112,25 @@ namespace NerdThings::Ngine {
 
         // Public Constructor(s)
 
-        EntityTransformChangedEventArgs(Math::TVector2 origin_, Math::TVector2 pos_, float rot_, float scale_)
+        EntityTransformChangedEventArgs(TVector2 origin_, TVector2 pos_, float rot_, float scale_)
                 : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
     };
 
-    struct SceneLoadEventArgs : Core::EventArgs {
+    struct SceneLoadEventArgs : EventArgs {
         // Public Fields
 
         /*
          * The game that the scene has been loaded into
          */
-        Core::Game *Game;
+        Game *Game;
 
         // Public Constructor(s)
 
-        SceneLoadEventArgs(Core::Game *game_)
+        SceneLoadEventArgs(class Game *game_)
                 : Game(game_) {}
     };
 
-    struct UIControlEventArgs : Core::EventArgs {
+    struct UIControlEventArgs : EventArgs {
         // Public Fields
 
         /*

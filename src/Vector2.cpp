@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-namespace NerdThings::Ngine::Math {
+namespace NerdThings::Ngine {
     // Public Fields
 
     const TVector2 TVector2::UnitX = {1, 0};

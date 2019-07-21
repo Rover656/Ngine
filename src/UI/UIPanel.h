@@ -16,7 +16,7 @@
 
 #include "../Graphics/RenderTarget.h"
 #include "../Graphics/GraphicsManager.h"
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "UIControl.h"
 #include "UIControlSized.h"
 
@@ -84,12 +84,12 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the panel on screen
          */
-        Math::TVector2 GetLogicPosition();
+        TVector2 GetLogicPosition();
 
         /*
          * Gets the panel position relative to the render target (0, 0)
          */
-        Math::TVector2 GetRenderPosition() override;
+        TVector2 GetRenderPosition() override;
 
         /*
          * Set the parent widget.

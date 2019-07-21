@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "UIStyle.h"
 
 namespace NerdThings::Ngine::UI {
@@ -123,22 +123,22 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the render position.
          */
-        virtual Math::TVector2 GetLogicPosition();
+        virtual TVector2 GetLogicPosition();
 
         /*
          * Get the render rectangle
          */
-        Math::TRectangle GetLogicRectangle();
+        TRectangle GetLogicRectangle();
 
         /*
          * Get the render position.
          */
-        virtual Math::TVector2 GetRenderPosition();
+        virtual TVector2 GetRenderPosition();
 
         /*
          * Get the render rectangle
          */
-        Math::TRectangle GetRenderRectangle();
+        TRectangle GetRenderRectangle();
 
         /*
          * Get the current style

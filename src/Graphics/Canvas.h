@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "../Math/Vector2.h"
+#include "Vector2.h"
 #include "RenderTarget.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -56,7 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw the canvas
          */
-        void Draw(Math::TVector2 pos_);
+        void Draw(TVector2 pos_);
 
         /*
          * Get canvas height

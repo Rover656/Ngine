@@ -62,14 +62,14 @@ namespace NerdThings::Ngine::UI {
         return GetOffsetBeside(GetChild<UIControl>(name_));
     }
 
-    Math::TVector2 UIPanel::GetLogicPosition() {
+    TVector2 UIPanel::GetLogicPosition() {
         if (_ParentWidget != nullptr)
             return _ParentWidget->GetPosition();
         else
             return UIControl::GetLogicPosition();
     }
 
-    Math::TVector2 UIPanel::GetRenderPosition() {
+    TVector2 UIPanel::GetRenderPosition() {
         if (_ParentWidget != nullptr)
             return _ParentWidget->GetPosition();
         else
