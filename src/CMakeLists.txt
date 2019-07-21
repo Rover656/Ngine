@@ -19,10 +19,18 @@ generate_product_version(
 # Add library
 if (${BUILD_SHARED})
     message("Building Ngine as a shared library.")
-    add_library(Ngine SHARED ${Ngine_source} ${VersionFilesOutputVariable})
+    if (${MSVC})
+        add_library(Ngine SHARED ${Ngine_source} ${VersionFilesOutputVariable})
+    else()
+        add_library(Ngine SHARED ${Ngine_source})
+    endif()
 else()
     message("Building Ngine as a static library.")
-    add_library(Ngine STATIC ${Ngine_source} ${VersionFilesOutputVariable})
+    if (${MSVC})
+        add_library(Ngine STATIC ${Ngine_source} ${VersionFilesOutputVariable})
+    else()
+        add_library(Ngine STATIC ${Ngine_source})
+    endif()
 endif()
 
 # Include directories
