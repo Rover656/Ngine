@@ -35,31 +35,22 @@
 namespace NerdThings::Ngine {
     // Private Fields
 
-    std::unordered_map<std::string, Graphics::TFont *> Resources::_Fonts;
+    std::unordered_map<std::string, std::shared_ptr<Graphics::TFont>> Resources::_Fonts;
     std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> Resources::_Music;
     std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> Resources::_Sounds;
-    std::unordered_map<std::string, Graphics::TTexture2D *> Resources::_Textures;
+    std::unordered_map<std::string, std::shared_ptr<Graphics::TTexture2D>> Resources::_Textures;
 
     // Public Methods
 
     void Resources::DeleteAll() {
-        for (auto fnt : _Fonts) {
-            delete fnt.second;
-        }
         _Fonts.clear();
-
         _Music.clear();
         _Sounds.clear();
-
-        for (auto tex : _Textures) {
-            delete tex.second;
-        }
         _Textures.clear();
     }
 
     void Resources::DeleteFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end()) {
-            delete _Fonts[name_];
             _Fonts.erase(name_);
         }
     }
@@ -78,7 +69,6 @@ namespace NerdThings::Ngine {
 
     void Resources::DeleteTexture(const std::string &name_) {
         if (_Textures.find(name_) != _Textures.end()) {
-            delete _Textures[name_];
             _Textures.erase(name_);
         }
     }
@@ -176,7 +166,7 @@ namespace NerdThings::Ngine {
         return std::string(::GetExtension(path_.c_str()));
     }
 
-    Graphics::TFont *Resources::GetFont(const std::string &name_) {
+    std::shared_ptr<Graphics::TFont> Resources::GetFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end())
             return _Fonts[name_];
         return nullptr;
@@ -194,7 +184,7 @@ namespace NerdThings::Ngine {
         return nullptr;
     }
 
-    Graphics::TTexture2D *Resources::GetTexture(const std::string &name_) {
+    std::shared_ptr<Graphics::TTexture2D> Resources::GetTexture(const std::string &name_) {
         if (_Textures.find(name_) != _Textures.end())
             return _Textures[name_];
         return nullptr;
@@ -242,7 +232,7 @@ namespace NerdThings::Ngine {
 
     bool Resources::LoadFont(const std::string &inPath_, const std::string &name_) {
         auto fnt = Graphics::TFont::LoadFont(inPath_);
-        if (fnt->Texture.ID > 0) {
+        if (fnt->Texture->ID > 0) {
             _Fonts.insert({ name_, fnt });
             return true;
         }

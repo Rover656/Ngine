@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The panel render target
          */
-        Graphics::TRenderTarget *_RenderTarget = nullptr;
+        std::shared_ptr<Graphics::TRenderTarget> _RenderTarget = nullptr;
     public:
 
         // Destructor

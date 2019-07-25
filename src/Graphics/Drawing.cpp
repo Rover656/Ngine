@@ -376,7 +376,7 @@ namespace NerdThings::Ngine::Graphics {
                                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawText(TFont *font_, const std::string &string_, const TVector2 position_,
+    void Drawing::DrawText(std::shared_ptr<TFont> font_, const std::string &string_, const TVector2 position_,
                            const float fontSize_,
                            const float spacing_, const TColor color_) {
         DrawTextEx(font_->ToRaylibFont(),
@@ -387,7 +387,7 @@ namespace NerdThings::Ngine::Graphics {
                    color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTextRect(TFont *font_, const std::string &string_, const TRectangle rectangle_,
+    void Drawing::DrawTextRect(std::shared_ptr<TFont> font_, const std::string &string_, const TRectangle rectangle_,
                                const float fontSize_, const float spacing_, const TColor color_, const bool wordWrap_) {
         DrawTextRec(font_->ToRaylibFont(),
                     string_.c_str(),
@@ -398,7 +398,7 @@ namespace NerdThings::Ngine::Graphics {
                     color_.ToRaylibColor());
     }
 
-    void Drawing::DrawTextRectEx(TFont *font_, const std::string &string_, const TRectangle rectangle_,
+    void Drawing::DrawTextRectEx(std::shared_ptr<TFont> font_, const std::string &string_, const TRectangle rectangle_,
                                  const float fontSize_, const float spacing_, const TColor color_,
                                  const int selectStart_,
                                  const int selectLength_, const TColor selectText_, const TColor selectBack_,
@@ -416,7 +416,7 @@ namespace NerdThings::Ngine::Graphics {
                       selectBack_.ToRaylibColor());
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const TVector2 position_, const TColor color_,
+    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TVector2 position_, const TColor color_,
                               const float scale_,
                               const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
@@ -437,7 +437,7 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const TVector2 position_, const float width_,
+    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TVector2 position_, const float width_,
                               const float height_,
                               const TColor color_, const TVector2 origin_, const float rotation_) {
         DrawTexture(texture_,
@@ -458,7 +458,7 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle sourceRectangle_,
+    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TRectangle sourceRectangle_,
                               const TVector2 position_, const TColor color_, const TVector2 origin_,
                               const float rotation_) {
         DrawTexture(texture_,
@@ -474,7 +474,7 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle sourceRectangle_,
+    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TRectangle sourceRectangle_,
                               const TVector2 position_, const float width_, const float height_,
                               const TColor color_,
                               const TVector2 origin_, const float rotation_) {
@@ -491,7 +491,7 @@ namespace NerdThings::Ngine::Graphics {
                     rotation_);
     }
 
-    void Drawing::DrawTexture(TTexture2D *texture_, const TRectangle destRectangle_,
+    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TRectangle destRectangle_,
                               const TRectangle sourceRectangle_, const TColor color_,
                               const TVector2 origin_,
                               const float rotation_) {

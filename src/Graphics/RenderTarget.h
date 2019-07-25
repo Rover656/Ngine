@@ -31,12 +31,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Texture buffer
          */
-        TTexture2D Texture;
+        std::shared_ptr<TTexture2D> Texture;
 
         /*
          * Depth buffer
          */
-        TTexture2D DepthBuffer;
+        std::shared_ptr<TTexture2D> DepthBuffer;
 
         /*
          * Is depth attachment is a texture or renderbuffer

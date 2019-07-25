@@ -39,8 +39,8 @@ namespace NerdThings::Ngine::Graphics {
         ConsoleMessage("Unloading and deleting render target.", "NOTICE", "RENDER TARGET");
         UnloadRenderTexture(ToRaylibTarget());
         ID = 0;
-        Texture = TTexture2D();
-        DepthBuffer = TTexture2D();
+        Texture = std::shared_ptr<TTexture2D>(nullptr);
+        DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
         DepthTexture = false;
     }
 
@@ -52,8 +52,8 @@ namespace NerdThings::Ngine::Graphics {
         auto target = RenderTexture2D();
 
         target.id = ID;
-        target.texture = Texture.ToRaylibTex();
-        target.depth = DepthBuffer.ToRaylibTex();
+        target.texture = Texture->ToRaylibTex();
+        target.depth = DepthBuffer->ToRaylibTex();
         target.depthTexture = DepthTexture;
 
         return target;

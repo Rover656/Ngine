@@ -22,14 +22,14 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TSprite::TSprite(TTexture2D *texture_) {
+    TSprite::TSprite(std::shared_ptr<TTexture2D> texture_) {
         _Textures.push_back(texture_);
 
         DrawHeight = texture_->Height;
         DrawWidth = texture_->Width;
     }
 
-    TSprite::TSprite(TTexture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+    TSprite::TSprite(std::shared_ptr<TTexture2D> texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                    float imageSpeed_, int startingFrame)
         : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
           ImageSpeed(imageSpeed_) {
@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::Graphics {
         CurrentFrame = startingFrame;
     }
 
-    TSprite::TSprite(std::vector<TTexture2D*> textures_, float imageSpeed_, int startingFrame_) { }
+    TSprite::TSprite(std::vector<std::shared_ptr<TTexture2D>> textures_, float imageSpeed_, int startingFrame_) { }
 
     // Public Methods
 
@@ -84,7 +84,7 @@ namespace NerdThings::Ngine::Graphics {
         return y;
     }
 
-    TTexture2D *TSprite::GetCurrentTexture() {
+    std::shared_ptr<TTexture2D> TSprite::GetCurrentTexture() {
         if (_Textures.empty())
             return nullptr;
 
@@ -123,12 +123,12 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void TSprite::SetTexture(TTexture2D *texture_) {
+    void TSprite::SetTexture(std::shared_ptr<TTexture2D> texture_) {
         _Textures.clear();
         _Textures.push_back(texture_);
     }
 
-    void TSprite::SetTextures(std::vector<TTexture2D *> textures_) {
+    void TSprite::SetTextures(std::vector<std::shared_ptr<TTexture2D> > textures_) {
         _Textures = textures_;
     }
 

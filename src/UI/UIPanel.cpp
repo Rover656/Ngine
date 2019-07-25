@@ -18,7 +18,6 @@ namespace NerdThings::Ngine::UI {
     // Destructor
 
     UIPanel::~UIPanel() {
-        delete _RenderTarget;
     }
 
     // Public Methods
@@ -38,7 +37,7 @@ namespace NerdThings::Ngine::UI {
         auto rPos = GetRenderPosition();
 
         // Draw target
-        Graphics::Drawing::DrawTexture(&_RenderTarget->Texture,
+        Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
                                        {
                                                rPos.X,
                                                rPos.Y,
@@ -48,8 +47,8 @@ namespace NerdThings::Ngine::UI {
                                        {
                                                0,
                                                0,
-                                               static_cast<float>(_RenderTarget->Texture.Width),
-                                               static_cast<float>(-_RenderTarget->Texture.Height)
+                                               static_cast<float>(_RenderTarget->Texture->Width),
+                                               static_cast<float>(-_RenderTarget->Texture->Height)
                                        },
                                        Graphics::TColor::White);
     }
@@ -83,15 +82,13 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::SetHeight(float height_) {
         UIControlSized::SetHeight(height_);
 
-        delete _RenderTarget;
-        _RenderTarget = new Graphics::TRenderTarget(static_cast<int>(GetWidth()), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(GetWidth()), static_cast<int>(height_));
     }
 
     void UIPanel::SetWidth(float width_) {
         UIControlSized::SetWidth(width_);
 
-        delete _RenderTarget;
-        _RenderTarget = new Graphics::TRenderTarget(static_cast<int>(width_), static_cast<int>(GetHeight()));
+        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(width_), static_cast<int>(GetHeight()));
     }
 
     void UIPanel::Update() {
@@ -106,6 +103,6 @@ namespace NerdThings::Ngine::UI {
         _ChildrenConfig = 3; // Allow multiple children
 
         // Create render target
-        _RenderTarget = new Graphics::TRenderTarget(static_cast<int>(width_), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(width_), static_cast<int>(height_));
     }
 }

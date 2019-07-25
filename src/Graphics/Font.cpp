@@ -57,18 +57,18 @@ namespace NerdThings::Ngine::Graphics {
 
     // Private Fields
 
-    TFont* TFont::_DefaultFont;
+    std::shared_ptr<TFont> TFont::_DefaultFont;
 
     // Public Constructor(s)
 
     TFont::TFont(TFont &&font_)
     noexcept {
-        Texture = std::move(font_.Texture);
+        Texture = font_.Texture;
         BaseSize = font_.BaseSize;
         CharacterCount = font_.CharacterCount;
         Characters = font_.Characters;
 
-        font_.Texture = TTexture2D();
+        font_.Texture = std::shared_ptr<TTexture2D>(nullptr);
         font_.BaseSize = 0;
         font_.CharacterCount = 0;
         font_.Characters = nullptr;
@@ -88,7 +88,7 @@ namespace NerdThings::Ngine::Graphics {
     Font TFont::ToRaylibFont() const {
         Font fnt;
 
-        fnt.texture = Texture.ToRaylibTex();
+        fnt.texture = Texture->ToRaylibTex();
         fnt.baseSize = BaseSize;
         fnt.charsCount = CharacterCount;
 
@@ -98,26 +98,26 @@ namespace NerdThings::Ngine::Graphics {
         return fnt;
     }
 
-    TFont *TFont::FromRaylibFont(const Font &font_) {
-        return new TFont(
+    std::shared_ptr<TFont> TFont::FromRaylibFont(const Font &font_) {
+        return std::shared_ptr<TFont>(new TFont(
             TTexture2D::FromRaylibTex(font_.texture),
             font_.baseSize,
             font_.charsCount,
             reinterpret_cast<TCharInfo*>(font_.chars)
-        );
+        ));
     }
 
     #endif
 
-    struct TFont *TFont::GetDefaultFont() {
+    std::shared_ptr<TFont> TFont::GetDefaultFont() {
         if (_DefaultFont == nullptr) {
-            _DefaultFont = FromRaylibFont(GetFontDefault());
+            _DefaultFont = std::shared_ptr<TFont>(FromRaylibFont(GetFontDefault()));
         }
 
         return _DefaultFont;
     }
 
-    TFont *TFont::LoadFont(const std::string &filename_) {
+    std::shared_ptr<TFont> TFont::LoadFont(const std::string &filename_) {
         return FromRaylibFont(::LoadFont(filename_.c_str()));
     }
 
