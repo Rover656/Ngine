@@ -78,20 +78,118 @@ static PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArrays;
 #endif
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
-    ////////
-    // GL Class
-    ////////
+    // Shader Related
+
+    std::shared_ptr<GLShaderProgram> GL::_CurrentShaderProgram = nullptr;
+    std::shared_ptr<GLShaderProgram> GL::_DefaultShaderProgram = nullptr;
+
+    // Draw Batching Related Fields
+
+    int GL::_CurrentBuffer = 0;
+    float GL::_CurrentDepth = -1.0f;
+    std::unique_ptr<GLDrawCall[]> _DrawCalls = nullptr; // TODO: Is this the best type to use??
+    int GL::_DrawCounter = 0;
+    GLDynamicBuffer GL::_VertexData[];
 
     // Matrix Related Fields
 
     TMatrix *GL::_CurrentMatrix = nullptr;
-    MatrixMode GL::_CurrentMatrixMode = MATRIX_NULL;
+    GLMatrixMode GL::_CurrentMatrixMode = MATRIX_NULL;
     TMatrix GL::_MatrixStack[];
     int GL::_MatrixStackCounter = 0;
     TMatrix GL::_ModelView = TMatrix::Identity;
     TMatrix GL::_Projection = TMatrix::Identity;
     TMatrix GL::_TransformMatrix = TMatrix::Identity;
     bool GL::_UseTransformMatrix = false;
+
+    // Feature Related Fields
+
+    int GL::MaxDepthBits = 16;
+    bool GL::TexCompDXTSupported = false;
+    bool GL::TexCompETC1Supported = false;
+    bool GL::TexCompETC2Supported = false;
+    bool GL::TexCompPVRTSupported = false;
+    bool GL::TexCompASTCSupported = false;
+    bool GL::TexDepthSupported = false;
+    bool GL::TexFloatSupported = false;
+    bool GL::TexNPOTSupported = false;
+    bool GL::VAOSupported = false;
+
+    // Internal Methods
+
+    void GL::LoadDefaultShader() {
+        // Shader sources
+        std::string vertexShaderSrc =
+#if defined(GRAPHICS_OPENGLES2)
+                "#version 100\n"
+                "attribute vec3 vertexPosition;\n"
+                "attribute vec2 vertexTexCoord;\n"
+                "attribute vec4 vertexColor;\n"
+                "varying vec2 fragTexCoord;\n"
+                "varying vec4 fragColor;\n"
+#elif defined(GRAPHICS_OPENGL33)
+                "#version 330\n"
+                "in vec3 vertexPosition;\n"
+                "in vec2 vertexTexCoord;\n"
+                "in vec4 vertexColor;\n"
+                "out vec2 fragTexCoord;\n"
+                "out vec4 fragColor;\n"
+                #endif
+                "uniform mat4 mvp;\n"
+                "void main()\n"
+                "{\n"
+                "    fragTexCoord = vertexTexCoord;\n"
+                "    fragColor = vertexColor;\n"
+                "    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
+                "}\n";
+        std::string fragmentShaderSrc =
+#if defined(GRAPHICS_OPENGLES2)
+                "#version 100\n"
+                "precision mediump float;\n"
+                "varying vec2 fragTexCoord;\n"
+                "varying vec4 fragColor;\n"
+#else
+                "#version 330\n"
+                "in vec2 fragTexCoord;\n"
+                "in vec4 fragColor;\n"
+                "out vec4 finalColor;\n"
+                #endif
+                "uniform sampler2D texture;\n"
+                "void main()\n"
+                "{\n"
+                #if defined(GRAPHICS_OPENGLES2)
+                "    vec4 texelColor = texture2D(texture, fragTexCoord);\n" // NOTE: texture2D() is deprecated on OpenGL 3.3 and ES 3.0
+                "    gl_FragColor = texelColor*fragColor;\n"
+                #elif defined(GRAPHICS_OPENGL33)
+                "    vec4 texelColor = texture2D(texture, fragTexCoord);\n"
+                "    finalColor = texelColor*fragColor;\n"
+                #endif
+                "}\n";
+
+        // Load shaders
+        auto vertexShader = new GLShader(vertexShaderSrc, SHADER_VERTEX);
+        if (vertexShader->IsDirty()) {
+            delete vertexShader;
+            throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
+        }
+
+        auto fragmentShader = new GLShader(fragmentShaderSrc, SHADER_FRAGMENT);
+        if (vertexShader->IsDirty()) {
+            delete vertexShader;
+            delete fragmentShader;
+            throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
+        }
+
+        // Load program
+        _DefaultShaderProgram = std::make_shared<GLShaderProgram>(fragmentShader, vertexShader);
+
+        // Delete shaders
+        delete vertexShader;
+        delete fragmentShader;
+
+        if (_DefaultShaderProgram->IsDirty())
+            throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
+    }
 
     // Management Methods
 
@@ -192,13 +290,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Load shader
         LoadDefaultShader();
-        _CurrentShader = _DefaultShader;
+        _CurrentShaderProgram = _DefaultShaderProgram;
 
         unsigned char pixels[4] = {255, 255, 255, 255};   // 1 pixel RGBA (4 bytes)
         _DefaultTexture = std::make_unique<Texture2D>(1, 1, pixels, UNCOMPRESSED_R8G8B8A8, 1);
 
         // Init draw calls tracking system
-        _DrawCalls = std::make_unique<DrawCall[]>(MAX_DRAWCALL_REGISTERED);
+        _DrawCalls = std::make_unique<GLDrawCall[]>(MAX_DRAWCALL_REGISTERED);
 
         for (int i = 0; i < MAX_DRAWCALL_REGISTERED; i++) {
             _DrawCalls[i].Mode = PRIMITIVE_QUADS;
@@ -227,7 +325,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     // Other OpenGL Methods
 
-    OpenGLVersion GL::GetGLVersion() {
+    GLVersion GL::GetGLVersion() {
 #if defined(GRAPHICS_OPENGL33)
         return OPENGL_33;
 #elif defined(GRAPHICS_OPENGLES2)

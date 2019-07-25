@@ -97,7 +97,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     };
 
     struct GLDrawCall {
-        PrimitiveMode Mode;
+        GLPrimitiveMode Mode;
         int VertexCount;
         int VertexAlignment;
         unsigned int TextureID;
@@ -122,6 +122,45 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
      * A C++ clone of rlgl, without the 3D methods.
      */
     class GL {
+        // Shader Related Fields
+
+        /*
+         * The current shader program
+         */
+        static std::shared_ptr<GLShaderProgram> _CurrentShaderProgram;
+
+        /*
+         * The default shader program
+         */
+        static std::shared_ptr<GLShaderProgram> _DefaultShaderProgram;
+
+        // Draw Batching Related Fields
+
+        /*
+         * The current buffer index
+         */
+        static int _CurrentBuffer;
+
+        /*
+         * The current draw depth
+         */
+        static float _CurrentDepth; // TODO: Do we need this??
+
+        /*
+         * The draw call batch
+         */
+        static std::unique_ptr<GLDrawCall[]> _DrawCalls;
+
+        /*
+         * The current draw call index
+         */
+        static int _DrawCounter;
+
+        /*
+         * The buffer batch
+         */
+        static GLDynamicBuffer _VertexData[MAX_BATCH_BUFFERING]; // TODO: Will we ever use these other batches?
+
         // Matrix Related Fields
 
         /*
@@ -164,7 +203,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          */
         static bool _UseTransformMatrix;
 
-        // Internal methods
+        // Internal Methods
 
         /*
          * Draw the internal buffers
@@ -357,7 +396,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Get the OpenGL Version
          */
-        static OpenGLVersion GetGLVersion();
+        static GLVersion GetGLVersion();
 
         /*
          * Set the viewport
