@@ -22,27 +22,15 @@ set_target_properties(NgineTest
 
 # Copy dependant dlls
 if (${BUILD_SHARED})
-    if (WIN32)
-        add_custom_command(TARGET NgineTest POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:Ngine>
-                $<TARGET_FILE_DIR:NgineTest>)
-
-        add_custom_command(TARGET NgineTest POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:raylib>
-                $<TARGET_FILE_DIR:NgineTest>)
-    else()
-        add_custom_command(TARGET NgineTest POST_BUILD
+    add_custom_command(TARGET NgineTest POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:Ngine>
-                $<TARGET_FILE_DIR:NgineTest>)
+            $<TARGET_FILE:Ngine>
+            $<TARGET_FILE_DIR:NgineTest>)
 
-        add_custom_command(TARGET NgineTest POST_BUILD
+    add_custom_command(TARGET NgineTest POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                $<TARGET_FILE:raylib_static>
-                $<TARGET_FILE_DIR:NgineTest>)
-    endif()
+            $<TARGET_FILE:raylib>
+            $<TARGET_FILE_DIR:NgineTest>)
 endif()
 
 # Copy content
