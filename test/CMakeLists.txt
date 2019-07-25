@@ -27,10 +27,10 @@ if (${BUILD_SHARED})
             $<TARGET_FILE:Ngine>
             $<TARGET_FILE_DIR:NgineTest>)
 
-    add_custom_command(TARGET NgineTest POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:raylib>
-            $<TARGET_FILE_DIR:NgineTest>)
+    #add_custom_command(TARGET NgineTest POST_BUILD
+    #        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    #        $<TARGET_FILE:raylib>
+    #        $<TARGET_FILE_DIR:NgineTest>)
 endif()
 
 # Copy content

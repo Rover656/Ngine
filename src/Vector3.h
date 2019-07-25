@@ -16,7 +16,7 @@ namespace NerdThings::Ngine {
     /*
      * A 3 component vector
      */
-    struct Vector3 {
+    struct TVector3 {
         // Public fields
 
         /*

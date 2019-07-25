@@ -4,3 +4,6 @@
 [submodule "third-party/Box2D-cmake"]
 	path = third-party/Box2D-cmake
 	url = https://github.com/tobanteGaming/Box2D-cmake
+[submodule "third-party/glfw"]
+	path = third-party/glfw
+	url = https://github.com/glfw/glfw

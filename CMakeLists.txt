@@ -17,13 +17,11 @@ project("Ngine")
 option(BUILD_TEST "Build the test program." ON)
 option(BUILD_SHARED "Build as a shared library" ON)
 enum_option(PLATFORM "Desktop;UWP" "Platform to build for.")
+enum_option(OPENGL_VERSION "3.3;ES2" "Preferred OpenGL Version.")
 
-message("Building for ${PLATFORM}")
+message("Building for ${PLATFORM} with preferred OpenGL Version ${OPENGL_VERSION}.")
 
 # Option enforcement
-if (${PLATFORM} MATCHES "UWP")
-    set (BUILD_SHARED_LIBS OFF)
-endif()
 if (DEFINED BUILD_SHARED_LIBS)
     if (${BUILD_SHARED_LIBS})
         set(BUILD_SHARED ON CACHE INTERNAL "" FORCE)
@@ -36,14 +34,16 @@ if (UNIX OR MINGW)
 endif()
 
 # Output directories
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
+if (NOT ${PLATFORM} MATCHES "UWP") # TODO: See if this is actually necesary
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
 
-if ( MSVC )
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Ngine")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Ngine")
-endif ( MSVC )
+    if (MSVC)
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Ngine")
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Ngine")
+    endif(MSVC)
+endif()
 
 # Add sub directories
 add_subdirectory(third-party)

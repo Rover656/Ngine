@@ -1,0 +1,370 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+#ifndef OPENGL_H
+#define OPENGL_H
+
+#include "../../Matrix.h"
+#include "../../ngine.h"
+#include "../../Vector2.h"
+#include "../../Vector3.h"
+#include "../Color.h"
+#include "Buffer.h"
+#include "Shader.h"
+
+/*
+ * This file is sorted by function then alphabetically to make it more clear.
+ * This will be done engine wide soon.
+ */
+
+namespace NerdThings::Ngine::Graphics::OpenGL {
+    // Enums
+
+    /*
+     * OpenGL Matrix Mode
+     */
+    enum GLMatrixMode {
+        /*
+         * Null matrix mode, not supported
+         */
+        MATRIX_NULL = -1,
+
+        /*
+         * Model view matrix
+         */
+        MATRIX_MODELVIEW = 0x1700,
+
+        /*
+         * Projection matrix
+         */
+        MATRIX_PROJECTION = 0x1701
+    };
+
+    /*
+     * OpenGL Version
+     */
+    enum GLVersion {
+        /*
+         * Unknown OpenGL Version
+         */
+        OPENGL_UNKNOWN = -1,
+
+        /*
+         * OpenGL 3.3
+         */
+        OPENGL_33 = 0,
+
+        /*
+         * OpenGL ES2.0
+         */
+        OPENGL_ES2 = 1
+    };
+
+    /*
+     * OpenGL Primitive Rendering Mode
+     */
+    enum GLPrimitiveMode {
+        /*
+         * Lines
+         */
+        PRIMITIVE_LINES = 0x0001,
+
+        /*
+         * Triangles
+         */
+        PRIMITIVE_TRIANGLES = 0x0004,
+
+        /*
+         * Quads
+         */
+        PRIMITIVE_QUADS = 0x0007
+    };
+
+    // Structures
+
+    struct GLDynamicBuffer {
+        int VCounter;
+        int TCCounter;
+        int CCounter;
+        std::unique_ptr<float[]> Vertices;
+        std::unique_ptr<float[]> TexCoords;
+        std::unique_ptr<unsigned char[]> Colors;
+#if defined(GRAPHICS_OPENGL33)
+        std::unique_ptr<unsigned int[]> Indices;
+#elif defined(GRAPHICS_OPENGLES2)
+        std::unique_ptr<unsigned short[]> Indices;
+#endif
+        std::unique_ptr<GLVertexArray> VAO;
+        std::unique_ptr<std::unique_ptr<GLBuffer>[]> VBO;
+    };
+
+    struct GLDrawCall {
+        PrimitiveMode Mode;
+        int VertexCount;
+        int VertexAlignment;
+        unsigned int TextureID;
+    };
+
+    // Defines
+
+#if defined(GRAPHICS_OPENGL33)
+#define MAX_BATCH_ELEMENTS 8192
+#elif defined(GRAPHICS_OPENGLES2)
+    // TODO: Consider raising this
+    #define MAX_BATCH_ELEMENTS 2048
+#endif
+
+#define MAX_BATCH_BUFFERING 1
+#define MAX_FRAMEBUFFER_STACK_SIZE 16
+#define MAX_MATRIX_STACK_SIZE 32
+#define MAX_DRAWCALL_REGISTERED 256
+
+    /*
+     * OpenGL API.
+     * A C++ clone of rlgl, without the 3D methods.
+     */
+    class GL {
+        // Matrix Related Fields
+
+        /*
+         * The currently active matrix
+         */
+        static TMatrix *_CurrentMatrix;
+
+        /*
+         * Current Matrix Mode
+         */
+        static GLMatrixMode _CurrentMatrixMode;
+
+        /*
+         * The Matrix stack
+         */
+        static TMatrix _MatrixStack[MAX_MATRIX_STACK_SIZE];
+
+        /*
+         * The matrix stack counter
+         */
+        static int _MatrixStackCounter;
+
+        /*
+         * The modelview matrix
+         */
+        static TMatrix _ModelView;
+
+        /*
+         * The projection matrix
+         */
+        static TMatrix _Projection;
+
+        /*
+         * The transform matrix
+         */
+        static TMatrix _TransformMatrix;
+
+        /*
+         * Whether or not to use the transformation matrix
+         */
+        static bool _UseTransformMatrix;
+
+        // Internal methods
+
+        /*
+         * Draw the internal buffers
+         */
+        static void DrawBuffersDefault();
+
+        /*
+         * Initialize the internal buffers
+         */
+        static void LoadBuffersDefault();
+
+        /*
+         * Initialize the default shader program
+         */
+        static void LoadDefaultShader();
+
+        /*
+         * Update the data in the internal buffers
+         */
+        static void UpdateBuffersDefault();
+
+    public:
+        // Feature Related Fields
+
+        /*
+         * Maximum number of bits in a depth buffer/texture. TODO: Do we need this?
+         */
+        static int MaxDepthBits;
+
+        /*
+         * DDS texture compression support
+         */
+        static bool TexCompDXTSupported;
+
+        /*
+         * ETC1 texture compression support
+         */
+        static bool TexCompETC1Supported;
+
+        /*
+         * ETC2/EAC texture compression support
+         */
+        static bool TexCompETC2Supported;
+
+        /*
+         * PVR texture compression support
+         */
+        static bool TexCompPVRTSupported;
+
+        /*
+         * ASTC texture compression support
+         */
+        static bool TexCompASTCSupported;
+
+        /*
+         * Depth texture support
+         */
+        static bool TexDepthSupported;
+
+        /*
+         * Texture float support
+         */
+        static bool TexFloatSupported;
+
+        /*
+         * NPOT texture support
+         */
+        static bool TexNPOTSupported;
+
+        /*
+         * Whether or not vertex arrays are supported
+         */
+        static bool VAOSupported;
+
+        // Matrix Related Methods
+
+        /*
+         * Load the identity matrix
+         */
+        static void LoadIdentity();
+
+        /*
+         * Set the matrix mode
+         */
+        static void MatrixMode(enum GLMatrixMode mode_);
+
+        /*
+         * Multiply the current matrix by another
+         */
+        static void MultMatrix(TMatrix matrix_);
+
+        /*
+         * Create an orthographic matrix
+         */
+        static void Ortho(float left_, float right_, float bottom_, float top_, float znear_, float zfar_);
+
+        /*
+         * Pop a matrix from the stack
+         */
+        static void PopMatrix();
+
+        /*
+         * Push the current matrix to the stack
+         */
+        static void PushMatrix();
+
+        /*
+         * Apply a rotation to the current matrix
+         */
+        static void Rotate(float angle_, TVector3 axis_);
+
+        /*
+         * Apply a scale to the current matrix
+         */
+        static void Scale(TVector3 scale_);
+
+        /*
+         * Set the value of the current matrix
+         */
+        static void SetMatrix(TMatrix matrix_);
+
+        /*
+         * Apply a translation to the current matrix
+         */
+        static void Translate(TVector3 translation_);
+
+        // Vertex Methods
+
+        /*
+         * Begin a set of vertices
+         */
+        static void Begin(GLPrimitiveMode mode_);
+
+        /*
+         * Set vertex color
+         */
+        static void Color(TColor color_);
+
+        /*
+         * End a set of vertices
+         */
+        static void End();
+
+        /*
+         * Set vertex texture coordinate
+         */
+        static void TexCoord(TVector2 coord_);
+
+        /*
+         * Set vertex position
+         */
+        static void Vertex(TVector2 pos_);
+
+        /*
+         * Set vertex position TODO: Do we remove this and go for the above only?
+         */
+        static void Vertex(TVector3 pos_);
+
+        // Buffering Methods
+
+        /*
+         * Whether or not the buffer has reached it's batch limit
+         */
+        static bool AtBufferLimit(int vertexCount_);
+
+        /*
+         * Draw and empty the buffers
+         */
+        static void Draw();
+
+        // Management Methods
+
+        /*
+         * Initialize OpenGL
+         */
+        static void Init();
+
+        // Other OpenGL Methods
+
+        /*
+         * Clear the screen/framebuffer
+         */
+        static void Clear();
+
+        /*
+         * Set the clear color
+         */
+        static void ClearColor(TColor color_);
+
+        /*
+         * Get the OpenGL Version
+         */
+        static OpenGLVersion GetGLVersion();
+
+        /*
+         * Set the viewport
+         */
+        static void Viewport(int x_, int y_, int width_, int height_);
+    };
+}
+
+#endif //OPENGL_H
+#endif
