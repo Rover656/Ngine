@@ -19,7 +19,7 @@
 #include "Graphics/TilesetCanvas.h"
 
 namespace NerdThings::Ngine::Components {
-    class TilesetComponent : public Core::Component {
+    class TilesetComponent : public Component {
         // Private Fields
 
         /*
@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Components {
 
         // Public Constructor(s)
 
-        TilesetComponent(Core::BaseEntity *parent_, Graphics::TilesetCanvas *tileset_)
+        TilesetComponent(BaseEntity *parent_, Graphics::TilesetCanvas *tileset_)
          : Component(parent_), _Tileset(tileset_) {
             SubscribeToDraw();
         }
@@ -43,8 +43,8 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        void Draw(Core::EventArgs &e) override {
-            auto par = GetParent<Core::BaseEntity>();
+        void Draw(EventArgs &e) override {
+            auto par = GetParent<BaseEntity>();
             _Tileset->Draw(par->GetPosition());
         }
 
