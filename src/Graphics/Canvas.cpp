@@ -19,20 +19,19 @@ namespace NerdThings::Ngine::Graphics {
 
     Canvas::Canvas(float width_, float height_)
             : _Width(width_), _Height(height_) {
-        _RenderTarget = new TRenderTarget(_Width, _Height);
+        _RenderTarget = std::make_shared<TRenderTarget>(_Width, _Height);
     }
 
     // Destructor
 
     Canvas::~Canvas() {
         ConsoleMessage("Deleting canvas.", "NOTICE", "CANVAS");
-        delete _RenderTarget;
     }
 
     // Public Methods
 
     void Canvas::Draw(TVector2 pos_) {
-        Graphics::Drawing::DrawTexture(&_RenderTarget->Texture,
+        Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
                                        {
                                                pos_.X,
                                                pos_.Y,
@@ -42,8 +41,8 @@ namespace NerdThings::Ngine::Graphics {
                                        {
                                                0,
                                                0,
-                                               static_cast<float>(_RenderTarget->Texture.Width),
-                                               static_cast<float>(-_RenderTarget->Texture.Height)
+                                               static_cast<float>(_RenderTarget->Texture->Width),
+                                               static_cast<float>(-_RenderTarget->Texture->Height)
                                        },
                                        Graphics::TColor::White);
     }
@@ -68,8 +67,7 @@ namespace NerdThings::Ngine::Graphics {
         ConsoleMessage("Resizing canvas.", "NOTICE", "CANVAS");
         _Width = width_;
         _Height = height_;
-        delete _RenderTarget;
-        _RenderTarget = new TRenderTarget(_Width, _Height);
+        _RenderTarget = std::make_shared<TRenderTarget>(_Width, _Height);
         ReDraw();
     }
 }

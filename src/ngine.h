@@ -56,6 +56,7 @@
 #include <chrono>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <thread>

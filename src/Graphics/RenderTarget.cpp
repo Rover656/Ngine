@@ -19,14 +19,15 @@ namespace NerdThings::Ngine::Graphics {
 
         ID = tmp.id;
         Texture = TTexture2D::FromRaylibTex(tmp.texture);
-        DepthBuffer = TTexture2D::FromRaylibTex(tmp.depth);
+        if (tmp.depthTexture) DepthBuffer = TTexture2D::FromRaylibTex(tmp.depth);
+        else DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
         DepthTexture = tmp.depthTexture;
     }
 
     TRenderTarget::TRenderTarget(TRenderTarget &&target_) {
         ID = target_.ID;
-        Texture = std::move(target_.Texture);
-        DepthBuffer = std::move(target_.DepthBuffer);
+        Texture = target_.Texture;
+        DepthBuffer = target_.DepthBuffer;
         DepthTexture = target_.DepthTexture;
 
         target_.ID = 0;
@@ -39,8 +40,8 @@ namespace NerdThings::Ngine::Graphics {
         ConsoleMessage("Unloading and deleting render target.", "NOTICE", "RENDER TARGET");
         UnloadRenderTexture(ToRaylibTarget());
         ID = 0;
-        Texture = TTexture2D();
-        DepthBuffer = TTexture2D();
+        Texture = std::shared_ptr<TTexture2D>(nullptr);
+        DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
         DepthTexture = false;
     }
 
@@ -52,9 +53,12 @@ namespace NerdThings::Ngine::Graphics {
         auto target = RenderTexture2D();
 
         target.id = ID;
-        target.texture = Texture.ToRaylibTex();
-        target.depth = DepthBuffer.ToRaylibTex();
-        target.depthTexture = DepthTexture;
+        target.texture = Texture->ToRaylibTex();
+
+        if (DepthTexture) {
+            target.depth = DepthBuffer->ToRaylibTex();
+            target.depthTexture = DepthTexture;
+        }
 
         return target;
     }

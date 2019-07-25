@@ -17,7 +17,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TTileset::TTileset(TTexture2D *texture_, float tileWidth_, float tileHeight_)
+    TTileset::TTileset(std::shared_ptr<TTexture2D> texture_, float tileWidth_, float tileHeight_)
             : _Texture(texture_), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
 
     // Public Methods

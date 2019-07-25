@@ -54,7 +54,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Load music from a file
          */
-        static TMusic *LoadMusic(const std::string &filename_);
+        static std::shared_ptr<TMusic> LoadMusic(const std::string &filename_);
 
         /*
          * Update music stream.

@@ -88,7 +88,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The default font
          */
-        static TFont* _DefaultFont;
+        static std::shared_ptr<TFont> _DefaultFont;
     public:
 
         // Public Fields
@@ -96,7 +96,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Font texture
          */
-        TTexture2D Texture;
+        std::shared_ptr<TTexture2D> Texture;
 
         /*
          * Base size (default char height)
@@ -148,19 +148,19 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert from raylib font
          */
-        static TFont *FromRaylibFont(const Font &font_);
+        static std::shared_ptr<TFont> FromRaylibFont(const Font &font_);
 
         #endif
 
         /*
          * Get the default font (Supplied by raylib)
          */
-        static TFont *GetDefaultFont();
+        static std::shared_ptr<TFont> GetDefaultFont();
 
         /*
          * Load a font
          */
-        static TFont *LoadFont(const std::string &filename_);
+        static std::shared_ptr<TFont> LoadFont(const std::string &filename_);
 
         /*
          * Measure the dimensions of a string
@@ -178,7 +178,7 @@ namespace NerdThings::Ngine::Graphics {
             CharacterCount = font_.CharacterCount;
             Characters = font_.Characters;
 
-            font_.Texture = TTexture2D();
+            font_.Texture = std::shared_ptr<TTexture2D>(nullptr);
             font_.BaseSize = 0;
             font_.CharacterCount = 0;
             font_.Characters = nullptr;
@@ -195,9 +195,9 @@ namespace NerdThings::Ngine::Graphics {
     private:
         // Private Constructor(s)
 
-        TFont(TTexture2D tex_, int baseSize_, int charCount_, TCharInfo *chars_)
+        TFont(std::shared_ptr<TTexture2D> tex_, int baseSize_, int charCount_, TCharInfo *chars_)
             : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
-            Texture = std::move(tex_);
+            Texture = tex_;
         }
     };
 }

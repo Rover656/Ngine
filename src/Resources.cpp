@@ -35,59 +35,40 @@
 namespace NerdThings::Ngine {
     // Private Fields
 
-    std::unordered_map<std::string, Graphics::TFont *> Resources::_Fonts;
-    std::unordered_map<std::string, Audio::TMusic *> Resources::_Music;
-    std::unordered_map<std::string, Audio::TSound *> Resources::_Sounds;
-    std::unordered_map<std::string, Graphics::TTexture2D *> Resources::_Textures;
+    std::unordered_map<std::string, std::shared_ptr<Graphics::TFont>> Resources::_Fonts;
+    std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> Resources::_Music;
+    std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> Resources::_Sounds;
+    std::unordered_map<std::string, std::shared_ptr<Graphics::TTexture2D>> Resources::_Textures;
 
     // Public Methods
 
     void Resources::DeleteAll() {
-        for (auto fnt : _Fonts) {
-            delete fnt.second;
-        }
         _Fonts.clear();
-
-        for (auto mus : _Music) {
-            delete mus.second;
-        }
         _Music.clear();
-
-        for (auto snd : _Sounds) {
-            delete snd.second;
-        }
         _Sounds.clear();
-
-        for (auto tex : _Textures) {
-            delete tex.second;
-        }
         _Textures.clear();
     }
 
     void Resources::DeleteFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end()) {
-            delete _Fonts[name_];
             _Fonts.erase(name_);
         }
     }
 
     void Resources::DeleteMusic(const std::string &name_) {
         if (_Music.find(name_) != _Music.end()) {
-            delete _Music[name_];
             _Music.erase(name_);
         }
     }
 
     void Resources::DeleteSound(const std::string &name_) {
         if (_Sounds.find(name_) != _Sounds.end()) {
-            delete _Sounds[name_];
             _Sounds.erase(name_);
         }
     }
 
     void Resources::DeleteTexture(const std::string &name_) {
         if (_Textures.find(name_) != _Textures.end()) {
-            delete _Textures[name_];
             _Textures.erase(name_);
         }
     }
@@ -185,25 +166,25 @@ namespace NerdThings::Ngine {
         return std::string(::GetExtension(path_.c_str()));
     }
 
-    Graphics::TFont *Resources::GetFont(const std::string &name_) {
+    std::shared_ptr<Graphics::TFont> Resources::GetFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end())
             return _Fonts[name_];
         return nullptr;
     }
 
-    Audio::TMusic *Resources::GetMusic(const std::string &name_) {
+    std::shared_ptr<Audio::TMusic> Resources::GetMusic(const std::string &name_) {
         if (_Music.find(name_) != _Music.end())
             return _Music[name_];
         return nullptr;
     }
 
-    Audio::TSound *Resources::GetSound(const std::string &name_) {
+    std::shared_ptr<Audio::TSound> Resources::GetSound(const std::string &name_) {
         if (_Sounds.find(name_) != _Sounds.end())
             return _Sounds[name_];
         return nullptr;
     }
 
-    Graphics::TTexture2D *Resources::GetTexture(const std::string &name_) {
+    std::shared_ptr<Graphics::TTexture2D> Resources::GetTexture(const std::string &name_) {
         if (_Textures.find(name_) != _Textures.end())
             return _Textures[name_];
         return nullptr;
@@ -251,7 +232,7 @@ namespace NerdThings::Ngine {
 
     bool Resources::LoadFont(const std::string &inPath_, const std::string &name_) {
         auto fnt = Graphics::TFont::LoadFont(inPath_);
-        if (fnt->Texture.ID > 0) {
+        if (fnt->Texture->ID > 0) {
             _Fonts.insert({ name_, fnt });
             return true;
         }

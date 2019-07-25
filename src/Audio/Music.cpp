@@ -37,9 +37,9 @@ namespace NerdThings::Ngine::Audio {
 
     #endif
 
-    TMusic *TMusic::LoadMusic(const std::string &filename_) {
+    std::shared_ptr<TMusic> TMusic::LoadMusic(const std::string &filename_) {
         auto dat = LoadMusicStream(filename_.c_str());
-        auto ret = new TMusic;
+        auto ret = std::make_shared<TMusic>();
         ret->MusicData = static_cast<void*>(dat);
         return ret;
     }

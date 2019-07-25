@@ -57,14 +57,8 @@ namespace NerdThings::Ngine::Graphics {
         };
     }
 
-    TTexture2D TTexture2D::FromRaylibTex(const Texture2D tex_) {
-        return {
-            tex_.id,
-            tex_.width,
-            tex_.height,
-            tex_.mipmaps,
-            tex_.format
-        };
+    std::shared_ptr<TTexture2D> TTexture2D::FromRaylibTex(const Texture2D tex_) {
+        return std::shared_ptr<TTexture2D>(new TTexture2D(tex_.id, tex_.width, tex_.height, tex_.mipmaps, tex_.format));
     }
 
     #endif
@@ -74,15 +68,8 @@ namespace NerdThings::Ngine::Graphics {
         GenTextureMipmaps(&tex);
     }
 
-    TTexture2D *TTexture2D::LoadTexture(const std::string &filename_) {
-        auto tex = FromRaylibTex(::LoadTexture(filename_.c_str()));
-        auto ret = new TTexture2D(tex.ID, tex.Width, tex.Height, tex.Mipmaps, tex.Format);
-        tex.ID = 0;
-        tex.Width = 0;
-        tex.Height = 0;
-        tex.Mipmaps = 0;
-        tex.Format = 0;
-        return ret;
+    std::shared_ptr<TTexture2D> TTexture2D::LoadTexture(const std::string &filename_) {
+        return FromRaylibTex(::LoadTexture(filename_.c_str()));
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
@@ -92,5 +79,4 @@ namespace NerdThings::Ngine::Graphics {
     void TTexture2D::SetTextureWrap(const ETextureWrapMode wrapMode_) const {
         ::SetTextureWrap(ToRaylibTex(), static_cast<int>(wrapMode_));
     }
-
 }

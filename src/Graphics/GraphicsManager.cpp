@@ -14,11 +14,11 @@
 namespace NerdThings::Ngine::Graphics {
     // Private Fields
 
-    std::vector<TRenderTarget*> GraphicsManager::_RenderTargetStack;
+    std::vector<std::shared_ptr<TRenderTarget>> GraphicsManager::_RenderTargetStack;
 
     // Public Methods
 
-    TRenderTarget *GraphicsManager::PopTarget(bool &popped_) {
+    std::shared_ptr<TRenderTarget> GraphicsManager::PopTarget(bool &popped_) {
         if (!_RenderTargetStack.empty()) {
             // Get target
             auto pop = _RenderTargetStack.back();
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Graphics {
         return nullptr;
     }
 
-    void GraphicsManager::PushTarget(TRenderTarget *target_) {
+    void GraphicsManager::PushTarget(std::shared_ptr<TRenderTarget> target_) {
         // Stop using current target
         if (!_RenderTargetStack.empty())
             EndTextureMode();
@@ -54,7 +54,7 @@ namespace NerdThings::Ngine::Graphics {
         BeginTextureMode(target_->ToRaylibTarget());
     }
 
-    void GraphicsManager::ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_) {
+    void GraphicsManager::ReplaceTarget(std::shared_ptr<TRenderTarget> old_, std::shared_ptr<TRenderTarget> new_) {
         const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.
             begin();
 

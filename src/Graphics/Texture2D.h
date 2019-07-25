@@ -80,7 +80,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert from raylib texture
          */
-        static TTexture2D FromRaylibTex(Texture2D tex_);
+        static std::shared_ptr<TTexture2D> FromRaylibTex(Texture2D tex_);
 
         #endif
 
@@ -95,7 +95,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load a texture and get a pointer
          */
-        static TTexture2D *LoadTexture(const std::string &filename_);
+        static std::shared_ptr<TTexture2D> LoadTexture(const std::string &filename_);
 
         // Operators
 

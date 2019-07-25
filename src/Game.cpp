@@ -101,7 +101,7 @@ namespace NerdThings::Ngine {
 
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
-            _RenderTarget = Graphics::TRenderTarget(_IntendedWidth, _IntendedHeight);
+            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(_IntendedWidth, _IntendedHeight);
         }
 
         // Timing
@@ -151,7 +151,7 @@ namespace NerdThings::Ngine {
             }
 
             // Setup mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
@@ -173,10 +173,10 @@ namespace NerdThings::Ngine {
             Graphics::Drawing::Clear(Graphics::TColor::Black);
 
             // If using, start using target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
-                _RenderTarget.Texture.SetTextureWrap(WRAP_CLAMP);
-                _RenderTarget.Texture.SetTextureFilter(RenderTargetFilterMode);
-                Graphics::GraphicsManager::PushTarget(&_RenderTarget);
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
+                _RenderTarget->Texture->SetTextureWrap(WRAP_CLAMP);
+                _RenderTarget->Texture->SetTextureFilter(RenderTargetFilterMode);
+                Graphics::GraphicsManager::PushTarget(_RenderTarget);
             }
 
             // Clear the background
@@ -186,11 +186,11 @@ namespace NerdThings::Ngine {
             Draw();
 
             // If using a target, draw target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
                 auto popped = false;
                 Graphics::GraphicsManager::PopTarget(popped);
 
-                Graphics::Drawing::DrawTexture(&_RenderTarget.Texture,
+                Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
                                                {
                                                    (w - iw * scale) * 0.5f,
                                                    (h - ih * scale) * 0.5f,
@@ -200,14 +200,14 @@ namespace NerdThings::Ngine {
                                                {
                                                    0,
                                                    0,
-                                                   static_cast<float>(_RenderTarget.Texture.Width),
-                                                   static_cast<float>(-_RenderTarget.Texture.Height)
+                                                   static_cast<float>(_RenderTarget->Texture->Width),
+                                                   static_cast<float>(-_RenderTarget->Texture->Height)
                                                },
                                                Graphics::TColor::White);
             }
 
             // Reset mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.ID > 0) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
                 Input::Mouse::SetScale(1, 1);
                 Input::Mouse::SetOffset(0, 0);
             }
