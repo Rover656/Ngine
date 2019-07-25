@@ -144,6 +144,8 @@ public:
         panelStyle.BorderThickness = 2;
         panelStyle.SetPadding(5, 0, 5, 0);
         SetPanel(new VerticalPanel(250.0f, 500.0f));
+        //GetPanel<VerticalPanel>()->SetWidth(250.0f);
+        //GetPanel<VerticalPanel>()->SetHeight(500.0f);
         GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
         //SetPanel(new HorizontalPanel(550.0f, 250.0f));
         //GetPanel<HorizontalPanel>()->EVerticalAlignment = ALIGN_MIDDLE;

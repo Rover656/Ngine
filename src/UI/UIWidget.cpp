@@ -41,9 +41,7 @@ namespace NerdThings::Ngine::UI {
     }
 
     void UIWidget::Update() {
-        if (_Panel == nullptr)
-            throw std::runtime_error("Panel is null...");
-        else
+        if (_Panel != nullptr)
             _Panel->Update();
     }
 }

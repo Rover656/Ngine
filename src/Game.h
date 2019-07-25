@@ -17,6 +17,7 @@
 #include "Graphics/Color.h"
 #include "Graphics/Drawing.h"
 #include "Graphics/RenderTarget.h"
+#include "Resources.h"
 #include "Vector2.h"
 #include "EventHandler.h"
 #include "Scene.h"
