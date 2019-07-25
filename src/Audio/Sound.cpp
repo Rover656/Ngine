@@ -48,9 +48,9 @@ namespace NerdThings::Ngine::Audio {
 
     #endif
 
-    TSound *TSound::LoadSound(const std::string &filename_) {
+    std::shared_ptr<TSound> TSound::LoadSound(const std::string &filename_) {
         const auto snd = ::LoadSound(filename_.c_str());
-        auto ret = new TSound();
+        auto ret = std::make_shared<TSound>();
         ret->AudioBuffer = snd.audioBuffer;
         ret->Buffer = snd.buffer;
         ret->Format = snd.format;

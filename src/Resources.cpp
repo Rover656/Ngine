@@ -36,8 +36,8 @@ namespace NerdThings::Ngine {
     // Private Fields
 
     std::unordered_map<std::string, Graphics::TFont *> Resources::_Fonts;
-    std::unordered_map<std::string, Audio::TMusic *> Resources::_Music;
-    std::unordered_map<std::string, Audio::TSound *> Resources::_Sounds;
+    std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> Resources::_Music;
+    std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> Resources::_Sounds;
     std::unordered_map<std::string, Graphics::TTexture2D *> Resources::_Textures;
 
     // Public Methods
@@ -48,14 +48,7 @@ namespace NerdThings::Ngine {
         }
         _Fonts.clear();
 
-        for (auto mus : _Music) {
-            delete mus.second;
-        }
         _Music.clear();
-
-        for (auto snd : _Sounds) {
-            delete snd.second;
-        }
         _Sounds.clear();
 
         for (auto tex : _Textures) {
@@ -73,14 +66,12 @@ namespace NerdThings::Ngine {
 
     void Resources::DeleteMusic(const std::string &name_) {
         if (_Music.find(name_) != _Music.end()) {
-            delete _Music[name_];
             _Music.erase(name_);
         }
     }
 
     void Resources::DeleteSound(const std::string &name_) {
         if (_Sounds.find(name_) != _Sounds.end()) {
-            delete _Sounds[name_];
             _Sounds.erase(name_);
         }
     }
@@ -191,13 +182,13 @@ namespace NerdThings::Ngine {
         return nullptr;
     }
 
-    Audio::TMusic *Resources::GetMusic(const std::string &name_) {
+    std::shared_ptr<Audio::TMusic> Resources::GetMusic(const std::string &name_) {
         if (_Music.find(name_) != _Music.end())
             return _Music[name_];
         return nullptr;
     }
 
-    Audio::TSound *Resources::GetSound(const std::string &name_) {
+    std::shared_ptr<Audio::TSound> Resources::GetSound(const std::string &name_) {
         if (_Sounds.find(name_) != _Sounds.end())
             return _Sounds[name_];
         return nullptr;

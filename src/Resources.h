@@ -31,12 +31,12 @@ namespace NerdThings::Ngine {
         /*
          * All named music
          */
-        static std::unordered_map<std::string, Audio::TMusic *> _Music;
+        static std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> _Music;
 
         /*
          * All named sounds
          */
-        static std::unordered_map<std::string, Audio::TSound *> _Sounds;
+        static std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> _Sounds;
 
         /*
          * All named textures
@@ -94,12 +94,12 @@ namespace NerdThings::Ngine {
         /*
          * Get a named music
          */
-        static Audio::TMusic *GetMusic(const std::string &name_);
+        static std::shared_ptr<Audio::TMusic> GetMusic(const std::string &name_);
 
         /*
          * Get a named sound
          */
-        static Audio::TSound *GetSound(const std::string &name_);
+        static std::shared_ptr<Audio::TSound> GetSound(const std::string &name_);
 
         /*
          * Get a named texture
