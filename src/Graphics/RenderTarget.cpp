@@ -15,87 +15,76 @@ namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     TRenderTarget::TRenderTarget(const int width_, const int height_) {
-        const auto tmp = LoadRenderTexture(width_, height_);
-
-        ID = tmp.id;
-        Texture = TTexture2D::FromRaylibTex(tmp.texture);
-        if (tmp.depthTexture) DepthBuffer = TTexture2D::FromRaylibTex(tmp.depth);
-        else DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
-        DepthTexture = tmp.depthTexture;
+        Width = width_;
+        Height = height_;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
+#endif
     }
 
     TRenderTarget::TRenderTarget(TRenderTarget &&target_) {
-        ID = target_.ID;
-        Texture = target_.Texture;
-        DepthBuffer = target_.DepthBuffer;
-        DepthTexture = target_.DepthTexture;
+        InternalFramebuffer = target_.InternalFramebuffer;
+        Width = target_.Width;
+        Height = target_.Height;
 
-        target_.ID = 0;
-        DepthTexture = false;
+        target_.InternalFramebuffer = nullptr;
+        target_.Width = 0;
+        target_.Height = 0;
     }
 
     // Destructor
 
     TRenderTarget::~TRenderTarget() {
-        ConsoleMessage("Unloading and deleting render target.", "NOTICE", "RENDER TARGET");
-        UnloadRenderTexture(ToRaylibTarget());
-        ID = 0;
-        Texture = std::shared_ptr<TTexture2D>(nullptr);
-        DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
-        DepthTexture = false;
+        // Unreference (smart pointer will delete in due time)
+        InternalFramebuffer = nullptr;
     }
 
     // Public Methods
 
-    #ifdef INCLUDE_RAYLIB
-
-    RenderTexture2D TRenderTarget::ToRaylibTarget() const {
-        auto target = RenderTexture2D();
-
-        target.id = ID;
-        target.texture = Texture->ToRaylibTex();
-
-        if (DepthTexture) {
-            target.depth = DepthBuffer->ToRaylibTex();
-            target.depthTexture = DepthTexture;
-        }
-
-        return target;
+    TTexture2D TRenderTarget::GetTexture() {
+        auto tex = TTexture2D();
+        tex.Width = Width;
+        tex.Height = Height;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        tex.InternalTexture = InternalFramebuffer->RenderTexture;
+#endif
+        return tex;
     }
 
-    TRenderTarget TRenderTarget::FromRaylibTarget(RenderTexture2D target_) {
-        auto target = TRenderTarget();
-
-        target.ID = target_.id;
-        target.Texture = TTexture2D::FromRaylibTex(target_.texture);
-        target.DepthBuffer = TTexture2D::FromRaylibTex(target_.depth);
-        target.DepthTexture = target_.depthTexture;
-
-        return target;
+    bool TRenderTarget::IsValid() {
+        if (InternalFramebuffer != nullptr)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+            if (InternalFramebuffer->ID > 0)
+#endif
+                return true;
+        return false;
     }
-
-    #endif
 
     // Operators
 
     TRenderTarget &TRenderTarget::operator=(TRenderTarget &&target_) {
-        ID = target_.ID;
-        Texture = std::move(target_.Texture);
-        DepthBuffer = std::move(target_.DepthBuffer);
-        DepthTexture = target_.DepthTexture;
+        InternalFramebuffer = target_.InternalFramebuffer;
+        Width = target_.Width;
+        Height = target_.Height;
 
-        target_.ID = 0;
-        DepthTexture = false;
-
+        target_.InternalFramebuffer = nullptr;
+        target_.Width = 0;
+        target_.Height = 0;
         return *this;
     }
 
     bool TRenderTarget::operator==(const TRenderTarget &b) const {
-        return ID == b.ID;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        return InternalFramebuffer->ID == b.InternalFramebuffer->ID;
+#endif
+        return false;
     }
 
     bool TRenderTarget::operator!=(const TRenderTarget &b) const {
-        return ID != b.ID;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        return InternalFramebuffer->ID != b.InternalFramebuffer->ID;
+#endif
+        return true;
     }
 
 }

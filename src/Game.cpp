@@ -16,7 +16,11 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Resources.h"
-#include "WindowManager.h"
+#include "Window.h"
+
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#include "Graphics/OpenGL/OpenGL.h"
+#endif
 
 namespace NerdThings::Ngine {
     // Public Constructor(s)
@@ -36,20 +40,27 @@ namespace NerdThings::Ngine {
         _Config = config_;
 
         // Apply raylib config
-        WindowManager::ApplyConfig(_Config);
-        ConsoleMessage("Window config has been applied.", "NOTICE", "GAME");
+        //WindowManager::ApplyConfig(_Config);
+        //ConsoleMessage("Window config has been applied.", "NOTICE", "GAME");
 
         // Set intended dimensions
         _IntendedHeight = targetHeight_;
         _IntendedWidth = targetWidth_;
 
         // Initialize raylib's window
-        WindowManager::Init(windowWidth_, windowHeight_, title_);
+        //WindowManager::Init(windowWidth_, windowHeight_, title_);
+        Window::Init(windowWidth_, windowHeight_, title_);
         ConsoleMessage("Window has been initialized.", "NOTICE", "GAME");
 
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        Graphics::OpenGL::GL::Init();
+        ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "GAME");
+#endif
+
         // Set Target FPS
-        SetDrawFPS(drawFPS_);
-        SetUpdateFPS(updateFPS_);
+        // TODO: We need to implement this now...
+        //SetDrawFPS(drawFPS_);
+        //SetUpdateFPS(updateFPS_); // TODO: Second thread for updates???
 
         // Register default events
         OnRun.Bind(Input::Mouse::OnGameRun);
@@ -58,7 +69,7 @@ namespace NerdThings::Ngine {
         ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
 
         // By default, disable exit key
-        Input::Keyboard::SetExitKey(KEY_NONE);
+        //Input::Keyboard::SetExitKey(KEY_NONE);
 
         #else
 
@@ -101,7 +112,7 @@ namespace NerdThings::Ngine {
 
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
-            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(_IntendedWidth, _IntendedHeight);
+            _RenderTarget = Graphics::TRenderTarget(_IntendedWidth, _IntendedHeight);
         }
 
         // Timing
@@ -119,7 +130,7 @@ namespace NerdThings::Ngine {
         if (Audio::AudioManager::IsReady()) {
             ConsoleMessage("Audio device initialized successfully..", "NOTICE", "GAME");
         } else {
-            ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARNING", "GAME");
+            ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "GAME");
         }
 
         // Invoke OnRun
@@ -127,10 +138,10 @@ namespace NerdThings::Ngine {
 
         _Running = true;
 
-        while (!WindowManager::ShouldClose() && _Running) {
+        while (!Window::ShouldClose() && _Running) {
             // Window/Game Size variables
-            const auto w = static_cast<float>(WindowManager::GetWindowWidth());
-            const auto h = static_cast<float>(WindowManager::GetWindowHeight());
+            const auto w = static_cast<float>(Window::GetWidth());
+            const auto h = static_cast<float>(Window::GetHeight());
             const auto iw = static_cast<float>(_IntendedWidth);
             const auto ih = static_cast<float>(_IntendedHeight);
             const auto scale = std::min(w / iw, h / ih);
@@ -151,7 +162,7 @@ namespace NerdThings::Ngine {
             }
 
             // Setup mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
@@ -173,9 +184,9 @@ namespace NerdThings::Ngine {
             Graphics::Renderer::Clear(Graphics::TColor::Black);
 
             // If using, start using target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
-                _RenderTarget->Texture->SetTextureWrap(WRAP_CLAMP);
-                _RenderTarget->Texture->SetTextureFilter(RenderTargetFilterMode);
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
+                _RenderTarget.GetTexture().SetTextureWrap(WRAP_CLAMP);
+                _RenderTarget.GetTexture().SetTextureFilter(RenderTargetFilterMode);
                 Graphics::GraphicsManager::PushTarget(_RenderTarget);
             }
 
@@ -186,11 +197,11 @@ namespace NerdThings::Ngine {
             Draw();
 
             // If using a target, draw target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
                 auto popped = false;
                 Graphics::GraphicsManager::PopTarget(popped);
 
-                Graphics::Renderer::DrawTexture(_RenderTarget->Texture,
+                Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
                                                {
                                                    (w - iw * scale) * 0.5f,
                                                    (h - ih * scale) * 0.5f,
@@ -200,14 +211,14 @@ namespace NerdThings::Ngine {
                                                {
                                                    0,
                                                    0,
-                                                   static_cast<float>(_RenderTarget->Texture->Width),
-                                                   static_cast<float>(-_RenderTarget->Texture->Height)
+                                                   static_cast<float>(_RenderTarget.Width),
+                                                   static_cast<float>(-_RenderTarget.Height)
                                                },
                                                Graphics::TColor::White);
             }
 
             // Reset mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
                 Input::Mouse::SetScale(1, 1);
                 Input::Mouse::SetOffset(0, 0);
             }
@@ -228,7 +239,7 @@ namespace NerdThings::Ngine {
 
         // Close window
         ConsoleMessage("Closing window.", "NOTICE", "GAME");
-        WindowManager::Close();
+        Window::Cleanup();
 
         ConsoleMessage("Game successfully shut down.", "NOTICE", "GAME");
 

@@ -57,7 +57,7 @@ namespace NerdThings::Ngine {
         /*
          * The render target used for enforcing resolution
          */
-        std::shared_ptr<Graphics::TRenderTarget> _RenderTarget;
+        Graphics::TRenderTarget _RenderTarget;
 
         /*
          * Is the game loop running

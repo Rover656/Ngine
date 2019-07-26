@@ -16,6 +16,10 @@
 
 #include "Texture2D.h"
 
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#include "OpenGL/Framebuffer.h"
+#endif
+
 namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture in the GPU that can be rendered to
@@ -24,24 +28,21 @@ namespace NerdThings::Ngine::Graphics {
         // Public Fields
 
         /*
-         * OpenGL ID
+         * Internal framebuffer on the GPU
          */
-        unsigned int ID;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer;
+#endif
 
         /*
-         * Texture buffer
+         * Render target height
          */
-        std::shared_ptr<TTexture2D> Texture;
+        unsigned int Height;
 
         /*
-         * Depth buffer
+         * Render target width
          */
-        std::shared_ptr<TTexture2D> DepthBuffer;
-
-        /*
-         * Is depth attachment is a texture or renderbuffer
-         */
-        bool DepthTexture;
+        unsigned int Width;
 
         // Public Constructor(s)
 
@@ -49,7 +50,7 @@ namespace NerdThings::Ngine::Graphics {
          * Create a null render target
          */
         TRenderTarget()
-            : ID(0), DepthTexture(false) {}
+            : InternalFramebuffer(nullptr) {}
 
         /*
          * Create a render target
@@ -72,13 +73,15 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
+        /*
+         * Get rendered texture
+         */
+        TTexture2D GetTexture();
 
-        RenderTexture2D ToRaylibTarget() const;
-
-        static TRenderTarget FromRaylibTarget(RenderTexture2D target_);
-
-        #endif
+        /*
+         * Whether or not the render target is valid and usable
+         */
+        bool IsValid();
 
         // Operators
 

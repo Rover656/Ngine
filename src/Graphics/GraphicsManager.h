@@ -21,12 +21,18 @@ namespace NerdThings::Ngine::Graphics {
      * Graphics management class
      */
     class NEAPI GraphicsManager {
-        // Render Target Related Fields
+        // Render Target Related Private Fields
 
         /*
          * The render target stack
          */
-        static std::vector<std::shared_ptr<TRenderTarget>> _RenderTargetStack;
+        static std::vector<TRenderTarget> _RenderTargetStack;
+
+        // Render Target Related Private Methods
+
+        static void EndRenderTarget();
+
+        static void UseRenderTarget(const TRenderTarget &target_);
     public:
         // Render Target Related Methods
 
@@ -34,17 +40,17 @@ namespace NerdThings::Ngine::Graphics {
          * Pop a target off the stack (if present)
          * If not present, returns empty target
          */
-        static std::shared_ptr<TRenderTarget> PopTarget(bool &popped_);
+        static TRenderTarget PopTarget(bool &popped_);
 
         /*
          * Push a target onto the stack
          */
-        static void PushTarget(std::shared_ptr<TRenderTarget> target_);
+        static void PushTarget(const TRenderTarget & target_);
 
         /*
-         * Replace a target on the stack
+         const * Replace a t&arget on the stack
          */
-        static void ReplaceTarget(std::shared_ptr<TRenderTarget> old_, std::shared_ptr<TRenderTarget> new_);
+        static void ReplaceTarget(const TRenderTarget & old_, const TRenderTarget & new_);
     };
 }
 
