@@ -9,6 +9,8 @@
 #include "../Color.h"
 #include "Buffer.h"
 #include "Shader.h"
+#include "Texture.h"
+#include "VertexArray.h"
 
 /*
  * This file is sorted by function then alphabetically to make it more clear.
@@ -96,11 +98,29 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         std::unique_ptr<std::unique_ptr<GLBuffer>[]> VBO;
     };
 
+    /*
+     * Information regarding a draw call
+     */
     struct GLDrawCall {
+        /*
+         * Primitive mode used
+         */
         GLPrimitiveMode Mode;
+
+        /*
+         * Number of vertices used
+         */
         int VertexCount;
+
+        /*
+         * The vertex alignment
+         */
         int VertexAlignment;
-        unsigned int TextureID;
+
+        /*
+         * The attached texture
+         */
+        std::shared_ptr<GLTexture> Texture;
     };
 
     // Defines
@@ -133,6 +153,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * The default shader program
          */
         static std::shared_ptr<GLShaderProgram> _DefaultShaderProgram;
+
+        /*
+         * Default white texture used for rendering
+         */
+        static std::shared_ptr<GLTexture> _DefaultTexture;
 
         // Draw Batching Related Fields
 
@@ -229,9 +254,19 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Feature Related Fields
 
         /*
+         * Maximum anisotropic filtering level
+         */
+        static float MaxAnisotropicLevel;
+
+        /*
          * Maximum number of bits in a depth buffer/texture. TODO: Do we need this?
          */
         static int MaxDepthBits;
+
+        /*
+         * Anisotropic filtering support
+         */
+        static bool TexAnisotropicFilterSupported;
 
         /*
          * DDS texture compression support
@@ -267,6 +302,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * Texture float support
          */
         static bool TexFloatSupported;
+
+        /*
+         * Clamp mirror wrap mode support
+         */
+        static bool TexMirrorClampSupported;
 
         /*
          * NPOT texture support
@@ -392,6 +432,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * Set the clear color
          */
         static void ClearColor(TColor color_);
+
+        /*
+         * Get OpenGL equivalent texture formats
+         */
+        static void GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
 
         /*
          * Get the OpenGL Version

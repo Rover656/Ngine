@@ -82,6 +82,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     std::shared_ptr<GLShaderProgram> GL::_CurrentShaderProgram = nullptr;
     std::shared_ptr<GLShaderProgram> GL::_DefaultShaderProgram = nullptr;
+    std::shared_ptr<GLTexture> GL::_DefaultTexture = nullptr;
 
     // Draw Batching Related Fields
 
@@ -104,7 +105,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     // Feature Related Fields
 
+    float GL::MaxAnisotropicLevel = 0.0f;
     int GL::MaxDepthBits = 16;
+    bool GL::TexAnisotropicFilterSupported = false;
     bool GL::TexCompDXTSupported = false;
     bool GL::TexCompETC1Supported = false;
     bool GL::TexCompETC2Supported = false;
@@ -112,10 +115,19 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     bool GL::TexCompASTCSupported = false;
     bool GL::TexDepthSupported = false;
     bool GL::TexFloatSupported = false;
+    bool GL::TexMirrorClampSupported = false;
     bool GL::TexNPOTSupported = false;
     bool GL::VAOSupported = false;
 
     // Internal Methods
+
+    void GL::DrawBuffersDefault() {
+
+    }
+
+    void GL::LoadBuffersDefault() {
+
+    }
 
     void GL::LoadDefaultShader() {
         // Shader sources
@@ -285,6 +297,16 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
             // ASTC texture compression support
             if (strcmp(extList[i], "GL_KHR_texture_compression_astc_hdr") == 0) TexCompASTCSupported = true;
+
+            // Anisotropic texture filter
+            if (strcmp(extList[i], (const char *)"GL_EXT_texture_filter_anisotropic") == 0)
+            {
+                TexAnisotropicFilterSupported = true;
+                glGetFloatv(0x84FF, &MaxAnisotropicLevel);   // GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+            }
+
+            // Clamp mirror wrap mode supported
+            if (strcmp(extList[i], (const char *)"GL_EXT_texture_mirror_clamp") == 0) TexMirrorClampSupported = true;
         }
 #endif
 
@@ -293,7 +315,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _CurrentShaderProgram = _DefaultShaderProgram;
 
         unsigned char pixels[4] = {255, 255, 255, 255};   // 1 pixel RGBA (4 bytes)
-        _DefaultTexture = std::make_unique<Texture2D>(1, 1, pixels, UNCOMPRESSED_R8G8B8A8, 1);
+        _DefaultTexture = std::make_unique<GLTexture>(1, 1, pixels, UNCOMPRESSED_R8G8B8A8, 1);
 
         // Init draw calls tracking system
         _DrawCalls = std::make_unique<GLDrawCall[]>(MAX_DRAWCALL_REGISTERED);
@@ -302,7 +324,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             _DrawCalls[i].Mode = PRIMITIVE_QUADS;
             _DrawCalls[i].VertexCount = 0;
             _DrawCalls[i].VertexAlignment = 0;
-            _DrawCalls[i].TextureID = _DefaultTexture->ID;
+            _DrawCalls[i].Texture = _DefaultTexture;
         }
 
         _DrawCounter = 1;
