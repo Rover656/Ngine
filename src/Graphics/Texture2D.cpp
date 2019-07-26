@@ -35,6 +35,23 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
+    int TTexture2D::GetMipmapCount() {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        return InternalTexture->MipmapCount;
+#endif
+        return 0;
+    }
+
+    TTexture2D TTexture2D::LoadPixels(unsigned int width_, unsigned height_, void *data_, int mipmapCount_) {
+        TTexture2D tex;
+        tex.Width = width_;
+        tex.Height = height_;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        tex.InternalTexture = std::make_shared<OpenGL::GLTexture>(width_, height_, data_, mipmapCount_);
+#endif
+        return tex;
+    }
+
     std::shared_ptr<TTexture2D> TTexture2D::LoadTexture(const std::string &filename_) {
         //return FromRaylibTex(::LoadTexture(filename_.c_str()));
         // TODO: Texture loading

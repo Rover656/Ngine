@@ -32,12 +32,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Texture width
          */
-        int Width;
+        unsigned int Width;
 
         /*
          * Texture Height
          */
-        int Height;
+        unsigned int Height;
 
         // Public Constructor(s)
 
@@ -64,8 +64,16 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Methods
 
-        // TODO: Add LoadTexture pixel data support
-        //static TTexture2D LoadPixels()
+        /*
+         * Get the number of mipmaps this texture has
+         */
+        int GetMipmapCount();
+
+        /*
+         * Load a texture from pixel data.
+         * This expects 8 bits for R, G, B and A.
+         */
+        static TTexture2D LoadPixels(unsigned int width_, unsigned height_, void *data_, int mipmapCount_ = 1);
 
         /*
          * Load a texture and get a pointer
