@@ -14,18 +14,18 @@
 
 #include "../ngine.h"
 
-#include "BaseEntity.h"
-#include "Component.h"
 #include "../UI/UIWidget.h"
+#include "../BaseEntity.h"
+#include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
-    class UIWidgetComponent : public Core::Component {
+    class UIWidgetComponent : public Component {
         // Private Fields
 
         /*
          * On position changed
          */
-        Core::EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
+        EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
 
         /*
          * The UI widget we are attached to.
@@ -35,12 +35,12 @@ namespace NerdThings::Ngine::Components {
 
         // Public Constructor(s)
 
-        UIWidgetComponent(Core::BaseEntity *parent_, const UI::UIWidget& widget_)
+        UIWidgetComponent(BaseEntity *parent_, const UI::UIWidget& widget_)
                 : Component(parent_), _Widget(widget_) {
             SubscribeToDraw();
             SubscribeToUpdate();
 
-            _OnTransformChangeRef = GetParent<Core::BaseEntity>()->OnTransformChanged.Bind(
+            _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged.Bind(
                     this, &UIWidgetComponent::UpdatePosition);
         }
 
@@ -52,11 +52,11 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        void Draw(Core::EventArgs &e) override {
+        void Draw(EventArgs &e) override {
             _Widget.Draw();
         }
 
-        void Update(Core::EventArgs &e) override {
+        void Update(EventArgs &e) override {
             _Widget.Update();
         }
 

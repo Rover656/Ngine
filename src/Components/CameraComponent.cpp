@@ -13,8 +13,8 @@
 
 #include "CameraComponent.h"
 
-#include "BaseEntity.h"
 #include "../Graphics/Camera.h"
+#include "../BaseEntity.h"
 
 namespace NerdThings::Ngine::Components {
     // Private Methods

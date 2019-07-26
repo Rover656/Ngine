@@ -16,10 +16,10 @@
 
 #include "../ngine.h"
 
-#include "Graphics/Renderer.h"
+#include "../Graphics/Renderer.h"
 #include "../Physics/BoundingBox.h"
 #include "../Physics/Circle.h"
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "BaseCollisionShapeComponent.h"
 #include "BoundingBoxCollisionShapeComponent.h"
 

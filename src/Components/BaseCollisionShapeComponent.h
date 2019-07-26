@@ -16,8 +16,8 @@
 
 #include "../ngine.h"
 
-#include "BaseEntity.h"
-#include "Component.h"
+#include "../BaseEntity.h"
+#include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
     /*

@@ -16,10 +16,10 @@
 
 #include "../ngine.h"
 
-#include "Component.h"
-#include "BaseEntity.h"
-#include "EventHandler.h"
 #include "../Graphics/Sprite.h"
+#include "../Component.h"
+#include "../BaseEntity.h"
+#include "../EventHandler.h"
 
 namespace NerdThings::Ngine::Components {
     /*

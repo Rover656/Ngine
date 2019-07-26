@@ -14,9 +14,9 @@
 
 #include "../ngine.h"
 
-#include "BaseEntity.h"
-#include "Component.h"
-#include "Graphics/TilesetCanvas.h"
+#include "../Graphics/TilesetCanvas.h"
+#include "../BaseEntity.h"
+#include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
     class TilesetComponent : public Component {

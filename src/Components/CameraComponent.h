@@ -16,10 +16,10 @@
 
 #include "../ngine.h"
 
-#include "Component.h"
 #include "../Graphics/Camera.h"
-#include "Vector2.h"
+#include "../Component.h"
 #include "../EventArgs.h"
+#include "../Vector2.h"
 
 namespace NerdThings::Ngine::Components {
     /*
