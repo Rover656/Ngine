@@ -9,25 +9,30 @@
 *
 **********************************************************************************************/
 
+#if defined(GRAPHICS_OPENGL33) || defined(GRPHICS_OPENGLES2)
 #include "OpenGL/OpenGL.h"
+#endif
+
 #include "Camera.h"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     void TCamera::BeginCamera() const {
-        // Finish the previous mode
+        // Force draw and load
+#if defined(GRAPHICS_OPENGL33) || defined(GRPHICS_OPENGLES2)
         OpenGL::GL::Draw();
         OpenGL::GL::LoadIdentity();
-
-        auto mat = GetTranslationMatrix();
-        OpenGL::GL::MultMatrix(mat);
+        OpenGL::GL::MultMatrix(GetTranslationMatrix());
+#endif
     }
 
     void TCamera::EndCamera() const {
-        // Finish the previous mode
+        // Force draw and reload
+#if defined(GRAPHICS_OPENGL33) || defined(GRPHICS_OPENGLES2)
         OpenGL::GL::Draw();
         OpenGL::GL::LoadIdentity();
+#endif
     }
 
     TVector2 TCamera::ScreenToWorld(TVector2 pos_) {
