@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 #include "OpenGL/OpenGL.h"
 #endif
 
@@ -20,7 +20,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void TCamera::BeginCamera() const {
         // Force draw and load
-#if defined(GRAPHICS_OPENGL33) || defined(GRPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
         OpenGL::GL::LoadIdentity();
         OpenGL::GL::MultMatrix(GetTranslationMatrix());
@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void TCamera::EndCamera() const {
         // Force draw and reload
-#if defined(GRAPHICS_OPENGL33) || defined(GRPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
         OpenGL::GL::LoadIdentity();
 #endif
