@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         Bind();
 
         // Color attachment
-        RenderTexture = std::make_unique<GLTexture>(width_, height_, nullptr);
+        RenderTexture = std::make_shared<GLTexture>(width_, height_, nullptr);
         RenderTexture->SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_NEAREST);
         RenderTexture->SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_NEAREST);
 

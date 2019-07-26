@@ -14,69 +14,97 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TTexture2D::TTexture2D(TTexture2D &&tex_)
-    noexcept {
-        ID = tex_.ID;
+    TTexture2D::TTexture2D(TTexture2D &&tex_) noexcept {
+        InternalTexture = tex_.InternalTexture;
         Width = tex_.Width;
         Height = tex_.Height;
-        Mipmaps = tex_.Mipmaps;
-        Format = tex_.Format;
 
-        tex_.ID = 0;
+        tex_.InternalTexture = nullptr;
         tex_.Width = 0;
         tex_.Height = 0;
-        tex_.Mipmaps = 0;
-        tex_.Format = 0;
     }
 
     // Destructor
 
     TTexture2D::~TTexture2D() {
-        if (ID > 0) {
-            ConsoleMessage("Unloading and deleting texture.", "NOTICE", "TEXTURE");
-            UnloadTexture((*this).ToRaylibTex());
-            ID = 0;
-            Width = 0;
-            Height = 0;
-            Mipmaps = 0;
-            Format = 0;
+        if (InternalTexture != nullptr) {
+            // Unassign texture. Smart pointers do the rest
+            InternalTexture = nullptr;
         }
     }
 
     // Public Methods
 
-    #ifdef INCLUDE_RAYLIB
-
-    Texture2D TTexture2D::ToRaylibTex() const {
-        return {
-            ID,
-            Width,
-            Height,
-            Mipmaps,
-            Format
-        };
-    }
-
-    std::shared_ptr<TTexture2D> TTexture2D::FromRaylibTex(const Texture2D tex_) {
-        return std::shared_ptr<TTexture2D>(new TTexture2D(tex_.id, tex_.width, tex_.height, tex_.mipmaps, tex_.format));
-    }
-
-    #endif
-
-    void TTexture2D::GenerateMipmaps() const {
-        auto tex = (*this).ToRaylibTex();
-        GenTextureMipmaps(&tex);
-    }
-
     std::shared_ptr<TTexture2D> TTexture2D::LoadTexture(const std::string &filename_) {
-        return FromRaylibTex(::LoadTexture(filename_.c_str()));
+        //return FromRaylibTex(::LoadTexture(filename_.c_str()));
+        // TODO: Texture loading
+        return nullptr;
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
-        ::SetTextureFilter(ToRaylibTex(), static_cast<int>(filterMode_));
+        switch(filterMode_) {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+            case FILTER_POINT:
+                if (InternalTexture->MipmapCount > 1) {
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_MIP_NEAREST);
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_NEAREST);
+                } else {
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_NEAREST);
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_NEAREST);
+                }
+                break;
+            case FILTER_BILINEAR:
+                if (InternalTexture->MipmapCount > 1) {
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_LINEAR_MIP_NEAREST);
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_NEAREST);
+                } else {
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_LINEAR);
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_LINEAR);
+                }
+                break;
+            case FILTER_TRILINEAR:
+                if (InternalTexture->MipmapCount > 1) {
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_MIP_NEAREST);
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_LINEAR);
+                } else {
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_LINEAR);
+                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_LINEAR);
+                }
+                break;
+            case FILTER_ANISOTROPIC_4X:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_ANISOTROPIC_FILTER, 4);
+                break;
+            case FILTER_ANISOTROPIC_8X:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_ANISOTROPIC_FILTER, 8);
+                break;
+            case FILTER_ANISOTROPIC_16X:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_ANISOTROPIC_FILTER, 16);
+                break;
+#endif
+            default: break;
+        }
     }
 
     void TTexture2D::SetTextureWrap(const ETextureWrapMode wrapMode_) const {
-        ::SetTextureWrap(ToRaylibTex(), static_cast<int>(wrapMode_));
+        switch (wrapMode_) {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+            case WRAP_REPEAT:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_REPEAT);
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_REPEAT);
+                break;
+            case WRAP_CLAMP:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_CLAMP);
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_CLAMP);
+                break;
+            case WRAP_MIRROR_REPEAT:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_MIRROR_REPEAT);
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_MIRROR_REPEAT);
+                break;
+            case WRAP_MIRROR_CLAMP:
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_MIRROR_CLAMP);
+                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_MIRROR_CLAMP);
+                break;
+#endif
+        }
     }
 }

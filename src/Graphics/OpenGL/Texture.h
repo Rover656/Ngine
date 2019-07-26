@@ -97,6 +97,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         unsigned int ID;
 
         /*
+         * The number of mipmaps used
+         */
+        int MipmapCount;
+
+        /*
          * Create a texture stored on the GPU
          */
         GLTexture(unsigned int width_, unsigned int height_, void *data_, int mipmapCount_ = 1, GLPixelFormat format_ = UNCOMPRESSED_R8G8B8A8);

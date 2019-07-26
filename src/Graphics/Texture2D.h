@@ -14,18 +14,21 @@
 
 #include "../ngine.h"
 
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#include "OpenGL/Texture.h"
+#endif
+
 namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture stored in the GPU memory
      */
     struct NEAPI TTexture2D {
-        // Public Fields
-
         /*
-         * OpenGL Texture ID
+         * The internal texture used by the GPU
          */
-        unsigned int ID;
-
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        std::shared_ptr<OpenGL::GLTexture> InternalTexture;
+#endif
         /*
          * Texture width
          */
@@ -36,23 +39,13 @@ namespace NerdThings::Ngine::Graphics {
          */
         int Height;
 
-        /*
-         * Mipmap levels
-         */
-        int Mipmaps;
-
-        /*
-         * Data format
-         */
-        int Format;
-
         // Public Constructor(s)
 
         /*
          * Create a null texture
          */
         TTexture2D()
-            : ID(0), Width(0), Height(0), Mipmaps(1), Format(0) {}
+            : InternalTexture(nullptr), Width(0), Height(0) {}
 
         /*
          * Move a texture
@@ -70,24 +63,6 @@ namespace NerdThings::Ngine::Graphics {
         ~TTexture2D();
 
         // Public Methods
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib texture
-         */
-        [[nodiscard]] Texture2D ToRaylibTex() const;
-
-        /*
-         * Convert from raylib texture
-         */
-        static std::shared_ptr<TTexture2D> FromRaylibTex(Texture2D tex_);
-
-        #endif
-
-        /*
-         * Generate texture mipmaps
-         */
-        void GenerateMipmaps() const;
 
         // TODO: Add LoadTexture pixel data support
         //static TTexture2D LoadPixels()
@@ -102,18 +77,14 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Move a texture
          */
-        TTexture2D &operator=(TTexture2D &&tex_) noexcept {
-            ID = tex_.ID;
+        TTexture2D &operator=(TTexture2D &&tex_) noexcept { // TODO: can this = default?
+            InternalTexture = tex_.InternalTexture;
             Width = tex_.Width;
             Height = tex_.Height;
-            Mipmaps = tex_.Mipmaps;
-            Format = tex_.Format;
 
-            tex_.ID = 0;
+            tex_.InternalTexture = nullptr;
             tex_.Width = 0;
             tex_.Height = 0;
-            tex_.Mipmaps = 0;
-            tex_.Format = 0;
 
             return *this;
         }
@@ -133,12 +104,6 @@ namespace NerdThings::Ngine::Graphics {
          * Use with caution.
          */
         TTexture2D &operator=(const TTexture2D &tex_) = default;
-
-    private:
-        // Private Constructor(s)
-
-        TTexture2D(unsigned int id_, int width_, int height_, int mipmaps_, int format_)
-            : ID(id_), Width(width_), Height(height_), Mipmaps(mipmaps_), Format(format_) {}
     };
 }
 

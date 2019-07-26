@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * The attached render texture
          */
-        std::unique_ptr<GLTexture> RenderTexture;
+        std::shared_ptr<GLTexture> RenderTexture;
 
         /*
          * Create a new framebuffer

@@ -25,6 +25,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                          GLPixelFormat format_) {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        // Set mipmap count
+        MipmapCount = mipmapCount_;
         
         // Check format support
         if ((!GL::TexCompDXTSupported) && ((format_ == COMPRESSED_DXT1_RGB) || (format_ == COMPRESSED_DXT1_RGBA) ||
