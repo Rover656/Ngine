@@ -12,7 +12,7 @@
 #ifndef COLLISIONSHAPE_H
 #define COLLISIONSHAPE_H
 
-#include "Vector2.h"
+#include "../Vector2.h"
 
 namespace NerdThings::Ngine::Physics {
     /*

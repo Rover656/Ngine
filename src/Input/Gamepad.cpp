@@ -17,13 +17,14 @@ namespace NerdThings::Ngine::Input {
     Gamepad::Gamepad(EGamepadNumber number_) {
         if (number_ < 0 || number_ > 3)
             throw std::runtime_error("Gamepad number out of range.");
-        _GamepadNumber = number_;
+        //_GamepadNumber = number_;
     }
 
     // Public Methods
 
     float Gamepad::GetAxisValue(const EGamepadAxis axis_) const {
-        return GetGamepadAxisMovement(static_cast<int>(_GamepadNumber), static_cast<int>(axis_));
+        //return GetGamepadAxisMovement(static_cast<int>(_GamepadNumber), static_cast<int>(axis_));
+        return 0;
     }
 
     Gamepad Gamepad::GetGamepad(const EGamepadNumber gamepadNumber_) {
@@ -31,23 +32,28 @@ namespace NerdThings::Ngine::Input {
     }
 
     bool Gamepad::IsAvailable() const {
-        return IsGamepadAvailable(static_cast<int>(_GamepadNumber));
+        //return IsGamepadAvailable(static_cast<int>(_GamepadNumber));
+        return false;
     }
 
     bool Gamepad::IsButtonDown(const EGamepadButton button_) const {
-        return IsGamepadButtonDown(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        //return IsGamepadButtonDown(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        return false;
     }
 
     bool Gamepad::IsButtonPressed(const EGamepadButton button_) const {
-        return IsGamepadButtonPressed(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        //return IsGamepadButtonPressed(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        return false;
     }
 
     bool Gamepad::IsButtonReleased(const EGamepadButton button_) const {
-        return IsGamepadButtonReleased(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        //return IsGamepadButtonReleased(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        return false;
     }
 
     bool Gamepad::IsButtonUp(const EGamepadButton button_) const {
-        return IsGamepadButtonUp(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        //return IsGamepadButtonUp(static_cast<int>(_GamepadNumber), static_cast<int>(button_));
+        return false;
     }
 
 }

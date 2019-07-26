@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "EventHandler.h"
 #include "../EventArgs.h"
+#include "../EventHandler.h"
 #include "UIControl.h"
 
 namespace NerdThings::Ngine::UI {

@@ -167,10 +167,10 @@ namespace NerdThings::Ngine {
             }
 
             // Prep for drawing
-            Graphics::Drawing::BeginDrawing();
+            Graphics::Renderer::BeginDrawing();
 
             // Clear
-            Graphics::Drawing::Clear(Graphics::TColor::Black);
+            Graphics::Renderer::Clear(Graphics::TColor::Black);
 
             // If using, start using target
             if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
@@ -190,7 +190,7 @@ namespace NerdThings::Ngine {
                 auto popped = false;
                 Graphics::GraphicsManager::PopTarget(popped);
 
-                Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
+                Graphics::Renderer::DrawTexture(_RenderTarget->Texture,
                                                {
                                                    (w - iw * scale) * 0.5f,
                                                    (h - ih * scale) * 0.5f,
@@ -213,7 +213,7 @@ namespace NerdThings::Ngine {
             }
 
             // Finish drawing
-            Graphics::Drawing::EndDrawing();
+            Graphics::Renderer::EndDrawing();
 
             // Release thread to CPU (Stops weird idle cpu usage and fps drops)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -278,6 +278,6 @@ namespace NerdThings::Ngine {
     // Protected Methods
 
     void Game::Clear() const {
-        Graphics::Drawing::Clear(ClearColor);
+        Graphics::Renderer::Clear(ClearColor);
     }
 }

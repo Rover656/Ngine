@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "UIPanel.h"
 
 namespace NerdThings::Ngine::UI {

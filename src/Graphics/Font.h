@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "Rectangle.h"
-#include "Vector2.h"
+#include "../Rectangle.h"
+#include "../Vector2.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -63,21 +63,6 @@ namespace NerdThings::Ngine::Graphics {
               OffsetY(0),
               AdvanceX(0),
               Data(nullptr) {}
-
-        // Public Methods
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib charinfo
-         */
-        CharInfo ToRaylibInfo() const;
-
-        /*
-         * Convert from raylib charinfo
-         */
-        static TCharInfo FromRaylibInfo(const CharInfo &info_);
-
-        #endif
     };
 
     /*
@@ -124,7 +109,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Move a font
          */
-        TFont(TFont &&font_) noexcept;
+        TFont(TFont &&font_);
 
         /*
          * Copy a font (Reference, if one is deleted, both will stop working correctly.)
@@ -137,20 +122,6 @@ namespace NerdThings::Ngine::Graphics {
         virtual ~TFont();
 
         // Public Methods
-
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib font
-         */
-        Font ToRaylibFont() const;
-
-        /*
-         * Convert from raylib font
-         */
-        static std::shared_ptr<TFont> FromRaylibFont(const Font &font_);
-
-        #endif
 
         /*
          * Get the default font (Supplied by raylib)

@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "Rectangle.h"
-#include "Vector2.h"
+#include "../Rectangle.h"
+#include "../Vector2.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {

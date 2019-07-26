@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "CollisionShape.h"
 
 #define MAX_POLY_VERTS 8

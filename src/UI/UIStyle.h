@@ -16,7 +16,7 @@
 
 #include "../Graphics/Color.h"
 #include "../Graphics/Texture2D.h"
-#include "Rectangle.h"
+#include "../Rectangle.h"
 
 namespace NerdThings::Ngine::UI {
     /*

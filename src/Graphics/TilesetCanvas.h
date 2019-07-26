@@ -14,8 +14,8 @@
 
 #include "../ngine.h"
 
-#include "Rectangle.h"
 #include "../Physics/Polygon.h"
+#include "../Rectangle.h"
 #include "Canvas.h"
 #include "Tileset.h"
 

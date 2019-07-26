@@ -15,8 +15,8 @@
 
 #include "../Graphics/Color.h"
 #include "../Graphics/Texture2D.h"
-#include "Rectangle.h"
-#include "Vector2.h"
+#include "../Rectangle.h"
+#include "../Vector2.h"
 #include "Renderer.h"
 
 namespace NerdThings::Ngine::Graphics {

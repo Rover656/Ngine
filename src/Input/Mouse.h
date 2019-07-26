@@ -14,9 +14,9 @@
 
 #include "../ngine.h"
 
-#include "EventHandler.h"
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "../EventArgs.h"
+#include "EventHandler.h"
 
 namespace NerdThings::Ngine::Input {
     struct MouseState {

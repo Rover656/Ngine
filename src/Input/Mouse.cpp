@@ -21,16 +21,16 @@ namespace NerdThings::Ngine::Input {
 
     MouseState Mouse::FetchState() {
         MouseState state;
-
-        for (auto i = 0; i < 3; i++) {
-            state.ButtonsDown[i] = IsButtonDown(static_cast<EMouseButton>(i));
-            state.ButtonsPressed[i] = IsButtonPressed(static_cast<EMouseButton>(i));
-            state.ButtonsReleased[i] = IsButtonReleased(static_cast<EMouseButton>(i));
-        }
-
-        state.MouseWheelMovementY = GetMouseWheelMovement();
-        state.Position = GetMousePosition();
-
+//
+//        for (auto i = 0; i < 3; i++) {
+//            state.ButtonsDown[i] = IsButtonDown(static_cast<EMouseButton>(i));
+//            state.ButtonsPressed[i] = IsButtonPressed(static_cast<EMouseButton>(i));
+//            state.ButtonsReleased[i] = IsButtonReleased(static_cast<EMouseButton>(i));
+//        }
+//
+//        state.MouseWheelMovementY = GetMouseWheelMovement();
+//        state.Position = GetMousePosition();
+//
         return state;
     }
 
@@ -50,7 +50,8 @@ namespace NerdThings::Ngine::Input {
     }
 
     TVector2 Mouse::GetMousePosition() {
-        return TVector2::FromRaylibVec(::GetMousePosition());
+        //return TVector2::FromRaylibVec(::GetMousePosition());
+        return {0, 0};
     }
 
     MouseState Mouse::GetMouseState() {
@@ -58,19 +59,23 @@ namespace NerdThings::Ngine::Input {
     }
 
     int Mouse::GetMouseWheelMovement() {
-        return GetMouseWheelMove();
+        //return GetMouseWheelMove();
+        return 0;
     }
 
     bool Mouse::IsButtonDown(EMouseButton button_) {
-        return IsMouseButtonDown(button_);
+        //return IsMouseButtonDown(button_);
+        return false;
     }
 
     bool Mouse::IsButtonPressed(EMouseButton button_) {
-        return IsMouseButtonPressed(button_);
+        //return IsMouseButtonPressed(button_);
+        return false;
     }
 
     bool Mouse::IsButtonReleased(EMouseButton button_) {
-        return IsMouseButtonReleased(button_);
+        //return IsMouseButtonReleased(button_);
+        return false;
     }
 
     // Public Event Handles
@@ -107,10 +112,10 @@ namespace NerdThings::Ngine::Input {
     }
 
     void Mouse::SetOffset(float ox_, float oy_) {
-        SetMouseOffset(ox_, oy_);
+        //SetMouseOffset(ox_, oy_);
     }
 
     void Mouse::SetScale(float sx_, float sy_) {
-        SetMouseScale(sx_, sy_);
+        //SetMouseScale(sx_, sy_);
     }
 }

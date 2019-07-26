@@ -16,7 +16,7 @@
 
 #include "../Graphics/RenderTarget.h"
 #include "../Graphics/GraphicsManager.h"
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "UIControl.h"
 #include "UIControlSized.h"
 

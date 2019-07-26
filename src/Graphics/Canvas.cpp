@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     void Canvas::Draw(TVector2 pos_) {
-        Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
+        Graphics::Renderer::DrawTexture(_RenderTarget->Texture,
                                        {
                                                pos_.X,
                                                pos_.Y,
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Canvas::ReDraw() {
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
-        Graphics::Drawing::Clear(TColor::Transparent);
+        Graphics::Renderer::Clear(TColor::Transparent);
         RenderTargetRedraw();
         bool popped = false;
         Graphics::GraphicsManager::PopTarget(popped);
