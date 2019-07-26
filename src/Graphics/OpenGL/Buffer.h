@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
      * OpenGL Data Buffer
      */
-    class GLBuffer {
+    class NEAPI GLBuffer {
         /*
          * The buffer type
          */

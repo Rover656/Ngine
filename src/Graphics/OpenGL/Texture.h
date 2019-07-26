@@ -85,7 +85,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
      * A texture held on the GPU
      */
-    class GLTexture {
+    class NEAPI GLTexture {
         /*
          * The pixel format
          */

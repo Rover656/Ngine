@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
      * A vertex buffer element
      */
-    struct GLVertexBufferElement {
+    struct NEAPI GLVertexBufferElement {
         GLType Type;
         unsigned int Count;
         unsigned int Normalized;
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
      * This provides information about shader bindings.
      * Not used by the GL batcher, but useful for custom implementations.
      */
-    class GLVertexBufferLayout {
+    class NEAPI GLVertexBufferLayout {
         /*
          * Layout elements
          */
@@ -83,7 +83,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
      * A vertex array object
      */
-    struct GLVertexArray {
+    struct NEAPI GLVertexArray {
         /*
          * OpenGL ID
          */

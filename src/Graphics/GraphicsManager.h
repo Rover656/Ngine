@@ -21,14 +21,14 @@ namespace NerdThings::Ngine::Graphics {
      * Graphics management class
      */
     class NEAPI GraphicsManager {
-        // Private fields
+        // Render Target Related Fields
 
         /*
          * The render target stack
          */
         static std::vector<std::shared_ptr<TRenderTarget>> _RenderTargetStack;
     public:
-        // Public Methods
+        // Render Target Related Methods
 
         /*
          * Pop a target off the stack (if present)

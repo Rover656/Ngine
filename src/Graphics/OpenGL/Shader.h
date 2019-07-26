@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
      * Shader, gets attached to a program
      */
-    class GLShader {
+    class NEAPI GLShader {
         /*
          * Whether or not the shader has been compiled since the source was set/changed
          */
@@ -105,7 +105,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
      * OpenGL Shader program.
      * Uses a fragment and a vertex shader.
      */
-    class GLShaderProgram {
+    class NEAPI GLShaderProgram {
         /*
          * Whether or not the shader program is dirty
          */

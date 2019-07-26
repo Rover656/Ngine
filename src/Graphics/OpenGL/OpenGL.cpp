@@ -323,25 +323,18 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "}\n";
 
         // Load shaders
-        auto vertexShader = new GLShader(vertexShaderSrc, SHADER_VERTEX);
+        auto vertexShader = std::make_shared<GLShader>(vertexShaderSrc, SHADER_VERTEX);
         if (vertexShader->IsDirty()) {
-            delete vertexShader;
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
 
-        auto fragmentShader = new GLShader(fragmentShaderSrc, SHADER_FRAGMENT);
+        auto fragmentShader = std::make_shared<GLShader>(fragmentShaderSrc, SHADER_FRAGMENT);
         if (vertexShader->IsDirty()) {
-            delete vertexShader;
-            delete fragmentShader;
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
 
         // Load program
         _DefaultShaderProgram = std::make_shared<GLShaderProgram>(fragmentShader, vertexShader);
-
-        // Delete shaders
-        delete vertexShader;
-        delete fragmentShader;
 
         if (_DefaultShaderProgram->IsDirty())
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
@@ -679,7 +672,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _CurrentShaderProgram = _DefaultShaderProgram;
 
         unsigned char pixels[4] = {255, 255, 255, 255};   // 1 pixel RGBA (4 bytes)
-        _DefaultTexture = std::make_unique<GLTexture>(1, 1, pixels, UNCOMPRESSED_R8G8B8A8, 1);
+        _DefaultTexture = std::make_unique<GLTexture>(1, 1, pixels, 1, UNCOMPRESSED_R8G8B8A8);
 
         // Init draw calls tracking system
         _DrawCalls = std::make_unique<GLDrawCall[]>(MAX_DRAWCALL_REGISTERED);

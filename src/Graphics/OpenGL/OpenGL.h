@@ -141,7 +141,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
      * OpenGL API.
      * A C++ clone of rlgl, without the 3D methods.
      */
-    class GL {
+    class NEAPI GL {
         // Shader Related Fields
 
         /*
