@@ -16,7 +16,7 @@
 
 #include "../ngine.h"
 
-#include "../Graphics/Drawing.h"
+#include "Graphics/Renderer.h"
 #include "../Physics/BoundingBox.h"
 #include "../Physics/Circle.h"
 #include "Vector2.h"
@@ -73,7 +73,7 @@ namespace NerdThings::Ngine::Components {
                 col = Graphics::TColor::Green;
 
             // Draw the circle outline
-            Graphics::Drawing::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
+            Graphics::Renderer::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {

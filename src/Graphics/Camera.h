@@ -52,20 +52,6 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib camera
-         */
-        [[nodiscard]] Camera2D ToRaylibCam() const;
-
-        /*
-         * Convert from raylib camera
-         */
-        static TCamera FromRaylibCam(const Camera2D &cam_);
-
-        #endif
-
         /*
          * Begin using the camera
          */

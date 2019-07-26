@@ -15,36 +15,23 @@ namespace NerdThings::Ngine::Audio {
     // Destructor
 
     TMusic::~TMusic() {
-        if (MusicData != nullptr) {
-            UnloadMusicStream(static_cast<::MusicData*>(MusicData));
-            MusicData = nullptr;
-        }
+//        if (MusicData != nullptr) {
+//            UnloadMusicStream(static_cast<::MusicData*>(MusicData));
+//            MusicData = nullptr;
+//        }
     }
 
     // Public Methods
 
-    #ifdef INCLUDE_RAYLIB
-
-    Music TMusic::ToRaylibMusic() const {
-        return static_cast<::MusicData*>(MusicData);
-    }
-
-    TMusic TMusic::FromRaylibMusic(Music music_) {
-        auto mus = TMusic();
-        mus.MusicData = static_cast<void*>(music_);
-        return mus;
-    }
-
-    #endif
-
     std::shared_ptr<TMusic> TMusic::LoadMusic(const std::string &filename_) {
-        auto dat = LoadMusicStream(filename_.c_str());
-        auto ret = std::make_shared<TMusic>();
-        ret->MusicData = static_cast<void*>(dat);
-        return ret;
+        //auto dat = LoadMusicStream(filename_.c_str());
+        //auto ret = std::make_shared<TMusic>();
+        //ret->MusicData = static_cast<void*>(dat);
+        //return ret;
+        return nullptr;
     }
 
     void TMusic::Update() {
-        UpdateMusicStream(ToRaylibMusic());
+        //UpdateMusicStream(ToRaylibMusic());
     }
 }

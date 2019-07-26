@@ -37,20 +37,6 @@ namespace NerdThings::Ngine::Audio {
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib music
-         */
-        Music ToRaylibMusic() const;
-
-        /*
-         * Convert from raylib music
-         */
-        static TMusic FromRaylibMusic(Music music_);
-
-        #endif
-
         /*
          * Load music from a file
          */

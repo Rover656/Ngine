@@ -17,7 +17,7 @@
 
 #include "../ngine.h"
 
-#include "../Graphics/Drawing.h"
+#include "Graphics/Renderer.h"
 #include "../Physics/BoundingBox.h"
 #include "../Physics/Polygon.h"
 #include "Vector2.h"
@@ -78,11 +78,11 @@ namespace NerdThings::Ngine::Components {
                 col = Graphics::TColor::Green;
 
             // Draw every vertex of the polygon
-            Graphics::Drawing::DrawLine(_Polygon.Vertices[0], _Polygon.Vertices[1], col);
+            Graphics::Renderer::DrawLine(_Polygon.Vertices[0], _Polygon.Vertices[1], col);
             for (auto i = 1; i < _Polygon.VertexCount - 1; i++) {
-                Graphics::Drawing::DrawLine(_Polygon.Vertices[i], _Polygon.Vertices[i + 1], col);
+                Graphics::Renderer::DrawLine(_Polygon.Vertices[i], _Polygon.Vertices[i + 1], col);
             }
-            Graphics::Drawing::DrawLine(_Polygon.Vertices[_Polygon.VertexCount - 1], _Polygon.Vertices[0], col);
+            Graphics::Renderer::DrawLine(_Polygon.Vertices[_Polygon.VertexCount - 1], _Polygon.Vertices[0], col);
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {

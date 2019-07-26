@@ -15,47 +15,26 @@ namespace NerdThings::Ngine::Audio {
     // Destructor
 
     TSound::~TSound() {
-        if (AudioBuffer != nullptr) {
-            UnloadSound(ToRaylibSound());
-            AudioBuffer = nullptr;
-            Buffer = 0;
-            Format = 0;
-            Source = 0;
-        }
+//        if (AudioBuffer != nullptr) {
+//            UnloadSound(ToRaylibSound());
+//            AudioBuffer = nullptr;
+//            Buffer = 0;
+//            Format = 0;
+//            Source = 0;
+//        }
     }
 
     // Public Methods
 
-    #ifdef INCLUDE_RAYLIB
-
-    Sound TSound::ToRaylibSound() const {
-        Sound snd;
-        snd.audioBuffer = AudioBuffer;
-        snd.buffer = Buffer;
-        snd.format = Format;
-        snd.source = Source;
-        return snd;
-    }
-
-    TSound TSound::FromRaylibSound(const Sound snd_) {
-        TSound snd;
-        snd.AudioBuffer = snd_.audioBuffer;
-        snd.Source = snd_.source;
-        snd.Buffer = snd_.buffer;
-        snd.Format = snd_.format;
-        return snd;
-    }
-
-    #endif
-
     std::shared_ptr<TSound> TSound::LoadSound(const std::string &filename_) {
-        const auto snd = ::LoadSound(filename_.c_str());
-        auto ret = std::make_shared<TSound>();
-        ret->AudioBuffer = snd.audioBuffer;
-        ret->Buffer = snd.buffer;
-        ret->Format = snd.format;
-        ret->Source = snd.source;
-        return ret;
+//        const auto snd = ::LoadSound(filename_.c_str());
+//        auto ret = std::make_shared<TSound>();
+//        ret->AudioBuffer = snd.audioBuffer;
+//        ret->Buffer = snd.buffer;
+//        ret->Format = snd.format;
+//        ret->Source = snd.source;
+//        return ret;
+        return nullptr;
     }
 
 }

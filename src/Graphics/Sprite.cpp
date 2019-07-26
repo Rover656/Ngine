@@ -17,7 +17,7 @@
 #include "../Graphics/Texture2D.h"
 #include "Rectangle.h"
 #include "Vector2.h"
-#include "Drawing.h"
+#include "Renderer.h"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)

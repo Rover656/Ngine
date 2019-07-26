@@ -18,7 +18,7 @@
 
 #include "../../ngine.h"
 
-#include "../../Graphics/Drawing.h"
+#include "Graphics/Renderer.h"
 #include "../UIControlSized.h"
 #include "../UIPanel.h"
 
@@ -94,8 +94,8 @@ namespace NerdThings::Ngine::UI::Controls {
             auto textSize = _Font->MeasureString(_Text, _FontSize, _FontSpacing);
 
             if (_Font != nullptr && style.DrawDefaults)
-                Graphics::Drawing::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
-                                                style.ForeColor); // TODO: Wordwrap option
+                Graphics::Renderer::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
+                                                 style.ForeColor); // TODO: Wordwrap option
         }
 
         std::shared_ptr<Graphics::TFont> GetFont() {

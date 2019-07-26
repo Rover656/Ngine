@@ -11,7 +11,7 @@
 
 #include "Canvas.h"
 
-#include "Drawing.h"
+#include "Renderer.h"
 #include "GraphicsManager.h"
 
 namespace NerdThings::Ngine::Graphics {

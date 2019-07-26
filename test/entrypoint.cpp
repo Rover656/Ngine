@@ -241,10 +241,10 @@ public:
 
     void Draw(EventArgs &e) {
         // for (auto i = 0; i < 800; i++) {
-        //     Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
+        //     Renderer::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
         // }
 
-        Drawing::DrawFPS({ 500, 300 });
+        Renderer::DrawFPS({500, 300 });
 
         //widg.Draw();
 
@@ -252,7 +252,7 @@ public:
     }
 
     void DrawCam(EventArgs &e) {
-        Drawing::DrawRectangleLines(GetCullArea(), TColor::Green, 1);
+        Renderer::DrawRectangleLines(GetCullArea(), TColor::Green, 1);
     }
 
     void Update(EventArgs &e) {

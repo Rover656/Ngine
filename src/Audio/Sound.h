@@ -55,20 +55,6 @@ namespace NerdThings::Ngine::Audio {
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * To a raylib sound
-         */
-        Sound ToRaylibSound() const;
-
-        /*
-         * From a raylib sound
-         */
-        static TSound FromRaylibSound(Sound snd_);
-
-        #endif
-
         /*
          * Load a sound from a file
          */

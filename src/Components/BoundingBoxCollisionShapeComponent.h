@@ -17,7 +17,7 @@
 #include "../ngine.h"
 
 #include "../Graphics/Color.h"
-#include "../Graphics/Drawing.h"
+#include "Graphics/Renderer.h"
 #include "Rectangle.h"
 #include "BaseCollisionShapeComponent.h"
 
@@ -66,14 +66,14 @@ namespace NerdThings::Ngine::Components {
                 col = Graphics::TColor::Green;
 
             // Draw each vertex of the bounding box
-            Graphics::Drawing::DrawLine(_BoundingBox.Min, {_BoundingBox.Max.X, _BoundingBox.Min.Y}, col);
-            Graphics::Drawing::DrawLine({_BoundingBox.Max.X, _BoundingBox.Min.Y}, _BoundingBox.Max, col);
-            Graphics::Drawing::DrawLine(_BoundingBox.Max, {_BoundingBox.Min.X, _BoundingBox.Max.Y}, col);
-            Graphics::Drawing::DrawLine({_BoundingBox.Min.X, _BoundingBox.Max.Y}, _BoundingBox.Min, col);
+            Graphics::Renderer::DrawLine(_BoundingBox.Min, {_BoundingBox.Max.X, _BoundingBox.Min.Y}, col);
+            Graphics::Renderer::DrawLine({_BoundingBox.Max.X, _BoundingBox.Min.Y}, _BoundingBox.Max, col);
+            Graphics::Renderer::DrawLine(_BoundingBox.Max, {_BoundingBox.Min.X, _BoundingBox.Max.Y}, col);
+            Graphics::Renderer::DrawLine({_BoundingBox.Min.X, _BoundingBox.Max.Y}, _BoundingBox.Min, col);
 
             // Extra to understand how bounding boxes work
             if (DebugDrawInternalRectangle)
-                Graphics::Drawing::DrawRectangle(
+                Graphics::Renderer::DrawRectangle(
                     TRectangle(par->GetPosition() + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width,
                                      _Rectangle.Height), Graphics::TColor::Orange, par->GetRotation(),
                     par->GetOrigin());

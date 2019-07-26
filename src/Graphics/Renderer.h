@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef DRAWING_H
-#define DRAWING_H
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include "../ngine.h"
 
@@ -24,7 +24,7 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * Connect to the raylib renderer directly
      */
-    class NEAPI Drawing {
+    class NEAPI Renderer {
     public:
         // TODO: Depth support through batching?
 
@@ -320,4 +320,4 @@ namespace NerdThings::Ngine::Graphics {
     };
 }
 
-#endif //DRAWING_H
+#endif //RENDERER_H
