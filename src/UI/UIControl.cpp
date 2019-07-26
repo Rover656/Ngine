@@ -70,7 +70,7 @@ namespace NerdThings::Ngine::UI {
         if (style.DrawDefaults) {
             // Background
             if (style.BackgroundTexture != nullptr)
-                Graphics::Drawing::DrawTexture(style.BackgroundTexture,
+                Graphics::Renderer::DrawTexture(style.BackgroundTexture,
                                                controlBackgroundRect,
                                                {
                                                        0,
@@ -80,11 +80,11 @@ namespace NerdThings::Ngine::UI {
                                                },
                                                style.BackColor);
             else
-                Graphics::Drawing::DrawRectangle(controlBackgroundRect, style.BackColor);
+                Graphics::Renderer::DrawRectangle(controlBackgroundRect, style.BackColor);
 
             // Border
             if (style.BorderThickness > 0) {
-                Graphics::Drawing::DrawRectangleLines(controlBorderRect, style.BorderColor,
+                Graphics::Renderer::DrawRectangleLines(controlBorderRect, style.BorderColor,
                                                       static_cast<int>(style.BorderThickness));
             }
         }

@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
@@ -129,3 +130,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 }
 
 #endif //TEXTURE_H
+#endif

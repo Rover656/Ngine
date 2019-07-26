@@ -35,10 +35,10 @@
 namespace NerdThings::Ngine {
     // Private Fields
 
-    std::unordered_map<std::string, std::shared_ptr<Graphics::TFont>> Resources::_Fonts;
-    std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> Resources::_Music;
-    std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> Resources::_Sounds;
-    std::unordered_map<std::string, std::shared_ptr<Graphics::TTexture2D>> Resources::_Textures;
+    std::unordered_map<std::string, Graphics::TFont> Resources::_Fonts;
+    std::unordered_map<std::string, Audio::TMusic> Resources::_Music;
+    std::unordered_map<std::string, Audio::TSound> Resources::_Sounds;
+    std::unordered_map<std::string, Graphics::TTexture2D> Resources::_Textures;
 
     // Public Methods
 
@@ -71,6 +71,13 @@ namespace NerdThings::Ngine {
         if (_Textures.find(name_) != _Textures.end()) {
             _Textures.erase(name_);
         }
+    }
+
+    std::string Resources::GetDirectoryPath(std::string path_) {
+        auto p = std::filesystem::path(path_);
+        if (std::filesystem::is_directory(p))
+            return path_; // No need to get parent path
+        return p.parent_path().string();
     }
 
     std::string Resources::GetExecutableDirectory(bool &success_) {
@@ -163,35 +170,38 @@ namespace NerdThings::Ngine {
     }
 
     std::string Resources::GetFileExtension(const std::string &path_) {
-        return std::string(::GetExtension(path_.c_str()));
+        auto p = std::filesystem::path(path_);
+        if (std::filesystem::is_directory(p))
+            throw std::runtime_error("Cannot get extension of directory.");
+        return p.extension().string();
     }
 
-    std::shared_ptr<Graphics::TFont> Resources::GetFont(const std::string &name_) {
+    Graphics::TFont Resources::GetFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end())
             return _Fonts[name_];
-        return nullptr;
+        return Graphics::TFont();
     }
 
-    std::shared_ptr<Audio::TMusic> Resources::GetMusic(const std::string &name_) {
+    Audio::TMusic Resources::GetMusic(const std::string &name_) {
         if (_Music.find(name_) != _Music.end())
             return _Music[name_];
-        return nullptr;
+        return Audio::TMusic();
     }
 
-    std::shared_ptr<Audio::TSound> Resources::GetSound(const std::string &name_) {
+    Audio::TSound Resources::GetSound(const std::string &name_) {
         if (_Sounds.find(name_) != _Sounds.end())
             return _Sounds[name_];
-        return nullptr;
+        return Audio::TSound();
     }
 
-    std::shared_ptr<Graphics::TTexture2D> Resources::GetTexture(const std::string &name_) {
+    Graphics::TTexture2D Resources::GetTexture(const std::string &name_) {
         if (_Textures.find(name_) != _Textures.end())
             return _Textures[name_];
-        return nullptr;
+        return Graphics::TTexture2D();
     }
 
     std::string Resources::GetWorkingDirectory() {
-        return std::string(::GetWorkingDirectory());
+        return std::filesystem::current_path().string();
     }
 
     void Resources::LoadDirectory(const std::string &directory_) {
@@ -231,35 +241,38 @@ namespace NerdThings::Ngine {
     }
 
     bool Resources::LoadFont(const std::string &inPath_, const std::string &name_) {
-        auto fnt = Graphics::TFont::LoadFont(inPath_);
-        if (fnt->Texture->ID > 0) {
-            _Fonts.insert({ name_, fnt });
-            return true;
-        }
+//        auto fnt = Graphics::TFont::LoadFont(inPath_);
+//        if (fnt->Texture->ID > 0) {
+//            _Fonts.insert({ name_, fnt });
+//            return true;
+//        }
+//        return false;
         return false;
     }
 
     bool Resources::LoadMusic(const std::string &inPath_, const std::string &name_) {
-        auto mus = Audio::TMusic::LoadMusic(inPath_);
-        if (mus->MusicData != nullptr) {
-            _Music.insert({ name_, mus });
-            return true;
-        }
+//        auto mus = Audio::TMusic::LoadMusic(inPath_);
+//        if (mus->MusicData != nullptr) {
+//            _Music.insert({ name_, mus });
+//            return true;
+//        }
+//        return false;
         return false;
     }
 
     bool Resources::LoadSound(const std::string &inPath_, const std::string &name_) {
-        auto snd = Audio::TSound::LoadSound(inPath_);
-        if (snd->AudioBuffer != nullptr) {
-            _Sounds.insert({ name_, snd });
-            return true;
-        }
+//        auto snd = Audio::TSound::LoadSound(inPath_);
+//        if (snd->AudioBuffer != nullptr) {
+//            _Sounds.insert({ name_, snd });
+//            return true;
+//        }
+//        return false;
         return false;
     }
 
     bool Resources::LoadTexture(const std::string &inPath_, const std::string &name_) {
         auto tex = Graphics::TTexture2D::LoadTexture(inPath_);
-        if (tex->ID > 0) {
+        if (tex.IsValid()) {
             _Textures.insert({ name_, tex });
             return true;
         }

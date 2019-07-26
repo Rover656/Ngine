@@ -41,6 +41,7 @@ if (${PLATFORM} MATCHES "Desktop")
             else()
                 add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ../third-party/glad/src/glad.c)
             endif()
+            target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
         else()
             add_library(Ngine STATIC ${SOURCE_FILES} ${HEADER_FILES} ../third-party/glad/src/glad.c)
         endif()
@@ -56,8 +57,13 @@ if (${PLATFORM} MATCHES "Desktop")
         # Link glad
         target_include_directories(Ngine PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glad/include)
 
+        # Link Box2D
+        target_include_directories(Ngine PRIVATE "../third-party/Box2D-cmake/Box2D")
+        target_link_libraries(Ngine tobanteGaming::Box2D)
+
         # Defines
         target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGL33=1 PLATFORM_DESKTOP=1)
+        target_compile_definitions(Ngine PRIVATE NGINE_BUILD=1) # Used by ngine.h
     elseif(${OPENGL_VERSION} MATCHES "ES2")
         # Ngine with ANGLE
         if (${BUILD_SHARED})
@@ -66,6 +72,7 @@ if (${PLATFORM} MATCHES "Desktop")
             else()
                 add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES})
             endif()
+            target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
         else()
             add_library(Ngine STATIC ${SOURCE_FILES} ${HEADER_FILES})
         endif()
@@ -78,8 +85,13 @@ if (${PLATFORM} MATCHES "Desktop")
         target_link_libraries(Ngine ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
         target_include_directories(Ngine PRIVATE ${PROJECT_SOURCE_DIR}/third-party/ANGLE)
 
+        # Link Box2D
+        target_include_directories(Ngine PRIVATE "../third-party/Box2D-cmake/Box2D")
+        target_link_libraries(Ngine tobanteGaming::Box2D)
+
         # Defines
         target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGLES2=1 PLATFORM_DESKTOP=1)
+        target_compile_definitions(Ngine PRIVATE NGINE_BUILD=1) # Used by ngine.h
 
         # Copy dependant dlls
         add_custom_command(TARGET Ngine POST_BUILD

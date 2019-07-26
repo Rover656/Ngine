@@ -11,542 +11,197 @@
 
 #include "Renderer.h"
 
-#include <rlgl.h>
-
-// TODO: Use rlgl to add custom vertex data support (i.e. custom shapes)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+#include "OpenGL/OpenGL.h"
+#endif
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Methods
+    // OpenGL Implementation
 
-    void Drawing::BeginDrawing() {
-        ::BeginDrawing();
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+
+    void Renderer::BeginDrawing() {
+        // Load identity matrix
+        OpenGL::GL::LoadIdentity();
     }
 
-    void Drawing::Clear(const TColor color_) {
-        auto c = color_.ToRaylibColor();
-        ClearBackground(color_.ToRaylibColor());
+    void Renderer::Clear(TColor color_) {
+        // Set clear color
+        OpenGL::GL::ClearColor(color_);
+
+        // Clear
+        OpenGL::GL::Clear();
     }
 
-    void Drawing::DrawPixel(const TVector2 position_, const TColor color_) {
-        DrawPixelV(position_.ToRaylibVec(),
-                   color_.ToRaylibColor());
+    void Renderer::DrawPixel(TVector2 position_, TColor color_) {
+
     }
 
+    void Renderer::DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_, float thickness_) {
 
-    void Drawing::DrawLine(const TVector2 startPos_, const TVector2 endPos_, const TColor color_,
-                           const float thickness_) {
-        DrawLineEx(startPos_.ToRaylibVec(),
-                   endPos_.ToRaylibVec(),
-                   thickness_,
-                   color_.ToRaylibColor());
     }
 
-    void Drawing::DrawLineStrip(std::vector<TVector2> points_, const TColor color_) {
-        //Build points array
-        auto pts = new Vector2[points_.size()];
-        for (unsigned int i = 0; i < points_.size(); i++) {
-            pts[i] = points_[i].ToRaylibVec();
-        }
+    void Renderer::DrawLineStrip(std::vector<TVector2> points_, TColor color_) {
 
-        //Draw
-        ::DrawLineStrip(pts,
-                        points_.size(),
-                        color_.ToRaylibColor());
-
-        //Delete points array
-        delete[] pts;
     }
 
-    void Drawing::DrawLineBezier(const TVector2 startPos_, const TVector2 endPos_, const TColor color_,
-                                 const float thickness_) {
-        ::DrawLineBezier(startPos_.ToRaylibVec(),
-                         endPos_.ToRaylibVec(),
-                         thickness_,
-                         color_.ToRaylibColor());
+    void Renderer::DrawLineBezier(TVector2 startPos_, TVector2 endPos_, TColor color_, float thickness_) {
+
     }
 
-    void Drawing::DrawCircle(const TVector2 center_, const float radius_, const TColor color_) {
-        DrawCircleV(center_.ToRaylibVec(),
-                    radius_,
-                    color_.ToRaylibColor());
+    void Renderer::DrawCircle(TVector2 center_, float radius_, TColor color_) {
+
     }
 
-    void Drawing::DrawCircleGradient(const TVector2 center_, const float radius_, const TColor color1_,
-                                     const TColor color2_) {
-        ::DrawCircleGradient(static_cast<int>(center_.X),
-                             static_cast<int>(center_.Y),
-                             radius_,
-                             color1_.ToRaylibColor(),
-                             color2_.ToRaylibColor());
+    void Renderer::DrawCircleGradient(TVector2 center_, float radius_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawCircleLines(const TVector2 center_, const float radius_, const TColor color_) {
-        ::DrawCircleLines(static_cast<int>(center_.X),
-                          static_cast<int>(center_.Y),
-                          radius_,
-                          color_.ToRaylibColor());
+    void Renderer::DrawCircleLines(TVector2 center_, float radius_, TColor color_) {
+
     }
 
-    void Drawing::DrawCircleSector(const TVector2 center_, const float radius_, const int startAngle_,
-                                   const int endAngle_, const int segments_,
-                                   const TColor color_) {
-        ::DrawCircleSector(center_.ToRaylibVec(),
-                           radius_,
-                           startAngle_,
-                           endAngle_,
-                           segments_,
-                           color_.ToRaylibColor());
+    void Renderer::DrawCircleSector(TVector2 center_, float radius_, int startAngle_, int endAngle_, int segments_,
+                                    TColor color_) {
+
     }
 
-    void Drawing::DrawCircleSectorLines(const TVector2 center_, const float radius_, const int startAngle_,
-                                        const int endAngle_, const int segments_,
-                                        const TColor color_) {
-        ::DrawCircleSectorLines(center_.ToRaylibVec(),
-                                radius_,
-                                startAngle_,
-                                endAngle_,
-                                segments_,
-                                color_.ToRaylibColor());
+    void Renderer::DrawCircleSectorLines(TVector2 center_, float radius_, int startAngle_, int endAngle_, int segments_,
+                                         TColor color_) {
+
     }
 
-    void Drawing::DrawFPS(const TVector2 position_) {
-        ::DrawFPS(static_cast<int>(position_.X),
-                  static_cast<int>(position_.Y));
+    void Renderer::DrawRing(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
+                            int segments_, TColor color_) {
+
     }
 
-    void Drawing::DrawRing(const TVector2 center_, const float innerRadius_, const float outerRadius_,
-                           const int startAngle_, const int endAngle_,
-                           const int segments_, const TColor color_) {
-        ::DrawRing(center_.ToRaylibVec(),
-                   innerRadius_,
-                   outerRadius_,
-                   startAngle_,
-                   endAngle_,
-                   segments_,
-                   color_.ToRaylibColor());
+    void
+    Renderer::DrawRingLines(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
+                            int segments_, TColor color_) {
+
     }
 
-    void Drawing::DrawRingLines(const TVector2 center_, const float innerRadius_, const float outerRadius_,
-                                const int startAngle_,
-                                const int endAngle_, const int segments_, const TColor color_) {
-        ::DrawRingLines(center_.ToRaylibVec(),
-                        innerRadius_,
-                        outerRadius_,
-                        startAngle_,
-                        endAngle_,
-                        segments_,
-                        color_.ToRaylibColor());
+    void Renderer::DrawRectangle(TVector2 position_, float width_, float height_, TColor color_, float rotation_,
+                                 TVector2 origin_) {
+
     }
 
-    void Drawing::DrawRectangle(const TVector2 position_, const float width_, const float height_,
-                                const TColor color_,
-                                const float rotation_,
-                                const TVector2 origin_) {
-        DrawRectangle({
-                          position_,
-                          width_,
-                          height_
-                      },
-                      color_,
-                      rotation_,
-                      origin_);
+    void Renderer::DrawRectangle(TVector2 position_, TVector2 size_, TColor color_, float rotation_, TVector2 origin_) {
+
     }
 
-    void Drawing::DrawRectangle(const TVector2 position_, const TVector2 size_, const TColor color_,
-                                const float rotation_, const TVector2 origin_) {
-        DrawRectangle({
-                          position_,
-                          size_
-                      },
-                      color_,
-                      rotation_,
-                      origin_);
+    void Renderer::DrawRectangle(TRectangle rectangle_, TColor color_, float rotation_, TVector2 origin_) {
+
     }
 
-    void Drawing::DrawRectangle(const TRectangle rectangle_, const TColor color_, const float rotation_,
-                                const TVector2 origin_) {
-        DrawRectanglePro(rectangle_.ToRaylibRect(),
-                         origin_.ToRaylibVec(),
-                         RadToDeg(rotation_),
-                         color_.ToRaylibColor());
+    void
+    Renderer::DrawRectangleGradientV(TVector2 position_, float width_, float height_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawRectangleGradientV(const TVector2 position_, const float width_, const float height_,
-                                         const TColor color1_,
-                                         const TColor color2_) {
-        DrawRectangleGradientV({
-                                   position_,
-                                   width_,
-                                   height_
-                               },
-                               color1_,
-                               color2_);
+    void Renderer::DrawRectangleGradientV(TVector2 position_, TVector2 size_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawRectangleGradientV(const TVector2 position_, const TVector2 size_,
-                                         const TColor color1_,
-                                         const TColor color2_) {
-        DrawRectangleGradientV({
-                                   position_,
-                                   size_
-                               },
-                               color1_,
-                               color2_);
+    void Renderer::DrawRectangleGradientV(TRectangle rectangle_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawRectangleGradientV(const TRectangle rectangle_, const TColor color1_,
-                                         const TColor color2_) {
-        ::DrawRectangleGradientV(static_cast<int>(rectangle_.X),
-                                 static_cast<int>(rectangle_.Y),
-                                 static_cast<int>(rectangle_.Width),
-                                 static_cast<int>(rectangle_.Height),
-                                 color1_.ToRaylibColor(),
-                                 color2_.ToRaylibColor());
+    void
+    Renderer::DrawRectangleGradientH(TVector2 position_, float width_, float height_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawRectangleGradientH(const TVector2 position_, const float width_, const float height_,
-                                         const TColor color1_,
-                                         const TColor color2_) {
-        DrawRectangleGradientH({
-                                   position_,
-                                   width_,
-                                   height_
-                               },
-                               color1_,
-                               color2_);
+    void Renderer::DrawRectangleGradientH(TVector2 position_, TVector2 size_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawRectangleGradientH(const TVector2 position_, const TVector2 size_,
-                                         const TColor color1_,
-                                         const TColor color2_) {
-        DrawRectangleGradientH({
-                                   position_,
-                                   size_
-                               },
-                               color1_,
-                               color2_);
+    void Renderer::DrawRectangleGradientH(TRectangle rectangle_, TColor color1_, TColor color2_) {
+
     }
 
-    void Drawing::DrawRectangleGradientH(const TRectangle rectangle_, const TColor color1_,
-                                         const TColor color2_) {
-        ::DrawRectangleGradientH(static_cast<int>(rectangle_.X),
-                                 static_cast<int>(rectangle_.Y),
-                                 static_cast<int>(rectangle_.Width),
-                                 static_cast<int>(rectangle_.Height),
-                                 color1_.ToRaylibColor(),
-                                 color2_.ToRaylibColor());
+    void
+    Renderer::DrawRectangleGradientEx(TVector2 position_, float width_, float height_, TColor color1_, TColor color2_,
+                                      TColor color3_, TColor color4_) {
+
     }
 
-    void Drawing::DrawRectangleGradientEx(const TVector2 position_, const float width_, const float height_,
-                                          const TColor color1_,
-                                          const TColor color2_, const TColor color3_, const TColor color4_) {
-        DrawRectangleGradientEx({
-                                    position_,
-                                    width_,
-                                    height_
-                                },
-                                color1_,
-                                color2_,
-                                color3_,
-                                color4_);
+    void Renderer::DrawRectangleGradientEx(TVector2 position_, TVector2 size_, TColor color1_, TColor color2_,
+                                           TColor color3_, TColor color4_) {
+
     }
 
-    void Drawing::DrawRectangleGradientEx(const TVector2 position_, const TVector2 size_,
-                                          const TColor color1_,
-                                          const TColor color2_,
-                                          const TColor color3_, const TColor color4_) {
-        DrawRectangleGradientEx({
-                                    position_,
-                                    size_
-                                },
-                                color1_,
-                                color2_,
-                                color3_,
-                                color4_);
+    void Renderer::DrawRectangleGradientEx(TRectangle rectangle_, TColor color1_, TColor color2_, TColor color3_,
+                                           TColor color4_) {
+
     }
 
-    void Drawing::DrawRectangleGradientEx(const TRectangle rectangle_, const TColor color1_, const TColor color2_,
-                                          const TColor color3_,
-                                          const TColor color4_) {
-        ::DrawRectangleGradientEx(rectangle_.ToRaylibRect(),
-                                  color1_.ToRaylibColor(),
-                                  color2_.ToRaylibColor(),
-                                  color3_.ToRaylibColor(),
-                                  color4_.ToRaylibColor());
+    void
+    Renderer::DrawRectangleLines(TVector2 position_, float width_, float height_, TColor color_, int lineThickness_) {
+
     }
 
-    void Drawing::DrawRectangleLines(const TVector2 position_, const float width_, const float height_,
-                                     const TColor color_,
-                                     const int lineThickness_) {
-        DrawRectangleLines({
-                               position_,
-                               width_,
-                               height_
-                           },
-                           color_,
-                           lineThickness_);
+    void Renderer::DrawRectangleLines(TVector2 position_, TVector2 size_, TColor color_, int lineThickness_) {
+
     }
 
-    void Drawing::DrawRectangleLines(const TVector2 position_, const TVector2 size_, const TColor color_,
-                                     const int lineThickness_) {
-        DrawRectangleLines({
-                               position_,
-                               size_
-                           },
-                           color_,
-                           lineThickness_);
+    void Renderer::DrawRectangleLines(TRectangle rectangle_, TColor color_, int lineThickness_) {
+
     }
 
-    void Drawing::DrawRectangleLines(const TRectangle rectangle_, const TColor color_, const int lineThickness_) {
-        ::DrawRectangleLinesEx(rectangle_.ToRaylibRect(),
-                               lineThickness_,
-                               color_.ToRaylibColor());
+    void
+    Renderer::DrawText(TFont font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
+                       TColor color_) {
+
     }
 
-    void Drawing::DrawRectangleRounded(const TVector2 position_, const float width_, const float height_,
-                                       const float roundness_, const int segments_,
-                                       const TColor color_) {
-        DrawRectangleRounded({
-                                 position_,
-                                 width_,
-                                 height_
-                             },
-                             roundness_,
-                             segments_,
-                             color_);
+    void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin,
+                               float rotation_) {
+
     }
 
-    void Drawing::DrawRectangleRounded(const TVector2 position_, const TVector2 size_,
-                                       const float roundness_,
-                                       const int segments_,
-                                       const TColor color_) {
-        DrawRectangleRounded({
-                                 position_,
-                                 size_
-                             },
-                             roundness_,
-                             segments_,
-                             color_);
+    void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, float width_, float height_, TColor color_,
+                               TVector2 origin_, float rotation_) {
+
     }
 
-    void Drawing::DrawRectangleRounded(const TRectangle rectangle_, const float roundness_, const int segments_,
-                                       const TColor color_) {
-        ::DrawRectangleRounded(rectangle_.ToRaylibRect(),
-                               roundness_,
-                               segments_,
-                               color_.ToRaylibColor());
+    void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
+                               TVector2 origin_, float rotation_) {
+
     }
 
-    void Drawing::DrawRectangleRoundedLines(const TVector2 position_, const float width_, const float height_,
-                                            const float roundness_,
-                                            const int segments_, const int lineThickness_, const TColor color_) {
-        DrawRectangleRoundedLines({
-                                      position_,
-                                      width_,
-                                      height_
-                                  },
-                                  roundness_,
-                                  segments_,
-                                  lineThickness_,
-                                  color_);
+    void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
+                               float height_, TColor color_, TVector2 origin_, float rotation_) {
+
     }
 
-    void Drawing::DrawRectangleRoundedLines(const TVector2 position_, const TVector2 size_,
-                                            const float roundness_,
-                                            const int segments_,
-                                            const int lineThickness_, const TColor color_) {
-        DrawRectangleRoundedLines({
-                                      position_,
-                                      size_
-                                  },
-                                  roundness_,
-                                  segments_,
-                                  lineThickness_,
-                                  color_);
+    void
+    Renderer::DrawTexture(TTexture2D texture_, TRectangle destRectangle_, TRectangle sourceRectangle_, TColor color_,
+                          TVector2 origin_, float rotation_) {
+
     }
 
-    void Drawing::DrawRectangleRoundedLines(const TRectangle rectangle_, const float roundness_,
-                                            const int segments_,
-                                            const int lineThickness_,
-                                            const TColor color_) {
-        ::DrawRectangleRoundedLines(rectangle_.ToRaylibRect(),
-                                    roundness_,
-                                    segments_,
-                                    lineThickness_,
-                                    color_.ToRaylibColor());
+    void Renderer::DrawTriangle(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_) {
+
     }
 
-    void Drawing::DrawText(std::shared_ptr<TFont> font_, const std::string &string_, const TVector2 position_,
-                           const float fontSize_,
-                           const float spacing_, const TColor color_) {
-        DrawTextEx(font_->ToRaylibFont(),
-                   string_.c_str(),
-                   position_.ToRaylibVec(),
-                   fontSize_,
-                   spacing_,
-                   color_.ToRaylibColor());
+    void Renderer::DrawTriangleLines(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_) {
+
     }
 
-    void Drawing::DrawTextRect(std::shared_ptr<TFont> font_, const std::string &string_, const TRectangle rectangle_,
-                               const float fontSize_, const float spacing_, const TColor color_, const bool wordWrap_) {
-        DrawTextRec(font_->ToRaylibFont(),
-                    string_.c_str(),
-                    rectangle_.ToRaylibRect(),
-                    fontSize_,
-                    spacing_,
-                    wordWrap_,
-                    color_.ToRaylibColor());
+    void Renderer::DrawTriangleFan(std::vector<TVector2> points_, TColor color_) {
+
     }
 
-    void Drawing::DrawTextRectEx(std::shared_ptr<TFont> font_, const std::string &string_, const TRectangle rectangle_,
-                                 const float fontSize_, const float spacing_, const TColor color_,
-                                 const int selectStart_,
-                                 const int selectLength_, const TColor selectText_, const TColor selectBack_,
-                                 const bool wordWrap_) {
-        DrawTextRecEx(font_->ToRaylibFont(),
-                      string_.c_str(),
-                      rectangle_.ToRaylibRect(),
-                      fontSize_,
-                      spacing_,
-                      wordWrap_,
-                      color_.ToRaylibColor(),
-                      selectStart_,
-                      selectLength_,
-                      selectText_.ToRaylibColor(),
-                      selectBack_.ToRaylibColor());
+    void Renderer::DrawPoly(TVector2 center_, int sides_, float radius_, float rotation_, TColor color_) {
+
     }
 
-    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TVector2 position_, const TColor color_,
-                              const float scale_,
-                              const TVector2 origin_, const float rotation_) {
-        DrawTexture(texture_,
-                    {
-                        position_.X,
-                        position_.Y,
-                        static_cast<float>(texture_->Width) * scale_,
-                        static_cast<float>(texture_->Height) * scale_
-                    },
-                    {
-                        0,
-                        0,
-                        static_cast<float>(texture_->Width),
-                        static_cast<float>(texture_->Height)
-                    },
-                    color_,
-                    origin_,
-                    rotation_);
+    void Renderer::EndDrawing() {
+        // Draw all batches
+        OpenGL::GL::Draw();
     }
 
-    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TVector2 position_, const float width_,
-                              const float height_,
-                              const TColor color_, const TVector2 origin_, const float rotation_) {
-        DrawTexture(texture_,
-                    {
-                        position_.X,
-                        position_.Y,
-                        width_,
-                        height_
-                    },
-                    {
-                        0,
-                        0,
-                        static_cast<float>(texture_->Width),
-                        static_cast<float>(texture_->Height)
-                    },
-                    color_,
-                    origin_,
-                    rotation_);
-    }
-
-    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TRectangle sourceRectangle_,
-                              const TVector2 position_, const TColor color_, const TVector2 origin_,
-                              const float rotation_) {
-        DrawTexture(texture_,
-                    {
-                        position_.X,
-                        position_.Y,
-                        sourceRectangle_.Width,
-                        sourceRectangle_.Height
-                    },
-                    sourceRectangle_,
-                    color_,
-                    origin_,
-                    rotation_);
-    }
-
-    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TRectangle sourceRectangle_,
-                              const TVector2 position_, const float width_, const float height_,
-                              const TColor color_,
-                              const TVector2 origin_, const float rotation_) {
-        DrawTexture(texture_,
-                    {
-                        position_.X,
-                        position_.Y,
-                        width_,
-                        height_
-                    },
-                    sourceRectangle_,
-                    color_,
-                    origin_,
-                    rotation_);
-    }
-
-    void Drawing::DrawTexture(std::shared_ptr<TTexture2D> texture_, const TRectangle destRectangle_,
-                              const TRectangle sourceRectangle_, const TColor color_,
-                              const TVector2 origin_,
-                              const float rotation_) {
-        if (texture_ == nullptr) return;
-
-        DrawTexturePro(texture_->ToRaylibTex(),
-                       sourceRectangle_.ToRaylibRect(),
-                       destRectangle_.ToRaylibRect(),
-                       origin_.ToRaylibVec(),
-                       RadToDeg(rotation_),
-                       color_.ToRaylibColor());
-    }
-
-    void Drawing::DrawTriangle(const TVector2 v1_, const TVector2 v2_, const TVector2 v3_,
-                               const TColor color_) {
-        ::DrawTriangle(v1_.ToRaylibVec(),
-                       v2_.ToRaylibVec(),
-                       v3_.ToRaylibVec(),
-                       color_.ToRaylibColor());
-    }
-
-    void Drawing::DrawTriangleLines(const TVector2 v1_, const TVector2 v2_, const TVector2 v3_,
-                                    const TColor color_) {
-        ::DrawTriangleLines(v1_.ToRaylibVec(),
-                            v2_.ToRaylibVec(),
-                            v3_.ToRaylibVec(),
-                            color_.ToRaylibColor());
-    }
-
-    void Drawing::DrawTriangleFan(std::vector<TVector2> points_, const TColor color_) {
-        //Build points array
-        auto pts = new Vector2[points_.size()];
-        for (unsigned int i = 0; i < points_.size(); i++) {
-            pts[i] = points_[i].ToRaylibVec();
-        }
-
-        //Draw
-        ::DrawTriangleFan(pts,
-                          points_.size(),
-                          color_.ToRaylibColor());
-
-        //Delete points array
-        delete[] pts;
-    }
-
-    void Drawing::DrawPoly(const TVector2 center_, const int sides_, const float radius_, const float rotation_,
-                           const TColor color_) {
-        ::DrawPoly(center_.ToRaylibVec(),
-                   sides_,
-                   radius_,
-                   RadToDeg(rotation_),
-                   color_.ToRaylibColor());
-    }
-
-    void Drawing::EndDrawing() {
-        ::EndDrawing();
-    }
+#endif
 }

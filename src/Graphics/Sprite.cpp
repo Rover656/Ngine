@@ -22,14 +22,14 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TSprite::TSprite(std::shared_ptr<TTexture2D> texture_) {
+    TSprite::TSprite(const TTexture2D &texture_) {
         _Textures.push_back(texture_);
 
-        DrawHeight = texture_->Height;
-        DrawWidth = texture_->Width;
+        DrawHeight = texture_.Height;
+        DrawWidth = texture_.Width;
     }
 
-    TSprite::TSprite(std::shared_ptr<TTexture2D> texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+    TSprite::TSprite(const TTexture2D &texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                    float imageSpeed_, int startingFrame)
         : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
           ImageSpeed(imageSpeed_) {
@@ -37,12 +37,12 @@ namespace NerdThings::Ngine::Graphics {
         CurrentFrame = startingFrame;
     }
 
-    TSprite::TSprite(std::vector<std::shared_ptr<TTexture2D>> textures_, float imageSpeed_, int startingFrame_) { }
+    TSprite::TSprite(const std::vector<TTexture2D> &textures_, float imageSpeed_, int startingFrame_) { }
 
     // Public Methods
 
     void TSprite::Draw(TVector2 position_, float rotation_, TVector2 origin_) {
-        Drawing::DrawTexture(GetCurrentTexture(),
+        Renderer::DrawTexture(GetCurrentTexture(),
                              TRectangle(
                                  position_,
                                  static_cast<float>(DrawWidth),
@@ -60,7 +60,7 @@ namespace NerdThings::Ngine::Graphics {
         auto x = 0;
         for (auto i = 0; i < CurrentFrame; i++) {
             x += FrameWidth;
-            if (x >= GetCurrentTexture()->Width)
+            if (x >= GetCurrentTexture().Width)
                 x = 0;
         }
 
@@ -75,7 +75,7 @@ namespace NerdThings::Ngine::Graphics {
         auto y = 0;
         for (auto i = 0; i < CurrentFrame; i++) {
             x += FrameWidth;
-            if (x >= GetCurrentTexture()->Width) {
+            if (x >= GetCurrentTexture().Width) {
                 x = 0;
                 y += FrameHeight;
             }
@@ -84,9 +84,9 @@ namespace NerdThings::Ngine::Graphics {
         return y;
     }
 
-    std::shared_ptr<TTexture2D> TSprite::GetCurrentTexture() {
+    TTexture2D TSprite::GetCurrentTexture() {
         if (_Textures.empty())
-            return nullptr;
+            return TTexture2D();
 
         if (_SpriteSheet) {
             return _Textures[0];
@@ -107,15 +107,15 @@ namespace NerdThings::Ngine::Graphics {
             return {
                 0,
                 0,
-                static_cast<float>(GetCurrentTexture()->Width),
-                static_cast<float>(GetCurrentTexture()->Height)
+                static_cast<float>(GetCurrentTexture().Width),
+                static_cast<float>(GetCurrentTexture().Height)
             };
     }
 
     bool TSprite::IsAnimated() {
         if (_SpriteSheet) {
-            if (GetCurrentTexture() != nullptr)
-                return FrameHeight != GetCurrentTexture()->Height || FrameWidth != GetCurrentTexture()->Width;
+            if (GetCurrentTexture().IsValid())
+                return FrameHeight != GetCurrentTexture().Height || FrameWidth != GetCurrentTexture().Width;
             else
                 return false;
         } else {
@@ -123,12 +123,12 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void TSprite::SetTexture(std::shared_ptr<TTexture2D> texture_) {
+    void TSprite::SetTexture(const TTexture2D &texture_) {
         _Textures.clear();
         _Textures.push_back(texture_);
     }
 
-    void TSprite::SetTextures(std::vector<std::shared_ptr<TTexture2D> > textures_) {
+    void TSprite::SetTextures(const std::vector<TTexture2D> &textures_) {
         _Textures = textures_;
     }
 
@@ -146,7 +146,7 @@ namespace NerdThings::Ngine::Graphics {
 
                 // Reset if out of range
                 if (_SpriteSheet) {
-                    auto count = (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
+                    auto count = (GetCurrentTexture().Width / FrameWidth) * (GetCurrentTexture().Height / FrameHeight);
 
                     if (CurrentFrame > count - 1)
                         CurrentFrame = 0;

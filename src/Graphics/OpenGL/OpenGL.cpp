@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #include "OpenGL.h"
 
 // Platform specifics
@@ -775,3 +776,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glViewport(x_, y_, width_, height_);
     }
 }
+#endif

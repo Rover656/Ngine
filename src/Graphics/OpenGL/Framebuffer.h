@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
@@ -57,3 +58,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 }
 
 #endif //FRAMEBUFFER_H
+#endif

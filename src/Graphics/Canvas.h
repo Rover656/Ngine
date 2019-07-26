@@ -27,17 +27,17 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Cavas height
          */
-        float _Height;
+        unsigned int _Height;
 
         /*
          * The render target
          */
-        std::shared_ptr<TRenderTarget> _RenderTarget;
+        TRenderTarget _RenderTarget;
 
         /*
          * Canvas width
          */
-        float _Width;
+        unsigned int _Width;
 
     public:
         // Public Constructor(s)
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Create a new canvas
          */
-        Canvas(float width_, float height_);
+        Canvas(unsigned int width_, unsigned int height_);
 
         // Destructor
 
@@ -61,12 +61,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get canvas height
          */
-        float GetHeight();
+        unsigned int GetHeight();
 
         /*
          * Get canvas width
          */
-        float GetWidth();
+        unsigned int GetWidth();
 
         /*
          * Redraw the contents of the canvas.
@@ -78,7 +78,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Set the dimensions of the canvas
          */
-        void SetDimensions(float width_, float height_);
+        void SetDimensions(unsigned int width_, unsigned int height_);
 
     protected:
 

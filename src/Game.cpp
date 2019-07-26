@@ -201,20 +201,20 @@ namespace NerdThings::Ngine {
                 auto popped = false;
                 Graphics::GraphicsManager::PopTarget(popped);
 
-                Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
-                                               {
-                                                   (w - iw * scale) * 0.5f,
-                                                   (h - ih * scale) * 0.5f,
-                                                   iw * scale,
-                                                   ih * scale
-                                               },
-                                               {
-                                                   0,
-                                                   0,
-                                                   static_cast<float>(_RenderTarget.Width),
-                                                   static_cast<float>(-_RenderTarget.Height)
-                                               },
-                                               Graphics::TColor::White);
+//                Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
+//                                               {
+//                                                   (w - iw * scale) * 0.5f,
+//                                                   (h - ih * scale) * 0.5f,
+//                                                   iw * scale,
+//                                                   ih * scale
+//                                               },
+//                                               {
+//                                                   0,
+//                                                   0,
+//                                                   static_cast<float>(_RenderTarget.Width),
+//                                                   static_cast<float>(-_RenderTarget.Height)
+//                                               },
+//                                               Graphics::TColor::White);
             }
 
             // Reset mouse
@@ -253,12 +253,12 @@ namespace NerdThings::Ngine {
     void Game::SetFPS(int FPS_) {
         _UpdateFPS = FPS_;
         _DrawFPS = FPS_;
-        WindowManager::SetTargetFPS(FPS_);
+        //WindowManager::SetTargetFPS(FPS_);
     }
 
     void Game::SetDrawFPS(int FPS_) {
         _DrawFPS = FPS_;
-        WindowManager::SetTargetFPS(FPS_);
+        //WindowManager::SetTargetFPS(FPS_);
     }
 
     void Game::SetScene(Scene *scene_) {

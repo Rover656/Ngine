@@ -26,22 +26,22 @@ namespace NerdThings::Ngine {
     class NEAPI Resources {
         // Private Fields
 
-        static std::unordered_map<std::string, std::shared_ptr<Graphics::TFont>> _Fonts;
+        static std::unordered_map<std::string, Graphics::TFont> _Fonts;
 
         /*
          * All named music
          */
-        static std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> _Music;
+        static std::unordered_map<std::string, Audio::TMusic> _Music;
 
         /*
          * All named sounds
          */
-        static std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> _Sounds;
+        static std::unordered_map<std::string, Audio::TSound> _Sounds;
 
         /*
          * All named textures
          */
-        static std::unordered_map<std::string, std::shared_ptr<Graphics::TTexture2D>> _Textures;
+        static std::unordered_map<std::string, Graphics::TTexture2D> _Textures;
     public:
 
         // Public Methods
@@ -72,6 +72,11 @@ namespace NerdThings::Ngine {
         static void DeleteTexture(const std::string &name_);
 
         /*
+         * Get the directory from a path to a file
+         */
+        static std::string GetDirectoryPath(std::string path_);
+
+        /*
          * Get the path to the directory that the game's executable is in
          */
         static std::string GetExecutableDirectory(bool &success_);
@@ -89,22 +94,22 @@ namespace NerdThings::Ngine {
         /*
          * Get a named font
          */
-        static std::shared_ptr<Graphics::TFont> GetFont(const std::string &name_);
+        static Graphics::TFont GetFont(const std::string &name_);
 
         /*
          * Get a named music
          */
-        static std::shared_ptr<Audio::TMusic> GetMusic(const std::string &name_);
+        static Audio::TMusic GetMusic(const std::string &name_);
 
         /*
          * Get a named sound
          */
-        static std::shared_ptr<Audio::TSound> GetSound(const std::string &name_);
+        static Audio::TSound GetSound(const std::string &name_);
 
         /*
          * Get a named texture
          */
-        static std::shared_ptr<Graphics::TTexture2D> GetTexture(const std::string &name_);
+        static Graphics::TTexture2D GetTexture(const std::string &name_);
 
         /*
          * Get the working directory.

@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
@@ -112,3 +113,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 }
 
 #endif //VERTEXARRAY_H
+#endif

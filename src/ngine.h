@@ -21,8 +21,7 @@
 // Basic Definitions
 //----------------------------------------------------------------------------------
 
-#if defined(NGINE_EXPORTS)
-#define INCLUDE_RAYLIB
+#if defined(NGINE_BUILD)
 #define INCLUDE_BOX2D
 #endif
 
@@ -64,10 +63,6 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-
-#if defined(INCLUDE_RAYLIB)
-#include <raylib.h>    // Required for: raylib in its entirety
-#endif
 
 #if defined(INCLUDE_BOX2D)
 #include <Box2D/Box2D.h>

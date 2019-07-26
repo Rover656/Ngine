@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The tileset texture
          */
-        std::shared_ptr<TTexture2D> _Texture;
+        TTexture2D _Texture;
 
         /*
          * Tile width
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TTileset(std::shared_ptr<TTexture2D> texture_, float tileWidth_, float tileHeight_);
+        TTileset(TTexture2D texture_, float tileWidth_, float tileHeight_);
 
         // Public Methods
 

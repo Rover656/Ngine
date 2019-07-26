@@ -17,9 +17,9 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructors
 
-    Canvas::Canvas(float width_, float height_)
+    Canvas::Canvas(unsigned int width_, unsigned int height_)
             : _Width(width_), _Height(height_) {
-        _RenderTarget = std::make_shared<TRenderTarget>(_Width, _Height);
+        _RenderTarget = TRenderTarget(_Width, _Height);
     }
 
     // Destructor
@@ -31,27 +31,27 @@ namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     void Canvas::Draw(TVector2 pos_) {
-        Graphics::Renderer::DrawTexture(_RenderTarget->Texture,
-                                       {
-                                               pos_.X,
-                                               pos_.Y,
-                                               _Width,
-                                               _Height
-                                       },
-                                       {
-                                               0,
-                                               0,
-                                               static_cast<float>(_RenderTarget->Texture->Width),
-                                               static_cast<float>(-_RenderTarget->Texture->Height)
-                                       },
-                                       Graphics::TColor::White);
+//        Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
+//                                       {
+//                                               pos_.X,
+//                                               pos_.Y,
+//                                               _Width,
+//                                               _Height
+//                                       },
+//                                       {
+//                                               0,
+//                                               0,
+//                                               static_cast<float>(_RenderTarget.Width),
+//                                               static_cast<float>(-_RenderTarget.Height)
+//                                       },
+//                                       Graphics::TColor::White);
     }
 
-    float Canvas::GetHeight() {
+    unsigned int Canvas::GetHeight() {
         return _Height;
     }
 
-    float Canvas::GetWidth() {
+    unsigned int Canvas::GetWidth() {
         return _Width;
     }
 
@@ -63,11 +63,11 @@ namespace NerdThings::Ngine::Graphics {
         Graphics::GraphicsManager::PopTarget(popped);
     }
 
-    void Canvas::SetDimensions(float width_, float height_) {
+    void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {
         ConsoleMessage("Resizing canvas.", "NOTICE", "CANVAS");
         _Width = width_;
         _Height = height_;
-        _RenderTarget = std::make_shared<TRenderTarget>(_Width, _Height);
+        _RenderTarget = TRenderTarget(_Width, _Height);
         ReDraw();
     }
 }

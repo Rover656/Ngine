@@ -70,6 +70,11 @@ namespace NerdThings::Ngine::Graphics {
         int GetMipmapCount();
 
         /*
+         * Is the texture valid and ready for use
+         */
+        bool IsValid();
+
+        /*
          * Load a texture from pixel data.
          * This expects 8 bits for R, G, B and A.
          */
@@ -78,9 +83,23 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load a texture and get a pointer
          */
-        static std::shared_ptr<TTexture2D> LoadTexture(const std::string &filename_);
+        static TTexture2D LoadTexture(const std::string &filename_);
+
+        /*
+         * Set the texture filter mode
+         */
+        void SetTextureFilter(ETextureFilterMode filterMode_) const;
+
+        /*
+         * Set the texture wrap mode
+         */
+        void SetTextureWrap(ETextureWrapMode wrapMode_) const;
 
         // Operators
+
+        bool operator==(const TTexture2D &tex_) const;
+
+        bool operator!=(const TTexture2D &tex_) const;
 
         /*
          * Move a texture
@@ -96,16 +115,6 @@ namespace NerdThings::Ngine::Graphics {
 
             return *this;
         }
-
-        /*
-         * Set the texture filter mode
-         */
-        void SetTextureFilter(ETextureFilterMode filterMode_) const;
-
-        /*
-         * Set the texture wrap mode
-         */
-        void SetTextureWrap(ETextureWrapMode wrapMode_) const;
 
         /*
          * Copy a texture (Reference, if one is deleted, both will stop working correctly.)

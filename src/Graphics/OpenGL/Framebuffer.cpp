@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #include "Framebuffer.h"
 
 // Platform specifics
@@ -69,3 +70,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #include "Shader.h"
 
 // Platform specifics
@@ -171,3 +172,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glUseProgram(ID);
     }
 }
+#endif

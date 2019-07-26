@@ -42,6 +42,15 @@ namespace NerdThings::Ngine::Graphics {
         return 0;
     }
 
+    bool TTexture2D::IsValid() {
+        if (InternalTexture != nullptr)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+            if (InternalTexture->ID > 0)
+#endif
+                return false;
+        return true;
+    }
+
     TTexture2D TTexture2D::LoadPixels(unsigned int width_, unsigned height_, void *data_, int mipmapCount_) {
         TTexture2D tex;
         tex.Width = width_;
@@ -52,10 +61,10 @@ namespace NerdThings::Ngine::Graphics {
         return tex;
     }
 
-    std::shared_ptr<TTexture2D> TTexture2D::LoadTexture(const std::string &filename_) {
+    TTexture2D TTexture2D::LoadTexture(const std::string &filename_) {
         //return FromRaylibTex(::LoadTexture(filename_.c_str()));
         // TODO: Texture loading
-        return nullptr;
+        return TTexture2D();
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
@@ -123,5 +132,21 @@ namespace NerdThings::Ngine::Graphics {
                 break;
 #endif
         }
+    }
+
+    // Operators
+
+    bool TTexture2D::operator==(const TTexture2D &tex_) const {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        return InternalTexture->ID == tex_.InternalTexture->ID;
+#endif
+        return false;
+    }
+
+    bool TTexture2D::operator!=(const TTexture2D &tex_) const {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        return InternalTexture->ID != tex_.InternalTexture->ID;
+#endif
+        return true;
     }
 }

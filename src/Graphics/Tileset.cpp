@@ -17,7 +17,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TTileset::TTileset(std::shared_ptr<TTexture2D> texture_, float tileWidth_, float tileHeight_)
+    TTileset::TTileset(TTexture2D texture_, float tileWidth_, float tileHeight_)
             : _Texture(texture_), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
 
     // Public Methods
@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::Graphics {
         auto y = 0.0f;
         for (auto i = 0; i < tile_; i++) {
             x += _TileWidth;
-            if (x >= _Texture->Width) {
+            if (x >= (float)_Texture.Width) {
                 x = 0;
                 y += _TileHeight;
             }
@@ -44,7 +44,7 @@ namespace NerdThings::Ngine::Graphics {
         TRectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
 
         // Draw
-        Drawing::DrawTexture(_Texture, sourceRectangle, position_, TColor::White);
+        Renderer::DrawTexture(_Texture, sourceRectangle, position_, TColor::White);
     }
 
     float TTileset::GetTileHeight() const {

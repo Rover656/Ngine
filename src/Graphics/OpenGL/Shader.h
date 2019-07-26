@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #ifndef SHADER_H
 #define SHADER_H
 
@@ -170,3 +171,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 }
 
 #endif //SHADER_H
+#endif

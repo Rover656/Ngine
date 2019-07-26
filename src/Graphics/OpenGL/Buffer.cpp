@@ -1,3 +1,4 @@
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #include "Buffer.h"
 
 // Platform specifics
@@ -49,3 +50,4 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glBufferData(_Type, dataSize_, data_, _Usage);
     }
 }
+#endif
