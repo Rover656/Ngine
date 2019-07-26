@@ -41,13 +41,13 @@ namespace NerdThings::Ngine {
 
         static TMatrix Frustum(float left_, float right_, float bottom_, float top_, float near_, float far_);
 
-        static TMatrix LookAt(Vector3 eye_, Vector3 target_, Vector3 up_);
+        static TMatrix LookAt(TVector3 eye_, TVector3 target_, TVector3 up_);
 
         static TMatrix Orthographic(float left_, float right_, float bottom_, float top_, float near_, float far_);
 
         static TMatrix Perspective(float fovy_, float aspect_, float near_, float far_);
 
-        static TMatrix Rotate(Vector3 axis_, float angle_);
+        static TMatrix Rotate(TVector3 axis_, float angle_);
 
         static TMatrix RotateX(float angle_);
 
@@ -57,9 +57,11 @@ namespace NerdThings::Ngine {
 
         static TMatrix Scale(float x, float y, float z);
 
+        std::unique_ptr<float[]> ToFloatArray();
+
         [[nodiscard]] float Trace() const;
 
-        static TMatrix Translate(Vector3 translation_);
+        static TMatrix Translate(TVector3 translation_);
 
         static TMatrix Translate(float x_, float y_, float z_);
 

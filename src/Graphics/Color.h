@@ -57,42 +57,42 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the red value as a float
          */
-        [[nodiscard]] float RedFloat() const;
+        [[nodiscard]] float RedF() const;
 
         /*
          * Get the green value as a float
          */
-        [[nodiscard]] float GreenFloat() const;
+        [[nodiscard]] float GreenF() const;
 
         /*
          * Get the blue value as a float
          */
-        [[nodiscard]] float BlueFloat() const;
+        [[nodiscard]] float BlueF() const;
 
         /*
          * Get the alpha value as a float
          */
-        [[nodiscard]] float AlphaFloat() const;
+        [[nodiscard]] float AlphaF() const;
 
         /*
          * Get the red value as an int
          */
-        [[nodiscard]] int RedInt() const;
+        [[nodiscard]] int RedI() const;
 
         /*
          * Get the green value as an int
          */
-        [[nodiscard]] int GreenInt() const;
+        [[nodiscard]] int GreenI() const;
 
         /*
          * Get the blue value as an int
          */
-        [[nodiscard]] int BlueInt() const;
+        [[nodiscard]] int BlueI() const;
 
         /*
          * Get the alpha value as an int
          */
-        [[nodiscard]] int AlphaInt() const;
+        [[nodiscard]] int AlphaI() const;
 
         #ifdef INCLUDE_RAYLIB
         /*

@@ -35,35 +35,35 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    float TColor::RedFloat() const {
+    float TColor::RedF() const {
         return static_cast<unsigned char>(PackedValue) / 255.0f;
     }
 
-    float TColor::GreenFloat() const {
+    float TColor::GreenF() const {
         return static_cast<unsigned char>(PackedValue >> 8) / 255.0f;
     }
 
-    float TColor::BlueFloat() const {
+    float TColor::BlueF() const {
         return static_cast<unsigned char>(PackedValue >> 16) / 255.0f;
     }
 
-    float TColor::AlphaFloat() const {
+    float TColor::AlphaF() const {
         return static_cast<unsigned char>(PackedValue >> 24) / 255.0f;
     }
 
-    int TColor::RedInt() const {
+    int TColor::RedI() const {
         return static_cast<unsigned char>(PackedValue);
     }
 
-    int TColor::GreenInt() const {
+    int TColor::GreenI() const {
         return static_cast<unsigned char>(PackedValue >> 8);
     }
 
-    int TColor::BlueInt() const {
+    int TColor::BlueI() const {
         return static_cast<unsigned char>(PackedValue >> 16);
     }
 
-    int TColor::AlphaInt() const {
+    int TColor::AlphaI() const {
         return static_cast<unsigned char>(PackedValue >> 24);
     }
 

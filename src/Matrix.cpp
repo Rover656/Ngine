@@ -77,7 +77,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::LookAt(Vector3 eye_, Vector3 target_, Vector3 up_) {
+    TMatrix TMatrix::LookAt(TVector3 eye_, TVector3 target_, TVector3 up_) {
         // TODO: Vector3 math
         /*TMatrix result = { 0 };
 
@@ -147,7 +147,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Rotate(const Vector3 axis_, const float angle_) {
+    TMatrix TMatrix::Rotate(const TVector3 axis_, const float angle_) {
         TMatrix result = {0};
 
         auto x = axis_.X, y = axis_.Y, z = axis_.Z;
@@ -241,12 +241,34 @@ namespace NerdThings::Ngine {
         return result;
     }
 
+    std::unique_ptr<float[]> TMatrix::ToFloatArray() {
+        auto buffer = std::make_unique<float[]>(16);
+        buffer[0] = M0;
+        buffer[1] = M1;
+        buffer[2] = M2;
+        buffer[3] = M3;
+        buffer[4] = M4;
+        buffer[5] = M5;
+        buffer[6] = M6;
+        buffer[7] = M7;
+        buffer[8] = M8;
+        buffer[9] = M9;
+        buffer[10] = M10;
+        buffer[11] = M11;
+        buffer[12] = M12;
+        buffer[13] = M13;
+        buffer[14] = M14;
+        buffer[15] = M15;
+
+        return buffer;
+    }
+
     float TMatrix::Trace() const {
         const auto result = (M0 + M5 + M10 + M15);
         return result;
     }
 
-    TMatrix TMatrix::Translate(Vector3 translation_) {
+    TMatrix TMatrix::Translate(TVector3 translation_) {
         return Translate(translation_.X, translation_.Y, translation_.Z);
     }
 

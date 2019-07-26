@@ -88,7 +88,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         int CCounter;
         std::unique_ptr<float[]> Vertices;
         std::unique_ptr<float[]> TexCoords;
-        std::unique_ptr<unsigned char[]> Colors;
+        std::unique_ptr<float[]> Colors;
 #if defined(GRAPHICS_OPENGL33)
         std::unique_ptr<unsigned int[]> Indices;
 #elif defined(GRAPHICS_OPENGLES2)
