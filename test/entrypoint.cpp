@@ -193,6 +193,23 @@ public:
     }
 };
 
+// THIS IS DANGEROUS, DO NOT DO THIS IN PRODUCTION
+#include <Graphics/OpenGL/OpenGL.h>
+
+// Define rectangle
+float vertices[] = {
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
+};
+float colors[] = {
+        1.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.5f, 1.0f
+};
+
 class TestScene : public Scene {
 public:
     TCamera cam;
@@ -247,6 +264,13 @@ public:
         //Renderer::DrawFPS({500, 300 });
 
         //widg.Draw();
+
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+        for (auto i = 0; i < 4; i++) {
+            OpenGL::GL::Color({colors[4*i], colors[4*i + 1], colors[4*i + 2], colors[4*i + 3]});
+            OpenGL::GL::Vertex({vertices[3*i], vertices[3*i + 1], vertices[3*i + 2]});
+        }
+        OpenGL::GL::End();
 
         testTiles->Draw({100, 100});
     }

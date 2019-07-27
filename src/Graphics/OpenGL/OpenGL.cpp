@@ -167,7 +167,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
                 // Bind vertex attrib: color (shader-location = 3)
                 _VertexData[_CurrentBuffer].VBO[2]->Bind();
-                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_FLOAT, 0, 0, nullptr);
                 glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR]);
 
                 _VertexData[_CurrentBuffer].VBO[3]->Bind();
@@ -280,7 +280,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             _VertexData[i].VBO[2] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
             _VertexData[i].VBO[2]->SetData(_VertexData[i].Colors.get(), sizeof(float) * 4 * 4 * MAX_BATCH_ELEMENTS);
             glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR]);
-            glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+            glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_FLOAT, 0, 0, nullptr);
 
             _VertexData[i].VBO[3] = std::make_unique<GLBuffer>(BUFFER_INDEX, USAGE_STATIC);
 #if defined(GRAPHICS_OPENGL33)
