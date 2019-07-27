@@ -265,12 +265,14 @@ public:
 
         //widg.Draw();
 
-        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
-        for (auto i = 0; i < 4; i++) {
-            OpenGL::GL::Color({colors[4*i], colors[4*i + 1], colors[4*i + 2], colors[4*i + 3]});
-            OpenGL::GL::Vertex({vertices[3*i], vertices[3*i + 1], vertices[3*i + 2]});
-        }
-        OpenGL::GL::End();
+//        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+//        for (auto i = 0; i < 4; i++) {
+//            OpenGL::GL::Color({colors[4*i], colors[4*i + 1], colors[4*i + 2], colors[4*i + 3]});
+//            OpenGL::GL::Vertex({vertices[3*i], vertices[3*i + 1], vertices[3*i + 2]});
+//        }
+//        OpenGL::GL::End();
+
+        Renderer::DrawLine({0, 0}, {1920, 1080}, TColor::Pink);
 
         testTiles->Draw({100, 100});
     }
@@ -315,7 +317,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLin
     #else
 int main() {
     #endif
-    auto game = new TestGame(1280, 768, 60, 60, "Hi");
+    auto game = new TestGame(1920/2, 1080/2, 60, 60, "Hi");
     game->Run();
     delete game;
     return 0;

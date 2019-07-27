@@ -15,14 +15,16 @@
 #include "OpenGL/OpenGL.h"
 #endif
 
+#include "GraphicsManager.h"
+
 namespace NerdThings::Ngine::Graphics {
     // OpenGL Implementation
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 
     void Renderer::BeginDrawing() {
-        // Load identity matrix
-        OpenGL::GL::LoadIdentity();
+        // Setup framebuffer
+        GraphicsManager::SetupFramebuffer();
     }
 
     void Renderer::Clear(TColor color_) {
@@ -34,11 +36,23 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::DrawPixel(TVector2 position_, TColor color_) {
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_LINES);
 
+        OpenGL::GL::Color(color_);
+        OpenGL::GL::Vertex(position_);
+        OpenGL::GL::Vertex(TVector2(position_.X + 1, position_.Y + 1));
+
+        OpenGL::GL::End();
     }
 
     void Renderer::DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_, float thickness_) {
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_LINES);
 
+        OpenGL::GL::Color(color_);
+        OpenGL::GL::Vertex(startPos_);
+        OpenGL::GL::Vertex(endPos_);
+
+        OpenGL::GL::End();
     }
 
     void Renderer::DrawLineStrip(std::vector<TVector2> points_, TColor color_) {

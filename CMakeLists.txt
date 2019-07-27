@@ -15,7 +15,7 @@ project("Ngine")
 
 # Options
 option(BUILD_TEST "Build the test program." ON)
-option(BUILD_SHARED "Build as a shared library" ON)
+option(BUILD_SHARED "Build as a shared library" OFF)
 enum_option(PLATFORM "Desktop;UWP" "Platform to build for.")
 enum_option(OPENGL_VERSION "3.3;ES2" "Preferred OpenGL Version.")
 

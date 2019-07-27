@@ -44,8 +44,8 @@ namespace NerdThings::Ngine {
         _Height = height_;
 #elif defined(PLATFORM_UWP)
     void Window::UpdateWindowSize(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ args) {
-        _Width = args->Size.Width;
-        _Height = args->Size.Height;
+        eglQuerySurface(display, surface, EGL_WIDTH, &_Width);
+        eglQuerySurface(display, surface, EGL_HEIGHT, &_Height);
 #endif
     }
 
@@ -116,6 +116,9 @@ namespace NerdThings::Ngine {
 
         // Set resize callback
         glfwSetWindowSizeCallback((GLFWwindow *)_WindowPtr, (void(*)(GLFWwindow*, int, int))Window::UpdateWindowSize);
+
+        // Get initial size
+        glfwGetWindowSize((GLFWwindow *)_WindowPtr, &_Width, &_Height);
 
         // Use new context
         glfwMakeContextCurrent((GLFWwindow*) _WindowPtr);
@@ -300,16 +303,13 @@ namespace NerdThings::Ngine {
         }
 
         // Get EGL display window size
-        eglQuerySurface(display, surface, EGL_WIDTH, &width_);
-        eglQuerySurface(display, surface, EGL_HEIGHT, &height_);
+        eglQuerySurface(display, surface, EGL_WIDTH, &_Width);
+        eglQuerySurface(display, surface, EGL_HEIGHT, &_Height);
 
         if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
         {
             throw std::runtime_error("Unable to attach EGL rendering context to EGL surface");
         }
-
-        // Resize callback
-        UWPWindow->SizeChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow^, Windows::UI::Core::WindowSizeChangedEventArgs^>(&Window::UpdateWindowSize);
 #endif
     }
 

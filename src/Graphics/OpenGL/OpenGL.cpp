@@ -401,7 +401,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     void GL::Ortho(float left_, float right_, float bottom_, float top_, float znear_, float zfar_) {
-
+        auto matrixOrtho = TMatrix::Orthographic(left_, right_, bottom_, top_, znear_, zfar_);
+        *_CurrentMatrix = *_CurrentMatrix * matrixOrtho;
     }
 
     void GL::PopMatrix() {

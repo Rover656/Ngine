@@ -28,12 +28,35 @@ namespace NerdThings::Ngine::Graphics {
          */
         static std::vector<TRenderTarget> _RenderTargetStack;
 
+        // General Rendering Fields
+
+        static unsigned int _CurrentHeight;
+
+        static unsigned int _CurrentWidth;
+
         // Render Target Related Private Methods
 
         static void EndRenderTarget();
 
         static void UseRenderTarget(const TRenderTarget &target_);
     public:
+        // General Rendering Methods
+
+        /*
+         * Gets the current render width
+         */
+        static unsigned int GetCurrentWidth();
+
+        /*
+         * Gets the current render height
+         */
+        static unsigned int GetCurrentHeight();
+
+        /*
+         * Loads the default orthographic matrix and viewport.
+         */
+        static void SetupFramebuffer();
+
         // Render Target Related Methods
 
         /*

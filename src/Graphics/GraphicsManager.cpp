@@ -22,6 +22,11 @@ namespace NerdThings::Ngine::Graphics {
 
     std::vector<TRenderTarget> GraphicsManager::_RenderTargetStack;
 
+    // General Rendering Fields
+
+    unsigned int GraphicsManager::_CurrentHeight = 0;
+    unsigned int GraphicsManager::_CurrentWidth = 0;
+
     // Render Target Related Private Methods
 
     void GraphicsManager::EndRenderTarget() {
@@ -32,25 +37,52 @@ namespace NerdThings::Ngine::Graphics {
         // Stop using target
         OpenGL::GLFramebuffer::Unbind();
 
-        // Set viewport
-        OpenGL::GL::Viewport(0, 0, Window::GetWidth(), Window::GetHeight());
+        // Setup framebuffer
+        _CurrentWidth = Window::GetWidth();
+        _CurrentHeight = Window::GetHeight();
+        SetupFramebuffer();
 #endif
     }
 
     void GraphicsManager::UseRenderTarget(const TRenderTarget &target_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-        // Use target
-        target_.InternalFramebuffer->Bind();
-
         // Force draw
         OpenGL::GL::Draw();
 
-        // Stop using target
-        OpenGL::GLFramebuffer::Unbind();
+        // Use target
+        target_.InternalFramebuffer->Bind();
+
+        // Setup framebuffer
+        _CurrentWidth = target_.Width;
+        _CurrentHeight = target_.Height;
+        SetupFramebuffer();
+#endif
+    }
+
+    // General Rendering Methods
+
+    unsigned int GraphicsManager::GetCurrentWidth() {
+        return _CurrentWidth;
+    }
+
+    unsigned int GraphicsManager::GetCurrentHeight() {
+        return _CurrentHeight;
+    }
+
+    void GraphicsManager::SetupFramebuffer() {
+        if (_RenderTargetStack.empty()) {
+            // We are rendering straight to the window, update width and height
+            _CurrentWidth = Window::GetWidth();
+            _CurrentHeight = Window::GetHeight();
+        }
 
         // Set viewport
-        OpenGL::GL::Viewport(0, 0, target_.Width, target_.Height);
-#endif
+        OpenGL::GL::Viewport(0, 0, (float)_CurrentWidth, (float)_CurrentHeight);
+
+        // Start new matrix with orthographic applied
+        OpenGL::GL::MatrixMode(OpenGL::MATRIX_PROJECTION);
+        OpenGL::GL::LoadIdentity();
+        OpenGL::GL::Ortho(0, (float)_CurrentWidth, (float)_CurrentHeight, 0, -1, 1);
     }
 
     // Render Target Related Methods
