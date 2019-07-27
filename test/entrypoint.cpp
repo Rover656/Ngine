@@ -1,5 +1,4 @@
-#define INCLUDE_WINDOWS
-#include "ngine.h"
+#include <ngine.h>
 
 #include <Audio/AudioManager.h>
 #include <Audio/Music.h>

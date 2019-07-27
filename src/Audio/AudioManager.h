@@ -14,7 +14,7 @@
 
 #include "../ngine.h"
 
-#include "EventHandler.h"
+#include "../EventHandler.h"
 #include "Music.h"
 #include "Sound.h"
 

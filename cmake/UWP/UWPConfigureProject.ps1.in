@@ -1,4 +1,10 @@
-# Configure to add reference tp ANGLE.WindowsStore
+# Look for reference first, if we have it don't do anything
+$text = (get-content (Resolve-Path "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcxproj"))
+if ($text -like '*ANGLE.WindowsStore.2.1.13*') {
+    exit
+}
+
+# Configure to add reference to ANGLE.WindowsStore
 
 $xml = [xml](get-content (Resolve-Path "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcxproj"))
 
