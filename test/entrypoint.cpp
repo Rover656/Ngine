@@ -244,7 +244,7 @@ public:
         //     Renderer::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
         // }
 
-        Renderer::DrawFPS({500, 300 });
+        //Renderer::DrawFPS({500, 300 });
 
         //widg.Draw();
 

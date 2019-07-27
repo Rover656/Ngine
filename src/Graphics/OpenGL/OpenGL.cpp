@@ -89,7 +89,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     int GL::_CurrentBuffer = 0;
     float GL::_CurrentDepth = -1.0f;
-    std::unique_ptr<GLDrawCall[]> _DrawCalls = nullptr; // TODO: Is this the best type to use??
+    std::unique_ptr<GLDrawCall[]> GL::_DrawCalls = nullptr; // TODO: Is this the best type to use??
     int GL::_DrawCounter = 0;
     GLDynamicBuffer GL::_VertexData[];
 

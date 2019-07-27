@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Active music streams
          */
-        static std::vector<std::shared_ptr<TMusic>> _ActiveMusic;
+        static std::vector<TMusic> _ActiveMusic;
 
         /*
          * Whether or not the device is initialized
@@ -47,12 +47,12 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Get the length of a music stream
          */
-        static float GetMusicLength(std::shared_ptr<TMusic> mus_);
+        static float GetMusicLength(TMusic mus_);
 
         /*
          * Get the amount of time of a music stream played
          */
-        static float GetMusicTimePlayed(std::shared_ptr<TMusic> mus_);
+        static float GetMusicTimePlayed(TMusic mus_);
 
         /*
          * Init audio device.
@@ -63,12 +63,12 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Is music stream playing
          */
-        static bool IsPlaying(std::shared_ptr<TMusic> mus_);
+        static bool IsPlaying(TMusic mus_);
 
         /*
          * Is sound playing
          */
-        static bool IsPlaying(std::shared_ptr<TSound> snd_);
+        static bool IsPlaying(TSound snd_);
 
         /*
          * Is the device ready
@@ -78,22 +78,22 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Pause music stream
          */
-        static void Pause(std::shared_ptr<TMusic> mus_);
+        static void Pause(TMusic mus_);
 
         /*
          * Pause a sound
          */
-        static void Pause(std::shared_ptr<TSound> snd_);
+        static void Pause(TSound snd_);
 
         /*
          * Play music stream
          */
-        static void Play(std::shared_ptr<TMusic> mus_);
+        static void Play(TMusic mus_);
 
         /*
          * Play a sound
          */
-        static void Play(std::shared_ptr<TSound> snd_);
+        static void Play(TSound snd_);
 
         /*
          * Set the master volume
@@ -103,37 +103,37 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Set music stream loop count
          */
-        static void SetLoopCount(std::shared_ptr<TMusic> mus_, int loops_);
+        static void SetLoopCount(TMusic mus_, int loops_);
 
         /*
          * Set music stream pitch
          */
-        static void SetPitch(std::shared_ptr<TMusic> mus_, float pitch_);
+        static void SetPitch(TMusic mus_, float pitch_);
 
         /*
          * Set sound pitch
          */
-        static void SetPitch(std::shared_ptr<TSound> snd_, float pitch_);
+        static void SetPitch(TSound snd_, float pitch_);
 
         /*
          * Set music stream volume
          */
-        static void SetVolume(std::shared_ptr<TMusic> mus_, float vol_);
+        static void SetVolume(TMusic mus_, float vol_);
 
         /*
          * Set sound volume
          */
-        static void SetVolume(std::shared_ptr<TSound> snd_, float vol_);
+        static void SetVolume(TSound snd_, float vol_);
 
         /*
          * Stop a music stream
          */
-        static void Stop(std::shared_ptr<TMusic> mus_);
+        static void Stop(TMusic mus_);
 
         /*
          * Stop a sound
          */
-        static void Stop(std::shared_ptr<TSound> snd_);
+        static void Stop(TSound snd_);
 
         /*
          * Update

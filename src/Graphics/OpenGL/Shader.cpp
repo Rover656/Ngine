@@ -83,7 +83,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Validate inputs
         if (fragmentShader_->GetShaderType() != SHADER_FRAGMENT)
             throw std::runtime_error("A fragment shader was not provided.");
-        if (fragmentShader_->GetShaderType() != SHADER_VERTEX)
+        if (vertexShader_->GetShaderType() != SHADER_VERTEX)
             throw std::runtime_error("A vertex shader was not provided.");
 
         // Create program

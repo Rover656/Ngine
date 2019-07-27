@@ -69,14 +69,14 @@ namespace NerdThings::Ngine::UI {
         // Draw geometry
         if (style.DrawDefaults) {
             // Background
-            if (style.BackgroundTexture != nullptr)
+            if (style.BackgroundTexture.IsValid())
                 Graphics::Renderer::DrawTexture(style.BackgroundTexture,
                                                controlBackgroundRect,
                                                {
                                                        0,
                                                        0,
-                                                       static_cast<float>(style.BackgroundTexture->Width),
-                                                       static_cast<float>(style.BackgroundTexture->Height)
+                                                       static_cast<float>(style.BackgroundTexture.Width),
+                                                       static_cast<float>(style.BackgroundTexture.Height)
                                                },
                                                style.BackColor);
             else

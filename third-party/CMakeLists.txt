@@ -21,7 +21,8 @@ set(SUPPORT_FILEFORMAT_FLAC ON CACHE INTERNAL "Support this format" FORCE)
 #add_subdirectory("raylib") # Removed so that it does not break our implementation, this will indefinately break asset loading and sounds while we work on these
 add_subdirectory("Box2D-cmake")
 if (${PLATFORM} MATCHES "Desktop")
-    find_package(OpenGL REQUIRED)
+    # Set GLFW Properties
+    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build glfw as a shared library")
     add_subdirectory(glfw)
 endif()
 

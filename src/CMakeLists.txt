@@ -34,6 +34,9 @@ if (${PLATFORM} MATCHES "Desktop")
     endif()
 
     if (${OPENGL_VERSION} MATCHES "3.3")
+        # We need OpenGL
+        find_package(OpenGL REQUIRED)
+
         # Ngine with native OpenGL
         if (${BUILD_SHARED})
             if (MSVC)

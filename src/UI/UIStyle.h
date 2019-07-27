@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The background texture
          */
-        std::shared_ptr<Graphics::TTexture2D> BackgroundTexture = nullptr;
+        Graphics::TTexture2D BackgroundTexture;
 
         /*
          * Border color

@@ -93,9 +93,10 @@ namespace NerdThings::Ngine::UI::Controls {
 
             auto textSize = _Font->MeasureString(_Text, _FontSize, _FontSpacing);
 
-            if (_Font != nullptr && style.DrawDefaults)
-                Graphics::Renderer::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
-                                                 style.ForeColor); // TODO: Wordwrap option
+            // BIG TODO: Add this support again, i omitted it as idk if we're gonna do it like this
+//            if (_Font != nullptr && style.DrawDefaults)
+//                Graphics::Renderer::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
+//                                                 style.ForeColor); // TODO: Wordwrap option
         }
 
         std::shared_ptr<Graphics::TFont> GetFont() {
