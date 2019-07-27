@@ -42,11 +42,24 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Set color attachment
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RenderTexture->ID, 0);
 
-        // Check this worked
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) throw std::runtime_error("Failed to create framebuffer.");
-
         // Unbind framebuffer
         Unbind();
+
+        // Check this worked
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            // Message about failure
+            ConsoleMessage("Failed to create framebuffer.", "WARN", "GLFramebuffer");
+
+            // Delete texture
+            RenderTexture = nullptr;
+
+            // Delete framebuffer
+            glDeleteFramebuffers(1, &ID);
+
+            // Set ID to 0
+            ID = 0;
+        }
     }
 
     GLFramebuffer::~GLFramebuffer() {

@@ -58,9 +58,9 @@ namespace NerdThings::Ngine {
 #endif
 
         // Set Target FPS
-        // TODO: We need to implement this now...
-        //SetDrawFPS(drawFPS_);
-        //SetUpdateFPS(updateFPS_); // TODO: Second thread for updates???
+        // TODO: We need to implement this now... for now these are just stored numbers
+        SetDrawFPS(drawFPS_);
+        SetUpdateFPS(updateFPS_);
 
         // Register default events
         OnRun.Bind(Input::Mouse::OnGameRun);
@@ -225,6 +225,12 @@ namespace NerdThings::Ngine {
 
             // Finish drawing
             Graphics::Renderer::EndDrawing();
+
+            // Swap buffers
+            Window::SwapBuffers();
+
+            // Poll inputs
+            Window::PollEvents();
 
             // Release thread to CPU (Stops weird idle cpu usage and fps drops)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
