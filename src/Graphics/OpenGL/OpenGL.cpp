@@ -354,19 +354,24 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Load shaders
         auto vertexShader = std::make_shared<GLShader>(vertexShaderSrc, SHADER_VERTEX);
         if (vertexShader->IsDirty()) {
+            ConsoleMessage("Failed to compile internal vertex shader.", "FATAL", "OpenGL");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
 
         auto fragmentShader = std::make_shared<GLShader>(fragmentShaderSrc, SHADER_FRAGMENT);
         if (vertexShader->IsDirty()) {
+            ConsoleMessage("Failed to compile internal fragment shader.", "FATAL", "OpenGL");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
 
         // Load program
         _DefaultShaderProgram = std::make_shared<GLShaderProgram>(fragmentShader, vertexShader);
 
-        if (_DefaultShaderProgram->IsDirty())
+        if (_DefaultShaderProgram->IsDirty()) {
+            ConsoleMessage("Failed to link internal shader.", "FATAL", "OpenGL");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
+        }
+        ConsoleMessage("Loaded internal shader.", "NOTICE", "OpenGL");
     }
 
     void GL::UpdateBuffersDefault() {
@@ -639,6 +644,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Init glad for the first time
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
             glfwTerminate();
+            ConsoleMessage("Failed to init GLAD.", "FATAL", "OpenGL");
             throw std::runtime_error("Failed to init GLAD.");
         }
 #endif
@@ -771,6 +777,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glClearDepth(1.0f);
         ClearColor(TColor(0, 0, 0, 1));
         Clear();
+
+        ConsoleMessage("Finished initializing OpenGL API.", "NOTICE", "OpenGL");
     }
 
     // Other OpenGL Methods
@@ -794,16 +802,65 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         switch (format_) {
 #if defined(GRAPHICS_OPENGLES2)
             // NOTE: on OpenGL ES 2.0 (WebGL), internalFormat must match format and options allowed are: GL_LUMINANCE, GL_RGB, GL_RGBA
-        case UNCOMPRESSED_GRAYSCALE: *glInternalFormat_ = GL_LUMINANCE; *glFormat_ = GL_LUMINANCE; *glType_ = GL_UNSIGNED_BYTE; break;
-        case UNCOMPRESSED_GRAY_ALPHA: *glInternalFormat_ = GL_LUMINANCE_ALPHA; *glFormat_ = GL_LUMINANCE_ALPHA; *glType_ = GL_UNSIGNED_BYTE; break;
-        case UNCOMPRESSED_R5G6B5: *glInternalFormat_ = GL_RGB; *glFormat_ = GL_RGB; *glType_ = GL_UNSIGNED_SHORT_5_6_5; break;
-        case UNCOMPRESSED_R8G8B8: *glInternalFormat_ = GL_RGB; *glFormat_ = GL_RGB; *glType_ = GL_UNSIGNED_BYTE; break;
-        case UNCOMPRESSED_R5G5B5A1: *glInternalFormat_ = GL_RGBA; *glFormat_ = GL_RGBA; *glType_ = GL_UNSIGNED_SHORT_5_5_5_1; break;
-        case UNCOMPRESSED_R4G4B4A4: *glInternalFormat_ = GL_RGBA; *glFormat_ = GL_RGBA; *glType_ = GL_UNSIGNED_SHORT_4_4_4_4; break;
-        case UNCOMPRESSED_R8G8B8A8: *glInternalFormat_ = GL_RGBA; *glFormat_ = GL_RGBA; *glType_ = GL_UNSIGNED_BYTE; break;
-        case UNCOMPRESSED_R32: if (TexFloatSupported) *glInternalFormat_ = GL_LUMINANCE; *glFormat_ = GL_LUMINANCE; *glType_ = GL_FLOAT; break;   // NOTE: Requires extension OES_texture_float
-        case UNCOMPRESSED_R32G32B32: if (TexFloatSupported) *glInternalFormat_ = GL_RGB; *glFormat_ = GL_RGB; *glType_ = GL_FLOAT; break;         // NOTE: Requires extension OES_texture_float
-        case UNCOMPRESSED_R32G32B32A32: if (TexFloatSupported) *glInternalFormat_ = GL_RGBA; *glFormat_ = GL_RGBA; *glType_ = GL_FLOAT; break;    // NOTE: Requires extension OES_texture_float
+        case UNCOMPRESSED_GRAYSCALE:
+            *glInternalFormat_ = GL_LUMINANCE;
+            *glFormat_ = GL_LUMINANCE;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_GRAY_ALPHA:
+            *glInternalFormat_ = GL_LUMINANCE_ALPHA;
+            *glFormat_ = GL_LUMINANCE_ALPHA;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_R5G6B5:
+            *glInternalFormat_ = GL_RGB;
+            *glFormat_ = GL_RGB;
+            *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+            break;
+        case UNCOMPRESSED_R8G8B8:
+            *glInternalFormat_ = GL_RGB;
+            *glFormat_ = GL_RGB;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_R5G5B5A1:
+            *glInternalFormat_ = GL_RGBA;
+            *glFormat_ = GL_RGBA;
+            *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+            break;
+        case UNCOMPRESSED_R4G4B4A4:
+            *glInternalFormat_ = GL_RGBA;
+            *glFormat_ = GL_RGBA;
+            *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+            break;
+        case UNCOMPRESSED_R8G8B8A8:
+            *glInternalFormat_ = GL_RGBA;
+            *glFormat_ = GL_RGBA;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_R32:
+            // NOTE: Requires extension OES_texture_float
+            if (TexFloatSupported) {
+                *glInternalFormat_ = GL_LUMINANCE;
+                *glFormat_ = GL_LUMINANCE;
+                *glType_ = GL_FLOAT;
+            }
+            break;
+        case UNCOMPRESSED_R32G32B32:
+            // NOTE: Requires extension OES_texture_float
+            if (TexFloatSupported) {
+                *glInternalFormat_ = GL_RGB;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_FLOAT;
+            }
+            break;
+        case UNCOMPRESSED_R32G32B32A32:
+            // NOTE: Requires extension OES_texture_float
+            if (TexFloatSupported) {
+                *glInternalFormat_ = GL_RGBA;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_FLOAT;
+            }
+            break;
 #elif defined(GRAPHICS_OPENGL33)
             case UNCOMPRESSED_GRAYSCALE:
                 *glInternalFormat_ = GL_R8;
