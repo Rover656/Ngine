@@ -64,6 +64,12 @@
 #include <unordered_map>
 #include <vector>
 
+#if defined(PLATFORM_UWP)
+// Fix UWP??
+#define NOMINMAX
+#include <Windows.h>
+#endif
+
 #if defined(INCLUDE_BOX2D)
 #include <Box2D/Box2D.h>
 

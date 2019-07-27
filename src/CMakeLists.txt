@@ -40,77 +40,77 @@ if (${PLATFORM} MATCHES "Desktop")
         # Ngine with native OpenGL
         if (${BUILD_SHARED})
             if (MSVC)
-                add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ${VersionFilesOutputVariable} ../third-party/glad/src/glad.c)
+                add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${VersionFilesOutputVariable} ${PROJECT_SOURCE_DIR}/third-party/glad/src/glad.c)
             else()
-                add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ../third-party/glad/src/glad.c)
+                add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ../third-party/glad/src/glad.c)
             endif()
-            target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
+            target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_EXPORTS=1)
         else()
-            add_library(Ngine STATIC ${SOURCE_FILES} ${HEADER_FILES} ../third-party/glad/src/glad.c)
+            add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PROJECT_SOURCE_DIR}/third-party/glad/src/glad.c)
         endif()
 
         # Link OpenGL
-        target_link_libraries(Ngine ${OPENGL_LIBRARIES})
-        target_include_directories(Ngine PRIVATE ${OPENGL_INCLUDE_DIR})
+        target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
+        target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
 
         # Link glfw
-        target_link_libraries(Ngine glfw)
-        target_include_directories(Ngine PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glfw/include)
+        target_link_libraries(${PROJECT_NAME} glfw)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glfw/include)
 
         # Link glad
-        target_include_directories(Ngine PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glad/include)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glad/include)
 
         # Link Box2D
-        target_include_directories(Ngine PRIVATE "../third-party/Box2D-cmake/Box2D")
-        target_link_libraries(Ngine tobanteGaming::Box2D)
+        target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/third-party/Box2D-cmake/Box2D")
+        target_link_libraries(${PROJECT_NAME} tobanteGaming::Box2D)
 
         # Defines
-        target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGL33=1 PLATFORM_DESKTOP=1)
-        target_compile_definitions(Ngine PRIVATE NGINE_BUILD=1) # Used by ngine.h
+        target_compile_definitions(${PROJECT_NAME} PUBLIC GRAPHICS_OPENGL33=1 PLATFORM_DESKTOP=1)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_BUILD=1) # Used by ngine.h
     elseif(${OPENGL_VERSION} MATCHES "ES2")
         # Ngine with ANGLE
         if (${BUILD_SHARED})
             if (MSVC)
-                add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ${VersionFilesOutputVariable})
+                add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${VersionFilesOutputVariable})
             else()
-                add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES})
+                add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
             endif()
-            target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
+            target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_EXPORTS=1)
         else()
-            add_library(Ngine STATIC ${SOURCE_FILES} ${HEADER_FILES})
+            add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
         endif()
 
         # Link glfw
-        target_link_libraries(Ngine glfw)
-        target_include_directories(Ngine PRIVATE ../third-party/glfw/include)
+        target_link_libraries(${PROJECT_NAME} glfw)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glfw/include)
 
         # Link ANGLE
-        target_link_libraries(Ngine ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
-        target_include_directories(Ngine PRIVATE ${PROJECT_SOURCE_DIR}/third-party/ANGLE)
+        target_link_libraries(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/ANGLE)
 
         # Link Box2D
-        target_include_directories(Ngine PRIVATE "../third-party/Box2D-cmake/Box2D")
-        target_link_libraries(Ngine tobanteGaming::Box2D)
+        target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/third-party/Box2D-cmake/Box2D")
+        target_link_libraries(${PROJECT_NAME} tobanteGaming::Box2D)
 
         # Defines
-        target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGLES2=1 PLATFORM_DESKTOP=1)
-        target_compile_definitions(Ngine PRIVATE NGINE_BUILD=1) # Used by ngine.h
+        target_compile_definitions(${PROJECT_NAME} PUBLIC GRAPHICS_OPENGLES2=1 PLATFORM_DESKTOP=1)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_BUILD=1) # Used by ngine.h
 
         # Copy dependant dlls
         add_custom_command(TARGET Ngine POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
-                $<TARGET_FILE_DIR:Ngine>)
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
         add_custom_command(TARGET Ngine POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
-                $<TARGET_FILE_DIR:Ngine>)
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
         add_custom_command(TARGET Ngine POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
-                $<TARGET_FILE_DIR:Ngine>)
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>)
     endif()
 elseif(${PLATFORM} MATCHES "UWP")
     # THIS SHOULD BE BUILT WITH A PROVIDED SCRIPT, NOT WITH CMAKE!! PROCEED AT YOUR OWN RISK
@@ -124,5 +124,37 @@ elseif(${PLATFORM} MATCHES "UWP")
         message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_VERSION=10.0")
     endif()
 
-    # TODO: UWP Specific setup
+    # Source groups
+    source_group("Source Files" FILES ${SOURCE_FILES})
+    source_group("Header Files" FILES ${HEADER_FILES})
+
+    # Add executable
+    if (${BUILD_SHARED})
+        add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
+        target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_EXPORTS=1)
+    else()
+        add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+    endif()
+
+    set_property(TARGET ${PROJECT_NAME} PROPERTY VS_WINRT_COMPONENT TRUE) # TODO: Is this required?
+
+    # Defined
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GRAPHICS_OPENGLES2=1 PLATFORM_UWP=1)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_BUILD=1) # Used by ngine.h
+
+    # Link Box2D
+    target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/third-party/Box2D-cmake/Box2D")
+    target_link_libraries(${PROJECT_NAME} tobanteGaming::Box2D)
+
+    # Use ANGLE
+    target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/third-party/ANGLE)
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/packages.config.in
+            ${CMAKE_BINARY_DIR}/packages.config COPYONLY)
+
+    # Configure the script ready for the project mod
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureProject.ps1.in
+            ${CMAKE_BINARY_DIR}/UWPConfigureProject.ps1)
+
+    # Restore NuGet
+    execute_process(COMMAND ${PROJECT_SOURCE_DIR}/redist/nuget.exe restore -SolutionDirectory ${CMAKE_BINARY_DIR})
 endif()
