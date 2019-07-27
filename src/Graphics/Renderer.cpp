@@ -11,6 +11,8 @@
 
 #include "Renderer.h"
 
+#include <utility>
+
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
 #include "OpenGL/OpenGL.h"
 #endif
@@ -46,13 +48,19 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_, float thickness_) {
-        OpenGL::GL::Begin(OpenGL::PRIMITIVE_LINES);
+        if (thickness_ < 0) thickness_ = -thickness_; // Cheeky liddle fix
+        if (thickness_ == 1.0f) {
+            // More basic, less math
+            OpenGL::GL::Begin(OpenGL::PRIMITIVE_LINES);
 
-        OpenGL::GL::Color(color_);
-        OpenGL::GL::Vertex(startPos_);
-        OpenGL::GL::Vertex(endPos_);
+            OpenGL::GL::Color(color_);
+            OpenGL::GL::Vertex(startPos_);
+            OpenGL::GL::Vertex(endPos_);
 
-        OpenGL::GL::End();
+            OpenGL::GL::End();
+        } else {
+            // TODO: Thickness option
+        }
     }
 
     void Renderer::DrawLineStrip(std::vector<TVector2> points_, TColor color_) {
@@ -170,30 +178,82 @@ namespace NerdThings::Ngine::Graphics {
 
     }
 
-    void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin,
+    void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
                                float rotation_) {
-
+        DrawTexture(texture_, {0, 0, (float)texture_.Width, (float)texture_.Height}, position_, texture_.Width, texture_.Height, color_, origin_, rotation_);
     }
 
     void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, float width_, float height_, TColor color_,
                                TVector2 origin_, float rotation_) {
-
+        DrawTexture(texture_, {0, 0, (float)texture_.Width, (float)texture_.Height}, position_, width_, height_, color_, origin_, rotation_);
     }
 
     void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
                                TVector2 origin_, float rotation_) {
-
+        DrawTexture(texture_, sourceRectangle_, position_, texture_.Width, texture_.Height, color_, origin_, rotation_);
     }
 
     void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
                                float height_, TColor color_, TVector2 origin_, float rotation_) {
-
+        DrawTexture(std::move(texture_), {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
     }
 
     void
     Renderer::DrawTexture(TTexture2D texture_, TRectangle destRectangle_, TRectangle sourceRectangle_, TColor color_,
                           TVector2 origin_, float rotation_) {
+        // Raylib implementation
+        if (texture_.IsValid()) {
+            float width = (float)texture_.Width;
+            float height = (float)texture_.Height;
 
+            bool flipX = false;
+
+            if (sourceRectangle_.Width < 0) {
+                flipX = true;
+                sourceRectangle_.Width *= -1;
+            }
+
+            if (sourceRectangle_.Height < 0) {
+                sourceRectangle_.Y -= sourceRectangle_.Height;
+            }
+
+            OpenGL::GL::UseTexture(texture_.InternalTexture);
+
+            OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
+            OpenGL::GL::PushMatrix();
+
+            OpenGL::GL::Translate({destRectangle_.X, destRectangle_.Y, 0.0f});
+            OpenGL::GL::Rotate(rotation_, {0.0f, 0.0f, 1.0f});
+            OpenGL::GL::Translate({-origin_.X, -origin_.Y, 0.0f});
+
+            OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
+            OpenGL::GL::Color(color_);
+
+            // Bottom-left corner for texture and quad
+            if (flipX) OpenGL::GL::TexCoord({(sourceRectangle_.X + sourceRectangle_.Width)/width, sourceRectangle_.Y/height});
+            else OpenGL::GL::TexCoord({sourceRectangle_.X/width, sourceRectangle_.Y/height});
+            OpenGL::GL::Vertex(TVector2(0.0f, 0.0f));
+
+            // Bottom-right corner for texture and quad
+            if (flipX) OpenGL::GL::TexCoord({(sourceRectangle_.X + sourceRectangle_.Width)/width, (sourceRectangle_.Y + sourceRectangle_.Height)/height});
+            else OpenGL::GL::TexCoord({sourceRectangle_.X/width, (sourceRectangle_.Y + sourceRectangle_.Height)/height});
+            OpenGL::GL::Vertex(TVector2(0.0f, destRectangle_.Height));
+
+            // Top-right corner for texture and quad
+            if (flipX) OpenGL::GL::TexCoord({sourceRectangle_.X/width, (sourceRectangle_.Y + sourceRectangle_.Height)/height});
+            else OpenGL::GL::TexCoord({(sourceRectangle_.X + sourceRectangle_.Width)/width, (sourceRectangle_.Y + sourceRectangle_.Height)/height});
+            OpenGL::GL::Vertex(TVector2(destRectangle_.Width, destRectangle_.Height));
+
+            // Top-left corner for texture and quad
+            if (flipX) OpenGL::GL::TexCoord({sourceRectangle_.X/width, sourceRectangle_.Y/height});
+            else OpenGL::GL::TexCoord({(sourceRectangle_.X + sourceRectangle_.Width)/width, sourceRectangle_.Y/height});
+            OpenGL::GL::Vertex(TVector2(destRectangle_.Width, 0.0f));
+
+            OpenGL::GL::End();
+
+            OpenGL::GL::PopMatrix();
+        }
     }
 
     void Renderer::DrawTriangle(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_) {

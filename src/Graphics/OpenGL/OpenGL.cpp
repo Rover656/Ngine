@@ -1,21 +1,26 @@
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+
 #include "OpenGL.h"
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL33)
+
 #include <glad/glad.h>
+
 #elif defined(GRAPHICS_OPENGLES2)
-    #define GL_KHR_debug 0
-    #define GL_GLEXT_PROTOTYPES 1 // UWP???
-    #include <GLES2/gl2.h>
-    #include <GLES2/gl2ext.h>
-    #include <EGL/egl.h>
+#define GL_KHR_debug 0
+#define GL_GLEXT_PROTOTYPES 1 // UWP???
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <EGL/egl.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-    #include <GLFW/glfw3.h>
+
+#include <GLFW/glfw3.h>
+
 #elif defined(PLATFORM_UWP)
-    #include <angle_windowsstore.h>
+#include <angle_windowsstore.h>
 #endif
 
 #include <cstring>
@@ -69,8 +74,8 @@
 
 #if defined(GRAPHICS_OPENGLES2)
 #define glClearDepth                glClearDepthf
-    #define GL_READ_FRAMEBUFFER         GL_FRAMEBUFFER
-    #define GL_DRAW_FRAMEBUFFER         GL_FRAMEBUFFER
+#define GL_READ_FRAMEBUFFER         GL_FRAMEBUFFER
+#define GL_DRAW_FRAMEBUFFER         GL_FRAMEBUFFER
 #endif
 
 // GLES2 extensions
@@ -157,17 +162,20 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             else {
                 // Bind vertex attrib: position (shader-location = 0)
                 _VertexData[_CurrentBuffer].VBO[0]->Bind();
-                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION], 3, GL_FLOAT, 0, 0, nullptr);
+                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION], 3, GL_FLOAT, 0, 0,
+                                      nullptr);
                 glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION]);
 
                 // Bind vertex attrib: texcoord (shader-location = 1)
                 _VertexData[_CurrentBuffer].VBO[1]->Bind();
-                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD], 2, GL_FLOAT, 0, 0, nullptr);
+                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD], 2, GL_FLOAT, 0, 0,
+                                      nullptr);
                 glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD]);
 
                 // Bind vertex attrib: color (shader-location = 3)
                 _VertexData[_CurrentBuffer].VBO[2]->Bind();
-                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_FLOAT, 0, 0, nullptr);
+                glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_FLOAT, 0, 0,
+                                      nullptr);
                 glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR]);
 
                 _VertexData[_CurrentBuffer].VBO[3]->Bind();
@@ -176,6 +184,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             glActiveTexture(GL_TEXTURE0);
 
             for (auto i = 0; i < _DrawCounter; i++) {
+                if (_DrawCalls[i].Texture == nullptr) continue;
                 _DrawCalls[i].Texture->Bind();
 
                 if ((_DrawCalls[i].Mode == PRIMITIVE_LINES) || (_DrawCalls[i].Mode == PRIMITIVE_TRIANGLES))
@@ -270,12 +279,14 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             _VertexData[i].VBO[0] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
             _VertexData[i].VBO[0]->SetData(_VertexData[i].Vertices.get(), sizeof(float) * 3 * 4 * MAX_BATCH_ELEMENTS);
             glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION]);
-            glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION], 3, GL_FLOAT, 0, 0, nullptr);
+            glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION], 3, GL_FLOAT, 0, 0,
+                                  nullptr);
 
             _VertexData[i].VBO[1] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
             _VertexData[i].VBO[1]->SetData(_VertexData[i].TexCoords.get(), sizeof(float) * 2 * 4 * MAX_BATCH_ELEMENTS);
             glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD]);
-            glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD], 2, GL_FLOAT, 0, 0, nullptr);
+            glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD], 2, GL_FLOAT, 0, 0,
+                                  nullptr);
 
             _VertexData[i].VBO[2] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
             _VertexData[i].VBO[2]->SetData(_VertexData[i].Colors.get(), sizeof(float) * 4 * 4 * MAX_BATCH_ELEMENTS);
@@ -295,12 +306,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Shader sources
         std::string vertexShaderSrc =
 #if defined(GRAPHICS_OPENGLES2)
-                "#version 100\n"
-                "attribute vec3 vertexPosition;\n"
-                "attribute vec2 vertexTexCoord;\n"
-                "attribute vec4 vertexColor;\n"
-                "varying vec2 fragTexCoord;\n"
-                "varying vec4 fragColor;\n"
+        "#version 100\n"
+        "attribute vec3 vertexPosition;\n"
+        "attribute vec2 vertexTexCoord;\n"
+        "attribute vec4 vertexColor;\n"
+        "varying vec2 fragTexCoord;\n"
+        "varying vec4 fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
                 "#version 330\n"
                 "in vec3 vertexPosition;\n"
@@ -318,10 +329,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "}\n";
         std::string fragmentShaderSrc =
 #if defined(GRAPHICS_OPENGLES2)
-                "#version 100\n"
-                "precision mediump float;\n"
-                "varying vec2 fragTexCoord;\n"
-                "varying vec4 fragColor;\n"
+        "#version 100\n"
+        "precision mediump float;\n"
+        "varying vec2 fragTexCoord;\n"
+        "varying vec4 fragColor;\n"
 #else
                 "#version 330\n"
                 "in vec2 fragTexCoord;\n"
@@ -365,13 +376,16 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
             // Vertex positions buffer
             _VertexData[_CurrentBuffer].VBO[0]->Bind();
-            _VertexData[_CurrentBuffer].VBO[0]->SetData(_VertexData[_CurrentBuffer].Vertices.get(), sizeof(float)*3*4*MAX_BATCH_ELEMENTS);
+            _VertexData[_CurrentBuffer].VBO[0]->SetData(_VertexData[_CurrentBuffer].Vertices.get(),
+                                                        sizeof(float) * 3 * 4 * MAX_BATCH_ELEMENTS);
 
             _VertexData[_CurrentBuffer].VBO[1]->Bind();
-            _VertexData[_CurrentBuffer].VBO[1]->SetData(_VertexData[_CurrentBuffer].TexCoords.get(), sizeof(float)*2*4*MAX_BATCH_ELEMENTS);
+            _VertexData[_CurrentBuffer].VBO[1]->SetData(_VertexData[_CurrentBuffer].TexCoords.get(),
+                                                        sizeof(float) * 2 * 4 * MAX_BATCH_ELEMENTS);
 
             _VertexData[_CurrentBuffer].VBO[2]->Bind();
-            _VertexData[_CurrentBuffer].VBO[2]->SetData(_VertexData[_CurrentBuffer].Colors.get(), sizeof(float)*4*4*MAX_BATCH_ELEMENTS);
+            _VertexData[_CurrentBuffer].VBO[2]->SetData(_VertexData[_CurrentBuffer].Colors.get(),
+                                                        sizeof(float) * 4 * 4 * MAX_BATCH_ELEMENTS);
         }
     }
 
@@ -382,12 +396,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     void GL::MatrixMode(enum GLMatrixMode mode_) {
-        switch(mode_) {
+        switch (mode_) {
             case MATRIX_MODELVIEW:
                 _CurrentMatrix = &_ModelView;
                 break;
             case MATRIX_PROJECTION:
-                _CurrentMatrix= &_Projection;
+                _CurrentMatrix = &_Projection;
                 break;
             default:
                 throw std::runtime_error("Matrix Mode not supported.");
@@ -456,13 +470,17 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             if (_DrawCalls[_DrawCounter - 1].VertexCount > 0) {
                 if (_DrawCalls[_DrawCounter - 1].Mode == PRIMITIVE_LINES)
                     _DrawCalls[_DrawCounter - 1].VertexAlignment = ((_DrawCalls[_DrawCounter - 1].VertexCount < 4)
-                                                                    ? _DrawCalls[_DrawCounter - 1].VertexCount : _DrawCalls[
-                                                                                                                         _DrawCounter -
-                                                                                                                         1].VertexCount %
-                                                                                                                 4);
+                                                                    ? _DrawCalls[_DrawCounter - 1].VertexCount :
+                                                                    _DrawCalls[
+                                                                            _DrawCounter -
+                                                                            1].VertexCount %
+                                                                    4);
                 else if (_DrawCalls[_DrawCounter - 1].Mode == PRIMITIVE_TRIANGLES)
-                    _DrawCalls[_DrawCounter - 1].VertexAlignment = ((_DrawCalls[_DrawCounter - 1].VertexCount < 4) ? 1 : (
-                            4 - (_DrawCalls[_DrawCounter - 1].VertexCount % 4)));
+                    _DrawCalls[_DrawCounter - 1].VertexAlignment = ((_DrawCalls[_DrawCounter - 1].VertexCount < 4) ? 1
+                                                                                                                   : (
+                                                                            4 -
+                                                                            (_DrawCalls[_DrawCounter - 1].VertexCount %
+                                                                             4)));
                 else _DrawCalls[_DrawCounter - 1].VertexAlignment = 0;
 
                 if (AtBufferLimit(_DrawCalls[_DrawCounter - 1].VertexAlignment)) Draw();
@@ -542,12 +560,46 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         } else throw std::runtime_error("Buffer overflow.");
     }
 
+    void GL::UseTexture(std::shared_ptr<GLTexture> texture_) {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        if (_DrawCalls[_DrawCounter - 1].Texture != texture_) {
+            if (_DrawCalls[_DrawCounter - 1].VertexCount > 0) {
+                // Make sure current vertex count is aligned a multiple of 4,
+                if (_DrawCalls[_DrawCounter - 1].Mode == PRIMITIVE_LINES)
+                    _DrawCalls[_DrawCounter - 1].VertexAlignment = ((_DrawCalls[_DrawCounter - 1].VertexCount < 4)
+                                                                    ? _DrawCalls[_DrawCounter - 1].VertexCount :
+                                                                    _DrawCalls[_DrawCounter - 1].VertexCount % 4);
+                else if (_DrawCalls[_DrawCounter - 1].Mode == PRIMITIVE_TRIANGLES)
+                    _DrawCalls[_DrawCounter - 1].VertexAlignment = ((_DrawCalls[_DrawCounter - 1].VertexCount < 4) ? 1
+                                                                                                                   :
+                                                                           (4 - (_DrawCalls[_DrawCounter -
+                                                                                            1].VertexCount % 4)));
+                else _DrawCalls[_DrawCounter - 1].VertexAlignment = 0;
+
+                if (AtBufferLimit(_DrawCalls[_DrawCounter - 1].VertexAlignment)) Draw();
+                else {
+                    _VertexData[_CurrentBuffer].VCounter += _DrawCalls[_DrawCounter - 1].VertexAlignment;
+                    _VertexData[_CurrentBuffer].CCounter += _DrawCalls[_DrawCounter - 1].VertexAlignment;
+                    _VertexData[_CurrentBuffer].TCCounter += _DrawCalls[_DrawCounter - 1].VertexAlignment;
+
+                    _DrawCounter++;
+                }
+            }
+
+            if (_DrawCounter >= MAX_DRAWCALL_REGISTERED) Draw();
+
+            _DrawCalls[_DrawCounter - 1].Texture = texture_;
+            _DrawCalls[_DrawCounter - 1].VertexCount = 0;
+        }
+#endif
+    }
+
     void GL::Vertex(TVector2 pos_) {
         Vertex({pos_.X, pos_.Y, _CurrentDepth});
     }
 
     void GL::Vertex(TVector3 pos_) {
-        //if (_UseTransformMatrix) pos_ = pos_.Transform(_TransformMatrix); TODO: Support this!!! Time for full TVector3
+        if (_UseTransformMatrix) pos_ = pos_.Transform(_TransformMatrix);
 
         // Verify limit
         if (_VertexData[_CurrentBuffer].VCounter < (MAX_BATCH_ELEMENTS * 4)) {
@@ -585,8 +637,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Init GLAD
 #if defined(GRAPHICS_OPENGL33)
         // Init glad for the first time
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        {
+        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
             glfwTerminate();
             throw std::runtime_error("Failed to init GLAD.");
         }
@@ -609,10 +660,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
 
         // Allocate extensions list
-        const char **extList = new const char*[numExt];
+        const char **extList = new const char *[numExt];
 
         // Get strings
-        for (auto i = 0; i < numExt; i++) extList[i] = (char *)glGetStringi(GL_EXTENSIONS, i);
+        for (auto i = 0; i < numExt; i++) extList[i] = (char *) glGetStringi(GL_EXTENSIONS, i);
 #elif defined(GRAPHICS_OPENGLES2)
         // Allocate 2kb of strings
         const char **extList = new const char*[512];
@@ -659,11 +710,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             // DDS texture compression support
             if ((strcmp(extList[i], "GL_EXT_texture_compression_s3tc") == 0) ||
                 (strcmp(extList[i], "GL_WEBGL_compressed_texture_s3tc") == 0) ||
-                (strcmp(extList[i], "GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0)) TexCompDXTSupported = true;
+                (strcmp(extList[i], "GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0))
+                TexCompDXTSupported = true;
 
             // ETC1 texture compression support
             if ((strcmp(extList[i], "GL_OES_compressed_ETC1_RGB8_texture") == 0) ||
-                (strcmp(extList[i], "GL_WEBGL_compressed_texture_etc1") == 0)) TexCompETC1Supported = true;
+                (strcmp(extList[i], "GL_WEBGL_compressed_texture_etc1") == 0))
+                TexCompETC1Supported = true;
 
             // ETC2/EAC texture compression support
             if (strcmp(extList[i], "GL_ARB_ES3_compatibility") == 0) TexCompETC2Supported = true;
@@ -675,14 +728,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             if (strcmp(extList[i], "GL_KHR_texture_compression_astc_hdr") == 0) TexCompASTCSupported = true;
 
             // Anisotropic texture filter
-            if (strcmp(extList[i], (const char *)"GL_EXT_texture_filter_anisotropic") == 0)
-            {
+            if (strcmp(extList[i], (const char *) "GL_EXT_texture_filter_anisotropic") == 0) {
                 TexAnisotropicFilterSupported = true;
                 glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &MaxAnisotropicLevel);
             }
 
             // Clamp mirror wrap mode supported
-            if (strcmp(extList[i], (const char *)"GL_EXT_texture_mirror_clamp") == 0) TexMirrorClampSupported = true;
+            if (strcmp(extList[i], (const char *) "GL_EXT_texture_mirror_clamp") == 0) TexMirrorClampSupported = true;
         }
 #endif
 
@@ -753,28 +805,90 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         case UNCOMPRESSED_R32G32B32: if (TexFloatSupported) *glInternalFormat_ = GL_RGB; *glFormat_ = GL_RGB; *glType_ = GL_FLOAT; break;         // NOTE: Requires extension OES_texture_float
         case UNCOMPRESSED_R32G32B32A32: if (TexFloatSupported) *glInternalFormat_ = GL_RGBA; *glFormat_ = GL_RGBA; *glType_ = GL_FLOAT; break;    // NOTE: Requires extension OES_texture_float
 #elif defined(GRAPHICS_OPENGL33)
-            case UNCOMPRESSED_GRAYSCALE: *glInternalFormat_ = GL_R8; *glFormat_ = GL_RED; *glType_ = GL_UNSIGNED_BYTE; break;
-            case UNCOMPRESSED_GRAY_ALPHA: *glInternalFormat_ = GL_RG8; *glFormat_ = GL_RG; *glType_ = GL_UNSIGNED_BYTE; break;
-            case UNCOMPRESSED_R5G6B5: *glInternalFormat_ = GL_RGB565; *glFormat_ = GL_RGB; *glType_ = GL_UNSIGNED_SHORT_5_6_5; break;
-            case UNCOMPRESSED_R8G8B8: *glInternalFormat_ = GL_RGB8; *glFormat_ = GL_RGB; *glType_ = GL_UNSIGNED_BYTE; break;
-            case UNCOMPRESSED_R5G5B5A1: *glInternalFormat_ = GL_RGB5_A1; *glFormat_ = GL_RGBA; *glType_ = GL_UNSIGNED_SHORT_5_5_5_1; break;
-            case UNCOMPRESSED_R4G4B4A4: *glInternalFormat_ = GL_RGBA4; *glFormat_ = GL_RGBA; *glType_ = GL_UNSIGNED_SHORT_4_4_4_4; break;
-            case UNCOMPRESSED_R8G8B8A8: *glInternalFormat_ = GL_RGBA8; *glFormat_ = GL_RGBA; *glType_ = GL_UNSIGNED_BYTE; break;
-            case UNCOMPRESSED_R32: if (TexFloatSupported) *glInternalFormat_ = GL_R32F; *glFormat_ = GL_RED; *glType_ = GL_FLOAT; break;
-            case UNCOMPRESSED_R32G32B32: if (TexFloatSupported) *glInternalFormat_ = GL_RGB32F; *glFormat_ = GL_RGB; *glType_ = GL_FLOAT; break;
-            case UNCOMPRESSED_R32G32B32A32: if (TexFloatSupported) *glInternalFormat_ = GL_RGBA32F; *glFormat_ = GL_RGBA; *glType_ = GL_FLOAT; break;
+            case UNCOMPRESSED_GRAYSCALE:
+                *glInternalFormat_ = GL_R8;
+                *glFormat_ = GL_RED;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_GRAY_ALPHA:
+                *glInternalFormat_ = GL_RG8;
+                *glFormat_ = GL_RG;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_R5G6B5:
+                *glInternalFormat_ = GL_RGB565;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+                break;
+            case UNCOMPRESSED_R8G8B8:
+                *glInternalFormat_ = GL_RGB8;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_R5G5B5A1:
+                *glInternalFormat_ = GL_RGB5_A1;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+                break;
+            case UNCOMPRESSED_R4G4B4A4:
+                *glInternalFormat_ = GL_RGBA4;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+                break;
+            case UNCOMPRESSED_R8G8B8A8:
+                *glInternalFormat_ = GL_RGBA8;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_R32:
+                if (TexFloatSupported) *glInternalFormat_ = GL_R32F;
+                *glFormat_ = GL_RED;
+                *glType_ = GL_FLOAT;
+                break;
+            case UNCOMPRESSED_R32G32B32:
+                if (TexFloatSupported) *glInternalFormat_ = GL_RGB32F;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_FLOAT;
+                break;
+            case UNCOMPRESSED_R32G32B32A32:
+                if (TexFloatSupported) *glInternalFormat_ = GL_RGBA32F;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_FLOAT;
+                break;
 #endif
-            case COMPRESSED_DXT1_RGB: if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGB_S3TC_DXT1_EXT; break;
-            case COMPRESSED_DXT1_RGBA: if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT; break;
-            case COMPRESSED_DXT3_RGBA: if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT; break;
-            case COMPRESSED_DXT5_RGBA: if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT; break;
-            case COMPRESSED_ETC1_RGB: if (TexCompETC1Supported) *glInternalFormat_ = GL_ETC1_RGB8_OES; break;                      // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
-            case COMPRESSED_ETC2_RGB: if (TexCompETC2Supported) *glInternalFormat_ = GL_COMPRESSED_RGB8_ETC2; break;               // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
-            case COMPRESSED_ETC2_EAC_RGBA: if (TexCompETC2Supported) *glInternalFormat_ = GL_COMPRESSED_RGBA8_ETC2_EAC; break;     // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
-            case COMPRESSED_PVRT_RGB: if (TexCompPVRTSupported) *glInternalFormat_ = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG; break;    // NOTE: Requires PowerVR GPU
-            case COMPRESSED_PVRT_RGBA: if (TexCompPVRTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG; break;  // NOTE: Requires PowerVR GPU
-            case COMPRESSED_ASTC_4x4_RGBA: if (TexCompASTCSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_4x4_KHR; break;  // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
-            case COMPRESSED_ASTC_8x8_RGBA: if (TexCompASTCSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_8x8_KHR; break;  // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+            case COMPRESSED_DXT1_RGB:
+                if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                break;
+            case COMPRESSED_DXT1_RGBA:
+                if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                break;
+            case COMPRESSED_DXT3_RGBA:
+                if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                break;
+            case COMPRESSED_DXT5_RGBA:
+                if (TexCompDXTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                break;
+            case COMPRESSED_ETC1_RGB:
+                if (TexCompETC1Supported) *glInternalFormat_ = GL_ETC1_RGB8_OES;
+                break;                      // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
+            case COMPRESSED_ETC2_RGB:
+                if (TexCompETC2Supported) *glInternalFormat_ = GL_COMPRESSED_RGB8_ETC2;
+                break;               // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+            case COMPRESSED_ETC2_EAC_RGBA:
+                if (TexCompETC2Supported) *glInternalFormat_ = GL_COMPRESSED_RGBA8_ETC2_EAC;
+                break;     // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+            case COMPRESSED_PVRT_RGB:
+                if (TexCompPVRTSupported) *glInternalFormat_ = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                break;    // NOTE: Requires PowerVR GPU
+            case COMPRESSED_PVRT_RGBA:
+                if (TexCompPVRTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+                break;  // NOTE: Requires PowerVR GPU
+            case COMPRESSED_ASTC_4x4_RGBA:
+                if (TexCompASTCSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+                break;  // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+            case COMPRESSED_ASTC_8x8_RGBA:
+                if (TexCompASTCSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
+                break;  // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             default:
                 throw std::runtime_error("Unsupported format.");
         }

@@ -104,7 +104,7 @@ namespace NerdThings::Ngine {
         /*
          * Start in fullscreen?
          */
-        FULLSCREEN = 2,
+        //FULLSCREEN = 2,
 
         /*
          * Have a resizeable window
@@ -115,32 +115,32 @@ namespace NerdThings::Ngine {
         /*
          * Have a frameless window
          */
-        FRAMELESS_WINDOW = 8,
+        //FRAMELESS_WINDOW = 8,
 
         /*
          * Have a transparent window
          */
-        TRANSPARENT_WINDOW = 16,
+        //TRANSPARENT_WINDOW = 16,
 
         /*
          * 4x Multi-sample Anti-aliasing
          */
-        MSAA_4X = 32,
+        //MSAA_4X = 32,
 
         /*
          * Vertical sync
          */
-        VSYNC = 64,
+        //VSYNC = 64,
 
         /*
          * Start the game with a hidden window
          */
-        HIDDEN_WINDOW = 128,
+        //HIDDEN_WINDOW = 128,
 
         /*
          * Continue running game when minimized
          */
-        ALWAYS_RUN_MINIMIZED = 256,
+        //ALWAYS_RUN_MINIMIZED = 256,
 
         /*
          * Whether or not to maintain the dimensions provided to the game constructor

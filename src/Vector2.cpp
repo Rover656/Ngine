@@ -22,18 +22,6 @@ namespace NerdThings::Ngine {
 
     // Public Fields
 
-#ifdef INCLUDE_RAYLIB
-
-    Vector2 TVector2::ToRaylibVec() const {
-        return {X, Y};
-    }
-
-    TVector2 TVector2::FromRaylibVec(const Vector2 &vec) {
-        return {vec.x, vec.y};
-    }
-
-#endif
-
     TVector2 TVector2::Clamp(TVector2 value_, TVector2 min_, TVector2 max_) {
         return {
                 std::clamp(value_.X, min_.X, max_.X),

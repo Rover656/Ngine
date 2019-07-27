@@ -67,20 +67,6 @@ namespace NerdThings::Ngine {
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to a raylib vector
-         */
-        Vector2 ToRaylibVec() const;
-
-        /*
-         * Convert from a raylib vector
-         */
-        static TVector2 FromRaylibVec(const Vector2 &vec);
-
-        #endif
-
         /*
          * Clamp a vector
          */
@@ -89,23 +75,23 @@ namespace NerdThings::Ngine {
         /*
          * Find the dot product between two vectors
          */
-        [[nodiscard]] float Dot(TVector2 b_) const;
+        float Dot(TVector2 b_) const;
 
         /*
          * Find the distance between two vectors
          */
-        [[nodiscard]] float Distance(TVector2 b_) const;
+        float Distance(TVector2 b_) const;
 
         /*
          * Find the magnitude of a vector
          */
-        [[nodiscard]] float Magnitude() const;
+        float Magnitude() const;
 
         /*
          * Find the magnitude of a vector squared.
          * Does not use sqrt so it is better for comparisons.
          */
-        [[nodiscard]] float MagnitudeSquared() const;
+        float MagnitudeSquared() const;
 
         /*
          * Rotate this point around another
@@ -115,7 +101,7 @@ namespace NerdThings::Ngine {
         /*
          * Transform by matrix
          */
-        [[nodiscard]] TVector2 Transform(TMatrix matrix_) const;
+        TVector2 Transform(TMatrix matrix_) const;
 
         // Operators
 

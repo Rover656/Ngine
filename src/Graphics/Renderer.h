@@ -219,7 +219,7 @@ namespace NerdThings::Ngine::Graphics {
          * Draw a texture
          */
         static void DrawTexture(TTexture2D texture_, TVector2 position_, TColor color_,
-                                float scale_ = 1, TVector2 origin = TVector2(), float rotation_ = 0);
+                                float scale_ = 1, TVector2 origin_ = TVector2(), float rotation_ = 0);
 
         /*
          * Draw a texture with specified dimensions

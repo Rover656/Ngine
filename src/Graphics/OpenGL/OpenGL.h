@@ -414,6 +414,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         static void TexCoord(TVector2 coord_);
 
         /*
+         * Use a texture with this set of vertices
+         */
+        static void UseTexture(std::shared_ptr<GLTexture> texture_);
+
+        /*
          * Set vertex position
          */
         static void Vertex(TVector2 pos_);

@@ -47,8 +47,8 @@ namespace NerdThings::Ngine::Graphics {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
             if (InternalTexture->ID > 0)
 #endif
-                return false;
-        return true;
+                return true;
+        return false;
     }
 
     TTexture2D TTexture2D::LoadPixels(unsigned int width_, unsigned height_, void *data_, int mipmapCount_) {

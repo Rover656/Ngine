@@ -272,7 +272,7 @@ public:
 //        }
 //        OpenGL::GL::End();
 
-        Renderer::DrawLine({0, 0}, {1920, 1080}, TColor::Pink);
+        Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink);
 
         testTiles->Draw({100, 100});
     }

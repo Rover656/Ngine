@@ -212,7 +212,7 @@ namespace NerdThings::Ngine {
                                                    0,
                                                    0,
                                                    static_cast<float>(_RenderTarget.Width),
-                                                   static_cast<float>(-_RenderTarget.Height)
+                                                   static_cast<float>(_RenderTarget.Height) * -1
                                                },
                                                Graphics::TColor::White);
             }
