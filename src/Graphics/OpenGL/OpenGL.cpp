@@ -306,12 +306,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Shader sources
         std::string vertexShaderSrc =
 #if defined(GRAPHICS_OPENGLES2)
-        "#version 100\n"
-        "attribute vec3 vertexPosition;\n"
-        "attribute vec2 vertexTexCoord;\n"
-        "attribute vec4 vertexColor;\n"
-        "varying vec2 fragTexCoord;\n"
-        "varying vec4 fragColor;\n"
+                "#version 100\n"
+                "attribute vec3 vertexPosition;\n"
+                "attribute vec2 vertexTexCoord;\n"
+                "attribute vec4 vertexColor;\n"
+                "varying vec2 fragTexCoord;\n"
+                "varying vec4 fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
                 "#version 330\n"
                 "in vec3 vertexPosition;\n"
@@ -329,10 +329,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "}\n";
         std::string fragmentShaderSrc =
 #if defined(GRAPHICS_OPENGLES2)
-        "#version 100\n"
-        "precision mediump float;\n"
-        "varying vec2 fragTexCoord;\n"
-        "varying vec4 fragColor;\n"
+                "#version 100\n"
+                "precision mediump float;\n"
+                "varying vec2 fragTexCoord;\n"
+                "varying vec4 fragColor;\n"
 #else
                 "#version 330\n"
                 "in vec2 fragTexCoord;\n"
