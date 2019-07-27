@@ -5,8 +5,11 @@
 #if defined(GRAPHICS_OPENGL33)
 #include <glad/glad.h>
 #elif defined(GRAPHICS_OPENGLES2)
+    #define GL_KHR_debug 0
+    #define GL_GLEXT_PROTOTYPES 1 // UWP???
+    #include <GLES2/gl2.h>
+    #include <GLES2/gl2ext.h>
     #include <EGL/egl.h>
-    #include <EGL/eglext.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -119,6 +122,20 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     bool GL::TexMirrorClampSupported = false;
     bool GL::TexNPOTSupported = false;
     bool GL::VAOSupported = false;
+
+    // Vertex Array Methods
+
+    void GL::GenVertexArrays(int n, unsigned int *arrays) {
+        glGenVertexArrays(n, arrays);
+    }
+
+    void GL::BindVertexArray(unsigned int array) {
+        glBindVertexArray(array);
+    }
+
+    void GL::DeleteVertexArrays(int n, unsigned int *arrays) {
+        glDeleteVertexArrays(n, arrays);
+    }
 
     // Internal Methods
 

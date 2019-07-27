@@ -318,6 +318,27 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          */
         static bool VAOSupported;
 
+        // Vertex Array Methods
+        // This is only here to fix GLES2 issues
+
+        /*
+         * Generate a number of vertex arrays.
+         * Intended for internal use. See OpenGL::GLVertexArray instead.
+         */
+        static void GenVertexArrays(int n, unsigned int *arrays);
+
+        /*
+         * Bind a vertex array.
+         * Intended for internal use. See OpenGL::GLVertexArray instead.
+         */
+        static void BindVertexArray(unsigned int array);
+
+        /*
+         * Delete a number of vertex arrays.
+         * Intended for internal use. See OpenGL::GLVertexArray instead.
+         */
+        static void DeleteVertexArrays(int n, unsigned int *arrays);
+
         // Matrix Related Methods
 
         /*

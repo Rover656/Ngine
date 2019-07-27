@@ -5,8 +5,11 @@
 #if defined(GRAPHICS_OPENGL33)
 #include <glad/glad.h>
 #elif defined(GRAPHICS_OPENGLES2)
+#define GL_KHR_debug 0
+#define GL_GLEXT_PROTOTYPES 1 // UWP???
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
-    #include <EGL/eglext.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -14,6 +17,8 @@
 #elif defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
 #endif
+
+#include "OpenGL.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     ////////
@@ -63,12 +68,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     GLVertexArray::GLVertexArray() {
         // Create vertex array
-        glGenVertexArrays(1, &ID);
+        GL::GenVertexArrays(1, &ID);
     }
 
     GLVertexArray::~GLVertexArray() {
         // Delete vertex array
-        glDeleteVertexArrays(1, &ID);
+        GL::DeleteVertexArrays(1, &ID);
 
         // Set ID to 0
         ID = 0;
@@ -99,7 +104,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     void GLVertexArray::Bind() {
         // Bind VAO
-        glBindVertexArray(ID);
+        GL::BindVertexArray(ID);
     }
 }
 #endif

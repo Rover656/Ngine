@@ -27,14 +27,27 @@ if (${BUILD_SHARED})
             $<TARGET_FILE:Ngine>
             $<TARGET_FILE_DIR:NgineTest>)
 
-    #add_custom_command(TARGET NgineTest POST_BUILD
-    #        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    #        $<TARGET_FILE:raylib>
-    #        $<TARGET_FILE_DIR:NgineTest>)
+    if (${OPENGL_VERSION} MATCHES "ES2")
+        # Copy dependant dlls
+        add_custom_command(TARGET NgineTest POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
+                $<TARGET_FILE_DIR:NgineTest>)
+
+        add_custom_command(TARGET NgineTest POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
+                $<TARGET_FILE_DIR:NgineTest>)
+
+        add_custom_command(TARGET NgineTest POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
+                $<TARGET_FILE_DIR:NgineTest>)
+    endif()
 endif()
 
 # Copy content
 add_custom_command(TARGET NgineTest PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_LIST_DIR}/content"
-        "${CMAKE_BINARY_DIR}/NgineTest/content")
+        ${CMAKE_CURRENT_LIST_DIR}/content
+        $<TARGET_FILE_DIR:NgineTest>/content)

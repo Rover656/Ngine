@@ -3,16 +3,19 @@
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL33)
-    #include <glad/glad.h>
+#include <glad/glad.h>
 #elif defined(GRAPHICS_OPENGLES2)
-    #include <EGL/egl.h>
-    #include <EGL/eglext.h>
+#define GL_KHR_debug 0
+#define GL_GLEXT_PROTOTYPES 1 // UWP???
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <EGL/egl.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-    #include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h>
 #elif defined(PLATFORM_UWP)
-    #include <angle_windowsstore.h>
+#include <angle_windowsstore.h>
 #endif
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
