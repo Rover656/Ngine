@@ -22,7 +22,15 @@
 #include "Graphics/OpenGL/OpenGL.h"
 #endif
 
+#if defined(PLATFORM_UWP)
+#include "Platform/UWP/GameApp.h"
+#endif
+
 namespace NerdThings::Ngine {
+    // Public Fields
+
+    Game *Game::CurrentGame = nullptr;
+
     // Public Constructor(s)
 
     Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, int config_)
@@ -34,7 +42,10 @@ namespace NerdThings::Ngine {
 
     Game::Game(int windowWidth_, int windowHeight_, int targetWidth_, int targetHeight_, int drawFPS_, int updateFPS_,
                const std::string &title_, int config_) {
-        #if !defined(PLATFORM_UWP)
+        // Check a game is not present
+        if (CurrentGame != nullptr)
+            throw std::runtime_error("Cannot create a second game!");
+        CurrentGame = this;
 
         // Save config
         _Config = config_;
@@ -47,14 +58,15 @@ namespace NerdThings::Ngine {
         _IntendedHeight = targetHeight_;
         _IntendedWidth = targetWidth_;
 
-        // Initialize raylib's window
-        //WindowManager::Init(windowWidth_, windowHeight_, title_);
+#if !defined(PLATFORM_UWP)
+        // Initialize window
         Window::Init(windowWidth_, windowHeight_, title_);
         ConsoleMessage("Window has been initialized.", "NOTICE", "GAME");
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if (defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2))
         Graphics::OpenGL::GL::Init();
         ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "GAME");
+#endif
 #endif
 
         // Set Target FPS
@@ -70,21 +82,30 @@ namespace NerdThings::Ngine {
 
         // By default, disable exit key
         //Input::Keyboard::SetExitKey(KEY_NONE);
+    }
 
-        #else
+    // Destructor
 
-        // TODO: UWP Support
-
-        #endif
+    Game::~Game() {
+        CurrentGame = nullptr;
     }
 
     // Public Methods
+
+    void Game::Clear() const {
+        Graphics::Renderer::Clear(ClearColor);
+    }
 
     void Game::Draw() {
         if (_CurrentScene != nullptr) {
             OnDraw({});
             _CurrentScene->Draw();
         }
+    }
+
+    int Game::GetConfig()
+    {
+        return _Config;
     }
 
     int Game::GetFPS() const {
@@ -103,13 +124,15 @@ namespace NerdThings::Ngine {
         return _UpdateFPS;
     }
 
+    bool Game::IsRunning() {
+        return _Running;
+    }
+
     void Game::Quit() {
         _Running = false;
     }
 
     void Game::Run() {
-        #if !defined(PLATFORM_UWP)
-
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
             _RenderTarget = Graphics::TRenderTarget(_IntendedWidth, _IntendedHeight);
@@ -248,12 +271,6 @@ namespace NerdThings::Ngine {
         Window::Cleanup();
 
         ConsoleMessage("Game successfully shut down.", "NOTICE", "GAME");
-
-        #else
-
-        // TODO: UWP Support
-
-        #endif
     }
 
     void Game::SetFPS(int FPS_) {
@@ -265,6 +282,10 @@ namespace NerdThings::Ngine {
     void Game::SetDrawFPS(int FPS_) {
         _DrawFPS = FPS_;
         //WindowManager::SetTargetFPS(FPS_);
+    }
+
+    void Game::SetIsRunning(bool running_) {
+        _Running = running_;
     }
 
     void Game::SetScene(Scene *scene_) {
@@ -290,11 +311,5 @@ namespace NerdThings::Ngine {
         if (_CurrentScene != nullptr) {
             _CurrentScene->Update();
         }
-    }
-
-    // Protected Methods
-
-    void Game::Clear() const {
-        Graphics::Renderer::Clear(ClearColor);
     }
 }

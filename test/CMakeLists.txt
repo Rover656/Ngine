@@ -17,7 +17,7 @@ if (${PLATFORM} MATCHES "Desktop")
     add_executable(${PROJECT_NAME} WIN32 ${SOURCE_FILES})
 
     # Link Ngine
-    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}}/src)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src)
     target_link_libraries(${PROJECT_NAME} Ngine)
 
     if (${BUILD_SHARED})
@@ -30,6 +30,9 @@ if (${PLATFORM} MATCHES "Desktop")
                 $<TARGET_FILE:Ngine>
                 $<TARGET_FILE_DIR:NgineTest>)
     endif()
+
+    # Defines
+    target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_DESKTOP=1)
 
     # Copy content
     add_custom_command(TARGET NgineTest PRE_BUILD
@@ -79,14 +82,13 @@ elseif(${PLATFORM} MATCHES "UWP")
             )
 
     # Source Groups
-    source_group("Source Files" FILES ${SOURCE_FILES})
-    source_group("Header Files" FILES ${HEADER_FILES})
+    source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
     source_group("Resource Files" FILES ${RESOURCE_FILES})
 
     # Add exe
     add_executable(${PROJECT_NAME} WIN32 ${SOURCE_FILES} ${RESOURCE_FILES})
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_WINRT_COMPONENT TRUE)
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+    #set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
     # Set graphics version
     target_compile_definitions(${PROJECT_NAME} PRIVATE GRAPHICS_OPENGLES2=1)
@@ -97,4 +99,17 @@ elseif(${PLATFORM} MATCHES "UWP")
 
     # Link WindowsApp
     target_link_libraries(${PROJECT_NAME} WindowsApp)
+
+    # Configure the script ready for the project mod
+    set(PROJECT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureANGLEProject.ps1.in
+            ${CMAKE_BINARY_DIR}/Configure/UWPConfigureANGLE${PROJECT_NAME}.ps1)
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureProject.ps1.in
+            ${CMAKE_BINARY_DIR}/Configure/UWPConfigure${PROJECT_NAME}.ps1)
+
+    # CMAKE 3.15 :(
+    #set_property(TARGET ${PROJECT_NAME} PROPERTY VS_PACKAGE_REFERENCES "ANGLE.WindowsStore_2.1.13")
+
+    # Defines
+    target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_UWP=1)
 endif()

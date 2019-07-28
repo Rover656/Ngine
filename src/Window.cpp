@@ -17,7 +17,8 @@
 #if defined(PLATFORM_DESKTOP)
     #include <GLFW/glfw3.h>
 #elif defined(PLATFORM_UWP)
-    #include <angle_windowsstore.h>
+#include <angle_windowsstore.h>
+#include "Platform/UWP/GameApp.h"
 #endif
 
 #include <stdexcept>
@@ -31,8 +32,10 @@ namespace NerdThings::Ngine {
     int Window::_Width = 0;
     void *Window::_WindowPtr = nullptr;
 
+    // Public Fields
+
 #if defined(PLATFORM_UWP)
-    Windows::UI::Core::CoreWindow ^Window::UWPWindow;
+    UWP::GameApp ^Window::UWPApp;
 #endif
 
     // Private Methods
@@ -44,8 +47,7 @@ namespace NerdThings::Ngine {
         _Height = height_;
 #elif defined(PLATFORM_UWP)
     void Window::UpdateWindowSize(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ args) {
-        eglQuerySurface(display, surface, EGL_WIDTH, &_Width);
-        eglQuerySurface(display, surface, EGL_HEIGHT, &_Height);
+        // Use this or nah??
 #endif
     }
 
@@ -75,18 +77,30 @@ namespace NerdThings::Ngine {
     }
 
     int Window::GetHeight() {
+#if defined(PLATFORM_UWP)
+        auto h = 0;
+        eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+        return h;
+#endif
         return _Height;
     }
 
     int Window::GetWidth() {
+#if defined(PLATFORM_UWP)
+        auto w = 0;
+        eglQuerySurface(display, surface, EGL_WIDTH, &w);
+        return w;
+#endif
         return _Width;
     }
 
     void Window::Init(int width_, int height_, std::string title_) {
-// Init
+        // Init
 #if defined(PLATFORM_DESKTOP)
-        if (!glfwInit())
+        if (!glfwInit()) {
+            ConsoleMessage("Failed to init GLFW.", "ERROR", "WINDOW");
             throw std::runtime_error("[Window::Init] Failed to init GLFW.");
+        }
         glfwDefaultWindowHints();
 
         switch(Graphics::OpenGL::GL::GetGLVersion()) {
@@ -103,6 +117,8 @@ namespace NerdThings::Ngine {
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
                 break;
         }
+#elif defined(PLATFORM_UWP)
+        UWPApp->SetDimensions(width_, height_);
 #endif
 
         // Creation
@@ -290,7 +306,7 @@ namespace NerdThings::Ngine {
         //https://stackoverflow.com/questions/46550182/how-to-create-eglsurface-using-c-winrt-and-angle
 
         //surface = eglCreateWindowSurface(display, config, reinterpret_cast<IInspectable*>(surfaceCreationProperties), surfaceAttributes);
-        surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)UWPWindow, surfaceAttributes);
+        surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)UWPApp->GetWindow(), surfaceAttributes);
         if (surface == EGL_NO_SURFACE)
         {
             throw std::runtime_error("Failed to create EGL fullscreen surface");
@@ -310,6 +326,9 @@ namespace NerdThings::Ngine {
         {
             throw std::runtime_error("Unable to attach EGL rendering context to EGL surface");
         }
+
+        // UWP on resize
+        UWPApp->GetWindow()->SizeChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow^, Windows::UI::Core::WindowSizeChangedEventArgs^>(&Window::UpdateWindowSize);
 #endif
     }
 
@@ -317,6 +336,8 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         // Poll window events
         glfwPollEvents();
+#else
+        CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 #endif
     }
 

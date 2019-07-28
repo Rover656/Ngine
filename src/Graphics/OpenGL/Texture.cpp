@@ -30,8 +30,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        // Set mipmap count
+        // Set mipmap count and format
         MipmapCount = mipmapCount_;
+        _Format = format_;
         
         // Check format support
         if ((!GL::TexCompDXTSupported) && ((format_ == COMPRESSED_DXT1_RGB) || (format_ == COMPRESSED_DXT1_RGBA) ||
@@ -106,7 +107,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Init parameters
 #if defined(GRAPHICS_OPENGLES2)
-        // NOTE: OpenGL ES 2.0 with no GL_OES_texture_npot support (i.e. WebGL) has limited NPOT support, so CLAMP_TO_EDGE must be used
+    // NOTE: OpenGL ES 2.0 with no GL_OES_texture_npot support (i.e. WebGL) has limited NPOT support, so CLAMP_TO_EDGE must be used
     if (GL::TexNPOTSupported)
     {
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -145,7 +146,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     GLTexture::~GLTexture() {
+        // Delete texture
+        glDeleteTextures(0, &ID);
 
+        // Set ID to 0
+        ID = 0;
     }
 
     void GLTexture::Bind() {

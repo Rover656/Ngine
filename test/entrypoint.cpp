@@ -28,6 +28,7 @@
 #include <UI/UIControl.h>
 #include <UI/UIPanel.h>
 #include <UI/UIWidget.h>
+#include <Window.h>
 
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
@@ -292,14 +293,16 @@ public:
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
         width_, height_, 1280, 768, DrawFPS_, UpdateFPS_, title_,
         MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
+        //0) {
         OnRun.Bind(this, &TestGame::Init);
     }
 
     void Init(EventArgs &e) {
         // Load all content
         auto succ = false;
-        auto exeDir = Resources::GetExecutableDirectory(succ);
-        Resources::LoadDirectory(exeDir + "\\content");
+        // TODO: UWP Support this!!!
+        //auto exeDir = Resources::GetExecutableDirectory(succ);
+        //Resources::LoadDirectory(exeDir + "\\content");
 
         // Create scene
         _Scene = new TestScene(this);
@@ -309,15 +312,27 @@ public:
     }
 };
 
+#if defined(PLATFORM_DESKTOP)
 #ifdef _WIN32
 #include <Windows.h>
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow) {
-    #else
+#else
 int main() {
-    #endif
-    auto game = new TestGame(1920/2, 1080/2, 60, 60, "Hi");
+#endif
+#elif defined(PLATFORM_UWP)
+#include <Platform/UWP/GameApp.h>
+
+[Platform::MTAThread]
+int main(Platform::Array<Platform::String^>^) {
+#endif
+    auto game = new TestGame(1920 / 2, 1080 / 2, 60, 60, "Hi");
+
+#if defined(PLATFORM_UWP)
+    CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
+#else
     game->Run();
+#endif
     delete game;
     return 0;
 }

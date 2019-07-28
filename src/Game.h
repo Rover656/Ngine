@@ -78,6 +78,11 @@ namespace NerdThings::Ngine {
         Graphics::TColor ClearColor = Graphics::TColor::Black;
 
         /*
+         * The current game. If this isn't nullptr at start, it will error
+         */
+        static Game *CurrentGame;
+
+        /*
          * On update event
          */
         EventHandler<EventArgs> OnDraw;
@@ -117,14 +122,24 @@ namespace NerdThings::Ngine {
 
         // Destructor
 
-        virtual ~Game() = default;
+        virtual ~Game();
 
         // Public Methods
+
+        /*
+         * Clear the game background
+         */
+        void Clear() const;
 
         /*
          * Draw a frame.
          */
         void Draw();
+
+        /*
+         * Get the game config
+         */
+        int GetConfig();
 
         /*
          * Get the target FPS.
@@ -148,14 +163,24 @@ namespace NerdThings::Ngine {
         [[nodiscard]] int GetUpdateFPS() const;
 
         /*
+         * Is the game running
+         */
+        bool IsRunning();
+
+        /*
          * Quit the game
          */
         void Quit();
 
         /*
-         * Start the game loop
+         * Start the game loop.
          */
         void Run();
+
+        /*
+         * The internal run loop.
+         */
+        void RunLoop();
 
         /*
          * Set the target FPS.
@@ -175,6 +200,11 @@ namespace NerdThings::Ngine {
         void SetIntendedSize(TVector2 size_);
 
         /*
+         * Set whether or not the game is running
+         */
+        void SetIsRunning(bool running_);
+
+        /*
          * Set the current scene
          */
         void SetScene(Scene *scene_);
@@ -188,14 +218,6 @@ namespace NerdThings::Ngine {
          * Update logic
          */
         void Update();
-
-    protected:
-        // Protected Methods
-
-        /*
-         * Clear the game background
-         */
-        void Clear() const;
     };
 }
 

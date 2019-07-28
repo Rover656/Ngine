@@ -3,6 +3,12 @@
 
 #include "ngine.h"
 
+#if defined(PLATFORM_UWP)
+namespace NerdThings::Ngine::UWP {
+    ref class GameApp;
+}
+#endif
+
 namespace NerdThings::Ngine {
     /*
      * Ngine window management wrapper.
@@ -38,12 +44,8 @@ namespace NerdThings::Ngine {
 #endif
     public:
         // Public Fields
-
 #if defined(PLATFORM_UWP)
-        /*
-         * UWP Core window (For EGL setup)
-         */
-        static Windows::UI::Core::CoreWindow ^UWPWindow;
+        static UWP::GameApp ^UWPApp;
 #endif
 
         // Public Methods

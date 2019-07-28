@@ -27,32 +27,38 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Check if we use the depth texture
         if (useDepth_) _HasDepthBuffer = true;
 
-        // Create FBO
-        glGenFramebuffers(1, &ID);
-        Bind();
-
         // Color attachment
-        RenderTexture = std::make_shared<GLTexture>(width_, height_, nullptr);
-        RenderTexture->SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_NEAREST);
-        RenderTexture->SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_NEAREST);
+        RenderTexture = std::make_shared<GLTexture>(width_, height_, nullptr, 1, UNCOMPRESSED_R8G8B8A8);
+        RenderTexture->SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_LINEAR);
+        RenderTexture->SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_LINEAR);
+        RenderTexture->SetParameter(TEXPARAM_WRAP_S, WRAP_CLAMP);
+        RenderTexture->SetParameter(TEXPARAM_WRAP_T, WRAP_CLAMP);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         // Depth buffer
         glGenRenderbuffers(1, &_DepthBufferID);
         glBindRenderbuffer(GL_RENDERBUFFER, _DepthBufferID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width_, height_);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width_, height_);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        // Create FBO
+        glGenFramebuffers(1, &ID);
+        Bind();
+
+        // Set depth attachment
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _DepthBufferID);
 
         // Set color attachment
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, RenderTexture->ID, 0);
-
-        // Unbind framebuffer
-        Unbind();
 
         // Check this worked
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
             // Message about failure
             ConsoleMessage("Failed to create framebuffer.", "WARN", "GLFramebuffer");
+
+            // Unbind framebuffer
+            Unbind();
 
             // Delete texture
             RenderTexture = nullptr;
@@ -63,6 +69,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             // Set ID to 0
             ID = 0;
         }
+
+        // Unbind framebuffer
+        Unbind();
     }
 
     GLFramebuffer::~GLFramebuffer() {

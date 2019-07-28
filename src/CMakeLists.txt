@@ -97,20 +97,25 @@ if (${PLATFORM} MATCHES "Desktop")
         target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_BUILD=1) # Used by ngine.h
 
         # Copy dependant dlls
-        add_custom_command(TARGET Ngine POST_BUILD
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
                 $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-        add_custom_command(TARGET Ngine POST_BUILD
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
                 $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-        add_custom_command(TARGET Ngine POST_BUILD
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
                 $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+    endif()
+
+    if(MSVC)
+        # Source groups
+        source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
     endif()
 elseif(${PLATFORM} MATCHES "UWP")
     # THIS SHOULD BE BUILT WITH A PROVIDED SCRIPT, NOT WITH CMAKE!! PROCEED AT YOUR OWN RISK
@@ -125,8 +130,7 @@ elseif(${PLATFORM} MATCHES "UWP")
     endif()
 
     # Source groups
-    source_group("Source Files" FILES ${SOURCE_FILES})
-    source_group("Header Files" FILES ${HEADER_FILES})
+    source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
 
     # Add executable
     if (${BUILD_SHARED})
@@ -152,8 +156,11 @@ elseif(${PLATFORM} MATCHES "UWP")
             ${CMAKE_BINARY_DIR}/packages.config COPYONLY)
 
     # Configure the script ready for the project mod
+    set(PROJECT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureANGLEProject.ps1.in
+            ${CMAKE_BINARY_DIR}/Configure/UWPConfigureANGLE${PROJECT_NAME}.ps1)
     configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureProject.ps1.in
-            ${CMAKE_BINARY_DIR}/UWPConfigureProject.ps1)
+            ${CMAKE_BINARY_DIR}/Configure/UWPConfigure${PROJECT_NAME}.ps1)
 
     # Restore NuGet
     execute_process(COMMAND ${PROJECT_SOURCE_DIR}/redist/nuget.exe restore -SolutionDirectory ${CMAKE_BINARY_DIR})
