@@ -40,6 +40,30 @@ namespace NerdThings::Ngine {
     std::unordered_map<std::string, Audio::TSound> Resources::_Sounds;
     std::unordered_map<std::string, Graphics::TTexture2D> Resources::_Textures;
 
+    // Private Methods
+
+    std::string Resources::ProcessPath(std::string path_) {
+#if defined(PLATFORM_DESKTOP)
+        auto success = false;
+        auto exeDir = GetExecutableDirectory(success);
+        if (!success) throw std::runtime_error("Unable to get executable dir.");
+        return (std::filesystem::path(exeDir) / path_).string();
+#elif defined(PLATFORM_UWP)
+        // This does not work, see below comment in LoadResources
+        //return "ms-appx:///" + path_;
+        auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+        std::wstring tmp(installed->Begin());
+        std::string installedPath(tmp.begin(), tmp.end());
+
+        return installedPath + "\\" + path_;
+#endif
+        return path_;
+    }
+
+    // Public Fields
+
+    std::string Resources::ResourcesDirectory = "content";
+
     // Public Methods
 
     void Resources::DeleteAll() {
@@ -204,28 +228,32 @@ namespace NerdThings::Ngine {
         return std::filesystem::current_path().string();
     }
 
-    void Resources::LoadDirectory(const std::string &directory_) {
+    void Resources::LoadResources() {
         std::vector<std::string> files;
 
+        auto dir = ProcessPath(ResourcesDirectory);
+
+        // TODO: We *need* to use UWP's own filesystem APIs as this just doesn't work.
+
         // Get all files
-        for (std::filesystem::recursive_directory_iterator i(directory_), end; i != end; ++i)
+        for (std::filesystem::recursive_directory_iterator i(dir), end; i != end; ++i)
             if (!std::filesystem::is_directory(i->path())) {
-                files.push_back(std::filesystem::relative(i->path(), directory_).string());
+                files.push_back(std::filesystem::relative(i->path(), dir).string());
         }
 
         // File extension definitions
+        // TODO: Align this with whatever spec we will support
         std::vector<std::string> fntExts = {"ttf", "otf", "fnt"}; // TODO: Spritefont support
         std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
         std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc"};
-
 
         // Load all files
         for (auto file : files) {
             auto name = file.substr(0, file.find_last_of("."));
             auto ext = GetFileExtension(file);
 
-            auto actualPath = std::filesystem::path(directory_);
+            auto actualPath = std::filesystem::path(dir);
             actualPath /= file;
 
             if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font

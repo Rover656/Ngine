@@ -298,10 +298,7 @@ public:
 
     void Init(EventArgs &e) {
         // Load all content
-        auto succ = false;
-        // TODO: UWP Support this!!!
-        //auto exeDir = Resources::GetExecutableDirectory(succ);
-        //Resources::LoadDirectory(exeDir + "\\content");
+        //Resources::LoadResources();
 
         // Create scene
         _Scene = new TestScene(this);

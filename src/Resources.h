@@ -42,7 +42,23 @@ namespace NerdThings::Ngine {
          * All named textures
          */
         static std::unordered_map<std::string, Graphics::TTexture2D> _Textures;
+
+        // Private Methods
+
+        /*
+         * Processes the path to get it relative to the install dir
+         */
+        static std::string ProcessPath(std::string path_);
     public:
+
+        // Public Fields
+
+        /*
+         * The directory to load resources from
+         */
+        static std::string ResourcesDirectory;
+
+        // TODO: Directory config - provides information on what directories contain what filetypes
 
         // Public Methods
 
@@ -118,10 +134,10 @@ namespace NerdThings::Ngine {
         static std::string GetWorkingDirectory();
 
         /*
-         * Loads all files in a directory.
+         * Loads all files in the resources directory.
          * All names will be set to their relative path without their extension
          */
-        static void LoadDirectory(const std::string &directory_);
+        static void LoadResources();
 
         /*
          * Load font from file
