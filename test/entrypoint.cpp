@@ -89,8 +89,7 @@ public:
 
         AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()))->
-            EnableDebugDraw();
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()));//->EnableDebugDraw();
 
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
 
@@ -118,7 +117,7 @@ public:
     OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}));//->EnableDebugDraw();
         //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
 
         //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
@@ -272,7 +271,7 @@ public:
 //        }
 //        OpenGL::GL::End();
 
-        Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink);
+        Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
         testTiles->Draw({100, 100});
     }

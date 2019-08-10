@@ -63,7 +63,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a new window. Title ignored most non desktop platforms.
          */
-        static void Init(int width_, int height_, std::string title_);
+        static void Init(int width_, int height_, const std::string& title_);
 
         /*
          * Poll window events
@@ -78,11 +78,11 @@ namespace NerdThings::Ngine {
         /*
          * Set window title (Ignored on most non desktop platforms.)
          */
-        static void SetTitle(std::string title_);
+        static void SetTitle(const std::string& title_);
 
         /*
-         * Whether or not the window should be closed
-         */
+         * Whether or not the window should be const closed
+    &     */
         static bool ShouldClose();
 
         /*

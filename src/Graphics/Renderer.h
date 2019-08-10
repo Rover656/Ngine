@@ -22,12 +22,11 @@
 
 namespace NerdThings::Ngine::Graphics {
     /*
-     * Connect to the raylib renderer directly
+     * Render to the display.
+     * There is no concept of depth. First drawn is furthest behind.
      */
     class NEAPI Renderer {
     public:
-        // TODO: Depth support through batching?
-
         // Public Methods
 
         /*
@@ -56,12 +55,6 @@ namespace NerdThings::Ngine::Graphics {
          */
         // TODO: Thickness for this too?
         static void DrawLineStrip(std::vector<TVector2> points_, TColor color_);
-
-        /*
-         * Draw a line using cubic-bezier curves
-         */
-        static void DrawLineBezier(TVector2 startPos_, TVector2 endPos_, TColor color_,
-                                   float thickness_ = 1);
 
         /*
          * Draw a color-filled circle

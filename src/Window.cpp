@@ -39,9 +39,7 @@ namespace NerdThings::Ngine {
 #endif
 
     // Private Methods
-
 #if defined(PLATFORM_UWP)
-
     void Window::Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
         /*
          * According to the UWP Lifecycle, this is called when the app is placed into the background.
@@ -100,7 +98,7 @@ namespace NerdThings::Ngine {
         return _Width;
     }
 
-    void Window::Init(int width_, int height_, std::string title_) {
+    void Window::Init(int width_, int height_, const std::string& title_) {
         // Init
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
@@ -123,6 +121,8 @@ namespace NerdThings::Ngine {
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
                 break;
+            case Graphics::OpenGL::OPENGL_UNKNOWN:
+                throw std::runtime_error("Error, we were unable to determine an OpenGL version to use.");
         }
 #endif
 
@@ -365,7 +365,7 @@ namespace NerdThings::Ngine {
 #endif
     }
 
-    void Window::SetTitle(std::string title_) {
+    void Window::SetTitle(const std::string& title_) {
 #if defined(PLATFORM_DESKTOP)
         glfwSetWindowTitle((GLFWwindow *)_WindowPtr, title_.c_str());
 #endif

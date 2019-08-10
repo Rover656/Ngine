@@ -47,9 +47,9 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
     }
 
-    void Renderer::DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_, float thickness_) {
-        if (thickness_ < 0) thickness_ = -thickness_; // Cheeky liddle fix
-        if (thickness_ == 1.0f) {
+    void Renderer::DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_, float lineThickness_) {
+        if (lineThickness_ < 0) lineThickness_ = -lineThickness_; // Cheeky liddle fix
+        if (lineThickness_ <= 1.0f) {
             // More basic, less math
             OpenGL::GL::Begin(OpenGL::PRIMITIVE_LINES);
 
@@ -59,15 +59,42 @@ namespace NerdThings::Ngine::Graphics {
 
             OpenGL::GL::End();
         } else {
-            // TODO: Thickness option
+            // Swap if start pos is past end pos
+            if (startPos_.X > endPos_.X) {
+                auto tmp = startPos_;
+                startPos_ = endPos_;
+                endPos_ = tmp;
+            }
+
+            auto dx = endPos_.X - startPos_.X;
+            auto dy = endPos_.Y - startPos_.Y;
+
+            float d = sqrtf(dx*dx + dy*dy);
+            float angle = asinf(dy/d);
+
+            OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
+            OpenGL::GL::PushMatrix();
+
+            OpenGL::GL::Translate({startPos_.X, startPos_.Y, 0.0f});
+            OpenGL::GL::Rotate(angle, {0.0f, 0.0f, 1.0f});
+            OpenGL::GL::Translate({0, (lineThickness_ > 1.0f) ? -lineThickness_/2.0f : -1.0f, 0.0f});
+
+            OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
+            OpenGL::GL::Color(color_);
+
+            OpenGL::GL::Vertex({0, 0});
+            OpenGL::GL::Vertex({0, lineThickness_});
+            OpenGL::GL::Vertex({d, lineThickness_});
+            OpenGL::GL::Vertex({d, 0});
+
+            OpenGL::GL::End();
+
+            OpenGL::GL::PopMatrix();
         }
     }
 
     void Renderer::DrawLineStrip(std::vector<TVector2> points_, TColor color_) {
-
-    }
-
-    void Renderer::DrawLineBezier(TVector2 startPos_, TVector2 endPos_, TColor color_, float thickness_) {
 
     }
 
@@ -106,15 +133,33 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::DrawRectangle(TVector2 position_, float width_, float height_, TColor color_, float rotation_,
                                  TVector2 origin_) {
-
+        DrawRectangle(position_, {width_, height_}, color_, rotation_);
     }
 
     void Renderer::DrawRectangle(TVector2 position_, TVector2 size_, TColor color_, float rotation_, TVector2 origin_) {
-
+        DrawRectangle({position_.X, position_.Y, size_.X, size_.Y}, color_, rotation_, origin_);
     }
 
     void Renderer::DrawRectangle(TRectangle rectangle_, TColor color_, float rotation_, TVector2 origin_) {
+        OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
+        OpenGL::GL::PushMatrix();
 
+        OpenGL::GL::Translate({rectangle_.X, rectangle_.Y, 0});
+        OpenGL::GL::Rotate(rotation_, {0, 0, 1.0f});
+        OpenGL::GL::Translate({-origin_.X, -origin_.Y, 0});
+
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
+        OpenGL::GL::Color(color_);
+
+        OpenGL::GL::Vertex({0, 0});
+        OpenGL::GL::Vertex({0, rectangle_.Height});
+        OpenGL::GL::Vertex({rectangle_.Width, rectangle_.Height});
+        OpenGL::GL::Vertex({rectangle_.Width, 0});
+
+        OpenGL::GL::End();
+
+        OpenGL::GL::PopMatrix();
     }
 
     void
@@ -161,15 +206,18 @@ namespace NerdThings::Ngine::Graphics {
 
     void
     Renderer::DrawRectangleLines(TVector2 position_, float width_, float height_, TColor color_, int lineThickness_) {
-
+        DrawRectangleLines(position_, {width_, height_}, color_, lineThickness_);
     }
 
     void Renderer::DrawRectangleLines(TVector2 position_, TVector2 size_, TColor color_, int lineThickness_) {
-
+        DrawRectangleLines({position_, size_}, color_, lineThickness_);
     }
 
     void Renderer::DrawRectangleLines(TRectangle rectangle_, TColor color_, int lineThickness_) {
-
+        DrawLine({rectangle_.X, rectangle_.Y}, {rectangle_.X + rectangle_.Width, rectangle_.Y}, color_, lineThickness_);
+        DrawLine({rectangle_.X + rectangle_.Width, rectangle_.Y}, {rectangle_.X + rectangle_.Width, rectangle_.Y + rectangle_.Height}, color_, lineThickness_);
+        DrawLine({rectangle_.X + rectangle_.Width, rectangle_.Y + rectangle_.Height}, {rectangle_.X, rectangle_.Y + rectangle_.Height}, color_, lineThickness_);
+        DrawLine({rectangle_.X, rectangle_.Y + rectangle_.Height}, {rectangle_.X, rectangle_.Y}, color_, lineThickness_);
     }
 
     void
