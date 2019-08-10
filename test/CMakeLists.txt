@@ -88,7 +88,7 @@ elseif(${PLATFORM} MATCHES "UWP")
     # Add exe
     add_executable(${PROJECT_NAME} WIN32 ${SOURCE_FILES} ${RESOURCE_FILES})
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_WINRT_COMPONENT TRUE)
-    #set_property(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+    #set_property(DIRECTORY ${CMAKE_BINARY_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
     # Set graphics version
     target_compile_definitions(${PROJECT_NAME} PRIVATE GRAPHICS_OPENGLES2=1)
@@ -106,9 +106,6 @@ elseif(${PLATFORM} MATCHES "UWP")
             ${CMAKE_BINARY_DIR}/Configure/UWPConfigureANGLE${PROJECT_NAME}.ps1)
     configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureProject.ps1.in
             ${CMAKE_BINARY_DIR}/Configure/UWPConfigure${PROJECT_NAME}.ps1)
-
-    # CMAKE 3.15 :(
-    #set_property(TARGET ${PROJECT_NAME} PROPERTY VS_PACKAGE_REFERENCES "ANGLE.WindowsStore_2.1.13")
 
     # Defines
     target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_UWP=1)

@@ -40,19 +40,32 @@ namespace NerdThings::Ngine {
 
     // Private Methods
 
+#if defined(PLATFORM_UWP)
 
-#if defined(PLATFORM_DESKTOP)
-    void Window::UpdateWindowSize(void *window_, int width_, int height_) {
-        _Width = width_;
-        _Height = height_;
-#elif defined(PLATFORM_UWP)
-    void Window::UpdateWindowSize(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ args) {
-        // Use this or nah??
-#endif
+    void Window::Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
+        /*
+         * According to the UWP Lifecycle, this is called when the app is placed into the background.
+         * I reckon that because we have a constant loop running, this will only be called when the game is closed.
+         * This is used because the Run thread is immediately killed, it is not allowed to run to the end.
+         * Resuming event should not be required because of this, so we can assume that the application is closing.
+         */
+
+        // Delete loaded resources
+        Resources::DeleteAll();
+
+        // Close audio
+        ConsoleMessage("Closing audio device.", "NOTICE", "WINDOW");
+        Audio::AudioManager::CloseDevice();
+
+        // Close window
+        ConsoleMessage("Closing window.", "NOTICE", "WINDOW");
+        Window::Cleanup();
     }
+#endif
 
     void Window::Cleanup() {
 #if defined(PLATFORM_DESKTOP)
+        // Destroy window
         glfwDestroyWindow((GLFWwindow*)_WindowPtr);
         glfwTerminate();
 #elif defined(PLATFORM_UWP)
@@ -74,29 +87,23 @@ namespace NerdThings::Ngine {
             display = EGL_NO_DISPLAY;
         }
 #endif
+        // Unset width and height as the window is closed
+        _Width = 0;
+        _Height = 0;
     }
 
     int Window::GetHeight() {
-#if defined(PLATFORM_UWP)
-        auto h = 0;
-        eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-        return h;
-#endif
         return _Height;
     }
 
     int Window::GetWidth() {
-#if defined(PLATFORM_UWP)
-        auto w = 0;
-        eglQuerySurface(display, surface, EGL_WIDTH, &w);
-        return w;
-#endif
         return _Width;
     }
 
     void Window::Init(int width_, int height_, std::string title_) {
         // Init
 #if defined(PLATFORM_DESKTOP)
+        // Init GLFW
         if (!glfwInit()) {
             ConsoleMessage("Failed to init GLFW.", "ERROR", "WINDOW");
             throw std::runtime_error("[Window::Init] Failed to init GLFW.");
@@ -117,8 +124,6 @@ namespace NerdThings::Ngine {
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
                 break;
         }
-#elif defined(PLATFORM_UWP)
-        UWPApp->SetDimensions(width_, height_);
 #endif
 
         // Creation
@@ -130,9 +135,6 @@ namespace NerdThings::Ngine {
             throw std::runtime_error("[Window::Window] Failed to create.");
         }
 
-        // Set resize callback
-        glfwSetWindowSizeCallback((GLFWwindow *)_WindowPtr, (void(*)(GLFWwindow*, int, int))Window::UpdateWindowSize);
-
         // Get initial size
         glfwGetWindowSize((GLFWwindow *)_WindowPtr, &_Width, &_Height);
 
@@ -141,12 +143,14 @@ namespace NerdThings::Ngine {
 #elif defined(PLATFORM_UWP)
         EGLint samples = 0;
         EGLint sampleBuffer = 0;
+        // TODO: MSAA support
         //if (configFlags & FLAG_MSAA_4X_HINT)
         //{
         //    samples = 4;
         //    sampleBuffer = 1;
         //}
 
+        // TODO: Review all of this that came from raylib to determine if this is all up to scratch
         const EGLint framebufferAttribs[] =
         {
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,     // Type of context support -> Required on RPI?
@@ -327,17 +331,31 @@ namespace NerdThings::Ngine {
             throw std::runtime_error("Unable to attach EGL rendering context to EGL surface");
         }
 
-        // UWP on resize
-        UWPApp->GetWindow()->SizeChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow^, Windows::UI::Core::WindowSizeChangedEventArgs^>(&Window::UpdateWindowSize);
+        // UWP on suspend. This handles resource cleanup
+        CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(&Window::Suspended);
 #endif
+        // Window is now created, init OpenGL
+        Graphics::OpenGL::GL::Init();
+        ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "WINDOW");
     }
 
     void Window::PollEvents() {
 #if defined(PLATFORM_DESKTOP)
         // Poll window events
         glfwPollEvents();
-#else
-        CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+
+        // Query dimensions
+        glfwGetWindowSize((GLFWwindow *)_WindowPtr, &_Width, &_Height);
+#elif defined(PLATFORM_UWP)
+        // Poll window events
+        if (ShouldRenderFrame())
+            CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+        else
+            CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
+
+        // Query dimensions
+        eglQuerySurface(display, surface, EGL_WIDTH, &_Width);
+        eglQuerySurface(display, surface, EGL_HEIGHT, &_Height);
 #endif
     }
 
@@ -357,7 +375,15 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         return glfwWindowShouldClose((GLFWwindow *)_WindowPtr);
 #elif defined(PLATFORM_UWP)
-        return false; // TODO: Get from a window callback
+        return false; // This is not used for anything anyway.
+#endif
+        return true;
+    }
+
+    bool Window::ShouldRenderFrame()
+    {
+#if defined(PLATFORM_UWP)
+        return UWPApp->GetWindow()->Visible == true;
 #endif
         return true;
     }

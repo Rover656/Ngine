@@ -44,13 +44,13 @@ namespace NerdThings::Ngine {
                const std::string &title_, int config_) {
         // Check a game is not present
         if (CurrentGame != nullptr)
-            throw std::runtime_error("Cannot create a second game!");
+            throw std::runtime_error("Cannot create a second game before deleting the first!");
         CurrentGame = this;
 
         // Save config
         _Config = config_;
 
-        // Apply raylib config
+        // Apply config
         //WindowManager::ApplyConfig(_Config);
         //ConsoleMessage("Window config has been applied.", "NOTICE", "GAME");
 
@@ -58,15 +58,14 @@ namespace NerdThings::Ngine {
         _IntendedHeight = targetHeight_;
         _IntendedWidth = targetWidth_;
 
+        // Set default window dimensions
+        _WindowHeight = windowHeight_;
+        _WindowWidth = windowWidth_;
+
 #if !defined(PLATFORM_UWP)
         // Initialize window
-        Window::Init(windowWidth_, windowHeight_, title_);
+        Window::Init(_WindowWidth, _WindowHeight, title_);
         ConsoleMessage("Window has been initialized.", "NOTICE", "GAME");
-
-#if (defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2))
-        Graphics::OpenGL::GL::Init();
-        ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "GAME");
-#endif
 #endif
 
         // Set Target FPS
@@ -110,6 +109,10 @@ namespace NerdThings::Ngine {
 
     int Game::GetFPS() const {
         return _UpdateFPS;
+    }
+
+    TVector2 Game::GetDefaultWindowDimensions() const {
+        return { (float)_WindowWidth, (float)_WindowHeight };
     }
 
     TVector2 Game::GetDimensions() const {
@@ -200,44 +203,52 @@ namespace NerdThings::Ngine {
                 Update();
             }
 
-            // Prep for drawing
-            Graphics::Renderer::BeginDrawing();
+            if (Window::ShouldRenderFrame()) { // See if we should render a frame to the displau
+                // Prep for drawing
+                Graphics::Renderer::BeginDrawing();
 
-            // Clear
-            Graphics::Renderer::Clear(Graphics::TColor::Black);
+                // Clear
+                Graphics::Renderer::Clear(Graphics::TColor::Black);
 
-            // If using, start using target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
-                _RenderTarget.GetTexture().SetTextureWrap(WRAP_CLAMP);
-                _RenderTarget.GetTexture().SetTextureFilter(RenderTargetFilterMode);
-                Graphics::GraphicsManager::PushTarget(_RenderTarget);
-            }
+                // If using, start using target
+                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
+                    _RenderTarget.GetTexture().SetTextureWrap(WRAP_CLAMP);
+                    _RenderTarget.GetTexture().SetTextureFilter(RenderTargetFilterMode);
+                    Graphics::GraphicsManager::PushTarget(_RenderTarget);
+                }
 
-            // Clear the background
-            Clear();
+                // Clear the background
+                Clear();
 
-            // Draw
-            Draw();
+                // Draw
+                Draw();
 
-            // If using a target, draw target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
-                auto popped = false;
-                Graphics::GraphicsManager::PopTarget(popped);
+                // If using a target, draw target
+                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
+                    auto popped = false;
+                    Graphics::GraphicsManager::PopTarget(popped);
 
-                Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
-                                               {
-                                                   (w - iw * scale) * 0.5f,
-                                                   (h - ih * scale) * 0.5f,
-                                                   iw * scale,
-                                                   ih * scale
-                                               },
+                    Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
+                        {
+                            (w - iw * scale) * 0.5f,
+                            (h - ih * scale) * 0.5f,
+                            iw * scale,
+                            ih * scale
+                        },
                                                {
                                                    0,
                                                    0,
                                                    static_cast<float>(_RenderTarget.Width),
                                                    static_cast<float>(_RenderTarget.Height) * -1
                                                },
-                                               Graphics::TColor::White);
+                        Graphics::TColor::White);
+                }
+
+                // Finish drawing
+                Graphics::Renderer::EndDrawing();
+
+                // Swap buffers
+                Window::SwapBuffers();
             }
 
             // Reset mouse
@@ -246,19 +257,16 @@ namespace NerdThings::Ngine {
                 Input::Mouse::SetOffset(0, 0);
             }
 
-            // Finish drawing
-            Graphics::Renderer::EndDrawing();
-
-            // Swap buffers
-            Window::SwapBuffers();
-
             // Poll inputs
             Window::PollEvents();
 
+#if defined(PLATFORM_DESKTOP)
             // Release thread to CPU (Stops weird idle cpu usage and fps drops)
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
+#endif
         }
 
+#if !defined(PLATFORM_UWP) // UWP handles this elsewhere because this is ignored
         // Delete loaded resources
         Resources::DeleteAll();
 
@@ -271,6 +279,7 @@ namespace NerdThings::Ngine {
         Window::Cleanup();
 
         ConsoleMessage("Game successfully shut down.", "NOTICE", "GAME");
+#endif
     }
 
     void Game::SetFPS(int FPS_) {

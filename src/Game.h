@@ -69,6 +69,16 @@ namespace NerdThings::Ngine {
          */
         int _UpdateFPS = 0;
 
+        /*
+         * The default window height
+         */
+        int _WindowHeight = 0;
+
+        /*
+         * The default window width
+         */
+        int _WindowWidth = 0;
+
     public:
         // Public Fields
 
@@ -148,6 +158,11 @@ namespace NerdThings::Ngine {
         [[nodiscard]] int GetFPS() const;
 
         /*
+         * Get the default OS window size
+         */
+        TVector2 GetDefaultWindowDimensions() const;
+
+        /*
          * Get game dimensions
          */
         TVector2 GetDimensions() const;
@@ -176,11 +191,6 @@ namespace NerdThings::Ngine {
          * Start the game loop.
          */
         void Run();
-
-        /*
-         * The internal run loop.
-         */
-        void RunLoop();
 
         /*
          * Set the target FPS.

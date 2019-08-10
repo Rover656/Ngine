@@ -323,7 +323,7 @@ int main() {
 #elif defined(PLATFORM_UWP)
 #include <Platform/UWP/GameApp.h>
 
-[Platform::MTAThread]
+//[Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^) {
 #endif
     auto game = new TestGame(1920 / 2, 1080 / 2, 60, 60, "Hi");

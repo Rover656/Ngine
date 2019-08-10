@@ -31,16 +31,11 @@ namespace NerdThings::Ngine {
          */
         static void *_WindowPtr;
 
-#if defined(PLATFORM_DESKTOP)
+#if defined(PLATFORM_UWP)
         /*
-         * GLFW callback to update window size
+         * When the application is suspended
          */
-        static void UpdateWindowSize(void *window_, int width_, int height_);
-#elif defined(PLATFORM_UWP)
-        /*
-         * CoreWindow callback to update window size
-         */
-        static void UpdateWindowSize(Windows::UI::Core::CoreWindow^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ args);
+        static void Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args);
 #endif
     public:
         // Public Fields
@@ -89,6 +84,11 @@ namespace NerdThings::Ngine {
          * Whether or not the window should be closed
          */
         static bool ShouldClose();
+
+        /*
+         * Whether or not to run this frame
+         */
+        static bool ShouldRenderFrame();
 
         /*
          * Swap the window buffers
