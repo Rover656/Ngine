@@ -236,10 +236,18 @@ namespace NerdThings::Ngine {
         // TODO: We *need* to use UWP's own filesystem APIs as this just doesn't work.
 
         // Get all files
+#if defined(PLATFORM_UWP)
+        auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+        std::wstring tmp(installed->Begin());
+        std::string installedPath(tmp.begin(), tmp.end());
+
+        auto contentFolder = Windows::Storage::StorageFolder::;
+#else
         for (std::filesystem::recursive_directory_iterator i(dir), end; i != end; ++i)
             if (!std::filesystem::is_directory(i->path())) {
                 files.push_back(std::filesystem::relative(i->path(), dir).string());
-        }
+            }
+#endif
 
         // File extension definitions
         // TODO: Align this with whatever spec we will support
