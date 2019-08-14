@@ -15,7 +15,7 @@
 
   <Properties>
     <DisplayName>@PROJECT_NAME@</DisplayName>
-    <PublisherDisplayName>@PUBLISHER_DISPLAY@</PublisherDisplayName>
+    <PublisherDisplayName>@PUBLISHER_DISPLAY_NAME@</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

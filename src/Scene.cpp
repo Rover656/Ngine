@@ -104,6 +104,10 @@ namespace NerdThings::Ngine {
     TRectangle Scene::GetCullArea() const {
         auto cam = GetActiveCamera();
 
+        if (cam == nullptr) {
+            return {0, 0, 0, 0};
+        }
+
         if (_CullAreaCenter)
             return {
                 cam->Target.X - _CullAreaWidth * 0.5f, cam->Target.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,

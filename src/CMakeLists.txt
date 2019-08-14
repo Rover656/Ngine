@@ -3,9 +3,9 @@ file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 file(GLOB_RECURSE HEADER_FILES "*.h")
 
 # Versioning
-set(NGINE_VERSION_MAJOR 0)
-set(NGINE_VERSION_MINOR 1)
-set(NGINE_VERSION_PATCH 0)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+set(VERSION_PATCH 0)
 
 # Product information (Some for UWP)
 set(PROJECT_NAME Ngine)
@@ -57,6 +57,9 @@ if (${PLATFORM} MATCHES "Desktop")
         target_link_libraries(${PROJECT_NAME} glfw)
         target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glfw/include)
 
+        # Include stb libraries
+        target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/stb)
+
         # Link glad
         target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glad/include)
 
@@ -83,6 +86,9 @@ if (${PLATFORM} MATCHES "Desktop")
         # Link glfw
         target_link_libraries(${PROJECT_NAME} glfw)
         target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glfw/include)
+
+        # Include stb libraries
+        target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/stb)
 
         # Link ANGLE
         target_link_libraries(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
@@ -130,7 +136,8 @@ elseif(${PLATFORM} MATCHES "UWP")
     endif()
 
     # Source groups
-    source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
+    source_group(TREE ${PROJECT_SOURCE_DIR}/src PREFIX "\\Source Files" FILES ${SOURCE_FILES})
+    source_group(TREE ${PROJECT_SOURCE_DIR}/src PREFIX "\\Header Files" FILES ${HEADER_FILES})
 
     # Add executable
     if (${BUILD_SHARED})
@@ -149,6 +156,9 @@ elseif(${PLATFORM} MATCHES "UWP")
     # Link Box2D
     target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/third-party/Box2D-cmake/Box2D")
     target_link_libraries(${PROJECT_NAME} tobanteGaming::Box2D)
+
+    # Include stb libraries
+    target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/stb)
 
     # Use ANGLE
     target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/third-party/ANGLE)

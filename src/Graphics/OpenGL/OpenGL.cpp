@@ -160,19 +160,19 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             int vertexOffset = 0;
             if (VAOSupported) _VertexData[_CurrentBuffer].VAO->Bind();
             else {
-                // Bind vertex attrib: position (shader-location = 0)
+                // Bind vertex attrib: position
                 _VertexData[_CurrentBuffer].VBO[0]->Bind();
                 glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION], 3, GL_FLOAT, 0, 0,
                                       nullptr);
                 glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION]);
 
-                // Bind vertex attrib: texcoord (shader-location = 1)
+                // Bind vertex attrib: texcoord
                 _VertexData[_CurrentBuffer].VBO[1]->Bind();
                 glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD], 2, GL_FLOAT, 0, 0,
                                       nullptr);
                 glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD]);
 
-                // Bind vertex attrib: color (shader-location = 3)
+                // Bind vertex attrib: color
                 _VertexData[_CurrentBuffer].VBO[2]->Bind();
                 glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_FLOAT, 0, 0,
                                       nullptr);
@@ -338,17 +338,16 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "in vec2 fragTexCoord;\n"
                 "in vec4 fragColor;\n"
                 "out vec4 finalColor;\n"
-                #endif
+#endif
                 "uniform sampler2D texture;\n"
                 "void main()\n"
                 "{\n"
-                #if defined(GRAPHICS_OPENGLES2)
-                "    vec4 texelColor = texture2D(texture, fragTexCoord);\n" // NOTE: texture2D() is deprecated on OpenGL 3.3 and ES 3.0
-                "    gl_FragColor = texelColor*fragColor;\n"
-                #elif defined(GRAPHICS_OPENGL33)
                 "    vec4 texelColor = texture2D(texture, fragTexCoord);\n"
+#if defined(GRAPHICS_OPENGLES2)
+                "    gl_FragColor = texelColor*fragColor;\n"
+#elif defined(GRAPHICS_OPENGL33)
                 "    finalColor = texelColor*fragColor;\n"
-                #endif
+#endif
                 "}\n";
 
         // Load shaders
@@ -770,8 +769,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _CurrentMatrix = &_ModelView;
 
         // Init OpenGL states
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Clear
         glClearDepth(1.0f);

@@ -11,6 +11,8 @@
 
 #include "Texture2D.h"
 
+#include <stb_image.h>
+
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
@@ -62,9 +64,14 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     TTexture2D TTexture2D::LoadTexture(const std::string &filename_) {
-        //return FromRaylibTex(::LoadTexture(filename_.c_str()));
-        // TODO: Texture loading
-        return TTexture2D();
+        int width, height, channelCount;
+        //stbi_set_flip_vertically_on_load(true);
+        auto pixelData = stbi_load(filename_.c_str(), &width, &height, &channelCount, 4);
+        if (pixelData == nullptr)
+            throw std::runtime_error("Unable to open texture.");
+        auto tex = LoadPixels(width, height, pixelData, 1);
+        stbi_image_free(pixelData);
+        return tex;
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {

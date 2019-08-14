@@ -30,7 +30,12 @@
 #include <pwd.h>
 #endif
 
+#if defined(PLATFORM_UWP)
+#include <ppltasks.h>
+#endif
+
 #include <filesystem>
+#include <sstream>
 
 namespace NerdThings::Ngine {
     // Private Fields
@@ -55,10 +60,34 @@ namespace NerdThings::Ngine {
         std::wstring tmp(installed->Begin());
         std::string installedPath(tmp.begin(), tmp.end());
 
-        return installedPath + "\\" + path_;
+        return installedPath +"\\" + path_;
 #endif
         return path_;
     }
+
+#if defined(PLATFORM_UWP)
+    void Resources::UWPGetFiles(Windows::Storage::StorageFolder ^folder, std::string currentPath, std::vector<std::string> *files) {
+        auto itemsTask = concurrency::create_task(folder->GetItemsAsync());
+
+        while (!itemsTask.is_done()) {}
+
+        auto items = itemsTask.get();
+
+        for (auto it = items->First(); it->HasCurrent; it->MoveNext()) {
+            auto item = it->Current;
+
+            auto n = item->Name;
+            std::wstring tmp(n->Begin());
+            std::string name(tmp.begin(), tmp.end());
+
+            if (item->IsOfType(Windows::Storage::StorageItemTypes::File)) {
+                files->push_back(currentPath + name);
+            } else {
+                UWPGetFiles((Windows::Storage::StorageFolder ^)item, currentPath + name + "\\", files);
+            }
+        }
+    }
+#endif
 
     // Public Fields
 
@@ -194,10 +223,7 @@ namespace NerdThings::Ngine {
     }
 
     std::string Resources::GetFileExtension(const std::string &path_) {
-        auto p = std::filesystem::path(path_);
-        if (std::filesystem::is_directory(p))
-            throw std::runtime_error("Cannot get extension of directory.");
-        return p.extension().string();
+        return path_.substr(path_.find_last_of(".") + 1, path_.length() - 1);
     }
 
     Graphics::TFont Resources::GetFont(const std::string &name_) {
@@ -233,15 +259,19 @@ namespace NerdThings::Ngine {
 
         auto dir = ProcessPath(ResourcesDirectory);
 
-        // TODO: We *need* to use UWP's own filesystem APIs as this just doesn't work.
-
         // Get all files
 #if defined(PLATFORM_UWP)
-        auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
-        std::wstring tmp(installed->Begin());
-        std::string installedPath(tmp.begin(), tmp.end());
+        std::wstringstream wss;
+        wss << dir.c_str();
+        Platform::String ^dirPS = ref new Platform::String(wss.str().c_str());
 
-        auto contentFolder = Windows::Storage::StorageFolder::;
+        auto contentFolderTask = concurrency::create_task(Windows::Storage::StorageFolder::GetFolderFromPathAsync(dirPS));
+
+        while(!contentFolderTask.is_done()) {}
+
+        auto contentFolder = contentFolderTask.get();
+
+        UWPGetFiles(contentFolder, "", &files);
 #else
         for (std::filesystem::recursive_directory_iterator i(dir), end; i != end; ++i)
             if (!std::filesystem::is_directory(i->path())) {
@@ -252,6 +282,7 @@ namespace NerdThings::Ngine {
         // File extension definitions
         // TODO: Align this with whatever spec we will support
         std::vector<std::string> fntExts = {"ttf", "otf", "fnt"}; // TODO: Spritefont support
+
         std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
         std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc"};
@@ -261,17 +292,16 @@ namespace NerdThings::Ngine {
             auto name = file.substr(0, file.find_last_of("."));
             auto ext = GetFileExtension(file);
 
-            auto actualPath = std::filesystem::path(dir);
-            actualPath /= file;
+            auto actualPath = dir + "\\" + file;
 
             if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
-                LoadFont(actualPath.string(), name);
+                LoadFont(actualPath, name);
             } else if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
-                LoadMusic(actualPath.string(), name);
+                LoadMusic(actualPath, name);
             } else if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
-                LoadSound(actualPath.string(), name);
+                LoadSound(actualPath, name);
             } else if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end()) { // Texture
-                LoadTexture(actualPath.string(), name);
+                LoadTexture(actualPath, name);
             }
         }
     }

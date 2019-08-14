@@ -49,6 +49,13 @@ namespace NerdThings::Ngine {
          * Processes the path to get it relative to the install dir
          */
         static std::string ProcessPath(std::string path_);
+
+#if defined(PLATFORM_UWP)
+        /*
+         * Recursiveley get files in folder (UWP)
+         */
+        static void UWPGetFiles(Windows::Storage::StorageFolder ^folder, std::string currentPath, std::vector<std::string> *files);
+#endif
     public:
 
         // Public Fields

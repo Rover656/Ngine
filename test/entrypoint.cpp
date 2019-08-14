@@ -89,7 +89,7 @@ public:
 
         AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()));//->EnableDebugDraw();
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
 
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
 
@@ -241,8 +241,8 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
-        testTiles->SetTileAt({5, 5}, 13);
+        //testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        //testTiles->SetTileAt({5, 5}, 13);
     }
 
     ~TestScene() {
@@ -273,7 +273,8 @@ public:
 
         Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
-        testTiles->Draw({100, 100});
+        // TODO: This causes major texture issues on UWP/GLES2
+        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), {0, 0}, TColor::White);
     }
 
     void DrawCam(EventArgs &e) {
@@ -298,7 +299,7 @@ public:
 
     void Init(EventArgs &e) {
         // Load all content
-        //Resources::LoadResources();
+        Resources::LoadResources();
 
         // Create scene
         _Scene = new TestScene(this);

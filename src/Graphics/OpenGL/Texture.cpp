@@ -38,26 +38,26 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         if ((!GL::TexCompDXTSupported) && ((format_ == COMPRESSED_DXT1_RGB) || (format_ == COMPRESSED_DXT1_RGBA) ||
                                        (format_ == COMPRESSED_DXT3_RGBA) || (format_ == COMPRESSED_DXT5_RGBA)))
         {
-            throw std::runtime_error("DXT compressed texture format_ not supported");
+            throw std::runtime_error("DXT compressed texture format not supported");
         }
         if ((!GL::TexCompETC1Supported) && (format_ == COMPRESSED_ETC1_RGB))
         {
-            throw std::runtime_error("ETC1 compressed texture format_ not supported");
+            throw std::runtime_error("ETC1 compressed texture format not supported");
         }
     
         if ((!GL::TexCompETC2Supported) && ((format_ == COMPRESSED_ETC2_RGB) || (format_ == COMPRESSED_ETC2_EAC_RGBA)))
         {
-            throw std::runtime_error("ETC2 compressed texture format_ not supported");
+            throw std::runtime_error("ETC2 compressed texture format not supported");
         }
     
         if ((!GL::TexCompPVRTSupported) && ((format_ == COMPRESSED_PVRT_RGB) || (format_ == COMPRESSED_PVRT_RGBA)))
         {
-            throw std::runtime_error("PVRT compressed texture format_ not supported");
+            throw std::runtime_error("PVRT compressed texture format not supported");
         }
     
         if ((!GL::TexCompASTCSupported) && ((format_ == COMPRESSED_ASTC_4x4_RGBA) || (format_ == COMPRESSED_ASTC_8x8_RGBA)))
         {
-            throw std::runtime_error("ASTC compressed texture format_ not supported");
+            throw std::runtime_error("ASTC compressed texture format not supported");
         }
 
         // Create texture
@@ -72,11 +72,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         int mipHeight = height_;
         int mipOffset = 0;
 
+        unsigned int glInternalFormat, glFormat, glType;
+        GL::GetGLTextureFormats(format_, &glInternalFormat, &glFormat, &glType);
+
         for (int i = 0; i < mipmapCount_; i++) {
             unsigned int mipSize = GetPixelDataSize(mipWidth, mipHeight, format_);
-
-            unsigned int glInternalFormat, glFormat, glType;
-            GL::GetGLTextureFormats(format_, &glInternalFormat, &glFormat, &glType);
 
             if (glInternalFormat != -1) {
                 if (format_ < COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *)data_ + mipOffset);
@@ -128,21 +128,26 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         SetParameter(TEXPARAM_WRAP_T, WRAP_CLAMP);
     }
 #else
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         SetParameter(TEXPARAM_WRAP_S, WRAP_REPEAT);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         SetParameter(TEXPARAM_WRAP_T, WRAP_REPEAT);
 #endif
 
 #if defined(GRAPHICS_OPENGL33)
         if (mipmapCount_ > 1)
         {
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_LINEAR);
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_MIP_LINEAR);
-        }
+        } else
 #endif
+        {
+            // By default we filter by nearest. TODO: Look at pros and cons of this
+            SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_NEAREST);
+            SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_NEAREST);
+        }
+
+        // Generate mipmap data
+        if (!(width_ == 1 && height_ / 2 == width_))
+            glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     GLTexture::~GLTexture() {
@@ -154,7 +159,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     void GLTexture::Bind() {
-        // Use texture 0
+        // Use texture unit 0
         glActiveTexture(GL_TEXTURE0);
 
         // Bind
@@ -165,7 +170,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Bind
         Bind();
 
-        // Set parametrer
+        // Set parameter
         switch(param_) {
             case TEXPARAM_WRAP_S:
             case TEXPARAM_WRAP_T:
@@ -192,7 +197,45 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     int GLTexture::GetPixelDataSize(int width_, int height_, GLPixelFormat format_) {
-        return 0;
+        auto bpp = 0;
+
+        switch (format_)
+        {
+            case UNCOMPRESSED_GRAYSCALE: bpp = 8; break;
+            case UNCOMPRESSED_GRAY_ALPHA:
+            case UNCOMPRESSED_R5G6B5:
+            case UNCOMPRESSED_R5G5B5A1:
+            case UNCOMPRESSED_R4G4B4A4: bpp = 16; break;
+            case UNCOMPRESSED_R8G8B8A8: bpp = 32; break;
+            case UNCOMPRESSED_R8G8B8: bpp = 24; break;
+            case UNCOMPRESSED_R32: bpp = 32; break;
+            case UNCOMPRESSED_R32G32B32: bpp = 32*3; break;
+            case UNCOMPRESSED_R32G32B32A32: bpp = 32*4; break;
+            case COMPRESSED_DXT1_RGB:
+            case COMPRESSED_DXT1_RGBA:
+            case COMPRESSED_ETC1_RGB:
+            case COMPRESSED_ETC2_RGB:
+            case COMPRESSED_PVRT_RGB:
+            case COMPRESSED_PVRT_RGBA: bpp = 4; break;
+            case COMPRESSED_DXT3_RGBA:
+            case COMPRESSED_DXT5_RGBA:
+            case COMPRESSED_ETC2_EAC_RGBA:
+            case COMPRESSED_ASTC_4x4_RGBA: bpp = 8; break;
+            case COMPRESSED_ASTC_8x8_RGBA: bpp = 2; break;
+            default: break;
+        }
+
+        auto dataSize = width_*height_*bpp/8;  // Total data size in bytes
+
+        // Most compressed formats works on 4x4 blocks,
+        // if texture is smaller, minimum dataSize is 8 or 16
+        if ((width_ < 4) && (height_ < 4))
+        {
+            if ((format_ >= COMPRESSED_DXT1_RGB) && (format_ < COMPRESSED_DXT3_RGBA)) dataSize = 8;
+            else if ((format_ >= COMPRESSED_DXT3_RGBA) && (format_ < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
+        }
+
+        return dataSize;
     }
 }
 #endif
