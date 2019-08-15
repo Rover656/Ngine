@@ -184,6 +184,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             glActiveTexture(GL_TEXTURE0);
 
             for (auto i = 0; i < _DrawCounter; i++) {
+                auto call = _DrawCalls[i];
                 if (_DrawCalls[i].Texture == nullptr) continue;
                 _DrawCalls[i].Texture->Bind();
 
@@ -196,7 +197,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                                    (GLvoid *) (sizeof(GLuint) * vertexOffset / 4 * 6));
 #elif defined(GRAPHICS_OPENGLES2)
                     glDrawElements(GL_TRIANGLES, _DrawCalls[i].VertexCount / 4 * 6, GL_UNSIGNED_SHORT,
-                               (GLvoid *) (sizeof(GLuint) * vertexOffset / 4 * 6));
+                               (GLvoid *) (sizeof(GLushort) * vertexOffset / 4 * 6));
 #endif
                 }
 
@@ -207,6 +208,14 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             }
+
+            // Unbind textures
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            if (VAOSupported) glBindVertexArray(0);
+
+            // Unbind program
+            glUseProgram(0);
 
             // Reset everything
             _VertexData[_CurrentBuffer].VCounter = 0;
@@ -277,28 +286,34 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
             _VertexData[i].VBO = std::make_unique<std::unique_ptr<GLBuffer>[]>(4);
             _VertexData[i].VBO[0] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
+            _VertexData[i].VBO[0]->Bind();
             _VertexData[i].VBO[0]->SetData(_VertexData[i].Vertices.get(), sizeof(float) * 3 * 4 * MAX_BATCH_ELEMENTS);
             glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION]);
             glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_POSITION], 3, GL_FLOAT, 0, 0,
                                   nullptr);
 
             _VertexData[i].VBO[1] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
+            _VertexData[i].VBO[1]->Bind();
             _VertexData[i].VBO[1]->SetData(_VertexData[i].TexCoords.get(), sizeof(float) * 2 * 4 * MAX_BATCH_ELEMENTS);
             glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD]);
             glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_TEXCOORD], 2, GL_FLOAT, 0, 0,
                                   nullptr);
 
             _VertexData[i].VBO[2] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
+            _VertexData[i].VBO[2]->Bind();
             _VertexData[i].VBO[2]->SetData(_VertexData[i].Colors.get(), sizeof(float) * 4 * 4 * MAX_BATCH_ELEMENTS);
             glEnableVertexAttribArray(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR]);
             glVertexAttribPointer(_CurrentShaderProgram->Locations[LOCATION_VERTEX_COLOR], 4, GL_FLOAT, 0, 0, nullptr);
 
             _VertexData[i].VBO[3] = std::make_unique<GLBuffer>(BUFFER_INDEX, USAGE_STATIC);
+            _VertexData[i].VBO[3]->Bind();
 #if defined(GRAPHICS_OPENGL33)
             _VertexData[i].VBO[3]->SetData(_VertexData[i].Indices.get(), sizeof(unsigned int) * 6 * MAX_BATCH_ELEMENTS);
 #elif defined(GRAPHICS_OPENGLES2)
             _VertexData[i].VBO[3]->SetData(_VertexData[i].Indices.get(), sizeof(unsigned short) * 6 * MAX_BATCH_ELEMENTS);
 #endif
+
+            if (VAOSupported) glBindVertexArray(0);
         }
     }
 
@@ -390,6 +405,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             _VertexData[_CurrentBuffer].VBO[2]->Bind();
             _VertexData[_CurrentBuffer].VBO[2]->SetData(_VertexData[_CurrentBuffer].Colors.get(),
                                                         sizeof(float) * 4 * 4 * MAX_BATCH_ELEMENTS);
+
+            if (VAOSupported) glBindVertexArray(0); // Need VAO class to have this???
         }
     }
 
@@ -556,6 +573,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         }
     }
 
+    void GL::StopUsingTexture() {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        if (_VertexData[_CurrentBuffer].VCounter >= (MAX_BATCH_ELEMENTS*4)) Draw();
+#endif
+    }
+
     void GL::TexCoord(TVector2 coord_) {
         if (_VertexData[_CurrentBuffer].TCCounter < (MAX_BATCH_ELEMENTS * 4)) {
             _VertexData[_CurrentBuffer].TexCoords[2 * _VertexData[_CurrentBuffer].TCCounter] = coord_.X;
@@ -566,6 +589,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     void GL::UseTexture(std::shared_ptr<GLTexture> texture_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+
+        auto call = _DrawCalls[_DrawCounter - 1];
+
+        // If the current draw call uses a different texture and has data, get ready to open a new draw call
         if (_DrawCalls[_DrawCounter - 1].Texture != texture_) {
             if (_DrawCalls[_DrawCounter - 1].VertexCount > 0) {
                 // Make sure current vertex count is aligned a multiple of 4,
@@ -590,6 +617,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 }
             }
 
+            // Draw if we reached our limit
             if (_DrawCounter >= MAX_DRAWCALL_REGISTERED) Draw();
 
             _DrawCalls[_DrawCounter - 1].Texture = texture_;

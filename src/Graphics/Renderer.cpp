@@ -238,7 +238,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
                                TVector2 origin_, float rotation_) {
-        DrawTexture(texture_, sourceRectangle_, position_, texture_.Width, texture_.Height, color_, origin_, rotation_);
+        DrawTexture(texture_, sourceRectangle_, position_, sourceRectangle_.Width, sourceRectangle_.Height, color_, origin_, rotation_);
     }
 
     void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
@@ -301,6 +301,8 @@ namespace NerdThings::Ngine::Graphics {
             OpenGL::GL::End();
 
             OpenGL::GL::PopMatrix();
+
+            OpenGL::GL::StopUsingTexture();
         }
     }
 

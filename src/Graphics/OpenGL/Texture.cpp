@@ -27,6 +27,12 @@
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLTexture::GLTexture(unsigned int width_, unsigned int height_, void *data_, int mipmapCount_,
                          GLPixelFormat format_) {
+        // Check dimensions
+        if (width_ <= 0 || height_ <= 0) {
+            ConsoleMessage("Texture was given invalid dimensions.", "ERROR", "GLTexture");
+            return;
+        }
+
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -146,8 +152,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         }
 
         // Generate mipmap data
-        if (!(width_ == 1 && height_ / 2 == width_))
-            glGenerateMipmap(GL_TEXTURE_2D);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     GLTexture::~GLTexture() {

@@ -133,7 +133,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 #endif
 
 #define MAX_BATCH_BUFFERING 1
-#define MAX_FRAMEBUFFER_STACK_SIZE 16
 #define MAX_MATRIX_STACK_SIZE 32
 #define MAX_DRAWCALL_REGISTERED 256
 
@@ -407,6 +406,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * End a set of vertices
          */
         static void End();
+
+        /*
+         * Stop using the current texture
+         */
+        static void StopUsingTexture();
 
         /*
          * Set vertex texture coordinate

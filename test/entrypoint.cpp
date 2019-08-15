@@ -241,8 +241,8 @@ public:
             tileData.push_back(2);
         }
 
-        //testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
-        //testTiles->SetTileAt({5, 5}, 13);
+        testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles->SetTileAt({5, 5}, 13);
     }
 
     ~TestScene() {
@@ -273,8 +273,10 @@ public:
 
         Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
-        // TODO: This causes major texture issues on UWP/GLES2
-        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), {0, 0}, TColor::White);
+        //Renderer::DrawTexture(Resources::GetTexture("test_tiles"), { 0, 0 }, 100, 100, TColor::White);
+
+        testTiles->Draw({ 0, 0 });
+        //testTiles->GetTileset()->DrawTile({0, 0}, 1);
     }
 
     void DrawCam(EventArgs &e) {

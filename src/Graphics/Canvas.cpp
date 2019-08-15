@@ -31,20 +31,20 @@ namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     void Canvas::Draw(TVector2 pos_) {
-//        Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
-//                                       {
-//                                               pos_.X,
-//                                               pos_.Y,
-//                                               _Width,
-//                                               _Height
-//                                       },
-//                                       {
-//                                               0,
-//                                               0,
-//                                               static_cast<float>(_RenderTarget.Width),
-//                                               static_cast<float>(-_RenderTarget.Height)
-//                                       },
-//                                       Graphics::TColor::White);
+        Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
+                                       {
+                                               pos_.X,
+                                               pos_.Y,
+                                               static_cast<float>(_Width),
+                                               static_cast<float>(_Height)
+                                       },
+                                       {
+                                               0,
+                                               0,
+                                               static_cast<float>(_RenderTarget.Width),
+                                               static_cast<float>(_RenderTarget.Height) * -1
+                                       },
+                                       Graphics::TColor::White);
     }
 
     unsigned int Canvas::GetHeight() {
