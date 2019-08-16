@@ -21,16 +21,19 @@ namespace NerdThings::Ngine::UI {
         auto style = GetStyle();
         auto rect = style.GetBorderRect(GetLogicRectangle());
 
+        // Get mouse position
+        auto mPos = Input::Mouse::GetMousePosition();
+
         // Check the mouse is within our parent too, if not we cant be clicked
         auto par = GetParent<UIControl>();
         if (par != nullptr) {
             auto parentRect = par->GetLogicRectangle();
 
-            if (!parentRect.Contains(Input::Mouse::GetMousePosition()))
+            if (!parentRect.Contains(mPos))
                 return;
         }
 
-        if (rect.Contains(Input::Mouse::GetMousePosition())) {
+        if (rect.Contains(mPos)) {
             // The mouse is over the button
             if (Input::Mouse::IsButtonPressed(MOUSE_BUTTON_LEFT)) {
                 // Clicked
