@@ -145,6 +145,7 @@ namespace NerdThings::Ngine::Input {
     }
 
     bool Keyboard::IsKeyDown(const EKey key_) {
+        if (key_ == KEY_NONE) return false;
         return _CurrentKeyState[key_];
     }
 
@@ -157,6 +158,7 @@ namespace NerdThings::Ngine::Input {
     }
 
     bool Keyboard::IsKeyUp(const EKey key_) {
+        if (key_ == KEY_NONE) return true;
         return !IsKeyDown(key_);
     }
 
