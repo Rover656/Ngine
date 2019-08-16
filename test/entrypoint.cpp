@@ -255,7 +255,7 @@ public:
         AudioManager::SetMasterVolume(0.5);
     }
 
-    //int rot = 0;
+    int rot = 0;
 
     void Draw(EventArgs &e) {
         // for (auto i = 0; i < 800; i++) {
@@ -268,12 +268,15 @@ public:
 
         Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
-        //rot += Mouse::GetMouseWheelYDelta();
+        rot += Mouse::GetMouseWheelYDelta();
 
-        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, TColor::White, {});// , DegToRad(rot));
+        if (rot > 0)
+            rot = rot;
+
+        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, TColor::White, {} , DegToRad(rot));
 
         if (Mouse::IsButtonPressed(MOUSE_BUTTON_LEFT))
-            testTiles->Draw({ 0, 0 });
+            testTiles->Draw({0, 0});
         //testTiles->Draw(Mouse::GetMousePosition());
         //testTiles->GetTileset()->DrawTile({0, 0}, 1);
     }

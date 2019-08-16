@@ -74,7 +74,7 @@ namespace NerdThings::Ngine {
         SetUpdateFPS(updateFPS_);
 
         // Register default events
-        OnUpdate.Bind(Input::Mouse::OnGameUpdate);
+        //OnUpdate.Bind(Input::Mouse::OnGameUpdate);
         OnUpdate.Bind(Audio::AudioManager::Update);
         ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
 
@@ -256,8 +256,9 @@ namespace NerdThings::Ngine {
                 Input::Mouse::SetOffset(0, 0);
             }
 
-            // Poll inputs
+            // Poll events and inputs
             Window::PollEvents();
+            Input::Mouse::PollInputs();
 
 #if defined(PLATFORM_DESKTOP)
             // Release thread to CPU (Stops weird idle cpu usage and fps drops)

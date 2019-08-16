@@ -42,9 +42,6 @@ namespace NerdThings::Ngine::Input {
         pos.Y = pointerPos.Y - window->Bounds.Y;
 #endif
 
-        pos.X = (pos.X + _MouseOffset.X) * _MouseScale.X;
-        pos.Y = (pos.Y + _MouseOffset.Y) * _MouseScale.Y;
-
         return pos;
     }
 
@@ -65,8 +62,8 @@ namespace NerdThings::Ngine::Input {
 
     void Mouse::UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
         if (args->CurrentPoint->Properties->IsHorizontalMouseWheel)
-            _NextMouseState.MouseWheelXDelta = args->CurrentPoint->Properties->MouseWheelDelta;
-        else _NextMouseState.MouseWheelYDelta = args->CurrentPoint->Properties->MouseWheelDelta;
+            _NextMouseState.MouseWheelXDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
+        else _NextMouseState.MouseWheelYDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
     }
 
     void Mouse::UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
@@ -99,11 +96,13 @@ namespace NerdThings::Ngine::Input {
     }
 
     TVector2 Mouse::GetMousePosition() {
-        return _CurrentMouseState.Position;
-    }
+        auto pos = _CurrentMouseState.Position;
 
-    MouseState Mouse::GetMouseState() {
-        return _CurrentMouseState;
+        // Apply translation
+        pos.X = (pos.X + _MouseOffset.X) * _MouseScale.X;
+        pos.Y = (pos.Y + _MouseOffset.Y) * _MouseScale.Y;
+
+        return pos;
     }
 
     int Mouse::GetMouseWheelXDelta() {
@@ -145,9 +144,7 @@ namespace NerdThings::Ngine::Input {
         return _CurrentMouseState.ButtonsDown[button_] != _LastMouseState.ButtonsDown[button_] && _CurrentMouseState.ButtonsDown[button_] == false;
     }
 
-    // Public Event Handles
-
-    void Mouse::OnGameUpdate(EventArgs &e_) {
+    void Mouse::PollInputs() {
         // Mouse position events
         if (_LastMouseState.Position != _CurrentMouseState.Position) {
             OnMouseMoved({_CurrentMouseState.Position, _CurrentMouseState.Position - _LastMouseState.Position});
@@ -179,8 +176,9 @@ namespace NerdThings::Ngine::Input {
         // Push new data to current state
         _CurrentMouseState = _NextMouseState;
 
-        // Create a clean slate
-        _NextMouseState = MouseState();
+        // Reset next state's scroll wheel
+        _NextMouseState.MouseWheelYDelta = 0;
+        _NextMouseState.MouseWheelXDelta = 0;
     }
 
     void Mouse::SetOffset(float ox_, float oy_) {

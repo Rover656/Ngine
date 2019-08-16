@@ -141,12 +141,6 @@ namespace NerdThings::Ngine::Input {
         static TVector2 GetMousePosition();
 
         /*
-         * Get the mouse state.
-         * Use this if you use cancellable events.
-         */
-        static MouseState GetMouseState();
-
-        /*
          * Get mouse wheel X movement.
          */
         static int GetMouseWheelXDelta();
@@ -177,6 +171,11 @@ namespace NerdThings::Ngine::Input {
         static bool IsButtonReleased(EMouseButton button_);
 
         /*
+         * Poll Mouse Inputs
+         */
+        static void PollInputs();
+
+        /*
          * Set mouse offset.
          * This should only be used internally.
          * This may produce unexpected results if used.
@@ -189,14 +188,7 @@ namespace NerdThings::Ngine::Input {
          * This may produce unexpected results if used.
          */
         static void SetScale(float sx_, float sy_);
-
-        // Public Event Handles
-
-        /*
-         * On game update
-         */
-        static void OnGameUpdate(EventArgs &e_);
-};
+    };
 }
 
 #endif //MOUSE_H
