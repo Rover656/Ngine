@@ -35,7 +35,7 @@ namespace NerdThings::Ngine::UI {
 
         if (rect.Contains(mState.Position)) {
             // The mouse is over the button
-            if (mState.ButtonsPressed[MOUSE_BUTTON_LEFT]) {
+            if (Input::Mouse::IsButtonPressed(MOUSE_BUTTON_LEFT)) {
                 // Clicked
                 OnClick({this});
 

@@ -26,11 +26,6 @@ namespace NerdThings::Ngine {
          */
         static int _Width;
 
-        /*
-         * Platform window pointer
-         */
-        static void *_WindowPtr;
-
 #if defined(PLATFORM_UWP)
         /*
          * When the application is suspended
@@ -39,6 +34,13 @@ namespace NerdThings::Ngine {
 #endif
     public:
         // Public Fields
+
+        /*
+         * Platform specific window pointer.
+         * Most likely will be nullptr on non-desktop platforms
+         */
+        static void *WindowPtr;
+
 #if defined(PLATFORM_UWP)
         static UWP::GameApp ^UWPApp;
 #endif

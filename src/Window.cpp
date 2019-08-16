@@ -24,15 +24,17 @@
 #include <stdexcept>
 
 #include "Graphics/OpenGL/OpenGL.h"
+#include "Input/Mouse.h"
 
 namespace NerdThings::Ngine {
     // Private Fields
 
     int Window::_Height = 0;
     int Window::_Width = 0;
-    void *Window::_WindowPtr = nullptr;
 
     // Public Fields
+
+    void *Window::WindowPtr = nullptr;
 
 #if defined(PLATFORM_UWP)
     UWP::GameApp ^Window::UWPApp;
@@ -64,7 +66,7 @@ namespace NerdThings::Ngine {
     void Window::Cleanup() {
 #if defined(PLATFORM_DESKTOP)
         // Destroy window
-        glfwDestroyWindow((GLFWwindow*)_WindowPtr);
+        glfwDestroyWindow((GLFWwindow*)WindowPtr);
         glfwTerminate();
 #elif defined(PLATFORM_UWP)
         // Close surface, context and display
@@ -129,17 +131,17 @@ namespace NerdThings::Ngine {
         // Creation
 #if defined(PLATFORM_DESKTOP)
         // Create window
-        _WindowPtr = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
-        if (!_WindowPtr) {
+        WindowPtr = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
+        if (!WindowPtr) {
             glfwTerminate();
             throw std::runtime_error("[Window::Window] Failed to create.");
         }
 
         // Get initial size
-        glfwGetWindowSize((GLFWwindow *)_WindowPtr, &_Width, &_Height);
+        glfwGetWindowSize((GLFWwindow *)WindowPtr, &_Width, &_Height);
 
         // Use new context
-        glfwMakeContextCurrent((GLFWwindow*) _WindowPtr);
+        glfwMakeContextCurrent((GLFWwindow*) WindowPtr);
 #elif defined(PLATFORM_UWP)
         EGLint samples = 0;
         EGLint sampleBuffer = 0;
@@ -337,6 +339,10 @@ namespace NerdThings::Ngine {
         // Window is now created, init OpenGL
         Graphics::OpenGL::GL::Init();
         ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "WINDOW");
+
+        // Init Input
+        Input::Mouse::Init();
+        ConsoleMessage("Input API's have been initialized.", "NOTICE", "Window");
     }
 
     void Window::PollEvents() {
@@ -345,7 +351,7 @@ namespace NerdThings::Ngine {
         glfwPollEvents();
 
         // Query dimensions
-        glfwGetWindowSize((GLFWwindow *)_WindowPtr, &_Width, &_Height);
+        glfwGetWindowSize((GLFWwindow *)WindowPtr, &_Width, &_Height);
 #elif defined(PLATFORM_UWP)
         // Poll window events
         if (ShouldRenderFrame())
@@ -361,19 +367,19 @@ namespace NerdThings::Ngine {
 
     void Window::SetResizable(bool resizable_) {
 #if defined(PLATFORM_DESKTOP)
-        glfwSetWindowAttrib((GLFWwindow *)_WindowPtr, GLFW_RESIZABLE, resizable_ ? 1 : 0);
+        glfwSetWindowAttrib((GLFWwindow *)WindowPtr, GLFW_RESIZABLE, resizable_ ? 1 : 0);
 #endif
     }
 
     void Window::SetTitle(const std::string& title_) {
 #if defined(PLATFORM_DESKTOP)
-        glfwSetWindowTitle((GLFWwindow *)_WindowPtr, title_.c_str());
+        glfwSetWindowTitle((GLFWwindow *)WindowPtr, title_.c_str());
 #endif
     }
 
     bool Window::ShouldClose() {
 #if defined(PLATFORM_DESKTOP)
-        return glfwWindowShouldClose((GLFWwindow *)_WindowPtr);
+        return glfwWindowShouldClose((GLFWwindow *)WindowPtr);
 #elif defined(PLATFORM_UWP)
         return false; // This is not used for anything anyway.
 #endif
@@ -390,7 +396,7 @@ namespace NerdThings::Ngine {
 
     void Window::SwapBuffers() {
 #if defined(PLATFORM_DESKTOP)
-        glfwSwapBuffers((GLFWwindow *)_WindowPtr);
+        glfwSwapBuffers((GLFWwindow *)WindowPtr);
 #elif defined(PLATFORM_UWP)
         eglSwapBuffers(display, surface);
 #endif

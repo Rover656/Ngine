@@ -14,6 +14,12 @@
 
 #include "../ngine.h"
 
+#if defined(PLATFORM_DESKTOP)
+struct GLFWwindow;
+#elif defined(PLATFORM_UWP)
+#include "../Platform/UWP/GameApp.h"
+#endif
+
 #include "../Vector2.h"
 #include "../EventArgs.h"
 #include "../EventHandler.h"
@@ -28,19 +34,19 @@ namespace NerdThings::Ngine::Input {
         bool ButtonsDown[3] = {false, false, false};
 
         /*
-         * Buttons pressed this frame
+         * The change in mouse wheel X offset between frames
          */
-        bool ButtonsPressed[3] = {false, false, false};
+        int MouseWheelXDelta = 0;
 
         /*
-         * Buttons released this frame
+         * The change in mouse wheel Y offset between frames
          */
-        bool ButtonsReleased[3] = {false, false, false};
+        int MouseWheelYDelta = 0;
 
         /*
-         * The mouse wheel y movement
+         * Whether or not this mouse state struct has been populated with info.
          */
-        int MouseWheelMovementY = 0;
+        bool Populated = false;
 
         /*
          * Mouse cursor position
@@ -50,8 +56,6 @@ namespace NerdThings::Ngine::Input {
 
     /*
      * Mouse input manager.
-     * 
-     * Currently does not support touch platforms. Will see if raylib is moving touch into mouse first.
      */
     class NEAPI Mouse {
         // Private Fields
@@ -66,12 +70,36 @@ namespace NerdThings::Ngine::Input {
          */
         static MouseState _LastMouseState;
 
+        /*
+         * Mouse position offset
+         */
+        static TVector2 _MouseOffset;
+
+        /*
+         * Mouse position scale
+         */
+        static TVector2 _MouseScale;
+
+        /*
+         * The next mouse state that is being built while the frame is progressing
+         */
+        static MouseState _NextMouseState;
+
         // Private Methods
 
         /*
-         * Fetch the mouse state
+         * Get the mouse position direct from the device
          */
-        static MouseState FetchState();
+        static TVector2 InternalGetMousePosition();
+
+#if defined(PLATFORM_DESKTOP)
+        static void GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_);
+        static void GLFWScrollCallback(GLFWwindow *window_, double x_, double y_);
+#elif defined(PLATFORM_UWP)
+        static void UWPMouseMoved(Windows::Devices::Input::MouseDevice ^sender, Windows::Devices::Input::MouseEventArgs ^args);
+        static void UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
+        static void UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
+#endif
     public:
         // Public Fields
 
@@ -89,6 +117,11 @@ namespace NerdThings::Ngine::Input {
          * On mouse moved event
          */
         static EventHandler<MouseMovedEventArgs> OnMouseMoved;
+
+        /*
+         * On mouse scroll X changed
+         */
+        static EventHandler<MouseScrollChangedEventArgs> OnMouseScrollXChanged;
 
         /*
          * On mouse scroll Y changed
@@ -114,9 +147,19 @@ namespace NerdThings::Ngine::Input {
         static MouseState GetMouseState();
 
         /*
-         * Get mouse wheel movement.
+         * Get mouse wheel X movement.
          */
-        static int GetMouseWheelMovement();
+        static int GetMouseWheelXDelta();
+
+        /*
+         * Get mouse wheel Y movement.
+         */
+        static int GetMouseWheelYDelta();
+
+        /*
+         * Init mouse input APIs.
+         */
+        static void Init();
 
         /*
          * Is button down (even if cancelled).
@@ -150,15 +193,10 @@ namespace NerdThings::Ngine::Input {
         // Public Event Handles
 
         /*
-         * On game run
-         */
-        static void OnGameRun(EventArgs &e_);
-
-        /*
          * On game update
          */
         static void OnGameUpdate(EventArgs &e_);
-    };
+};
 }
 
 #endif //MOUSE_H

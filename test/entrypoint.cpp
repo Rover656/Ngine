@@ -255,6 +255,8 @@ public:
         AudioManager::SetMasterVolume(0.5);
     }
 
+    //int rot = 0;
+
     void Draw(EventArgs &e) {
         // for (auto i = 0; i < 800; i++) {
         //     Renderer::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
@@ -264,18 +266,15 @@ public:
 
         //widg.Draw();
 
-//        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
-//        for (auto i = 0; i < 4; i++) {
-//            OpenGL::GL::Color({colors[4*i], colors[4*i + 1], colors[4*i + 2], colors[4*i + 3]});
-//            OpenGL::GL::Vertex({vertices[3*i], vertices[3*i + 1], vertices[3*i + 2]});
-//        }
-//        OpenGL::GL::End();
-
         Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
-        //Renderer::DrawTexture(Resources::GetTexture("test_tiles"), { 0, 0 }, 100, 100, TColor::White);
+        //rot += Mouse::GetMouseWheelYDelta();
 
-        testTiles->Draw({ 0, 0 });
+        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, TColor::White, {});// , DegToRad(rot));
+
+        if (Mouse::IsButtonPressed(MOUSE_BUTTON_LEFT))
+            testTiles->Draw({ 0, 0 });
+        //testTiles->Draw(Mouse::GetMousePosition());
         //testTiles->GetTileset()->DrawTile({0, 0}, 1);
     }
 
