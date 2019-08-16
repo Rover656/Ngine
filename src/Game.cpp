@@ -74,7 +74,6 @@ namespace NerdThings::Ngine {
         SetUpdateFPS(updateFPS_);
 
         // Register default events
-        //OnUpdate.Bind(Input::Mouse::OnGameUpdate);
         OnUpdate.Bind(Audio::AudioManager::Update);
         ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
 
