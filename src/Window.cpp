@@ -25,6 +25,7 @@
 
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Input/Mouse.h"
+#include "Input/Keyboard.h"
 
 namespace NerdThings::Ngine {
     // Private Fields
@@ -342,6 +343,7 @@ namespace NerdThings::Ngine {
 
         // Init Input
         Input::Mouse::Init();
+        Input::Keyboard::Init();
         ConsoleMessage("Input API's have been initialized.", "NOTICE", "Window");
     }
 

@@ -76,9 +76,6 @@ namespace NerdThings::Ngine {
         // Register default events
         OnUpdate.Bind(Audio::AudioManager::Update);
         ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
-
-        // By default, disable exit key
-        //Input::Keyboard::SetExitKey(KEY_NONE);
     }
 
     // Destructor
@@ -258,6 +255,7 @@ namespace NerdThings::Ngine {
             // Poll events and inputs
             Window::PollEvents();
             Input::Mouse::PollInputs();
+            Input::Keyboard::PollInputs();
 
 #if defined(PLATFORM_DESKTOP)
             // Release thread to CPU (Stops weird idle cpu usage and fps drops)

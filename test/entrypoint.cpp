@@ -270,13 +270,12 @@ public:
 
         rot += Mouse::GetMouseWheelYDelta();
 
-        if (rot > 0)
-            rot = rot;
-
         Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, TColor::White, {} , DegToRad(rot));
 
-        if (Mouse::IsButtonPressed(MOUSE_BUTTON_LEFT))
+        if (Keyboard::IsKeyDown(KEY_SPACE)) {
             testTiles->Draw({0, 0});
+            //ConsoleMessage("PRESSED", "DEBUG", "entrypoint");
+        }
         //testTiles->Draw(Mouse::GetMousePosition());
         //testTiles->GetTileset()->DrawTile({0, 0}, 1);
     }
@@ -299,6 +298,8 @@ public:
         MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
         //0) {
         OnRun.Bind(this, &TestGame::Init);
+
+        Keyboard::SetExitKey(KEY_ESCAPE);
     }
 
     void Init(EventArgs &e) {

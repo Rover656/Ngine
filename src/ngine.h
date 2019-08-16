@@ -443,6 +443,8 @@ namespace NerdThings::Ngine {
         KEY_KP_EQUAL = 336
     };
 
+    #define KEY_MAX 348
+
     /*
      * Texture filter mode
      */
