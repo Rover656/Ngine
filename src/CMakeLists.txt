@@ -23,7 +23,7 @@ if (${PLATFORM} MATCHES "Desktop" AND MSVC)
     # Generate windows product info
     include(generate_product_version)
     generate_product_version(
-        RESOURCE_FILES
+        EXTRA_FILES
         NAME ${PROJECT_NAME}
         VERSION_MAJOR ${NGINE_VERSION_MAJOR}
         VERSION_MINOR ${NGINE_VERSION_MINOR}
@@ -37,11 +37,11 @@ if (${OPENGL_VERSION} MATCHES "3.3" AND ${PLATFORM} MATCHES "Desktop")
     find_package(OpenGL REQUIRED)
 
     # Add glad source
-    set(EXTRA_FILES "../third-party/glad/src/glad.c")
+    set(EXTRA_FILES ${EXTRA_FILES} "../third-party/glad/src/glad.c")
 endif()
 
 # Add library
-ngine_add_library(${PROJECT_NAME} ${BUILD_SHARED} ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_FILES} ${EXTRA_FILES})
+ngine_add_library(${PROJECT_NAME} ${BUILD_SHARED} ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
 
 # Enable exports
 if (${BUILD_SHARED} AND ${PLATFORM} MATCHES "Desktop")
