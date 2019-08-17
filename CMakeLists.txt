@@ -19,6 +19,18 @@ option(BUILD_SHARED "Build as a shared library" OFF)
 enum_option(PLATFORM "Desktop;UWP" "Platform to build for.")
 enum_option(OPENGL_VERSION "3.3;ES2" "Preferred OpenGL Version.")
 
+if(${PLATFORM} MATCHES "UWP")
+    message("Forcing OpenGL Version to ES2")
+    set(OPENGL_VERSION "ES2")
+elseif (${PLATFORM} MATCHES "Desktop")
+    if (${OPENGL_VERSION} MATCHES "ES2")
+        if (NOT MSVC)
+            message("Cannot use OpenGL ES2 on non-windows")
+            set(OPENGL_VERSION "3.3")
+        endif()
+    endif()
+endif()
+
 message("Building for ${PLATFORM} with preferred OpenGL Version ${OPENGL_VERSION}.")
 
 # Option enforcement

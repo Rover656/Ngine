@@ -1,2 +1,0 @@
-# Find and replace the /machine:X86 string
-((Get-Content -path (Resolve-Path "${PROJECT_DIR}/${PROJECT_NAME}.vcxproj") -Raw) -replace ' /machine:X86','') | Set-Content -Path (Resolve-Path "${PROJECT_DIR}/${PROJECT_NAME}.vcxproj")

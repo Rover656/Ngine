@@ -14,6 +14,8 @@ set(PACKAGE_GUID "0fa9fe36-15ee-44bb-a9b9-62d55c4ea028")
 set(PUBLISHER "NerdThings")
 set(PUBLISHER_DISPLAY_NAME "NerdThings")
 
+# TODO: Refactor this too!
+
 if (${PLATFORM} MATCHES "Desktop")
     if (${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
         message(FATAL_ERROR "Cannot build for Desktop under UWP. Use -DPLATFORM=UWP instead.")
@@ -124,10 +126,6 @@ if (${PLATFORM} MATCHES "Desktop")
         source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
     endif()
 elseif(${PLATFORM} MATCHES "UWP")
-    # THIS SHOULD BE BUILT WITH A PROVIDED SCRIPT, NOT WITH CMAKE!! PROCEED AT YOUR OWN RISK
-    if(${OPENGL_VERSION} MATCHES "3.3")
-        message(WARNING "The selected OpenGL version is incompatible. Using GLES2 instead.")
-    endif()
     if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
         message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_NAME=WindowsStore")
     endif()
@@ -149,7 +147,7 @@ elseif(${PLATFORM} MATCHES "UWP")
 
     set_property(TARGET ${PROJECT_NAME} PROPERTY VS_WINRT_COMPONENT TRUE) # TODO: Is this required?
 
-    # Defined
+    # Defines
     target_compile_definitions(${PROJECT_NAME} PRIVATE GRAPHICS_OPENGLES2=1 PLATFORM_UWP=1)
     target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_BUILD=1) # Used by ngine.h
 
@@ -160,18 +158,11 @@ elseif(${PLATFORM} MATCHES "UWP")
     # Include stb libraries
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/stb)
 
-    # Use ANGLE
-    target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/third-party/ANGLE)
+    # Add ANGLE via NuGet
     configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/packages.config.in
             ${CMAKE_BINARY_DIR}/packages.config COPYONLY)
-
-    # Configure the script ready for the project mod
-    set(PROJECT_DIR ${CMAKE_CURRENT_BINARY_DIR})
-    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureANGLEProject.ps1.in
-            ${CMAKE_BINARY_DIR}/Configure/UWPConfigureANGLE${PROJECT_NAME}.ps1)
-    configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/UWPConfigureProject.ps1.in
-            ${CMAKE_BINARY_DIR}/Configure/UWPConfigure${PROJECT_NAME}.ps1)
-
-    # Restore NuGet
     execute_process(COMMAND ${PROJECT_SOURCE_DIR}/redist/nuget.exe restore -SolutionDirectory ${CMAKE_BINARY_DIR})
+
+    # Link ANGLE
+    target_link_libraries(Ngine ${CMAKE_BINARY_DIR}/packages/ANGLE.WindowsStore.2.1.13/build/native/ANGLE.WindowsStore.targets)
 endif()
