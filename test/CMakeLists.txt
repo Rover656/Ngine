@@ -16,7 +16,7 @@ set(VERSION_PATCH 0)
 include(Ngine)
 
 # Check config is ok
-ngine_check_config(${PLATFORM})
+ngine_check_config()
 
 # Get UWP extras TODO: Add a function for this??
 if (${PLATFORM} MATCHES "UWP")
@@ -34,9 +34,11 @@ endif()
 ngine_configure_uwp_executable(${PROJECT_SOURCE_DIR}/cmake/UWP/Package.appxmanifest.in ${PROJECT_NAME} ${PACKAGE_GUID} ${PUBLISHER} ${PUBLISHER_DISPLAY_NAME} ${VERSION_MAJOR} ${VERSION_MINOR} ${VERSION_PATCH})
 
 # Visual Studio Source Groups
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/content PREFIX "\\Content" FILES ${CONTENT_FILES})
-source_group("Assets" FILES ${RESOURCE_FILES})
+if(MSVC)
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/content PREFIX "\\Content" FILES ${CONTENT_FILES})
+    source_group("Assets" FILES ${RESOURCE_FILES})
+endif()
 
 # Add EXE
 ngine_add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${CONTENT_FILES} ${RESOURCE_FILES})

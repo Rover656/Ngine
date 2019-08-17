@@ -1,7 +1,26 @@
 # General functions
 
 function(ngine_add_executable target)
+    # Add exe
     add_executable(${target} WIN32 ${ARGN})
+
+    # UWP Specifics
+    if (${PLATFORM} MATCHES "UWP")
+        # Mark as WinRT Component
+        set_property(TARGET ${target} PROPERTY VS_WINRT_COMPONENT TRUE) # IDK if we really need this tho
+
+        # Link special libraries
+        target_link_libraries(${target} WindowsApp)
+    endif()
+endfunction()
+
+function(ngine_add_library target shared)
+    # Add lib
+    if (${shared})
+        add_library(${target} SHARED ${ARGN})
+    else()
+        add_library(${target} ${ARGN})
+    endif()
 
     # UWP Specifics
     if (${PLATFORM} MATCHES "UWP")
@@ -24,14 +43,17 @@ function(ngine_configure_uwp_executable manifest PROJECT_NAME PACKAGE_GUID PUBLI
 endfunction()
 
 # Check all config is okay
-function(ngine_check_config platform)
-    if (${platform} MATCHES "Desktop")
+function(ngine_check_config)
+    if (${PLATFORM} MATCHES "Desktop")
         if (${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
             message(FATAL_ERROR "Cannot build Desktop for UWP. Use UWP platform instead.")
         endif()
-    elseif(${platform} MATCHES "UWP")
+    elseif(${PLATFORM} MATCHES "UWP")
         if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
-            message(FATAL_ERROR "Cannot build UWP for non WindowsStore target.")
+            message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_NAME=WindowsStore")
+        endif()
+        if (NOT ${CMAKE_SYSTEM_VERSION} STREQUAL "10.0")
+            message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_VERSION=10.0")
         endif()
     endif()
 endfunction()
