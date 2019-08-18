@@ -13,6 +13,7 @@
 
 #include "Audio/AudioManager.h"
 #include "Graphics/GraphicsManager.h"
+#include "Input/Gamepad.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Resources.h"
@@ -254,6 +255,7 @@ namespace NerdThings::Ngine {
 
             // Poll events and inputs
             Window::PollEvents();
+            Input::Gamepad::PollInputs();
             Input::Mouse::PollInputs();
             Input::Keyboard::PollInputs();
 

@@ -24,6 +24,7 @@
 #include <stdexcept>
 
 #include "Graphics/OpenGL/OpenGL.h"
+#include "Input/Gamepad.h"
 #include "Input/Mouse.h"
 #include "Input/Keyboard.h"
 
@@ -342,6 +343,7 @@ namespace NerdThings::Ngine {
         ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "WINDOW");
 
         // Init Input
+        Input::Gamepad::Init();
         Input::Mouse::Init();
         Input::Keyboard::Init();
         ConsoleMessage("Input API's have been initialized.", "NOTICE", "Window");

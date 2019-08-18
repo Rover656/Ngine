@@ -170,11 +170,11 @@ namespace NerdThings::Ngine::Input {
             }
         }
 
-        // Move current to last
-        for (auto i = 0; i <= KEY_MAX; i++) _PreviousKeyState[i] = _CurrentKeyState[i];
-
-        // Move next into current
-        for (auto i = 0; i <= KEY_MAX; i++) _CurrentKeyState[i] = _NextKeyState[i];
+        // Move current to last and next into current
+        for (auto i = 0; i <= KEY_MAX; i++) {
+            _PreviousKeyState[i] = _CurrentKeyState[i];
+            _CurrentKeyState[i] = _NextKeyState[i];
+        }
     }
 
     void Keyboard::SetExitKey(const EKey key_) {

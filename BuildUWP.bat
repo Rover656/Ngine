@@ -31,5 +31,3 @@ if exist "!InstallDir!\VC\Auxiliary\Build\vcvars64.bat" (
 ) else (
   echo "Could not find !InstallDir!\VC\Auxiliary\Build\vcvars64.bat"
 )
-
-pause

@@ -21,55 +21,58 @@ namespace NerdThings::Ngine::Input {
     class NEAPI Gamepad {
         // Private Fields
 
-        /*
-         * The current gamepad number
-         */
-        EGamepadNumber _GamepadNumber;
+        static float _CurrentAxisValue[][GAMEPAD_AXIS_RIGHT_TRIGGER+1];
+        static bool _CurrentButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB+1];
+        static bool _PreviousButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB+1];
+        static bool _Ready[];
 
+#if defined(PLATFORM_UWP)
+        static Windows::Gaming::Input::Gamepad ^ _UWPGamepads[];
+#endif
+
+        // Private Methods
+
+        static EGamepadAxis GetAxis(int axis_);
+        static EGamepadButton GetButton(int button_);
+
+#if defined(PLATFORM_UWP)
+        static void UWPGamepadAdded(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
+        static void UWPGamepadRemoved(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
+#endif
     public:
-        // Public Constructor(s)
-
-        /*
-         * Create a gamepad accessor for gamepad number
-         */
-        Gamepad(EGamepadNumber number_);
-
         // Public Methods
 
         /*
          * Get the value for an axis
          */
-        [[nodiscard]] float GetAxisValue(EGamepadAxis axis_) const;
+        static float GetAxisValue(EGamepadNumber pad_, EGamepadAxis axis_);
 
-        /*
-         * Get a gamepad by number
-         */
-        static Gamepad GetGamepad(EGamepadNumber gamepadNumber_);
+        static void Init();
 
         /*
          * Test if a the gamepad is available
          */
-        [[nodiscard]] bool IsAvailable() const;
+        static bool IsAvailable(EGamepadNumber pad_);
 
         /*
          * Test if a button is down
          */
-        [[nodiscard]] bool IsButtonDown(EGamepadButton button_) const;
+        static bool IsButtonDown(EGamepadNumber pad_, EGamepadButton button_);
 
         /*
          * Test if a button was pressed this frame
          */
-        [[nodiscard]] bool IsButtonPressed(EGamepadButton button_) const;
+        static bool IsButtonPressed(EGamepadNumber pad_, EGamepadButton button_);
 
         /*
          * Test if a button was released this frame
          */
-        [[nodiscard]] bool IsButtonReleased(EGamepadButton button_) const;
+        static bool IsButtonReleased(EGamepadNumber pad_, EGamepadButton button_);
 
         /*
-         * Test if a button is up
+         * Poll inputs
          */
-        [[nodiscard]] bool IsButtonUp(EGamepadButton button_) const;
+        static void PollInputs();
     };
 }
 

@@ -35,7 +35,7 @@ ngine_configure_uwp_executable(${PROJECT_SOURCE_DIR}/cmake/UWP/Package.appxmanif
 
 # Visual Studio Source Groups
 if(MSVC)
-    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "\\Source Files" FILES ${SOURCE_FILES})
     source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/content PREFIX "\\Content" FILES ${CONTENT_FILES})
     source_group("Assets" FILES ${RESOURCE_FILES})
 endif()

@@ -14,6 +14,7 @@
 #include <Resources.h>
 #include <Graphics/Sprite.h>
 #include <Graphics/TilesetCanvas.h>
+#include <Input/Gamepad.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
 #include <Vector2.h>
@@ -269,10 +270,11 @@ public:
         Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
         rot += Mouse::GetMouseWheelYDelta();
+        rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
 
         Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, TColor::White, {} , DegToRad(rot));
 
-        if (Keyboard::IsKeyDown(KEY_SPACE)) {
+        if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
             testTiles->Draw({0, 0});
             //ConsoleMessage("PRESSED", "DEBUG", "entrypoint");
         }

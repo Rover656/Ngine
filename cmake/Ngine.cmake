@@ -132,8 +132,6 @@ function(ngine_add_content target root_dir content_dir)
             # Remove filename
             string(REPLACE "/${CONTENT_FILENAME}" "" CONTENT_FILE_DEPLOYLOC ${CONTENT_FILE_DEPLOYLOC})
 
-            message(${CONTENT_FILE})
-            message(${CONTENT_FILE_DEPLOYLOC})
             set_property(SOURCE ${CONTENT_FILE} PROPERTY VS_DEPLOYMENT_LOCATION ${CONTENT_FILE_DEPLOYLOC})
         endforeach()
 
