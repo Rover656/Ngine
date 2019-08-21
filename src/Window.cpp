@@ -8,10 +8,9 @@
     #include <EGL/eglext.h>
 
     // Defined here so it doesn't appear in Window.h
-    static EGLDisplay display; // Native display device (physical screen connection)
-    static EGLSurface surface; // Surface to draw on, framebuffers (connected to context)
-    static EGLContext context; // Graphic context, mode in which drawing can be done
-    static EGLConfig config; // Graphic config
+    //static EGLDisplay Display; // Native Display device (physical screen connection)
+    //static EGLSurface surface; // Surface to draw on, framebuffers (connected to context)
+    //static EGLContext context; // Graphic context, mode in which drawing can be done
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -36,10 +35,12 @@ namespace NerdThings::Ngine {
 
     // Public Fields
 
+#if defined(PLATFORM_DESKTOP)
     void *Window::WindowPtr = nullptr;
-
-#if defined(PLATFORM_UWP)
-    UWP::GameApp ^Window::UWPApp;
+#elif defined(PLATFORM_UWP)
+    EGLContext Window::Context = nullptr;
+    EGLDisplay Window::Display = nullptr;
+    EGLSurface Window::Surface = nullptr;
 #endif
 
     // Private Methods
@@ -71,22 +72,22 @@ namespace NerdThings::Ngine {
         glfwDestroyWindow((GLFWwindow*)WindowPtr);
         glfwTerminate();
 #elif defined(PLATFORM_UWP)
-        // Close surface, context and display
-        if (display != EGL_NO_DISPLAY) {
-            eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        // Close surface, context and Display
+        if (Display != EGL_NO_DISPLAY) {
+            eglMakeCurrent(Display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
-            if (surface != EGL_NO_SURFACE) {
-                eglDestroySurface(display, surface);
-                surface = EGL_NO_SURFACE;
+            if (Surface != EGL_NO_SURFACE) {
+                eglDestroySurface(Display, Surface);
+                Surface = EGL_NO_SURFACE;
             }
 
-            if (context != EGL_NO_CONTEXT) {
-                eglDestroyContext(display, context);
-                context = EGL_NO_CONTEXT;
+            if (Context != EGL_NO_CONTEXT) {
+                eglDestroyContext(Display, Context);
+                Context = EGL_NO_CONTEXT;
             }
 
-            eglTerminate(display);
-            display = EGL_NO_DISPLAY;
+            eglTerminate(Display);
+            Display = EGL_NO_DISPLAY;
         }
 #endif
         // Unset width and height as the window is closed
@@ -187,7 +188,7 @@ namespace NerdThings::Ngine {
 
         const EGLint defaultDisplayAttributes[] =
         {
-            // These are the default display attributes, used to request ANGLE's D3D11 renderer.
+            // These are the default Display attributes, used to request ANGLE's D3D11 renderer.
             // eglInitialize will only succeed with these attributes if the hardware supports D3D11 Feature Level 10_0+.
             EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
 
@@ -205,7 +206,7 @@ namespace NerdThings::Ngine {
         const EGLint fl9_3DisplayAttributes[] =
         {
             // These can be used to request ANGLE's D3D11 renderer, with D3D11 Feature Level 9_3.
-            // These attributes are used if the call to eglInitialize fails with the default display attributes.
+            // These attributes are used if the call to eglInitialize fails with the default Display attributes.
             EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
             EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE, 9,
             EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE, 3,
@@ -217,7 +218,7 @@ namespace NerdThings::Ngine {
         const EGLint warpDisplayAttributes[] =
         {
             // These attributes can be used to request D3D11 WARP.
-            // They are used if eglInitialize fails with both the default display attributes and the 9_3 display attributes.
+            // They are used if eglInitialize fails with both the default Display attributes and the 9_3 Display attributes.
             EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
             EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_WARP_ANGLE,
             EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER, EGL_TRUE,
@@ -227,7 +228,7 @@ namespace NerdThings::Ngine {
 
         EGLConfig config = NULL;
 
-        // eglGetPlatformDisplayEXT is an alternative to eglGetDisplay. It allows us to pass in display attributes, used to configure D3D11.
+        // eglGetPlatformDisplayEXT is an alternative to eglGetDisplay. It allows us to pass in Display attributes, used to configure D3D11.
         PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)(eglGetProcAddress("eglGetPlatformDisplayEXT"));
         if (!eglGetPlatformDisplayEXT)
         {
@@ -235,7 +236,7 @@ namespace NerdThings::Ngine {
         }
 
         //
-        // To initialize the display, we make three sets of calls to eglGetPlatformDisplayEXT and eglInitialize, with varying
+        // To initialize the Display, we make three sets of calls to eglGetPlatformDisplayEXT and eglInitialize, with varying
         // parameters passed to eglGetPlatformDisplayEXT:
         // 1) The first calls uses "defaultDisplayAttributes" as a parameter. This corresponds to D3D11 Feature Level 10_0+.
         // 2) If eglInitialize fails for step 1 (e.g. because 10_0+ isn't supported by the default GPU), then we try again
@@ -245,31 +246,31 @@ namespace NerdThings::Ngine {
         //
 
         // This tries to initialize EGL to D3D11 Feature Level 10_0+. See above comment for details.
-        display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, defaultDisplayAttributes);
-        if (display == EGL_NO_DISPLAY)
+        Display = (void*)eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, defaultDisplayAttributes);
+        if (Display == EGL_NO_DISPLAY)
         {
-            throw std::runtime_error("Failed to initialize EGL display");
+            throw std::runtime_error("Failed to initialize EGL Display");
         }
 
-        if (eglInitialize(display, NULL, NULL) == EGL_FALSE)
+        if (eglInitialize(Display, NULL, NULL) == EGL_FALSE)
         {
             // This tries to initialize EGL to D3D11 Feature Level 9_3, if 10_0+ is unavailable (e.g. on some mobile devices).
-            display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, fl9_3DisplayAttributes);
-            if (display == EGL_NO_DISPLAY)
+            Display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, fl9_3DisplayAttributes);
+            if (Display == EGL_NO_DISPLAY)
             {
-                throw std::runtime_error("Failed to initialize EGL display");
+                throw std::runtime_error("Failed to initialize EGL Display");
             }
 
-            if (eglInitialize(display, NULL, NULL) == EGL_FALSE)
+            if (eglInitialize(Display, NULL, NULL) == EGL_FALSE)
             {
                 // This initializes EGL to D3D11 Feature Level 11_0 on WARP, if 9_3+ is unavailable on the default GPU.
-                display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, warpDisplayAttributes);
-                if (display == EGL_NO_DISPLAY)
+                Display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, warpDisplayAttributes);
+                if (Display == EGL_NO_DISPLAY)
                 {
-                    throw std::runtime_error("Failed to initialize EGL display");
+                    throw std::runtime_error("Failed to initialize EGL Display");
                 }
 
-                if (eglInitialize(display, NULL, NULL) == EGL_FALSE)
+                if (eglInitialize(Display, NULL, NULL) == EGL_FALSE)
                 {
                     // If all of the calls to eglInitialize returned EGL_FALSE then an error has occurred.
                     throw std::runtime_error("Failed to initialize EGL");
@@ -278,7 +279,7 @@ namespace NerdThings::Ngine {
         }
 
         EGLint numConfigs = 0;
-        if ((eglChooseConfig(display, framebufferAttribs, &config, 1, &numConfigs) == EGL_FALSE) || (numConfigs == 0))
+        if ((eglChooseConfig(Display, framebufferAttribs, &config, 1, &numConfigs) == EGL_FALSE) || (numConfigs == 0))
         {
             throw std::runtime_error("Failed to choose first EGLConfig");
         }
@@ -313,24 +314,24 @@ namespace NerdThings::Ngine {
 
         //https://stackoverflow.com/questions/46550182/how-to-create-eglsurface-using-c-winrt-and-angle
 
-        //surface = eglCreateWindowSurface(display, config, reinterpret_cast<IInspectable*>(surfaceCreationProperties), surfaceAttributes);
-        surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)UWPApp->GetWindow(), surfaceAttributes);
-        if (surface == EGL_NO_SURFACE)
+        //Surface = eglCreateWindowSurface(Display, config, reinterpret_cast<IInspectable*>(surfaceCreationProperties), surfaceAttributes);
+        Surface = eglCreateWindowSurface(Display, config, (EGLNativeWindowType)CoreWindow::GetForCurrentThread(), surfaceAttributes);
+        if (Surface == EGL_NO_SURFACE)
         {
             throw std::runtime_error("Failed to create EGL fullscreen surface");
         }
 
-        context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
-        if (context == EGL_NO_CONTEXT)
+        Context = eglCreateContext(Display, config, EGL_NO_CONTEXT, contextAttribs);
+        if (Context == EGL_NO_CONTEXT)
         {
             throw std::runtime_error("Failed to create EGL context");
         }
 
-        // Get EGL display window size
-        eglQuerySurface(display, surface, EGL_WIDTH, &_Width);
-        eglQuerySurface(display, surface, EGL_HEIGHT, &_Height);
+        // Get EGL Display window size
+        eglQuerySurface(Display, Surface, EGL_WIDTH, &_Width);
+        eglQuerySurface(Display, Surface, EGL_HEIGHT, &_Height);
 
-        if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE)
+        if (eglMakeCurrent(Display, Surface, Surface, Context) == EGL_FALSE)
         {
             throw std::runtime_error("Unable to attach EGL rendering context to EGL surface");
         }
@@ -364,8 +365,8 @@ namespace NerdThings::Ngine {
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
 
         // Query dimensions
-        eglQuerySurface(display, surface, EGL_WIDTH, &_Width);
-        eglQuerySurface(display, surface, EGL_HEIGHT, &_Height);
+        eglQuerySurface(Display, Surface, EGL_WIDTH, &_Width);
+        eglQuerySurface(Display, Surface, EGL_HEIGHT, &_Height);
 #endif
     }
 
@@ -393,7 +394,7 @@ namespace NerdThings::Ngine {
     bool Window::ShouldRenderFrame()
     {
 #if defined(PLATFORM_UWP)
-        return UWPApp->GetWindow()->Visible == true;
+        return CoreWindow::GetForCurrentThread()->Visible == true;
 #endif
         return true;
     }
@@ -402,7 +403,7 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         glfwSwapBuffers((GLFWwindow *)WindowPtr);
 #elif defined(PLATFORM_UWP)
-        eglSwapBuffers(display, surface);
+        eglSwapBuffers(Display, Surface);
 #endif
     }
 }

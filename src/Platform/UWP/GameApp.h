@@ -46,11 +46,6 @@ namespace NerdThings::Ngine::UWP {
          * App window width
          */
         int _Width = 0;
-
-        /*
-         * Our core window
-         */
-        Windows::UI::Core::CoreWindow ^_Window;
     public:
 
         GameApp() {
@@ -70,29 +65,9 @@ namespace NerdThings::Ngine::UWP {
             applicationView->Activated += ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &GameApp::OnActivated);
         }
 
-        Windows::UI::Core::CoreWindow ^GetWindow()
-        {
-            return _Window;
-        }
-
         virtual void SetWindow(Windows::UI::Core::CoreWindow^ window)
         {
-            // Save window for later
-            _Window = window;
-
-            //window->PointerPressed += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &GameApp::PointerPressed);
-            //window->PointerWheelChanged += ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &GameApp::PointerWheelChanged);
-            //window->KeyDown += ref new TypedEventHandler<CoreWindow ^, KeyEventArgs ^>(this, &GameApp::OnKeyDown);
-            //window->KeyUp += ref new TypedEventHandler<CoreWindow ^, KeyEventArgs ^>(this, &GameApp::OnKeyUp);
-
-            //Windows::Devices::Input::MouseDevice::GetForCurrentView()->MouseMoved += ref new TypedEventHandler<MouseDevice^, MouseEventArgs^>(this, &GameApp::MouseMoved);
-
-            //DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
-            //currentDisplayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^, Object^>(this, &GameApp::OnDpiChanged);
-            //currentDisplayInformation->OrientationChanged += ref new TypedEventHandler<DisplayInformation^, Object^>(this, &GameApp::OnOrientationChanged);
-
             // Init
-            Window::UWPApp = this;
             Window::Init(_Width, _Height, "");
         }
 

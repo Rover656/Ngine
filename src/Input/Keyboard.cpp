@@ -137,7 +137,7 @@ namespace NerdThings::Ngine::Input {
         glfwSetKeyCallback((GLFWwindow *)Window::WindowPtr, Keyboard::GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
         // UWP events
-        auto window = Window::UWPApp->GetWindow();
+        auto window = CoreWindow::GetForCurrentThread();
 
         window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&UWPKeyDown);
         window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&UWPKeyUp);

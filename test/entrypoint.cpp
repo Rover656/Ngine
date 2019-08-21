@@ -330,13 +330,13 @@ int main() {
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^) {
 #endif
-    auto game = new TestGame(1920 / 2, 1080 / 2, 60, 60, "Hi");
+    auto game = TestGame(1920 / 2, 1080 / 2, 60, 60, "Hi");
 
 #if defined(PLATFORM_UWP)
     CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
 #else
-    game->Run();
+    game.Run();
 #endif
-    delete game;
+
     return 0;
 }

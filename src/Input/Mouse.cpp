@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Input {
         pos.X = static_cast<float>(x);
         pos.Y = static_cast<float>(y);
 #elif defined(PLATFORM_UWP)
-        auto window = Window::UWPApp->GetWindow();
+        auto window = CoreWindow::GetForCurrentThread();
         auto pointerPos = window->PointerPosition;
         pos.X = pointerPos.X - window->Bounds.X;
         pos.Y = pointerPos.Y - window->Bounds.Y;
@@ -123,7 +123,7 @@ namespace NerdThings::Ngine::Input {
 #elif defined(PLATFORM_UWP)
 
         // Register UWP callbacks
-        auto window = Window::UWPApp->GetWindow();
+        auto window = CoreWindow::GetForCurrentThread();
 
         window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&UWPPointerWheelChanged);
         window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&UWPPointerButtonEvent);

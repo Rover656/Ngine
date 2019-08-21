@@ -35,8 +35,7 @@ namespace NerdThings::Ngine::Input {
     EGamepadAxis Gamepad::GetAxis(int axis_) {
         EGamepadAxis axis = GAMEPAD_AXIS_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
-        switch (axis_)
-        {
+        switch (axis_) {
             case GLFW_GAMEPAD_AXIS_LEFT_X: axis = GAMEPAD_AXIS_LEFT_X; break;
             case GLFW_GAMEPAD_AXIS_LEFT_Y: axis = GAMEPAD_AXIS_LEFT_Y; break;
             case GLFW_GAMEPAD_AXIS_RIGHT_X: axis = GAMEPAD_AXIS_RIGHT_X; break;
@@ -53,8 +52,7 @@ namespace NerdThings::Ngine::Input {
     EGamepadButton Gamepad::GetButton(int button_) {
         EGamepadButton btn = GAMEPAD_BUTTON_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
-        switch (button_)
-        {
+        switch (button_) {
             case GLFW_GAMEPAD_BUTTON_Y: btn = GAMEPAD_BUTTON_RIGHT_FACE_UP; break;
             case GLFW_GAMEPAD_BUTTON_B: btn = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT; break;
             case GLFW_GAMEPAD_BUTTON_A: btn = GAMEPAD_BUTTON_RIGHT_FACE_DOWN; break;

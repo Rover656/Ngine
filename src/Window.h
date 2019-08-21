@@ -7,6 +7,10 @@
 namespace NerdThings::Ngine::UWP {
     ref class GameApp;
 }
+
+typedef void *EGLDisplay;
+typedef void *EGLSurface;
+typedef void *EGLContext;
 #endif
 
 namespace NerdThings::Ngine {
@@ -35,14 +39,27 @@ namespace NerdThings::Ngine {
     public:
         // Public Fields
 
+#if defined(PLATFORM_DESKTOP)
         /*
-         * Platform specific window pointer.
+         * GLFW Window pointer
          * Most likely will be nullptr on non-desktop platforms
          */
         static void *WindowPtr;
+#elif defined(PLATFORM_UWP)
+        /*
+         * EGL Context
+         */
+        static EGLContext Context;
 
-#if defined(PLATFORM_UWP)
-        static UWP::GameApp ^UWPApp;
+        /*
+         * EGL Display
+         */
+        static EGLDisplay Display;
+
+        /*
+         * EGL Surface
+         */
+        static EGLSurface Surface;
 #endif
 
         // Public Methods
