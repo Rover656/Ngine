@@ -17,7 +17,7 @@
 #include "../ngine.h"
 
 #include "../Graphics/Color.h"
-#include "../Graphics/Renderer.h"
+#include "Graphics/Renderer.h"
 #include "../Rectangle.h"
 #include "BaseCollisionShapeComponent.h"
 

@@ -91,7 +91,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     std::shared_ptr<GLShaderProgram> GL::_CurrentShaderProgram = nullptr;
     std::shared_ptr<GLShaderProgram> GL::_DefaultShaderProgram = nullptr;
-    std::shared_ptr<GLTexture> GL::_DefaultTexture = nullptr;
 
     // Draw Batching Related Fields
 
@@ -127,6 +126,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     bool GL::TexMirrorClampSupported = false;
     bool GL::TexNPOTSupported = false;
     bool GL::VAOSupported = false;
+
+    // Textures
+    std::shared_ptr<GLTexture> GL::DefaultTexture = nullptr;
 
     // Vertex Array Methods
 
@@ -233,7 +235,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             for (int i = 0; i < MAX_DRAWCALL_REGISTERED; i++) {
                 _DrawCalls[i].Mode = PRIMITIVE_QUADS;
                 _DrawCalls[i].VertexCount = 0;
-                _DrawCalls[i].Texture = _DefaultTexture;
+                _DrawCalls[i].Texture = DefaultTexture;
             }
 
             _DrawCounter = 1;
@@ -519,7 +521,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
             _DrawCalls[_DrawCounter - 1].Mode = mode_;
             _DrawCalls[_DrawCounter - 1].VertexCount = 0;
-            _DrawCalls[_DrawCounter - 1].Texture = _DefaultTexture;
+            _DrawCalls[_DrawCounter - 1].Texture = DefaultTexture;
         }
     }
 
@@ -776,7 +778,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _CurrentShaderProgram = _DefaultShaderProgram;
 
         unsigned char pixels[4] = {255, 255, 255, 255};   // 1 pixel RGBA (4 bytes)
-        _DefaultTexture = std::make_unique<GLTexture>(1, 1, pixels, 1, UNCOMPRESSED_R8G8B8A8);
+        DefaultTexture = std::make_unique<GLTexture>(1, 1, pixels, 1, UNCOMPRESSED_R8G8B8A8);
 
         // Init draw calls tracking system
         _DrawCalls = std::make_unique<GLDrawCall[]>(MAX_DRAWCALL_REGISTERED);
@@ -785,7 +787,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             _DrawCalls[i].Mode = PRIMITIVE_QUADS;
             _DrawCalls[i].VertexCount = 0;
             _DrawCalls[i].VertexAlignment = 0;
-            _DrawCalls[i].Texture = _DefaultTexture;
+            _DrawCalls[i].Texture = DefaultTexture;
         }
 
         _DrawCounter = 1;

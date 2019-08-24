@@ -153,11 +153,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          */
         static std::shared_ptr<GLShaderProgram> _DefaultShaderProgram;
 
-        /*
-         * Default white texture used for rendering
-         */
-        static std::shared_ptr<GLTexture> _DefaultTexture;
-
         // Draw Batching Related Fields
 
         /*
@@ -316,6 +311,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * Whether or not vertex arrays are supported
          */
         static bool VAOSupported;
+
+        // Textures
+
+        /*
+         * Default white texture used for rendering
+         */
+        static std::shared_ptr<GLTexture> DefaultTexture;
 
         // Vertex Array Methods
         // This is only here to fix GLES2 issues

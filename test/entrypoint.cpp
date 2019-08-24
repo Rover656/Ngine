@@ -280,6 +280,18 @@ public:
         }
         //testTiles->Draw(Mouse::GetMousePosition());
         //testTiles->GetTileset()->DrawTile({0, 0}, 1);
+
+        //Renderer::DrawTriangle({10, 10}, {50, 50}, {100, 100}, TColor::Red);
+
+        //Renderer::DrawLineStrip({{0, 0}, {100, 100}, {150, 50}}, TColor::Red, 5);
+
+        //Renderer::DrawCircle({100, 100}, 30, TColor::Red);
+        //Renderer::DrawCircleSector({100, 100}, 10, DegToRad(90), DegToRad(180), 2, TColor::Green);
+
+        Renderer::DrawCircleLines({100, 100}, 30, TColor::Red);
+        Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, TColor::Green);
+
+        //Renderer::DrawRectangleLines({200, 200, 50, 50}, TColor::Beige);
     }
 
     void DrawCam(EventArgs &e) {

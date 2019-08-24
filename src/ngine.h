@@ -37,8 +37,10 @@
 #define NGINE_NS NerdThings::Ngine
 
 // Angle maths
-#define RadToDeg(rad) rad * 180/3.14
-#define DegToRad(deg) deg * 3.14/180
+#define PI 3.1415
+
+#define RadToDeg(rad) rad * 180/PI
+#define DegToRad(deg) deg * PI/180
 
 //----------------------------------------------------------------------------------
 // Project Info

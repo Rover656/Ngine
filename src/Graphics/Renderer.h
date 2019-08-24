@@ -26,6 +26,12 @@ namespace NerdThings::Ngine::Graphics {
      * There is no concept of depth. First drawn is furthest behind.
      */
     class NEAPI Renderer {
+        // Internal OpenGL Methods
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+
+        static void __DrawLine(TVector2 a_, TVector2 b_, TColor c_, float thick_);
+
+#endif
     public:
         // Public Methods
 
@@ -54,7 +60,7 @@ namespace NerdThings::Ngine::Graphics {
          * Draw a polygon outline from a point array
          */
         // TODO: Thickness for this too?
-        static void DrawLineStrip(std::vector<TVector2> points_, TColor color_);
+        static void DrawLineStrip(const std::vector<TVector2> &points_, TColor color_, float lineThickness_ = 1);
 
         /*
          * Draw a color-filled circle
@@ -62,39 +68,33 @@ namespace NerdThings::Ngine::Graphics {
         static void DrawCircle(TVector2 center_, float radius_, TColor color_);
 
         /*
-         * Draw a gradient-filled circle
-         */
-        static void DrawCircleGradient(TVector2 center_, float radius_, TColor color1_,
-                                       TColor color2_);
-
-        /*
          * Draw a circle outline
          */
-        static void DrawCircleLines(TVector2 center_, float radius_, TColor color_);
+        static void DrawCircleLines(TVector2 center_, float radius_, TColor color_, float lineThickness_ = 1);
 
         /*
          * Draw a sector of a circle
          */
-        static void DrawCircleSector(TVector2 center_, float radius_, int startAngle_, int endAngle_,
+        static void DrawCircleSector(TVector2 center_, float radius_, float startAngle_, float endAngle_,
                                      int segments_, TColor color_);
 
         /*
          * Draw a circle sector outline
          */
-        static void DrawCircleSectorLines(TVector2 center_, float radius_, int startAngle_, int endAngle_,
-                                          int segments_, TColor color_);
+        static void DrawCircleSectorLines(TVector2 center_, float radius_, float startAngle_, float endAngle_,
+                                          int segments_, TColor color_, float lineThickness_ = 1);
 
-        /*
-         * Draw a ring
-         */
-        static void DrawRing(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
-                             int endAngle_, int segments_, TColor color_);
-
-        /*
-         * Draw a ring outline
-         */
-        static void DrawRingLines(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
-                                  int endAngle_, int segments_, TColor color_);
+//        /*
+//         * Draw a ring
+//         */
+//        static void DrawRing(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
+//                             int endAngle_, int segments_, TColor color_);
+//
+//        /*
+//         * Draw a ring outline
+//         */
+//        static void DrawRingLines(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
+//                                  int endAngle_, int segments_, TColor color_);
 
         /*
          * Draw a rectangle
@@ -118,56 +118,60 @@ namespace NerdThings::Ngine::Graphics {
          * Draw a vertical-gradient-filled rectangle
          */
         static void DrawRectangleGradientV(TVector2 position_, float width_, float height_,
-                                           TColor color1_, TColor color2_);
+                                           TColor color1_, TColor color2_, float rotation_ = 0,
+                                           TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a vertical-gradient-filled rectangle
          */
         static void DrawRectangleGradientV(TVector2 position_, TVector2 size_, TColor color1_,
-                                           TColor color2_);
+                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a vertical-gradient-filled rectangle
          */
         static void DrawRectangleGradientV(TRectangle rectangle_, TColor color1_,
-                                           TColor color2_);
+                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a horizonal-gradient-filled rectangle
          */
         static void DrawRectangleGradientH(TVector2 position_, float width_, float height_,
-                                           TColor color1_, TColor color2_);
+                                           TColor color1_, TColor color2_, float rotation_ = 0,
+                                           TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a horizonal-gradient-filled rectangle
          */
         static void DrawRectangleGradientH(TVector2 position_, TVector2 size_, TColor color1_,
-                                           TColor color2_);
+                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a horizonal-gradient-filled rectangle
          */
         static void DrawRectangleGradientH(TRectangle rectangle_, TColor color1_,
-                                           TColor color2_);
+                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a rectangle with a color per vertex
          */
         static void DrawRectangleGradientEx(TVector2 position_, float width_, float height_,
                                             TColor color1_, TColor color2_, TColor color3_,
-                                            TColor color4_);
+                                            TColor color4_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a rectangle with a color per vertex
          */
         static void DrawRectangleGradientEx(TVector2 position_, TVector2 size_, TColor color1_,
-                                            TColor color2_, TColor color3_, TColor color4_);
+                                            TColor color2_, TColor color3_, TColor color4_, float rotation_ = 0,
+                                            TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw a rectangle with a color per vertex
          */
         static void DrawRectangleGradientEx(TRectangle rectangle_, TColor color1_,
-                                            TColor color2_, TColor color3_, TColor color4_);
+                                            TColor color2_, TColor color3_, TColor color4_, float rotation_ = 0,
+                                            TVector2 origin_ = TVector2::Zero);
 
         /*
          * Draw rectangle outline
@@ -257,13 +261,14 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw a triangle fan from a point array
          */
-        static void DrawTriangleFan(std::vector<TVector2> points_, TColor color_);
+        static void DrawTriangleFan(const std::vector<TVector2> &points_, TColor color_);
 
         /*
          * Draw a polygon
          */
         static void DrawPoly(TVector2 center_, int sides_, float radius_, float rotation_,
                              TColor color_);
+
         /*
          * End a drawing loop.
          */
