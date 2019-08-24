@@ -215,34 +215,34 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw a texture
          */
-        static void DrawTexture(TTexture2D texture_, TVector2 position_, TColor color_,
+        static void DrawTexture(const TTexture2D& texture_, TVector2 position_, TColor color_,
                                 float scale_ = 1, TVector2 origin_ = TVector2(), float rotation_ = 0);
 
         /*
          * Draw a texture with specified dimensions
          */
-        static void DrawTexture(TTexture2D texture_, TVector2 position_, float width_,
+        static void DrawTexture(const TTexture2D& texture_, TVector2 position_, float width_,
                                 float height_, TColor color_, TVector2 origin_ = TVector2(),
                                 float rotation_ = 0);
 
         /*
          * Draw a part of a texture
          */
-        static void DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_,
+        static void DrawTexture(const TTexture2D& texture_, TRectangle sourceRectangle_,
                                 TVector2 position_, TColor color_,
                                 TVector2 origin_ = TVector2(), float rotation_ = 0);
 
         /*
          * Draw a part of a texture with specified dimensions
          */
-        static void DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_,
+        static void DrawTexture(const TTexture2D& texture_, TRectangle sourceRectangle_,
                                 TVector2 position_, float width_, float height_, TColor color_,
                                 TVector2 origin_ = TVector2(), float rotation_ = 0);
 
         /*
          * Draw a texture with pro parameters
          */
-        static void DrawTexture(TTexture2D texture_, TRectangle destRectangle_,
+        static void DrawTexture(const TTexture2D& texture_, TRectangle destRectangle_,
                                 TRectangle sourceRectangle_, TColor color_,
                                 TVector2 origin_ = TVector2(), float rotation_ = 0);
 

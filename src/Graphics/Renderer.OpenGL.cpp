@@ -423,31 +423,31 @@ namespace NerdThings::Ngine::Graphics {
         // TODO: Text support
     }
 
-    void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
+    void Renderer::DrawTexture(const TTexture2D& texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
                                float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_.Width, (float) texture_.Height}, position_, texture_.Width,
                     texture_.Height, color_, origin_, rotation_);
     }
 
-    void Renderer::DrawTexture(TTexture2D texture_, TVector2 position_, float width_, float height_, TColor color_,
+    void Renderer::DrawTexture(const TTexture2D& texture_, TVector2 position_, float width_, float height_, TColor color_,
                                TVector2 origin_, float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_.Width, (float) texture_.Height}, position_, width_, height_,
                     color_, origin_, rotation_);
     }
 
-    void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
+    void Renderer::DrawTexture(const TTexture2D& texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
                                TVector2 origin_, float rotation_) {
         DrawTexture(texture_, sourceRectangle_, position_, sourceRectangle_.Width, sourceRectangle_.Height, color_,
                     origin_, rotation_);
     }
 
-    void Renderer::DrawTexture(TTexture2D texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
+    void Renderer::DrawTexture(const TTexture2D& texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
                                float height_, TColor color_, TVector2 origin_, float rotation_) {
-        DrawTexture(std::move(texture_), {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
+        DrawTexture(texture_, {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(TTexture2D texture_, TRectangle destRectangle_, TRectangle sourceRectangle_, TColor color_,
+    Renderer::DrawTexture(const TTexture2D& texture_, TRectangle destRectangle_, TRectangle sourceRectangle_, TColor color_,
                           TVector2 origin_, float rotation_) {
         // Raylib implementation
         if (texture_.IsValid()) {

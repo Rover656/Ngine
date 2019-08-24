@@ -37,14 +37,14 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    int TTexture2D::GetMipmapCount() {
+    int TTexture2D::GetMipmapCount() const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->MipmapCount;
 #endif
         return 0;
     }
 
-    bool TTexture2D::IsValid() {
+    bool TTexture2D::IsValid() const {
         if (InternalTexture != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
             if (InternalTexture->ID > 0)

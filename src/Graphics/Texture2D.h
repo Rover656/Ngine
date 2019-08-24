@@ -67,12 +67,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the number of mipmaps this texture has
          */
-        int GetMipmapCount();
+        int GetMipmapCount() const;
 
         /*
          * Is the texture valid and ready for use
          */
-        bool IsValid();
+        bool IsValid() const;
 
         /*
          * Load a texture from pixel data.
@@ -117,8 +117,7 @@ namespace NerdThings::Ngine::Graphics {
         }
 
         /*
-         * Copy a texture (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
+         * Copy a texture
          */
         TTexture2D &operator=(const TTexture2D &tex_) = default;
     };
