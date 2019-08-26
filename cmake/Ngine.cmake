@@ -12,6 +12,11 @@ function(ngine_add_executable target)
         # Link special libraries
         target_link_libraries(${target} WindowsApp)
     endif()
+
+    # Unix specifics
+    if (UNIX OR MINGW)
+        target_link_libraries(NgineTest stdc++fs)
+    endif()
 endfunction()
 
 function(ngine_add_library target shared)
@@ -29,6 +34,11 @@ function(ngine_add_library target shared)
 
         # Link special libraries
         target_link_libraries(${target} WindowsApp)
+    endif()
+
+    # Unix specifics
+    if (UNIX OR MINGW)
+        target_link_libraries(NgineTest stdc++fs)
     endif()
 endfunction()
 
