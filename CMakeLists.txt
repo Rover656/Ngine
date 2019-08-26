@@ -28,7 +28,7 @@ if (DEFINED BUILD_SHARED_LIBS)
     if (${BUILD_SHARED_LIBS})
         set(BUILD_SHARED ON CACHE INTERNAL "" FORCE)
     endif()
-endif(
+endif()
 
 # Output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
