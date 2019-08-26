@@ -15,7 +15,7 @@ function(ngine_add_executable target)
 
     # Unix specifics
     if (UNIX OR MINGW)
-        target_link_libraries(NgineTest stdc++fs)
+        target_link_libraries(${target} stdc++fs)
     endif()
 endfunction()
 
@@ -38,7 +38,7 @@ function(ngine_add_library target shared)
 
     # Unix specifics
     if (UNIX OR MINGW)
-        target_link_libraries(NgineTest stdc++fs)
+        target_link_libraries(${target} stdc++fs)
     endif()
 endfunction()
 
