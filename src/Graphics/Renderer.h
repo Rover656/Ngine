@@ -256,7 +256,7 @@ namespace NerdThings::Ngine::Graphics {
          * Draw a triangle outline
          */
         static void DrawTriangleLines(TVector2 v1_, TVector2 v2_, TVector2 v3_,
-                                      TColor color_);
+                                      TColor color_, float lineThickness_ = 1);
 
         /*
          * Draw a triangle fan from a point array

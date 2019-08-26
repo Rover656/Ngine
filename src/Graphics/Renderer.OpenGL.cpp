@@ -423,31 +423,36 @@ namespace NerdThings::Ngine::Graphics {
         // TODO: Text support
     }
 
-    void Renderer::DrawTexture(const TTexture2D& texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
-                               float rotation_) {
+    void
+    Renderer::DrawTexture(const TTexture2D &texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
+                          float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_.Width, (float) texture_.Height}, position_, texture_.Width,
                     texture_.Height, color_, origin_, rotation_);
     }
 
-    void Renderer::DrawTexture(const TTexture2D& texture_, TVector2 position_, float width_, float height_, TColor color_,
-                               TVector2 origin_, float rotation_) {
+    void
+    Renderer::DrawTexture(const TTexture2D &texture_, TVector2 position_, float width_, float height_, TColor color_,
+                          TVector2 origin_, float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_.Width, (float) texture_.Height}, position_, width_, height_,
                     color_, origin_, rotation_);
     }
 
-    void Renderer::DrawTexture(const TTexture2D& texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
-                               TVector2 origin_, float rotation_) {
+    void
+    Renderer::DrawTexture(const TTexture2D &texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
+                          TVector2 origin_, float rotation_) {
         DrawTexture(texture_, sourceRectangle_, position_, sourceRectangle_.Width, sourceRectangle_.Height, color_,
                     origin_, rotation_);
     }
 
-    void Renderer::DrawTexture(const TTexture2D& texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
-                               float height_, TColor color_, TVector2 origin_, float rotation_) {
+    void
+    Renderer::DrawTexture(const TTexture2D &texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
+                          float height_, TColor color_, TVector2 origin_, float rotation_) {
         DrawTexture(texture_, {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(const TTexture2D& texture_, TRectangle destRectangle_, TRectangle sourceRectangle_, TColor color_,
+    Renderer::DrawTexture(const TTexture2D &texture_, TRectangle destRectangle_, TRectangle sourceRectangle_,
+                          TColor color_,
                           TVector2 origin_, float rotation_) {
         // Raylib implementation
         if (texture_.IsValid()) {
@@ -546,8 +551,22 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::StopUsingTexture();
     }
 
-    void Renderer::DrawTriangleLines(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_) {
+    void Renderer::DrawTriangleLines(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_, float lineThickness_) {
+        // Check for buffer space
+        if (OpenGL::GL::AtBufferLimit(12)) OpenGL::GL::Draw();
 
+        // Draw
+        OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
+
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
+        __DrawLine(v1_, v2_, color_, lineThickness_);
+        __DrawLine(v2_, v3_, color_, lineThickness_);
+        __DrawLine(v3_, v1_, color_, lineThickness_);
+
+        OpenGL::GL::End();
+
+        OpenGL::GL::StopUsingTexture();
     }
 
     void Renderer::DrawTriangleFan(const std::vector<TVector2> &points_, TColor color_) {

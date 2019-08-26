@@ -96,7 +96,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Character data
          */
-        TCharInfo *Characters;
+        std::vector<TCharInfo> Characters;
 
         // Public Constructor(s)
 
