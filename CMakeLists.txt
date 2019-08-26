@@ -30,6 +30,11 @@ if (DEFINED BUILD_SHARED_LIBS)
     endif()
 endif()
 
+# Filesystem for Linux and MinGW
+if (UNIX OR MINGW)
+    target_link_libraries(NgineTest stdc++fs)
+endif()
+
 # Output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Ngine")
