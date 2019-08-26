@@ -20,6 +20,11 @@ set_target_properties(NgineTest
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/NgineTest"
 )
 
+# Filesystem for Linux and MinGW
+if (UNIX OR MINGW)
+    target_link_libraries(NgineTest stdc++fs)
+endif()
+
 # Copy dependant dlls
 if (${BUILD_SHARED})
     add_custom_command(TARGET NgineTest POST_BUILD
