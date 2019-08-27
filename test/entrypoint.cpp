@@ -274,7 +274,7 @@ public:
         // Load all content
         auto succ = false;
         auto exeDir = Resources::GetExecutableDirectory(succ);
-        Resources::LoadDirectory(exeDir + "\\content");
+        Resources::LoadDirectory(exeDir + "/content");
 
         // Create scene
         _Scene = new TestScene(this);
