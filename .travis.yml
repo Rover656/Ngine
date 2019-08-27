@@ -2,20 +2,25 @@ language: cpp
 
 matrix:
   include:
-    - os: linux
+    - name: "GCC 8 - Static"
+      os: linux
       env: BUILD_SHARED=OFF
+
+    - name: "GCC 8 - Shared"
+        os: linux
+        env: BUILD_SHARED=ON
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq g++-9 xorg-dev libglu1-mesa-dev; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 90; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -qq g++-8 xorg-dev libglu1-mesa-dev; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90; fi
 
 before_script:
   - if [ -z "$BUILD_SHARED" ]; then export BUILD_SHARED=ON; fi
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=$BUILD_SHARED ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=$BUILD_SHARED -DDCMAKE_CXX_COMPILER=/usr/bin/g++-8 ..
 
 script:
   - make
