@@ -693,6 +693,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             _DrawCalls[i] = GLDrawCall();
 
         DefaultTexture = nullptr;
+
+        _CurrentShaderProgram = nullptr;
+        _DefaultShaderProgram = nullptr;
     }
 
     void GL::Init() {
