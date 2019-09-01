@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Internal framebuffer on the GPU
          */
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer;
 #endif
 

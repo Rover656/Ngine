@@ -17,7 +17,7 @@ namespace NerdThings::Ngine::Graphics {
     TRenderTarget::TRenderTarget(const int width_, const int height_) {
         Width = width_;
         Height = height_;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
 #endif
     }
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Graphics {
         auto tex = TTexture2D();
         tex.Width = Width;
         tex.Height = Height;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         tex.InternalTexture = InternalFramebuffer->RenderTexture;
 #endif
         return tex;
@@ -53,7 +53,7 @@ namespace NerdThings::Ngine::Graphics {
 
     bool TRenderTarget::IsValid() {
         if (InternalFramebuffer != nullptr)
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             if (InternalFramebuffer->ID > 0)
 #endif
                 return true;
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool TRenderTarget::operator==(const TRenderTarget &b) const {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalFramebuffer->ID == b.InternalFramebuffer->ID;
 #endif
         return false;

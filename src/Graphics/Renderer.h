@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Graphics {
      */
     class NEAPI Renderer {
         // Internal OpenGL Methods
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 
         static void __DrawLine(TVector2 a_, TVector2 b_, TColor c_, float thick_);
 

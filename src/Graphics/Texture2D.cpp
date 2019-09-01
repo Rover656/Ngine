@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     int TTexture2D::GetMipmapCount() const {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->MipmapCount;
 #endif
         return 0;
@@ -46,7 +46,7 @@ namespace NerdThings::Ngine::Graphics {
 
     bool TTexture2D::IsValid() const {
         if (InternalTexture != nullptr)
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             if (InternalTexture->ID > 0)
 #endif
                 return true;
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Graphics {
         TTexture2D tex;
         tex.Width = width_;
         tex.Height = height_;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         tex.InternalTexture = std::make_shared<OpenGL::GLTexture>(width_, height_, data_, mipmapCount_);
 #endif
         return tex;
@@ -76,7 +76,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
         switch(filterMode_) {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             case FILTER_POINT:
                 if (InternalTexture->MipmapCount > 1) {
                     InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_MIP_NEAREST);
@@ -120,7 +120,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void TTexture2D::SetTextureWrap(const ETextureWrapMode wrapMode_) const {
         switch (wrapMode_) {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             case WRAP_REPEAT:
                 InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_REPEAT);
                 InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_REPEAT);
@@ -144,14 +144,14 @@ namespace NerdThings::Ngine::Graphics {
     // Operators
 
     bool TTexture2D::operator==(const TTexture2D &tex_) const {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->ID == tex_.InternalTexture->ID;
 #endif
         return false;
     }
 
     bool TTexture2D::operator!=(const TTexture2D &tex_) const {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->ID != tex_.InternalTexture->ID;
 #endif
         return true;
