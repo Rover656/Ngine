@@ -691,6 +691,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         for (auto i = 0; i < MAX_DRAWCALL_REGISTERED; i++)
             _DrawCalls[i] = GLDrawCall();
+
+        DefaultTexture = nullptr;
     }
 
     void GL::Init() {
