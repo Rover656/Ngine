@@ -999,7 +999,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     GLVersion GL::GetGLVersion() {
-#if defined(GPRAHICS_OPENGL21)
+#if defined(GRAPHICS_OPENGL21)
         return OPENGL_21;
 #elif defined(GRAPHICS_OPENGL33)
         return OPENGL_33;
