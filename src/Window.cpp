@@ -114,8 +114,11 @@ namespace NerdThings::Ngine {
         glfwDefaultWindowHints();
 
         switch(Graphics::OpenGL::GL::GetGLVersion()) {
+            case Graphics::OpenGL::OPENGL_21:
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+                break;
             case Graphics::OpenGL::OPENGL_33:
-                glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -124,7 +127,12 @@ namespace NerdThings::Ngine {
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+
+#if defined(PLATFORM_DESKTOP)
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
+#else
+                glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+#endif
                 break;
             case Graphics::OpenGL::OPENGL_UNKNOWN:
                 throw std::runtime_error("Error, we were unable to determine an OpenGL version to use.");
