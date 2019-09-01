@@ -85,7 +85,7 @@ public:
 class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, TVector2 position_)
-        : BaseEntity(parentScene_, position_) {
+            : BaseEntity(parentScene_, position_) {
         SetOrigin({16, 16});
 
         AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
@@ -308,8 +308,8 @@ class TestGame : public Game {
 public:
 
     TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
-        width_, height_, 1280, 768, DrawFPS_, UpdateFPS_, title_,
-        MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
+            width_, height_, 1280, 768, DrawFPS_, UpdateFPS_, title_,
+            MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
         //0) {
         OnRun.Bind(this, &TestGame::Init);
 
@@ -334,10 +334,10 @@ public:
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow) {
 #else
-int main() {
+    int main() {
 #endif
 #elif defined(PLATFORM_UWP)
-#include <Platform/UWP/GameApp.h>
+    #include <Platform/UWP/GameApp.h>
 
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^) {

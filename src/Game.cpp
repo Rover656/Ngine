@@ -265,6 +265,9 @@ namespace NerdThings::Ngine {
 #endif
         }
 
+        // Delete render target now so that it doesnt try after GL is gone.
+        _RenderTarget = Graphics::TRenderTarget();
+
 #if !defined(PLATFORM_UWP) // UWP handles this elsewhere because this is ignored
         // Delete loaded resources
         Resources::DeleteAll();

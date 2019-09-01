@@ -2,6 +2,11 @@
 
 #include "OpenGL.h"
 
+// OpenGL 2.1 works similarly to 3.3
+#if defined(GPRAHICS_OPENGL21)
+#defined GRAPHICS_OPENGL33
+#endif
+
 // Platform specifics
 #if defined(GRAPHICS_OPENGL33)
 
@@ -76,6 +81,11 @@
 #define glClearDepth                glClearDepthf
 #define GL_READ_FRAMEBUFFER         GL_FRAMEBUFFER
 #define GL_DRAW_FRAMEBUFFER         GL_FRAMEBUFFER
+#endif
+
+#if defined(GRAPHICS_OPENGL21)
+#define GL_LUMINANCE                        0x1909
+#define GL_LUMINANCE_ALPHA                  0x190A
 #endif
 
 // GLES2 extensions
@@ -322,8 +332,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     void GL::LoadDefaultShader() {
         // Shader sources
         std::string vertexShaderSrc =
-#if defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21)
+                "#version 120\n"
+#elif defined(GRAPHICS_OPENGLES2)
                 "#version 100\n"
+#endif
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "attribute vec3 vertexPosition;\n"
                 "attribute vec2 vertexTexCoord;\n"
                 "attribute vec4 vertexColor;\n"
@@ -345,9 +359,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
                 "}\n";
         std::string fragmentShaderSrc =
-#if defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21)
+                "#version 120\n"
+#elif defined(GRAPHICS_OPENGLES2)
                 "#version 100\n"
                 "precision mediump float;\n"
+#endif
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "varying vec2 fragTexCoord;\n"
                 "varying vec4 fragColor;\n"
 #else
@@ -360,7 +378,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "void main()\n"
                 "{\n"
                 "    vec4 texelColor = texture2D(texture, fragTexCoord);\n"
-#if defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "    gl_FragColor = texelColor*fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
                 "    finalColor = texelColor*fragColor;\n"
@@ -829,7 +847,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         *glType_ = -1;
 
         switch (format_) {
-#if defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             // NOTE: on OpenGL ES 2.0 (WebGL), internalFormat must match format and options allowed are: GL_LUMINANCE, GL_RGB, GL_RGBA
         case UNCOMPRESSED_GRAYSCALE:
             *glInternalFormat_ = GL_LUMINANCE;
@@ -981,7 +999,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     GLVersion GL::GetGLVersion() {
-#if defined(GRAPHICS_OPENGL33)
+#if defined(GPRAHICS_OPENGL21)
+        return OPENGL_21;
+#elif defined(GRAPHICS_OPENGL33)
         return OPENGL_33;
 #elif defined(GRAPHICS_OPENGLES2)
         return OPENGL_ES2;

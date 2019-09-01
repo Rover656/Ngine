@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
         font_.Texture = std::shared_ptr<TTexture2D>(nullptr);
         font_.BaseSize = 0;
         font_.CharacterCount = 0;
-        font_.Characters = nullptr;
+        font_.Characters.clear();
     }
 
     // Destructor

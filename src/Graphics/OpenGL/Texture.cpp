@@ -96,7 +96,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 }
                 else if (format_ == UNCOMPRESSED_GRAY_ALPHA)
                 {
+#if defined(GRAPHICS_OPENGL21)
+                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ALPHA };
+#elif defined(GRAPHICS_OPENGL33)
                     GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_GREEN };
+#endif
                     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
                 }
 #endif

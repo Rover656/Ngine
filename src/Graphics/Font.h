@@ -104,7 +104,7 @@ namespace NerdThings::Ngine::Graphics {
          * Create a null font
          */
         TFont()
-            : BaseSize(0), CharacterCount(0), Characters(nullptr) {}
+            : BaseSize(0), CharacterCount(0), Characters() {}
 
         /*
          * Move a font
@@ -152,7 +152,7 @@ namespace NerdThings::Ngine::Graphics {
             font_.Texture = std::shared_ptr<TTexture2D>(nullptr);
             font_.BaseSize = 0;
             font_.CharacterCount = 0;
-            font_.Characters = nullptr;
+            font_.Characters.clear();
 
             return *this;
         }
@@ -166,7 +166,7 @@ namespace NerdThings::Ngine::Graphics {
     private:
         // Private Constructor(s)
 
-        TFont(std::shared_ptr<TTexture2D> tex_, int baseSize_, int charCount_, TCharInfo *chars_)
+        TFont(std::shared_ptr<TTexture2D> tex_, int baseSize_, int charCount_, std::vector<TCharInfo> chars_)
             : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
             Texture = tex_;
         }

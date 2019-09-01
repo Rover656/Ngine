@@ -45,19 +45,30 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
      */
     enum GLVersion {
         /*
-         * Unknown OpenGL Version
+         * Unknown OpenGL Version.
+         * Probably bad.
          */
         OPENGL_UNKNOWN = -1,
 
         /*
+         * OpenGL 1.1 (Will probably not add)
+         */
+        OPENGL_11 = 0,
+
+        /*
+         * OpenGL 2.1
+         */
+        OPENGL_21 = 1,
+
+        /*
          * OpenGL 3.3
          */
-        OPENGL_33 = 0,
+        OPENGL_33 = 2,
 
         /*
          * OpenGL ES2.0
          */
-        OPENGL_ES2 = 1
+        OPENGL_ES2 = 3
     };
 
     /*
