@@ -67,6 +67,12 @@ namespace NerdThings::Ngine {
 #endif
 
     void Window::Cleanup() {
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        // Window closing, clean OpenGL state
+        Graphics::OpenGL::GL::Cleanup();
+        ConsoleMessage("The OpenGL state has been cleaned.", "NOTICE", "WINDOW");
+#endif
+
 #if defined(PLATFORM_DESKTOP)
         // Destroy window
         glfwDestroyWindow((GLFWwindow*)WindowPtr);
@@ -347,9 +353,12 @@ namespace NerdThings::Ngine {
         // UWP on suspend. This handles resource cleanup
         CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(&Window::Suspended);
 #endif
+
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Window is now created, init OpenGL
         Graphics::OpenGL::GL::Init();
         ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "WINDOW");
+#endif
 
         // Init Input
         Input::Gamepad::Init();

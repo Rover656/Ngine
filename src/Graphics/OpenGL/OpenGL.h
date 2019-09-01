@@ -460,6 +460,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Management Methods
 
         /*
+         * Clean up OpenGL state
+         */
+        static void Cleanup();
+
+        /*
          * Initialize OpenGL
          */
         static void Init();

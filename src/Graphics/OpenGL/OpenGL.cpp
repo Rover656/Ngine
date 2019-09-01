@@ -685,6 +685,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     // Management Methods
 
+    void GL::Cleanup() {
+        for (auto i = 0; i < MAX_BATCH_BUFFERING; i++)
+            _VertexData[i] = GLDynamicBuffer();
+    }
+
     void GL::Init() {
         // Init GLAD
 #if defined(GRAPHICS_OPENGL33)
