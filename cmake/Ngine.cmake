@@ -92,6 +92,8 @@ function(ngine_link_ngine target)
 
     if (${OPENGL_VERSION} MATCHES "3.3")
         target_compile_definitions(${target} PRIVATE GRAPHICS_OPENGL33=1)
+    elseif (${OPENGL_VERSION} MATCHES "2.1")
+        target_compile_definitions(${target} PRIVATE GRAPHICS_OPENGL21=1)
     elseif(${OPENGL_VERSION} MATCHES "ES2")
         target_compile_definitions(${target} PRIVATE GRAPHICS_OPENGLES2=1)
 
