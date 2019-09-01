@@ -219,6 +219,9 @@ namespace NerdThings::Ngine {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
+        // Delete render target now so that it doesnt try after GL is gone.
+        _RenderTarget = nullptr;
+
         // Delete loaded resources
         Resources::DeleteAll();
 
