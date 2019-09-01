@@ -1,4 +1,4 @@
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #ifndef OPENGL_H
 #define OPENGL_H
 
