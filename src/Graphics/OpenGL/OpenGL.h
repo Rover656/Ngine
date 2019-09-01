@@ -179,7 +179,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * The draw call batch
          */
-        static std::unique_ptr<GLDrawCall[]> _DrawCalls;
+        static GLDrawCall _DrawCalls[];
 
         /*
          * The current draw call index

@@ -106,7 +106,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     int GL::_CurrentBuffer = 0;
     float GL::_CurrentDepth = -1.0f;
-    std::unique_ptr<GLDrawCall[]> GL::_DrawCalls = nullptr; // TODO: Is this the best type to use??
+    GLDrawCall GL::_DrawCalls[MAX_DRAWCALL_REGISTERED];
     int GL::_DrawCounter = 0;
     GLDynamicBuffer GL::_VertexData[];
 
@@ -688,6 +688,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     void GL::Cleanup() {
         for (auto i = 0; i < MAX_BATCH_BUFFERING; i++)
             _VertexData[i] = GLDynamicBuffer();
+
+        for (auto i = 0; i < MAX_DRAWCALL_REGISTERED; i++)
+            _DrawCalls[i] = GLDrawCall();
     }
 
     void GL::Init() {
@@ -802,9 +805,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         unsigned char pixels[4] = {255, 255, 255, 255};   // 1 pixel RGBA (4 bytes)
         DefaultTexture = std::make_unique<GLTexture>(1, 1, pixels, 1, UNCOMPRESSED_R8G8B8A8);
-
-        // Init draw calls tracking system
-        _DrawCalls = std::make_unique<GLDrawCall[]>(MAX_DRAWCALL_REGISTERED);
 
         for (int i = 0; i < MAX_DRAWCALL_REGISTERED; i++) {
             _DrawCalls[i].Mode = PRIMITIVE_QUADS;
