@@ -32,7 +32,7 @@ if (${PLATFORM} MATCHES "Desktop" AND MSVC)
         COMPANY_NAME ${PUBLISHER_DISPLAY_NAME})
 endif()
 
-if (${OPENGL_VERSION} MATCHES "3.3" AND ${PLATFORM} MATCHES "Desktop")
+if ((${OPENGL_VERSION} MATCHES "2.1" OR ${OPENGL_VERSION} MATCHES "3.3") AND ${PLATFORM} MATCHES "Desktop")
     # We need OpenGL
     find_package(OpenGL REQUIRED)
 
@@ -57,6 +57,13 @@ if (${PLATFORM} MATCHES "Desktop")
 
         # Mark OpenGL 3.3
         target_compile_definitions(${PROJECT_NAME} PUBLIC GRAPHICS_OPENGL33=1)
+    elseif (${OPENGL_VERSION} MATCHES "2.1")
+        # Link OpenGL
+        target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES})
+        target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
+
+        # Mark OpenGL 3.3
+        target_compile_definitions(${PROJECT_NAME} PUBLIC GRAPHICS_OPENGL21=1)
     elseif(${OPENGL_VERSION} MATCHES "ES2")
         # Link ANGLE
         target_link_libraries(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${PROJECT_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)

@@ -12,7 +12,7 @@
 #include "../Window.h"
 #include "GraphicsManager.h"
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 #include "OpenGL/Framebuffer.h"
 #include "OpenGL/OpenGL.h"
 #endif
@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
     // Render Target Related Private Methods
 
     void GraphicsManager::EndRenderTarget() {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Force draw
         OpenGL::GL::Draw();
 
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void GraphicsManager::UseRenderTarget(const TRenderTarget &target_) {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Force draw
         OpenGL::GL::Draw();
 

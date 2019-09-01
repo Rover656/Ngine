@@ -100,7 +100,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         std::unique_ptr<float[]> Vertices;
         std::unique_ptr<float[]> TexCoords;
         std::unique_ptr<float[]> Colors;
-#if defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         std::unique_ptr<unsigned int[]> Indices;
 #elif defined(GRAPHICS_OPENGLES2)
         std::unique_ptr<unsigned short[]> Indices;
@@ -136,7 +136,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     // Defines
 
-#if defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #define MAX_BATCH_ELEMENTS 8192
 #elif defined(GRAPHICS_OPENGLES2)
     // TODO: Consider raising this

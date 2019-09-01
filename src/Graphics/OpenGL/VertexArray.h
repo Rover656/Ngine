@@ -1,4 +1,4 @@
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 

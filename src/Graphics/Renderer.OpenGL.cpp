@@ -24,7 +24,7 @@
 namespace NerdThings::Ngine::Graphics {
     // OpenGL Implementation
 
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 
 #define CIRCLE_ERROR_RATE 0.5f
 

@@ -1,8 +1,8 @@
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #include "Shader.h"
 
 // Platform specifics
-#if defined(GRAPHICS_OPENGL33)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #include <glad/glad.h>
 #elif defined(GRAPHICS_OPENGLES2)
 #define GL_KHR_debug 0

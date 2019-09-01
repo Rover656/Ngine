@@ -16,7 +16,7 @@
 
 #include "Texture2D.h"
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 #include "OpenGL/Framebuffer.h"
 #endif
 

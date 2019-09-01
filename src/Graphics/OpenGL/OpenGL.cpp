@@ -3,8 +3,8 @@
 #include "OpenGL.h"
 
 // OpenGL 2.1 works similarly to 3.3
-#if defined(GPRAHICS_OPENGL21)
-#defined GRAPHICS_OPENGL33
+#if defined(GRAPHICS_OPENGL21)
+#define GRAPHICS_OPENGL33
 #endif
 
 // Platform specifics
