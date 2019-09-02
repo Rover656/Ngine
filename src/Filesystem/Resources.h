@@ -12,14 +12,14 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "ngine.h"
+#include "../ngine.h"
 
-#include "Audio/Music.h"
-#include "Audio/Sound.h"
-#include "Graphics/Font.h"
-#include "Graphics/Texture2D.h"
+#include "../Audio/Music.h"
+#include "../Audio/Sound.h"
+#include "../Graphics/Font.h"
+#include "../Graphics/Texture2D.h"
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Filesystem {
     /*
      * Resource management class
      */

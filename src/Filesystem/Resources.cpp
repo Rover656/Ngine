@@ -13,7 +13,7 @@
 
 // Platform specific includes
 #if defined(_WIN32)
-#include <Windows.h>
+#include <windows.h>
 #elif defined(__linux__)
 #include <unistd.h>
 #include <limits.h>
@@ -37,7 +37,7 @@
 #include <filesystem>
 #include <sstream>
 
-namespace NerdThings::Ngine {
+namespace NerdThings::Ngine::Filesystem {
     // Private Fields
 
     std::unordered_map<std::string, Graphics::TFont> Resources::_Fonts;

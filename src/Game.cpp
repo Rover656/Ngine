@@ -16,7 +16,7 @@
 #include "Input/Gamepad.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "Resources.h"
+#include "Filesystem/Resources.h"
 #include "Window.h"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
@@ -270,7 +270,7 @@ namespace NerdThings::Ngine {
 
 #if !defined(PLATFORM_UWP) // UWP handles this elsewhere because this is ignored
         // Delete loaded resources
-        Resources::DeleteAll();
+        Filesystem::Resources::DeleteAll();
 
         // Close audio
         ConsoleMessage("Closing audio device.", "NOTICE", "GAME");

@@ -11,7 +11,7 @@
 #include <BaseEntity.h>
 #include <Component.h>
 #include <Game.h>
-#include <Resources.h>
+#include <Filesystem/Resources.h>
 #include <Graphics/Sprite.h>
 #include <Graphics/TilesetCanvas.h>
 #include <Input/Gamepad.h>
@@ -34,6 +34,7 @@
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
 using namespace NGINE_NS::Components;
+using namespace NGINE_NS::Filesystem;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 using namespace NGINE_NS::Physics;
