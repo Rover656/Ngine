@@ -92,7 +92,6 @@ namespace NerdThings::Ngine::Filesystem {
         if (len <= 0 || len == PATH_MAX)
             return TPath("");
 
-        success_ = true;
         return TPath(std::string(exePath));
 #elif defined(__APPLE__)
         char exePath[PATH_MAX];
@@ -112,7 +111,6 @@ namespace NerdThings::Ngine::Filesystem {
 
             free(realPath);
 
-            success_ = true;
             return TPath(pathStr);
         }
         else
@@ -138,7 +136,6 @@ namespace NerdThings::Ngine::Filesystem {
 
             free(realPath);
 
-            success_ = true;
             return TPath(pathStr);
         }
 
