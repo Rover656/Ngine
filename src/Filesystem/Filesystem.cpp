@@ -383,14 +383,14 @@ namespace NerdThings::Ngine::Filesystem {
                 _InternalOpenMode = mode_;
                 break;
             case MODE_READ_WRITE:
-                // Open binary file for append
+                // Open binary file for read and write
                 _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "w+b" : "w+");
 
                 // Set mode
                 _InternalOpenMode = mode_;
                 break;
             case MODE_READ_APPEND:
-                // Open binary file for append
+                // Open binary file for read and append
                 _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "a+b" : "a+");
 
                 // Set mode
@@ -428,8 +428,12 @@ namespace NerdThings::Ngine::Filesystem {
             throw std::runtime_error("Invalid read size.");
         }
 
-        if (offset_ >= filesize_) {
+        if (offset_ >= filesize_ || offset_ < 0) {
             throw std::runtime_error("Invalid offset.");
+        }
+
+        if (size_ + offset_ > filesize_) {
+            throw std::runtime_error("Data out of bounds.");
         }
 
         // Seek to the offset
@@ -470,8 +474,12 @@ namespace NerdThings::Ngine::Filesystem {
             throw std::runtime_error("Invalid read size.");
         }
 
-        if (offset_ >= filesize_) {
+        if (offset_ >= filesize_ || offset_ < 0) {
             throw std::runtime_error("Invalid offset.");
+        }
+
+        if (size_ + offset_ > filesize_) {
+            throw std::runtime_error("Data out of bounds.");
         }
 
         // Seek to the offset
