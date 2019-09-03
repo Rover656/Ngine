@@ -37,6 +37,8 @@
 #include <filesystem>
 #include <sstream>
 
+#include "Filesystem.h"
+
 namespace NerdThings::Ngine::Filesystem {
     // Private Fields
 
@@ -49,10 +51,8 @@ namespace NerdThings::Ngine::Filesystem {
 
     std::string Resources::ProcessPath(std::string path_) {
 #if defined(PLATFORM_DESKTOP)
-        auto success = false;
-        auto exeDir = GetExecutableDirectory(success);
-        if (!success) throw std::runtime_error("Unable to get executable dir.");
-        return (std::filesystem::path(exeDir) / path_).string();
+        auto exeDir = TPath::GetExecutableDirectory();
+        return (exeDir / path_).GetString();
 #elif defined(PLATFORM_UWP)
         // This does not work, see below comment in LoadResources
         //return "ms-appx:///" + path_;
@@ -126,106 +126,6 @@ namespace NerdThings::Ngine::Filesystem {
         }
     }
 
-    std::string Resources::GetDirectoryPath(std::string path_) {
-        auto p = std::filesystem::path(path_);
-        if (std::filesystem::is_directory(p))
-            return path_; // No need to get parent path
-        return p.parent_path().string();
-    }
-
-    std::string Resources::GetExecutableDirectory(bool &success_) {
-        const auto exePath = GetExecutablePath(success_);
-
-        if (success_) {
-            return std::string(GetDirectoryPath(exePath.c_str()));
-        }
-
-        return "";
-    }
-
-    std::string Resources::GetExecutablePath(bool &success_) {
-        // https://github.com/cginternals/cpplocate/blob/master/source/liblocate/source/liblocate.c#L39
-        // I trust this works as there are no issues about it...
-        success_ = false;
-        #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
-
-        char exePath[MAX_PATH];
-        unsigned int len = GetModuleFileNameA(GetModuleHandleA(0x0), exePath, MAX_PATH);
-        if (len == 0)
-            return "";
-
-        success_ = true;
-        return std::string(exePath);
-
-        #elif defined(__linux__)
-
-        char exePath[PATH_MAX];
-        int len = readlink("/proc/self/exe", exePath, PATH_MAX);
-        if (len <= 0 || len == PATH_MAX)
-            return "";
-
-        success_ = true;
-        return std::string(exePath);
-
-        #elif defined(__APPLE__)
-
-        char exePath[PATH_MAX];
-
-        unsigned int len = (unsigned int)PATH_MAX;
-
-        if (_NSGetExecutablePath(exePath, &len) == 0)
-        {
-            char * realPath = realpath(exePath, 0x0);
-
-            if (realPath == 0x0)
-            {
-                return "";
-            }
-
-            auto pathStr = std::string(realPath);
-
-            free(realPath);
-
-            success_ = true;
-            return pathStr;
-        }
-        else
-        {
-            char * intermediatePath = (char *)malloc(sizeof(char) * len);
-
-            if (_NSGetExecutablePath(intermediatePath, &len) != 0)
-            {
-                free(intermediatePath);
-                return "";
-            }
-
-            char * realPath = realpath(intermediatePath, 0x0);
-
-            free(intermediatePath);
-
-            if (realPath == 0x0)
-            {
-                return "";
-            }
-
-            auto pathStr = std::string(realPath);
-
-            free(realPath);
-
-            success_ = true;
-            return pathStr;
-        }
-
-        #else
-        // Returns blank, this cannot be used
-        return "";
-        #endif
-    }
-
-    std::string Resources::GetFileExtension(const std::string &path_) {
-        return path_.substr(path_.find_last_of(".") + 1, path_.length() - 1);
-    }
-
     Graphics::TFont Resources::GetFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end())
             return _Fonts[name_];
@@ -289,10 +189,10 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Load all files
         for (auto file : files) {
-            auto name = file.substr(0, file.find_last_of("."));
-            auto ext = GetFileExtension(file);
+            auto name = file.substr(0, file.find_last_of('.'));
+            auto ext = TPath(file).GetFileExtension();
 
-            auto actualPath = dir + "\\" + file;
+            TPath actualPath = TPath(dir) / file;
 
             if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
                 LoadFont(actualPath, name);

@@ -8,16 +8,13 @@
 #include <Components/CircleCollisionShapeComponent.h>
 #include <Components/PolygonCollisionShapeComponent.h>
 #include <Components/SpriteComponent.h>
-#include <BaseEntity.h>
-#include <Component.h>
-#include <Game.h>
+#include <Filesystem/Filesystem.h>
 #include <Filesystem/Resources.h>
 #include <Graphics/Sprite.h>
 #include <Graphics/TilesetCanvas.h>
 #include <Input/Gamepad.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
-#include <Vector2.h>
 #include <Physics/BoundingBox.h>
 #include <Physics/Circle.h>
 #include <Physics/Polygon.h>
@@ -29,6 +26,10 @@
 #include <UI/UIControl.h>
 #include <UI/UIPanel.h>
 #include <UI/UIWidget.h>
+#include <BaseEntity.h>
+#include <Component.h>
+#include <Game.h>
+#include <Vector2.h>
 #include <Window.h>
 
 using namespace NGINE_NS;
@@ -320,6 +321,21 @@ public:
     void Init(EventArgs &e) {
         // Load all content
         Resources::LoadResources();
+
+//        // TEST
+//        auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory(), "content/readme.txt"));
+//
+//        if (f.Open(MODE_READ)) {
+//            auto t = f.ReadString();
+//            ConsoleMessage("Readme Reads:", "NOTICE", "entrypoint");
+//            ConsoleMessage(t, "NOTICE", "entrypoint - readme.txt");
+//            f.Close();
+//        }
+//
+//        if (f.Open(MODE_WRITE)) {
+//            f.WriteString("hi");
+//            f.Close();
+//        }
 
         // Create scene
         _Scene = new TestScene(this);

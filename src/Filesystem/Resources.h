@@ -95,26 +95,6 @@ namespace NerdThings::Ngine::Filesystem {
         static void DeleteTexture(const std::string &name_);
 
         /*
-         * Get the directory from a path to a file
-         */
-        static std::string GetDirectoryPath(std::string path_);
-
-        /*
-         * Get the path to the directory that the game's executable is in
-         */
-        static std::string GetExecutableDirectory(bool &success_);
-
-        /*
-         * Get the location of the game executable
-         */
-        static std::string GetExecutablePath(bool &success_);
-
-        /*
-         * Get file extension
-         */
-        static std::string GetFileExtension(const std::string &path_);
-
-        /*
          * Get a named font
          */
         static Graphics::TFont GetFont(const std::string &name_);
