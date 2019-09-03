@@ -317,14 +317,53 @@ namespace NerdThings::Ngine::Filesystem {
         if (!path_.Valid()) throw std::runtime_error("Cannot use invalid paths for TFile.");
     }
 
+    // Destructor
+
+    TFile::~TFile() {
+        // Close file in case it isnt gone already
+        Close();
+    }
+
     // Public Methods
 
     void TFile::Close() {
         if (_InternalHandle != nullptr)
             fclose(_InternalHandle);
 
+        // Remove pointer for safety
+        _InternalHandle = nullptr;
+
         // Set mode
         _InternalOpenMode = MODE_NONE;
+    }
+
+    TFile TFile::CreateNewFile(TPath path_, bool leaveOpen_) {
+        TFile f(path_);
+        f.Open(MODE_WRITE);
+        if (!leaveOpen_)
+            f.Close();
+        return f;
+    }
+
+    bool TFile::Delete() {
+        // Ensure that we are closed
+        Close();
+
+        // Remove from filesystem
+        return remove(ObjectPath.GetString().c_str()) == 0;
+    }
+
+    bool TFile::Exists() {
+        // If we are open, we know we exist
+        if (IsOpen()) return true;
+
+        // Using C apis so that it is cross platform
+        FILE *file = fopen(ObjectPath.GetString().c_str(), "r");
+        if (file != nullptr) {
+            fclose(file);
+            return true;
+        }
+        return false;
     }
 
     EFileOpenMode TFile::GetCurrentMode() {
@@ -534,4 +573,32 @@ namespace NerdThings::Ngine::Filesystem {
     ////////
     // TDirectory
     ////////
+
+    TDirectory::TDirectory() : TFilesystemObject(TPath()) {
+
+    }
+
+    TDirectory::TDirectory(const TPath &path_) : TFilesystemObject(path_) {
+
+    }
+
+    bool TDirectory::Delete() {
+        return false;
+    }
+
+    bool TDirectory::Exists() {
+        return false;
+    }
+
+    std::vector<TFilesystemObject> TDirectory::GetAllContents() {
+        return std::vector<TFilesystemObject>();
+    }
+
+    TDirectory TDirectory::GetDirectory(const TPath &path_) {
+        return TDirectory();
+    }
+
+    void TDirectory::Rename(const std::string &newName_) {
+
+    }
 }

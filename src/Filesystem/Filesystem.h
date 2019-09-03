@@ -160,6 +160,21 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Methods
 
         /*
+         * Delete this object from the filesystem.
+         */
+        virtual bool Delete() = 0;
+
+        /*
+         * Determine whether or not this object exists on the filesystem.
+         */
+        virtual bool Exists() = 0;
+
+        /*
+         * Rename/Move this object.
+         */
+        virtual void Rename(const std::string &newName_) = 0;
+
+        /*
          * Get the name of the object
          */
         std::string GetObjectName();
@@ -255,12 +270,31 @@ namespace NerdThings::Ngine::Filesystem {
          */
         TFile(const TPath &path_);
 
+        // Destructor
+
+        ~TFile();
+
         // Public Methods
 
         /*
          * Close the file
          */
         void Close();
+
+        /*
+         * Create a new file and optionally leave it open for read or write.
+         */
+        static TFile CreateNewFile(TPath path_, bool leaveOpen_ = false);
+
+        /*
+         * Delete this object from the filesystem.
+         */
+        bool Delete() override;
+
+        /*
+         * Determine whether or not this object exists on the filesystem.
+         */
+        bool Exists() override;
 
         /*
          * Get the current file mode
@@ -301,6 +335,11 @@ namespace NerdThings::Ngine::Filesystem {
         std::string ReadString(int size_ = -1, int offset_ = 0);
 
         /*
+         * Rename/Move this object.
+         */
+        void Rename(const std::string &newName_) override;
+
+        /*
          * Write bytes to the file.
          */
         bool WriteBytes(std::vector<unsigned char> data_);
@@ -331,14 +370,39 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Methods
 
         /*
+         * Delete this object from the filesystem.
+         */
+        bool Delete() override;
+
+        /*
+         * Determine whether or not this object exists on the filesystem.
+         */
+        bool Exists() override;
+
+        /*
          * Get the contents of this directory.
          */
-        std::vector<TFilesystemObject> GetContents(bool recursive_ = false);
+        std::vector<TFilesystemObject> GetAllContents();
+
+        /*
+         * Get all of the children directories.
+         */
+        std::vector<TDirectory> GetChildDirectories();
+
+        /*
+         * Get all of the children files.
+         */
+        std::vector<TFile> GetChildFiles(bool recursive_ = false);
 
         /*
          * Get a directory
          */
         static TDirectory GetDirectory(const TPath &path_);
+
+        /*
+         * Rename/Move this object.
+         */
+        void Rename(const std::string &newName_) override;
     };
 }
 
