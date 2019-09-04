@@ -19,13 +19,10 @@
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
+#include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#endif
-
-#if defined(PLATFORM_UWP)
-#include <ppltasks.h>
 #endif
 
 #include <sstream>
@@ -209,6 +206,44 @@ namespace NerdThings::Ngine::Filesystem {
 
     std::string TPath::GetString() const {
         return _InternalPath;
+    }
+
+    TPath TPath::GetWorkingDirectory() {
+#if defined(_WIN32)
+        // Create buffer
+        DWORD bufferLen = MAX_PATH;
+        auto buffer = new char[MAX_PATH + 1];
+
+        // Get current dir
+        GetCurrentDirectoryA(MAX_PATH + 1, buffer);
+
+        // Null terminate
+        buffer[MAX_PATH] = 0;
+
+        // Convert to string
+        std::string string(buffer);
+
+        // Delete buffer
+        delete[] buffer;
+
+        // Return
+        return TPath(string);
+#elif defined(__linux) || defined(__APPLE__)
+        // Create buffer
+        auto buffer = new char[MAX_PATH];
+
+        // Get working dir
+        if (getcwd(buffer, MAX_PATH) == nullptr) throw std::runtime_error("Unable to determine working directory.");
+
+        // Convert to string
+        std::string string(buffer);
+
+        // Delete buffer
+        delete[] buffer;
+
+        // Return
+        return TPath(string);
+#endif
     }
 
     TPath TPath::Join(const std::string &pathA_, const std::string &pathB_) {
@@ -741,11 +776,13 @@ namespace NerdThings::Ngine::Filesystem {
     bool TDirectory::Exists() {
 #if defined(_WIN32)
         // https://stackoverflow.com/a/6218445
+        // Get attributes for directory
         DWORD dwAttrib = GetFileAttributesA(ObjectPath.GetString().c_str());
 
         return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
                 (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #elif defined(__linux__) || defined(__APPLE__)
+        // Test opening of file
         DIR *dir = opendir(ObjectPath.GetString().c_str());
         if (dir) {
             closedir(dir);
@@ -757,6 +794,10 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     std::vector<TDirectory> TDirectory::GetDirectories() {
+        // Check exists
+        if (!Exists()) throw std::runtime_error("This directory does not exist.");
+
+        // Directories vector
         auto dirs = std::vector<TDirectory>();
 #if defined(__linux__) || defined(__APPLE__)
         // Variables
@@ -780,26 +821,36 @@ namespace NerdThings::Ngine::Filesystem {
         // Close directory
         closedir(dir);
 #elif defined(_WIN32) && defined(PLATFORM_DESKTOP)
+        // Find first directory
         WIN32_FIND_DATA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
+
+        // Check exists
         if (hFind == INVALID_HANDLE_VALUE) {
             throw std::runtime_error("Invalid directory.");
         }
 
+        // Search for directories
         do {
             if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 auto dirName = FindFileData.cFileName;
+                // Avoids . and .. directories
                 if (strcmp(dirName, ".") != 0 && strcmp(dirName, "..") != 0)
                     dirs.push_back(TDirectory(TPath(ObjectPath, dirName)));
             }
         } while (FindNextFile(hFind, &FindFileData) != 0);
 
+        // Close search
         FindClose(hFind);
 #endif
         return dirs;
     }
 
     std::vector<TFile> TDirectory::GetFiles() {
+        // Check exists
+        if (!Exists()) throw std::runtime_error("This directory does not exist.");
+
+        // Files vector
         auto files = std::vector<TFile>();
 #if defined(__linux__) || defined(__APPLE__)
         // Variables
@@ -822,13 +873,17 @@ namespace NerdThings::Ngine::Filesystem {
         // Close directory
         closedir(dir);
 #elif defined(_WIN32)
+        // Find the first file in the directory
         WIN32_FIND_DATAA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
+
+        // Check it exists
         if (hFind == INVALID_HANDLE_VALUE) {
             auto err = GetLastError();
             throw std::runtime_error("Invalid directory.");
         }
 
+        // Get all files
         do {
             if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
                 auto filename = FindFileData.cFileName;
@@ -836,6 +891,7 @@ namespace NerdThings::Ngine::Filesystem {
             }
         } while (FindNextFileA(hFind, &FindFileData) != 0);
 
+        // Close search
         FindClose(hFind);
 #endif
         return files;
@@ -862,5 +918,13 @@ namespace NerdThings::Ngine::Filesystem {
 
     TDirectory TDirectory::GetDirectory(const TPath &path_) {
         return TDirectory(path_);
+    }
+
+    TDirectory TDirectory::GetExecutableDirectory() {
+        return TDirectory(TPath::GetExecutableDirectory());
+    }
+
+    TDirectory TDirectory::GetWorkingDirectory() {
+        return TDirectory(TPath::GetWorkingDirectory());
     }
 }

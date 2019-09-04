@@ -75,6 +75,11 @@ namespace NerdThings::Ngine::Filesystem {
         std::string GetString() const;
 
         /*
+         * Get the working directory.
+         */
+        static TPath GetWorkingDirectory();
+
+        /*
          * Combine two parts of a path
          */
         static TPath Join(const std::string &pathA_, const std::string &pathB_);
@@ -437,6 +442,16 @@ namespace NerdThings::Ngine::Filesystem {
          * Get a directory
          */
         static TDirectory GetDirectory(const TPath &path_);
+
+        /*
+         * Get the executable directory.
+         */
+        static TDirectory GetExecutableDirectory();
+
+        /*
+         * Get the working directory for the program.
+         */
+        static TDirectory GetWorkingDirectory();
     };
 }
 
