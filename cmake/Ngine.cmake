@@ -15,11 +15,6 @@ function(ngine_add_executable target)
         # No warnings
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     endif()
-
-    # Unix specifics
-    if (UNIX OR MINGW)
-        target_link_libraries(${target} stdc++fs)
-    endif()
 endfunction()
 
 function(ngine_add_library target shared)
@@ -40,11 +35,6 @@ function(ngine_add_library target shared)
 
         # No warnings
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    endif()
-
-    # Unix specifics
-    if (UNIX OR MINGW)
-        target_link_libraries(${target} stdc++fs)
     endif()
 endfunction()
 
