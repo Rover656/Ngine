@@ -19,6 +19,7 @@
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
+#include <limits.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
