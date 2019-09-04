@@ -3,12 +3,12 @@
 #if defined(_WIN32)
 #include <windows.h>
 #elif defined(__linux__)
+#define _GNU_SOURCE
+#define __USE_GNU
 #include <unistd.h>
 #include <limits.h>
 #include <pwd.h>
 #include <linux/limits.h>
-#define _GNU_SOURCE
-#define __USE_GNU
 #include <dlfcn.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
@@ -19,7 +19,6 @@
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
-#include <limits.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -231,10 +230,10 @@ namespace NerdThings::Ngine::Filesystem {
         return TPath(string);
 #elif defined(__linux) || defined(__APPLE__)
         // Create buffer
-        auto buffer = new char[MAX_PATH];
+        auto buffer = new char[PATH_MAX];
 
         // Get working dir
-        if (getcwd(buffer, MAX_PATH) == nullptr) throw std::runtime_error("Unable to determine working directory.");
+        if (getcwd(buffer, PATH_MAX) == nullptr) throw std::runtime_error("Unable to determine working directory.");
 
         // Convert to string
         std::string string(buffer);
