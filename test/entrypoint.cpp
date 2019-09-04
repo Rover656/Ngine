@@ -322,16 +322,21 @@ public:
         // Load all content
         Resources::LoadResources();
 
-//        // TEST
-//        auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory(), "content/readme.txt"));
-//
-//        if (f.Open(MODE_READ)) {
-//            auto t = f.ReadString();
-//            ConsoleMessage("Readme Reads:", "NOTICE", "entrypoint");
-//            ConsoleMessage(t, "NOTICE", "entrypoint - readme.txt");
-//            f.Close();
-//        }
-//
+        // TEST
+        auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory(), "content/readme.txt"));
+
+        if (f.Open(MODE_READ)) {
+            auto t = f.ReadString();
+            ConsoleMessage("Readme Reads:", "NOTICE", "entrypoint");
+            ConsoleMessage(t, "NOTICE", "entrypoint - readme.txt");
+            f.Close();
+        }
+
+//        auto createJob = TDirectory::Create(TPath(TPath::GetExecutableDirectory(), "testCreate"));
+
+        auto dir = TDirectory(TPath(TPath::GetExecutableDirectory(), "test"));
+        auto del = dir.DeleteRecursive();
+
 //        if (f.Open(MODE_WRITE)) {
 //            f.WriteString("hi");
 //            f.Close();

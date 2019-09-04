@@ -11,33 +11,8 @@
 
 #include "Resources.h"
 
-// Platform specific includes
-#if defined(_WIN32)
-#include <windows.h>
-#elif defined(__linux__)
-#include <unistd.h>
-#include <limits.h>
-#include <pwd.h>
-#include <linux/limits.h>
-#define _GNU_SOURCE
-#define __USE_GNU
-#include <dlfcn.h>
-#elif defined(__APPLE__)
-#include <mach-o/dyld.h>
-#include <dlfcn.h>
-#include <sys/syslimits.h>
-#include <unistd.h>
-#include <pwd.h>
-#endif
-
-#if defined(PLATFORM_UWP)
-#include <ppltasks.h>
-#endif
-
 #include <filesystem>
 #include <sstream>
-
-#include "Filesystem.h"
 
 namespace NerdThings::Ngine::Filesystem {
     // Private Fields
@@ -47,51 +22,9 @@ namespace NerdThings::Ngine::Filesystem {
     std::unordered_map<std::string, Audio::TSound> Resources::_Sounds;
     std::unordered_map<std::string, Graphics::TTexture2D> Resources::_Textures;
 
-    // Private Methods
-
-    std::string Resources::ProcessPath(std::string path_) {
-#if defined(PLATFORM_DESKTOP)
-        auto exeDir = TPath::GetExecutableDirectory();
-        return (exeDir / path_).GetString();
-#elif defined(PLATFORM_UWP)
-        // This does not work, see below comment in LoadResources
-        //return "ms-appx:///" + path_;
-        auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
-        std::wstring tmp(installed->Begin());
-        std::string installedPath(tmp.begin(), tmp.end());
-
-        return installedPath +"\\" + path_;
-#endif
-        return path_;
-    }
-
-#if defined(PLATFORM_UWP)
-    void Resources::UWPGetFiles(Windows::Storage::StorageFolder ^folder, std::string currentPath, std::vector<std::string> *files) {
-        auto itemsTask = concurrency::create_task(folder->GetItemsAsync());
-
-        while (!itemsTask.is_done()) {}
-
-        auto items = itemsTask.get();
-
-        for (auto it = items->First(); it->HasCurrent; it->MoveNext()) {
-            auto item = it->Current;
-
-            auto n = item->Name;
-            std::wstring tmp(n->Begin());
-            std::string name(tmp.begin(), tmp.end());
-
-            if (item->IsOfType(Windows::Storage::StorageItemTypes::File)) {
-                files->push_back(currentPath + name);
-            } else {
-                UWPGetFiles((Windows::Storage::StorageFolder ^)item, currentPath + name + "\\", files);
-            }
-        }
-    }
-#endif
-
     // Public Fields
 
-    std::string Resources::ResourcesDirectory = "content";
+    TPath Resources::ResourcesDirectory = TPath("content");
 
     // Public Methods
 
@@ -155,29 +88,11 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     void Resources::LoadResources() {
-        std::vector<std::string> files;
-
-        auto dir = ProcessPath(ResourcesDirectory);
+        // Get content dir
+        auto contentDir = TDirectory(TPath(TPath::GetExecutableDirectory(), ResourcesDirectory));
 
         // Get all files
-#if defined(PLATFORM_UWP)
-        std::wstringstream wss;
-        wss << dir.c_str();
-        Platform::String ^dirPS = ref new Platform::String(wss.str().c_str());
-
-        auto contentFolderTask = concurrency::create_task(Windows::Storage::StorageFolder::GetFolderFromPathAsync(dirPS));
-
-        while(!contentFolderTask.is_done()) {}
-
-        auto contentFolder = contentFolderTask.get();
-
-        UWPGetFiles(contentFolder, "", &files);
-#else
-        for (std::filesystem::recursive_directory_iterator i(dir), end; i != end; ++i)
-            if (!std::filesystem::is_directory(i->path())) {
-                files.push_back(std::filesystem::relative(i->path(), dir).string());
-            }
-#endif
+        auto files = contentDir.GetFilesRecursive();
 
         // File extension definitions
         // TODO: Align this with whatever spec we will support
@@ -189,24 +104,23 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Load all files
         for (auto file : files) {
-            auto name = file.substr(0, file.find_last_of('.'));
-            auto ext = TPath(file).GetFileExtension();
-
-            TPath actualPath = TPath(dir) / file;
+            auto name = file.GetObjectName();
+            auto ext = file.GetFileExtension();
+            auto path = file.GetObjectPath();
 
             if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
-                LoadFont(actualPath, name);
+                LoadFont(path, name);
             } else if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
-                LoadMusic(actualPath, name);
+                LoadMusic(path, name);
             } else if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
-                LoadSound(actualPath, name);
+                LoadSound(path, name);
             } else if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end()) { // Texture
-                LoadTexture(actualPath, name);
+                LoadTexture(path, name);
             }
         }
     }
 
-    bool Resources::LoadFont(const std::string &inPath_, const std::string &name_) {
+    bool Resources::LoadFont(const TPath &inPath_, const std::string &name_) {
 //        auto fnt = Graphics::TFont::LoadFont(inPath_);
 //        if (fnt->Texture->ID > 0) {
 //            _Fonts.insert({ name_, fnt });
@@ -216,7 +130,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool Resources::LoadMusic(const std::string &inPath_, const std::string &name_) {
+    bool Resources::LoadMusic(const TPath &inPath_, const std::string &name_) {
 //        auto mus = Audio::TMusic::LoadMusic(inPath_);
 //        if (mus->MusicData != nullptr) {
 //            _Music.insert({ name_, mus });
@@ -226,7 +140,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool Resources::LoadSound(const std::string &inPath_, const std::string &name_) {
+    bool Resources::LoadSound(const TPath &inPath_, const std::string &name_) {
 //        auto snd = Audio::TSound::LoadSound(inPath_);
 //        if (snd->AudioBuffer != nullptr) {
 //            _Sounds.insert({ name_, snd });
@@ -236,7 +150,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool Resources::LoadTexture(const std::string &inPath_, const std::string &name_) {
+    bool Resources::LoadTexture(const TPath &inPath_, const std::string &name_) {
         auto tex = Graphics::TTexture2D::LoadTexture(inPath_);
         if (tex.IsValid()) {
             _Textures.insert({ name_, tex });

@@ -11,6 +11,9 @@ function(ngine_add_executable target)
 
         # Link special libraries
         target_link_libraries(${target} WindowsApp)
+
+        # No warnings
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     endif()
 
     # Unix specifics
@@ -34,6 +37,9 @@ function(ngine_add_library target shared)
 
         # Link special libraries
         target_link_libraries(${target} WindowsApp)
+
+        # No warnings
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     endif()
 
     # Unix specifics

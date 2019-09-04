@@ -18,6 +18,7 @@
 #include "../Audio/Sound.h"
 #include "../Graphics/Font.h"
 #include "../Graphics/Texture2D.h"
+#include "Filesystem.h"
 
 namespace NerdThings::Ngine::Filesystem {
     /*
@@ -42,20 +43,6 @@ namespace NerdThings::Ngine::Filesystem {
          * All named textures
          */
         static std::unordered_map<std::string, Graphics::TTexture2D> _Textures;
-
-        // Private Methods
-
-        /*
-         * Processes the path to get it relative to the install dir
-         */
-        static std::string ProcessPath(std::string path_);
-
-#if defined(PLATFORM_UWP)
-        /*
-         * Recursiveley get files in folder (UWP)
-         */
-        static void UWPGetFiles(Windows::Storage::StorageFolder ^folder, std::string currentPath, std::vector<std::string> *files);
-#endif
     public:
 
         // Public Fields
@@ -63,7 +50,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * The directory to load resources from
          */
-        static std::string ResourcesDirectory;
+        static TPath ResourcesDirectory;
 
         // TODO: Directory config - provides information on what directories contain what filetypes
 
@@ -129,22 +116,22 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Load font from file
          */
-        static bool LoadFont(const std::string &inPath_, const std::string &name_);
+        static bool LoadFont(const TPath &inPath_, const std::string &name_);
 
         /*
          * Load music from file
          */
-        static bool LoadMusic(const std::string &inPath_, const std::string &name_);
+        static bool LoadMusic(const TPath &inPath_, const std::string &name_);
 
         /*
          * Load sound from file
          */
-        static bool LoadSound(const std::string &inPath_, const std::string &name_);
+        static bool LoadSound(const TPath &inPath_, const std::string &name_);
 
         /*
          * Load texture from file
          */
-        static bool LoadTexture(const std::string &inPath_, const std::string &name_);
+        static bool LoadTexture(const TPath &inPath_, const std::string &name_);
     };
 }
 

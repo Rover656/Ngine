@@ -142,6 +142,12 @@ namespace NerdThings::Ngine::Filesystem {
         // Private Methods
 
         /*
+         * Clean a path on windows.
+         * Converts Unicode name to usable name.
+         */
+        std::string __CleanPathString(const std::string &str_);
+
+        /*
          * Run correction checks on path strings.
          */
         void __CorrectPath();
@@ -170,9 +176,14 @@ namespace NerdThings::Ngine::Filesystem {
         virtual bool Exists() = 0;
 
         /*
-         * Rename/Move this object.
+         * Move this object.
          */
-        virtual void Rename(const std::string &newName_) = 0;
+        void Move(const TPath &newPath_);
+
+        /*
+         * Rename this object.
+         */
+        void Rename(const std::string &newName_);
 
         /*
          * Get the name of the object
@@ -245,12 +256,28 @@ namespace NerdThings::Ngine::Filesystem {
      * A reference to a file in the filesystem
      */
     class NEAPI TFile : public TFilesystemObject {
+        // Private Structs
+
+        /*
+         * Handler that holds the handle.
+         */
+        struct InternalFileHandler {
+            /*
+             * The internal file handle
+             */
+            FILE *InternalHandle = nullptr;
+
+            // Destructor
+
+            ~InternalFileHandler();
+        };
+
         // Private Fields
 
         /*
-         * The internal file handle
+         * Internal handler
          */
-        FILE *_InternalHandle = nullptr;
+        std::shared_ptr<InternalFileHandler> _InternalHandle = nullptr;
 
         /*
          * Get the current open mode
@@ -307,6 +334,11 @@ namespace NerdThings::Ngine::Filesystem {
         static TFile GetFile(const TPath &path_);
 
         /*
+         * Get the file extension
+         */
+        std::string GetFileExtension();
+
+        /*
          * Get the size of the file
          */
         int GetSize();
@@ -333,11 +365,6 @@ namespace NerdThings::Ngine::Filesystem {
          * Size of -1 means all.
          */
         std::string ReadString(int size_ = -1, int offset_ = 0);
-
-        /*
-         * Rename/Move this object.
-         */
-        void Rename(const std::string &newName_) override;
 
         /*
          * Write bytes to the file.
@@ -370,9 +397,21 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Methods
 
         /*
+         * Create a new directory.
+         * Returns success and the new directory (may be reference to nothing).
+         */
+        static std::pair<bool, TDirectory> Create(const TPath &path_);
+
+        /*
          * Delete this object from the filesystem.
+         * Fails if directory is not empty
          */
         bool Delete() override;
+
+        /*
+         * Recursivly delete the folder.
+         */
+        bool DeleteRecursive();
 
         /*
          * Determine whether or not this object exists on the filesystem.
@@ -380,29 +419,24 @@ namespace NerdThings::Ngine::Filesystem {
         bool Exists() override;
 
         /*
-         * Get the contents of this directory.
-         */
-        std::vector<TFilesystemObject> GetAllContents();
-
-        /*
          * Get all of the children directories.
          */
-        std::vector<TDirectory> GetChildDirectories();
+        std::vector<TDirectory> GetDirectories();
 
         /*
          * Get all of the children files.
          */
-        std::vector<TFile> GetChildFiles(bool recursive_ = false);
+        std::vector<TFile> GetFiles();
+
+        /*
+         * Get all of the descended children inside any child directory.
+         */
+        std::vector<TFile> GetFilesRecursive();
 
         /*
          * Get a directory
          */
         static TDirectory GetDirectory(const TPath &path_);
-
-        /*
-         * Rename/Move this object.
-         */
-        void Rename(const std::string &newName_) override;
     };
 }
 

@@ -54,7 +54,7 @@ namespace NerdThings::Ngine {
          */
 
         // Delete loaded resources
-        Resources::DeleteAll();
+        Filesystem::Resources::DeleteAll();
 
         // Close audio
         ConsoleMessage("Closing audio device.", "NOTICE", "WINDOW");

@@ -13,12 +13,12 @@
 #include <wrl.h>
 
 #include "../../Audio/AudioManager.h"
+#include "../../Filesystem/Resources.h"
 #include "../../Graphics/OpenGL/OpenGL.h"
 #include "../../Graphics/GraphicsManager.h"
 #include "../../Input/Keyboard.h"
 #include "../../Input/Mouse.h"
 #include "../../Game.h"
-#include "../../Resources.h"
 #include "../../Window.h"
 #include "../../Vector2.h"
 

@@ -18,6 +18,16 @@
 #include <pwd.h>
 #endif
 
+#if defined(__linux__) || defined(__APPLE__)
+#include <dirent.h>
+#endif
+
+#if defined(PLATFORM_UWP)
+#include <ppltasks.h>
+#endif
+
+#include <sstream>
+
 namespace NerdThings::Ngine::Filesystem {
     ////////
     // TPath
@@ -73,7 +83,15 @@ namespace NerdThings::Ngine::Filesystem {
     // Public Methods
 
     TPath TPath::GetExecutableDirectory() {
+#if defined(PLATFORM_UWP)
+        auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+        std::wstring tmp(installed->Begin());
+        std::string installedPath(tmp.begin(), tmp.end());
+
+        return installedPath;
+#else
         return GetExecutablePath().GetParent();
+#endif
     }
 
     TPath TPath::GetExecutablePath() {
@@ -86,6 +104,8 @@ namespace NerdThings::Ngine::Filesystem {
             return TPath("");
 
         return TPath(std::string(exePath));
+#elif defined(_WIN32) && defined(PLATFORM_UWP)
+        throw std::runtime_error("Cannot get executable path of UWP app, get executable directory instead.");
 #elif defined(__linux__)
         char exePath[PATH_MAX];
         int len = readlink("/proc/self/exe", exePath, PATH_MAX);
@@ -165,7 +185,7 @@ namespace NerdThings::Ngine::Filesystem {
         // Search for the last directory slash
         auto fSlash = nameTemp.find_last_of(__GetJoinChar());
         if (std::string::npos != fSlash) {
-            nameTemp.erase(0, fSlash);
+            nameTemp.erase(0, fSlash + 1);
         }
 
         // Remove the file extension
@@ -241,7 +261,48 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Private Methods
 
+    std::string TPath::__CleanPathString(const std::string &str_) {
+#if defined(_WIN32) && defined(PLATFORM_DESKTOP)
+        // Get path length
+        auto len = GetShortPathNameA(str_.c_str(), nullptr, 0);
+
+        // Check length
+        if (len == 0) {
+            auto e = GetLastError();
+            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
+                return str_;
+            else throw std::runtime_error("GetShortPathNameA error.");
+        }
+
+        // Allocate buffer
+        auto buffer = new char[len];
+
+        // Get path
+        len = GetShortPathNameA(str_.c_str(), buffer, len);
+
+        // Check length
+        if (len == 0) {
+            auto e = GetLastError();
+            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
+                return str_;
+            else throw std::runtime_error("GetShortPathNameA error.");
+        }
+
+        // Convert to string
+        auto string = std::string(buffer);
+
+        // Delete buffer
+        delete[] buffer;
+
+        return string;
+#endif
+        return str_;
+    }
+
     void TPath::__CorrectPath() {
+        // Clean path
+        _InternalPath = __CleanPathString(_InternalPath);
+
         // Search for empty string
         if (_InternalPath.empty()) {
             // Not a correct value
@@ -292,6 +353,16 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Public Methods
 
+    void TFilesystemObject::Move(const TPath &newPath_) {
+        // Move file
+        rename(ObjectPath.GetString().c_str(), newPath_.GetString().c_str());
+    }
+
+    void TFilesystemObject::Rename(const std::string &newName_) {
+        // Rename
+        Move(ObjectPath / newName_);
+    }
+
     std::string TFilesystemObject::GetObjectName() {
         return ObjectPath.GetObjectName();
     }
@@ -307,14 +378,28 @@ namespace NerdThings::Ngine::Filesystem {
     ////////
     // TFile
     ////////
+    
+    // InternalFileHandler Destructor
+
+    TFile::InternalFileHandler::~InternalFileHandler() {
+        if (InternalHandle != nullptr)
+            fclose(InternalHandle);
+        InternalHandle = nullptr;
+    }
 
     // Public Constructor(s)
 
-    TFile::TFile() : TFilesystemObject(TPath()) {}
+    TFile::TFile() : TFilesystemObject(TPath()) {
+        // Create an empty handler
+        _InternalHandle = std::make_shared<InternalFileHandler>();
+    }
 
     TFile::TFile(const TPath &path_) : TFilesystemObject(path_) {
         // Check path is valid
-        if (!path_.Valid()) throw std::runtime_error("Cannot use invalid paths for TFile.");
+        if (!path_.Valid()) throw std::runtime_error("File must be given a valid path.");
+
+        // Create an empty handler
+        _InternalHandle = std::make_shared<InternalFileHandler>();
     }
 
     // Destructor
@@ -327,10 +412,7 @@ namespace NerdThings::Ngine::Filesystem {
     // Public Methods
 
     void TFile::Close() {
-        if (_InternalHandle != nullptr)
-            fclose(_InternalHandle);
-
-        // Remove pointer for safety
+        // Remove handler
         _InternalHandle = nullptr;
 
         // Set mode
@@ -374,21 +456,27 @@ namespace NerdThings::Ngine::Filesystem {
         return TFile(path_);
     }
 
+    std::string TFile::GetFileExtension() {
+        return ObjectPath.GetFileExtension();
+    }
+
     int TFile::GetSize() {
         if (!IsOpen()) {
             ConsoleMessage("Cannot determine size of file that is not open.", "WARN", "TFile");
             return 0;
         }
 
-        fseek(_InternalHandle, 0, SEEK_END);
-        auto s = ftell(_InternalHandle);
-        fseek(_InternalHandle, 0, SEEK_SET);
+        fseek(_InternalHandle->InternalHandle, 0, SEEK_END);
+        auto s = ftell(_InternalHandle->InternalHandle);
+        fseek(_InternalHandle->InternalHandle, 0, SEEK_SET);
 
         return s;
     }
 
     bool TFile::IsOpen() {
-        return _InternalHandle != nullptr;
+        if (_InternalHandle == nullptr) return false;
+
+        return _InternalHandle->InternalHandle != nullptr;
     }
 
     bool TFile::Open(EFileOpenMode mode_, bool binary_) {
@@ -399,35 +487,35 @@ namespace NerdThings::Ngine::Filesystem {
         switch(mode_) {
             case MODE_READ:
                 // Open binary file for read
-                _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "rb" : "r");
+                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "rb" : "r");
 
                 // Set mode
                 _InternalOpenMode = mode_;
                 break;
             case MODE_WRITE:
                 // Open binary file for write
-                _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "wb" : "w");
+                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "wb" : "w");
 
                 // Set mode
                 _InternalOpenMode = mode_;
                 break;
             case MODE_APPEND:
                 // Open binary file for append
-                _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "ab" : "a");
+                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "ab" : "a");
 
                 // Set mode
                 _InternalOpenMode = mode_;
                 break;
             case MODE_READ_WRITE:
                 // Open binary file for read and write
-                _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "w+b" : "w+");
+                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "w+b" : "w+");
 
                 // Set mode
                 _InternalOpenMode = mode_;
                 break;
             case MODE_READ_APPEND:
                 // Open binary file for read and append
-                _InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "a+b" : "a+");
+                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "a+b" : "a+");
 
                 // Set mode
                 _InternalOpenMode = mode_;
@@ -473,11 +561,11 @@ namespace NerdThings::Ngine::Filesystem {
         }
 
         // Seek to the offset
-        fseek(_InternalHandle, offset_, SEEK_SET);
+        fseek(_InternalHandle->InternalHandle, offset_, SEEK_SET);
 
         // Read bytes to array
         auto *buffer = new unsigned char[size_];
-        fread(buffer, 1, sizeof(buffer), _InternalHandle);
+        fread(buffer, 1, sizeof(buffer), _InternalHandle->InternalHandle);
 
         // Convert to vector
         std::vector<unsigned char> bytes(buffer, buffer + (sizeof(buffer) / sizeof(buffer[0])));
@@ -519,11 +607,11 @@ namespace NerdThings::Ngine::Filesystem {
         }
 
         // Seek to the offset
-        fseek(_InternalHandle, offset_, SEEK_SET);
+        fseek(_InternalHandle->InternalHandle, offset_, SEEK_SET);
 
         // Read to c string
         auto buffer = new char[size_ + 1];
-        int r = fread(buffer, 1, size_, _InternalHandle);
+        int r = fread(buffer, 1, size_, _InternalHandle->InternalHandle);
 
         // Null-terminate buffer
         buffer[r] = '\0';
@@ -552,7 +640,7 @@ namespace NerdThings::Ngine::Filesystem {
         auto dataSize = data_.size() * sizeof(unsigned char);
 
         // Write
-        return fwrite(data_.data(), 1, dataSize, _InternalHandle) == 1;
+        return fwrite(data_.data(), 1, dataSize, _InternalHandle->InternalHandle) == 1;
     }
 
     bool TFile::WriteString(const std::string &string_) {
@@ -567,38 +655,168 @@ namespace NerdThings::Ngine::Filesystem {
             throw std::runtime_error("File not opened for writing.");
 
         // Write string
-        return fputs(string_.c_str(), _InternalHandle) != EOF;
+        return fputs(string_.c_str(), _InternalHandle->InternalHandle) != EOF;
     }
 
     ////////
     // TDirectory
     ////////
 
-    TDirectory::TDirectory() : TFilesystemObject(TPath()) {
-
-    }
+    TDirectory::TDirectory() : TFilesystemObject(TPath()) {}
 
     TDirectory::TDirectory(const TPath &path_) : TFilesystemObject(path_) {
+        // Check for valid path
+        if (!path_.Valid()) throw std::runtime_error("Directory must be given a valid path.");
 
+        // Check it exists
+        if (!Exists()) throw std::runtime_error("Directory does not exist.");
+    }
+
+    std::pair<bool, TDirectory> TDirectory::Create(const TPath &path_) {
+        auto success = false;
+#if defined(_WIN32)
+        // Create file
+        success = CreateDirectoryA(path_.GetString().c_str(), nullptr) != 0;
+#endif
+        if (success)
+            return {success, TDirectory(path_)};
+        return {success, TDirectory()};
     }
 
     bool TDirectory::Delete() {
+#if defined(_WIN32)
+        // Try to delete (not recursive)
+        auto del = RemoveDirectoryA(ObjectPath.GetString().c_str());
+        return del != 0;
+#elif defined(__linux__) || defined(__APPLE__)
+        return remove(ObjectPath.GetString().c_str()) == 0;
+#endif
         return false;
+    }
+
+    bool TDirectory::DeleteRecursive() {
+        // Success tracker
+        auto success = true;
+
+        // Delete my own files
+        for (auto file : GetFiles()) {
+            if (!file.Delete()) {
+                success = false;
+                break;
+            }
+        }
+
+        // Stop if we find an issue
+        if (!success)
+            return false;
+
+        // Get directories
+        auto dirs = GetDirectories();
+
+        // Delete child directories
+        for (auto dir : dirs) {
+            if (!dir.DeleteRecursive()) {
+                success = false;
+                break;
+            }
+        }
+
+        // Stop if we find an issue
+        if (!success)
+            return false;
+
+
+        // Delete self
+        success = Delete();
+
+        // Return
+        return success;
     }
 
     bool TDirectory::Exists() {
+#if defined(_WIN32)
+        // https://stackoverflow.com/a/6218445
+        DWORD dwAttrib = GetFileAttributesA(ObjectPath.GetString().c_str());
+
+        return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+                (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+#elif defined(__linux__) || defined(__APPLE__)
+        DIR *dir = opendir(ObjectPath.GetString().c_str());
+        if (dir) {
+            closedir(dir);
+            return true;
+        }
+        return false;
+#endif
         return false;
     }
 
-    std::vector<TFilesystemObject> TDirectory::GetAllContents() {
-        return std::vector<TFilesystemObject>();
+    std::vector<TDirectory> TDirectory::GetDirectories() {
+        auto dirs = std::vector<TDirectory>();
+#if defined(__linux__) || defined(__APPLE__)
+#elif defined(_WIN32) && defined(PLATFORM_DESKTOP)
+        WIN32_FIND_DATA FindFileData;
+        HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
+        if (hFind == INVALID_HANDLE_VALUE) {
+            throw std::runtime_error("Invalid directory.");
+        }
+
+        do {
+            if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                auto dirName = FindFileData.cFileName;
+                if (strcmp(dirName, ".") != 0 && strcmp(dirName, "..") != 0)
+                    dirs.push_back(TDirectory(TPath(ObjectPath, dirName)));
+            }
+        } while (FindNextFile(hFind, &FindFileData) != 0);
+
+        FindClose(hFind);
+#endif
+        return dirs;
+    }
+
+    std::vector<TFile> TDirectory::GetFiles() {
+        auto files = std::vector<TFile>();
+#if defined(__linux__) || defined(__APPLE__)
+#elif defined(_WIN32)
+        WIN32_FIND_DATAA FindFileData;
+        HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
+        if (hFind == INVALID_HANDLE_VALUE) {
+            auto err = GetLastError();
+            throw std::runtime_error("Invalid directory.");
+        }
+
+        do {
+            if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                auto filename = FindFileData.cFileName;
+                files.push_back(TFile(TPath(ObjectPath, filename)));
+            }
+        } while (FindNextFileA(hFind, &FindFileData) != 0);
+
+        FindClose(hFind);
+#endif
+        return files;
+    }
+
+    std::vector<TFile> TDirectory::GetFilesRecursive() {
+        // Keep track of all files
+        auto files = std::vector<TFile>();
+
+        // Grab my files
+        auto myFiles = GetFiles();
+        files.insert(files.end(), myFiles.begin(), myFiles.end());
+
+        // Get all descendant directories
+        auto dirs = GetDirectories();
+
+        for (auto dir : dirs) {
+            auto dirFiles = dir.GetFilesRecursive();
+            files.insert(files.end(), dirFiles.begin(), dirFiles.end());
+        }
+
+        return files;
     }
 
     TDirectory TDirectory::GetDirectory(const TPath &path_) {
-        return TDirectory();
-    }
-
-    void TDirectory::Rename(const std::string &newName_) {
-
+        return TDirectory(path_);
     }
 }
