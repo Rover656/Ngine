@@ -20,6 +20,8 @@
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 #if defined(PLATFORM_UWP)
@@ -378,7 +380,7 @@ namespace NerdThings::Ngine::Filesystem {
     ////////
     // TFile
     ////////
-    
+
     // InternalFileHandler Destructor
 
     TFile::InternalFileHandler::~InternalFileHandler() {
@@ -675,8 +677,11 @@ namespace NerdThings::Ngine::Filesystem {
     std::pair<bool, TDirectory> TDirectory::Create(const TPath &path_) {
         auto success = false;
 #if defined(_WIN32)
-        // Create file
+        // Create directory
         success = CreateDirectoryA(path_.GetString().c_str(), nullptr) != 0;
+#elif defined(__linux__) || defined(__APPLE__)
+        // Create directory
+        success = mkdir(path_.GetString().c_str(), 0777) == 0;
 #endif
         if (success)
             return {success, TDirectory(path_)};
@@ -754,6 +759,26 @@ namespace NerdThings::Ngine::Filesystem {
     std::vector<TDirectory> TDirectory::GetDirectories() {
         auto dirs = std::vector<TDirectory>();
 #if defined(__linux__) || defined(__APPLE__)
+        // Variables
+        DIR *dir;
+        dirent *entry;
+
+        // Open dir
+        dir = opendir(ObjectPath.GetString().c_str());
+
+        // Test open
+        if (!dir) throw std::runtime_error("Cannot open directory.");
+
+        // Read all directories
+        while ((entry = readdir(dir)) != nullptr) {
+            if (entry->d_type == DT_DIR) {
+                if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
+                    dirs.push_back(TDirectory(TPath(ObjectPath, entry->d_name)));
+            }
+        }
+
+        // Close directory
+        closedir(dir);
 #elif defined(_WIN32) && defined(PLATFORM_DESKTOP)
         WIN32_FIND_DATA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
@@ -777,6 +802,25 @@ namespace NerdThings::Ngine::Filesystem {
     std::vector<TFile> TDirectory::GetFiles() {
         auto files = std::vector<TFile>();
 #if defined(__linux__) || defined(__APPLE__)
+        // Variables
+        DIR *dir;
+        dirent *entry;
+
+        // Open dir
+        dir = opendir(ObjectPath.GetString().c_str());
+
+        // Test open
+        if (!dir) throw std::runtime_error("Cannot open directory.");
+
+        // Read all directories
+        while ((entry = readdir(dir)) != nullptr) {
+            if (entry->d_type != DT_DIR) {
+                files.push_back(TFile(TPath(ObjectPath, entry->d_name)));
+            }
+        }
+
+        // Close directory
+        closedir(dir);
 #elif defined(_WIN32)
         WIN32_FIND_DATAA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);

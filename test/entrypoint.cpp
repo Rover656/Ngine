@@ -334,8 +334,8 @@ public:
 
 //        auto createJob = TDirectory::Create(TPath(TPath::GetExecutableDirectory(), "testCreate"));
 
-        auto dir = TDirectory(TPath(TPath::GetExecutableDirectory(), "test"));
-        auto del = dir.DeleteRecursive();
+//        auto dir = TDirectory(TPath(TPath::GetExecutableDirectory(), "test"));
+//        auto del = dir.DeleteRecursive();
 
 //        if (f.Open(MODE_WRITE)) {
 //            f.WriteString("hi");
