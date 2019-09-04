@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Audio {
 
     // Public Methods
 
-    std::shared_ptr<TSound> TSound::LoadSound(const std::string &filename_) {
+    std::shared_ptr<TSound> TSound::LoadSound(const Filesystem::TPath &path_) {
 //        const auto snd = ::LoadSound(filename_.c_str());
 //        auto ret = std::make_shared<TSound>();
 //        ret->AudioBuffer = snd.audioBuffer;

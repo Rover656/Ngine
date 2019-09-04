@@ -18,6 +18,8 @@
 #include "OpenGL/Texture.h"
 #endif
 
+#include "../Filesystem/Filesystem.h"
+
 namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture stored in the GPU memory
@@ -83,7 +85,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load a texture and get a pointer
          */
-        static TTexture2D LoadTexture(const std::string &filename_);
+        static TTexture2D LoadTexture(const Filesystem::TPath &path_);
 
         /*
          * Set the texture filter mode

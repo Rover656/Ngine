@@ -14,6 +14,7 @@
 
 #include "../ngine.h"
 
+#include "../Filesystem/Filesystem.h"
 #include "../Rectangle.h"
 #include "../Vector2.h"
 #include "Texture2D.h"
@@ -131,7 +132,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load a font
          */
-        static std::shared_ptr<TFont> LoadFont(const std::string &filename_);
+        static std::shared_ptr<TFont> LoadFont(const Filesystem::TPath &path_);
 
         /*
          * Measure the dimensions of a string

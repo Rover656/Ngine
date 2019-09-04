@@ -23,7 +23,7 @@ namespace NerdThings::Ngine::Audio {
 
     // Public Methods
 
-    std::shared_ptr<TMusic> TMusic::LoadMusic(const std::string &filename_) {
+    std::shared_ptr<TMusic> TMusic::LoadMusic(const Filesystem::TPath &path_) {
         //auto dat = LoadMusicStream(filename_.c_str());
         //auto ret = std::make_shared<TMusic>();
         //ret->MusicData = static_cast<void*>(dat);

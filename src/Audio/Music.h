@@ -14,6 +14,8 @@
 
 #include "../ngine.h"
 
+#include "../Filesystem/Filesystem.h"
+
 namespace NerdThings::Ngine::Audio {
     /*
      * Music stream
@@ -40,7 +42,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Load music from a file
          */
-        static std::shared_ptr<TMusic> LoadMusic(const std::string &filename_);
+        static std::shared_ptr<TMusic> LoadMusic(const Filesystem::TPath &path_);
 
         /*
          * Update music stream.

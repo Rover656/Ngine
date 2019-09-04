@@ -14,6 +14,8 @@
 
 #include "../ngine.h"
 
+#include "../Filesystem/Filesystem.h"
+
 namespace NerdThings::Ngine::Audio {
     /*
      * A sound source
@@ -58,7 +60,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Load a sound from a file
          */
-        static std::shared_ptr<TSound> LoadSound(const std::string &filename_);
+        static std::shared_ptr<TSound> LoadSound(const Filesystem::TPath &path_);
     };
 }
 

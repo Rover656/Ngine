@@ -50,7 +50,7 @@ namespace NerdThings::Ngine::Graphics {
         return _DefaultFont;
     }
 
-    std::shared_ptr<TFont> TFont::LoadFont(const std::string &filename_) {
+    std::shared_ptr<TFont> TFont::LoadFont(const Filesystem::TPath &path_) {
         //return FromRaylibFont(::LoadFont(filename_.c_str()));
         return nullptr;
     }

@@ -63,10 +63,10 @@ namespace NerdThings::Ngine::Graphics {
         return tex;
     }
 
-    TTexture2D TTexture2D::LoadTexture(const std::string &filename_) {
+    TTexture2D TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
         int width, height, channelCount;
         //stbi_set_flip_vertically_on_load(true);
-        auto pixelData = stbi_load(filename_.c_str(), &width, &height, &channelCount, 4);
+        auto pixelData = stbi_load(path_.GetString().c_str(), &width, &height, &channelCount, 4);
         if (pixelData == nullptr)
             throw std::runtime_error("Unable to open texture.");
         auto tex = LoadPixels(width, height, pixelData, 1);
