@@ -44,7 +44,7 @@ endif()
 ngine_add_library(${PROJECT_NAME} ${BUILD_SHARED} ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
 
 # Enable exports
-if (${BUILD_SHARED} AND ${PLATFORM} MATCHES "Desktop")
+if (${BUILD_SHARED} AND NOT ${PLATFORM} MATCHES "UWP")
     target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_EXPORTS=1)
 endif()
 

@@ -344,6 +344,11 @@ namespace NerdThings::Ngine::Filesystem {
         std::string GetFileExtension();
 
         /*
+         * Get the raw handle to the file.
+         */
+        FILE *GetFileHandle();
+
+        /*
          * Get the size of the file
          */
         int GetSize();

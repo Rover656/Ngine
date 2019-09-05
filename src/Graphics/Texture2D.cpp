@@ -13,6 +13,8 @@
 
 #include <stb_image.h>
 
+#include "Image.h"
+
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
@@ -64,13 +66,8 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     TTexture2D TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
-        int width, height, channelCount;
-        //stbi_set_flip_vertically_on_load(true);
-        auto pixelData = stbi_load(path_.GetString().c_str(), &width, &height, &channelCount, 4);
-        if (pixelData == nullptr)
-            throw std::runtime_error("Unable to open texture.");
-        auto tex = LoadPixels(width, height, pixelData, 1);
-        stbi_image_free(pixelData);
+        auto img = TImage::LoadImage(path_);
+        auto tex = LoadPixels(img.GetWidth(), img.GetHeight(), img.GetPixelData(), img.GetMipmapCount());
         return tex;
     }
 

@@ -497,6 +497,15 @@ namespace NerdThings::Ngine::Filesystem {
         return ObjectPath.GetFileExtension();
     }
 
+    FILE *TFile::GetFileHandle() {
+        if (!IsOpen()) {
+            ConsoleMessage("Cannot get handle of file that is not open.", "WARN", "TFile");
+            return nullptr;
+        }
+
+        return _InternalHandle->InternalHandle;
+    }
+
     int TFile::GetSize() {
         if (!IsOpen()) {
             ConsoleMessage("Cannot determine size of file that is not open.", "WARN", "TFile");

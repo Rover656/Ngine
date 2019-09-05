@@ -343,14 +343,12 @@ public:
 #if defined(PLATFORM_DESKTOP)
 #ifdef _WIN32
 #include <Windows.h>
-
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow) {
 #else
-    int main() {
+int main() {
 #endif
 #elif defined(PLATFORM_UWP)
-    #include <Platform/UWP/GameApp.h>
-
+#include <Platform/UWP/GameApp.h>
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^) {
 #endif
