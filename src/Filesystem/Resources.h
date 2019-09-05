@@ -102,12 +102,6 @@ namespace NerdThings::Ngine::Filesystem {
         static Graphics::TTexture2D GetTexture(const std::string &name_);
 
         /*
-         * Get the working directory.
-         * This is the directory that the game was run from
-         */
-        static std::string GetWorkingDirectory();
-
-        /*
          * Loads all files in the resources directory.
          * All names will be set to their relative path without their extension
          */

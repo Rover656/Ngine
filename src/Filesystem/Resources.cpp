@@ -82,10 +82,6 @@ namespace NerdThings::Ngine::Filesystem {
         return Graphics::TTexture2D();
     }
 
-    std::string Resources::GetWorkingDirectory() {
-        return std::filesystem::current_path().string();
-    }
-
     void Resources::LoadResources() {
         // Get content dir
         auto contentDir = TDirectory(TPath(TPath::GetExecutableDirectory(), ResourcesDirectory));
