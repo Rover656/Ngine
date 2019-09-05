@@ -21,7 +21,7 @@ namespace NerdThings::Ngine::Components {
 
     void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs &e) {
         // Update the target
-        _Camera.Target = e.EntityPosition;
+        _Camera.Position = e.EntityPosition;
 
         // We ignore scale and rotation as this is independently controlled
     }
@@ -40,7 +40,7 @@ namespace NerdThings::Ngine::Components {
         auto par = GetParent<BaseEntity>();
 
         // Setup camera
-        _Camera = Graphics::TCamera(rotation_, zoom_, par->GetPosition(), origin_);;
+        _Camera = Graphics::TCamera(par->GetPosition(), rotation_, zoom_, origin_);;
 
         // Attach to on position changed
         _TransformChangeEvent = par->OnTransformChanged.Bind(this, &CameraComponent::UpdateCamera);

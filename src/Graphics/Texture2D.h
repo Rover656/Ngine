@@ -22,6 +22,66 @@
 
 namespace NerdThings::Ngine::Graphics {
     /*
+     * Texture filter mode
+     */
+    enum ETextureFilterMode {
+        /*
+         * No filter, just approximation
+         */
+        FILTER_POINT = 0,
+
+        /*
+         * Linear filtering
+         */
+        FILTER_BILINEAR,
+
+        /*
+         * Trilinear filtering (with mipmaps)
+         */
+        FILTER_TRILINEAR,
+
+        /*
+         * Anisotropic filtering 4x
+         */
+        FILTER_ANISOTROPIC_4X,
+
+        /*
+         * Anisotropic filtering 8x
+         */
+        FILTER_ANISOTROPIC_8X,
+
+        /*
+         * Anisotropic filtering 16x
+         */
+        FILTER_ANISOTROPIC_16X
+    };
+
+    /*
+     * Texture wrap mode
+     */
+    enum ETextureWrapMode {
+        /*
+         * Repeats texture
+         */
+        WRAP_REPEAT = 0,
+
+        /*
+         * Clamps texture to edge pixel
+         */
+        WRAP_CLAMP,
+
+        /*
+         * Mirrors and repeats the texture
+         */
+        WRAP_MIRROR_REPEAT,
+
+        /*
+         * Mirrors and clamps to the border
+         */
+        WRAP_MIRROR_CLAMP
+    };
+
+    /*
      * A 2D Texture stored in the GPU memory
      */
     struct NEAPI TTexture2D {

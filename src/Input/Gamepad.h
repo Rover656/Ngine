@@ -16,6 +16,166 @@
 
 namespace NerdThings::Ngine::Input {
     /*
+     * Gamepad axis
+     */
+    enum EGamepadAxis {
+        /*
+         * Error checking for unknown axis used
+         */
+        GAMEPAD_AXIS_UNKNOWN = 0,
+
+        /*
+         * Left stick X
+         */
+        GAMEPAD_AXIS_LEFT_X,
+
+        /*
+         * Left stick Y
+         */
+        GAMEPAD_AXIS_LEFT_Y,
+
+        /*
+         * Right stick X
+         */
+        GAMEPAD_AXIS_RIGHT_X,
+
+        /*
+         * Right stick Y
+         */
+        GAMEPAD_AXIS_RIGHT_Y,
+
+        /*
+         * Left trigger
+         */
+        GAMEPAD_AXIS_LEFT_TRIGGER,
+
+        /*
+         * Right trigger
+         */
+        GAMEPAD_AXIS_RIGHT_TRIGGER
+    };
+
+    /*
+     * Gamepad buttons
+     */
+    enum EGamepadButton {
+        /*
+         * Error checking for unknown buttons
+         */
+        GAMEPAD_BUTTON_UNKNOWN = 0,
+
+        /*
+         * Left collection of buttons up
+         */
+        GAMEPAD_BUTTON_LEFT_FACE_UP,
+
+        /*
+         * Left collection of buttons right
+         */
+        GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
+
+        /*
+         * Left collection of buttons down
+         */
+        GAMEPAD_BUTTON_LEFT_FACE_DOWN,
+
+        /*
+         * Left collection of buttons left
+         */
+        GAMEPAD_BUTTON_LEFT_FACE_LEFT,
+
+        /*
+         * Right collection of buttons up
+         */
+        GAMEPAD_BUTTON_RIGHT_FACE_UP,
+
+        /*
+         * Right collection of buttons right
+         */
+        GAMEPAD_BUTTON_RIGHT_FACE_RIGHT,
+
+        /*
+         * Right collection of buttons down
+         */
+        GAMEPAD_BUTTON_RIGHT_FACE_DOWN,
+
+        /*
+         * Right collection of buttons left
+         */
+        GAMEPAD_BUTTON_RIGHT_FACE_LEFT,
+
+        /*
+         * Left trigger 1
+         */
+        GAMEPAD_BUTTON_LEFT_TRIGGER_1,
+
+        /*
+         * Left trigger 2
+         */
+        GAMEPAD_BUTTON_LEFT_TRIGGER_2,
+
+        /*
+         * Right trigger 1
+         */
+        GAMEPAD_BUTTON_RIGHT_TRIGGER_1,
+
+        /*
+         * Right trigger 2
+         */
+        GAMEPAD_BUTTON_RIGHT_TRIGGER_2,
+
+        /*
+         * Middle left button
+         */
+        GAMEPAD_BUTTON_MIDDLE_LEFT,
+
+        /*
+         * Middle button
+         */
+        GAMEPAD_BUTTON_MIDDLE,
+
+        /*
+         * Middle right button
+         */
+        GAMEPAD_BUTTON_MIDDLE_RIGHT,
+
+        /*
+         * Left thumb clicked in
+         */
+        GAMEPAD_BUTTON_LEFT_THUMB,
+
+        /*
+         * Right thumb clicked in
+         */
+        GAMEPAD_BUTTON_RIGHT_THUMB
+    };
+
+    /*
+     * Gamepad numbers
+     */
+    enum EGamepadNumber {
+        /*
+         * Gamepad 1
+         */
+        GAMEPAD_1 = 0,
+
+        /*
+         * Gamepad 2
+         */
+        GAMEPAD_2 = 1,
+
+        /*
+         * Gamepad 3
+         */
+        GAMEPAD_3 = 2,
+
+        /*
+         * Gamepad 4
+         */
+        GAMEPAD_4 = 3
+    };
+
+    /*
      * Gamepad input
      */
     class NEAPI Gamepad {

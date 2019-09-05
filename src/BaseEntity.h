@@ -20,12 +20,41 @@
 #include "ngine.h"
 
 #include "Vector2.h"
-#include "EventArgs.h"
 #include "EntityContainer.h"
 #include "Scene.h"
 
 namespace NerdThings::Ngine {
+    // Forward declare
     class Component;
+
+    struct EntityTransformChangedEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * Entity origin
+         */
+        TVector2 EntityOrigin;
+
+        /*
+         * The new entity position
+         */
+        TVector2 EntityPosition;
+
+        /*
+         * The new rotation
+         */
+        float EntityRotation;
+
+        /*
+         * The new scale
+         */
+        float EntityScale;
+
+        // Public Constructor(s)
+
+        EntityTransformChangedEventArgs(TVector2 origin_, TVector2 pos_, float rot_, float scale_)
+                : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
+    };
 
     /*
      * The root class for an entity within a scene

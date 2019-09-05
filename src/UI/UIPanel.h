@@ -24,6 +24,46 @@ namespace NerdThings::Ngine::UI {
     class NEAPI UIWidget;
 
     /*
+     * Horizontal alignment enum
+     */
+    enum EHorizontalAlignment {
+        /*
+         * Align elements with the left side
+         */
+        ALIGN_LEFT = 0,
+
+        /*
+         * Align elements with the middle
+         */
+        ALIGN_CENTER,
+
+        /*
+         * Align elements with the right side
+         */
+        ALIGN_RIGHT
+    };
+
+    /*
+     * Vertical alignment enum
+     */
+    enum EVerticalAlignment {
+        /*
+         * Align elements with top
+         */
+        ALIGN_TOP = 0,
+
+        /*
+         * Align elements with middle
+         */
+        ALIGN_MIDDLE,
+
+        /*
+         * Align elements with bottom
+         */
+        ALIGN_BOTTOM
+    };
+
+    /*
      * A UI Panel base, contains entities
      */
     class NEAPI UIPanel : virtual public UIControlSized {

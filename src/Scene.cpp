@@ -110,10 +110,10 @@ namespace NerdThings::Ngine {
 
         if (_CullAreaCenter)
             return {
-                cam->Target.X - _CullAreaWidth * 0.5f, cam->Target.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,
+                cam->Position.X - _CullAreaWidth * 0.5f, cam->Position.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,
                 _CullAreaHeight
             };
-        return {cam->Target.X - cam->Origin.X, cam->Target.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
+        return {cam->Position.X - cam->Origin.X, cam->Position.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
     }
 
     Game *Scene::GetParentGame() {

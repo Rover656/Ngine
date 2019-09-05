@@ -35,12 +35,12 @@ namespace NerdThings::Ngine::UI {
 
         if (rect.Contains(mPos)) {
             // The mouse is over the button
-            if (Input::Mouse::IsButtonPressed(MOUSE_BUTTON_LEFT)) {
+            if (Input::Mouse::IsButtonPressed(Input::MOUSE_BUTTON_LEFT)) {
                 // Clicked
                 OnClick({this});
 
                 // Deregister click so double events dont happen
-                Input::Mouse::CancelButton(MOUSE_BUTTON_LEFT);
+                Input::Mouse::CancelButton(Input::MOUSE_BUTTON_LEFT);
             } else if (!_Hovered) {
                 // Hovered
                 OnHover({this});

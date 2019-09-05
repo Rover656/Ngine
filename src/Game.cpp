@@ -207,7 +207,7 @@ namespace NerdThings::Ngine {
 
                 // If using, start using target
                 if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
-                    _RenderTarget.GetTexture().SetTextureWrap(WRAP_CLAMP);
+                    _RenderTarget.GetTexture().SetTextureWrap(Graphics::WRAP_CLAMP);
                     _RenderTarget.GetTexture().SetTextureFilter(RenderTargetFilterMode);
                     Graphics::GraphicsManager::PushTarget(_RenderTarget);
                 }

@@ -24,6 +24,62 @@
 
 namespace NerdThings::Ngine {
     /*
+     * Game config.
+     */
+    enum EGameConfig {
+        /*
+         * None
+         */
+        NONE = 1,
+
+        /*
+         * Start in fullscreen?
+         */
+        //FULLSCREEN = 2,
+
+        /*
+         * Have a resizeable window
+         * Should usually be used with MAINTAIN_DIMENSIONS
+         */
+        RESIZEABLE_WINDOW = 4,
+
+        /*
+         * Have a frameless window
+         */
+        //FRAMELESS_WINDOW = 8,
+
+        /*
+         * Have a transparent window
+         */
+        //TRANSPARENT_WINDOW = 16,
+
+        /*
+         * 4x Multi-sample Anti-aliasing
+         */
+        //MSAA_4X = 32,
+
+        /*
+         * Vertical sync
+         */
+        //VSYNC = 64,
+
+        /*
+         * Start the game with a hidden window
+         */
+        //HIDDEN_WINDOW = 128,
+
+        /*
+         * Continue running game when minimized
+         */
+        //ALWAYS_RUN_MINIMIZED = 256,
+
+        /*
+         * Whether or not to maintain the dimensions provided to the game constructor
+         */
+        MAINTAIN_DIMENSIONS = 512
+    };
+
+    /*
      * The main container of the game
      */
     class NEAPI Game {
@@ -110,7 +166,7 @@ namespace NerdThings::Ngine {
         /*
          * Filter mode for scaling render target
          */
-        ETextureFilterMode RenderTargetFilterMode = FILTER_BILINEAR;
+        Graphics::ETextureFilterMode RenderTargetFilterMode = Graphics::FILTER_BILINEAR;
 
         // Public Constructor(s)
 

@@ -21,10 +21,79 @@ struct GLFWwindow;
 #endif
 
 #include "../Vector2.h"
-#include "../EventArgs.h"
 #include "../EventHandler.h"
 
 namespace NerdThings::Ngine::Input {
+    /*
+     * Mouse button
+     */
+    enum EMouseButton {
+        MOUSE_BUTTON_LEFT = 0,
+        MOUSE_BUTTON_RIGHT,
+        MOUSE_BUTTON_MIDDLE
+    };
+
+    /*
+     * Mouse button down event args
+     */
+    struct MouseButtonEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The mouse button
+         */
+        EMouseButton Button;
+
+        /*
+         * Whether or not the button is pressed
+         */
+        bool Pressed;
+
+        // Public Constructor(s)
+
+        MouseButtonEventArgs(const EMouseButton button_, const bool pressed_)
+                : Button(button_), Pressed(pressed_) {}
+    };
+
+    /*
+     * Mouse moved event args
+     */
+    struct MouseMovedEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The current mouse position
+         */
+        TVector2 MousePosition;
+
+        /*
+         * The change in mouse position
+         */
+        TVector2 DeltaMousePosition;
+
+        // Public Constructor(s)
+
+        MouseMovedEventArgs(TVector2 mousePosition_, TVector2 deltaMousePosition_)
+                : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
+    };
+
+    struct MouseScrollChangedEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * Scroll wheel value
+         */
+        int Value;
+
+        // Public Constructor(s)
+
+        MouseScrollChangedEventArgs(int value_)
+                : Value(value_) {}
+    };
+
+    /*
+     * Mouse state info.
+     */
     struct MouseState {
         // Public Fields
 

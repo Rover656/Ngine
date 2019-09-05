@@ -18,11 +18,29 @@
 
 #include "Rectangle.h"
 #include "Graphics/Camera.h"
-#include "EventArgs.h"
 #include "EntityContainer.h"
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine {
+    struct NEAPI Game;
+
+    /*
+     * Scene loaded event args.
+     */
+    struct SceneLoadEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The game that the scene has been loaded into
+         */
+        Game *ParentGame;
+
+        // Public Constructor(s)
+
+        SceneLoadEventArgs(Game *game_)
+                : ParentGame(game_) {}
+    };
+
     /*
      * A container for entities
      */

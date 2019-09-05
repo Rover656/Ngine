@@ -17,8 +17,8 @@
 #include "../ngine.h"
 
 #include "../Graphics/Camera.h"
+#include "../BaseEntity.h"
 #include "../Component.h"
-#include "../EventArgs.h"
 #include "../Vector2.h"
 
 namespace NerdThings::Ngine::Components {

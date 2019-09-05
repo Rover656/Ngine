@@ -14,11 +14,27 @@
 
 #include "../ngine.h"
 
-#include "../EventArgs.h"
 #include "../EventHandler.h"
 #include "UIControl.h"
 
 namespace NerdThings::Ngine::UI {
+    /*
+     * UI Control event args
+     */
+    struct UIControlEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The control this belongs to
+         */
+        UI::UIControl *Control;
+
+        // Public Constructor(s)
+
+        UIControlEventArgs(UI::UIControl *control_)
+                : Control(control_) {}
+    };
+
     /*
      * An interactible UI Control
      */

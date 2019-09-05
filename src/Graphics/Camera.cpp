@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Graphics {
 
     TMatrix TCamera::GetTranslationMatrix() const {
         TMatrix ret = TMatrix::Identity;
-        ret = ret * TMatrix::Translate(-Target.X, -Target.Y, 0);
+        ret = ret * TMatrix::Translate(-Position.X, -Position.Y, 0);
         ret = ret * TMatrix::RotateZ(Rotation);
         ret = ret * TMatrix::Scale(Zoom, Zoom, 1);
         ret = ret * TMatrix::Translate(Origin.X, Origin.Y, 0);

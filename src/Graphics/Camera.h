@@ -30,14 +30,14 @@ namespace NerdThings::Ngine::Graphics {
         TVector2 Origin;
 
         /*
+         * Camera position
+         */
+        TVector2 Position;
+
+        /*
          * Camera rotation
          */
         float Rotation;
-
-        /*
-         * Camera target
-         */
-        TVector2 Target;
 
         /*
          * Camera zoom
@@ -46,8 +46,8 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TCamera(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
-                TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
+        TCamera(TVector2 position_ = TVector2(), float rotation_ = 0, float zoom_ = 0,
+                TVector2 origin_ = TVector2()) : Position(position_), Rotation(rotation_), Zoom(zoom_),
                                                              Origin(origin_) {}
 
         // Public Methods
