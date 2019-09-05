@@ -190,14 +190,16 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _Linked = linked == GL_TRUE;
 
         // Get locations
-        Locations[LOCATION_VERTEX_POSITION] = GetAttributeLocation(Attribs[ATTRIB_POSITION]);
-        Locations[LOCATION_VERTEX_TEXCOORD] = GetAttributeLocation(Attribs[ATTRIB_TEXCOORD]);
-        Locations[LOCATION_VERTEX_COLOR] = GetAttributeLocation(Attribs[ATTRIB_COLOR]);
-        Locations[LOCATION_MATRIX_MVP] = GetUniformLocation(Uniforms[UNIFORM_MATRIX_MVP]);
-        Locations[LOCATION_TEXTURE] = GetUniformLocation(Uniforms[UNIFORM_TEXTURE]);
-        ConsoleMessage("Collected all locations.", "NOTICE", "GLShaderProgram");
+        if (IsLinked()) {
+            Locations[LOCATION_VERTEX_POSITION] = GetAttributeLocation(Attribs[ATTRIB_POSITION]);
+            Locations[LOCATION_VERTEX_TEXCOORD] = GetAttributeLocation(Attribs[ATTRIB_TEXCOORD]);
+            Locations[LOCATION_VERTEX_COLOR] = GetAttributeLocation(Attribs[ATTRIB_COLOR]);
+            Locations[LOCATION_MATRIX_MVP] = GetUniformLocation(Uniforms[UNIFORM_MATRIX_MVP]);
+            Locations[LOCATION_TEXTURE] = GetUniformLocation(Uniforms[UNIFORM_TEXTURE]);
+            ConsoleMessage("Collected all locations.", "NOTICE", "GLShaderProgram");
+        }
 
-        return linked == GL_TRUE;
+        return IsLinked();
     }
 
     void GLShaderProgram::SetUniformMatrix(unsigned int loc_, const TMatrix &matrix_) {
