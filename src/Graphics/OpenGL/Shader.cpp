@@ -147,7 +147,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     void GLShaderProgram::DetachShader(std::shared_ptr<GLShader> shader_) {
         // Detach shader
         glDetachShader(ID, shader_->ID);
-        ConsoleMessage("Detached shader with ID " + std::to_string(shader_->ID) + " to shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
+        ConsoleMessage("Detached shader with ID " + std::to_string(shader_->ID) + " from shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
     }
 
     unsigned int GLShaderProgram::GetAttributeLocation(const std::string &name_) {
