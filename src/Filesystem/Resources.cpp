@@ -11,7 +11,6 @@
 
 #include "Resources.h"
 
-#include <filesystem>
 #include <sstream>
 
 namespace NerdThings::Ngine::Filesystem {
