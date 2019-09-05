@@ -57,11 +57,10 @@ namespace NerdThings::Ngine {
         Filesystem::Resources::DeleteAll();
 
         // Close audio
-        ConsoleMessage("Closing audio device.", "NOTICE", "WINDOW");
+        ConsoleMessage("Closing audio device.", "NOTICE", "Window");
         Audio::AudioManager::CloseDevice();
 
         // Close window
-        ConsoleMessage("Closing window.", "NOTICE", "WINDOW");
         Window::Cleanup();
     }
 #endif
@@ -70,7 +69,7 @@ namespace NerdThings::Ngine {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Window closing, clean OpenGL state
         Graphics::OpenGL::GL::Cleanup();
-        ConsoleMessage("The OpenGL state has been cleaned.", "NOTICE", "WINDOW");
+        ConsoleMessage("The OpenGL state has been cleaned.", "NOTICE", "Window");
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -96,6 +95,8 @@ namespace NerdThings::Ngine {
             Display = EGL_NO_DISPLAY;
         }
 #endif
+        ConsoleMessage("Closed window.", "NOTICE", "Window");
+
         // Unset width and height as the window is closed
         _Width = 0;
         _Height = 0;
@@ -114,9 +115,11 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
         if (!glfwInit()) {
-            ConsoleMessage("Failed to init GLFW.", "ERROR", "WINDOW");
+            ConsoleMessage("Failed to init GLFW.", "ERROR", "Window");
             throw std::runtime_error("[Window::Init] Failed to init GLFW.");
         }
+        ConsoleMessage("Initialised GLFW.", "NOTICE", "Window");
+
         glfwDefaultWindowHints();
 
         switch(Graphics::OpenGL::GL::GetGLVersion()) {
@@ -141,7 +144,7 @@ namespace NerdThings::Ngine {
 #endif
                 break;
             case Graphics::OpenGL::OPENGL_UNKNOWN:
-                throw std::runtime_error("Error, we were unable to determine an OpenGL version to use.");
+                throw std::runtime_error("Error, unable to determine an OpenGL version to use.");
         }
 #endif
 
@@ -151,7 +154,7 @@ namespace NerdThings::Ngine {
         WindowPtr = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
         if (!WindowPtr) {
             glfwTerminate();
-            throw std::runtime_error("[Window::Window] Failed to create.");
+            throw std::runtime_error("Failed to create game window.");
         }
 
         // Get initial size
@@ -353,18 +356,19 @@ namespace NerdThings::Ngine {
         // UWP on suspend. This handles resource cleanup
         CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(&Window::Suspended);
 #endif
+        ConsoleMessage("Successfully created window.", "NOTICE", "Window");
 
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Window is now created, init OpenGL
         Graphics::OpenGL::GL::Init();
-        ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "WINDOW");
+        ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "Window");
 #endif
 
         // Init Input
         Input::Gamepad::Init();
         Input::Mouse::Init();
         Input::Keyboard::Init();
-        ConsoleMessage("Input API's have been initialized.", "NOTICE", "Window");
+        ConsoleMessage("Input APIs have been initialized.", "NOTICE", "Window");
     }
 
     void Window::PollEvents() {

@@ -241,7 +241,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    std::unique_ptr<float[]> TMatrix::ToFloatArray() {
+    std::unique_ptr<float[]> TMatrix::ToFloatArray() const {
         auto buffer = std::make_unique<float[]>(16);
         buffer[0] = M0;
         buffer[1] = M1;

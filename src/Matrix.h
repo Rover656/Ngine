@@ -57,19 +57,19 @@ namespace NerdThings::Ngine {
 
         static TMatrix Scale(float x, float y, float z);
 
-        std::unique_ptr<float[]> ToFloatArray();
+        std::unique_ptr<float[]> ToFloatArray() const;
 
-        [[nodiscard]] float Trace() const;
+        float Trace() const;
 
         static TMatrix Translate(TVector3 translation_);
 
         static TMatrix Translate(float x_, float y_, float z_);
 
-        [[nodiscard]] TMatrix Transpose() const;
+        TMatrix Transpose() const;
 
-        [[nodiscard]] TMatrix Invert() const;
+        TMatrix Invert() const;
 
-        [[nodiscard]] TMatrix Normalize() const;
+        TMatrix Normalize() const;
 
         // Operators
 

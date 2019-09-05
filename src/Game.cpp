@@ -66,7 +66,7 @@ namespace NerdThings::Ngine {
 #if !defined(PLATFORM_UWP)
         // Initialize window
         Window::Init(_WindowWidth, _WindowHeight, title_);
-        ConsoleMessage("Window has been initialized.", "NOTICE", "GAME");
+        ConsoleMessage("Window has been initialized.", "NOTICE", "Game");
 #endif
 
         // Set Target FPS
@@ -76,7 +76,7 @@ namespace NerdThings::Ngine {
 
         // Register default events
         OnUpdate.Bind(Audio::AudioManager::Update);
-        ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
+        ConsoleMessage("Engine events have been registered.", "NOTICE", "Game");
     }
 
     // Destructor
@@ -145,19 +145,18 @@ namespace NerdThings::Ngine {
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
         // Init audio
-        ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "GAME");
+        ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "Game");
         Audio::AudioManager::InitDevice();
 
         // Check if the device was created
-        if (Audio::AudioManager::IsReady()) {
-            ConsoleMessage("Audio device initialized successfully..", "NOTICE", "GAME");
-        } else {
-            ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "GAME");
-        }
+        if (Audio::AudioManager::IsReady())
+            ConsoleMessage("Audio device initialized successfully..", "NOTICE", "Game");
+        else ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "Game");
 
         // Invoke OnRun
         OnRun({});
 
+        // Start game
         _Running = true;
 
         while (!Window::ShouldClose() && _Running) {
@@ -180,7 +179,7 @@ namespace NerdThings::Ngine {
                 lastFPS = _UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
-                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "GAME");
+                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
             }
 
             // Setup mouse
@@ -273,14 +272,14 @@ namespace NerdThings::Ngine {
         Filesystem::Resources::DeleteAll();
 
         // Close audio
-        ConsoleMessage("Closing audio device.", "NOTICE", "GAME");
+        ConsoleMessage("Closing audio device.", "NOTICE", "Game");
         Audio::AudioManager::CloseDevice();
 
         // Close window
-        ConsoleMessage("Closing window.", "NOTICE", "GAME");
+        ConsoleMessage("Closing window.", "NOTICE", "Game");
         Window::Cleanup();
 
-        ConsoleMessage("Game successfully shut down.", "NOTICE", "GAME");
+        ConsoleMessage("Game successfully stopped.", "NOTICE", "Game");
 #endif
     }
 
@@ -308,7 +307,7 @@ namespace NerdThings::Ngine {
         if (_CurrentScene != nullptr)
             _CurrentScene->OnLoad({this});
 
-        ConsoleMessage("A new scene has been loaded.", "NOTICE", "GAME");
+        ConsoleMessage("A new scene has been loaded.", "NOTICE", "Game");
     }
 
     void Game::SetUpdateFPS(int FPS_) {

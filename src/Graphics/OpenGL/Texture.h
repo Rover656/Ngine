@@ -95,12 +95,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * The OpenGL ID
          */
-        unsigned int ID;
+        unsigned int ID = 0;
 
         /*
          * The number of mipmaps used
          */
-        int MipmapCount;
+        int MipmapCount = 0;
 
         /*
          * Create a texture stored on the GPU

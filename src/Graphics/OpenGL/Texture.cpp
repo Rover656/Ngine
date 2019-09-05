@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                          GLPixelFormat format_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
-            ConsoleMessage("Texture was given invalid dimensions.", "ERROR", "GLTexture");
+            ConsoleMessage("Texture was given invalid dimensions of " + std::to_string(width_) + ", " + std::to_string(height_) + ".", "ERROR", "GLTexture");
             return;
         }
 

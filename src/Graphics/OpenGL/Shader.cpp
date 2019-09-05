@@ -26,6 +26,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     GLShader::GLShader(std::string src, GLShaderType type_) : _Dirty(true), _Type(type_) {
         // Create shader
         ID = glCreateShader(_Type);
+        ConsoleMessage("Created new shader with ID " + std::to_string(ID) + ".", "NOTICE", "GLShader");
 
         // Set source
         SetSource(std::move(src));
@@ -44,6 +45,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     bool GLShader::Compile() {
         // Compile shader
+        ConsoleMessage("Attempting to compile shader with ID " + std::to_string(ID) + ".", "NOTICE", "GLShader");
         glCompileShader(ID);
 
         // Check compile status
@@ -52,8 +54,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         if (success == GL_FALSE)
             ConsoleMessage("Failed to compile shader.", "WARN", "GLShader");
+        else ConsoleMessage("Compiled shader successfully.", "NOTICE", "GLShader");
 
-        // Mark as clean
+        // Mark as clean if successful
         _Dirty = !success;
 
         // Return the success or fail
@@ -91,6 +94,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Create program
         ID = glCreateProgram();
+        ConsoleMessage("Created a new shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
 
         // Set default attribs
         Attribs[ATTRIB_POSITION] = "vertexPosition";
@@ -100,6 +104,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Set default uniforms
         Uniforms[UNIFORM_MATRIX_MVP] = "mvp";
         Uniforms[UNIFORM_TEXTURE] = "texture";
+        ConsoleMessage("Loaded default attribute and uniform names.", "NOTICE", "GLShaderProgram");
 
         // Perform link
         // We give the option to not if the above params need tweaks
@@ -120,6 +125,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     GLShaderProgram::~GLShaderProgram() {
         // Delete program
         glDeleteProgram(ID);
+        ConsoleMessage("Deleting shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
 
         // Set ID to 0
         ID = 0;
@@ -132,6 +138,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Attach shader
         glAttachShader(ID, shader_->ID);
+        ConsoleMessage("Attached shader with ID " + std::to_string(shader_->ID) + " to shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
 
         // Mark as dirty
         _Dirty = true;
@@ -140,14 +147,36 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     void GLShaderProgram::DetachShader(std::shared_ptr<GLShader> shader_) {
         // Detach shader
         glDetachShader(ID, shader_->ID);
+        ConsoleMessage("Detached shader with ID " + std::to_string(shader_->ID) + " to shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
+    }
+
+    unsigned int GLShaderProgram::GetAttributeLocation(const std::string &name_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot get attribute location on shader program that is not linked.");
+
+        // Get location
+        return glGetAttribLocation(ID, name_.c_str());
+    }
+
+    unsigned int GLShaderProgram::GetUniformLocation(const std::string &name_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot get attribute location on shader program that is not linked.");
+
+        // Get location
+        return glGetUniformLocation(ID, name_.c_str());
     }
 
     bool GLShaderProgram::IsDirty() {
         return _Dirty;
     }
 
+    bool GLShaderProgram::IsLinked() {
+        return _Linked;
+    }
+
     bool GLShaderProgram::Link() {
         // Link program
+        ConsoleMessage("Attempting to link shader program with ID " + std::to_string(ID) + ".", "NOTICE", "GLShaderProgram");
         glLinkProgram(ID);
 
         // Check link success
@@ -155,15 +184,52 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glGetProgramiv(ID, GL_LINK_STATUS, &linked);
         if (linked == GL_FALSE)
             ConsoleMessage("Failed to link shader program.", "WARN", "GLShaderProgram");
+        else ConsoleMessage("Linked shader program successfully.", "NOTICE", "GLShaderProgram");
+
+        // Mark as linked
+        _Linked = linked == GL_TRUE;
 
         // Get locations
-        Locations[LOCATION_VERTEX_POSITION] = glGetAttribLocation(ID, Attribs[ATTRIB_POSITION]);
-        Locations[LOCATION_VERTEX_TEXCOORD] = glGetAttribLocation(ID, Attribs[ATTRIB_TEXCOORD]);
-        Locations[LOCATION_VERTEX_COLOR] = glGetAttribLocation(ID, Attribs[ATTRIB_COLOR]);
-        Locations[LOCATION_MATRIX_MVP] = glGetUniformLocation(ID, Uniforms[UNIFORM_MATRIX_MVP]);
-        Locations[LOCATION_TEXTURE] = glGetUniformLocation(ID, Uniforms[UNIFORM_TEXTURE]);
+        Locations[LOCATION_VERTEX_POSITION] = GetAttributeLocation(Attribs[ATTRIB_POSITION]);
+        Locations[LOCATION_VERTEX_TEXCOORD] = GetAttributeLocation(Attribs[ATTRIB_TEXCOORD]);
+        Locations[LOCATION_VERTEX_COLOR] = GetAttributeLocation(Attribs[ATTRIB_COLOR]);
+        Locations[LOCATION_MATRIX_MVP] = GetUniformLocation(Uniforms[UNIFORM_MATRIX_MVP]);
+        Locations[LOCATION_TEXTURE] = GetUniformLocation(Uniforms[UNIFORM_TEXTURE]);
+        ConsoleMessage("Collected all locations.", "NOTICE", "GLShaderProgram");
 
         return linked == GL_TRUE;
+    }
+
+    void GLShaderProgram::SetUniformMatrix(unsigned int loc_, const TMatrix &matrix_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniformMatrix4fv(loc_, 1, false, matrix_.ToFloatArray().get());
+    }
+
+    void GLShaderProgram::SetUniformMatrixP(GLShaderLocation loc_, const TMatrix &matrix_) {
+        SetUniformMatrix(Locations[loc_], matrix_);
+    }
+
+    void GLShaderProgram::SetUniformMatrixN(const std::string &loc_, const TMatrix &matrix_) {
+        SetUniformMatrix(GetUniformLocation(loc_), matrix_);
+    }
+
+    void GLShaderProgram::SetUniformInt(unsigned int loc_, int int_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform1i(loc_, int_);
+    }
+
+    void GLShaderProgram::SetUniformIntP(GLShaderLocation loc_, int int_) {
+        SetUniformInt(Locations[loc_], int_);
+    }
+
+    void GLShaderProgram::SetUniformIntN(const std::string &loc_, int int_) {
+        SetUniformInt(GetUniformLocation(loc_), int_);
     }
 
     void GLShaderProgram::Use() {

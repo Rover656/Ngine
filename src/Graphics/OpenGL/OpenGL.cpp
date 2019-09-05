@@ -161,14 +161,15 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         TMatrix matModelView = _ModelView;
 
         if (_VertexData[_CurrentBuffer].VCounter > 0) {
+            // Use shader program
             _CurrentShaderProgram->Use();
 
+            // Pass shader data
             TMatrix matMVP = _ModelView * _Projection;
-            auto mvpDat = matMVP.ToFloatArray();
+            _CurrentShaderProgram->SetUniformMatrixP(LOCATION_MATRIX_MVP, matMVP);
+            _CurrentShaderProgram->SetUniformIntP(LOCATION_TEXTURE, 0);
 
-            glUniformMatrix4fv(_CurrentShaderProgram->Locations[LOCATION_MATRIX_MVP], 1, false, mvpDat.get());
-            glUniform1i(_CurrentShaderProgram->Locations[LOCATION_TEXTURE], 0);
-
+            // Prepare buffers
             int vertexOffset = 0;
             if (VAOSupported) _VertexData[_CurrentBuffer].VAO->Bind();
             else {
@@ -216,6 +217,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 vertexOffset += (_DrawCalls[i].VertexCount + _DrawCalls[i].VertexAlignment);
             }
 
+            // Unbind buffers
             if (!VAOSupported) {
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -224,6 +226,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             // Unbind textures
             glBindTexture(GL_TEXTURE_2D, 0);
 
+            // Unbind VAO
             if (VAOSupported) glBindVertexArray(0);
 
             // Unbind program
@@ -296,7 +299,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 _VertexData[i].VAO->Bind();
             }
 
-            _VertexData[i].VBO = std::make_unique<std::unique_ptr<GLBuffer>[]>(4);
             _VertexData[i].VBO[0] = std::make_unique<GLBuffer>(BUFFER_VERTEX);
             _VertexData[i].VBO[0]->Bind();
             _VertexData[i].VBO[0]->SetData(_VertexData[i].Vertices.get(), sizeof(float) * 3 * 4 * MAX_BATCH_ELEMENTS);
@@ -401,7 +403,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Load program
         _DefaultShaderProgram = std::make_shared<GLShaderProgram>(fragmentShader, vertexShader);
 
-        if (_DefaultShaderProgram->IsDirty()) {
+        if (_DefaultShaderProgram->IsDirty() || !_DefaultShaderProgram->IsLinked()) {
             ConsoleMessage("Failed to link internal shader.", "FATAL", "OpenGL");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
@@ -707,6 +709,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             ConsoleMessage("Failed to init GLAD.", "FATAL", "OpenGL");
             throw std::runtime_error("Failed to init GLAD.");
         }
+        ConsoleMessage("Successfully initialised GLAD.", "NOTICE", "OpenGL");
 #endif
 
         // Load extensions
@@ -803,6 +806,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             if (strcmp(extList[i], (const char *) "GL_EXT_texture_mirror_clamp") == 0) TexMirrorClampSupported = true;
         }
 #endif
+        ConsoleMessage("Successfully loaded extensions.", "NOTICE", "OpenGL");
 
         // Load shader
         LoadDefaultShader();

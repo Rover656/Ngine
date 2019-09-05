@@ -22,11 +22,15 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     GLBuffer::GLBuffer(GLBufferType type_, GLBufferUsage usage_) : _Type(type_), _Usage(usage_) {
         // Generate buffer
         glGenBuffers(1, &ID);
+
+        // Logging
+        ConsoleMessage("Created new buffer with ID " + std::to_string(ID) + ".", "NOTICE", "GLBuffer");
     }
 
     GLBuffer::~GLBuffer() {
         // Delete buffer
         glDeleteBuffers(1, &ID);
+        ConsoleMessage("Deleted buffer with ID " + std::to_string(ID) + ".", "NOTICE", "GLBuffer");
 
         // Set ID to 0
         ID = 0;

@@ -3,6 +3,7 @@
 #define SHADER_H
 
 #include "../../ngine.h"
+#include "../../Matrix.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
@@ -110,7 +111,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Whether or not the shader program is dirty
          */
-        bool _Dirty;
+        bool _Dirty = true;
+
+        /*
+         * Whether or not the shader program has linked successfully.
+         */
+        bool _Linked = false;
     public:
         /*
          * Shader attribute names
@@ -154,14 +160,63 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         void DetachShader(std::shared_ptr<GLShader> shader_);
 
         /*
-         * Whether or not the shader program is dirty
+         * Get the location of an attribute.
+         * Must have linked at least once.
+         */
+        unsigned int GetAttributeLocation(const std::string &name_);
+
+        /*
+         * Get the location of an uniform.
+         * Must have linked at least once.
+         */
+        unsigned int GetUniformLocation(const std::string &name_);
+
+        /*
+         * Whether or not the shader program is dirty.
          */
         bool IsDirty();
+
+        /*
+         * Whether or not the shader program has been linked.
+         */
+        bool IsLinked();
 
         /*
          * Link the shader
          */
         bool Link();
+
+        // TODO: The rest of set attribs and uniforms
+
+        /*
+         * Set uniform matrix value.
+         */
+        void SetUniformMatrix(unsigned int loc_, const TMatrix &matrix_);
+
+        /*
+         * Set uniform matrix value with a predefined location.
+         */
+        void SetUniformMatrixP(GLShaderLocation loc_, const TMatrix &matrix_);
+
+        /*
+         * Set uniform matrix value with a name.
+         */
+        void SetUniformMatrixN(const std::string &loc_, const TMatrix &matrix_);
+
+        /*
+         * Set a uniform int value
+         */
+        void SetUniformInt(unsigned int loc_, int int_);
+
+        /*
+         * Set a uniform int value with a predefined location.
+         */
+        void SetUniformIntP(GLShaderLocation loc_, int int_);
+
+        /*
+         * Set a uniform int value with a name.
+         */
+        void SetUniformIntN(const std::string & loc_, int int_);
 
         /*
          * Use the shader program

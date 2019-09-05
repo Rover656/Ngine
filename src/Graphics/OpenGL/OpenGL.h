@@ -106,7 +106,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         std::unique_ptr<unsigned short[]> Indices;
 #endif
         std::unique_ptr<GLVertexArray> VAO;
-        std::unique_ptr<std::unique_ptr<GLBuffer>[]> VBO;
+        std::unique_ptr<GLBuffer> VBO[4];
     };
 
     /*
@@ -139,8 +139,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #define MAX_BATCH_ELEMENTS 8192
 #elif defined(GRAPHICS_OPENGLES2)
-    // TODO: Consider raising this
-    #define MAX_BATCH_ELEMENTS 2048
+// TODO: Consider raising this
+#define MAX_BATCH_ELEMENTS 2048
 #endif
 
 #define MAX_BATCH_BUFFERING 1

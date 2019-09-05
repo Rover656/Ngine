@@ -29,6 +29,20 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Color attachment
         RenderTexture = std::make_shared<GLTexture>(width_, height_, nullptr, 1, UNCOMPRESSED_R8G8B8A8);
+
+        // Verify, stopping here to save wasting of more time
+        if (RenderTexture->ID <= 0) {
+            // Message about failure
+            ConsoleMessage("Framebuffer failed to create a texture attachment.", "WARN", "GLFramebuffer");
+
+            // Delete
+            RenderTexture = nullptr;
+
+            // Stop
+            return;
+        }
+
+        // Set parameters
         RenderTexture->SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_LINEAR);
         RenderTexture->SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_LINEAR);
         RenderTexture->SetParameter(TEXPARAM_WRAP_S, WRAP_CLAMP);
@@ -63,12 +77,19 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             // Delete texture
             RenderTexture = nullptr;
 
+            // Delete depth buffer
+            glDeleteRenderbuffers(1, &ID);
+
             // Delete framebuffer
             glDeleteFramebuffers(1, &ID);
 
             // Set ID to 0
             ID = 0;
+
+            // Finished
+            return;
         }
+        ConsoleMessage("Successfully created framebuffer with ID " + std::to_string(ID) + ".", "NOTICE", "GLFramebuffer");
 
         // Unbind framebuffer
         Unbind();
@@ -77,6 +98,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     GLFramebuffer::~GLFramebuffer() {
         // Delete texture
         RenderTexture = nullptr;
+
+        // Delete depth buffer
+        glDeleteRenderbuffers(1, &ID);
 
         // Delete framebuffer
         glDeleteFramebuffers(1, &ID);
