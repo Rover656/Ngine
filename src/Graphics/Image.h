@@ -83,9 +83,11 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Contains the pixel data safely.
          */
-        // TODO: USE THIS
         struct InternalDataContainer {
-            void *_PixelData;
+            /*
+             * The raw pixel data pointer
+             */
+            void *PixelData = nullptr;
 
             ~InternalDataContainer();
         };
@@ -110,7 +112,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Image pixel data
          */
-        void *_PixelData = nullptr;
+        std::shared_ptr<InternalDataContainer> _PixelDataContainer = nullptr;
 
         /*
          * Image width

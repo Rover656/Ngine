@@ -5,7 +5,10 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructors
 
-    TImage::TImage() {}
+    TImage::TImage() {
+        // Create container
+        _PixelDataContainer = std::make_shared<InternalDataContainer>();
+    }
 
     // Public Methods
 
@@ -22,7 +25,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void *TImage::GetPixelData() {
-        return _PixelData;
+        return _PixelDataContainer->PixelData;
     }
 
     int TImage::GetWidth() {
@@ -51,7 +54,7 @@ namespace NerdThings::Ngine::Graphics {
             int bpp = 0;
             // TODO: Work out why these cause havoc with the renderer
             //stbi_set_flip_vertically_on_load(true);
-            img._PixelData = stbi_load_from_file(file.GetFileHandle(), &img._Width, &img._Height, &bpp, 4);
+            img._PixelDataContainer->PixelData = stbi_load_from_file(file.GetFileHandle(), &img._Width, &img._Height, &bpp, 4);
             //stbi_set_flip_vertically_on_load(false);
 
             // Close file
@@ -67,5 +70,12 @@ namespace NerdThings::Ngine::Graphics {
         }
 
         return img;
+    }
+
+    // InternalDataContainer: Destructor
+
+    TImage::InternalDataContainer::~InternalDataContainer() {
+        // Free pixel data
+        stbi_image_free(PixelData);
     }
 }

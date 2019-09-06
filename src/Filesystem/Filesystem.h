@@ -6,6 +6,12 @@
 #include <cstdio>
 
 namespace NerdThings::Ngine::Filesystem {
+    enum EResourceType {
+        TYPE_INVALID = 0,
+        TYPE_FILE = 1,
+        TYPE_DIRECTORY = 2
+    };
+
     /*
      * A path that points to a filesystem resource
      */
@@ -67,12 +73,27 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Gets a parent (if any)
          */
-        TPath GetParent();
+        TPath GetParent() const;
+
+        /*
+         * Get this path relative to a base.
+         */
+        TPath GetRelativeTo(const TPath &base_) const;
+
+        /*
+         * Get the type of resource this points to
+         */
+        EResourceType GetResourceType() const;
 
         /*
          * Get string version of path
          */
         std::string GetString() const;
+
+        /*
+         *  Get string version of path without an extenson
+         */
+        std::string GetStringNoExtension() const;
 
         /*
          * Get the working directory.

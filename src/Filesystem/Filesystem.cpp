@@ -2,6 +2,7 @@
 
 #if defined(_WIN32)
 #include <windows.h>
+#include <Shlwapi.h>
 #elif defined(__linux__)
 #define _GNU_SOURCE
 #define __USE_GNU
@@ -168,13 +169,17 @@ namespace NerdThings::Ngine::Filesystem {
         // Get path string
         auto path = GetString();
 
-        // Remove the file extension
+        // Get file extension
         auto dot = path.find_last_of('.');
+        auto lastSlash = path.find_last_of(__GetJoinChar());
+
         if (std::string::npos != dot) {
-            return path.substr(dot + 1);
-        } else {
-            return "";
+            if (dot > lastSlash) {
+                return path.substr(dot + 1);
+            }
         }
+
+        return "";
     }
 
     std::string TPath::GetObjectName() const {
@@ -196,7 +201,7 @@ namespace NerdThings::Ngine::Filesystem {
         return nameTemp;
     }
 
-    TPath TPath::GetParent() {
+    TPath TPath::GetParent() const {
         auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
 
         if (std::string::npos != lastSlash)
@@ -204,7 +209,60 @@ namespace NerdThings::Ngine::Filesystem {
         else return TPath();
     }
 
+    TPath TPath::GetRelativeTo(const TPath &base_) const {
+#if defined(_WIN32)
+        // Get relative path
+        char relativePath[MAX_PATH] = "";
+
+        // Get attributes
+        auto baseAttrib = base_.GetResourceType() == TYPE_DIRECTORY ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL;
+        auto myAttrib = GetResourceType() == TYPE_DIRECTORY ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL;
+
+        // Get path
+        if (!PathRelativePathToA(relativePath, base_.GetString().c_str(), baseAttrib, GetString().c_str(), myAttrib)) {
+            throw std::runtime_error("PathRelativeToPathA error.");
+        }
+
+        return std::string(relativePath);
+#elif defined(__linux__) || defined(__APPLE__)
+#endif
+        throw std::runtime_error("Not implemented.");
+    }
+
+    EResourceType TPath::GetResourceType() const {
+#if defined(_WIN32)
+        DWORD dwAttrib = GetFileAttributesA(GetString().c_str());
+
+        if (dwAttrib != INVALID_FILE_ATTRIBUTES) {
+            return dwAttrib & FILE_ATTRIBUTE_DIRECTORY ? TYPE_DIRECTORY : TYPE_FILE;
+        }
+#elif defined(__linux__) || defined(__APPLE__)
+        // Get path info
+        struct stat path_stat;
+        stat(GetString().c_str(), &path_stat);
+
+        if (S_ISFILE(path_stat.st_mode))
+            return TYPE_FILE;
+        else if (S_ISDIR(path_stat.st_mode))
+            return TYPE_DIRECTORY;
+#endif
+        return TYPE_INVALID;
+    }
+
     std::string TPath::GetString() const {
+        return _InternalPath;
+    }
+
+    std::string TPath::GetStringNoExtension() const {
+        auto lastDot = _InternalPath.find_last_of('.');
+        auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
+
+        if (std::string::npos != lastDot) {
+            if (lastDot > lastSlash) {
+                return _InternalPath.substr(0, lastDot);
+            }
+        }
+
         return _InternalPath;
     }
 
