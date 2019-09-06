@@ -101,6 +101,11 @@ namespace NerdThings::Ngine::Filesystem {
         static TPath GetWorkingDirectory();
 
         /*
+         * Whether or not the path is absolute.
+         */
+        bool IsAbsolute() const;
+
+        /*
          * Combine two parts of a path
          */
         static TPath Join(const std::string &pathA_, const std::string &pathB_);

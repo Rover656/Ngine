@@ -210,6 +210,11 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     TPath TPath::GetRelativeTo(const TPath &base_) const {
+        // The base must be absolute
+        if (!base_.IsAbsolute()) throw std::runtime_error("Base must be absolute.");
+
+        // I must be absolute
+        if (!IsAbsolute()) throw std::runtime_error("Path must be absolute.");
 #if defined(_WIN32)
         // Get relative path
         char relativePath[MAX_PATH] = "";
@@ -301,6 +306,14 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Return
         return TPath(string);
+#endif
+    }
+
+    bool TPath::IsAbsolute() const {
+#if defined(_WIN32)
+        // Test whether or not it is relative and reverse.
+        return !PathIsRelativeA(GetString().c_str());
+#elif defined(__linux__) || defined(__APPLE__)
 #endif
     }
 
