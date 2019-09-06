@@ -555,6 +555,9 @@ namespace NerdThings::Ngine::Filesystem {
         // Check path is valid
         if (!path_.Valid()) throw std::runtime_error("File must be given a valid path.");
 
+        // Check this is actually a file
+        if (path_.GetResourceType() != TYPE_FILE) throw std::runtime_error("This path does not point to a file.");
+
         // Create an empty handler
         _InternalHandle = std::make_shared<InternalFileHandler>();
     }
@@ -834,8 +837,8 @@ namespace NerdThings::Ngine::Filesystem {
         // Check for valid path
         if (!path_.Valid()) throw std::runtime_error("Directory must be given a valid path.");
 
-        // Check it exists
-        if (!Exists()) throw std::runtime_error("Directory does not exist.");
+        // Check this is actually a directory
+        if (path_.GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("This path does not point to a directory.");
     }
 
     std::pair<bool, TDirectory> TDirectory::Create(const TPath &path_) {
