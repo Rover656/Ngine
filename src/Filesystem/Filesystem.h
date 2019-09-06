@@ -210,7 +210,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Determine whether or not this object exists on the filesystem.
          */
-        virtual bool Exists() = 0;
+        virtual bool Exists() const = 0;
 
         /*
          * Move this object.
@@ -358,7 +358,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Determine whether or not this object exists on the filesystem.
          */
-        bool Exists() override;
+        bool Exists() const override;
 
         /*
          * Get the current file mode
@@ -458,7 +458,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Determine whether or not this object exists on the filesystem.
          */
-        bool Exists() override;
+        bool Exists() const override;
 
         /*
          * Get all of the children directories.

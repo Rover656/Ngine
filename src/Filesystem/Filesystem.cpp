@@ -595,7 +595,7 @@ namespace NerdThings::Ngine::Filesystem {
         return remove(ObjectPath.GetString().c_str()) == 0;
     }
 
-    bool TFile::Exists() {
+    bool TFile::Exists() const {
         // If we are open, we know we exist
         if (IsOpen()) return true;
 
@@ -905,7 +905,7 @@ namespace NerdThings::Ngine::Filesystem {
         return success;
     }
 
-    bool TDirectory::Exists() {
+    bool TDirectory::Exists() const {
 #if defined(_WIN32)
         // https://stackoverflow.com/a/6218445
         // Get attributes for directory
