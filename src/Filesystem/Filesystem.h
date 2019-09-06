@@ -225,12 +225,12 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the name of the object
          */
-        std::string GetObjectName();
+        std::string GetObjectName() const;
 
         /*
          * Get the object path
          */
-        TPath GetObjectPath();
+        TPath GetObjectPath() const;
     protected:
         // Protected Constructors
 
@@ -348,7 +348,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Create a new file and optionally leave it open for read or write.
          */
-        static TFile CreateNewFile(TPath path_, bool leaveOpen_ = false);
+        static TFile CreateNewFile(const TPath &path_, bool leaveOpen_ = false);
 
         /*
          * Delete this object from the filesystem.
@@ -363,7 +363,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the current file mode
          */
-        EFileOpenMode GetCurrentMode();
+        EFileOpenMode GetCurrentMode() const;
 
         /*
          * Get a file from a path
@@ -373,22 +373,22 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the file extension
          */
-        std::string GetFileExtension();
+        std::string GetFileExtension() const;
 
         /*
          * Get the raw handle to the file.
          */
-        FILE *GetFileHandle();
+        FILE *GetFileHandle() const;
 
         /*
          * Get the size of the file
          */
-        int GetSize();
+        int GetSize() const;
 
         /*
          * Whether or not the file is open
          */
-        bool IsOpen();
+        bool IsOpen() const;
 
         /*
          * Open the file in read or write mode.
@@ -463,17 +463,17 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get all of the children directories.
          */
-        std::vector<TDirectory> GetDirectories();
+        std::vector<TDirectory> GetDirectories() const;
 
         /*
          * Get all of the children files.
          */
-        std::vector<TFile> GetFiles();
+        std::vector<TFile> GetFiles() const;
 
         /*
          * Get all of the descended children inside any child directory.
          */
-        std::vector<TFile> GetFilesRecursive();
+        std::vector<TFile> GetFilesRecursive() const;
 
         /*
          * Get a directory

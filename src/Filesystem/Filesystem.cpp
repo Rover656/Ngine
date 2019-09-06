@@ -520,11 +520,11 @@ namespace NerdThings::Ngine::Filesystem {
         Move(ObjectPath / newName_);
     }
 
-    std::string TFilesystemObject::GetObjectName() {
+    std::string TFilesystemObject::GetObjectName() const {
         return ObjectPath.GetObjectName();
     }
 
-    TPath TFilesystemObject::GetObjectPath() {
+    TPath TFilesystemObject::GetObjectPath() const {
         return ObjectPath;
     }
 
@@ -579,7 +579,7 @@ namespace NerdThings::Ngine::Filesystem {
         _InternalOpenMode = MODE_NONE;
     }
 
-    TFile TFile::CreateNewFile(TPath path_, bool leaveOpen_) {
+    TFile TFile::CreateNewFile(const TPath &path_, bool leaveOpen_) {
         TFile f(path_);
         f.Open(MODE_WRITE);
         if (!leaveOpen_)
@@ -608,7 +608,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    EFileOpenMode TFile::GetCurrentMode() {
+    EFileOpenMode TFile::GetCurrentMode() const {
         return _InternalOpenMode;
     }
 
@@ -616,11 +616,11 @@ namespace NerdThings::Ngine::Filesystem {
         return TFile(path_);
     }
 
-    std::string TFile::GetFileExtension() {
+    std::string TFile::GetFileExtension() const {
         return ObjectPath.GetFileExtension();
     }
 
-    FILE *TFile::GetFileHandle() {
+    FILE *TFile::GetFileHandle() const {
         if (!IsOpen()) {
             ConsoleMessage("Cannot get handle of file that is not open.", "WARN", "TFile");
             return nullptr;
@@ -629,7 +629,7 @@ namespace NerdThings::Ngine::Filesystem {
         return _InternalHandle->InternalHandle;
     }
 
-    int TFile::GetSize() {
+    int TFile::GetSize() const {
         if (!IsOpen()) {
             ConsoleMessage("Cannot determine size of file that is not open.", "WARN", "TFile");
             return 0;
@@ -642,7 +642,7 @@ namespace NerdThings::Ngine::Filesystem {
         return s;
     }
 
-    bool TFile::IsOpen() {
+    bool TFile::IsOpen() const {
         if (_InternalHandle == nullptr) return false;
 
         return _InternalHandle->InternalHandle != nullptr;
@@ -925,34 +925,13 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    std::vector<TDirectory> TDirectory::GetDirectories() {
+    std::vector<TDirectory> TDirectory::GetDirectories() const {
         // Check exists
         if (!Exists()) throw std::runtime_error("This directory does not exist.");
 
         // Directories vector
         auto dirs = std::vector<TDirectory>();
-#if defined(__linux__) || defined(__APPLE__)
-        // Variables
-        DIR *dir;
-        dirent *entry;
-
-        // Open dir
-        dir = opendir(ObjectPath.GetString().c_str());
-
-        // Test open
-        if (!dir) throw std::runtime_error("Cannot open directory.");
-
-        // Read all directories
-        while ((entry = readdir(dir)) != nullptr) {
-            if (entry->d_type == DT_DIR) {
-                if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
-                    dirs.push_back(TDirectory(TPath(ObjectPath, entry->d_name)));
-            }
-        }
-
-        // Close directory
-        closedir(dir);
-#elif defined(_WIN32) && defined(PLATFORM_DESKTOP)
+#if defined(_WIN32)
         // Find first directory
         WIN32_FIND_DATA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
@@ -974,17 +953,7 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Close search
         FindClose(hFind);
-#endif
-        return dirs;
-    }
-
-    std::vector<TFile> TDirectory::GetFiles() {
-        // Check exists
-        if (!Exists()) throw std::runtime_error("This directory does not exist.");
-
-        // Files vector
-        auto files = std::vector<TFile>();
-#if defined(__linux__) || defined(__APPLE__)
+#elif defined(__linux__) || defined(__APPLE__)
         // Variables
         DIR *dir;
         dirent *entry;
@@ -997,14 +966,25 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Read all directories
         while ((entry = readdir(dir)) != nullptr) {
-            if (entry->d_type != DT_DIR) {
-                files.push_back(TFile(TPath(ObjectPath, entry->d_name)));
+            if (entry->d_type == DT_DIR) {
+                if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
+                    dirs.push_back(TDirectory(TPath(ObjectPath, entry->d_name)));
             }
         }
 
         // Close directory
         closedir(dir);
-#elif defined(_WIN32)
+#endif
+        return dirs;
+    }
+
+    std::vector<TFile> TDirectory::GetFiles() const {
+        // Check exists
+        if (!Exists()) throw std::runtime_error("This directory does not exist.");
+
+        // Files vector
+        auto files = std::vector<TFile>();
+#if defined(_WIN32)
         // Find the first file in the directory
         WIN32_FIND_DATAA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
@@ -1025,11 +1005,31 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Close search
         FindClose(hFind);
+#elif defined(__linux__) || defined(__APPLE__)
+        // Variables
+        DIR *dir;
+        dirent *entry;
+
+        // Open dir
+        dir = opendir(ObjectPath.GetString().c_str());
+
+        // Test open
+        if (!dir) throw std::runtime_error("Cannot open directory.");
+
+        // Read all directories
+        while ((entry = readdir(dir)) != nullptr) {
+            if (entry->d_type != DT_DIR) {
+                files.push_back(TFile(TPath(ObjectPath, entry->d_name)));
+            }
+        }
+
+        // Close directory
+        closedir(dir);
 #endif
         return files;
     }
 
-    std::vector<TFile> TDirectory::GetFilesRecursive() {
+    std::vector<TFile> TDirectory::GetFilesRecursive() const {
         // Keep track of all files
         auto files = std::vector<TFile>();
 
