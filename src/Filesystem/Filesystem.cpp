@@ -2,7 +2,6 @@
 
 #if defined(_WIN32)
 #include <windows.h>
-#include <Shlwapi.h>
 #elif defined(__linux__)
 #define _GNU_SOURCE
 #define __USE_GNU
@@ -81,6 +80,14 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     // Public Methods
+
+    TPath TPath::GetAbsolute() const {
+        // If we are already absolute, ignore
+        if (IsAbsolute()) return *this;
+
+        // Get relative to executable dir
+        return GetExecutableDirectory() / *this;
+    }
 
     TPath TPath::GetExecutableDirectory() {
 #if defined(PLATFORM_UWP)
@@ -211,27 +218,60 @@ namespace NerdThings::Ngine::Filesystem {
 
     TPath TPath::GetRelativeTo(const TPath &base_) const {
         // The base must be absolute
-        if (!base_.IsAbsolute()) throw std::runtime_error("Base must be absolute.");
+        auto basePath = base_;
+        if (!basePath.IsAbsolute()) basePath = basePath.GetAbsolute();
+
+        // Base must be a directory
+        if (basePath.GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("Base must be a directory.");
 
         // I must be absolute
         if (!IsAbsolute()) throw std::runtime_error("Path must be absolute.");
-#if defined(_WIN32)
-        // Get relative path
-        char relativePath[MAX_PATH] = "";
 
-        // Get attributes
-        auto baseAttrib = base_.GetResourceType() == TYPE_DIRECTORY ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL;
-        auto myAttrib = GetResourceType() == TYPE_DIRECTORY ? FILE_ATTRIBUTE_DIRECTORY : FILE_ATTRIBUTE_NORMAL;
+        // Find common path
+        auto commonPathPos = 0;
 
-        // Get path
-        if (!PathRelativePathToA(relativePath, base_.GetString().c_str(), baseAttrib, GetString().c_str(), myAttrib)) {
-            throw std::runtime_error("PathRelativeToPathA error.");
+        auto baseStr = basePath.GetString();
+        auto str = GetString();
+
+        for (auto i = 0; i < baseStr.size() && i < str.size(); i++) {
+            if (baseStr[i] != str[i]) {
+                break;
+            }
+            commonPathPos++;
         }
 
-        return std::string(relativePath);
-#elif defined(__linux__) || defined(__APPLE__)
-#endif
-        throw std::runtime_error("Not implemented.");
+        // Catches things like different drives
+        if (commonPathPos == 0) {
+            throw std::runtime_error("Cannot get relative path to files on different drives.");
+        }
+
+        // Remove from both strings
+        baseStr.erase(0, commonPathPos);
+        str.erase(0, commonPathPos);
+
+        // Remove initial slash if left
+        if (str.size() > 0) {
+            if (str[0] == __GetJoinChar()) {
+                str.erase(0, 1);
+            }
+        }
+
+        // Prepend ../ for all extra parts
+        int subdirs = (int)std::count(baseStr.begin(), baseStr.end(), __GetJoinChar());
+
+        // Add one more if it doesn't end in a slash
+        if (baseStr.size() > 0) {
+            if (baseStr[baseStr.size() - 1] != __GetJoinChar()) {
+                subdirs += 1;
+            }
+        }
+
+        for (auto i = 0; i < subdirs; i++) {
+            str = std::string("..") + __GetJoinChar() + str;
+        }
+
+        // Return, we're done
+        return str;
     }
 
     EResourceType TPath::GetResourceType() const {
@@ -246,7 +286,7 @@ namespace NerdThings::Ngine::Filesystem {
         struct stat path_stat;
         stat(GetString().c_str(), &path_stat);
 
-        if (S_ISFILE(path_stat.st_mode))
+        if (S_ISREG(path_stat.st_mode))
             return TYPE_FILE;
         else if (S_ISDIR(path_stat.st_mode))
             return TYPE_DIRECTORY;
@@ -263,7 +303,11 @@ namespace NerdThings::Ngine::Filesystem {
         auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
 
         if (std::string::npos != lastDot) {
-            if (lastDot > lastSlash) {
+            if (std::string::npos != lastSlash) {
+                if (lastDot > lastSlash) {
+                    return _InternalPath.substr(0, lastDot);
+                }
+            } else {
                 return _InternalPath.substr(0, lastDot);
             }
         }
@@ -311,10 +355,15 @@ namespace NerdThings::Ngine::Filesystem {
 
     bool TPath::IsAbsolute() const {
 #if defined(_WIN32)
-        // Test whether or not it is relative and reverse.
-        return !PathIsRelativeA(GetString().c_str());
+        // Test if we have (*):\ at the start
+        if (_InternalPath.size() > 3)
+            return _InternalPath[1] == ':' && _InternalPath[2] == '\\';
 #elif defined(__linux__) || defined(__APPLE__)
+        // Test we have an initial slash
+        if (_InternalPath.size() > 0)
+            return _InternalPath[0] == '/';
 #endif
+        return false;
     }
 
     TPath TPath::Join(const std::string &pathA_, const std::string &pathB_) {

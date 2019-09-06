@@ -51,6 +51,12 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Methods
 
         /*
+         * Get this as an absolute path.
+         * This makes the path relative to the executable directory NOT the current/working directory.
+         */
+        TPath GetAbsolute() const;
+
+        /*
          * Get the executable directory
          */
         static TPath GetExecutableDirectory();

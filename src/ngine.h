@@ -84,8 +84,8 @@ bool NEAPI b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB);
 #ifdef _WIN32
 #define NOGDI
 #define NODRAWTEXT
-#define NOUSER
-#define NOCRYPT
+//#define NOUSER
+//#define NOCRYPT
 #endif
 
 //----------------------------------------------------------------------------------

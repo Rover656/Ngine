@@ -11,6 +11,7 @@
 
 #include "Resources.h"
 
+#include <regex>
 #include <sstream>
 
 namespace NerdThings::Ngine::Filesystem {
@@ -84,7 +85,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     void Resources::LoadResources() {
         // Get content dir
-        auto contentDir = TDirectory(TPath(TPath::GetExecutableDirectory(), ResourcesDirectory));
+        auto contentDir = TDirectory(TPath::GetExecutableDirectory() / ResourcesDirectory);
 
         // Get all files
         auto files = contentDir.GetFilesRecursive();
@@ -92,17 +93,25 @@ namespace NerdThings::Ngine::Filesystem {
         // File extension definitions
         // TODO: Align this with whatever spec we will support
         std::vector<std::string> fntExts = {"ttf", "otf", "fnt"}; // TODO: Spritefont support
-
         std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
         std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc"};
 
         // Load all files
         for (auto file : files) {
-            auto name = file.GetObjectName();
+            // Get name (relative path to the content folder)
+            auto name = file.GetObjectPath().GetRelativeTo(contentDir.GetObjectPath()).GetStringNoExtension();
+
+            // Replace windows slashes with forward slashes
+            name = std::regex_replace(name, std::regex("\\\\"), "/");
+
+            // Get extension
             auto ext = file.GetFileExtension();
+
+            // Get actual path
             auto path = file.GetObjectPath();
 
+            // Load resources
             if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
                 LoadFont(path, name);
             } else if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
