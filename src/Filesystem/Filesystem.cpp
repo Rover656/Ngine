@@ -555,9 +555,6 @@ namespace NerdThings::Ngine::Filesystem {
         // Check path is valid
         if (!path_.Valid()) throw std::runtime_error("File must be given a valid path.");
 
-        // Check this is actually a file
-        if (path_.GetResourceType() != TYPE_FILE) throw std::runtime_error("This path does not point to a file.");
-
         // Create an empty handler
         _InternalHandle = std::make_shared<InternalFileHandler>();
     }
@@ -572,16 +569,19 @@ namespace NerdThings::Ngine::Filesystem {
     // Public Methods
 
     void TFile::Close() {
-        // Remove handler
-        _InternalHandle = nullptr;
+        // Close file
+        if (_InternalHandle->InternalHandle != nullptr) {
+            fclose(_InternalHandle->InternalHandle);
+            _InternalHandle->InternalHandle = nullptr;
+        }
 
         // Set mode
         _InternalOpenMode = MODE_NONE;
     }
 
-    TFile TFile::CreateNewFile(const TPath &path_, bool leaveOpen_) {
+    TFile TFile::CreateNewFile(const TPath &path_, bool leaveOpen_, bool binary_) {
         TFile f(path_);
-        f.Open(MODE_WRITE);
+        f.Open(MODE_WRITE, binary_);
         if (!leaveOpen_)
             f.Close();
         return f;
@@ -655,6 +655,9 @@ namespace NerdThings::Ngine::Filesystem {
         // Open with selected mode
         switch(mode_) {
             case MODE_READ:
+                // Check this is actually a file
+                if (ObjectPath.GetResourceType() != TYPE_FILE) throw std::runtime_error("This path does not point to a file.");
+
                 // Open binary file for read
                 _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "rb" : "r");
 
@@ -701,7 +704,7 @@ namespace NerdThings::Ngine::Filesystem {
         return IsOpen();
     }
 
-    std::vector<unsigned char> TFile::ReadBytes(int size_, int offset_) {
+    std::shared_ptr<unsigned char[]> TFile::ReadBytes(int size_, int offset_) {
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
@@ -734,16 +737,10 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Read bytes to array
         auto *buffer = new unsigned char[size_];
-        fread(buffer, 1, sizeof(buffer), _InternalHandle->InternalHandle);
-
-        // Convert to vector
-        std::vector<unsigned char> bytes(buffer, buffer + (sizeof(buffer) / sizeof(buffer[0])));
-
-        // Delete buffer
-        delete[] buffer;
+        fread(buffer, size_, 1, _InternalHandle->InternalHandle);
 
         // Return data
-        return bytes;
+        return std::shared_ptr<unsigned char[]>(buffer);
     }
 
     std::string TFile::ReadString(int size_, int offset_) {
@@ -794,7 +791,7 @@ namespace NerdThings::Ngine::Filesystem {
         return str;
     }
 
-    bool TFile::WriteBytes(std::vector<unsigned char> data_) {
+    bool TFile::WriteBytes(std::shared_ptr<unsigned char[]> data_, int size_) {
         // Check we're open
         if (!IsOpen()) throw std::runtime_error("Cannot write to a closed file.");
 
@@ -805,11 +802,8 @@ namespace NerdThings::Ngine::Filesystem {
             && _InternalOpenMode != MODE_READ_APPEND)
             throw std::runtime_error("File not opened for writing.");
 
-        // Calculate size
-        auto dataSize = data_.size() * sizeof(unsigned char);
-
         // Write
-        return fwrite(data_.data(), 1, dataSize, _InternalHandle->InternalHandle) == 1;
+        return fwrite(data_.get(), 1, size_, _InternalHandle->InternalHandle) == 1;
     }
 
     bool TFile::WriteString(const std::string &string_) {

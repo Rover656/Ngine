@@ -348,7 +348,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Create a new file and optionally leave it open for read or write.
          */
-        static TFile CreateNewFile(const TPath &path_, bool leaveOpen_ = false);
+        static TFile CreateNewFile(const TPath &path_, bool leaveOpen_ = false, bool binary_ = true);
 
         /*
          * Delete this object from the filesystem.
@@ -400,7 +400,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Read a number of bytes from the file.
          * Size of -1 means all.
          */
-        std::vector<unsigned char> ReadBytes(int size_ = -1, int offset_ = 0);
+        std::shared_ptr<unsigned char[]> ReadBytes(int size_ = -1, int offset_ = 0);
 
         /*
          * Read a string from the file.
@@ -411,7 +411,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Write bytes to the file.
          */
-        bool WriteBytes(std::vector<unsigned char> data_);
+        bool WriteBytes(std::shared_ptr<unsigned char[]> data_, int size_);
 
         /*
          * Write a string to the file.

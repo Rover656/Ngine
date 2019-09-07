@@ -14,6 +14,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#define STB_TRUETYPE_IMPLEMENTATION
+#include <stb_truetype.h>
+
 #ifdef INCLUDE_BOX2D
 bool b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB) {
     b2Transform nope;

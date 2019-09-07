@@ -17,6 +17,7 @@
 #include "../Filesystem/Filesystem.h"
 #include "../Rectangle.h"
 #include "../Vector2.h"
+#include "Image.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -54,7 +55,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Greyscale pixel data
          */
-        unsigned char *Data;
+        Graphics::TImage Image;
 
         // Public Constructor
 
@@ -62,8 +63,7 @@ namespace NerdThings::Ngine::Graphics {
             : Character(0),
               OffsetX(0),
               OffsetY(0),
-              AdvanceX(0),
-              Data(nullptr) {}
+              AdvanceX(0) {}
     };
 
     /*
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Font texture
          */
-        std::shared_ptr<TTexture2D> Texture;
+        TTexture2D Texture;
 
         /*
          * Base size (default char height)
@@ -130,9 +130,9 @@ namespace NerdThings::Ngine::Graphics {
         static std::shared_ptr<TFont> GetDefaultFont();
 
         /*
-         * Load a font
+         * Load a true type font with specified characters
          */
-        static std::shared_ptr<TFont> LoadFont(const Filesystem::TPath &path_);
+        static std::shared_ptr<TFont> LoadTTFont(const Filesystem::TPath &path_, int baseSize_ = 12, std::vector<int> fontChars_ = std::vector<int>());
 
         /*
          * Measure the dimensions of a string
@@ -150,7 +150,7 @@ namespace NerdThings::Ngine::Graphics {
             CharacterCount = font_.CharacterCount;
             Characters = font_.Characters;
 
-            font_.Texture = std::shared_ptr<TTexture2D>(nullptr);
+            font_.Texture = TTexture2D();
             font_.BaseSize = 0;
             font_.CharacterCount = 0;
             font_.Characters.clear();
@@ -165,12 +165,9 @@ namespace NerdThings::Ngine::Graphics {
         TFont &operator=(const TFont &font_) = default;
 
     private:
-        // Private Constructor(s)
+        // Private Methods
 
-        TFont(std::shared_ptr<TTexture2D> tex_, int baseSize_, int charCount_, std::vector<TCharInfo> chars_)
-            : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
-            Texture = tex_;
-        }
+        void __LoadFontInfo(const Filesystem::TPath &path_, std::vector<int> chars_);
     };
 }
 

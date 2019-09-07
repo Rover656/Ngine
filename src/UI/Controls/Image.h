@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef IMAGECONTROL_H
+#define IMAGECONTROL_H
 
 #include "../../ngine.h"
 
@@ -67,4 +67,4 @@ namespace NerdThings::Ngine::UI::Controls {
     };
 };
 
-#endif // IMAGE_H
+#endif // IMAGECONTROL_H

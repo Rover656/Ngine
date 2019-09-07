@@ -77,6 +77,12 @@ namespace NerdThings::Ngine::Graphics {
          */
         static TImage LoadImage(const Filesystem::TPath &path_);
 
+        /*
+         * Load raw pixel data.
+         * The pixel data will be copied.
+         */
+        static TImage LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
+
     private:
         // Private Structs
 

@@ -322,6 +322,9 @@ public:
         // Load all content
         Resources::LoadResources();
 
+        // Load test font
+        auto fnt = TFont::LoadTTFont(TPath("C:\\Windows\\Fonts\\Arial.ttf"));
+
         // Output readme
         auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory(), "content/readme.txt"));
 
