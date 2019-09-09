@@ -14,7 +14,9 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TRenderTarget::TRenderTarget(const int width_, const int height_) {
+    TRenderTarget::TRenderTarget() {}
+
+    TRenderTarget::TRenderTarget(const int width_, const int height_) : TRenderTarget() {
         Width = width_;
         Height = height_;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -22,36 +24,19 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    TRenderTarget::TRenderTarget(TRenderTarget &&target_) {
-        InternalFramebuffer = target_.InternalFramebuffer;
-        Width = target_.Width;
-        Height = target_.Height;
-
-        target_.InternalFramebuffer = nullptr;
-        target_.Width = 0;
-        target_.Height = 0;
-    }
-
-    // Destructor
-
-    TRenderTarget::~TRenderTarget() {
-        // Unreference (smart pointer will delete in due time)
-        InternalFramebuffer = nullptr;
-    }
-
     // Public Methods
 
-    TTexture2D TRenderTarget::GetTexture() {
-        auto tex = TTexture2D();
-        tex.Width = Width;
-        tex.Height = Height;
+    std::shared_ptr<TTexture2D> TRenderTarget::GetTexture() {
+        auto tex = std::make_shared<TTexture2D>();
+        tex->Width = Width;
+        tex->Height = Height;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        tex.InternalTexture = InternalFramebuffer->RenderTexture;
+        tex->InternalTexture = InternalFramebuffer->RenderTexture;
 #endif
         return tex;
     }
 
-    bool TRenderTarget::IsValid() {
+    bool TRenderTarget::IsValid() const {
         if (InternalFramebuffer != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             if (InternalFramebuffer->ID > 0)
@@ -60,18 +45,16 @@ namespace NerdThings::Ngine::Graphics {
         return false;
     }
 
-    // Operators
-
-    TRenderTarget &TRenderTarget::operator=(TRenderTarget &&target_) {
-        InternalFramebuffer = target_.InternalFramebuffer;
-        Width = target_.Width;
-        Height = target_.Height;
-
-        target_.InternalFramebuffer = nullptr;
-        target_.Width = 0;
-        target_.Height = 0;
-        return *this;
+    void TRenderTarget::Unload() {
+        // Unload framebuffer
+        Height = 0;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        InternalFramebuffer->Delete();
+#endif
+        Width = 0;
     }
+
+    // Operators
 
     bool TRenderTarget::operator==(const TRenderTarget &b) const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)

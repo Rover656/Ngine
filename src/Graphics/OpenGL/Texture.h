@@ -92,6 +92,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          */
         GLPixelFormat _Format;
     public:
+        // Public Fields
+
         /*
          * The OpenGL ID
          */
@@ -102,20 +104,36 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          */
         int MipmapCount = 0;
 
+        // Public Constructors
+
+        /*
+         * Create a null texture
+         */
+        GLTexture();
+
         /*
          * Create a texture stored on the GPU
          */
         GLTexture(unsigned int width_, unsigned int height_, void *data_, int mipmapCount_ = 1, GLPixelFormat format_ = UNCOMPRESSED_R8G8B8A8);
+
+        // Destructor
 
         /*
          * Destruct and delete texture
          */
         ~GLTexture();
 
+        // Public Methods
+
         /*
          * Bind the texture
          */
         void Bind();
+
+        /*
+         * Delete the texture
+         */
+        void Delete();
 
         /*
          * Set a texture parameter.

@@ -418,46 +418,46 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawText(TFont font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
+    Renderer::DrawText(std::shared_ptr<TFont> font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
                        TColor color_) {
         // TODO: Text support
     }
 
     void
-    Renderer::DrawTexture(const TTexture2D &texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
+    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
                           float rotation_) {
-        DrawTexture(texture_, {0, 0, (float) texture_.Width, (float) texture_.Height}, position_, texture_.Width,
-                    texture_.Height, color_, origin_, rotation_);
+        DrawTexture(texture_, {0, 0, (float) texture_->Width, (float) texture_->Height}, position_, texture_->Width,
+                    texture_->Height, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(const TTexture2D &texture_, TVector2 position_, float width_, float height_, TColor color_,
+    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TVector2 position_, float width_, float height_, TColor color_,
                           TVector2 origin_, float rotation_) {
-        DrawTexture(texture_, {0, 0, (float) texture_.Width, (float) texture_.Height}, position_, width_, height_,
+        DrawTexture(texture_, {0, 0, (float) texture_->Width, (float) texture_->Height}, position_, width_, height_,
                     color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(const TTexture2D &texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
+    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
                           TVector2 origin_, float rotation_) {
         DrawTexture(texture_, sourceRectangle_, position_, sourceRectangle_.Width, sourceRectangle_.Height, color_,
                     origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(const TTexture2D &texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
+    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
                           float height_, TColor color_, TVector2 origin_, float rotation_) {
         DrawTexture(texture_, {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(const TTexture2D &texture_, TRectangle destRectangle_, TRectangle sourceRectangle_,
+    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TRectangle destRectangle_, TRectangle sourceRectangle_,
                           TColor color_,
                           TVector2 origin_, float rotation_) {
         // Raylib implementation
-        if (texture_.IsValid()) {
-            float width = (float) texture_.Width;
-            float height = (float) texture_.Height;
+        if (texture_->IsValid()) {
+            float width = (float) texture_->Width;
+            float height = (float) texture_->Height;
 
             bool flipX = false;
 
@@ -470,7 +470,7 @@ namespace NerdThings::Ngine::Graphics {
                 sourceRectangle_.Y -= sourceRectangle_.Height;
             }
 
-            OpenGL::GL::UseTexture(texture_.InternalTexture);
+            OpenGL::GL::UseTexture(texture_->InternalTexture);
 
             OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
             OpenGL::GL::PushMatrix();

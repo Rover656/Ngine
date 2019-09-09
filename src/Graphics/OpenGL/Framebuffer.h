@@ -12,23 +12,23 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * The depth buffer ID.
          * rlgl avoided this on GL 3.3, but we kept it
          */
-        unsigned int _DepthBufferID;
+        unsigned int _DepthBufferID = 0;
 
         /*
          * Whether or not a depth buffer is present
          */
-        bool _HasDepthBuffer;
+        bool _HasDepthBuffer = false;
     public:
 
         /*
          * Framebuffer ID
          */
-        unsigned int ID;
+        unsigned int ID = 0;
 
         /*
          * The attached render texture
          */
-        std::shared_ptr<GLTexture> RenderTexture;
+        std::shared_ptr<GLTexture> RenderTexture = nullptr;
 
         /*
          * Create a new framebuffer
@@ -44,6 +44,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          * Bind the framebuffer
          */
         void Bind();
+
+        /*
+         * Delete framebuffer
+         */
+        void Delete();
 
         /*
          * Whether or not a depth buffer is present

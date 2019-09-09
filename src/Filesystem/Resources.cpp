@@ -17,10 +17,10 @@
 namespace NerdThings::Ngine::Filesystem {
     // Private Fields
 
-    std::unordered_map<std::string, Graphics::TFont> Resources::_Fonts;
-    std::unordered_map<std::string, Audio::TMusic> Resources::_Music;
-    std::unordered_map<std::string, Audio::TSound> Resources::_Sounds;
-    std::unordered_map<std::string, Graphics::TTexture2D> Resources::_Textures;
+    std::unordered_map<std::string, std::shared_ptr<Graphics::TFont>> Resources::_Fonts;
+    std::unordered_map<std::string, std::shared_ptr<Audio::TMusic>> Resources::_Music;
+    std::unordered_map<std::string, std::shared_ptr<Audio::TSound>> Resources::_Sounds;
+    std::unordered_map<std::string, std::shared_ptr<Graphics::TTexture2D>> Resources::_Textures;
 
     // Public Fields
 
@@ -59,28 +59,28 @@ namespace NerdThings::Ngine::Filesystem {
         }
     }
 
-    Graphics::TFont Resources::GetFont(const std::string &name_) {
+    std::shared_ptr<Graphics::TFont> Resources::GetFont(const std::string &name_) {
         if (_Fonts.find(name_) != _Fonts.end())
             return _Fonts[name_];
-        return Graphics::TFont();
+        return nullptr;
     }
 
-    Audio::TMusic Resources::GetMusic(const std::string &name_) {
+    std::shared_ptr<Audio::TMusic> Resources::GetMusic(const std::string &name_) {
         if (_Music.find(name_) != _Music.end())
             return _Music[name_];
-        return Audio::TMusic();
+        return nullptr;
     }
 
-    Audio::TSound Resources::GetSound(const std::string &name_) {
+    std::shared_ptr<Audio::TSound> Resources::GetSound(const std::string &name_) {
         if (_Sounds.find(name_) != _Sounds.end())
             return _Sounds[name_];
-        return Audio::TSound();
+        return nullptr;
     }
 
-    Graphics::TTexture2D Resources::GetTexture(const std::string &name_) {
+    std::shared_ptr<Graphics::TTexture2D> Resources::GetTexture(const std::string &name_) {
         if (_Textures.find(name_) != _Textures.end())
             return _Textures[name_];
-        return Graphics::TTexture2D();
+        return nullptr;
     }
 
     void Resources::LoadResources() {
@@ -156,7 +156,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     bool Resources::LoadTexture(const TPath &inPath_, const std::string &name_) {
         auto tex = Graphics::TTexture2D::LoadTexture(inPath_);
-        if (tex.IsValid()) {
+        if (tex->IsValid()) {
             _Textures.insert({ name_, tex });
             return true;
         }

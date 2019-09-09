@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::UI {
         auto rPos = GetRenderPosition();
 
         // Draw target
-        Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
+        Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
                                        {
                                                rPos.X,
                                                rPos.Y,
@@ -47,8 +47,8 @@ namespace NerdThings::Ngine::UI {
                                        {
                                                0,
                                                0,
-                                               static_cast<float>(_RenderTarget.Width),
-                                               static_cast<float>(_RenderTarget.Height) * -1
+                                               static_cast<float>(_RenderTarget->Width),
+                                               static_cast<float>(_RenderTarget->Height) * -1
                                        },
                                        Graphics::TColor::White);
     }
@@ -82,13 +82,13 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::SetHeight(float height_) {
         UIControlSized::SetHeight(height_);
 
-        _RenderTarget = Graphics::TRenderTarget(static_cast<int>(GetWidth()), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(GetWidth()), static_cast<int>(height_));
     }
 
     void UIPanel::SetWidth(float width_) {
         UIControlSized::SetWidth(width_);
 
-        _RenderTarget = Graphics::TRenderTarget(static_cast<int>(width_), static_cast<int>(GetHeight()));
+        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(width_), static_cast<int>(GetHeight()));
     }
 
     void UIPanel::Update() {
@@ -103,6 +103,6 @@ namespace NerdThings::Ngine::UI {
         _ChildrenConfig = 3; // Allow multiple children
 
         // Create render target
-        _RenderTarget = Graphics::TRenderTarget(static_cast<int>(width_), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(width_), static_cast<int>(height_));
     }
 }

@@ -5,37 +5,9 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructors
 
-    TImage::TImage() {
-        // Create container
-        _PixelDataContainer = std::make_shared<InternalDataContainer>();
-    }
+    TImage::TImage() {}
 
-    // Public Methods
-
-    EPixelFormat TImage::GetFormat() {
-        return _Format;
-    }
-
-    int TImage::GetHeight() {
-        return _Height;
-    }
-
-    int TImage::GetMipmapCount() {
-        return _Mipmaps;
-    }
-
-    void *TImage::GetPixelData() {
-        return _PixelDataContainer->PixelData;
-    }
-
-    int TImage::GetWidth() {
-        return _Width;
-    }
-
-    TImage TImage::LoadImage(const Filesystem::TPath &path_) {
-        // Null image
-        TImage img;
-
+    TImage::TImage(const Filesystem::TPath &path_) {
         // Check format
         auto ext = path_.GetFileExtension();
 
@@ -58,20 +30,15 @@ namespace NerdThings::Ngine::Graphics {
             //stbi_set_flip_vertically_on_load(false);
 
             // Load image
-            img = LoadPixels(data, width, height, UNCOMPRESSED_R8G8B8A8);
+            *this = TImage(data, width, height, UNCOMPRESSED_R8G8B8A8);
 
             // Close file
             stbi_image_free(data);
             file.Close();
         }
-
-        return img;
     }
 
-    TImage TImage::LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
-        // The image
-        TImage img;
-
+    TImage::TImage(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
         // Bits per pixel
         int bpp = 0;
         if (format_ == UNCOMPRESSED_GRAYSCALE) bpp = 1;
@@ -81,22 +48,41 @@ namespace NerdThings::Ngine::Graphics {
         else throw std::runtime_error("Incompatible format.");
 
         // Copy pixel data
-        img._PixelDataContainer->PixelData = new unsigned char[width_*height_*bpp];
-        memcpy(img._PixelDataContainer->PixelData, pixelData_, width_*height_*sizeof(unsigned char)*bpp);
+        PixelData = new unsigned char[width_*height_*bpp];
+        memcpy(PixelData, pixelData_, width_*height_*sizeof(unsigned char)*bpp);
 
         // Set fields
-        img._Width = width_;
-        img._Height = height_;
-        img._Format = format_;
-        img._Mipmaps = 1;
-
-        return img;
+        Width = width_;
+        Height = height_;
+        Format = format_;
+        Mipmaps = 1;
     }
 
-    // InternalDataContainer: Destructor
+    // Public Methods
 
-    TImage::InternalDataContainer::~InternalDataContainer() {
-        // Free pixel data
+    bool TImage::IsValid() const {
+        return Width > 0
+                && Height > 0
+                && PixelData != nullptr;
+    }
+
+    std::shared_ptr<TImage> TImage::LoadImage(const Filesystem::TPath &path_) {
+        return std::make_shared<TImage>(path_);
+    }
+
+    std::shared_ptr<TImage>
+    TImage::LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
+        return std::make_shared<TImage>(pixelData_, width_, height_, format_);
+    }
+
+    void TImage::Unload() {
+        // Removes image data from the container (across all copies of this image)
+        Format = UNCOMPRESSED_GRAYSCALE;
+        Height = 0;
+        Mipmaps = 0;
         delete[] PixelData;
+        PixelData = nullptr;
+        Width = 0;
     }
+
 }

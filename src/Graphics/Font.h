@@ -16,6 +16,7 @@
 
 #include "../Filesystem/Filesystem.h"
 #include "../Rectangle.h"
+#include "../Resource.h"
 #include "../Vector2.h"
 #include "Image.h"
 #include "Texture2D.h"
@@ -55,7 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Greyscale pixel data
          */
-        Graphics::TImage Image;
+        std::shared_ptr<TImage> Image;
 
         // Public Constructor
 
@@ -69,30 +70,28 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A font
      */
-    struct NEAPI TFont {
-    private:
+    struct NEAPI TFont : public TResource {
+        // Public Fields
+
         /*
          * The default font
          */
-        static std::shared_ptr<TFont> _DefaultFont;
-    public:
-
-        // Public Fields
+        static std::shared_ptr<TFont> DefaultFont;
 
         /*
          * Font texture
          */
-        TTexture2D Texture;
+        std::shared_ptr<TTexture2D> Texture;
 
         /*
          * Base size (default char height)
          */
-        int BaseSize;
+        int BaseSize = 0;
 
         /*
          * Character count
          */
-        int CharacterCount;
+        int CharacterCount = 0;
 
         /*
          * Character data
@@ -104,13 +103,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Create a null font
          */
-        TFont()
-            : BaseSize(0), CharacterCount(0), Characters() {}
-
-        /*
-         * Move a font
-         */
-        TFont(TFont &&font_);
+        TFont();
 
         /*
          * Copy a font (Reference, if one is deleted, both will stop working correctly.)
@@ -125,7 +118,7 @@ namespace NerdThings::Ngine::Graphics {
         // Public Methods
 
         /*
-         * Get the default font (Supplied by raylib)
+         * Get the default font
          */
         static std::shared_ptr<TFont> GetDefaultFont();
 
@@ -137,35 +130,21 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Measure the dimensions of a string
          */
-        [[nodiscard]] TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
-
-        // Operators
+        TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
 
         /*
-         * Move a font
+         * Whether or not the font is valid.
          */
-        TFont &operator=(TFont &&font_) noexcept {
-            Texture = std::move(font_.Texture);
-            BaseSize = font_.BaseSize;
-            CharacterCount = font_.CharacterCount;
-            Characters = font_.Characters;
-
-            font_.Texture = TTexture2D();
-            font_.BaseSize = 0;
-            font_.CharacterCount = 0;
-            font_.Characters.clear();
-
-            return *this;
-        }
+        bool IsValid() const override;
 
         /*
-         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
+         * Unload the font
          */
-        TFont &operator=(const TFont &font_) = default;
-
+        void Unload() override;
     private:
         // Private Methods
+
+        void __GenerateAtlas();
 
         void __LoadFontInfo(const Filesystem::TPath &path_, std::vector<int> chars_);
     };

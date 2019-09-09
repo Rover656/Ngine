@@ -78,7 +78,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             RenderTexture = nullptr;
 
             // Delete depth buffer
-            glDeleteRenderbuffers(1, &ID);
+            glDeleteRenderbuffers(1, &_DepthBufferID);
 
             // Delete framebuffer
             glDeleteFramebuffers(1, &ID);
@@ -96,22 +96,28 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     GLFramebuffer::~GLFramebuffer() {
-        // Delete texture
-        RenderTexture = nullptr;
-
-        // Delete depth buffer
-        glDeleteRenderbuffers(1, &ID);
-
-        // Delete framebuffer
-        glDeleteFramebuffers(1, &ID);
-
-        // Set ID to 0
-        ID = 0;
+        Delete();
     }
 
     void GLFramebuffer::Bind() {
         // Bind
         glBindFramebuffer(GL_FRAMEBUFFER, ID);
+    }
+
+    void GLFramebuffer::Delete() {
+        if (ID > 0) {
+            // Delete texture
+            RenderTexture = nullptr;
+
+            // Delete depth buffer
+            glDeleteRenderbuffers(1, &_DepthBufferID);
+
+            // Delete framebuffer
+            glDeleteFramebuffers(1, &ID);
+
+            // Set ID to 0
+            ID = 0;
+        }
     }
 
     void GLFramebuffer::Unbind() {

@@ -20,7 +20,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Render Target Related Private Fields
 
-    std::vector<TRenderTarget> GraphicsManager::_RenderTargetStack;
+    std::vector<std::shared_ptr<TRenderTarget>> GraphicsManager::_RenderTargetStack;
 
     // General Rendering Fields
 
@@ -44,17 +44,17 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    void GraphicsManager::UseRenderTarget(const TRenderTarget &target_) {
+    void GraphicsManager::UseRenderTarget(std::shared_ptr<TRenderTarget> target_) {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Force draw
         OpenGL::GL::Draw();
 
         // Use target
-        target_.InternalFramebuffer->Bind();
+        target_->InternalFramebuffer->Bind();
 
         // Setup framebuffer
-        _CurrentWidth = target_.Width;
-        _CurrentHeight = target_.Height;
+        _CurrentWidth = target_->Width;
+        _CurrentHeight = target_->Height;
         SetupFramebuffer();
 #endif
     }
@@ -87,7 +87,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Render Target Related Methods
 
-    TRenderTarget GraphicsManager::PopTarget(bool &popped_) {
+    std::shared_ptr<TRenderTarget> GraphicsManager::PopTarget(bool &popped_) {
         if (!_RenderTargetStack.empty()) {
             // Get target
             auto pop = _RenderTargetStack.back();
@@ -109,10 +109,10 @@ namespace NerdThings::Ngine::Graphics {
         }
 
         popped_ = false;
-        return TRenderTarget();
+        return nullptr;
     }
 
-    void GraphicsManager::PushTarget(const TRenderTarget &target_) {
+    void GraphicsManager::PushTarget(std::shared_ptr<TRenderTarget> target_) {
         // Stop using current target
         if (!_RenderTargetStack.empty())
             EndRenderTarget();
@@ -124,7 +124,7 @@ namespace NerdThings::Ngine::Graphics {
         UseRenderTarget(target_);
     }
 
-    void GraphicsManager::ReplaceTarget(const TRenderTarget &old_, const TRenderTarget &new_) {
+    void GraphicsManager::ReplaceTarget(std::shared_ptr<TRenderTarget> old_, std::shared_ptr<TRenderTarget> new_) {
         const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.
             begin();
 

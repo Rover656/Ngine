@@ -14,6 +14,7 @@
 
 #include "../ngine.h"
 
+#include "../Resource.h"
 #include "Texture2D.h"
 
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
@@ -24,76 +25,57 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture in the GPU that can be rendered to
      */
-    struct NEAPI TRenderTarget {
+    struct NEAPI TRenderTarget : public TResource {
         // Public Fields
+
+        /*
+         * Render target height
+         */
+        int Height = 0;
 
         /*
          * Internal framebuffer on the GPU
          */
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer;
+        std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer = nullptr;
 #endif
-
-        /*
-         * Render target height
-         */
-        unsigned int Height;
 
         /*
          * Render target width
          */
-        unsigned int Width;
+        int Width = 0;
 
         // Public Constructor(s)
 
         /*
          * Create a null render target
          */
-        TRenderTarget()
-            : InternalFramebuffer(nullptr) {}
+        TRenderTarget();
 
         /*
          * Create a render target
          */
         TRenderTarget(int width_, int height_);
 
-        /*
-         * Move a render target
-         */
-        TRenderTarget(TRenderTarget &&target_);
-
-        /*
-         * Copy a render target (reference)
-         */
-        TRenderTarget(const TRenderTarget &target_) = default;
-
-        // Destructor
-
-        ~TRenderTarget();
-
         // Public Methods
 
         /*
          * Get rendered texture
          */
-        TTexture2D GetTexture();
+        std::shared_ptr<TTexture2D> GetTexture();
 
         /*
-         * Whether or not the render target is valid and usable
+         * Whether or not the render target is valid and usable.
          */
-        bool IsValid();
+        bool IsValid() const override;
+
+        /*
+         * Unload the render target.
+         * Invalidates all copies.
+         */
+        void Unload() override;
 
         // Operators
-
-        /*
-         * Move a render target
-         */
-        TRenderTarget &operator=(TRenderTarget &&target_);
-
-        /*
-         * Copy a render target (reference)
-         */
-        TRenderTarget &operator=(const TRenderTarget &target_) = default;
 
         bool operator==(const TRenderTarget &b) const;
 

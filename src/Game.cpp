@@ -134,7 +134,7 @@ namespace NerdThings::Ngine {
     void Game::Run() {
         // Create render target
         if (_Config & MAINTAIN_DIMENSIONS) {
-            _RenderTarget = Graphics::TRenderTarget(_IntendedWidth, _IntendedHeight);
+            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(_IntendedWidth, _IntendedHeight);
         }
 
         // Timing
@@ -183,7 +183,7 @@ namespace NerdThings::Ngine {
             }
 
             // Setup mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
@@ -206,9 +206,9 @@ namespace NerdThings::Ngine {
                 Graphics::Renderer::Clear(Graphics::TColor::Black);
 
                 // If using, start using target
-                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
-                    _RenderTarget.GetTexture().SetTextureWrap(Graphics::WRAP_CLAMP);
-                    _RenderTarget.GetTexture().SetTextureFilter(RenderTargetFilterMode);
+                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
+                    _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+                    _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
                     Graphics::GraphicsManager::PushTarget(_RenderTarget);
                 }
 
@@ -219,11 +219,11 @@ namespace NerdThings::Ngine {
                 Draw();
 
                 // If using a target, draw target
-                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
+                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
                     auto popped = false;
                     Graphics::GraphicsManager::PopTarget(popped);
 
-                    Graphics::Renderer::DrawTexture(_RenderTarget.GetTexture(),
+                    Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
                         {
                             (w - iw * scale) * 0.5f,
                             (h - ih * scale) * 0.5f,
@@ -233,8 +233,8 @@ namespace NerdThings::Ngine {
                                                {
                                                    0,
                                                    0,
-                                                   static_cast<float>(_RenderTarget.Width),
-                                                   static_cast<float>(_RenderTarget.Height) * -1
+                                                   static_cast<float>(_RenderTarget->Width),
+                                                   static_cast<float>(_RenderTarget->Height) * -1
                                                },
                         Graphics::TColor::White);
                 }
@@ -247,7 +247,7 @@ namespace NerdThings::Ngine {
             }
 
             // Reset mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget.IsValid()) {
+            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(1, 1);
                 Input::Mouse::SetOffset(0, 0);
             }
@@ -265,7 +265,7 @@ namespace NerdThings::Ngine {
         }
 
         // Delete render target now so that it doesnt try after GL is gone.
-        _RenderTarget = Graphics::TRenderTarget();
+        _RenderTarget = nullptr;
 
 #if !defined(PLATFORM_UWP) // UWP handles this elsewhere because this is ignored
         // Delete loaded resources

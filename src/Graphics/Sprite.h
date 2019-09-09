@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The textures associated
          */
-        std::vector<TTexture2D> _Textures;
+        std::vector<std::shared_ptr<TTexture2D>> _Textures;
 
         /*
          * Whether or not this is a spritesheet
@@ -80,18 +80,18 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Create a sprite
          */
-        TSprite(const TTexture2D &texture_);
+        TSprite(std::shared_ptr<TTexture2D> texture_);
 
         /*
          * Create an animated sprite sheet
          */
-        TSprite(const TTexture2D &texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+        TSprite(std::shared_ptr<TTexture2D> texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                 float imageSpeed_ = 30, int startingFrame = 0);
 
         /*
          * Create an animated sequence of textures
          */
-        TSprite(const std::vector<TTexture2D> &textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
+        TSprite(const std::vector<std::shared_ptr<TTexture2D>> &textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
 
         // Destructor
 
@@ -117,7 +117,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the current texture
          */
-        TTexture2D GetCurrentTexture();
+        std::shared_ptr<TTexture2D> GetCurrentTexture();
 
         /*
          * Get the source rectangle for drawing with
@@ -132,12 +132,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Set the sprite texture
          */
-        void SetTexture(const TTexture2D &texture_);
+        void SetTexture(std::shared_ptr<TTexture2D> texture_);
 
         /*
          * Set the sprite textures
          */
-        void SetTextures(const std::vector<TTexture2D> &textures_);
+        void SetTextures(const std::vector<std::shared_ptr<TTexture2D>> &textures_);
 
         /*
          * Update the sprite timer

@@ -25,6 +25,8 @@
 #include "OpenGL.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
+    GLTexture::GLTexture() {}
+
     GLTexture::GLTexture(unsigned int width_, unsigned int height_, void *data_, int mipmapCount_,
                          GLPixelFormat format_) {
         // Check dimensions
@@ -161,11 +163,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     GLTexture::~GLTexture() {
-        // Delete texture
-        glDeleteTextures(0, &ID);
-
-        // Set ID to 0
-        ID = 0;
+        Delete();
     }
 
     void GLTexture::Bind() {
@@ -174,6 +172,16 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Bind
         glBindTexture(GL_TEXTURE_2D, ID);
+    }
+
+    void GLTexture::Delete() {
+        if (ID > 0) {
+            // Delete texture
+            glDeleteTextures(0, &ID);
+
+            // Set ID to 0
+            ID = 0;
+        }
     }
 
     void GLTexture::SetParameter(GLTextureParameter param_, int value_) {

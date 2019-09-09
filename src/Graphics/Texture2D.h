@@ -19,6 +19,8 @@
 #endif
 
 #include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
+#include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
@@ -84,45 +86,42 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture stored in the GPU memory
      */
-    struct NEAPI TTexture2D {
-        /*
-         * The internal texture used by the GPU
-         */
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        std::shared_ptr<OpenGL::GLTexture> InternalTexture;
-#endif
-        /*
-         * Texture width
-         */
-        unsigned int Width;
+    struct NEAPI TTexture2D : public TResource {
+        // Public Fields
 
         /*
          * Texture Height
          */
-        unsigned int Height;
+        unsigned int Height = 0;
+
+        /*
+         * Internal texture (Graphics API dependant)
+         */
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        std::shared_ptr<OpenGL::GLTexture> InternalTexture = nullptr;
+#endif
+
+        /*
+         * Texture width
+         */
+        unsigned int Width = 0;
 
         // Public Constructor(s)
 
         /*
          * Create a null texture
          */
-        TTexture2D()
-            : InternalTexture(nullptr), Width(0), Height(0) {}
+        TTexture2D();
 
         /*
-         * Move a texture
+         * Create a texture from raw pixel data.
          */
-        TTexture2D(TTexture2D &&tex_) noexcept;
+        TTexture2D(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
-         * Copy a texture (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
+         * Load a texture file.
          */
-        TTexture2D(const TTexture2D &tex_) = default;
-
-        // Destructor
-
-        ~TTexture2D();
+        TTexture2D(const Filesystem::TPath &path_);
 
         // Public Methods
 
@@ -134,18 +133,18 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Is the texture valid and ready for use
          */
-        bool IsValid() const;
+        bool IsValid() const override;
 
         /*
          * Load a texture from pixel data.
          * This expects 8 bits for R, G, B and A.
          */
-        static TTexture2D LoadPixels(unsigned int width_, unsigned height_, void *data_, int mipmapCount_ = 1);
+        static std::shared_ptr<TTexture2D> LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
          * Load a texture and get a pointer
          */
-        static TTexture2D LoadTexture(const Filesystem::TPath &path_);
+        static std::shared_ptr<TTexture2D> LoadTexture(const Filesystem::TPath &path_);
 
         /*
          * Set the texture filter mode
@@ -157,26 +156,16 @@ namespace NerdThings::Ngine::Graphics {
          */
         void SetTextureWrap(ETextureWrapMode wrapMode_) const;
 
+        /*
+         * Unload the texture
+         */
+        void Unload() override;
+
         // Operators
 
         bool operator==(const TTexture2D &tex_) const;
 
         bool operator!=(const TTexture2D &tex_) const;
-
-        /*
-         * Move a texture
-         */
-        TTexture2D &operator=(TTexture2D &&tex_) noexcept { // TODO: can this = default?
-            InternalTexture = tex_.InternalTexture;
-            Width = tex_.Width;
-            Height = tex_.Height;
-
-            tex_.InternalTexture = nullptr;
-            tex_.Width = 0;
-            tex_.Height = 0;
-
-            return *this;
-        }
 
         /*
          * Copy a texture

@@ -11,30 +11,34 @@
 
 #include "Texture2D.h"
 
-#include <stb_image.h>
-
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TTexture2D::TTexture2D(TTexture2D &&tex_) noexcept {
-        InternalTexture = tex_.InternalTexture;
-        Width = tex_.Width;
-        Height = tex_.Height;
+    TTexture2D::TTexture2D() {}
 
-        tex_.InternalTexture = nullptr;
-        tex_.Width = 0;
-        tex_.Height = 0;
+    TTexture2D::TTexture2D(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_, int mipmapCount_) {
+        Width = width_;
+        Height = height_;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        // Get format
+        OpenGL::GLPixelFormat frmt = OpenGL::UNCOMPRESSED_GRAYSCALE;
+        if (format_ == UNCOMPRESSED_GRAY_ALPHA) frmt = OpenGL::UNCOMPRESSED_GRAY_ALPHA;
+        else if (format_ == UNCOMPRESSED_R8G8B8) frmt = OpenGL::UNCOMPRESSED_R8G8B8;
+        else if (format_ == UNCOMPRESSED_R8G8B8A8) frmt = OpenGL::UNCOMPRESSED_R8G8B8A8;
+        else throw std::runtime_error("Incompatible format.");
+
+        InternalTexture = std::make_shared<OpenGL::GLTexture>(width_, height_, data_, mipmapCount_, frmt);
+#endif
     }
 
-    // Destructor
+    TTexture2D::TTexture2D(const Filesystem::TPath &path_) {
+        // Get image
+        TImage img(path_);
 
-    TTexture2D::~TTexture2D() {
-        if (InternalTexture != nullptr) {
-            // Unassign texture. Smart pointers do the rest
-            InternalTexture = nullptr;
-        }
+        // Create
+        *this = TTexture2D(img.PixelData, img.Width, img.Height, img.Format, img.Mipmaps);
     }
 
     // Public Methods
@@ -47,28 +51,19 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool TTexture2D::IsValid() const {
-        if (InternalTexture != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-            if (InternalTexture->ID > 0)
+        if (InternalTexture->ID > 0)
+            return true;
 #endif
-                return true;
         return false;
     }
 
-    TTexture2D TTexture2D::LoadPixels(unsigned int width_, unsigned height_, void *data_, int mipmapCount_) {
-        TTexture2D tex;
-        tex.Width = width_;
-        tex.Height = height_;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        tex.InternalTexture = std::make_shared<OpenGL::GLTexture>(width_, height_, data_, mipmapCount_);
-#endif
-        return tex;
+    std::shared_ptr<TTexture2D> TTexture2D::LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_, int mipmapCount_) {
+        return std::make_shared<TTexture2D>(data_, width_, height_, format_, mipmapCount_);
     }
 
-    TTexture2D TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
-        auto img = TImage::LoadImage(path_);
-        auto tex = LoadPixels(img.GetWidth(), img.GetHeight(), img.GetPixelData(), img.GetMipmapCount());
-        return tex;
+    std::shared_ptr<TTexture2D> TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
+        return std::make_shared<TTexture2D>(path_);
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
@@ -136,6 +131,10 @@ namespace NerdThings::Ngine::Graphics {
                 break;
 #endif
         }
+    }
+
+    void TTexture2D::Unload() {
+        // Delete texture data
     }
 
     // Operators

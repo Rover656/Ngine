@@ -4,6 +4,7 @@
 #include "../ngine.h"
 
 #include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
@@ -37,7 +38,34 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * An image stored in CPU memory.
      */
-    struct NEAPI TImage {
+    struct NEAPI TImage : public TResource {
+        // Public Fields
+
+        /*
+         * Pixel format
+         */
+        EPixelFormat Format = UNCOMPRESSED_GRAYSCALE;
+
+        /*
+         * Image height
+         */
+        int Height = 0;
+
+        /*
+         * Image mipmaps
+         */
+        int Mipmaps = 0;
+
+        /*
+         * The raw pixel data pointer
+         */
+        unsigned char *PixelData = nullptr;
+
+        /*
+         * Image width
+         */
+        int Width = 0;
+
         // Public Constructors
 
         /*
@@ -45,85 +73,39 @@ namespace NerdThings::Ngine::Graphics {
          */
         TImage();
 
+        /*
+         * Load an image file
+         */
+        TImage(const Filesystem::TPath &path_);
+
+        /*
+         * Create an image from raw pixel data.
+         * The pixel data will be copied.
+         */
+        TImage(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
+
         // Public Methods
 
         /*
-         * Get image format.
+         * Test whether or not the image is valid
          */
-        EPixelFormat GetFormat();
-
-        /*
-         * Get image height
-         */
-        int GetHeight();
-
-        /*
-         * Get mipmap count
-         */
-        int GetMipmapCount();
-
-        /*
-         * Get pixel data
-         */
-        void *GetPixelData();
-
-        /*
-         * Get image width
-         */
-        int GetWidth();
+        bool IsValid() const override;
 
         /*
          * Load an image
          */
-        static TImage LoadImage(const Filesystem::TPath &path_);
+        static std::shared_ptr<TImage> LoadImage(const Filesystem::TPath &path_);
 
         /*
          * Load raw pixel data.
          * The pixel data will be copied.
          */
-        static TImage LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
-
-    private:
-        // Private Structs
+        static std::shared_ptr<TImage> LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
 
         /*
-         * Contains the pixel data safely.
+         * Unload image from memory.
          */
-        struct InternalDataContainer {
-            /*
-             * The raw pixel data pointer
-             */
-            void *PixelData = nullptr;
-
-            ~InternalDataContainer();
-        };
-
-        // Private Fields
-
-        /*
-         * Pixel format
-         */
-        EPixelFormat _Format = UNCOMPRESSED_GRAYSCALE;
-
-        /*
-         * Image height
-         */
-        int _Height = 0;
-
-        /*
-         * Mipmap count
-         */
-        int _Mipmaps = 0;
-
-        /*
-         * Image pixel data
-         */
-        std::shared_ptr<InternalDataContainer> _PixelDataContainer = nullptr;
-
-        /*
-         * Image width
-         */
-        int _Width = 0;
+        void Unload() override;
     };
 }
 

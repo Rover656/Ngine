@@ -19,43 +19,31 @@
 #include "../Vector2.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Private Fields
+    // Public Fields
 
-    std::shared_ptr<TFont> TFont::_DefaultFont;
+    std::shared_ptr<TFont> TFont::DefaultFont;
 
     // Public Constructor(s)
 
-    TFont::TFont(TFont &&font_) {
-        Texture = font_.Texture;
-        BaseSize = font_.BaseSize;
-        CharacterCount = font_.CharacterCount;
-        Characters = font_.Characters;
-
-        font_.Texture = TTexture2D();
-        font_.BaseSize = 0;
-        font_.CharacterCount = 0;
-        font_.Characters.clear();
-    }
+    TFont::TFont() {}
 
     // Destructor
 
     TFont::~TFont() {
         ConsoleMessage("Unloading and deleting font.", "NOTICE", "FONT");
-        //UnloadFont(ToRaylibFont());
     }
 
     // Public Methods
 
     std::shared_ptr<TFont> TFont::GetDefaultFont() {
-        if (_DefaultFont == nullptr) {
+        if (DefaultFont == nullptr || !DefaultFont->IsValid()) {
             //_DefaultFont = std::shared_ptr<TFont>(FromRaylibFont(GetFontDefault()));
         }
 
-        return _DefaultFont;
+        return DefaultFont;
     }
 
-    std::shared_ptr<TFont>
-    TFont::LoadTTFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
+    std::shared_ptr<TFont> TFont::LoadTTFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
         // Initialize font
         auto font = std::make_shared<TFont>();
 
@@ -64,6 +52,18 @@ namespace NerdThings::Ngine::Graphics {
 
         // Load font info
         font->__LoadFontInfo(path_, std::move(fontChars_));
+
+        if (!font->Characters.empty()) {
+            // Generate font atals
+            font->__GenerateAtlas();
+
+            // Unload individual character images
+            for (auto i = 0; i < font->CharacterCount; i++) {
+                font->Characters[i].Image->Unload();
+            }
+        } else {
+            font = GetDefaultFont();
+        }
 
         return font;
     }
@@ -74,6 +74,14 @@ namespace NerdThings::Ngine::Graphics {
         return {0, 0};
     }
 
+    bool TFont::IsValid() const {
+        return false;
+    }
+
+    void TFont::Unload() {
+
+    }
+
     // Private Methods
 
     // SDF default values
@@ -82,6 +90,10 @@ namespace NerdThings::Ngine::Graphics {
 #define SDF_PIXEL_DIST_SCALE     64.0f
 
 #define BITMAP_ALPHA_THRESHOLD     80
+
+    void TFont::__GenerateAtlas() {
+
+    }
 
     void TFont::__LoadFontInfo(const Filesystem::TPath &path_, std::vector<int> chars_) {
         // Characters
