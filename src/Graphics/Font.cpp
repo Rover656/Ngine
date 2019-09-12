@@ -43,7 +43,7 @@ namespace NerdThings::Ngine::Graphics {
         return DefaultFont;
     }
 
-    int TFont::GetGlyphIndex(int char_) {
+    int TFont::GetGlyphIndex(int char_) const {
         for (auto i = 0; i < CharacterCount; i++) {
             if (Characters[i].Character == char_) return i;
         }
@@ -78,9 +78,43 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
-        //return TVector2::FromRaylibVec(
-        //    MeasureTextEx((*this).ToRaylibFont(), string_.c_str(), fontSize_, spacing_));
-        return {0, 0};
+        int tempLen = 0;                // Used to count longer text line num chars
+        int lenCounter = 0;
+
+        float textWidth = 0.0f;
+        float tempTextWidth = 0.0f;     // Used to count longer text line width
+
+        float textHeight = (float)BaseSize;
+        float scaleFactor = fontSize_/(float)BaseSize;
+
+        int letter = 0;                 // Current character
+        int index = 0;                  // Index position in sprite font
+
+        scaleFactor = fontSize_/BaseSize;
+
+        for (int i = 0; i < string_.length(); i += 1) {
+            int next = 0;
+            letter = string_[i];
+            index = GetGlyphIndex(letter);
+
+            if (letter != '\n') {
+                if (Characters[index].AdvanceX == 0) textWidth  += ((float)Characters[index].Rectangle.Width*scaleFactor + spacing_);
+                else textWidth  += ((float)Characters[index].AdvanceX*scaleFactor + spacing_);
+            } else {
+                if (tempTextWidth < textWidth) tempTextWidth = textWidth;
+                lenCounter = 0;
+                textWidth = 0;
+                textHeight += ((float)BaseSize*1.5f);
+            }
+        }
+
+        if (tempTextWidth < textWidth) tempTextWidth = textWidth;
+
+        TVector2 vec;
+        vec.X = tempTextWidth*scaleFactor + (float)((tempLen - 1)*spacing_);
+        vec.Y = textHeight*scaleFactor;
+
+        return vec;
     }
 
     bool TFont::IsValid() const {

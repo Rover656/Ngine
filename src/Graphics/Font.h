@@ -119,7 +119,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get a character glyph index
          */
-        int GetGlyphIndex(int char_);
+        int GetGlyphIndex(int char_) const;
 
         /*
          * Load a true type font with specified characters

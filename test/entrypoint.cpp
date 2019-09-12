@@ -120,8 +120,8 @@ public:
     OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
 
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}));//->EnableDebugDraw();
-        //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
+        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
+        AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
 
         //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
 
@@ -133,13 +133,14 @@ public:
     bool CheckForCulling(TRectangle cullArea_) override {
         auto a = cullArea_.ToPolygon();
         auto b = TRectangle(GetPosition(), { 100, 100 }).ToPolygon();
-        return a.CheckCollision(&b);
+        return !a.CheckCollision(&b);
     }
 };
 
 class TestWidget : public UIWidget {
 public:
     TestWidget(TVector2 pos_) : UIWidget(pos_) {
+        return; // No thanks, not yet...
         auto panelStyle = TUIStyle();
         panelStyle.BackColor = TColor::White;
         panelStyle.BorderColor = TColor::Gray;
@@ -194,9 +195,6 @@ public:
         ConsoleMessage("Button was clicked", "NOTICE", "TestGame Entrypoint");
     }
 };
-
-// THIS IS DANGEROUS, DO NOT DO THIS IN PRODUCTION
-#include <Graphics/OpenGL/OpenGL.h>
 
 // Define rectangle
 float vertices[] = {
@@ -309,7 +307,7 @@ public:
     }
 
     void Update(EventArgs &e) {
-        widg.Update();
+        //widg.Update();
     }
 };
 
