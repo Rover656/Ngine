@@ -284,14 +284,14 @@ namespace NerdThings::Ngine::Graphics {
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
 
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
         OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
         OpenGL::GL::PushMatrix();
 
         OpenGL::GL::Translate({rectangle_.X, rectangle_.Y, 0});
         OpenGL::GL::Rotate(rotation_, {0, 0, 1.0f});
         OpenGL::GL::Translate({-origin_.X, -origin_.Y, 0});
-
-        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
 
         OpenGL::GL::Color(color_);
 
@@ -300,9 +300,9 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::Vertex({rectangle_.Width, rectangle_.Height});
         OpenGL::GL::Vertex({rectangle_.Width, 0});
 
-        OpenGL::GL::End();
-
         OpenGL::GL::PopMatrix();
+
+        OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
     }
@@ -356,13 +356,13 @@ namespace NerdThings::Ngine::Graphics {
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
 
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
         OpenGL::GL::PushMatrix();
 
         OpenGL::GL::Translate({rectangle_.X, rectangle_.Y, 0});
         OpenGL::GL::Rotate(rotation_, {0, 0, 1.0f});
         OpenGL::GL::Translate({-origin_.X, -origin_.Y, 0});
-
-        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
 
         OpenGL::GL::Color(color1_);
         OpenGL::GL::TexCoord({0, 0});
@@ -380,9 +380,9 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::TexCoord({1, 0});
         OpenGL::GL::Vertex({rectangle_.Width, 0});
 
-        OpenGL::GL::End();
-
         OpenGL::GL::PopMatrix();
+
+        OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
     }
@@ -420,7 +420,51 @@ namespace NerdThings::Ngine::Graphics {
     void
     Renderer::DrawText(std::shared_ptr<TFont> font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
                        TColor color_) {
-        // TODO: Text support
+        int textOffsetY = 0;        // Required for line break!
+        float textOffsetX = 0.0f;   // Offset between characters
+        float scaleFactor = 0.0f;
+
+        int letter = 0;             // Current character
+        int index = 0;              // Index position in sprite font
+
+        scaleFactor = fontSize_/font_->BaseSize;
+
+        for (int i = 0; i < string_.length(); i += 1)
+        {
+            int next = 0;
+            // TODO: UTF8?
+            //letter = GetNextCodepoint(&text_[i], &next);
+            letter = string_[i];
+            index = font_->GetGlyphIndex(letter);
+
+            // TODO: Some broken UTF8 code??
+            // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
+            // but we need to draw all of the bad bytes using the '?' symbol so to not skip any we set 'next = 1'
+            //if (letter == 0x3f) next = 1;
+            //i += (next - 1);
+
+            if (letter == '\n')
+            {
+                // NOTE: Fixed line spacing of 1.5 lines
+                textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                textOffsetX = 0.0f;
+            }
+            else
+            {
+                if (letter != ' ')
+                {
+                    DrawTexture(font_->Texture,
+                                   { position_.X + textOffsetX + font_->Characters[index].OffsetX*scaleFactor,
+                                                position_.Y + textOffsetY + font_->Characters[index].OffsetY*scaleFactor,
+                                                font_->Characters[index].Rectangle.Width*scaleFactor,
+                                                font_->Characters[index].Rectangle.Height*scaleFactor },
+                                                font_->Characters[index].Rectangle, color_, { 0, 0 }, 0.0f);
+                }
+
+                if (font_->Characters[index].AdvanceX == 0) textOffsetX += ((float)font_->Characters[index].Rectangle.Width*scaleFactor + spacing_);
+                else textOffsetX += ((float)font_->Characters[index].AdvanceX*scaleFactor + spacing_);
+            }
+        }
     }
 
     void
@@ -472,14 +516,14 @@ namespace NerdThings::Ngine::Graphics {
 
             OpenGL::GL::UseTexture(texture_->InternalTexture);
 
+            OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
             OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
             OpenGL::GL::PushMatrix();
 
             OpenGL::GL::Translate({destRectangle_.X, destRectangle_.Y, 0.0f});
             OpenGL::GL::Rotate(rotation_, {0.0f, 0.0f, 1.0f});
             OpenGL::GL::Translate({-origin_.X, -origin_.Y, 0.0f});
-
-            OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
 
             OpenGL::GL::Color(color_);
 
@@ -515,9 +559,9 @@ namespace NerdThings::Ngine::Graphics {
                         {(sourceRectangle_.X + sourceRectangle_.Width) / width, sourceRectangle_.Y / height});
             OpenGL::GL::Vertex(TVector2(destRectangle_.Width, 0.0f));
 
-            OpenGL::GL::End();
-
             OpenGL::GL::PopMatrix();
+
+            OpenGL::GL::End();
 
             OpenGL::GL::StopUsingTexture();
         }
@@ -604,14 +648,14 @@ namespace NerdThings::Ngine::Graphics {
 
         if (OpenGL::GL::AtBufferLimit(4 * (360 / sides_))) OpenGL::GL::Draw();
 
+        OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
+
+        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
+
         OpenGL::GL::PushMatrix();
 
         OpenGL::GL::Translate({center_.X, center_.Y, 0});
         OpenGL::GL::Rotate(rotation_, {});
-
-        OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
-
-        OpenGL::GL::Begin(OpenGL::PRIMITIVE_QUADS);
 
         OpenGL::GL::Color(color_);
 
@@ -629,11 +673,11 @@ namespace NerdThings::Ngine::Graphics {
             OpenGL::GL::Vertex({sinf(i + 360.0f / sides_) * radius_, cosf(i + 360.0f / sides_) * radius_});
         }
 
+        OpenGL::GL::PopMatrix();
+
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
-
-        OpenGL::GL::PopMatrix();
     }
 
     void Renderer::EndDrawing() {

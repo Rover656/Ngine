@@ -590,7 +590,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         if ((_VertexData[_CurrentBuffer].VCounter) >= (MAX_BATCH_ELEMENTS * 4 - 4)) {
             // Restore stack
-            for (auto i = _MatrixStackCounter; i >= 0; i--) PopMatrix();
+            for (auto i = _MatrixStackCounter; i > 0; i--) PopMatrix();
             Draw();
         }
     }

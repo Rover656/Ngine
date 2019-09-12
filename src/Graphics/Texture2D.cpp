@@ -34,14 +34,20 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     TTexture2D::TTexture2D(const Filesystem::TPath &path_) {
-        // Get image
-        TImage img(path_);
-
         // Create
-        *this = TTexture2D(img.PixelData, img.Width, img.Height, img.Format, img.Mipmaps);
+        *this = TTexture2D(std::make_shared<TImage>(path_));
+    }
+
+    TTexture2D::TTexture2D(const std::shared_ptr<TImage> &img_) {
+        // Create
+        *this = TTexture2D(img_->PixelData, img_->Width, img_->Height, img_->Format, img_->Mipmaps);
     }
 
     // Public Methods
+
+    std::shared_ptr<TTexture2D> TTexture2D::FromImage(const std::shared_ptr<TImage> &img_) {
+        return std::make_shared<TTexture2D>(img_);
+    }
 
     int TTexture2D::GetMipmapCount() const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -135,6 +141,11 @@ namespace NerdThings::Ngine::Graphics {
 
     void TTexture2D::Unload() {
         // Delete texture data
+        Width = 0;
+        Height = 0;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        InternalTexture = nullptr;
+#endif
     }
 
     // Operators

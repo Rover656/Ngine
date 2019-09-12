@@ -105,12 +105,6 @@ namespace NerdThings::Ngine::Graphics {
          */
         TFont();
 
-        /*
-         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
-         */
-        TFont(const TFont &font_) = default;
-
         // Destructor
 
         virtual ~TFont();
@@ -121,6 +115,11 @@ namespace NerdThings::Ngine::Graphics {
          * Get the default font
          */
         static std::shared_ptr<TFont> GetDefaultFont();
+
+        /*
+         * Get a character glyph index
+         */
+        int GetGlyphIndex(int char_);
 
         /*
          * Load a true type font with specified characters

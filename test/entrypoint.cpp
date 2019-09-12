@@ -220,7 +220,11 @@ public:
 
     TilesetCanvas *testTiles;
 
+    std::shared_ptr<TFont> TestFont;
+
     TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
+
+        TestFont = TFont::LoadTTFont(TPath("C:\\Windows\\Fonts\\Arial.ttf"), 36);
 
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
@@ -268,6 +272,10 @@ public:
         //Renderer::DrawFPS({500, 300 });
 
         //widg.Draw();
+
+        //Renderer::DrawTexture(TestFont->Texture, {100, 100}, TColor::White);
+
+        Renderer::DrawText(TestFont, "Hello World.", {100, 100}, 32, 1, TColor::Green);
 
         Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
@@ -321,9 +329,6 @@ public:
     void Init(EventArgs &e) {
         // Load all content
         Resources::LoadResources();
-
-        // Load test font
-        auto fnt = TFont::LoadTTFont(TPath("C:\\Windows\\Fonts\\Arial.ttf"));
 
         // Output readme
         auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory(), "content/readme.txt"));

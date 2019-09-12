@@ -123,7 +123,17 @@ namespace NerdThings::Ngine::Graphics {
          */
         TTexture2D(const Filesystem::TPath &path_);
 
+        /*
+         * Create a texture from an image.
+         */
+        TTexture2D(const std::shared_ptr<TImage> &img_);
+
         // Public Methods
+
+        /*
+         * Create a texture from an image.
+         */
+        static std::shared_ptr<TTexture2D> FromImage(const std::shared_ptr<TImage> &img_);
 
         /*
          * Get the number of mipmaps this texture has

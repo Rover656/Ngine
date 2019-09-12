@@ -43,6 +43,15 @@ namespace NerdThings::Ngine::Graphics {
         return DefaultFont;
     }
 
+    int TFont::GetGlyphIndex(int char_) {
+        for (auto i = 0; i < CharacterCount; i++) {
+            if (Characters[i].Character == char_) return i;
+        }
+
+        // Fail.
+        return -1;
+    }
+
     std::shared_ptr<TFont> TFont::LoadTTFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
         // Initialize font
         auto font = std::make_shared<TFont>();
@@ -79,7 +88,14 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void TFont::Unload() {
+        // Unload atlas texture.
+        Texture->Unload();
+        Texture = nullptr;
 
+        // Unset stuff
+        BaseSize = 0;
+        CharacterCount = 0;
+        Characters.clear();
     }
 
     // Private Methods
@@ -91,8 +107,92 @@ namespace NerdThings::Ngine::Graphics {
 
 #define BITMAP_ALPHA_THRESHOLD     80
 
-    void TFont::__GenerateAtlas() {
+    // All from raylib.
 
+    void TFont::__GenerateAtlas() {
+        // Generate atlas texture.
+        auto atlas = std::make_shared<TImage>();
+
+        // Undetermined constants
+        int padding = 0;
+
+        // By this point, no validation is required.
+
+        // Load rectangles
+        std::vector<TRectangle> recs(CharacterCount);
+
+        // Calculate image size
+        float requiredArea = 0;
+        for (int i = 0; i < CharacterCount; i++) requiredArea += ((Characters[i].Image->Width + 2*padding)*(Characters[i].Image->Height + 2*padding));
+        float guessSize = sqrtf(requiredArea)*1.3f;
+        int imageSize = (int)powf(2, ceilf(logf((float)guessSize)/logf(2)));  // Calculate next POT
+
+        // Set image parameters
+        atlas->Width = imageSize;
+        atlas->Height = imageSize;
+        atlas->PixelData = new unsigned char[atlas->Width * atlas->Height];
+        atlas->Format = UNCOMPRESSED_GRAYSCALE;
+        atlas->Mipmaps = 1;
+
+        // Default packing method (not adding skyline for now.)
+        int offsetX = padding;
+        int offsetY = padding;
+
+        // NOTE: Using simple packaging, one char after another
+        for (int i = 0; i < CharacterCount; i++)
+        {
+            // Copy pixel data from fc.data to atlas
+            for (int y = 0; y < Characters[i].Image->Height; y++)
+            {
+                for (int x = 0; x < Characters[i].Image->Width; x++)
+                {
+                    ((unsigned char *)atlas->PixelData)[(offsetY + y)*atlas->Width + (offsetX + x)] = ((unsigned char *)Characters[i].Image->PixelData)[y*Characters[i].Image->Width + x];
+                }
+            }
+
+            // Fill chars rectangles in atlas info
+            recs[i].X = (float)offsetX;
+            recs[i].Y = (float)offsetY;
+            recs[i].Width = (float)Characters[i].Image->Width;
+            recs[i].Height = (float)Characters[i].Image->Height;
+
+            // Save rectangle
+            Characters[i].Rectangle = recs[i];
+
+            // Move atlas position X for next character drawing
+            offsetX += (Characters[i].Image->Width + 2*padding);
+
+            if (offsetX >= (atlas->Width - Characters[i].Image->Width - padding))
+            {
+                offsetX = padding;
+
+                // NOTE: Be careful on offsetY for SDF fonts, by default SDF
+                // use an internal padding of 4 pixels, it means char rectangle
+                // height is bigger than fontSize, it could be up to (fontSize + 8)
+                offsetY += (BaseSize + 2*padding);
+
+                if (offsetY > (atlas->Height - BaseSize - padding)) break;
+            }
+        }
+
+        // Convert to gray alpha
+        unsigned char *dataGrayAlpha = new unsigned char[atlas->Width * atlas->Height * 2];
+
+        for (auto i = 0, k = 0; i < atlas->Width * atlas->Height; i++, k += 2) {
+            dataGrayAlpha[k] = 255;
+            dataGrayAlpha[k + 1] = atlas->PixelData[i];
+        }
+
+        // Complete atlas
+        delete atlas->PixelData;
+        atlas->PixelData = dataGrayAlpha;
+        atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
+
+        // Create texture
+        Texture = TTexture2D::FromImage(atlas);
+
+        // Delete atlas
+        atlas->Unload();
     }
 
     void TFont::__LoadFontInfo(const Filesystem::TPath &path_, std::vector<int> chars_) {
@@ -156,8 +256,6 @@ namespace NerdThings::Ngine::Graphics {
                 stbtt_GetCodepointHMetrics(&fontInfo, ch, &Characters[i].AdvanceX, nullptr);
                 Characters[i].AdvanceX *= scaleFactor;
             }
-
-            //delete fontData;
         } else {
             throw std::runtime_error("Unable to open font file.");
         }

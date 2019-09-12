@@ -49,7 +49,7 @@ namespace NerdThings::Ngine::Graphics {
         // Unload framebuffer
         Height = 0;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        InternalFramebuffer->Delete();
+        InternalFramebuffer = nullptr;
 #endif
         Width = 0;
     }
