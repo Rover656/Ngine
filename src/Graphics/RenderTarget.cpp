@@ -19,21 +19,25 @@ namespace NerdThings::Ngine::Graphics {
     TRenderTarget::TRenderTarget(const int width_, const int height_) : TRenderTarget() {
         Width = width_;
         Height = height_;
+
+        // Create framebuffer
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
+#endif
+
+        // Create texture
+        _Texture = std::make_shared<TTexture2D>();
+        _Texture->Width = Width;
+        _Texture->Height = Height;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        _Texture->InternalTexture = InternalFramebuffer->RenderTexture;
 #endif
     }
 
     // Public Methods
 
-    std::shared_ptr<TTexture2D> TRenderTarget::GetTexture() {
-        auto tex = std::make_shared<TTexture2D>();
-        tex->Width = Width;
-        tex->Height = Height;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        tex->InternalTexture = InternalFramebuffer->RenderTexture;
-#endif
-        return tex;
+    TTexture2D *TRenderTarget::GetTexture() {
+        return _Texture.get();
     }
 
     bool TRenderTarget::IsValid() const {

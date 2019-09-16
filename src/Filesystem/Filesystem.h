@@ -400,7 +400,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Read a number of bytes from the file.
          * Size of -1 means all.
          */
-        std::shared_ptr<unsigned char[]> ReadBytes(int size_ = -1, int offset_ = 0);
+        unsigned char *ReadBytes(int size_ = -1, int offset_ = 0);
 
         /*
          * Read a string from the file.
@@ -411,7 +411,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Write bytes to the file.
          */
-        bool WriteBytes(std::shared_ptr<unsigned char[]> data_, int size_);
+        bool WriteBytes(unsigned char *data_, int size_);
 
         /*
          * Write a string to the file.

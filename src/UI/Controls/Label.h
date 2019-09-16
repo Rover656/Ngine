@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * The font to be used
          */
-        std::shared_ptr<Graphics::TFont> _Font;
+        Graphics::TFont *_Font;
 
         /*
          * The font size
@@ -71,12 +71,12 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * Create a label
          */
-        Label(std::string text_, std::shared_ptr<Graphics::TFont> font_)
+        Label(std::string text_, Graphics::TFont *font_)
                 : UIControlSized(), _Text(std::move(text_)), _Font(font_), _IsFixedSize(false) {
             SetDynamicSize();
         }
 
-        Label(std::string text_, std::shared_ptr<Graphics::TFont> font_, float width_, float height_)
+        Label(std::string text_, Graphics::TFont *font_, float width_, float height_)
                 : UIControlSized(), _Text(std::move(text_)), _Font(font_), _IsFixedSize(true) {
             SetWidth(width_);
             SetHeight(height_);
@@ -99,7 +99,7 @@ namespace NerdThings::Ngine::UI::Controls {
 //                                                 style.ForeColor); // TODO: Wordwrap option
         }
 
-        std::shared_ptr<Graphics::TFont> GetFont() {
+        Graphics::TFont *GetFont() {
             return _Font;
         }
 
@@ -119,7 +119,7 @@ namespace NerdThings::Ngine::UI::Controls {
             return _Text;
         }
 
-        void SetFont(std::shared_ptr<Graphics::TFont> font_) {
+        void SetFont(Graphics::TFont *font_) {
             _Font = font_;
             if (!_IsFixedSize)
                 SetDynamicSize();

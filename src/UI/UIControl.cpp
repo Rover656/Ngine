@@ -70,7 +70,7 @@ namespace NerdThings::Ngine::UI {
         if (style.DrawDefaults) {
             // Background
             if (style.BackgroundTexture != nullptr && style.BackgroundTexture->IsValid())
-                Graphics::Renderer::DrawTexture(style.BackgroundTexture,
+                Graphics::Renderer::DrawTexture(style.GetBackgroundTexture(),
                                                controlBackgroundRect,
                                                {
                                                        0,

@@ -149,12 +149,12 @@ namespace NerdThings::Ngine::Graphics {
          * Load a texture from pixel data.
          * This expects 8 bits for R, G, B and A.
          */
-        static std::shared_ptr<TTexture2D> LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
+        static TTexture2D *LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
          * Load a texture and get a pointer
          */
-        static std::shared_ptr<TTexture2D> LoadTexture(const Filesystem::TPath &path_);
+        static TTexture2D *LoadTexture(const Filesystem::TPath &path_);
 
         /*
          * Set the texture filter mode

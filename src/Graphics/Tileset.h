@@ -42,14 +42,25 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TTileset(std::shared_ptr<TTexture2D> texture_, float tileWidth_, float tileHeight_);
+        TTileset(TTexture2D *texture_, float tileWidth_, float tileHeight_);
 
         // Public Methods
 
         void DrawTile(TVector2 position_, int tile_);
 
+        /*
+         * Get the tileset texture
+         */
+        TTexture2D *GetTexture();
+
+        /*
+         * Get the tile height
+         */
         float GetTileHeight() const;
 
+        /*
+         * Get the tile width
+         */
         float GetTileWidth() const;
     };
 }

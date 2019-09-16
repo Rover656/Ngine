@@ -76,7 +76,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The default font
          */
-        static std::shared_ptr<TFont> DefaultFont;
+        static std::unique_ptr<TFont> DefaultFont;
 
         /*
          * Font texture
@@ -114,7 +114,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the default font
          */
-        static std::shared_ptr<TFont> GetDefaultFont();
+        static TFont *GetDefaultFont();
 
         /*
          * Get a character glyph index
@@ -122,9 +122,14 @@ namespace NerdThings::Ngine::Graphics {
         int GetGlyphIndex(int char_) const;
 
         /*
+         * Get the font texture
+         */
+        TTexture2D *GetTexture() const;
+
+        /*
          * Load a true type font with specified characters
          */
-        static std::shared_ptr<TFont> LoadTTFont(const Filesystem::TPath &path_, int baseSize_ = 12, std::vector<int> fontChars_ = std::vector<int>());
+        static TFont *LoadTTFont(const Filesystem::TPath &path_, int baseSize_ = 12, std::vector<int> fontChars_ = std::vector<int>());
 
         /*
          * Measure the dimensions of a string

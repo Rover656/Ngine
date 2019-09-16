@@ -218,7 +218,7 @@ public:
 
     TilesetCanvas *testTiles;
 
-    std::shared_ptr<TFont> TestFont;
+    TFont *TestFont;
 
     TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
 

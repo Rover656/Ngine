@@ -64,12 +64,12 @@ namespace NerdThings::Ngine::Graphics {
         return false;
     }
 
-    std::shared_ptr<TTexture2D> TTexture2D::LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_, int mipmapCount_) {
-        return std::make_shared<TTexture2D>(data_, width_, height_, format_, mipmapCount_);
+    TTexture2D *TTexture2D::LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_, int mipmapCount_) {
+        return new TTexture2D(data_, width_, height_, format_, mipmapCount_);
     }
 
-    std::shared_ptr<TTexture2D> TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
-        return std::make_shared<TTexture2D>(path_);
+    TTexture2D *TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
+        return new TTexture2D(path_);
     }
 
     void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {

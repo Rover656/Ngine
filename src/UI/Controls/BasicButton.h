@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::UI::Controls {
 
         // Public Constructor(s)
 
-        BasicButton(std::string buttonText_, std::shared_ptr<Graphics::TFont> font_, float fontSize_, float width_, float height_, float fontSpacing_ = 2) {
+        BasicButton(std::string buttonText_, Graphics::TFont *font_, float fontSize_, float width_, float height_, float fontSpacing_ = 2) {
             // Set dimensions
             UIControlSized::SetWidth(width_);
             UIControlSized::SetHeight(height_);

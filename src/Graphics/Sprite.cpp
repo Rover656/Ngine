@@ -22,22 +22,24 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TSprite::TSprite(std::shared_ptr<TTexture2D> texture_) {
-        _Textures.push_back(texture_);
+    TSprite::TSprite(TTexture2D *texture_) {
+        _Textures.push_back(std::shared_ptr<TTexture2D>(texture_));
 
         DrawHeight = texture_->Height;
         DrawWidth = texture_->Width;
     }
 
-    TSprite::TSprite(std::shared_ptr<TTexture2D> texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+    TSprite::TSprite(TTexture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                    float imageSpeed_, int startingFrame)
         : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
           ImageSpeed(imageSpeed_) {
-        _Textures.push_back(texture_);
+        _Textures.push_back(std::shared_ptr<TTexture2D>(texture_));
         CurrentFrame = startingFrame;
     }
 
-    TSprite::TSprite(const std::vector<std::shared_ptr<TTexture2D>> &textures_, float imageSpeed_, int startingFrame_) { }
+    TSprite::TSprite(const std::vector<TTexture2D*> &textures_, float imageSpeed_, int startingFrame_) {
+        // TODO, didnt realise this wasnt done
+    }
 
     // Public Methods
 
@@ -86,15 +88,15 @@ namespace NerdThings::Ngine::Graphics {
         return y;
     }
 
-    std::shared_ptr<TTexture2D> TSprite::GetCurrentTexture() {
+    TTexture2D *TSprite::GetCurrentTexture() {
         if (_Textures.empty())
             return nullptr;
 
         if (_SpriteSheet) {
-            return _Textures[0];
+            return _Textures[0].get();
         }
 
-        return _Textures[CurrentFrame];
+        return _Textures[CurrentFrame].get();
     }
 
     TRectangle TSprite::GetSourceRectangle() {
@@ -125,13 +127,18 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void TSprite::SetTexture(std::shared_ptr<TTexture2D> texture_) {
+    void TSprite::SetTexture(TTexture2D *texture_) {
         _Textures.clear();
-        _Textures.push_back(texture_);
+        _Textures.push_back(std::shared_ptr<TTexture2D>(texture_));
     }
 
-    void TSprite::SetTextures(const std::vector<std::shared_ptr<TTexture2D>> &textures_) {
-        _Textures = textures_;
+    void TSprite::SetTextures(const std::vector<TTexture2D *> &textures_) {
+        _Textures.clear();
+
+        for (auto t : textures_) {
+            // Look for existing shared pointer first.
+            _Textures.push_back(std::shared_ptr<TTexture2D>(t));
+        }
     }
 
     void TSprite::Update() {

@@ -21,7 +21,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Fields
 
-    std::shared_ptr<TFont> TFont::DefaultFont;
+    std::unique_ptr<TFont> TFont::DefaultFont;
 
     // Public Constructor(s)
 
@@ -35,12 +35,12 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    std::shared_ptr<TFont> TFont::GetDefaultFont() {
+    TFont *TFont::GetDefaultFont() {
         if (DefaultFont == nullptr || !DefaultFont->IsValid()) {
-            //_DefaultFont = std::shared_ptr<TFont>(FromRaylibFont(GetFontDefault()));
+            //_DefaultFont = std::unique_ptr<TFont>(FromRaylibFont(GetFontDefault()));
         }
 
-        return DefaultFont;
+        return DefaultFont.get();
     }
 
     int TFont::GetGlyphIndex(int char_) const {
@@ -52,9 +52,13 @@ namespace NerdThings::Ngine::Graphics {
         return -1;
     }
 
-    std::shared_ptr<TFont> TFont::LoadTTFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
+    TTexture2D *TFont::GetTexture() const {
+        return Texture.get();
+    }
+
+    TFont *TFont::LoadTTFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
         // Initialize font
-        auto font = std::make_shared<TFont>();
+        auto font = new TFont();
 
         // Set default info
         font->BaseSize = baseSize_;
@@ -223,7 +227,7 @@ namespace NerdThings::Ngine::Graphics {
         atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
 
         // Create texture
-        Texture = TTexture2D::FromImage(atlas);
+        Texture = std::make_shared<TTexture2D>(atlas);
 
         // Delete atlas
         atlas->Unload();
@@ -239,8 +243,7 @@ namespace NerdThings::Ngine::Graphics {
             // Get font data
             auto size = fontFile.GetSize();
 
-            auto fontDataPtr = fontFile.ReadBytes();
-            auto fontData = fontDataPtr.get();
+            auto fontData = fontFile.ReadBytes();
             fontFile.Close();
 
             // Get ready to read data
@@ -279,7 +282,7 @@ namespace NerdThings::Ngine::Graphics {
                 auto pixels = stbtt_GetCodepointBitmap(&fontInfo, scaleFactor, scaleFactor, ch, &chw, &chh, &Characters[i].OffsetX, &Characters[i].OffsetY);
 
                 // Load image
-                Characters[i].Image = TImage::LoadPixels(pixels, chw, chh, UNCOMPRESSED_GRAYSCALE);
+                Characters[i].Image = std::make_shared<TImage>(pixels, chw, chh, UNCOMPRESSED_GRAYSCALE);
 
                 // TODO: Option to remove anti-aliasing
 
@@ -290,6 +293,9 @@ namespace NerdThings::Ngine::Graphics {
                 stbtt_GetCodepointHMetrics(&fontInfo, ch, &Characters[i].AdvanceX, nullptr);
                 Characters[i].AdvanceX *= scaleFactor;
             }
+
+            // Delete font data
+            delete fontData;
         } else {
             throw std::runtime_error("Unable to open font file.");
         }

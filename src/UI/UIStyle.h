@@ -98,6 +98,10 @@ namespace NerdThings::Ngine::UI {
             return controlRect_;
         }
 
+        Graphics::TTexture2D *GetBackgroundTexture() {
+            return BackgroundTexture.get();
+        }
+
         /*
          * Get the dimensions of the border
          */

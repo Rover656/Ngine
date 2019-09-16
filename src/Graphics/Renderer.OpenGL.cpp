@@ -418,7 +418,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawText(std::shared_ptr<TFont> font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
+    Renderer::DrawText(TFont *font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
                        TColor color_) {
         int textOffsetY = 0;        // Required for line break!
         float textOffsetX = 0.0f;   // Offset between characters
@@ -453,7 +453,7 @@ namespace NerdThings::Ngine::Graphics {
             {
                 if (letter != ' ')
                 {
-                    DrawTexture(font_->Texture,
+                    DrawTexture(font_->GetTexture(),
                                    { position_.X + textOffsetX + font_->Characters[index].OffsetX*scaleFactor,
                                                 position_.Y + textOffsetY + font_->Characters[index].OffsetY*scaleFactor,
                                                 font_->Characters[index].Rectangle.Width*scaleFactor,
@@ -468,36 +468,39 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
+    Renderer::DrawTexture(TTexture2D *texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
                           float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_->Width, (float) texture_->Height}, position_, texture_->Width,
                     texture_->Height, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TVector2 position_, float width_, float height_, TColor color_,
+    Renderer::DrawTexture(TTexture2D *texture_, TVector2 position_, float width_, float height_, TColor color_,
                           TVector2 origin_, float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_->Width, (float) texture_->Height}, position_, width_, height_,
                     color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
+    Renderer::DrawTexture(TTexture2D *texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
                           TVector2 origin_, float rotation_) {
         DrawTexture(texture_, sourceRectangle_, position_, sourceRectangle_.Width, sourceRectangle_.Height, color_,
                     origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
+    Renderer::DrawTexture(TTexture2D *texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
                           float height_, TColor color_, TVector2 origin_, float rotation_) {
         DrawTexture(texture_, {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(std::shared_ptr<TTexture2D> texture_, TRectangle destRectangle_, TRectangle sourceRectangle_,
+    Renderer::DrawTexture(TTexture2D *texture_, TRectangle destRectangle_, TRectangle sourceRectangle_,
                           TColor color_,
                           TVector2 origin_, float rotation_) {
+        // Check null
+        if (texture_ == nullptr) throw std::runtime_error("Texture is null.");
+
         // Raylib implementation
         if (texture_->IsValid()) {
             float width = (float) texture_->Width;
@@ -564,6 +567,8 @@ namespace NerdThings::Ngine::Graphics {
             OpenGL::GL::End();
 
             OpenGL::GL::StopUsingTexture();
+        } else {
+            ConsoleMessage("Attempted to draw invalid texture.", "WARN", "Renderer.OpenGL");
         }
     }
 

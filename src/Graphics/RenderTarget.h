@@ -62,7 +62,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get rendered texture
          */
-        std::shared_ptr<TTexture2D> GetTexture();
+        TTexture2D *GetTexture();
 
         /*
          * Whether or not the render target is valid and usable.
@@ -80,6 +80,14 @@ namespace NerdThings::Ngine::Graphics {
         bool operator==(const TRenderTarget &b) const;
 
         bool operator!=(const TRenderTarget &b) const;
+
+    private:
+        // Private Fields
+
+        /*
+         * The texture that the render target renders to.
+         */
+        std::shared_ptr<TTexture2D> _Texture;
     };
 }
 
