@@ -79,7 +79,7 @@ function(ngine_link_ngine target)
 
         # Copy, attached to Ngine target so that it will always happen
         if(${PLATFORM} MATCHES "Desktop")
-            add_custom_command(OUTPUT ${target}copyNgine
+            add_custom_command(TARGET ${target}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     $<TARGET_FILE:Ngine>
                     $<TARGET_FILE_DIR:${target}>)
@@ -94,7 +94,7 @@ function(ngine_link_ngine target)
         target_compile_definitions(${target} PRIVATE GRAPHICS_OPENGLES2=1)
 
         if(${PLATFORM} MATCHES "Desktop")
-            add_custom_command(OUTPUT ${target}copyES2
+            add_custom_command(TARGET ${target}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     ${NGINE_SOURCE_DIR}/../third-party/ANGLE/lib/x86/libEGL.dll
                     $<TARGET_FILE_DIR:${target}>
