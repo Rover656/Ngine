@@ -14,6 +14,8 @@
 
 #include "../ngine.h"
 
+#include "../EventHandler.h"
+
 #if defined(PLATFORM_DESKTOP)
 struct GLFWwindow;
 #endif
@@ -141,6 +143,22 @@ namespace NerdThings::Ngine::Input {
 #define KEY_MAX 348
 
     /*
+     * Key event args
+     */
+    struct KeyEventArgs : public EventArgs {
+        // Public Fields
+
+        /*
+         * The key this event is fore
+         */
+        EKey Key;
+
+        // Public Constructors
+
+        KeyEventArgs(EKey key_) : Key(key_) {}
+    };
+
+    /*
      * Keyboard input
      */
     class NEAPI Keyboard {
@@ -168,6 +186,18 @@ namespace NerdThings::Ngine::Input {
 #endif
 
     public:
+        // Public Fields
+
+        /*
+         * Key pressed
+         */
+        static EventHandler<KeyEventArgs> KeyPressed;
+
+        /*
+         * Key released
+         */
+        static EventHandler<KeyEventArgs> KeyReleased;
+
         // Public Methods
 
         /*

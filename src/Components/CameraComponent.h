@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Reference to on position changed event
          */
-        EventHandleRef<EntityTransformChangedEventArgs> _TransformChangeEvent;
+        EventHandleRef<EntityTransformChangedEventArgs> *_TransformChangeEvent;
 
         // Private Methods
 

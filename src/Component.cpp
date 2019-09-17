@@ -39,11 +39,11 @@ namespace NerdThings::Ngine {
     }
 
     void Component::UnsubscribeFromDraw() {
-        _OnDrawRef.UnBind();
+        _OnDrawRef->UnBind();
     }
 
     void Component::UnsubscribeFromUpdate() {
-        _OnUpdateRef.UnBind();
+        _OnUpdateRef->UnBind();
     }
 
     void Component::Update(EventArgs &e) { }

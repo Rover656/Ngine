@@ -42,9 +42,7 @@ namespace NerdThings::Ngine {
     BaseEntity::~BaseEntity() {
         // Delete all components
         ConsoleMessage("Deleting components and removing update subscription.", "NOTICE", "BASEENTITY");
-        for (auto comp : _Components) {
-            delete comp.second;
-        }
+        _Components.clear();
 
         // Unbind all events
         UnsubscribeFromUpdate();
@@ -76,8 +74,8 @@ namespace NerdThings::Ngine {
     std::vector<Component *> BaseEntity::GetComponents() {
         std::vector<Component*> vec;
 
-        for (auto it = _Components.begin(); it != _Components.end(); ++it) {
-            vec.push_back(it->second);
+        for (auto & _Component : _Components) {
+            vec.push_back(_Component.second.get());
         }
 
         return vec;
@@ -161,7 +159,7 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
-        if (_OnUpdateRef.ID > 0)
+        if (_OnUpdateRef != nullptr)
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
         _PersistentUpdates = persistentUpdates_;
     }
@@ -183,7 +181,7 @@ namespace NerdThings::Ngine {
 
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
-            if (_OnUpdateRef.ID < 0) {
+            if (_OnUpdateRef != nullptr) {
                 if (_PersistentUpdates) _OnUpdateRef = _ParentScene->OnPersistentUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 else _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 return true;
@@ -196,11 +194,11 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::UnsubscribeFromUpdate() {
-        _OnUpdateRef.UnBind();
+        _OnUpdateRef->UnBind();
     }
 
     void BaseEntity::Update(EventArgs &e) {
         // Trigger update
-        OnUpdate({});
+        OnUpdate();
     }
 }

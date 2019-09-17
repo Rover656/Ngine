@@ -22,7 +22,7 @@ namespace NerdThings::Ngine {
         std::vector<BaseEntity*> vec;
 
         for (auto it = _Entities.begin(); it != _Entities.end(); ++it) {
-            vec.push_back(it->second);
+            vec.push_back(it->second.get());
         }
 
         return vec;
@@ -56,7 +56,7 @@ namespace NerdThings::Ngine {
     bool EntityContainer::RemoveEntity(BaseEntity *entity_) {
         // Search for the entity
         for (const auto& ent : _Entities) {
-            if (ent.second == entity_) {
+            if (ent.second.get() == entity_) {
                 return RemoveEntity(ent.first);;
             }
         }

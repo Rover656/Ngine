@@ -191,7 +191,7 @@ namespace NerdThings::Ngine {
             _UpdateCounter -= fps;
 
         // Invoke updates
-        OnUpdate({});
-        OnPersistentUpdate({});
+        OnUpdate();
+        OnPersistentUpdate();
     }
 }

@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::Components {
     // Destructor
 
     CameraComponent::~CameraComponent() {
-        _TransformChangeEvent.UnBind();
+        _TransformChangeEvent->UnBind();
     }
 
     // Public Constructors

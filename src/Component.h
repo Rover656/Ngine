@@ -30,12 +30,12 @@ namespace NerdThings::Ngine {
         /*
          * On draw ref
          */
-        EventHandleRef<EventArgs> _OnDrawRef;
+        EventHandleRef<EventArgs> *_OnDrawRef;
 
         /*
          * On update ref
          */
-        EventHandleRef<EventArgs> _OnUpdateRef;
+        EventHandleRef<EventArgs> *_OnUpdateRef;
 
         /*
          * The parent entity

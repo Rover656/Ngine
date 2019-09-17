@@ -125,6 +125,11 @@ namespace NerdThings::Ngine::Input {
 
 #endif
 
+    // Public Fields
+
+    EventHandler<KeyEventArgs> Keyboard::KeyPressed;
+    EventHandler<KeyEventArgs> Keyboard::KeyReleased;
+
     // Public Methods
 
     EKey Keyboard::GetLatestKeypress() {
@@ -174,6 +179,16 @@ namespace NerdThings::Ngine::Input {
         for (auto i = 0; i <= KEY_MAX; i++) {
             _PreviousKeyState[i] = _CurrentKeyState[i];
             _CurrentKeyState[i] = _NextKeyState[i];
+        }
+
+        // Fire events
+        for (auto i = 0; i <= KEY_MAX; i++) {
+            auto k = (EKey)i;
+            if (IsKeyPressed(k)) {
+                KeyPressed({k});
+            } else if (IsKeyReleased(k)) {
+                KeyReleased({k});
+            }
         }
     }
 

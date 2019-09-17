@@ -46,9 +46,9 @@ namespace NerdThings::Ngine {
         EventHandler<ArgsType> *AttachedHandler = nullptr;
 
         /*
-         * The event handle ID
+         * Attached function
          */
-        int ID = -1;
+        std::function<void(ArgsType &)> Function;
 
         // Public Methods
 
@@ -57,8 +57,7 @@ namespace NerdThings::Ngine {
          */
         void UnBind() {
             if (AttachedHandler != nullptr)
-                AttachedHandler->UnBind(ID);
-            ID = -1;
+                AttachedHandler->UnBind(this);
         }
     };
 
@@ -72,7 +71,7 @@ namespace NerdThings::Ngine {
         /*
          * All of the handles for the event handler
          */
-        std::vector<std::function<void(ArgsType &)>> _Handles;
+        std::vector<std::shared_ptr<EventHandleRef<ArgsType>>> _Handles;
 
         /*
          * Unused indices in the Handles vector
@@ -89,65 +88,76 @@ namespace NerdThings::Ngine {
         /*
          * Bind a function
          */
-        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType &e)) {
+        EventHandleRef<ArgsType> *Bind(void (*func_)(ArgsType &e)) {
             auto f = std::bind(func_, std::placeholders::_1);
             if (_UnusedIndices.size() > 0) {
                 auto id = _UnusedIndices.back();
 
-                _Handles[id] = f;
+                auto ref = std::make_shared<EventHandleRef<ArgsType>>();
+                ref->AttachedHandler = this;
+                ref->Function = f;
+
+                _Handles[id] = ref;
 
                 _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
 
-                EventHandleRef<ArgsType> ref;
-                ref.AttachedHandler = this;
-                ref.ID = id;
-
-                return ref;
+                return ref.get();
             }
 
-            _Handles.push_back(f);
+            auto ref = std::make_shared<EventHandleRef<ArgsType>>();
+            ref->AttachedHandler = this;
+            ref->Function = f;
 
-            EventHandleRef<ArgsType> ref;
-            ref.AttachedHandler = this;
-            ref.ID = _Handles.size() - 1;
+            _Handles.push_back(ref);
 
-            return ref;
+            return ref.get();
         }
 
         /*
          * Bind a class method
          */
         template <typename Class>
-        EventHandleRef<ArgsType> Bind(Class *obj_, void (Class::*func_)(ArgsType &e)) {
+        EventHandleRef<ArgsType> *Bind(Class *obj_, void (Class::*func_)(ArgsType &e)) {
             auto f = std::bind(func_, obj_, std::placeholders::_1);
             if (!_UnusedIndices.empty()) {
                 auto id = _UnusedIndices.back();
 
-                _Handles[id] = f;
+                auto ref = std::make_shared<EventHandleRef<ArgsType>>();
+                ref->AttachedHandler = this;
+                ref->Function = f;
+
+                _Handles[id] = ref;
 
                 _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
 
-                EventHandleRef<ArgsType> ref;
-                ref.AttachedHandler = this;
-                ref.ID = id;
-
-                return ref;
+                return ref.get();
             }
 
-            _Handles.push_back(f);
+            auto ref = std::make_shared<EventHandleRef<ArgsType>>();
+            ref->AttachedHandler = this;
+            ref->Function = f;
 
-            EventHandleRef<ArgsType> ref;
-            ref.AttachedHandler = this;
-            ref.ID = _Handles.size() - 1;
+            _Handles.push_back(ref);
 
-            return ref;
+            return ref.get();
         }
 
         /*
          * Clear all event handles
          */
-        [[deprecated("Clearing is unsafe and will be removed on the next release.")]] void Clear() {
+        void Clear() {
+            // Unbind all
+            for (auto h : _Handles) h.UnBind();
+
+            // Clear
             _Handles.clear();
+        }
+
+        /*
+         * Invokes the handles attached to the event using a default constructor for the args
+         */
+        void Invoke() {
+            Invoke({});
         }
 
         /*
@@ -155,28 +165,36 @@ namespace NerdThings::Ngine {
          */
         void Invoke(ArgsType e) {
             for (auto i = 0; i < _Handles.size(); i++) {
-                auto handle = _Handles[i];
-                if (handle != nullptr) {
-                    ArgsType sendE = e;
-                    handle(sendE);
+                auto handle = _Handles[i].get();
+                ArgsType sendE = e;
+                handle->Function(sendE);
 
-                    if (sendE.UnBind)
-                        UnBind(i);
-                }
+                if (sendE.UnBind)
+                    UnBind(handle);
             }
         }
 
         /*
          * Unbind an event handle by index
          */
-        void UnBind(int index) {
-            if (index < 0)
+        void UnBind(EventHandleRef<ArgsType> *handler_) {
+            if (handler_ == nullptr)
                 return;
-            _Handles[index] = nullptr;
-            _UnusedIndices.push_back(index);
+
+            // Find and remove
+            for (auto i = 0; i < _Handles.size(); i++) {
+                if (_Handles[i].get() == handler_) {
+                    _Handles[i] = nullptr;
+                    _UnusedIndices.push_back(i);
+                }
+            }
         }
 
         // Operators
+
+        void operator()() {
+            Invoke();
+        }
 
         void operator()(ArgsType e) {
             Invoke(e);

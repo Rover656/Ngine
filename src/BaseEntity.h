@@ -71,7 +71,7 @@ namespace NerdThings::Ngine {
          * The list of all components.
          * All components are given a name for easy identification.
          */
-        std::map<std::string, Component*> _Components;
+        std::map<std::string, std::unique_ptr<Component>> _Components;
 
         /*
          * Depth layer
@@ -81,7 +81,7 @@ namespace NerdThings::Ngine {
         /*
          * On update event reference
          */
-        EventHandleRef<EventArgs> _OnUpdateRef;
+        EventHandleRef<EventArgs> *_OnUpdateRef;
 
         /*
          * The entity origin
@@ -175,7 +175,7 @@ namespace NerdThings::Ngine {
             auto comp = dynamic_cast<Component*>(component_);
 
             if (comp != nullptr) {
-                _Components.insert({name_, comp});
+                _Components.insert({name_, std::unique_ptr<Component>(comp)});
                 return component_;
             }
 
@@ -206,7 +206,7 @@ namespace NerdThings::Ngine {
         ComponentType *GetComponent(const std::string &name_) {
             // Try to find the component
             if (HasComponent(name_)) {
-                return dynamic_cast<ComponentType*>(_Components.at(name_)); // Will return null if its the wrong type
+                return dynamic_cast<ComponentType*>(_Components.at(name_).get()); // Will return null if its the wrong type
             }
 
             return nullptr;
@@ -230,7 +230,7 @@ namespace NerdThings::Ngine {
         /*
          * Get entity origin
          */
-        [[nodiscard]] TVector2 GetOrigin() const;
+        TVector2 GetOrigin() const;
 
         /*
          * Get our parent container.
@@ -241,21 +241,21 @@ namespace NerdThings::Ngine {
         /*
          * Get the parent entity
          */
-        [[nodiscard]] BaseEntity *GetParentEntity() const;
+        BaseEntity *GetParentEntity() const;
 
         /*
          * Get the parent entity as.
          * If there is no parent or the parent is not of this type it returns null
          */
         template <typename EntityType>
-        [[nodiscard]] EntityType *GetParentEntityAs() const {
+        EntityType *GetParentEntityAs() const {
             return dynamic_cast<EntityType*>(_ParentEntity);
         }
 
         /*
          * Get the parent scene
          */
-        [[nodiscard]] Scene *GetParentScene() const;
+        Scene *GetParentScene() const;
 
         /*
          * Test if we update when the scene is paused
@@ -265,17 +265,17 @@ namespace NerdThings::Ngine {
         /*
          * Get the entity position
          */
-        [[nodiscard]] TVector2 GetPosition() const;
+        TVector2 GetPosition() const;
 
         /*
          * Get the entity rotation
          */
-        [[nodiscard]] float GetRotation() const;
+        float GetRotation() const;
 
         // /*
         //  * Get the entity scale
         //  */
-        // [[nodiscard]] float GetScale() const;
+        // float GetScale() const;
 
         /*
          * Test if a component exists by a name.
