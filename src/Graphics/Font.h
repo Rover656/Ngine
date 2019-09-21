@@ -129,7 +129,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load a true type font with specified characters
          */
-        static TFont *LoadTTFont(const Filesystem::TPath &path_, int baseSize_ = 12, std::vector<int> fontChars_ = std::vector<int>());
+        static TFont *LoadTTFFont(const Filesystem::TPath &path_, int baseSize_ = 12, std::vector<int> fontChars_ = std::vector<int>());
 
         /*
          * Measure the dimensions of a string

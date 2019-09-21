@@ -40,20 +40,29 @@ namespace NerdThings::Ngine::Audio {
          */
         static std::vector<TMusic *> _ActiveMusic;
 
-        static TAudioBuffer *_AudioBufferPool[];
-
-        static unsigned int _AudioBufferPoolCounter;
-
-        static unsigned int _AudioBufferPoolChannels[];
-
+        /*
+         * The audio mutex
+         */
         static ma_mutex _AudioLock;
 
+        /*
+         * The first tracked buffer
+         */
         static TAudioBuffer *_BufferFirst;
 
+        /*
+         * The last tracked buffer
+         */
         static TAudioBuffer *_BufferLast;
 
+        /*
+         * Miniaudio context
+         */
         static ma_context _Context;
 
+        /*
+         * Miniaudio device
+         */
         static ma_device _Device;
 
         /*
@@ -61,24 +70,41 @@ namespace NerdThings::Ngine::Audio {
          */
         static bool _Initialized;
 
+        /*
+         * Device master volume
+         */
         static float _MasterVolume;
 
         // Private Methods
 
+        /*
+         * Read data from the converter
+         */
         static ma_uint32 __AudioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
 
-        static void __CloseBufferPool();
-
-        static void __InitBufferPool();
-
+        /*
+         * Log miniaudio errors
+         */
         static void __LogCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char* msg);
 
+        /*
+         * Audio mixer
+         */
         static void __MixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_, float localVolume_);
 
+        /*
+         * Send audio data to the audio device
+         */
         static void __SendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput, ma_uint32 frameCount);
 
+        /*
+         * Track an audio device
+         */
         static void __TrackAudioBuffer(TAudioBuffer *buffer_);
 
+        /*
+         * Untrack an audio device
+         */
         static void __UntrackAudioBuffer(TAudioBuffer *buffer_);
     public:
         // Public Methods

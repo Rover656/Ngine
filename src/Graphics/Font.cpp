@@ -56,7 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         return Texture.get();
     }
 
-    TFont *TFont::LoadTTFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
+    TFont *TFont::LoadTTFFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
         // Initialize font
         auto font = new TFont();
 

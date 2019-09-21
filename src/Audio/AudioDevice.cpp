@@ -21,9 +21,6 @@ namespace NerdThings::Ngine::Audio {
     std::vector<TMusic *> AudioDevice::_ActiveMusic;
 
     ma_mutex AudioDevice::_AudioLock;
-    TAudioBuffer *AudioDevice::_AudioBufferPool[MAX_AUDIO_BUFFER_POOL_CHANNELS];
-    unsigned int AudioDevice::_AudioBufferPoolCounter = 0;
-    unsigned int AudioDevice::_AudioBufferPoolChannels[MAX_AUDIO_BUFFER_POOL_CHANNELS] = {0};
     TAudioBuffer *AudioDevice::_BufferFirst;
     TAudioBuffer *AudioDevice::_BufferLast;
     ma_context AudioDevice::_Context;
@@ -103,20 +100,6 @@ namespace NerdThings::Ngine::Audio {
         }
 
         return framesRead;
-    }
-
-    void AudioDevice::__CloseBufferPool() {
-        for (auto i = 0; i < MAX_AUDIO_BUFFER_POOL_CHANNELS; i++) {
-            if (_AudioBufferPool[i] == nullptr) continue;
-            free(_AudioBufferPool[i]->Buffer);
-            delete _AudioBufferPool[i];
-        }
-    }
-
-    void AudioDevice::__InitBufferPool() {
-        for (auto i = 0; i < MAX_AUDIO_BUFFER_POOL_CHANNELS; i++) {
-            _AudioBufferPool[i] = InitAudioBuffer(DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, 0, BUFFER_USAGE_STATIC);
-        }
     }
 
     void AudioDevice::__LogCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char *msg) {
@@ -250,8 +233,6 @@ namespace NerdThings::Ngine::Audio {
             ma_mutex_uninit(&_AudioLock);
             ma_device_uninit(&_Device);
             ma_context_uninit(&_Context);
-
-            __CloseBufferPool();
 
             ConsoleMessage("Audio device closed successfully.", "NOTICE", "AudioDevice");
 
@@ -403,9 +384,7 @@ namespace NerdThings::Ngine::Audio {
         ConsoleMessage("Audio device initialized successfully!", "NOTICE", "AudioDevice");
         ConsoleMessage("Audio backend: miniaudio/" + std::string(ma_get_backend_name(_Context.backend)), "NOTICE", "AudioDevice");
         ConsoleMessage("Audio format: " + std::string(ma_get_format_name(_Device.playback.format)) + " -> " + std::string(ma_get_format_name(_Device.playback.internalFormat)), "NOTICE", "AudioDevice");
-        // TODO: The other info??
 
-        __InitBufferPool();
         ConsoleMessage("Audio multichannel pool size: " + std::to_string(MAX_AUDIO_BUFFER_POOL_CHANNELS), "NOTICE", "AudioDevice");
 
         _Initialized = true;

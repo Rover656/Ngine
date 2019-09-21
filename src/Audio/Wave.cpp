@@ -1,7 +1,9 @@
 #include "Wave.h"
 
+#include <dr_flac.h>
 #include <dr_mp3.h>
 #include <dr_wav.h>
+#include <stb_vorbis.h>
 
 namespace NerdThings::Ngine::Audio {
     TWave::~TWave() {
@@ -19,6 +21,10 @@ namespace NerdThings::Ngine::Audio {
             wav->__LoadMP3(path_);
         } else if (path_.GetFileExtension() == "wav") {
             wav->__LoadWAV(path_);
+        } else if (path_.GetFileExtension() == "ogg") {
+            wav->__LoadOGG(path_);
+        } else if (path_.GetFileExtension() == "flac") {
+            wav->__LoadFLAC(path_);
         } else ConsoleMessage("File format not supported.", "ERR", "Wave");
 
         return wav;
@@ -28,6 +34,20 @@ namespace NerdThings::Ngine::Audio {
         free(Data);
         Data = nullptr;
         ConsoleMessage("Unloaded wav data from RAM.", "NOTICE", "Wave");
+    }
+
+    void TWave::__LoadFLAC(const Filesystem::TPath &path_) {
+        // Decode entire FLAC file in one go
+        uint64_t totalSampleCount;
+        Data = drflac_open_file_and_read_pcm_frames_s16(path_.GetString().c_str(), &Channels, &SampleRate, &totalSampleCount);
+
+        SampleCount = (unsigned int) totalSampleCount;
+        SampleSize = 16;
+
+        if (Channels > 2) ConsoleMessage("Too many FLAC channels!", "ERR", "Wave");
+
+        if (Data == nullptr) ConsoleMessage("Failed to load FLAC data.", "ERR", "Wave");
+        else ConsoleMessage("Loaded FLAC file successfully!", "NOTICE", "Wave");
     }
 
     void TWave::__LoadMP3(const Filesystem::TPath &path_) {
@@ -46,6 +66,29 @@ namespace NerdThings::Ngine::Audio {
 
         if (Data == nullptr) ConsoleMessage("Failed to load MP3 data.", "ERR", "Wave");
         else ConsoleMessage("Loaded MP3 file successfully!", "NOTICE", "Wave");
+    }
+
+    void TWave::__LoadOGG(const Filesystem::TPath &path_) {
+        // Load ogg file
+        stb_vorbis *oggFile = stb_vorbis_open_filename(path_.GetString().c_str(), nullptr, nullptr);
+
+        if (oggFile == nullptr) ConsoleMessage("OGG file could not be opened.", "WARN", "Wave");
+        else {
+            stb_vorbis_info info = stb_vorbis_get_info(oggFile);
+
+            SampleRate = info.sample_rate;
+            SampleSize = 16;
+            Channels = info.channels;
+            SampleCount = (unsigned int)stb_vorbis_stream_length_in_samples(oggFile)*info.channels;
+
+            Data = (short *)malloc(SampleCount*Channels*sizeof(short));
+
+            int numSamplesOgg = stb_vorbis_get_samples_short_interleaved(oggFile, info.channels, (short *)Data, SampleCount*Channels);
+
+            ConsoleMessage("OGG File loaded successfully!", "NOTICE", "Wave");
+
+            stb_vorbis_close(oggFile);
+        }
     }
 
     void TWave::__LoadWAV(const Filesystem::TPath &path_) {

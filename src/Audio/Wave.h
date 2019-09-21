@@ -29,7 +29,9 @@ namespace NerdThings::Ngine::Audio {
     private:
         // Private Methods
 
+        void __LoadFLAC(const Filesystem::TPath &path_);
         void __LoadMP3(const Filesystem::TPath &path_);
+        void __LoadOGG(const Filesystem::TPath &path_);
         void __LoadWAV(const Filesystem::TPath &path_);
     };
 }

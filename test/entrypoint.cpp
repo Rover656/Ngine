@@ -225,7 +225,7 @@ public:
 
     TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
 
-        TestFont = TFont::LoadTTFont(TPath("C:\\Windows\\Fonts\\Arial.ttf"), 36);
+        TestFont = TFont::LoadTTFFont(TPath("C:\\Windows\\Fonts\\Arial.ttf"), 36);
 
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 

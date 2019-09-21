@@ -92,8 +92,8 @@ namespace NerdThings::Ngine::Filesystem {
 
         // File extension definitions
         // TODO: Align this with whatever spec we will support
-        std::vector<std::string> fntExts = {"ttf", "otf", "fnt"}; // TODO: Spritefont support
-        std::vector<std::string> musExts = {"ogg", "flac", "mp3", "xm", "mod"};
+        std::vector<std::string> fntExts = {"ttf", "otf"}; // TODO: Spritefont support
+        std::vector<std::string> musExts = {"ogg", "flac", "mp3"};//, "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
         std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc"};
 
@@ -131,12 +131,11 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadFont(const TPath &inPath_, const std::string &name_) {
-//        auto fnt = Graphics::TFont::LoadFont(inPath_);
-//        if (fnt->Texture->ID > 0) {
-//            _Fonts.insert({ name_, fnt });
-//            return true;
-//        }
-//        return false;
+        auto fnt = Graphics::TFont::LoadTTFFont(inPath_);
+        if (fnt->IsValid()) {
+            _Fonts.insert({ name_, std::unique_ptr<Graphics::TFont>(fnt) });
+            return true;
+        }
         return false;
     }
 
@@ -146,7 +145,6 @@ namespace NerdThings::Ngine::Filesystem {
             _Music.insert({ name_, std::unique_ptr<Audio::TMusic>(mus) });
             return true;
         }
-        return false;
         return false;
     }
 
