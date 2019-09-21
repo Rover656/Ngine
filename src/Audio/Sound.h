@@ -15,41 +15,33 @@
 #include "../ngine.h"
 
 #include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
+#include "AudioStream.h"
+#include "Wave.h"
 
 namespace NerdThings::Ngine::Audio {
     /*
      * A sound source
      */
-    struct NEAPI TSound {
+    struct NEAPI TSound : public TResource {
         // Public Fields
 
         /*
-         * Pointer to internal data within audio system
+         * The number of samples
          */
-        void *AudioBuffer;
+        unsigned int SampleCount;
 
         /*
-         * Audio buffer id
+         * The audio stream
          */
-        unsigned int Buffer;
-
-        /*
-         * Audio format
-         */
-        int Format;
-
-        /*
-         * Audio source id
-         */
-        unsigned int Source;
+        TAudioStream Stream;
 
         // Public Constructor(s)
 
         /*
          * Create a null sound
          */
-        TSound()
-            : AudioBuffer(nullptr), Buffer(0), Format(0), Source(0) {}
+        TSound() {}
 
         // Destructor
 
@@ -58,9 +50,59 @@ namespace NerdThings::Ngine::Audio {
         // Public Methods
 
         /*
+         * Whether or not the sound is playing.
+         */
+        bool IsPlaying() const;
+
+        /*
+         * Whether or not the sound is valid
+         */
+        bool IsValid() const override;
+
+        /*
          * Load a sound from a file
          */
-        static std::shared_ptr<TSound> LoadSound(const Filesystem::TPath &path_);
+        static TSound *LoadSound(const Filesystem::TPath &path_);
+
+        /*
+         * Load sound from wave data.
+         */
+        static TSound *LoadSoundFromWave(TWave *wave_);
+
+        /*
+         * Pause sound
+         */
+        void Pause();
+
+        /*
+         * Play sound
+         */
+        void Play();
+
+        /*
+         * Resume sound
+         */
+        void Resume();
+
+        /*
+         * Set sound pitch
+         */
+        void SetPitch(float pitch_);
+
+        /*
+         * Set sound volume
+         */
+        void SetVolume(float vol_);
+
+        /*
+         * Stop sound
+         */
+        void Stop();
+
+        /*
+         * Unload sound
+         */
+        void Unload() override;
     };
 }
 

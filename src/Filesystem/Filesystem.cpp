@@ -927,7 +927,7 @@ namespace NerdThings::Ngine::Filesystem {
         auto dirs = std::vector<TDirectory>();
 #if defined(_WIN32)
         // Find first directory
-        WIN32_FIND_DATA FindFileData;
+        WIN32_FIND_DATAA FindFileData;
         HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
 
         // Check exists
@@ -943,7 +943,7 @@ namespace NerdThings::Ngine::Filesystem {
                 if (strcmp(dirName, ".") != 0 && strcmp(dirName, "..") != 0)
                     dirs.push_back(TDirectory(TPath(ObjectPath, dirName)));
             }
-        } while (FindNextFile(hFind, &FindFileData) != 0);
+        } while (FindNextFileA(hFind, &FindFileData) != 0);
 
         // Close search
         FindClose(hFind);

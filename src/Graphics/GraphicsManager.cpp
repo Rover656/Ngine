@@ -20,7 +20,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Render Target Related Private Fields
 
-    std::vector<std::shared_ptr<TRenderTarget>> GraphicsManager::_RenderTargetStack;
+    std::vector<TRenderTarget *> GraphicsManager::_RenderTargetStack;
 
     // General Rendering Fields
 
@@ -44,7 +44,7 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    void GraphicsManager::UseRenderTarget(std::shared_ptr<TRenderTarget> target_) {
+    void GraphicsManager::UseRenderTarget(TRenderTarget *target_) {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Force draw
         OpenGL::GL::Draw();
@@ -87,7 +87,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Render Target Related Methods
 
-    std::shared_ptr<TRenderTarget> GraphicsManager::PopTarget(bool &popped_) {
+    TRenderTarget *GraphicsManager::PopTarget(bool &popped_) {
         if (!_RenderTargetStack.empty()) {
             // Get target
             auto pop = _RenderTargetStack.back();
@@ -112,7 +112,7 @@ namespace NerdThings::Ngine::Graphics {
         return nullptr;
     }
 
-    void GraphicsManager::PushTarget(std::shared_ptr<TRenderTarget> target_) {
+    void GraphicsManager::PushTarget(TRenderTarget *target_) {
         // Stop using current target
         if (!_RenderTargetStack.empty())
             EndRenderTarget();
@@ -124,7 +124,11 @@ namespace NerdThings::Ngine::Graphics {
         UseRenderTarget(target_);
     }
 
-    void GraphicsManager::ReplaceTarget(std::shared_ptr<TRenderTarget> old_, std::shared_ptr<TRenderTarget> new_) {
+    void GraphicsManager::PushTarget(const std::shared_ptr<TRenderTarget> &target_) {
+        PushTarget(target_.get());
+    }
+
+    void GraphicsManager::ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_) {
         const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.
             begin();
 
@@ -136,5 +140,10 @@ namespace NerdThings::Ngine::Graphics {
 
         // Send to stack
         _RenderTargetStack[oldPos] = new_;
+    }
+
+    void GraphicsManager::ReplaceTarget(const std::shared_ptr<TRenderTarget> &old_,
+                                        const std::shared_ptr<TRenderTarget> &new_) {
+        ReplaceTarget(old_.get(), new_.get());
     }
 }

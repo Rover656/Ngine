@@ -1,8 +1,9 @@
 #include <ngine.h>
 
-#include <Audio/AudioManager.h>
+#include <Audio/AudioDevice.h>
 #include <Audio/Music.h>
 #include <Audio/Sound.h>
+#include <Audio/Wave.h>
 #include <Components/BoundingBoxCollisionShapeComponent.h>
 #include <Components/CameraComponent.h>
 #include <Components/CircleCollisionShapeComponent.h>
@@ -110,7 +111,7 @@ public:
         //tst.Update();
 
         if (Keyboard::IsKeyPressed(KEY_SPACE)) {
-            AudioManager::Play(Resources::GetSound("test_sound"));
+            Resources::GetSound("test_sound")->Play();
         }
     }
 };
@@ -128,6 +129,8 @@ public:
         TRectangle rect = {0, 0, 32, 32};
 
         //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw();
+
+        SubscribeToUpdate();
     }
 
     bool CheckForCulling(TRectangle cullArea_) override {
@@ -255,9 +258,8 @@ public:
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
-        // AudioManager::Play(Resources::GetMusic("test_music"));
-
-        AudioManager::SetMasterVolume(0.5);
+        Resources::GetMusic("test_music")->Play();
+        AudioDevice::SetMasterVolume(0.5);
     }
 
     int rot = 0;
@@ -329,7 +331,7 @@ public:
         Resources::LoadResources();
 
         // Output readme
-        auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory(), "content/readme.txt"));
+        auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory() / "content" / "readme.txt"));
 
         if (f.Open(MODE_READ)) {
             auto t = f.ReadString();

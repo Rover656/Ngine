@@ -11,7 +11,7 @@
 
 #include "Game.h"
 
-#include "Audio/AudioManager.h"
+#include "Audio/AudioDevice.h"
 #include "Graphics/GraphicsManager.h"
 #include "Input/Gamepad.h"
 #include "Input/Keyboard.h"
@@ -73,10 +73,6 @@ namespace NerdThings::Ngine {
         // TODO: We need to implement this now... for now these are just stored numbers
         SetDrawFPS(drawFPS_);
         SetUpdateFPS(updateFPS_);
-
-        // Register default events
-        OnUpdate.Bind(Audio::AudioManager::Update);
-        ConsoleMessage("Engine events have been registered.", "NOTICE", "Game");
     }
 
     // Destructor
@@ -146,10 +142,10 @@ namespace NerdThings::Ngine {
 
         // Init audio
         ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "Game");
-        Audio::AudioManager::InitDevice();
+        Audio::AudioDevice::Initialize();
 
         // Check if the device was created
-        if (Audio::AudioManager::IsReady())
+        if (Audio::AudioDevice::IsReady())
             ConsoleMessage("Audio device initialized successfully..", "NOTICE", "Game");
         else ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "Game");
 
@@ -198,7 +194,10 @@ namespace NerdThings::Ngine {
                 Update();
             }
 
-            if (Window::ShouldRenderFrame()) { // See if we should render a frame to the displau
+            if (Window::ShouldRenderFrame()) { // See if we should render a frame to the display
+                // Take note of starting
+                auto drawStart = std::chrono::high_resolution_clock::now();
+
                 // Prep for drawing
                 Graphics::Renderer::BeginDrawing();
 
@@ -244,6 +243,16 @@ namespace NerdThings::Ngine {
 
                 // Swap buffers
                 Window::SwapBuffers();
+
+                auto renderTime = std::chrono::high_resolution_clock::now() - drawStart;
+                auto renderTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(renderTime).count();
+
+                // Wait for the rest of the frame
+                if (renderTimeMS < 1000 / _DrawFPS) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(renderTimeMS));
+                }
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
 
             // Reset mouse
@@ -257,11 +266,6 @@ namespace NerdThings::Ngine {
             Input::Gamepad::PollInputs();
             Input::Mouse::PollInputs();
             Input::Keyboard::PollInputs();
-
-#if defined(PLATFORM_DESKTOP)
-            // Release thread to CPU (Stops weird idle cpu usage and fps drops)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-#endif
         }
 
         // Delete render target now so that it doesnt try after GL is gone.
@@ -273,7 +277,7 @@ namespace NerdThings::Ngine {
 
         // Close audio
         ConsoleMessage("Closing audio device.", "NOTICE", "Game");
-        Audio::AudioManager::CloseDevice();
+        Audio::AudioDevice::Close();
 
         // Close window
         ConsoleMessage("Closing window.", "NOTICE", "Game");
@@ -286,12 +290,10 @@ namespace NerdThings::Ngine {
     void Game::SetFPS(int FPS_) {
         _UpdateFPS = FPS_;
         _DrawFPS = FPS_;
-        //WindowManager::SetTargetFPS(FPS_);
     }
 
     void Game::SetDrawFPS(int FPS_) {
         _DrawFPS = FPS_;
-        //WindowManager::SetTargetFPS(FPS_);
     }
 
     void Game::SetIsRunning(bool running_) {
@@ -321,5 +323,8 @@ namespace NerdThings::Ngine {
         if (_CurrentScene != nullptr) {
             _CurrentScene->Update();
         }
+
+        // AudioDevice update
+        Audio::AudioDevice::Update();
     }
 }

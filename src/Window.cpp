@@ -58,7 +58,7 @@ namespace NerdThings::Ngine {
 
         // Close audio
         ConsoleMessage("Closing audio device.", "NOTICE", "Window");
-        Audio::AudioManager::CloseDevice();
+        Audio::AudioDevice::Close();
 
         // Close window
         Window::Cleanup();

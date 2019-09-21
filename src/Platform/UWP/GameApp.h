@@ -12,7 +12,7 @@
 #include <memory>
 #include <wrl.h>
 
-#include "../../Audio/AudioManager.h"
+#include "../../Audio/AudioDevice.h"
 #include "../../Filesystem/Resources.h"
 #include "../../Graphics/OpenGL/OpenGL.h"
 #include "../../Graphics/GraphicsManager.h"

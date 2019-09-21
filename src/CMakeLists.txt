@@ -111,8 +111,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-p
 target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/third-party/Box2D-cmake/Box2D")
 target_link_libraries(${PROJECT_NAME} tobanteGaming::Box2D)
 
+# Miniaudio
+target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/third-party/miniaudio")
+
 # Dependant static libs
-if(${OPENGL_VERSION} MATCHES "ES2")
+if(${OPENGL_VERSION} MATCHES  "ES2")
     if(${PLATFORM} MATCHES "Desktop")
         add_custom_command(OUTPUT ${PROJECT_NAME}CopyES2
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different

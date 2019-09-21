@@ -114,11 +114,17 @@ namespace NerdThings::Ngine::Filesystem {
             // Load resources
             if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
                 LoadFont(path, name);
-            } else if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
+            }
+
+            if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
                 LoadMusic(path, name);
-            } else if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
+            }
+
+            if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
                 LoadSound(path, name);
-            } else if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end()) { // Texture
+            }
+
+            if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end()) { // Texture
                 LoadTexture(path, name);
             }
         }
@@ -135,22 +141,21 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadMusic(const TPath &inPath_, const std::string &name_) {
-//        auto mus = Audio::TMusic::LoadMusic(inPath_);
-//        if (mus->MusicData != nullptr) {
-//            _Music.insert({ name_, mus });
-//            return true;
-//        }
-//        return false;
+        auto mus = Audio::TMusic::LoadMusic(inPath_);
+        if (mus->IsValid()) {
+            _Music.insert({ name_, std::unique_ptr<Audio::TMusic>(mus) });
+            return true;
+        }
+        return false;
         return false;
     }
 
     bool Resources::LoadSound(const TPath &inPath_, const std::string &name_) {
-//        auto snd = Audio::TSound::LoadSound(inPath_);
-//        if (snd->AudioBuffer != nullptr) {
-//            _Sounds.insert({ name_, snd });
-//            return true;
-//        }
-//        return false;
+        auto snd = Audio::TSound::LoadSound(inPath_);
+        if (snd->IsValid()) {
+            _Sounds.insert({ name_, std::unique_ptr<Audio::TSound>(snd) });
+            return true;
+        }
         return false;
     }
 

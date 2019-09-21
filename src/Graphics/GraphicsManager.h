@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The render target stack
          */
-        static std::vector<std::shared_ptr<TRenderTarget>> _RenderTargetStack;
+        static std::vector<TRenderTarget *> _RenderTargetStack;
 
         // General Rendering Fields
 
@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Graphics {
 
         static void EndRenderTarget();
 
-        static void UseRenderTarget(std::shared_ptr<TRenderTarget> target_);
+        static void UseRenderTarget(TRenderTarget *target_);
     public:
         // General Rendering Methods
 
@@ -63,17 +63,27 @@ namespace NerdThings::Ngine::Graphics {
          * Pop a target off the stack (if present)
          * If not present, returns empty target
          */
-        static std::shared_ptr<TRenderTarget> PopTarget(bool &popped_);
+        static TRenderTarget *PopTarget(bool &popped_);
 
         /*
          * Push a target onto the stack
          */
-        static void PushTarget(std::shared_ptr<TRenderTarget> target_);
+        static void PushTarget(TRenderTarget *target_);
 
         /*
-         const * Replace a t&arget on the stack
+         * Push a target onto the stack
          */
-        static void ReplaceTarget(std::shared_ptr<TRenderTarget> old_, std::shared_ptr<TRenderTarget> new_);
+        static void PushTarget(const std::shared_ptr<TRenderTarget> &target_);
+
+        /*
+         const * Replace a target on the stack
+         */
+        static void ReplaceTarget(TRenderTarget *old_, TRenderTarget *new_);
+
+        /*
+         const * Replace a target on the stack
+         */
+        static void ReplaceTarget(const std::shared_ptr<TRenderTarget> &old_, const std::shared_ptr<TRenderTarget> &new_);
     };
 }
 

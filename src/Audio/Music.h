@@ -15,23 +15,48 @@
 #include "../ngine.h"
 
 #include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
+#include "AudioStream.h"
 
 namespace NerdThings::Ngine::Audio {
+    enum EMusicContextType {
+        AUDIO_OGG = 1,
+        AUDIO_FLAC,
+        AUDIO_MP3,
+        MODULE_XM,
+        MODULE_MOD
+    };
+
     /*
      * Music stream
      */
-    struct NEAPI TMusic {
+    struct NEAPI TMusic : public TResource {
         // Public Fields
 
         /*
-         * Pointer to raylib music data
+         * Context data
          */
-        void *MusicData;
+        void *CTXData = nullptr;
 
-        // Public Constructor(s)
+        /*
+         * Music context type
+         */
+        EMusicContextType CTXType;
 
-        TMusic()
-            : MusicData(nullptr) {}
+        /*
+         * Number of times to loop, 0 = infinite.
+         */
+        unsigned int LoopCount;
+
+        /*
+         * Total number of samples
+         */
+        unsigned int SampleCount;
+
+        /*
+         * The audio stream
+         */
+        TAudioStream Stream;
 
         // Destructor
 
@@ -40,15 +65,71 @@ namespace NerdThings::Ngine::Audio {
         // Public Methods
 
         /*
+         * Whether or not music is playing
+         */
+        bool IsPlaying() const;
+
+        /*
+         * Test if the music is valid
+         */
+        bool IsValid() const override;
+
+        /*
          * Load music from a file
          */
-        static std::shared_ptr<TMusic> LoadMusic(const Filesystem::TPath &path_);
+        static TMusic *LoadMusic(const Filesystem::TPath &path_);
+
+        /*
+         * Pause music
+         */
+        void Pause();
+
+        /*
+         * Play music
+         */
+        void Play();
+
+        /*
+         * Resume music
+         */
+        void Resume();
+
+        /*
+         * Set music pitch
+         */
+        void SetPitch(float pitch_);
+
+        /*
+         * Set music volume
+         */
+        void SetVolume(float vol_);
+
+        /*
+         * Stop music
+         */
+        void Stop();
+
+        /*
+         * Unload the music
+         */
+        void Unload() override;
+
+        /*
+         * Update all active music
+         */
+        static void Update();
+
+    private:
+        // Private Fields
+
+        static std::vector<TMusic *> _ActiveMusic;
+
+        // Private Methods
 
         /*
          * Update music stream.
-         * Should be called by AudioManager
          */
-        void Update();
+        void __Update();
     };
 }
 

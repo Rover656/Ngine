@@ -66,13 +66,12 @@ namespace NerdThings::Ngine::Graphics {
                 && PixelData != nullptr;
     }
 
-    std::shared_ptr<TImage> TImage::LoadImage(const Filesystem::TPath &path_) {
-        return std::make_shared<TImage>(path_);
+    TImage *TImage::LoadImage(const Filesystem::TPath &path_) {
+        return new TImage(path_);
     }
 
-    std::shared_ptr<TImage>
-    TImage::LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
-        return std::make_shared<TImage>(pixelData_, width_, height_, format_);
+    TImage *TImage::LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
+        return new TImage(pixelData_, width_, height_, format_);
     }
 
     void TImage::Unload() {

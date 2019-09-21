@@ -81,7 +81,7 @@ namespace NerdThings::Ngine {
         /*
          * On update event reference
          */
-        EventHandleRef<EventArgs> *_OnUpdateRef;
+        EventHandleRef<EventArgs> *_OnUpdateRef = nullptr;
 
         /*
          * The entity origin

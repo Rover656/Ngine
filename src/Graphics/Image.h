@@ -94,13 +94,13 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load an image
          */
-        static std::shared_ptr<TImage> LoadImage(const Filesystem::TPath &path_);
+        static TImage *LoadImage(const Filesystem::TPath &path_);
 
         /*
          * Load raw pixel data.
          * The pixel data will be copied.
          */
-        static std::shared_ptr<TImage> LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
+        static TImage *LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
 
         /*
          * Unload image from memory.
