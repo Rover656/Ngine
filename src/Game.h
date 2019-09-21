@@ -18,65 +18,54 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderTarget.h"
 #include "Filesystem/Resources.h"
-#include "Vector2.h"
 #include "EventHandler.h"
 #include "Scene.h"
+#include "Window.h"
+#include "Vector2.h"
 
 namespace NerdThings::Ngine {
-    /*
-     * Game config.
-     */
-    enum EGameConfig {
-        /*
-         * None
-         */
-        NONE = 1,
+    struct TGameConfig {
+        // Public Fields
 
         /*
-         * Start in fullscreen?
+         * Number of times to draw every second
          */
-        //FULLSCREEN = 2,
+        int DrawFPS = 60;
 
         /*
-         * Have a resizeable window
-         * Should usually be used with MAINTAIN_DIMENSIONS
+         * Target game height
          */
-        RESIZEABLE_WINDOW = 4,
+        int TargetHeight;
 
         /*
-         * Have a frameless window
+         * Maintain game virtual resolution
          */
-        //FRAMELESS_WINDOW = 8,
+        bool MaintainResolution = false;
 
         /*
-         * Have a transparent window
+         * Run the game while minimized
          */
-        //TRANSPARENT_WINDOW = 16,
+        bool RunMinimized = false;
 
         /*
-         * 4x Multi-sample Anti-aliasing
+         * Target game width
          */
-        //MSAA_4X = 32,
+        int TargetWidth = 0;
 
         /*
-         * Vertical sync
+         * Number of times to update very second
          */
-        //VSYNC = 64,
+        int UpdateFPS = 60;
+
+        // Public Methods
 
         /*
-         * Start the game with a hidden window
+         * Set FPS (simple)
          */
-        //HIDDEN_WINDOW = 128,
-
-        /*
-         * Continue running game when minimized
-         */
-        //ALWAYS_RUN_MINIMIZED = 256,
-
-        /*
-         * Whether or not to maintain the dimensions provided to the game constructor
-         */
-        MAINTAIN_DIMENSIONS = 512
+        void SetFPS(int fps_) {
+            DrawFPS = fps_;
+            UpdateFPS = fps_;
+        }
     };
 
     /*
@@ -86,29 +75,9 @@ namespace NerdThings::Ngine {
         // Private Fields
 
         /*
-         * The game config (stored)
-         */
-        int _Config;
-
-        /*
          * The currently loaded scene
          */
         Scene *_CurrentScene = nullptr;
-
-        /*
-         * The target draw FPS
-         */
-        int _DrawFPS = 0;
-
-        /*
-         * The intended game height
-         */
-        int _IntendedHeight = 0;
-
-        /*
-         * The intended game width
-         */
-        int _IntendedWidth = 0;
 
         /*
          * The render target used for enforcing resolution
@@ -120,21 +89,6 @@ namespace NerdThings::Ngine {
          */
         bool _Running = false;
 
-        /*
-         * The target update FPS
-         */
-        int _UpdateFPS = 0;
-
-        /*
-         * The default window height
-         */
-        int _WindowHeight = 0;
-
-        /*
-         * The default window width
-         */
-        int _WindowWidth = 0;
-
     public:
         // Public Fields
 
@@ -142,6 +96,11 @@ namespace NerdThings::Ngine {
          * Background clear color
          */
         Graphics::TColor ClearColor = Graphics::TColor::Black;
+
+        /*
+         * Game config
+         */
+        TGameConfig Config;
 
         /*
          * The current game. If this isn't nullptr at start, it will error
@@ -173,18 +132,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a new Game
          */
-        Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = NONE);
-
-        /*
-         * Create a new Game (Extra FPS options)
-         */
-        Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = NONE);
-
-        /*
-         * Create a new Game (Advanced)
-         */
-        Game(int windowWidth_, int windowHeight_, int targetWidth_, int targetHeight_, int drawFPS_, int updateFPS_,
-             const std::string &title_, int config_ = NONE);
+        Game(const TGameConfig &config_);
 
         // Destructor
 
@@ -203,17 +151,6 @@ namespace NerdThings::Ngine {
         void Draw();
 
         /*
-         * Get the game config
-         */
-        int GetConfig();
-
-        /*
-         * Get the target FPS.
-         * If using advanced game will return update FPS
-         */
-        [[nodiscard]] int GetFPS() const;
-
-        /*
          * Get the default OS window size
          */
         TVector2 GetDefaultWindowDimensions() const;
@@ -226,12 +163,12 @@ namespace NerdThings::Ngine {
         /*
          * Get the target draw FPS.
          */
-        [[nodiscard]] int GetDrawFPS() const;
+        int GetDrawFPS() const;
 
         /*
          * Get the target update FPS.
          */
-        [[nodiscard]] int GetUpdateFPS() const;
+        int GetUpdateFPS() const;
 
         /*
          * Is the game running

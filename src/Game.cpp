@@ -17,7 +17,6 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Filesystem/Resources.h"
-#include "Window.h"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 #include "Graphics/OpenGL/OpenGL.h"
@@ -34,45 +33,20 @@ namespace NerdThings::Ngine {
 
     // Public Constructor(s)
 
-    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, int config_)
-        : Game(width_, height_, FPS_, FPS_, title_, config_) {}
-
-    Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_,
-               const std::string &title_, int config_)
-        : Game(width_, height_, width_, height_, drawFPS_, updateFPS_, title_, config_) {}
-
-    Game::Game(int windowWidth_, int windowHeight_, int targetWidth_, int targetHeight_, int drawFPS_, int updateFPS_,
-               const std::string &title_, int config_) {
+    Game::Game(const TGameConfig &config_) {
         // Check a game is not present
         if (CurrentGame != nullptr)
             throw std::runtime_error("Cannot create a second game before deleting the first!");
         CurrentGame = this;
 
         // Save config
-        _Config = config_;
+        Config = config_;
 
-        // Apply config
-        //WindowManager::ApplyConfig(_Config);
-        //ConsoleMessage("Window config has been applied.", "NOTICE", "GAME");
-
-        // Set intended dimensions
-        _IntendedHeight = targetHeight_;
-        _IntendedWidth = targetWidth_;
-
-        // Set default window dimensions
-        _WindowHeight = windowHeight_;
-        _WindowWidth = windowWidth_;
-
-#if !defined(PLATFORM_UWP)
+#if !defined(PLATFORM_UWP) // UWP init elsewhere
         // Initialize window
-        Window::Init(_WindowWidth, _WindowHeight, title_);
+        Window::Init();
         ConsoleMessage("Window has been initialized.", "NOTICE", "Game");
 #endif
-
-        // Set Target FPS
-        // TODO: We need to implement this now... for now these are just stored numbers
-        SetDrawFPS(drawFPS_);
-        SetUpdateFPS(updateFPS_);
     }
 
     // Destructor
@@ -94,29 +68,20 @@ namespace NerdThings::Ngine {
         }
     }
 
-    int Game::GetConfig()
-    {
-        return _Config;
-    }
-
-    int Game::GetFPS() const {
-        return _UpdateFPS;
-    }
-
     TVector2 Game::GetDefaultWindowDimensions() const {
-        return { (float)_WindowWidth, (float)_WindowHeight };
+        return { (float)Window::GetWidth(), (float)Window::GetHeight() };
     }
 
     TVector2 Game::GetDimensions() const {
-        return { (float)_IntendedWidth, (float)_IntendedHeight };
+        return { (float)Config.TargetWidth, (float)Config.TargetHeight };
     }
 
     int Game::GetDrawFPS() const {
-        return _DrawFPS;
+        return Config.DrawFPS;
     }
 
     int Game::GetUpdateFPS() const {
-        return _UpdateFPS;
+        return Config.UpdateFPS;
     }
 
     bool Game::IsRunning() {
@@ -129,15 +94,15 @@ namespace NerdThings::Ngine {
 
     void Game::Run() {
         // Create render target
-        if (_Config & MAINTAIN_DIMENSIONS) {
-            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(_IntendedWidth, _IntendedHeight);
+        if (Config.MaintainResolution) {
+            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(Config.TargetWidth, Config.TargetHeight);
         }
 
         // Timing
         std::chrono::nanoseconds lag(0);
         auto started = std::chrono::high_resolution_clock::now();
 
-        auto lastFPS = _UpdateFPS;
+        auto lastFPS = Config.UpdateFPS;
         auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
         // Init audio
@@ -159,11 +124,17 @@ namespace NerdThings::Ngine {
             // Window/Game Size variables
             const auto w = static_cast<float>(Window::GetWidth());
             const auto h = static_cast<float>(Window::GetHeight());
-            const auto iw = static_cast<float>(_IntendedWidth);
-            const auto ih = static_cast<float>(_IntendedHeight);
+            const auto iw = static_cast<float>(Config.TargetWidth);
+            const auto ih = static_cast<float>(Config.TargetHeight);
             const auto scale = std::min(w / iw, h / ih);
             const auto offsetX = (w - iw * scale) * 0.5;
             const auto offsetY = (h - ih * scale) * 0.5;
+
+            if (Config.MaintainResolution && _RenderTarget == nullptr) {
+                _RenderTarget = std::make_shared<Graphics::TRenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            } else if (Config.MaintainResolution && (!_RenderTarget->IsValid() || (_RenderTarget->Width != Config.TargetWidth || _RenderTarget->Height != Config.TargetHeight))) {
+                _RenderTarget = std::make_shared<Graphics::TRenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            }
 
             // Get the time since the last frame
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
@@ -171,15 +142,15 @@ namespace NerdThings::Ngine {
             lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
             // Update timestep if FPS has changed
-            if (_UpdateFPS != lastFPS) {
-                lastFPS = _UpdateFPS;
+            if (Config.UpdateFPS != lastFPS) {
+                lastFPS = Config.UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
                 ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
             }
 
             // Setup mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
+            if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
@@ -205,7 +176,7 @@ namespace NerdThings::Ngine {
                 Graphics::Renderer::Clear(Graphics::TColor::Black);
 
                 // If using, start using target
-                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
+                if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                     _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
                     _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
                     Graphics::GraphicsManager::PushTarget(_RenderTarget);
@@ -218,7 +189,7 @@ namespace NerdThings::Ngine {
                 Draw();
 
                 // If using a target, draw target
-                if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
+                if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                     auto popped = false;
                     Graphics::GraphicsManager::PopTarget(popped);
 
@@ -229,7 +200,7 @@ namespace NerdThings::Ngine {
                             iw * scale,
                             ih * scale
                         },
-                                               {
+                        {
                                                    0,
                                                    0,
                                                    static_cast<float>(_RenderTarget->Width),
@@ -248,7 +219,7 @@ namespace NerdThings::Ngine {
                 auto renderTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(renderTime).count();
 
                 // Wait for the rest of the frame
-                if (renderTimeMS < 1000 / _DrawFPS) {
+                if (renderTimeMS < 1000 / Config.DrawFPS) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(renderTimeMS));
                 }
             } else {
@@ -256,7 +227,7 @@ namespace NerdThings::Ngine {
             }
 
             // Reset mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->IsValid()) {
+            if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(1, 1);
                 Input::Mouse::SetOffset(0, 0);
             }
@@ -281,19 +252,24 @@ namespace NerdThings::Ngine {
 
         // Close window
         ConsoleMessage("Closing window.", "NOTICE", "Game");
-        Window::Cleanup();
+        Window::Close();
 
         ConsoleMessage("Game successfully stopped.", "NOTICE", "Game");
 #endif
     }
 
     void Game::SetFPS(int FPS_) {
-        _UpdateFPS = FPS_;
-        _DrawFPS = FPS_;
+        Config.UpdateFPS = FPS_;
+        Config.DrawFPS = FPS_;
     }
 
     void Game::SetDrawFPS(int FPS_) {
-        _DrawFPS = FPS_;
+        Config.DrawFPS = FPS_;
+    }
+
+    void Game::SetIntendedSize(TVector2 size_) {
+        Config.TargetWidth = (int)size_.X;
+        Config.TargetHeight = (int)size_.Y;
     }
 
     void Game::SetIsRunning(bool running_) {
@@ -313,7 +289,7 @@ namespace NerdThings::Ngine {
     }
 
     void Game::SetUpdateFPS(int FPS_) {
-        _UpdateFPS = FPS_;
+        Config.UpdateFPS = FPS_;
     }
 
     void Game::Update() {

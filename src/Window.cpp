@@ -2,19 +2,14 @@
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL33)
-    #include <glad/glad.h>
+#include <glad/glad.h>
 #elif defined(GRAPHICS_OPENGLES2)
-    #include <EGL/egl.h>
-    #include <EGL/eglext.h>
-
-    // Defined here so it doesn't appear in Window.h
-    //static EGLDisplay Display; // Native Display device (physical screen connection)
-    //static EGLSurface surface; // Surface to draw on, framebuffers (connected to context)
-    //static EGLContext context; // Graphic context, mode in which drawing can be done
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-    #include <GLFW/glfw3.h>
+#include <GLFW/glfw3.h>
 #elif defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
 #include "Platform/UWP/GameApp.h"
@@ -30,10 +25,13 @@
 namespace NerdThings::Ngine {
     // Private Fields
 
-    int Window::_Height = 0;
-    int Window::_Width = 0;
+    int Window::_CurrentHeight = 0;
+    int Window::_CurrentWidth = 0;
+    bool Window::_Initialized = false;
 
     // Public Fields
+
+    TWindowConfig Window::Config = {};
 
 #if defined(PLATFORM_DESKTOP)
     void *Window::WindowPtr = nullptr;
@@ -61,11 +59,44 @@ namespace NerdThings::Ngine {
         Audio::AudioDevice::Close();
 
         // Close window
-        Window::Cleanup();
+        Window::Close();
     }
 #endif
 
-    void Window::Cleanup() {
+    void Window::ApplyConfig() {
+        if (!_Initialized) return;
+
+#if defined(PLATFORM_DESKTOP)
+        // V-Sync
+        if (Config.VSync) {
+            glfwSwapInterval(1);
+        }
+
+        // Window Resize
+        glfwSetWindowAttrib((GLFWwindow *)WindowPtr, GLFW_RESIZABLE, Config.Resizable ? 1 : 0);
+
+        // Window title
+        glfwSetWindowTitle((GLFWwindow *)WindowPtr, Config.Title.c_str());
+
+        // TODO: Fullscreen toggling
+
+        // Window icon
+        if (Config.Icon != nullptr && Config.Icon->Format == Graphics::UNCOMPRESSED_R8G8B8A8) {
+            GLFWimage icon[1] = {0};
+
+            icon[0].width = Config.Icon->Width;
+            icon[0].height = Config.Icon->Height;
+            icon[0].pixels = (unsigned char *)Config.Icon->PixelData;
+
+            glfwSetWindowIcon((GLFWwindow *)WindowPtr, 1, icon);
+        }
+
+        // Window size
+        glfwSetWindowSize((GLFWwindow *)WindowPtr, Config.Width, Config.Height);
+#endif
+    }
+
+    void Window::Close() {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Window closing, clean OpenGL state
         Graphics::OpenGL::GL::Cleanup();
@@ -98,19 +129,21 @@ namespace NerdThings::Ngine {
         ConsoleMessage("Closed window.", "NOTICE", "Window");
 
         // Unset width and height as the window is closed
-        _Width = 0;
-        _Height = 0;
+        _CurrentWidth = 0;
+        _CurrentHeight = 0;
+
+        _Initialized = false;
     }
 
     int Window::GetHeight() {
-        return _Height;
+        return _CurrentHeight;
     }
 
     int Window::GetWidth() {
-        return _Width;
+        return _CurrentWidth;
     }
 
-    void Window::Init(int width_, int height_, const std::string& title_) {
+    void Window::Init() {
         // Init
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
@@ -120,8 +153,13 @@ namespace NerdThings::Ngine {
         }
         ConsoleMessage("Initialised GLFW.", "NOTICE", "Window");
 
+        // Set defaults
         glfwDefaultWindowHints();
 
+        // Apply config
+        if (Config.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
+
+        // Set version string
         switch(Graphics::OpenGL::GL::GetGLVersion()) {
             case Graphics::OpenGL::OPENGL_21:
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
@@ -151,26 +189,26 @@ namespace NerdThings::Ngine {
         // Creation
 #if defined(PLATFORM_DESKTOP)
         // Create window
-        WindowPtr = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
+        WindowPtr = glfwCreateWindow(Config.Width, Config.Height, Config.Title.c_str(), nullptr, nullptr);
         if (!WindowPtr) {
             glfwTerminate();
             throw std::runtime_error("Failed to create game window.");
         }
 
         // Get initial size
-        glfwGetWindowSize((GLFWwindow *)WindowPtr, &_Width, &_Height);
+        glfwGetWindowSize((GLFWwindow *)WindowPtr, &_CurrentWidth, &_CurrentHeight);
 
         // Use new context
         glfwMakeContextCurrent((GLFWwindow*) WindowPtr);
 #elif defined(PLATFORM_UWP)
         EGLint samples = 0;
         EGLint sampleBuffer = 0;
-        // TODO: MSAA support
-        //if (configFlags & FLAG_MSAA_4X_HINT)
-        //{
-        //    samples = 4;
-        //    sampleBuffer = 1;
-        //}
+
+        if (Config.MSAA_4X) {
+            // TODO: Will not enable until we come up with a way to make this work on UWP
+            //samples = 4;
+            //sampleBuffer = 1;
+        }
 
         // TODO: Review all of this that came from raylib to determine if this is all up to scratch
         const EGLint framebufferAttribs[] =
@@ -333,6 +371,7 @@ namespace NerdThings::Ngine {
 
         //Surface = eglCreateWindowSurface(Display, config, reinterpret_cast<IInspectable*>(surfaceCreationProperties), surfaceAttributes);
         Surface = eglCreateWindowSurface(Display, config, (EGLNativeWindowType)CoreWindow::GetForCurrentThread(), surfaceAttributes);
+        
         if (Surface == EGL_NO_SURFACE)
         {
             throw std::runtime_error("Failed to create EGL fullscreen surface");
@@ -345,8 +384,8 @@ namespace NerdThings::Ngine {
         }
 
         // Get EGL Display window size
-        eglQuerySurface(Display, Surface, EGL_WIDTH, &_Width);
-        eglQuerySurface(Display, Surface, EGL_HEIGHT, &_Height);
+        eglQuerySurface(Display, Surface, EGL_WIDTH, &_CurrentWidth);
+        eglQuerySurface(Display, Surface, EGL_HEIGHT, &_CurrentHeight);
 
         if (eglMakeCurrent(Display, Surface, Surface, Context) == EGL_FALSE)
         {
@@ -364,6 +403,12 @@ namespace NerdThings::Ngine {
         ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "Window");
 #endif
 
+        // Initialized
+        _Initialized = true;
+
+        // Apply any after-creation config
+        ApplyConfig();
+
         // Init Input
         Input::Gamepad::Init();
         Input::Mouse::Init();
@@ -377,7 +422,7 @@ namespace NerdThings::Ngine {
         glfwPollEvents();
 
         // Query dimensions
-        glfwGetWindowSize((GLFWwindow *)WindowPtr, &_Width, &_Height);
+        glfwGetWindowSize((GLFWwindow *)WindowPtr, &_CurrentWidth, &_CurrentHeight);
 #elif defined(PLATFORM_UWP)
         // Poll window events
         if (ShouldRenderFrame())
@@ -386,21 +431,34 @@ namespace NerdThings::Ngine {
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
 
         // Query dimensions
-        eglQuerySurface(Display, Surface, EGL_WIDTH, &_Width);
-        eglQuerySurface(Display, Surface, EGL_HEIGHT, &_Height);
+        eglQuerySurface(Display, Surface, EGL_WIDTH, &_CurrentWidth);
+        eglQuerySurface(Display, Surface, EGL_HEIGHT, &_CurrentHeight);
 #endif
+    }
+
+    void Window::SetConfig(const TWindowConfig &config_) {
+        Config = config_;
+        ApplyConfig();
+    }
+
+    void Window::SetFullscreen(bool fullscreen_) {
+        Config.Fullscreen = fullscreen_;
+        ApplyConfig();
     }
 
     void Window::SetResizable(bool resizable_) {
-#if defined(PLATFORM_DESKTOP)
-        glfwSetWindowAttrib((GLFWwindow *)WindowPtr, GLFW_RESIZABLE, resizable_ ? 1 : 0);
-#endif
+        Config.Resizable = resizable_;
+        ApplyConfig();
     }
 
     void Window::SetTitle(const std::string& title_) {
-#if defined(PLATFORM_DESKTOP)
-        glfwSetWindowTitle((GLFWwindow *)WindowPtr, title_.c_str());
-#endif
+        Config.Title = title_;
+        ApplyConfig();
+    }
+
+    void Window::SetVSync(bool vsync_) {
+        Config.VSync = vsync_;
+        ApplyConfig();
     }
 
     bool Window::ShouldClose() {

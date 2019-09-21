@@ -58,6 +58,7 @@ namespace NerdThings::Ngine {
         void UnBind() {
             if (AttachedHandler != nullptr)
                 AttachedHandler->UnBind(this);
+            AttachedHandler = nullptr;
         }
     };
 

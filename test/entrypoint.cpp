@@ -317,9 +317,7 @@ class TestGame : public Game {
     TestScene *_Scene;
 public:
 
-    TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
-            width_, height_, 1280, 768, DrawFPS_, UpdateFPS_, title_,
-            MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
+    TestGame(const TGameConfig &config_) : Game(config_) {
         //0) {
         OnRun.Bind(this, &TestGame::Init);
 
@@ -360,7 +358,20 @@ int main() {
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^) {
 #endif
-    auto game = TestGame(1920 / 2, 1080 / 2, 60, 60, "Hi");
+    TGameConfig gameConfig;
+    gameConfig.TargetWidth = 1280;
+    gameConfig.TargetHeight = 768;
+    gameConfig.MaintainResolution = true;
+
+    TWindowConfig windowConfig;
+    windowConfig.Resizable = true;
+    windowConfig.MSAA_4X = true;
+    windowConfig.Width = 1920/2;
+    windowConfig.Height = 1080/2;
+    windowConfig.Title = "Test Game";
+    Window::SetConfig(windowConfig);
+
+    auto game = TestGame(gameConfig);
 
 #if defined(PLATFORM_UWP)
     CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));

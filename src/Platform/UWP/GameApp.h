@@ -68,7 +68,7 @@ namespace NerdThings::Ngine::UWP {
         virtual void SetWindow(Windows::UI::Core::CoreWindow^ window)
         {
             // Init
-            Window::Init(_Width, _Height, "");
+            Window::Init();
         }
 
         virtual void Load(Platform::String^ entryPoint) {}

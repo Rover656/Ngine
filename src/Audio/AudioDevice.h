@@ -24,8 +24,6 @@
 #define DEVICE_CHANNELS 2
 #define DEVICE_SAMPLE_RATE 44100
 
-#define MAX_AUDIO_BUFFER_POOL_CHANNELS 16
-
 #define AUDIO_BUFFER_SIZE 4096
 
 namespace NerdThings::Ngine::Audio {

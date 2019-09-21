@@ -385,8 +385,6 @@ namespace NerdThings::Ngine::Audio {
         ConsoleMessage("Audio backend: miniaudio/" + std::string(ma_get_backend_name(_Context.backend)), "NOTICE", "AudioDevice");
         ConsoleMessage("Audio format: " + std::string(ma_get_format_name(_Device.playback.format)) + " -> " + std::string(ma_get_format_name(_Device.playback.internalFormat)), "NOTICE", "AudioDevice");
 
-        ConsoleMessage("Audio multichannel pool size: " + std::to_string(MAX_AUDIO_BUFFER_POOL_CHANNELS), "NOTICE", "AudioDevice");
-
         _Initialized = true;
     }
 
