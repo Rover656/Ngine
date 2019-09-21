@@ -358,6 +358,9 @@ int main() {
 [Platform::MTAThread]
 int main(Platform::Array<Platform::String^>^) {
 #endif
+    // Load icon
+    auto icon = new TImage(TPath::GetExecutableDirectory() / "content" / "test_icon.png");
+
     TGameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
@@ -369,6 +372,7 @@ int main(Platform::Array<Platform::String^>^) {
     windowConfig.Width = 1920/2;
     windowConfig.Height = 1080/2;
     windowConfig.Title = "Test Game";
+    windowConfig.Icon = icon;
     Window::SetConfig(windowConfig);
 
     auto game = TestGame(gameConfig);
@@ -378,6 +382,9 @@ int main(Platform::Array<Platform::String^>^) {
 #else
     game.Run();
 #endif
+
+    // Delete icon
+    delete icon;
 
     return 0;
 }
