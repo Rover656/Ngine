@@ -139,7 +139,10 @@ namespace NerdThings::Ngine {
             // Get the time since the last frame
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
             started = std::chrono::high_resolution_clock::now();
-            lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
+
+            // Only increment lag if visible or allow running while hidden
+            if (Window::Visible() || Config.RunWhileHidden)
+                lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
             // Update timestep if FPS has changed
             if (Config.UpdateFPS != lastFPS) {
@@ -158,14 +161,17 @@ namespace NerdThings::Ngine {
             // Skip if we are going to catch up more than 5 seconds, that is too much (May not fix what I am experiencing)
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
-            // Run Updates
-            while (lag >= timeStep) {
-                // Run a single update
-                lag -= timeStep;
-                Update();
+            // Run Updates (only if visible or run while hidden)
+            if (Window::Visible() || Config.RunWhileHidden) {
+                while (lag >= timeStep) {
+                    // Run a single update
+                    lag -= timeStep;
+                    Update();
+                }
             }
 
-            if (Window::ShouldRenderFrame()) { // See if we should render a frame to the display
+            // Only render if visible
+            if (Window::Visible()) {
                 // Take note of starting
                 auto drawStart = std::chrono::high_resolution_clock::now();
 

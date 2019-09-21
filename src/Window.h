@@ -186,14 +186,14 @@ namespace NerdThings::Ngine {
         static bool ShouldClose();
 
         /*
-         * Whether or not to run this frame
-         */
-        static bool ShouldRenderFrame();
-
-        /*
          * Swap the window buffers
          */
         static void SwapBuffers();
+
+        /*
+         * Whether or not the window is visible.
+         */
+        static bool Visible();
     };
 }
 

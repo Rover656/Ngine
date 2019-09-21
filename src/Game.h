@@ -43,9 +43,9 @@ namespace NerdThings::Ngine {
         bool MaintainResolution = false;
 
         /*
-         * Run the game while minimized
+         * Run the game while not visible.
          */
-        bool RunMinimized = false;
+        bool RunWhileHidden = true;
 
         /*
          * Target game width

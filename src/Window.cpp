@@ -470,19 +470,20 @@ namespace NerdThings::Ngine {
         return true;
     }
 
-    bool Window::ShouldRenderFrame()
-    {
-#if defined(PLATFORM_UWP)
-        return CoreWindow::GetForCurrentThread()->Visible == true;
-#endif
-        return true;
-    }
-
     void Window::SwapBuffers() {
 #if defined(PLATFORM_DESKTOP)
         glfwSwapBuffers((GLFWwindow *)WindowPtr);
 #elif defined(PLATFORM_UWP)
         eglSwapBuffers(Display, Surface);
 #endif
+    }
+
+    bool Window::Visible() {
+#if defined(PLATFORM_DESKTOP)
+        return glfwGetWindowAttrib((GLFWwindow *)WindowPtr, GLFW_ICONIFIED) == 0;
+#elif defined(PLATFORM_UWP)
+        return CoreWindow::GetForCurrentThread()->Visible == true;
+#endif
+        return true;
     }
 }
