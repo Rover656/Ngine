@@ -467,6 +467,127 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
+    void Renderer::DrawTextRect(TFont *font_, const std::string &string_, TRectangle rectangle_, float fontSize_,
+                                float spacing_, TColor color_, bool wordWrap_) {
+        DrawTextRectEx(font_, string_, rectangle_, fontSize_, spacing_, color_, 0, 0, TColor::White, TColor::White, wordWrap_);
+    }
+
+    void Renderer::DrawTextRectEx(TFont *font_, const std::string &string_, TRectangle rectangle_, float fontSize_,
+                                  float spacing_, TColor color_, int selectStart_, int selectLength_,
+                                  TColor selectText_, TColor selectBack_, bool wordWrap_) {
+        int textOffsetY = 0;        // Required for line break!
+        float textOffsetX = 0.0f;   // Offset between characters
+        float scaleFactor = 0.0f;
+
+        int letter = 0;             // Current character
+        int index = 0;              // Index position in sprite font
+
+        scaleFactor = fontSize_/font_->BaseSize;
+        int startLine = -1;
+        int endLine = -1;
+        int lastk = -1;
+
+        bool measureState = wordWrap_ ? true : false;
+
+        for (auto i = 0, k = 0; i < string_.length(); i++, k++) {
+            int glyphWidth = 0;
+            int next = 0;
+            letter = string_[i];
+            index = font_->GetGlyphIndex(letter);
+
+            if (letter != '\n') {
+                glyphWidth = (font_->Characters[index].AdvanceX == 0)?
+                             (int)(font_->Characters[index].Rectangle.Width*scaleFactor + spacing_):
+                             (int)(font_->Characters[index].AdvanceX*scaleFactor + spacing_);
+            }
+
+            if (measureState) {
+                if ((letter == ' ') || (letter == '\t') || (letter == '\n')) endLine = i;
+
+                if ((textOffsetX + glyphWidth + 1) >= rectangle_.Width)
+                {
+                    endLine = (endLine < 1)? i : endLine;
+                    if (i == endLine) endLine -= next;
+                    if ((startLine + next) == endLine) endLine = i - next;
+                    measureState = !measureState;
+                }
+                else if ((i + 1) == string_.length())
+                {
+                    endLine = i;
+                    measureState = !measureState;
+                }
+                else if (letter == '\n')
+                {
+                    measureState = !measureState;
+                }
+
+                if (!measureState)
+                {
+                    textOffsetX = 0;
+                    i = startLine;
+                    glyphWidth = 0;
+
+                    // Save character position when we switch states
+                    int tmp = lastk;
+                    lastk = k - 1;
+                    k = tmp;
+                }
+            } else {
+                if (letter == '\n')
+                {
+                    if (!wordWrap_)
+                    {
+                        textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                        textOffsetX = 0;
+                    }
+                }
+                else
+                {
+                    if (!wordWrap_ && ((textOffsetX + glyphWidth + 1) >= rectangle_.Width))
+                    {
+                        textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                        textOffsetX = 0;
+                    }
+
+                    if ((textOffsetY + (int)(font_->BaseSize*scaleFactor)) > rectangle_.Height) break;
+
+                    // Draw selected
+                    bool isGlyphSelected = false;
+                    if ((selectStart_ >= 0) && (k >= selectStart_) && (k < (selectStart_ + selectLength_)))
+                    {
+                        TRectangle strec = {rectangle_.X + textOffsetX-1, rectangle_.Y + textOffsetY, (float)glyphWidth, font_->BaseSize*scaleFactor };
+                        DrawRectangle(strec, selectBack_);
+                        isGlyphSelected = true;
+                    }
+
+                    // Draw glyph
+                    if ((letter != ' ') && (letter != '\t'))
+                    {
+                        DrawTexture(font_->Texture.get(), { rectangle_.X + textOffsetX + font_->Characters[index].OffsetX*scaleFactor,
+                                                            rectangle_.Y + textOffsetY + font_->Characters[index].OffsetY*scaleFactor,
+                                                            font_->Characters[index].Rectangle.Width*scaleFactor,
+                                                            font_->Characters[index].Rectangle.Height*scaleFactor },
+                                                            font_->Characters[index].Rectangle,
+                                                            (!isGlyphSelected)? color_ : selectText_, { 0, 0 }, 0.0f);
+                    }
+                }
+
+                if (wordWrap_ && (i == endLine))
+                {
+                    textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                    textOffsetX = 0;
+                    startLine = endLine;
+                    endLine = -1;
+                    glyphWidth = 0;
+                    k = lastk;
+                    measureState = !measureState;
+                }
+            }
+
+            textOffsetX += glyphWidth;
+        }
+    }
+
     void
     Renderer::DrawTexture(TTexture2D *texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
                           float rotation_) {

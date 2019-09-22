@@ -425,7 +425,7 @@ namespace NerdThings::Ngine {
         glfwGetWindowSize((GLFWwindow *)WindowPtr, &_CurrentWidth, &_CurrentHeight);
 #elif defined(PLATFORM_UWP)
         // Poll window events
-        if (ShouldRenderFrame())
+        if (Visible())
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
         else
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);

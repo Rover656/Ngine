@@ -18,7 +18,7 @@
 
 #include "../../ngine.h"
 
-#include "Graphics/Renderer.h"
+#include "../../Graphics/Renderer.h"
 #include "../UIControlSized.h"
 #include "../UIPanel.h"
 
@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * The font to be used
          */
-        Graphics::TFont *_Font;
+        Graphics::TFont *_Font = nullptr;
 
         /*
          * The font size
@@ -91,12 +91,9 @@ namespace NerdThings::Ngine::UI::Controls {
 
             auto controlContentRect = style.GetContentRect(GetRenderRectangle());
 
-            auto textSize = _Font->MeasureString(_Text, _FontSize, _FontSpacing);
-
-            // BIG TODO: Add this support again, i omitted it as idk if we're gonna do it like this
-//            if (_Font != nullptr && style.DrawDefaults)
-//                Graphics::Renderer::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
-//                                                 style.ForeColor); // TODO: Wordwrap option
+            if (_Font != nullptr && style.DrawDefaults)
+                Graphics::Renderer::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
+                                                 style.ForeColor); // TODO: Wordwrap option
         }
 
         Graphics::TFont *GetFont() {

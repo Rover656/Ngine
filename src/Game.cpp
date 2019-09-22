@@ -161,6 +161,11 @@ namespace NerdThings::Ngine {
             // Skip if we are going to catch up more than 5 seconds, that is too much (May not fix what I am experiencing)
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
+            // Poll inputs
+            Input::Gamepad::PollInputs();
+            Input::Mouse::PollInputs();
+            Input::Keyboard::PollInputs();
+
             // Run Updates (only if visible or run while hidden)
             if (Window::Visible() || Config.RunWhileHidden) {
                 while (lag >= timeStep) {
@@ -238,11 +243,8 @@ namespace NerdThings::Ngine {
                 Input::Mouse::SetOffset(0, 0);
             }
 
-            // Poll events and inputs
+            // Poll events
             Window::PollEvents();
-            Input::Gamepad::PollInputs();
-            Input::Mouse::PollInputs();
-            Input::Keyboard::PollInputs();
         }
 
         // Delete render target now so that it doesnt try after GL is gone.

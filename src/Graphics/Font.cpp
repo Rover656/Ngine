@@ -38,6 +38,7 @@ namespace NerdThings::Ngine::Graphics {
     TFont *TFont::GetDefaultFont() {
         if (DefaultFont == nullptr || !DefaultFont->IsValid()) {
             //_DefaultFont = std::unique_ptr<TFont>(FromRaylibFont(GetFontDefault()));
+            DefaultFont = std::unique_ptr<TFont>(TFont::LoadTTFFont(Filesystem::TPath("C:\\Windows\\Fonts\\Arial.ttf"), 36));
         }
 
         return DefaultFont.get();
@@ -102,8 +103,8 @@ namespace NerdThings::Ngine::Graphics {
             index = GetGlyphIndex(letter);
 
             if (letter != '\n') {
-                if (Characters[index].AdvanceX == 0) textWidth  += ((float)Characters[index].Rectangle.Width*scaleFactor + spacing_);
-                else textWidth  += ((float)Characters[index].AdvanceX*scaleFactor + spacing_);
+                if (Characters[index].AdvanceX == 0) textWidth += ((float)Characters[index].Rectangle.Width*scaleFactor + spacing_);
+                else textWidth += ((float)Characters[index].AdvanceX*scaleFactor + spacing_);
             } else {
                 if (tempTextWidth < textWidth) tempTextWidth = textWidth;
                 lenCounter = 0;
@@ -122,7 +123,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool TFont::IsValid() const {
-        return false;
+        return Texture->IsValid();
     }
 
     void TFont::Unload() {

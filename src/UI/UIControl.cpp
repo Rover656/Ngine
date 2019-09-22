@@ -22,9 +22,11 @@ namespace NerdThings::Ngine::UI {
     // Destructor
 
     UIControl::~UIControl() {
-        for (auto child : _Children) {
-            delete child.second;
+        for (auto child : _ChildrenOrdered) {
+            delete child;
         }
+        _Children.clear();
+        _ChildrenOrdered.clear();
     }
 
     // Public Method(s)
@@ -52,8 +54,8 @@ namespace NerdThings::Ngine::UI {
     void UIControl::DrawChildren() {
         // Draw children
 
-        for (auto pair : _Children) {
-            pair.second->Draw();
+        for (auto child : _ChildrenOrdered) {
+            child->Draw();
         }
     }
 
@@ -159,8 +161,8 @@ namespace NerdThings::Ngine::UI {
     }
 
     void UIControl::Update() {
-        for (auto pair : _Children) {
-            pair.second->Update();
+        for (auto child : _ChildrenOrdered) {
+            child->Update();
         }
     }
 }

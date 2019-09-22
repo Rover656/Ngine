@@ -143,7 +143,7 @@ public:
 class TestWidget : public UIWidget {
 public:
     TestWidget(TVector2 pos_) : UIWidget(pos_) {
-        return; // No thanks, not yet...
+        auto fnt = TFont::GetDefaultFont();
         auto panelStyle = TUIStyle();
         panelStyle.BackColor = TColor::White;
         panelStyle.BorderColor = TColor::Gray;
@@ -160,12 +160,12 @@ public:
         auto style = TUIStyle();
         style.BorderThickness = 2;
         style.BorderColor = TColor::Blue;
-        style.SetPadding(5);
+        //style.SetPadding(5);
         style.BackColor = TColor::Green;
         style.Margin[2] = 5; // 5 bottom margin
         style.Margin[3] = 5; // 5 left margin
 
-        auto l = new Label("Hello world", TFont::GetDefaultFont());
+        auto l = new Label("Hello World", TFont::GetDefaultFont());
         style.ForeColor = Graphics::TColor::Orange;
         l->SetFontSize(32);
         l->SetStyle(style);
@@ -184,14 +184,13 @@ public:
         auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 200, 100);
         btn->OnClick.Bind(&TestWidget::Test);
         btn->SetStyle(bStyle);
-
         GetPanel()->AddChild("testButton", (UIControl *)btn);
 
-        auto imgStyle = TUIStyle();
-        imgStyle.Margin[0] = 5;
-        auto img = new Image(TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
-        img->SetStyle(imgStyle);
-        //GetPanel()->AddChild("testImage", img);
+//        auto imgStyle = TUIStyle();
+//        imgStyle.Margin[0] = 5;
+//        auto img = new Image(TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
+//        img->SetStyle(imgStyle);
+//        //GetPanel()->AddChild("testImage", img);
     }
 
     static void Test(UIControlEventArgs &e) {
@@ -271,7 +270,7 @@ public:
 
         //Renderer::DrawFPS({500, 300 });
 
-        //widg.Draw();
+        widg.Draw();
 
         //Renderer::DrawTexture(TestFont->Texture, {100, 100}, TColor::White);
 
@@ -309,7 +308,7 @@ public:
     }
 
     void Update(EventArgs &e) {
-        //widg.Update();
+        widg.Update();
     }
 };
 
@@ -318,7 +317,6 @@ class TestGame : public Game {
 public:
 
     TestGame(const TGameConfig &config_) : Game(config_) {
-        //0) {
         OnRun.Bind(this, &TestGame::Init);
 
         Keyboard::SetExitKey(KEY_ESCAPE);
@@ -369,6 +367,7 @@ int main(Platform::Array<Platform::String^>^) {
     TWindowConfig windowConfig;
     windowConfig.Resizable = true;
     windowConfig.MSAA_4X = true;
+    windowConfig.VSync = true;
     windowConfig.Width = 1920/2;
     windowConfig.Height = 1080/2;
     windowConfig.Title = "Test Game";
