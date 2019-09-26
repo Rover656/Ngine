@@ -124,6 +124,11 @@ namespace NerdThings::Ngine::Audio {
 
         static std::vector<TMusic *> _ActiveMusic;
 
+        /*
+         * Number of loops completed since last play.
+         */
+        int _LoopsCompleted;
+
         // Private Methods
 
         /*

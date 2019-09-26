@@ -91,11 +91,10 @@ namespace NerdThings::Ngine::Filesystem {
         auto files = contentDir.GetFilesRecursive();
 
         // File extension definitions
-        // TODO: Align this with whatever spec we will support
-        std::vector<std::string> fntExts = {"ttf", "otf"}; // TODO: Spritefont support
+        std::vector<std::string> fntExts = {"ttf", "otf"};
         std::vector<std::string> musExts = {"ogg", "flac", "mp3"};//, "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
-        std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd", "hdr", "dds", "pkm", "ktx", "pvr", "astc"};
+        std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd"};
 
         // Load all files
         for (auto file : files) {

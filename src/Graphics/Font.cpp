@@ -21,7 +21,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Fields
 
-    std::unique_ptr<TFont> TFont::DefaultFont;
+    TFont *TFont::DefaultFont;
 
     // Public Constructor(s)
 
@@ -36,12 +36,7 @@ namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
     TFont *TFont::GetDefaultFont() {
-        if (DefaultFont == nullptr || !DefaultFont->IsValid()) {
-            //_DefaultFont = std::unique_ptr<TFont>(FromRaylibFont(GetFontDefault()));
-            DefaultFont = std::unique_ptr<TFont>(TFont::LoadTTFFont(Filesystem::TPath("C:\\Windows\\Fonts\\Arial.ttf"), 36));
-        }
-
-        return DefaultFont.get();
+        return DefaultFont;
     }
 
     int TFont::GetGlyphIndex(int char_) const {
@@ -55,6 +50,10 @@ namespace NerdThings::Ngine::Graphics {
 
     TTexture2D *TFont::GetTexture() const {
         return Texture.get();
+    }
+
+    bool TFont::IsValid() const {
+        return Texture->IsValid();
     }
 
     TFont *TFont::LoadTTFFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
@@ -122,8 +121,8 @@ namespace NerdThings::Ngine::Graphics {
         return vec;
     }
 
-    bool TFont::IsValid() const {
-        return Texture->IsValid();
+    void TFont::SetDefaultFont(TFont *font_) {
+        DefaultFont = font_;
     }
 
     void TFont::Unload() {
@@ -138,13 +137,6 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     // Private Methods
-
-    // SDF default values
-#define SDF_CHAR_PADDING            4
-#define SDF_ON_EDGE_VALUE         128
-#define SDF_PIXEL_DIST_SCALE     64.0f
-
-#define BITMAP_ALPHA_THRESHOLD     80
 
     // All from raylib.
 

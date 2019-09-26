@@ -76,7 +76,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The default font
          */
-        static std::unique_ptr<TFont> DefaultFont;
+        static TFont *DefaultFont;
 
         /*
          * Font texture
@@ -127,9 +127,14 @@ namespace NerdThings::Ngine::Graphics {
         TTexture2D *GetTexture() const;
 
         /*
+         * Whether or not the font is valid.
+         */
+        bool IsValid() const override;
+
+        /*
          * Load a true type font with specified characters
          */
-        static TFont *LoadTTFFont(const Filesystem::TPath &path_, int baseSize_ = 12, std::vector<int> fontChars_ = std::vector<int>());
+        static TFont *LoadTTFFont(const Filesystem::TPath &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
 
         /*
          * Measure the dimensions of a string
@@ -137,9 +142,9 @@ namespace NerdThings::Ngine::Graphics {
         TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
 
         /*
-         * Whether or not the font is valid.
+         * Set the default font
          */
-        bool IsValid() const override;
+        static void SetDefaultFont(TFont *font_);
 
         /*
          * Unload the font

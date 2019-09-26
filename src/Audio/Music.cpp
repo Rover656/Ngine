@@ -219,13 +219,16 @@ namespace NerdThings::Ngine::Audio {
 
         if (streamEnding) {
             // Stop music
-            Stream.Buffer->Stop();
+            Stop();
+
+            // Increase completed loops
+            _LoopsCompleted++;
 
             // Decrease loop count to stop when required.
-            if (LoopCount > 1) {
-                LoopCount--;
-                Stream.Buffer->Play();
-            } else if (LoopCount == 0) Stream.Buffer->Play();
+            if (_LoopsCompleted < LoopCount || LoopCount == 0) Play();
+
+            // Reset if complete.
+            if (_LoopsCompleted == LoopCount && LoopCount != 0) _LoopsCompleted = 0;
         } else {
             if (Stream.Buffer->IsPlaying()) Play();
         }

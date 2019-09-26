@@ -220,12 +220,7 @@ public:
 
     TilesetCanvas *testTiles;
 
-    TFont *TestFont;
-
     TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
-
-        TestFont = TFont::LoadTTFFont(TPath("C:\\Windows\\Fonts\\Arial.ttf"), 36);
-
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
         AddEntity("Player", new PlayerEntity(this, {100, 100}));
@@ -258,25 +253,13 @@ public:
 
     void OnLoaded(SceneLoadEventArgs &e) {
         Resources::GetMusic("test_music")->Play();
-        AudioDevice::SetMasterVolume(0.5);
+        AudioDevice::SetMasterVolume(0.25);
     }
 
     int rot = 0;
 
     void Draw(EventArgs &e) {
-        // for (auto i = 0; i < 800; i++) {
-        //     Renderer::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
-        // }
-
-        //Renderer::DrawFPS({500, 300 });
-
         widg.Draw();
-
-        //Renderer::DrawTexture(TestFont->Texture, {100, 100}, TColor::White);
-
-        Renderer::DrawText(TestFont, "Hello World.", {100, 100}, 32, 1, TColor::Green);
-
-        Renderer::DrawLine({0, 0}, {1280, 768}, TColor::Pink, 5);
 
         rot += Mouse::GetMouseWheelYDelta();
         rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
@@ -285,22 +268,10 @@ public:
 
         if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
             testTiles->Draw({0, 0});
-            //ConsoleMessage("PRESSED", "DEBUG", "entrypoint");
         }
-        //testTiles->Draw(Mouse::GetMousePosition());
-        //testTiles->GetTileset()->DrawTile({0, 0}, 1);
-
-        //Renderer::DrawTriangle({10, 10}, {50, 50}, {100, 100}, TColor::Red);
-
-        //Renderer::DrawLineStrip({{0, 0}, {100, 100}, {150, 50}}, TColor::Red, 5);
-
-        //Renderer::DrawCircle({100, 100}, 30, TColor::Red);
-        //Renderer::DrawCircleSector({100, 100}, 10, DegToRad(90), DegToRad(180), 2, TColor::Green);
 
         Renderer::DrawCircleLines({100, 100}, 30, TColor::Red);
         Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, TColor::Green);
-
-        //Renderer::DrawRectangleLines({200, 200, 50, 50}, TColor::Beige);
     }
 
     void DrawCam(EventArgs &e) {
@@ -325,6 +296,9 @@ public:
     void Init(EventArgs &e) {
         // Load all content
         Resources::LoadResources();
+
+        // Load arial as default font
+        TFont::SetDefaultFont(Resources::GetFont("Arial"));
 
         // Output readme
         auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory() / "content" / "readme.txt"));
