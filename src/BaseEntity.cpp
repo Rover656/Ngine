@@ -28,7 +28,7 @@ namespace NerdThings::Ngine {
 
     // Public Constructor(s)
 
-    BaseEntity::BaseEntity(Scene *parentScene_, const TVector2 position_, int depth_, bool canCull_)
+    BaseEntity::BaseEntity(Scene *parentScene_, const Vector2 position_, int depth_, bool canCull_)
         : _CanCull(canCull_), _Depth(depth_), _ParentScene(parentScene_), _Position(position_) {
         if (parentScene_ == nullptr)
             throw std::runtime_error("Cannot give an entity a null parent scene.");
@@ -50,7 +50,7 @@ namespace NerdThings::Ngine {
 
     // Public Methods
 
-    bool BaseEntity::CheckForCulling(TRectangle cullArea_) {
+    bool BaseEntity::CheckForCulling(Rectangle cullArea_) {
         return !cullArea_.Contains(GetPosition());
     }
 
@@ -85,7 +85,7 @@ namespace NerdThings::Ngine {
         return _Depth;
     }
 
-    TVector2 BaseEntity::GetOrigin() const {
+    Vector2 BaseEntity::GetOrigin() const {
         return _Origin;
     }
 
@@ -109,7 +109,7 @@ namespace NerdThings::Ngine {
         return _PersistentUpdates;
     }
 
-    TVector2 BaseEntity::GetPosition() const {
+    Vector2 BaseEntity::GetPosition() const {
         return _Position;
     }
 
@@ -125,7 +125,7 @@ namespace NerdThings::Ngine {
         return _Components.find(name_) != _Components.end();
     }
 
-    void BaseEntity::MoveBy(const TVector2 moveBy_) {
+    void BaseEntity::MoveBy(const Vector2 moveBy_) {
         _Position += moveBy_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
@@ -153,7 +153,7 @@ namespace NerdThings::Ngine {
         _Depth = depth_;
     }
 
-    void BaseEntity::SetOrigin(TVector2 origin_) {
+    void BaseEntity::SetOrigin(Vector2 origin_) {
         _Origin = origin_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
@@ -164,7 +164,7 @@ namespace NerdThings::Ngine {
         _PersistentUpdates = persistentUpdates_;
     }
 
-    void BaseEntity::SetPosition(const TVector2 position_) {
+    void BaseEntity::SetPosition(const Vector2 position_) {
         _Position = position_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }

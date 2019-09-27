@@ -5,9 +5,9 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructors
 
-    TImage::TImage() {}
+    Image::Image() {}
 
-    TImage::TImage(const Filesystem::TPath &path_) {
+    Image::Image(const Filesystem::Path &path_) {
         // Check format
         auto ext = path_.GetFileExtension();
 
@@ -19,7 +19,7 @@ namespace NerdThings::Ngine::Graphics {
             || ext == "pic"
             || ext == "psd") {
             // Open file
-            auto file = Filesystem::TFile(path_);
+            auto file = Filesystem::File(path_);
             file.Open(Filesystem::MODE_READ, true);
 
             // Load data
@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
             //stbi_set_flip_vertically_on_load(false);
 
             // Load image
-            *this = TImage(data, width, height, UNCOMPRESSED_R8G8B8A8);
+            *this = Image(data, width, height, UNCOMPRESSED_R8G8B8A8);
 
             // Close file
             stbi_image_free(data);
@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    TImage::TImage(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
+    Image::Image(unsigned char *pixelData_, int width_, int height_, PixelFormat format_) {
         // Bits per pixel
         int bpp = 0;
         if (format_ == UNCOMPRESSED_GRAYSCALE) bpp = 1;
@@ -60,21 +60,21 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    bool TImage::IsValid() const {
+    bool Image::IsValid() const {
         return Width > 0
                 && Height > 0
                 && PixelData != nullptr;
     }
 
-    TImage *TImage::LoadImage(const Filesystem::TPath &path_) {
-        return new TImage(path_);
+    Image *Image::LoadImage(const Filesystem::Path &path_) {
+        return new Image(path_);
     }
 
-    TImage *TImage::LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_) {
-        return new TImage(pixelData_, width_, height_, format_);
+    Image *Image::LoadPixels(unsigned char *pixelData_, int width_, int height_, PixelFormat format_) {
+        return new Image(pixelData_, width_, height_, format_);
     }
 
-    void TImage::Unload() {
+    void Image::Unload() {
         // Removes image data from the container (across all copies of this image)
         Format = UNCOMPRESSED_GRAYSCALE;
         Height = 0;

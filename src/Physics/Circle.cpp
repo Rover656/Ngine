@@ -16,9 +16,9 @@
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
-    bool TCircle::IsCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
-        const auto circle = dynamic_cast<TCircle*>(shape_);
+    bool Circle::IsCompatible(ICollisionShape *shape_) {
+        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
+        const auto circle = dynamic_cast<Circle*>(shape_);
 
         // Circle against Circle
         if (circle != nullptr)
@@ -31,11 +31,11 @@ namespace NerdThings::Ngine::Physics {
         return false;
     }
 
-    bool TCircle::RunCollisionCheck(ICollisionShape *shape_) {
+    bool Circle::RunCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
-        auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
-        const auto circle = dynamic_cast<TCircle*>(shape_);
+        auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
+        const auto circle = dynamic_cast<Circle*>(shape_);
 
         // Circle against Circle
 
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Physics {
     // Public Methods
 
 #ifdef INCLUDE_BOX2D
-    b2CircleShape TCircle::ToB2Shape() {
+    b2CircleShape Circle::ToB2Shape() {
         b2CircleShape shape;
         shape.m_p.Set(Center.X, Center.Y);
         shape.m_radius = Radius;

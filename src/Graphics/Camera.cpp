@@ -18,7 +18,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
-    void TCamera::BeginCamera() const {
+    void Camera::BeginCamera() const {
         // Force draw and load
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    void TCamera::EndCamera() const {
+    void Camera::EndCamera() const {
         // Force draw and reload
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
@@ -35,20 +35,20 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    TVector2 TCamera::ScreenToWorld(TVector2 pos_) {
+    Vector2 Camera::ScreenToWorld(Vector2 pos_) {
         return pos_.Transform(GetTranslationMatrix().Invert());
     }
 
-    TVector2 TCamera::WorldToScreen(TVector2 pos_) {
+    Vector2 Camera::WorldToScreen(Vector2 pos_) {
         return pos_.Transform(GetTranslationMatrix());
     }
 
-    TMatrix TCamera::GetTranslationMatrix() const {
-        TMatrix ret = TMatrix::Identity;
-        ret = ret * TMatrix::Translate(-Position.X, -Position.Y, 0);
-        ret = ret * TMatrix::RotateZ(Rotation);
-        ret = ret * TMatrix::Scale(Zoom, Zoom, 1);
-        ret = ret * TMatrix::Translate(Origin.X, Origin.Y, 0);
+    Matrix Camera::GetTranslationMatrix() const {
+        Matrix ret = Matrix::Identity;
+        ret = ret * Matrix::Translate(-Position.X, -Position.Y, 0);
+        ret = ret * Matrix::RotateZ(Rotation);
+        ret = ret * Matrix::Scale(Zoom, Zoom, 1);
+        ret = ret * Matrix::Translate(Origin.X, Origin.Y, 0);
         return ret;
     }
 }

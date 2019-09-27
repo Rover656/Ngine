@@ -24,7 +24,7 @@ namespace NerdThings::Ngine::Input {
     /*
      * A keyboard key
      */
-    enum EKey {
+    enum Key {
         // For special purposes
         KEY_NONE = 0,
 
@@ -151,11 +151,11 @@ namespace NerdThings::Ngine::Input {
         /*
          * The key this event is fore
          */
-        EKey Key;
+        Key Key;
 
         // Public Constructors
 
-        KeyEventArgs(EKey key_) : Key(key_) {}
+        KeyEventArgs(Input::Key key_) : Key(key_) {}
     };
 
     /*
@@ -165,9 +165,9 @@ namespace NerdThings::Ngine::Input {
         // Private Fields
 
         static bool _CurrentKeyState[];
-        static EKey _ExitKey;
+        static Key _ExitKey;
         static bool _PreviousKeyState[];
-        static EKey _LatestKeyPress;
+        static Key _LatestKeyPress;
         static bool _NextKeyState[];
 
         // Private Methods
@@ -178,7 +178,7 @@ namespace NerdThings::Ngine::Input {
 
 #elif defined(PLATFORM_UWP)
 
-        static EKey KeyFromVirtualKey(int key_);
+        static Key KeyFromVirtualKey(int key_);
 
         static void UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
         static void UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
@@ -203,7 +203,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Get the latest keypress
          */
-        static EKey GetLatestKeypress();
+        static Key GetLatestKeypress();
 
         /*
          * Init keyboard input APIs
@@ -213,22 +213,22 @@ namespace NerdThings::Ngine::Input {
         /*
          * Is the key down
          */
-        static bool IsKeyDown(EKey key_);
+        static bool IsKeyDown(Key key_);
 
         /*
          * Has a key been pressed this tick
          */
-        static bool IsKeyPressed(EKey key_);
+        static bool IsKeyPressed(Key key_);
 
         /*
          * Was the key released this frame
          */
-        static bool IsKeyReleased(EKey key_);
+        static bool IsKeyReleased(Key key_);
 
         /*
          * Is the key not pressed
          */
-        static bool IsKeyUp(EKey key_);
+        static bool IsKeyUp(Key key_);
 
         /*
          * Poll keyboard inputs
@@ -238,7 +238,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Set the key to close the game
          */
-        static void SetExitKey(EKey key_);
+        static void SetExitKey(Key key_);
     };
 }
 

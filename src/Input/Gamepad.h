@@ -18,7 +18,7 @@ namespace NerdThings::Ngine::Input {
     /*
      * Gamepad axis
      */
-    enum EGamepadAxis {
+    enum GamepadAxis {
         /*
          * Error checking for unknown axis used
          */
@@ -192,7 +192,7 @@ namespace NerdThings::Ngine::Input {
 
         // Private Methods
 
-        static EGamepadAxis GetAxis(int axis_);
+        static GamepadAxis GetAxis(int axis_);
         static EGamepadButton GetButton(int button_);
 
 #if defined(PLATFORM_UWP)
@@ -205,7 +205,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Get the value for an axis
          */
-        static float GetAxisValue(EGamepadNumber pad_, EGamepadAxis axis_);
+        static float GetAxisValue(EGamepadNumber pad_, GamepadAxis axis_);
 
         static void Init();
 

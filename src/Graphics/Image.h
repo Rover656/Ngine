@@ -11,7 +11,7 @@ namespace NerdThings::Ngine::Graphics {
      * Image/Texture Pixel Format.
      * Corresponds with OpenGL Abstraction values.
      */
-    enum EPixelFormat {
+    enum PixelFormat {
         UNCOMPRESSED_GRAYSCALE = 1,
         UNCOMPRESSED_GRAY_ALPHA,
         UNCOMPRESSED_R5G6B5,
@@ -38,13 +38,13 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * An image stored in CPU memory.
      */
-    struct NEAPI TImage : public TResource {
+    struct NEAPI Image : public IResource {
         // Public Fields
 
         /*
          * Pixel format
          */
-        EPixelFormat Format = UNCOMPRESSED_GRAYSCALE;
+        PixelFormat Format = UNCOMPRESSED_GRAYSCALE;
 
         /*
          * Image height
@@ -71,18 +71,18 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Create a null image
          */
-        TImage();
+        Image();
 
         /*
          * Load an image file
          */
-        TImage(const Filesystem::TPath &path_);
+        Image(const Filesystem::Path &path_);
 
         /*
          * Create an image from raw pixel data.
          * The pixel data will be copied.
          */
-        TImage(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
+        Image(unsigned char *pixelData_, int width_, int height_, PixelFormat format_);
 
         // Public Methods
 
@@ -94,13 +94,13 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load an image
          */
-        static TImage *LoadImage(const Filesystem::TPath &path_);
+        static Image *LoadImage(const Filesystem::Path &path_);
 
         /*
          * Load raw pixel data.
          * The pixel data will be copied.
          */
-        static TImage *LoadPixels(unsigned char *pixelData_, int width_, int height_, EPixelFormat format_);
+        static Image *LoadPixels(unsigned char *pixelData_, int width_, int height_, PixelFormat format_);
 
         /*
          * Unload image from memory.

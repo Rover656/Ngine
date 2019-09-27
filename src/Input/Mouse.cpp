@@ -22,14 +22,14 @@ namespace NerdThings::Ngine::Input {
 
     MouseState Mouse::_CurrentMouseState;
     MouseState Mouse::_LastMouseState;
-    TVector2 Mouse::_MouseOffset;
-    TVector2 Mouse::_MouseScale;
+    Vector2 Mouse::_MouseOffset;
+    Vector2 Mouse::_MouseScale;
     MouseState Mouse::_NextMouseState;
 
     // Private Methods
 
-    TVector2 Mouse::InternalGetMousePosition() {
-        auto pos = TVector2::Zero;
+    Vector2 Mouse::InternalGetMousePosition() {
+        auto pos = Vector2::Zero;
 #if defined(PLATFORM_DESKTOP)
         double x, y;
         glfwGetCursorPos((GLFWwindow*)Window::WindowPtr, &x, &y);
@@ -90,12 +90,12 @@ namespace NerdThings::Ngine::Input {
 
     // Public Methods
 
-    void Mouse::CancelButton(EMouseButton button_) {
+    void Mouse::CancelButton(MouseButton button_) {
         _CurrentMouseState.ButtonsDown[button_] = false;
         _NextMouseState.ButtonsDown[button_] = false;
     }
 
-    TVector2 Mouse::GetMousePosition() {
+    Vector2 Mouse::GetMousePosition() {
         auto pos = _CurrentMouseState.Position;
 
         // Apply translation
@@ -132,15 +132,15 @@ namespace NerdThings::Ngine::Input {
 #endif
     }
 
-    bool Mouse::IsButtonDown(EMouseButton button_) {
+    bool Mouse::IsButtonDown(MouseButton button_) {
         return _CurrentMouseState.ButtonsDown[button_];
     }
 
-    bool Mouse::IsButtonPressed(EMouseButton button_) {
+    bool Mouse::IsButtonPressed(MouseButton button_) {
         return _CurrentMouseState.ButtonsDown[button_] != _LastMouseState.ButtonsDown[button_] && _CurrentMouseState.ButtonsDown[button_] == true;
     }
 
-    bool Mouse::IsButtonReleased(EMouseButton button_) {
+    bool Mouse::IsButtonReleased(MouseButton button_) {
         return _CurrentMouseState.ButtonsDown[button_] != _LastMouseState.ButtonsDown[button_] && _CurrentMouseState.ButtonsDown[button_] == false;
     }
 
@@ -152,10 +152,10 @@ namespace NerdThings::Ngine::Input {
 
         // Mouse button events
         for (auto i = 0; i < 3; i++) {
-            if (IsButtonPressed((EMouseButton)i)) {
-                OnMouseButtonPressed({static_cast<EMouseButton>(i), true});
-            } else if (IsButtonReleased((EMouseButton)i)) {
-                OnMouseButtonReleased({static_cast<EMouseButton>(i), false});
+            if (IsButtonPressed((MouseButton)i)) {
+                OnMouseButtonPressed({static_cast<MouseButton>(i), true});
+            } else if (IsButtonReleased((MouseButton)i)) {
+                OnMouseButtonReleased({static_cast<MouseButton>(i), false});
             }
         }
 

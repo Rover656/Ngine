@@ -97,11 +97,11 @@ namespace NerdThings::Ngine {
         }
     }
 
-    Graphics::TCamera *Scene::GetActiveCamera() const {
+    Graphics::Camera *Scene::GetActiveCamera() const {
         return _ActiveCamera;
     }
 
-    TRectangle Scene::GetCullArea() const {
+    Rectangle Scene::GetCullArea() const {
         auto cam = GetActiveCamera();
 
         if (cam == nullptr) {
@@ -150,7 +150,7 @@ namespace NerdThings::Ngine {
         _Paused = false;
     }
 
-    void Scene::SetActiveCamera(Graphics::TCamera *camera_) {
+    void Scene::SetActiveCamera(Graphics::Camera *camera_) {
         _ActiveCamera = camera_;
     }
 

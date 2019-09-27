@@ -14,9 +14,9 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TRenderTarget::TRenderTarget() {}
+    RenderTarget::RenderTarget() {}
 
-    TRenderTarget::TRenderTarget(const int width_, const int height_) : TRenderTarget() {
+    RenderTarget::RenderTarget(const int width_, const int height_) : RenderTarget() {
         Width = width_;
         Height = height_;
 
@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Graphics {
 #endif
 
         // Create texture
-        _Texture = std::make_shared<TTexture2D>();
+        _Texture = std::make_shared<Texture2D>();
         _Texture->Width = Width;
         _Texture->Height = Height;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -36,11 +36,11 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    TTexture2D *TRenderTarget::GetTexture() {
+    Texture2D *RenderTarget::GetTexture() {
         return _Texture.get();
     }
 
-    bool TRenderTarget::IsValid() const {
+    bool RenderTarget::IsValid() const {
         if (InternalFramebuffer != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             if (InternalFramebuffer->ID > 0)
@@ -49,7 +49,7 @@ namespace NerdThings::Ngine::Graphics {
         return false;
     }
 
-    void TRenderTarget::Unload() {
+    void RenderTarget::Unload() {
         // Unload framebuffer
         Height = 0;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -60,14 +60,14 @@ namespace NerdThings::Ngine::Graphics {
 
     // Operators
 
-    bool TRenderTarget::operator==(const TRenderTarget &b) const {
+    bool RenderTarget::operator==(const RenderTarget &b) const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalFramebuffer->ID == b.InternalFramebuffer->ID;
 #endif
         return false;
     }
 
-    bool TRenderTarget::operator!=(const TRenderTarget &b) const {
+    bool RenderTarget::operator!=(const RenderTarget &b) const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         return InternalFramebuffer->ID != b.InternalFramebuffer->ID;
 #endif

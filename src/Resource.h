@@ -7,7 +7,7 @@ namespace NerdThings::Ngine {
     /*
      * Abstract class defining requirements for a resource.
      */
-    class TResource {
+    class IResource {
     public:
         // Public Methods
 

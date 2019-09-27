@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Active music streams
          */
-        static std::vector<TMusic *> _ActiveMusic;
+        static std::vector<Music *> _ActiveMusic;
 
         /*
          * The audio mutex
@@ -46,12 +46,12 @@ namespace NerdThings::Ngine::Audio {
         /*
          * The first tracked buffer
          */
-        static TAudioBuffer *_BufferFirst;
+        static AudioBuffer *_BufferFirst;
 
         /*
          * The last tracked buffer
          */
-        static TAudioBuffer *_BufferLast;
+        static AudioBuffer *_BufferLast;
 
         /*
          * Miniaudio context
@@ -98,19 +98,19 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Track an audio device
          */
-        static void __TrackAudioBuffer(TAudioBuffer *buffer_);
+        static void __TrackAudioBuffer(AudioBuffer *buffer_);
 
         /*
          * Untrack an audio device
          */
-        static void __UntrackAudioBuffer(TAudioBuffer *buffer_);
+        static void __UntrackAudioBuffer(AudioBuffer *buffer_);
     public:
         // Public Methods
 
         /*
          * Close an audio buffer
          */
-        static void CloseAudioBuffer(TAudioBuffer *buffer_);
+        static void CloseAudioBuffer(AudioBuffer *buffer_);
 
         /*
          * Close audio device.
@@ -121,12 +121,12 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Init audio buffer
          */
-        static TAudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, int usage_);
+        static AudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, int usage_);
 
         /*
          * Init audio stream
          */
-        static TAudioStream InitAudioStream(unsigned int sampleRate_, unsigned int sampleSize_, unsigned int channels_);
+        static AudioStream InitAudioStream(unsigned int sampleRate_, unsigned int sampleSize_, unsigned int channels_);
 
         /*
          * Init audio device.

@@ -33,7 +33,7 @@ namespace NerdThings::Ngine {
 
     // Public Constructor(s)
 
-    Game::Game(const TGameConfig &config_) {
+    Game::Game(const GameConfig &config_) {
         // Check a game is not present
         if (CurrentGame != nullptr)
             throw std::runtime_error("Cannot create a second game before deleting the first!");
@@ -68,11 +68,11 @@ namespace NerdThings::Ngine {
         }
     }
 
-    TVector2 Game::GetDefaultWindowDimensions() const {
+    Vector2 Game::GetDefaultWindowDimensions() const {
         return { (float)Window::GetWidth(), (float)Window::GetHeight() };
     }
 
-    TVector2 Game::GetDimensions() const {
+    Vector2 Game::GetDimensions() const {
         return { (float)Config.TargetWidth, (float)Config.TargetHeight };
     }
 
@@ -95,7 +95,7 @@ namespace NerdThings::Ngine {
     void Game::Run() {
         // Create render target
         if (Config.MaintainResolution) {
-            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
         }
 
         // Timing
@@ -131,9 +131,9 @@ namespace NerdThings::Ngine {
             const auto offsetY = (h - ih * scale) * 0.5;
 
             if (Config.MaintainResolution && _RenderTarget == nullptr) {
-                _RenderTarget = std::make_shared<Graphics::TRenderTarget>(Config.TargetWidth, Config.TargetHeight);
+                _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
             } else if (Config.MaintainResolution && (!_RenderTarget->IsValid() || (_RenderTarget->Width != Config.TargetWidth || _RenderTarget->Height != Config.TargetHeight))) {
-                _RenderTarget = std::make_shared<Graphics::TRenderTarget>(Config.TargetWidth, Config.TargetHeight);
+                _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
             }
 
             // Get the time since the last frame
@@ -184,7 +184,7 @@ namespace NerdThings::Ngine {
                 Graphics::Renderer::BeginDrawing();
 
                 // Clear
-                Graphics::Renderer::Clear(Graphics::TColor::Black);
+                Graphics::Renderer::Clear(Graphics::Color::Black);
 
                 // If using, start using target
                 if (Config.MaintainResolution && _RenderTarget->IsValid()) {
@@ -217,7 +217,7 @@ namespace NerdThings::Ngine {
                                                    static_cast<float>(_RenderTarget->Width),
                                                    static_cast<float>(_RenderTarget->Height) * -1
                                                },
-                        Graphics::TColor::White);
+                        Graphics::Color::White);
                 }
 
                 // Finish drawing
@@ -275,7 +275,7 @@ namespace NerdThings::Ngine {
         Config.DrawFPS = FPS_;
     }
 
-    void Game::SetIntendedSize(TVector2 size_) {
+    void Game::SetIntendedSize(Vector2 size_) {
         Config.TargetWidth = (int)size_.X;
         Config.TargetHeight = (int)size_.Y;
     }

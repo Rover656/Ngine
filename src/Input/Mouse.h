@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Input {
     /*
      * Mouse button
      */
-    enum EMouseButton {
+    enum MouseButton {
         MOUSE_BUTTON_LEFT = 0,
         MOUSE_BUTTON_RIGHT,
         MOUSE_BUTTON_MIDDLE
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * The mouse button
          */
-        EMouseButton Button;
+        MouseButton Button;
 
         /*
          * Whether or not the button is pressed
@@ -51,7 +51,7 @@ namespace NerdThings::Ngine::Input {
 
         // Public Constructor(s)
 
-        MouseButtonEventArgs(const EMouseButton button_, const bool pressed_)
+        MouseButtonEventArgs(const MouseButton button_, const bool pressed_)
                 : Button(button_), Pressed(pressed_) {}
     };
 
@@ -64,16 +64,16 @@ namespace NerdThings::Ngine::Input {
         /*
          * The current mouse position
          */
-        TVector2 MousePosition;
+        Vector2 MousePosition;
 
         /*
          * The change in mouse position
          */
-        TVector2 DeltaMousePosition;
+        Vector2 DeltaMousePosition;
 
         // Public Constructor(s)
 
-        MouseMovedEventArgs(TVector2 mousePosition_, TVector2 deltaMousePosition_)
+        MouseMovedEventArgs(Vector2 mousePosition_, Vector2 deltaMousePosition_)
                 : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
     };
 
@@ -120,7 +120,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Mouse cursor position
          */
-        TVector2 Position = {0, 0};
+        Vector2 Position = {0, 0};
     };
 
     /*
@@ -142,12 +142,12 @@ namespace NerdThings::Ngine::Input {
         /*
          * Mouse position offset
          */
-        static TVector2 _MouseOffset;
+        static Vector2 _MouseOffset;
 
         /*
          * Mouse position scale
          */
-        static TVector2 _MouseScale;
+        static Vector2 _MouseScale;
 
         /*
          * The next mouse state that is being built while the frame is progressing
@@ -159,7 +159,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * Get the mouse position direct from the device
          */
-        static TVector2 InternalGetMousePosition();
+        static Vector2 InternalGetMousePosition();
 
 #if defined(PLATFORM_DESKTOP)
         static void GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_);
@@ -202,12 +202,12 @@ namespace NerdThings::Ngine::Input {
         /*
          * Cancel button press (Prevents double event checks).
          */
-        static void CancelButton(EMouseButton button_);
+        static void CancelButton(MouseButton button_);
 
         /*
          * Get mouse position
          */
-        static TVector2 GetMousePosition();
+        static Vector2 GetMousePosition();
 
         /*
          * Get mouse wheel X movement.
@@ -227,17 +227,17 @@ namespace NerdThings::Ngine::Input {
         /*
          * Is button down (even if cancelled).
          */
-        static bool IsButtonDown(EMouseButton button_);
+        static bool IsButtonDown(MouseButton button_);
 
         /*
          * Was button pushed this frame (even if cancelled).
          */
-        static bool IsButtonPressed(EMouseButton button_);
+        static bool IsButtonPressed(MouseButton button_);
 
         /*
          * Was button released this frame (even if cancelled).
          */
-        static bool IsButtonReleased(EMouseButton button_);
+        static bool IsButtonReleased(MouseButton button_);
 
         /*
          * Poll Mouse Inputs

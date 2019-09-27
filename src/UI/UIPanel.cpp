@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::UI {
 
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
 
-        Graphics::Renderer::Clear(Graphics::TColor::Transparent);
+        Graphics::Renderer::Clear(Graphics::Color::Transparent);
 
         DrawChildren();
 
@@ -50,7 +50,7 @@ namespace NerdThings::Ngine::UI {
                                                static_cast<float>(_RenderTarget->Width),
                                                static_cast<float>(_RenderTarget->Height) * -1
                                        },
-                                       Graphics::TColor::White);
+                                       Graphics::Color::White);
     }
 
     float UIPanel::GetOffsetAbove(std::string &name_) {
@@ -61,14 +61,14 @@ namespace NerdThings::Ngine::UI {
         return GetOffsetBeside(GetChild<UIControl>(name_));
     }
 
-    TVector2 UIPanel::GetLogicPosition() {
+    Vector2 UIPanel::GetLogicPosition() {
         if (_ParentWidget != nullptr)
             return _ParentWidget->GetPosition();
         else
             return UIControl::GetLogicPosition();
     }
 
-    TVector2 UIPanel::GetRenderPosition() {
+    Vector2 UIPanel::GetRenderPosition() {
         if (_ParentWidget != nullptr)
             return _ParentWidget->GetPosition();
         else
@@ -82,13 +82,13 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::SetHeight(float height_) {
         UIControlSized::SetHeight(height_);
 
-        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(GetWidth()), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(GetWidth()), static_cast<int>(height_));
     }
 
     void UIPanel::SetWidth(float width_) {
         UIControlSized::SetWidth(width_);
 
-        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(width_), static_cast<int>(GetHeight()));
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(width_), static_cast<int>(GetHeight()));
     }
 
     void UIPanel::Update() {
@@ -103,6 +103,6 @@ namespace NerdThings::Ngine::UI {
         _ChildrenConfig = 3; // Allow multiple children
 
         // Create render target
-        _RenderTarget = std::make_shared<Graphics::TRenderTarget>(static_cast<int>(width_), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(width_), static_cast<int>(height_));
     }
 }

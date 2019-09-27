@@ -105,7 +105,7 @@ namespace NerdThings::Ngine::UI {
             _GlobalStyles.insert({type_, style_});
     }
 
-    TVector2 UIControl::GetLogicPosition() {
+    Vector2 UIControl::GetLogicPosition() {
         auto parPanel = GetParent<UIPanel>();
         if (parPanel == nullptr) {
             auto par = GetParent<UIControl>();
@@ -120,11 +120,11 @@ namespace NerdThings::Ngine::UI {
         }
     }
 
-    TRectangle UIControl::GetLogicRectangle() {
-        return TRectangle(GetLogicPosition(), GetWidth(), GetHeight());
+    Rectangle UIControl::GetLogicRectangle() {
+        return Rectangle(GetLogicPosition(), GetWidth(), GetHeight());
     }
 
-    TVector2 UIControl::GetRenderPosition() {
+    Vector2 UIControl::GetRenderPosition() {
         auto parPanel = GetParent<UIPanel>();
         if (parPanel == nullptr) {
             auto par = GetParent<UIControl>();
@@ -132,15 +132,15 @@ namespace NerdThings::Ngine::UI {
             return parStyle.GetContentPosition(par->GetRenderPosition());
         } else {
             // Get panel setup
-            auto pos = TVector2::Zero;
+            auto pos = Vector2::Zero;
             pos.X += parPanel->GetOffsetBeside(this);
             pos.Y += parPanel->GetOffsetAbove(this);
             return pos;
         }
     }
 
-    TRectangle UIControl::GetRenderRectangle() {
-        return TRectangle(GetRenderPosition(), GetWidth(), GetHeight());
+    Rectangle UIControl::GetRenderRectangle() {
+        return Rectangle(GetRenderPosition(), GetWidth(), GetHeight());
     }
 
     TUIStyle UIControl::GetStyle() {

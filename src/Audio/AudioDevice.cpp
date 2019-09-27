@@ -18,11 +18,11 @@
 namespace NerdThings::Ngine::Audio {
     // Private Fields
 
-    std::vector<TMusic *> AudioDevice::_ActiveMusic;
+    std::vector<Music *> AudioDevice::_ActiveMusic;
 
     ma_mutex AudioDevice::_AudioLock;
-    TAudioBuffer *AudioDevice::_BufferFirst;
-    TAudioBuffer *AudioDevice::_BufferLast;
+    AudioBuffer *AudioDevice::_BufferFirst;
+    AudioBuffer *AudioDevice::_BufferLast;
     ma_context AudioDevice::_Context;
     ma_device AudioDevice::_Device;
     bool AudioDevice::_Initialized = false;
@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::Audio {
     ma_uint32 AudioDevice::__AudioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount,
                                                 void *pUserData) {
         if (!_Initialized) return 0;
-        auto buffer = (TAudioBuffer *)pUserData;
+        auto buffer = (AudioBuffer *)pUserData;
 
         auto subBufferSizeInFrames = (buffer->BufferSizeInFrames > 1) ? buffer->BufferSizeInFrames/2 : buffer->BufferSizeInFrames;
         auto currentSubBufferIndex = buffer->FrameCursorPos/subBufferSizeInFrames;
@@ -181,7 +181,7 @@ namespace NerdThings::Ngine::Audio {
         ma_mutex_unlock(&_AudioLock);
     }
 
-    void AudioDevice::__TrackAudioBuffer(TAudioBuffer *buffer_) {
+    void AudioDevice::__TrackAudioBuffer(AudioBuffer *buffer_) {
         if (!_Initialized) return;
         ma_mutex_lock(&_AudioLock);
         {
@@ -196,7 +196,7 @@ namespace NerdThings::Ngine::Audio {
         ma_mutex_unlock(&_AudioLock);
     }
 
-    void AudioDevice::__UntrackAudioBuffer(TAudioBuffer *buffer_) {
+    void AudioDevice::__UntrackAudioBuffer(AudioBuffer *buffer_) {
         if (!_Initialized) return;
         ma_mutex_lock(&_AudioLock);
         {
@@ -214,7 +214,7 @@ namespace NerdThings::Ngine::Audio {
 
     // Public Methods
 
-    void AudioDevice::CloseAudioBuffer(TAudioBuffer *buffer_) {
+    void AudioDevice::CloseAudioBuffer(AudioBuffer *buffer_) {
         if (!_Initialized) return;
         if (buffer_ != nullptr) {
             // Untrack buffer
@@ -239,10 +239,10 @@ namespace NerdThings::Ngine::Audio {
         } else ConsoleMessage("Could not close audio device as it is not open.", "WARN", "AudioDevice");
     }
 
-    TAudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
-                                               ma_uint32 bufferSizeInFrames_, int usage_) {
+    AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
+                                              ma_uint32 bufferSizeInFrames_, int usage_) {
         if (!_Initialized) return nullptr;
-        auto *buffer = new TAudioBuffer();
+        auto *buffer = new AudioBuffer();
 
         buffer->Buffer = calloc(bufferSizeInFrames_ * channels_ * ma_get_bytes_per_sample(format_), 1);
 
@@ -294,9 +294,9 @@ namespace NerdThings::Ngine::Audio {
         return buffer;
     }
 
-    TAudioStream
+    AudioStream
     AudioDevice::InitAudioStream(unsigned int sampleRate_, unsigned int sampleSize_, unsigned int channels_) {
-        TAudioStream stream;
+        AudioStream stream;
 
         stream.SampleRate = sampleRate_;
         stream.SampleSize = sampleSize_;
@@ -390,6 +390,6 @@ namespace NerdThings::Ngine::Audio {
 
     void AudioDevice::Update() {
         // We update here so we can add any future stuff
-        TMusic::Update();
+        Music::Update();
     }
 }

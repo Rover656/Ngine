@@ -24,9 +24,9 @@ namespace NerdThings::Ngine::Input {
     // Private Fields
 
     bool Keyboard::_CurrentKeyState[KEY_MAX + 1];
-    EKey Keyboard::_ExitKey = KEY_NONE;
+    Key Keyboard::_ExitKey = KEY_NONE;
     bool Keyboard::_PreviousKeyState[KEY_MAX + 1];
-    EKey Keyboard::_LatestKeyPress = KEY_NONE;
+    Key Keyboard::_LatestKeyPress = KEY_NONE;
     bool Keyboard::_NextKeyState[KEY_MAX + 1];
 
     // Private Methods
@@ -35,13 +35,13 @@ namespace NerdThings::Ngine::Input {
 
     void Keyboard::GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_) {
         _NextKeyState[key_] = (action_ != GLFW_RELEASE);
-        _LatestKeyPress = (EKey)key_;
+        _LatestKeyPress = (Key)key_;
     }
 
 #elif defined(PLATFORM_UWP)
 
-    EKey Keyboard::KeyFromVirtualKey(int key_) {
-        EKey actualKey = KEY_NONE;
+    Key Keyboard::KeyFromVirtualKey(int key_) {
+        Key actualKey = KEY_NONE;
         switch (key_)
         {
             case 0x08: actualKey = KEY_BACKSPACE; break;
@@ -113,13 +113,13 @@ namespace NerdThings::Ngine::Input {
     }
 
     void Keyboard::UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
-        EKey key = KeyFromVirtualKey((int)args->VirtualKey);
+        Key key = KeyFromVirtualKey((int)args->VirtualKey);
         _NextKeyState[key] = true;
     }
 
     void Keyboard::UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
     {
-        EKey key = KeyFromVirtualKey((int)args->VirtualKey);
+        Key key = KeyFromVirtualKey((int)args->VirtualKey);
         _NextKeyState[key] = false;
     }
 
@@ -132,7 +132,7 @@ namespace NerdThings::Ngine::Input {
 
     // Public Methods
 
-    EKey Keyboard::GetLatestKeypress() {
+    Key Keyboard::GetLatestKeypress() {
         return _LatestKeyPress;
     }
 
@@ -149,20 +149,20 @@ namespace NerdThings::Ngine::Input {
 #endif
     }
 
-    bool Keyboard::IsKeyDown(const EKey key_) {
+    bool Keyboard::IsKeyDown(const Key key_) {
         if (key_ == KEY_NONE) return false;
         return _CurrentKeyState[key_];
     }
 
-    bool Keyboard::IsKeyPressed(const EKey key_) {
+    bool Keyboard::IsKeyPressed(const Key key_) {
         return _CurrentKeyState[key_] != _PreviousKeyState[key_] && _CurrentKeyState[key_];
     }
 
-    bool Keyboard::IsKeyReleased(const EKey key_) {
+    bool Keyboard::IsKeyReleased(const Key key_) {
         return _CurrentKeyState[key_] != _PreviousKeyState[key_] && !_CurrentKeyState[key_];
     }
 
-    bool Keyboard::IsKeyUp(const EKey key_) {
+    bool Keyboard::IsKeyUp(const Key key_) {
         if (key_ == KEY_NONE) return true;
         return !IsKeyDown(key_);
     }
@@ -183,7 +183,7 @@ namespace NerdThings::Ngine::Input {
 
         // Fire events
         for (auto i = 0; i <= KEY_MAX; i++) {
-            auto k = (EKey)i;
+            auto k = (Key)i;
             if (IsKeyPressed(k)) {
                 KeyPressed({k});
             } else if (IsKeyReleased(k)) {
@@ -192,7 +192,7 @@ namespace NerdThings::Ngine::Input {
         }
     }
 
-    void Keyboard::SetExitKey(const EKey key_) {
+    void Keyboard::SetExitKey(const Key key_) {
         _ExitKey = key_;
     }
 }

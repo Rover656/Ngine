@@ -6,7 +6,7 @@
 #include <cstdio>
 
 namespace NerdThings::Ngine::Filesystem {
-    enum EResourceType {
+    enum ResourceType {
         TYPE_INVALID = 0,
         TYPE_FILE = 1,
         TYPE_DIRECTORY = 2
@@ -15,38 +15,38 @@ namespace NerdThings::Ngine::Filesystem {
     /*
      * A path that points to a filesystem resource
      */
-    struct NEAPI TPath {
+    struct NEAPI Path {
         // Public Constructors
 
         /*
          * Create a path that points nowhere
          */
-        TPath();
+        Path();
 
         /*
          * Create a reference to a path
          */
-        TPath(const std::string &pathString_);
+        Path(const std::string &pathString_);
 
         /*
          * Combine a path together
          */
-        TPath(const std::string &path_, const std::string &pathB_);
+        Path(const std::string &path_, const std::string &pathB_);
 
         /*
          * Combine a path together
          */
-        TPath(const TPath &path_, const TPath &pathB_);
+        Path(const Path &path_, const Path &pathB_);
 
         /*
          * Combine a path together
          */
-        TPath(const TPath &path_, const std::string &pathB_);
+        Path(const Path &path_, const std::string &pathB_);
 
         /*
          * Combine a path together
          */
-        TPath(const std::string &path_, const TPath &pathB_);
+        Path(const std::string &path_, const Path &pathB_);
 
         // Public Methods
 
@@ -54,17 +54,17 @@ namespace NerdThings::Ngine::Filesystem {
          * Get this as an absolute path.
          * This makes the path relative to the executable directory NOT the current/working directory.
          */
-        TPath GetAbsolute() const;
+        Path GetAbsolute() const;
 
         /*
          * Get the executable directory
          */
-        static TPath GetExecutableDirectory();
+        static Path GetExecutableDirectory();
 
         /*
          * Get the executable path
          */
-        static TPath GetExecutablePath();
+        static Path GetExecutablePath();
 
         /*
          * Get the file extension if present
@@ -79,17 +79,17 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Gets a parent (if any)
          */
-        TPath GetParent() const;
+        Path GetParent() const;
 
         /*
          * Get this path relative to a base.
          */
-        TPath GetRelativeTo(const TPath &base_) const;
+        Path GetRelativeTo(const Path &base_) const;
 
         /*
          * Get the type of resource this points to
          */
-        EResourceType GetResourceType() const;
+        ResourceType GetResourceType() const;
 
         /*
          * Get string version of path
@@ -104,7 +104,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the working directory.
          */
-        static TPath GetWorkingDirectory();
+        static Path GetWorkingDirectory();
 
         /*
          * Whether or not the path is absolute.
@@ -114,12 +114,12 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Combine two parts of a path
          */
-        static TPath Join(const std::string &pathA_, const std::string &pathB_);
+        static Path Join(const std::string &pathA_, const std::string &pathB_);
 
         /*
          * Combine two parts of a path
          */
-        static TPath Join(const TPath &pathA_, const TPath &pathB_);
+        static Path Join(const Path &pathA_, const Path &pathB_);
 
         /*
          * Whether the path is valid.
@@ -131,27 +131,27 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Combine to paths
          */
-        friend TPath operator/(const std::string &path_, const std::string &pathB_);
+        friend Path operator/(const std::string &path_, const std::string &pathB_);
 
         /*
          * Combine to paths
          */
-        friend TPath operator/(const TPath &path_, const TPath &pathB_);
+        friend Path operator/(const Path &path_, const Path &pathB_);
 
         /*
          * Combine to paths
          */
-        friend TPath operator/(const std::string &path_, const TPath &pathB_);
+        friend Path operator/(const std::string &path_, const Path &pathB_);
 
         /*
          * Combine to paths
          */
-        friend TPath operator/(const TPath &path_, const std::string &pathB_);
+        friend Path operator/(const Path &path_, const std::string &pathB_);
 
         /*
          * Combine two paths
          */
-        void operator/=(const TPath &pathB_);
+        void operator/=(const Path &pathB_);
 
         /*
          * Combine two paths
@@ -198,7 +198,7 @@ namespace NerdThings::Ngine::Filesystem {
     /*
      * A filesystem object
      */
-    class NEAPI TFilesystemObject {
+    class NEAPI FilesystemObject {
     public:
         // Public Methods
 
@@ -215,7 +215,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Move this object.
          */
-        void Move(const TPath &newPath_);
+        void Move(const Path &newPath_);
 
         /*
          * Rename this object.
@@ -230,27 +230,27 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the object path
          */
-        TPath GetObjectPath() const;
+        Path GetObjectPath() const;
     protected:
         // Protected Constructors
 
         /*
          * Create a new filesystem object reference.
          */
-        explicit TFilesystemObject(const TPath &path_);
+        explicit FilesystemObject(const Path &path_);
 
         // Protected Fields
 
         /*
          * The path of this object
          */
-        TPath ObjectPath;
+        Path ObjectPath;
     };
 
     /*
      * The opening mode of a file
      */
-    enum EFileOpenMode {
+    enum FileOpenMode {
         /*
          * The file is not open.
          */
@@ -292,7 +292,7 @@ namespace NerdThings::Ngine::Filesystem {
     /*
      * A reference to a file in the filesystem
      */
-    class NEAPI TFile : public TFilesystemObject {
+    class NEAPI File : public FilesystemObject {
         // Private Structs
 
         /*
@@ -319,7 +319,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the current open mode
          */
-        EFileOpenMode  _InternalOpenMode = MODE_NONE;
+        FileOpenMode  _InternalOpenMode = MODE_NONE;
     public:
         // Public Constructors
 
@@ -327,16 +327,16 @@ namespace NerdThings::Ngine::Filesystem {
          * Create an empty file reference.
          * Points to no file.
          */
-        TFile();
+        File();
 
         /*
          * Create a reference to a file.
          */
-        TFile(const TPath &path_);
+        File(const Path &path_);
 
         // Destructor
 
-        ~TFile();
+        ~File();
 
         // Public Methods
 
@@ -348,7 +348,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Create a new file and optionally leave it open for read or write.
          */
-        static TFile CreateNewFile(const TPath &path_, bool leaveOpen_ = false, bool binary_ = true);
+        static File CreateNewFile(const Path &path_, bool leaveOpen_ = false, bool binary_ = true);
 
         /*
          * Delete this object from the filesystem.
@@ -363,12 +363,12 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get the current file mode
          */
-        EFileOpenMode GetCurrentMode() const;
+        FileOpenMode GetCurrentMode() const;
 
         /*
          * Get a file from a path
          */
-        static TFile GetFile(const TPath &path_);
+        static File GetFile(const Path &path_);
 
         /*
          * Get the file extension
@@ -394,7 +394,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Open the file in read or write mode.
          * Binary mode is for non-text files.
          */
-        bool Open(EFileOpenMode mode_, bool binary_ = false);
+        bool Open(FileOpenMode mode_, bool binary_ = false);
 
         /*
          * Read a number of bytes from the file.
@@ -422,19 +422,19 @@ namespace NerdThings::Ngine::Filesystem {
     /*
      * A reference to a directory in the filesystem
      */
-    class NEAPI TDirectory : public TFilesystemObject {
+    class NEAPI Directory : public FilesystemObject {
     public:
         // Public Constructors
 
         /*
          * Create a null reference to a directory
          */
-        TDirectory();
+        Directory();
 
         /*
          * Create a reference to a directory
          */
-        TDirectory(const TPath &path_);
+        Directory(const Path &path_);
 
         // Public Methods
 
@@ -442,7 +442,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Create a new directory.
          * Returns success and the new directory (may be reference to nothing).
          */
-        static std::pair<bool, TDirectory> Create(const TPath &path_);
+        static std::pair<bool, Directory> Create(const Path &path_);
 
         /*
          * Delete this object from the filesystem.
@@ -463,32 +463,32 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get all of the children directories.
          */
-        std::vector<TDirectory> GetDirectories() const;
+        std::vector<Directory> GetDirectories() const;
 
         /*
          * Get all of the children files.
          */
-        std::vector<TFile> GetFiles() const;
+        std::vector<File> GetFiles() const;
 
         /*
          * Get all of the descended children inside any child directory.
          */
-        std::vector<TFile> GetFilesRecursive() const;
+        std::vector<File> GetFilesRecursive() const;
 
         /*
          * Get a directory
          */
-        static TDirectory GetDirectory(const TPath &path_);
+        static Directory GetDirectory(const Path &path_);
 
         /*
          * Get the executable directory.
          */
-        static TDirectory GetExecutableDirectory();
+        static Directory GetExecutableDirectory();
 
         /*
          * Get the working directory for the program.
          */
-        static TDirectory GetWorkingDirectory();
+        static Directory GetWorkingDirectory();
     };
 }
 

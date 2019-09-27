@@ -77,7 +77,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The panel render target
          */
-        std::shared_ptr<Graphics::TRenderTarget> _RenderTarget;
+        std::shared_ptr<Graphics::RenderTarget> _RenderTarget;
     public:
 
         // Destructor
@@ -124,12 +124,12 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the panel on screen
          */
-        TVector2 GetLogicPosition();
+        Vector2 GetLogicPosition();
 
         /*
          * Gets the panel position relative to the render target (0, 0)
          */
-        TVector2 GetRenderPosition() override;
+        Vector2 GetRenderPosition() override;
 
         /*
          * Set the parent widget.

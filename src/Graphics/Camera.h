@@ -21,18 +21,18 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A Camera
      */
-    struct NEAPI TCamera {
+    struct NEAPI Camera {
         // Public Fields
 
         /*
          * Camera offset/origin
          */
-        TVector2 Origin;
+        Vector2 Origin;
 
         /*
          * Camera position
          */
-        TVector2 Position;
+        Vector2 Position;
 
         /*
          * Camera rotation
@@ -46,9 +46,9 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TCamera(TVector2 position_ = TVector2(), float rotation_ = 0, float zoom_ = 0,
-                TVector2 origin_ = TVector2()) : Position(position_), Rotation(rotation_), Zoom(zoom_),
-                                                             Origin(origin_) {}
+        Camera(Vector2 position_ = Vector2(), float rotation_ = 0, float zoom_ = 0,
+               Vector2 origin_ = Vector2()) : Position(position_), Rotation(rotation_), Zoom(zoom_),
+                                              Origin(origin_) {}
 
         // Public Methods
 
@@ -65,17 +65,17 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert a screen/window position to a world position
          */
-        TVector2 ScreenToWorld(TVector2 pos_);
+        Vector2 ScreenToWorld(Vector2 pos_);
 
         /*
          * Convert a world position to a screen/window position
          */
-        TVector2 WorldToScreen(TVector2 pos_);
+        Vector2 WorldToScreen(Vector2 pos_);
 
         /*
          * Get the translation matrix
          */
-        TMatrix GetTranslationMatrix() const;
+        Matrix GetTranslationMatrix() const;
     };
 }
 

@@ -6,16 +6,16 @@
 #include <stb_vorbis.h>
 
 namespace NerdThings::Ngine::Audio {
-    TWave::~TWave() {
+    Wave::~Wave() {
         Unload();
     }
 
-    bool TWave::IsValid() const {
+    bool Wave::IsValid() const {
         return Data != nullptr; // TODO: Any more checks??
     }
 
-    TWave *TWave::LoadWave(const Filesystem::TPath &path_) {
-        auto wav = new TWave();
+    Wave *Wave::LoadWave(const Filesystem::Path &path_) {
+        auto wav = new Wave();
 
         if (path_.GetFileExtension() == "mp3") {
             wav->__LoadMP3(path_);
@@ -30,13 +30,13 @@ namespace NerdThings::Ngine::Audio {
         return wav;
     }
 
-    void TWave::Unload() {
+    void Wave::Unload() {
         free(Data);
         Data = nullptr;
         ConsoleMessage("Unloaded wav data from RAM.", "NOTICE", "Wave");
     }
 
-    void TWave::__LoadFLAC(const Filesystem::TPath &path_) {
+    void Wave::__LoadFLAC(const Filesystem::Path &path_) {
         // Decode entire FLAC file in one go
         uint64_t totalSampleCount;
         Data = drflac_open_file_and_read_pcm_frames_s16(path_.GetString().c_str(), &Channels, &SampleRate, &totalSampleCount);
@@ -50,7 +50,7 @@ namespace NerdThings::Ngine::Audio {
         else ConsoleMessage("Loaded FLAC file successfully!", "NOTICE", "Wave");
     }
 
-    void TWave::__LoadMP3(const Filesystem::TPath &path_) {
+    void Wave::__LoadMP3(const Filesystem::Path &path_) {
         // Decode whole MP3 file in one go
         uint64_t totalFrameCount = 0;
         drmp3_config config = {0};
@@ -68,7 +68,7 @@ namespace NerdThings::Ngine::Audio {
         else ConsoleMessage("Loaded MP3 file successfully!", "NOTICE", "Wave");
     }
 
-    void TWave::__LoadOGG(const Filesystem::TPath &path_) {
+    void Wave::__LoadOGG(const Filesystem::Path &path_) {
         // Load ogg file
         stb_vorbis *oggFile = stb_vorbis_open_filename(path_.GetString().c_str(), nullptr, nullptr);
 
@@ -91,7 +91,7 @@ namespace NerdThings::Ngine::Audio {
         }
     }
 
-    void TWave::__LoadWAV(const Filesystem::TPath &path_) {
+    void Wave::__LoadWAV(const Filesystem::Path &path_) {
         // Load wav file
         uint64_t totalFrameCount = 0;
         Data = drwav_open_file_and_read_pcm_frames_f32(path_.GetString().c_str(), &Channels, &SampleRate, &totalFrameCount);

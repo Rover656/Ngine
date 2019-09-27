@@ -112,13 +112,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     // Matrix Related Fields
 
-    TMatrix *GL::_CurrentMatrix = nullptr;
+    Matrix *GL::_CurrentMatrix = nullptr;
     GLMatrixMode GL::_CurrentMatrixMode = MATRIX_NULL;
-    TMatrix GL::_MatrixStack[];
+    Matrix GL::_MatrixStack[];
     int GL::_MatrixStackCounter = 0;
-    TMatrix GL::_ModelView = TMatrix::Identity;
-    TMatrix GL::_Projection = TMatrix::Identity;
-    TMatrix GL::_TransformMatrix = TMatrix::Identity;
+    Matrix GL::_ModelView = Matrix::Identity;
+    Matrix GL::_Projection = Matrix::Identity;
+    Matrix GL::_TransformMatrix = Matrix::Identity;
     bool GL::_UseTransformMatrix = false;
 
     // Feature Related Fields
@@ -157,15 +157,15 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     // Internal Methods
 
     void GL::DrawBuffersDefault() {
-        TMatrix matProjection = _Projection;
-        TMatrix matModelView = _ModelView;
+        Matrix matProjection = _Projection;
+        Matrix matModelView = _ModelView;
 
         if (_VertexData[_CurrentBuffer].VCounter > 0) {
             // Use shader program
             _CurrentShaderProgram->Use();
 
             // Pass shader data
-            TMatrix matMVP = _ModelView * _Projection;
+            Matrix matMVP = _ModelView * _Projection;
             _CurrentShaderProgram->SetUniformMatrixP(LOCATION_MATRIX_MVP, matMVP);
             _CurrentShaderProgram->SetUniformIntP(LOCATION_TEXTURE, 0);
 
@@ -435,7 +435,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     // Matrix Related Methods
 
     void GL::LoadIdentity() {
-        *_CurrentMatrix = TMatrix::Identity;
+        *_CurrentMatrix = Matrix::Identity;
     }
 
     void GL::MatrixMode(enum GLMatrixMode mode_) {
@@ -453,18 +453,18 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _CurrentMatrixMode = mode_;
     }
 
-    void GL::MultMatrix(TMatrix matrix_) {
+    void GL::MultMatrix(Matrix matrix_) {
         *_CurrentMatrix = (*_CurrentMatrix) * matrix_;
     }
 
     void GL::Ortho(float left_, float right_, float bottom_, float top_, float znear_, float zfar_) {
-        auto matrixOrtho = TMatrix::Orthographic(left_, right_, bottom_, top_, znear_, zfar_);
+        auto matrixOrtho = Matrix::Orthographic(left_, right_, bottom_, top_, znear_, zfar_);
         *_CurrentMatrix = *_CurrentMatrix * matrixOrtho;
     }
 
     void GL::PopMatrix() {
         if (_MatrixStackCounter > 0) {
-            TMatrix matrix = _MatrixStack[_MatrixStackCounter - 1];
+            Matrix matrix = _MatrixStack[_MatrixStackCounter - 1];
             *_CurrentMatrix = matrix;
             _MatrixStackCounter--;
         } else if (_MatrixStackCounter > 0 && _CurrentMatrixMode == MATRIX_MODELVIEW) {
@@ -487,22 +487,22 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _MatrixStackCounter++;
     }
 
-    void GL::Rotate(float angle_, TVector3 axis_) {
-        auto rotation = TMatrix::Rotate(axis_, angle_);
+    void GL::Rotate(float angle_, Vector3 axis_) {
+        auto rotation = Matrix::Rotate(axis_, angle_);
         *_CurrentMatrix = rotation * (*_CurrentMatrix);
     }
 
-    void GL::Scale(TVector3 scale_) {
-        auto scale = TMatrix::Scale(scale_.X, scale_.Y, scale_.Z);
+    void GL::Scale(Vector3 scale_) {
+        auto scale = Matrix::Scale(scale_.X, scale_.Y, scale_.Z);
         *_CurrentMatrix = scale * (*_CurrentMatrix);
     }
 
-    void GL::SetMatrix(TMatrix matrix_) {
+    void GL::SetMatrix(Matrix matrix_) {
         *_CurrentMatrix = matrix_;
     }
 
-    void GL::Translate(TVector3 translation_) {
-        auto translate = TMatrix::Translate(translation_);
+    void GL::Translate(Vector3 translation_) {
+        auto translate = Matrix::Translate(translation_);
         *_CurrentMatrix = translate * (*_CurrentMatrix);
     }
 
@@ -545,7 +545,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         }
     }
 
-    void GL::Color(TColor color_) {
+    void GL::Color(Graphics::Color color_) {
         if (_VertexData[_CurrentBuffer].CCounter < (MAX_BATCH_ELEMENTS * 4)) {
             _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter] = color_.RedF();
             _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 1] = color_.GreenF();
@@ -601,7 +601,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 #endif
     }
 
-    void GL::TexCoord(TVector2 coord_) {
+    void GL::TexCoord(Vector2 coord_) {
         if (_VertexData[_CurrentBuffer].TCCounter < (MAX_BATCH_ELEMENTS * 4)) {
             _VertexData[_CurrentBuffer].TexCoords[2 * _VertexData[_CurrentBuffer].TCCounter] = coord_.X;
             _VertexData[_CurrentBuffer].TexCoords[2 * _VertexData[_CurrentBuffer].TCCounter + 1] = coord_.Y;
@@ -648,11 +648,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 #endif
     }
 
-    void GL::Vertex(TVector2 pos_) {
+    void GL::Vertex(Vector2 pos_) {
         Vertex({pos_.X, pos_.Y, _CurrentDepth});
     }
 
-    void GL::Vertex(TVector3 pos_) {
+    void GL::Vertex(Vector3 pos_) {
         if (_UseTransformMatrix) pos_ = pos_.Transform(_TransformMatrix);
 
         // Verify limit
@@ -826,8 +826,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         LoadBuffersDefault();
 
-        _Projection = TMatrix::Identity;
-        _ModelView = TMatrix::Identity;
+        _Projection = Matrix::Identity;
+        _ModelView = Matrix::Identity;
         _CurrentMatrix = &_ModelView;
 
         // Init OpenGL states
@@ -836,7 +836,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Clear
         glClearDepth(1.0f);
-        ClearColor(TColor(0, 0, 0, 1));
+        ClearColor(Graphics::Color(0, 0, 0, 1));
         Clear();
 
         ConsoleMessage("Finished initializing OpenGL API.", "NOTICE", "OpenGL");
@@ -849,7 +849,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void GL::ClearColor(TColor color_) {
+    void GL::ClearColor(Graphics::Color color_) {
         // Set clear color
         glClearColor(color_.RedF(), color_.GreenF(), color_.BlueF(), color_.AlphaF());
     }

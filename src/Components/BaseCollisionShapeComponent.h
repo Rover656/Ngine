@@ -67,7 +67,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Offset shape
          */
-        virtual void Offset(TVector2 offset_) = 0;
+        virtual void Offset(Vector2 offset_) = 0;
 
         /*
          * Update shape information
@@ -119,7 +119,7 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision at a position
          */
         template <typename EntityType>
-        bool CheckCollisionAt(TVector2 position_) {
+        bool CheckCollisionAt(Vector2 position_) {
             auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
@@ -177,7 +177,7 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision with a collision group at a position
          * Component must have the collision group to work
          */
-        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, TVector2 position_) {
+        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, Vector2 position_) {
             auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
@@ -214,7 +214,7 @@ namespace NerdThings::Ngine::Components {
          * Component must have the collision group to work
          */
         template <typename EntityType>
-        bool CheckCollisionWithAt(const std::string &collisionGroup_, TVector2 position_) {
+        bool CheckCollisionWithAt(const std::string &collisionGroup_, Vector2 position_) {
             auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 

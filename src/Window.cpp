@@ -31,7 +31,7 @@ namespace NerdThings::Ngine {
 
     // Public Fields
 
-    TWindowConfig Window::Config = {};
+    WindowConfig Window::Config = {};
 
 #if defined(PLATFORM_DESKTOP)
     void *Window::WindowPtr = nullptr;
@@ -436,7 +436,7 @@ namespace NerdThings::Ngine {
 #endif
     }
 
-    void Window::SetConfig(const TWindowConfig &config_) {
+    void Window::SetConfig(const WindowConfig &config_) {
         Config = config_;
         ApplyConfig();
     }

@@ -18,22 +18,22 @@
 namespace NerdThings::Ngine::Audio {
     // Destructor
 
-    TSound::~TSound() {
+    Sound::~Sound() {
         Unload();
     }
 
     // Public Methods
 
-    bool TSound::IsPlaying() const {
+    bool Sound::IsPlaying() const {
         return Stream.Buffer->IsPlaying();
     }
 
-    bool TSound::IsValid() const {
+    bool Sound::IsValid() const {
         return Stream.Buffer != nullptr;
     }
 
-    TSound *TSound::LoadSound(const Filesystem::TPath &path_) {
-        auto wav = TWave::LoadWave(path_);
+    Sound *Sound::LoadSound(const Filesystem::Path &path_) {
+        auto wav = Wave::LoadWave(path_);
 
         auto snd = LoadSoundFromWave(wav);
 
@@ -42,9 +42,9 @@ namespace NerdThings::Ngine::Audio {
         return snd;
     }
 
-    TSound *TSound::LoadSoundFromWave(TWave *wave_) {
+    Sound *Sound::LoadSoundFromWave(Wave *wave_) {
         if (wave_->IsValid()) {
-            auto snd = new TSound();
+            auto snd = new Sound();
 
             // We convert every sound to be the same format.
             ma_format formatIn = ((wave_->SampleSize == 8) ? ma_format_u8 : ((wave_->SampleSize == 16) ? ma_format_s16 : ma_format_f32));
@@ -71,31 +71,31 @@ namespace NerdThings::Ngine::Audio {
         return nullptr;
     }
 
-    void TSound::Pause() {
+    void Sound::Pause() {
         Stream.Buffer->Pause();
     }
 
-    void TSound::Play() {
+    void Sound::Play() {
         Stream.Buffer->Play();
     }
 
-    void TSound::Resume() {
+    void Sound::Resume() {
         Stream.Buffer->Resume();
     }
 
-    void TSound::SetPitch(float pitch_) {
+    void Sound::SetPitch(float pitch_) {
         Stream.Buffer->SetPitch(pitch_);
     }
 
-    void TSound::SetVolume(float vol_) {
+    void Sound::SetVolume(float vol_) {
         Stream.Buffer->SetVolume(vol_);
     }
 
-    void TSound::Stop() {
+    void Sound::Stop() {
         Stream.Buffer->Stop();
     }
 
-    void TSound::Unload() {
+    void Sound::Unload() {
         // Close buffer
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
         Stream.Buffer = nullptr;

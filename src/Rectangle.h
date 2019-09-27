@@ -22,7 +22,7 @@ namespace NerdThings::Ngine {
     /*
      * A rectangle
      */
-    struct NEAPI TRectangle {
+    struct NEAPI Rectangle {
         // Public Fields
 
         /*
@@ -47,16 +47,16 @@ namespace NerdThings::Ngine {
 
         // Public Constructor(s)
 
-        TRectangle()
+        Rectangle()
             : X(0), Y(0), Width(0), Height(0) {}
 
-        TRectangle(float x_, float y_, float width_, float height_)
+        Rectangle(float x_, float y_, float width_, float height_)
             : X(x_), Y(y_), Width(width_), Height(height_) {}
 
-        TRectangle(TVector2 position_, float width_, float height_)
+        Rectangle(Vector2 position_, float width_, float height_)
             : X(position_.X), Y(position_.Y), Width(width_), Height(height_) {}
 
-        TRectangle(TVector2 position_, TVector2 size_)
+        Rectangle(Vector2 position_, Vector2 size_)
             : X(position_.X), Y(position_.Y), Width(size_.X), Height(size_.Y) {}
 
         // Public Methods
@@ -70,36 +70,36 @@ namespace NerdThings::Ngine {
         /*
          * Convert from Raylib rectangle
          */
-        static TRectangle FromRaylibRect(const Rectangle &rect_);
+        static Rectangle FromRaylibRect(const Rectangle &rect_);
 
         #endif
 
         /*
          * Whether or not the rectangle contains the point
          */
-        bool Contains(TVector2 point_) const;
+        bool Contains(Vector2 point_) const;
 
         /*
          * Convert rectangle to bounding box
          */
-        Physics::TBoundingBox ToBoundingBox(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
+        Physics::BoundingBox ToBoundingBox(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
 
         /*
          * Convert rectangle to bounding box pointer.
          * Must be deleted
          */
-        Physics::TBoundingBox *ToBoundingBoxPtr(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
+        Physics::BoundingBox *ToBoundingBoxPtr(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
 
         /*
          * Convert rectangle to polygon
          */
-        Physics::TPolygon ToPolygon(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
+        Physics::Polygon ToPolygon(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
 
         /*
          * Convert rectangle to polygon pointer.
          * Must be deleted.
          */
-        Physics::TPolygon *ToPolygonPtr(float rotation_ = 0, TVector2 origin_ = TVector2::Zero) const;
+        Physics::Polygon *ToPolygonPtr(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
     };
 }
 

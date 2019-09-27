@@ -18,7 +18,10 @@
 #include "CollisionShape.h"
 
 namespace NerdThings::Ngine::Physics {
-    struct NEAPI TCircle : public ICollisionShape {
+    /*
+     * A circle shape
+     */
+    struct NEAPI Circle : public ICollisionShape {
     private:
         // Private Methods
 
@@ -31,7 +34,7 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Circle center
          */
-        TVector2 Center;
+        Vector2 Center;
 
         /*
          * Circle radius
@@ -43,13 +46,13 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Create a circle
          */
-        TCircle()
-            : Center(TVector2::Zero), Radius(0) {}
+        Circle()
+            : Center(Vector2::Zero), Radius(0) {}
 
         /*
          * Create a circle
          */
-        TCircle(const TVector2 center_, const float radius_)
+        Circle(const Vector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
 
         // Public Methods

@@ -9,13 +9,13 @@ namespace NerdThings::Ngine::Audio {
     /*
      * Audio stream
      */
-    struct TAudioStream {
+    struct AudioStream {
         // Public Fields
 
         /*
          * The audio buffer
          */
-        TAudioBuffer *Buffer;
+        AudioBuffer *Buffer;
 
         /*
          * Number of channels

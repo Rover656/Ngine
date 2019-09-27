@@ -21,25 +21,25 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Fields
 
-    TFont *TFont::DefaultFont;
+    Font *Font::DefaultFont;
 
     // Public Constructor(s)
 
-    TFont::TFont() {}
+    Font::Font() {}
 
     // Destructor
 
-    TFont::~TFont() {
+    Font::~Font() {
         ConsoleMessage("Unloading and deleting font.", "NOTICE", "FONT");
     }
 
     // Public Methods
 
-    TFont *TFont::GetDefaultFont() {
+    Font *Font::GetDefaultFont() {
         return DefaultFont;
     }
 
-    int TFont::GetGlyphIndex(int char_) const {
+    int Font::GetGlyphIndex(int char_) const {
         for (auto i = 0; i < CharacterCount; i++) {
             if (Characters[i].Character == char_) return i;
         }
@@ -48,17 +48,17 @@ namespace NerdThings::Ngine::Graphics {
         return -1;
     }
 
-    TTexture2D *TFont::GetTexture() const {
+    Texture2D *Font::GetTexture() const {
         return Texture.get();
     }
 
-    bool TFont::IsValid() const {
+    bool Font::IsValid() const {
         return Texture->IsValid();
     }
 
-    TFont *TFont::LoadTTFFont(const Filesystem::TPath &path_, int baseSize_, std::vector<int> fontChars_) {
+    Font *Font::LoadTTFFont(const Filesystem::Path &path_, int baseSize_, std::vector<int> fontChars_) {
         // Initialize font
-        auto font = new TFont();
+        auto font = new Font();
 
         // Set default info
         font->BaseSize = baseSize_;
@@ -81,7 +81,7 @@ namespace NerdThings::Ngine::Graphics {
         return font;
     }
 
-    TVector2 TFont::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
+    Vector2 Font::MeasureString(const std::string &string_, const float fontSize_, const float spacing_) const {
         int tempLen = 0;                // Used to count longer text line num chars
         int lenCounter = 0;
 
@@ -114,18 +114,18 @@ namespace NerdThings::Ngine::Graphics {
 
         if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-        TVector2 vec;
+        Vector2 vec;
         vec.X = tempTextWidth*scaleFactor + (float)((tempLen - 1)*spacing_);
         vec.Y = textHeight*scaleFactor;
 
         return vec;
     }
 
-    void TFont::SetDefaultFont(TFont *font_) {
+    void Font::SetDefaultFont(Font *font_) {
         DefaultFont = font_;
     }
 
-    void TFont::Unload() {
+    void Font::Unload() {
         // Unload atlas texture.
         Texture->Unload();
         Texture = nullptr;
@@ -140,9 +140,9 @@ namespace NerdThings::Ngine::Graphics {
 
     // All from raylib.
 
-    void TFont::__GenerateAtlas() {
+    void Font::__GenerateAtlas() {
         // Generate atlas texture.
-        auto atlas = std::make_shared<TImage>();
+        auto atlas = std::make_shared<Image>();
 
         // Undetermined constants
         int padding = 0;
@@ -150,7 +150,7 @@ namespace NerdThings::Ngine::Graphics {
         // By this point, no validation is required.
 
         // Load rectangles
-        std::vector<TRectangle> recs(CharacterCount);
+        std::vector<Rectangle> recs(CharacterCount);
 
         // Calculate image size
         float requiredArea = 0;
@@ -220,18 +220,18 @@ namespace NerdThings::Ngine::Graphics {
         atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
 
         // Create texture
-        Texture = std::make_shared<TTexture2D>(atlas);
+        Texture = std::make_shared<Texture2D>(atlas);
 
         // Delete atlas
         atlas->Unload();
     }
 
-    void TFont::__LoadFontInfo(const Filesystem::TPath &path_, std::vector<int> chars_) {
+    void Font::__LoadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_) {
         // Characters
-        std::vector<TCharInfo> characters;
+        std::vector<CharInfo> characters;
 
         // Load font file
-        auto fontFile = Filesystem::TFile(path_);
+        auto fontFile = Filesystem::File(path_);
         if (fontFile.Open(Filesystem::MODE_READ, true)) {
             // Get font data
             auto size = fontFile.GetSize();
@@ -275,7 +275,7 @@ namespace NerdThings::Ngine::Graphics {
                 auto pixels = stbtt_GetCodepointBitmap(&fontInfo, scaleFactor, scaleFactor, ch, &chw, &chh, &Characters[i].OffsetX, &Characters[i].OffsetY);
 
                 // Load image
-                Characters[i].Image = std::make_shared<TImage>(pixels, chw, chh, UNCOMPRESSED_GRAYSCALE);
+                Characters[i].Image = std::make_shared<Image>(pixels, chw, chh, UNCOMPRESSED_GRAYSCALE);
 
                 // TODO: Option to remove anti-aliasing
 

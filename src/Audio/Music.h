@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Audio {
     /*
      * Music stream
      */
-    struct NEAPI TMusic : public TResource {
+    struct NEAPI Music : public IResource {
         // Public Fields
 
         /*
@@ -56,11 +56,11 @@ namespace NerdThings::Ngine::Audio {
         /*
          * The audio stream
          */
-        TAudioStream Stream;
+        AudioStream Stream;
 
         // Destructor
 
-        ~TMusic();
+        ~Music();
 
         // Public Methods
 
@@ -87,7 +87,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Load music from a file
          */
-        static TMusic *LoadMusic(const Filesystem::TPath &path_);
+        static Music *LoadMusic(const Filesystem::Path &path_);
 
         /*
          * Pause music
@@ -132,7 +132,7 @@ namespace NerdThings::Ngine::Audio {
     private:
         // Private Fields
 
-        static std::vector<TMusic *> _ActiveMusic;
+        static std::vector<Music *> _ActiveMusic;
 
         /*
          * Number of loops completed since last play.

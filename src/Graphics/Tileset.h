@@ -22,13 +22,13 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A tileset
      */
-    struct NEAPI TTileset {
+    struct NEAPI Tileset {
         // Public Fields
 
         /*
          * The tileset texture
          */
-        std::shared_ptr<TTexture2D> _Texture;
+        std::shared_ptr<Texture2D> _Texture;
 
         /*
          * Tile width
@@ -42,16 +42,16 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TTileset(TTexture2D *texture_, float tileWidth_, float tileHeight_);
+        Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_);
 
         // Public Methods
 
-        void DrawTile(TVector2 position_, int tile_);
+        void DrawTile(Vector2 position_, int tile_);
 
         /*
          * Get the tileset texture
          */
-        TTexture2D *GetTexture();
+        Texture2D *GetTexture();
 
         /*
          * Get the tile height

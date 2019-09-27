@@ -2,25 +2,25 @@
 
 namespace NerdThings::Ngine::Audio {
     // Public Methods
-    bool TAudioBuffer::IsPlaying() const {
+    bool AudioBuffer::IsPlaying() const {
         return (Playing && !Paused);
     }
 
-    void TAudioBuffer::Pause() {
+    void AudioBuffer::Pause() {
         Paused = true;
     }
 
-    void TAudioBuffer::Play() {
+    void AudioBuffer::Play() {
         Playing = true;
         Paused = false;
         FrameCursorPos = 0;
     }
 
-    void TAudioBuffer::Resume() {
+    void AudioBuffer::Resume() {
         Paused = false;
     }
 
-    void TAudioBuffer::SetPitch(float pitch_) {
+    void AudioBuffer::SetPitch(float pitch_) {
         float pitchMul = pitch_ / Pitch;
 
         auto newOutputSampleRate = (ma_uint32)((float)DSP.src.config.sampleRateOut/pitchMul);
@@ -29,11 +29,11 @@ namespace NerdThings::Ngine::Audio {
         ma_pcm_converter_set_output_sample_rate(&DSP, newOutputSampleRate);
     }
 
-    void TAudioBuffer::SetVolume(float vol_) {
+    void AudioBuffer::SetVolume(float vol_) {
         Volume = vol_;
     }
 
-    void TAudioBuffer::Stop() {
+    void AudioBuffer::Stop() {
         if (IsPlaying()) {
             Playing = false;
             Paused = false;

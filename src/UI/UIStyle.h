@@ -29,17 +29,17 @@ namespace NerdThings::Ngine::UI {
         /*
          * Background color
          */
-        Graphics::TColor BackColor = Graphics::TColor::Transparent;
+        Graphics::Color BackColor = Graphics::Color::Transparent;
 
         /*
          * The background texture
          */
-        std::shared_ptr<Graphics::TTexture2D> BackgroundTexture;
+        std::shared_ptr<Graphics::Texture2D> BackgroundTexture;
 
         /*
          * Border color
          */
-        Graphics::TColor BorderColor = Graphics::TColor::Gray;
+        Graphics::Color BorderColor = Graphics::Color::Gray;
 
         /*
          * Border thickness
@@ -54,7 +54,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Foreground color
          */
-        Graphics::TColor ForeColor = Graphics::TColor::Black;
+        Graphics::Color ForeColor = Graphics::Color::Black;
 
         /*
          * Margins,
@@ -73,7 +73,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Must be passed the border position
          */
-        TVector2 GetBackgroundPosition(TVector2 pos_) {
+        Vector2 GetBackgroundPosition(Vector2 pos_) {
             // Apply border
             pos_ += BorderThickness;
 
@@ -84,7 +84,7 @@ namespace NerdThings::Ngine::UI {
             return pos_;
         }
 
-        TRectangle GetBackgroundRect(TRectangle controlRect_) {
+        Rectangle GetBackgroundRect(Rectangle controlRect_) {
             // Apply border
             controlRect_.X += BorderThickness;
             controlRect_.Y += BorderThickness;
@@ -98,14 +98,14 @@ namespace NerdThings::Ngine::UI {
             return controlRect_;
         }
 
-        Graphics::TTexture2D *GetBackgroundTexture() {
+        Graphics::Texture2D *GetBackgroundTexture() {
             return BackgroundTexture.get();
         }
 
         /*
          * Get the dimensions of the border
          */
-        TVector2 GetBorderDimensions(TVector2 dimensions_) {
+        Vector2 GetBorderDimensions(Vector2 dimensions_) {
             // Apply border
             dimensions_ += BorderThickness * 2;
 
@@ -115,7 +115,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the border rectangle
          */
-        TRectangle GetBorderRect(TRectangle controlRect_) {
+        Rectangle GetBorderRect(Rectangle controlRect_) {
             // Apply border
             controlRect_.Width += BorderThickness * 2;
             controlRect_.Height += BorderThickness * 2;
@@ -130,7 +130,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the border
          */
-        TVector2 GetBorderPosition(TVector2 pos_) {
+        Vector2 GetBorderPosition(Vector2 pos_) {
             // Apply margin TODO: Check this is right
             pos_.X += Margin[3];
             pos_.Y += Margin[0];
@@ -141,7 +141,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The size of the content
          */
-        TVector2 GetContentDimensions(TVector2 dimensions_) {
+        Vector2 GetContentDimensions(Vector2 dimensions_) {
             // Apply padding
             dimensions_.X -= Padding[1];
             dimensions_.X -= Padding[3];
@@ -154,7 +154,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the start position for content inside the control.
          */
-        TVector2 GetContentPosition(TVector2 pos_) {
+        Vector2 GetContentPosition(Vector2 pos_) {
             // Apply border
             pos_ += BorderThickness;
 
@@ -169,7 +169,7 @@ namespace NerdThings::Ngine::UI {
             return pos_;
         }
 
-        TRectangle GetContentRect(TRectangle controlRect_) {
+        Rectangle GetContentRect(Rectangle controlRect_) {
             // Apply border
             controlRect_.X += BorderThickness;
             controlRect_.Y += BorderThickness;

@@ -32,7 +32,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The render target
          */
-        std::shared_ptr<TRenderTarget> _RenderTarget;
+        std::shared_ptr<RenderTarget> _RenderTarget;
 
         /*
          * Canvas width
@@ -56,7 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw the canvas
          */
-        void Draw(TVector2 pos_);
+        void Draw(Vector2 pos_);
 
         /*
          * Get canvas height

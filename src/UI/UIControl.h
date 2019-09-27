@@ -123,22 +123,22 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the render position.
          */
-        virtual TVector2 GetLogicPosition();
+        virtual Vector2 GetLogicPosition();
 
         /*
          * Get the render rectangle
          */
-        TRectangle GetLogicRectangle();
+        Rectangle GetLogicRectangle();
 
         /*
          * Get the render position.
          */
-        virtual TVector2 GetRenderPosition();
+        virtual Vector2 GetRenderPosition();
 
         /*
          * Get the render rectangle
          */
-        TRectangle GetRenderRectangle();
+        Rectangle GetRenderRectangle();
 
         /*
          * Get the current style

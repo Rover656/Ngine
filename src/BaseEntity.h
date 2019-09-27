@@ -33,12 +33,12 @@ namespace NerdThings::Ngine {
         /*
          * Entity origin
          */
-        TVector2 EntityOrigin;
+        Vector2 EntityOrigin;
 
         /*
          * The new entity position
          */
-        TVector2 EntityPosition;
+        Vector2 EntityPosition;
 
         /*
          * The new rotation
@@ -52,7 +52,7 @@ namespace NerdThings::Ngine {
 
         // Public Constructor(s)
 
-        EntityTransformChangedEventArgs(TVector2 origin_, TVector2 pos_, float rot_, float scale_)
+        EntityTransformChangedEventArgs(Vector2 origin_, Vector2 pos_, float rot_, float scale_)
                 : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
     };
 
@@ -86,7 +86,7 @@ namespace NerdThings::Ngine {
         /*
          * The entity origin
          */
-        TVector2 _Origin;
+        Vector2 _Origin;
 
         /*
          * The parent entity
@@ -106,7 +106,7 @@ namespace NerdThings::Ngine {
         /*
          * The entity position
          */
-        TVector2 _Position = TVector2::Zero;
+        Vector2 _Position = Vector2::Zero;
 
         /*
          * The entity rotation (in radians)
@@ -152,7 +152,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a BaseEntity.
          */
-        BaseEntity(Scene *parentScene_, TVector2 position_, int depth_ = 0, bool canCull_ = false);
+        BaseEntity(Scene *parentScene_, Vector2 position_, int depth_ = 0, bool canCull_ = false);
 
         // Destructor
 
@@ -186,7 +186,7 @@ namespace NerdThings::Ngine {
          * This is used to determine if this entity should be culled.
          * This can allow you to hide this if the collision box is not contained instead.
          */
-        virtual bool CheckForCulling(TRectangle cullArea_);
+        virtual bool CheckForCulling(Rectangle cullArea_);
 
         /*
          * Remove from our parent and delete ourselves.
@@ -230,7 +230,7 @@ namespace NerdThings::Ngine {
         /*
          * Get entity origin
          */
-        TVector2 GetOrigin() const;
+        Vector2 GetOrigin() const;
 
         /*
          * Get our parent container.
@@ -265,7 +265,7 @@ namespace NerdThings::Ngine {
         /*
          * Get the entity position
          */
-        TVector2 GetPosition() const;
+        Vector2 GetPosition() const;
 
         /*
          * Get the entity rotation
@@ -285,7 +285,7 @@ namespace NerdThings::Ngine {
         /*
          * Move an entity
          */
-        void MoveBy(TVector2 moveBy_);
+        void MoveBy(Vector2 moveBy_);
 
         /*
          * Removes the entity from the component.
@@ -306,7 +306,7 @@ namespace NerdThings::Ngine {
         /*
          * Set entity origin
          */
-        void SetOrigin(TVector2 origin_);
+        void SetOrigin(Vector2 origin_);
 
         /*
          * Set whether or not we update when the scene is paused
@@ -316,7 +316,7 @@ namespace NerdThings::Ngine {
         /*
          * Set entity position
          */
-        void SetPosition(TVector2 position_);
+        void SetPosition(Vector2 position_);
 
         /*
          * Set entity rotation

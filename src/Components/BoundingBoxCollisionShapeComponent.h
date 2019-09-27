@@ -31,12 +31,12 @@ namespace NerdThings::Ngine::Components {
         /*
          * The bounding box used
          */
-        Physics::TBoundingBox _BoundingBox;
+        Physics::BoundingBox _BoundingBox;
 
         /*
          * The rectangle to use
          */
-        TRectangle _Rectangle;
+        Rectangle _Rectangle;
 
         // Private Methods
 
@@ -61,9 +61,9 @@ namespace NerdThings::Ngine::Components {
             auto par = GetParent<BaseEntity>();
 
             // Determine color
-            auto col = Graphics::TColor::Red;
+            auto col = Graphics::Color::Red;
             if (CheckCollision<BaseEntity>())
-                col = Graphics::TColor::Green;
+                col = Graphics::Color::Green;
 
             // Draw each vertex of the bounding box
             Graphics::Renderer::DrawLine(_BoundingBox.Min, {_BoundingBox.Max.X, _BoundingBox.Min.Y}, col);
@@ -74,9 +74,9 @@ namespace NerdThings::Ngine::Components {
             // Extra to understand how bounding boxes work
             if (DebugDrawInternalRectangle)
                 Graphics::Renderer::DrawRectangle(
-                    TRectangle(par->GetPosition() + TVector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width,
-                                     _Rectangle.Height), Graphics::TColor::Orange, par->GetRotation(),
-                    par->GetOrigin());
+                        Rectangle(par->GetPosition() + Vector2(_Rectangle.X, _Rectangle.Y), _Rectangle.Width,
+                                  _Rectangle.Height), Graphics::Color::Orange, par->GetRotation(),
+                        par->GetOrigin());
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {
@@ -87,18 +87,18 @@ namespace NerdThings::Ngine::Components {
             return false;
         }
 
-        void Offset(TVector2 offset_) override {
+        void Offset(Vector2 offset_) override {
             // Recreate with a positional offset
             auto par = GetParent<BaseEntity>();
-            _BoundingBox = TRectangle(
-                par->GetPosition() - par->GetOrigin() + offset_ + TVector2(_Rectangle.X, _Rectangle.Y),
+            _BoundingBox = Rectangle(
+                    par->GetPosition() - par->GetOrigin() + offset_ + Vector2(_Rectangle.X, _Rectangle.Y),
                 _Rectangle.Width, _Rectangle.Height).ToBoundingBox(par->GetRotation(), par->GetOrigin());
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             // Recreate with new information
-            _BoundingBox = TRectangle(
-                e.EntityPosition - e.EntityOrigin + TVector2(_Rectangle.X, _Rectangle.Y),
+            _BoundingBox = Rectangle(
+                    e.EntityPosition - e.EntityOrigin + Vector2(_Rectangle.X, _Rectangle.Y),
                 _Rectangle.Width, _Rectangle.Height).ToBoundingBox(
                 e.EntityRotation, e.EntityOrigin);
         }
@@ -117,7 +117,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a bounding box component
          */
-        BoundingBoxCollisionShapeComponent(BaseEntity *parent_, TRectangle rectangle_,
+        BoundingBoxCollisionShapeComponent(BaseEntity *parent_, Rectangle rectangle_,
                                            std::string collisionGroup_ = "General")
             : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Rectangle(rectangle_) {
             const auto par = GetParent<BaseEntity>();
@@ -129,18 +129,18 @@ namespace NerdThings::Ngine::Components {
         /*
          * Get the bounding box
          */
-        [[nodiscard]] Physics::TBoundingBox GetBoundingBox() const {
+        [[nodiscard]] Physics::BoundingBox GetBoundingBox() const {
             return _BoundingBox;
         }
 
         /*
          * Set the bounding box height
          */
-        void SetRectangle(TRectangle rectangle_) {
+        void SetRectangle(Rectangle rectangle_) {
             const auto par = GetParent<BaseEntity>();
             _Rectangle = rectangle_;
-            _BoundingBox = TRectangle(
-                par->GetPosition() - par->GetOrigin() + TVector2(_Rectangle.X, _Rectangle.Y),
+            _BoundingBox = Rectangle(
+                    par->GetPosition() - par->GetOrigin() + Vector2(_Rectangle.X, _Rectangle.Y),
                 _Rectangle.Width, _Rectangle.Height).ToBoundingBox(
                 par->GetRotation(), par->GetOrigin());
         }

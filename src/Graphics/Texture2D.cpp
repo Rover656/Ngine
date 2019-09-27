@@ -16,9 +16,9 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TTexture2D::TTexture2D() {}
+    Texture2D::Texture2D() {}
 
-    TTexture2D::TTexture2D(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_, int mipmapCount_) {
+    Texture2D::Texture2D(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_, int mipmapCount_) {
         Width = width_;
         Height = height_;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -33,30 +33,30 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    TTexture2D::TTexture2D(const Filesystem::TPath &path_) {
+    Texture2D::Texture2D(const Filesystem::Path &path_) {
         // Create
-        *this = TTexture2D(std::make_shared<TImage>(path_));
+        *this = Texture2D(std::make_shared<Image>(path_));
     }
 
-    TTexture2D::TTexture2D(const std::shared_ptr<TImage> &img_) {
+    Texture2D::Texture2D(const std::shared_ptr<Image> &img_) {
         // Create
-        *this = TTexture2D(img_->PixelData, img_->Width, img_->Height, img_->Format, img_->Mipmaps);
+        *this = Texture2D(img_->PixelData, img_->Width, img_->Height, img_->Format, img_->Mipmaps);
     }
 
     // Public Methods
 
-    std::shared_ptr<TTexture2D> TTexture2D::FromImage(const std::shared_ptr<TImage> &img_) {
-        return std::make_shared<TTexture2D>(img_);
+    std::shared_ptr<Texture2D> Texture2D::FromImage(const std::shared_ptr<Image> &img_) {
+        return std::make_shared<Texture2D>(img_);
     }
 
-    int TTexture2D::GetMipmapCount() const {
+    int Texture2D::GetMipmapCount() const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->MipmapCount;
 #endif
         return 0;
     }
 
-    bool TTexture2D::IsValid() const {
+    bool Texture2D::IsValid() const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         if (InternalTexture->ID > 0)
             return true;
@@ -64,15 +64,15 @@ namespace NerdThings::Ngine::Graphics {
         return false;
     }
 
-    TTexture2D *TTexture2D::LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_, int mipmapCount_) {
-        return new TTexture2D(data_, width_, height_, format_, mipmapCount_);
+    Texture2D *Texture2D::LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_, int mipmapCount_) {
+        return new Texture2D(data_, width_, height_, format_, mipmapCount_);
     }
 
-    TTexture2D *TTexture2D::LoadTexture(const Filesystem::TPath &path_) {
-        return new TTexture2D(path_);
+    Texture2D *Texture2D::LoadTexture(const Filesystem::Path &path_) {
+        return new Texture2D(path_);
     }
 
-    void TTexture2D::SetTextureFilter(const ETextureFilterMode filterMode_) const {
+    void Texture2D::SetTextureFilter(const TextureFilterMode filterMode_) const {
         switch(filterMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             case FILTER_POINT:
@@ -116,7 +116,7 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void TTexture2D::SetTextureWrap(const ETextureWrapMode wrapMode_) const {
+    void Texture2D::SetTextureWrap(const TextureWrapMode wrapMode_) const {
         switch (wrapMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             case WRAP_REPEAT:
@@ -139,7 +139,7 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void TTexture2D::Unload() {
+    void Texture2D::Unload() {
         // Delete texture data
         Width = 0;
         Height = 0;
@@ -150,14 +150,14 @@ namespace NerdThings::Ngine::Graphics {
 
     // Operators
 
-    bool TTexture2D::operator==(const TTexture2D &tex_) const {
+    bool Texture2D::operator==(const Texture2D &tex_) const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->ID == tex_.InternalTexture->ID;
 #endif
         return false;
     }
 
-    bool TTexture2D::operator!=(const TTexture2D &tex_) const {
+    bool Texture2D::operator!=(const Texture2D &tex_) const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalTexture->ID != tex_.InternalTexture->ID;
 #endif

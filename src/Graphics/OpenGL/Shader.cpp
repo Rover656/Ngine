@@ -202,7 +202,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         return IsLinked();
     }
 
-    void GLShaderProgram::SetUniformMatrix(unsigned int loc_, const TMatrix &matrix_) {
+    void GLShaderProgram::SetUniformMatrix(unsigned int loc_, const Matrix &matrix_) {
         // No unlinked shaders
         if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
 
@@ -210,11 +210,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glUniformMatrix4fv(loc_, 1, false, matrix_.ToFloatArray().get());
     }
 
-    void GLShaderProgram::SetUniformMatrixP(GLShaderLocation loc_, const TMatrix &matrix_) {
+    void GLShaderProgram::SetUniformMatrixP(GLShaderLocation loc_, const Matrix &matrix_) {
         SetUniformMatrix(Locations[loc_], matrix_);
     }
 
-    void GLShaderProgram::SetUniformMatrixN(const std::string &loc_, const TMatrix &matrix_) {
+    void GLShaderProgram::SetUniformMatrixN(const std::string &loc_, const Matrix &matrix_) {
         SetUniformMatrix(GetUniformLocation(loc_), matrix_);
     }
 

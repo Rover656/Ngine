@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * The internal camera
          */
-        Graphics::TCamera _Camera;
+        Graphics::Camera _Camera;
 
         /*
          * Reference to on position changed event
@@ -51,7 +51,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a camera component
          */
-        CameraComponent(BaseEntity *parent_, float zoom_, TVector2 origin_ = TVector2::Zero,
+        CameraComponent(BaseEntity *parent_, float zoom_, Vector2 origin_ = Vector2::Zero,
                         float rotation_ = 0);
 
         // Destructor
@@ -69,7 +69,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Set the camera origin
          */
-        void SetOrigin(TVector2 origin_);
+        void SetOrigin(Vector2 origin_);
 
         /*
          * Set camera rotation

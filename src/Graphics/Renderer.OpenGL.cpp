@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Graphics {
 
 #define CIRCLE_ERROR_RATE 0.5f
 
-    void Renderer::__DrawLine(TVector2 a_, TVector2 b_, TColor c_, float thick_) {
+    void Renderer::__DrawLine(Vector2 a_, Vector2 b_, Color c_, float thick_) {
         // Swap if start pos is past end pos
         if (a_.X > b_.X) {
             auto tmp = a_;
@@ -71,7 +71,7 @@ namespace NerdThings::Ngine::Graphics {
         GraphicsManager::SetupFramebuffer();
     }
 
-    void Renderer::Clear(TColor color_) {
+    void Renderer::Clear(Color color_) {
         // Set clear color
         OpenGL::GL::ClearColor(color_);
 
@@ -79,11 +79,11 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::Clear();
     }
 
-    void Renderer::DrawPixel(TVector2 position_, TColor color_) {
+    void Renderer::DrawPixel(Vector2 position_, Color color_) {
         DrawLine(position_, {position_.X + 1, position_.Y + 1}, color_);
     }
 
-    void Renderer::DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_, float lineThickness_) {
+    void Renderer::DrawLine(Vector2 startPos_, Vector2 endPos_, Color color_, float lineThickness_) {
         if (lineThickness_ < 0) lineThickness_ = -lineThickness_; // Cheeky liddle fix
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -97,7 +97,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::StopUsingTexture();
     }
 
-    void Renderer::DrawLineStrip(const std::vector<TVector2> &points_, TColor color_, float lineThickness_) {
+    void Renderer::DrawLineStrip(const std::vector<Vector2> &points_, Color color_, float lineThickness_) {
         if (points_.size() >= 2) {
             if (OpenGL::GL::AtBufferLimit(points_.size() * 2)) OpenGL::GL::Draw();
 
@@ -118,16 +118,16 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void Renderer::DrawCircle(TVector2 center_, float radius_, TColor color_) {
+    void Renderer::DrawCircle(Vector2 center_, float radius_, Color color_) {
         DrawCircleSector(center_, radius_, 0, DegToRad(360), 36, color_);
     }
 
-    void Renderer::DrawCircleLines(TVector2 center_, float radius_, TColor color_, float lineThickness_) {
+    void Renderer::DrawCircleLines(Vector2 center_, float radius_, Color color_, float lineThickness_) {
         DrawCircleSectorLines(center_, radius_, 0, DegToRad(360), 36, color_, lineThickness_);
     }
 
-    void Renderer::DrawCircleSector(TVector2 center_, float radius_, float startAngle_, float endAngle_, int segments_,
-                                    TColor color_) {
+    void Renderer::DrawCircleSector(Vector2 center_, float radius_, float startAngle_, float endAngle_, int segments_,
+                                    Color color_) {
         if (radius_ <= 0.0f) radius_ = 0.1f;
 
         // Fix angles if wrong way around
@@ -200,8 +200,8 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawCircleSectorLines(TVector2 center_, float radius_, float startAngle_, float endAngle_, int segments_,
-                                    TColor color_, float lineThickness_) {
+    Renderer::DrawCircleSectorLines(Vector2 center_, float radius_, float startAngle_, float endAngle_, int segments_,
+                                    Color color_, float lineThickness_) {
         if (radius_ <= 0.0f) radius_ = 0.1f;
 
         if (endAngle_ < startAngle_) {
@@ -259,27 +259,27 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::StopUsingTexture();
     }
 
-//    void Renderer::DrawRing(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
-//                            int segments_, TColor color_) {
+//    void Renderer::DrawRing(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
+//                            int segments_, Color color_) {
 //
 //    }
 //
 //    void
-//    Renderer::DrawRingLines(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
-//                            int segments_, TColor color_) {
+//    Renderer::DrawRingLines(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
+//                            int segments_, Color color_) {
 //
 //    }
 
-    void Renderer::DrawRectangle(TVector2 position_, float width_, float height_, TColor color_, float rotation_,
-                                 TVector2 origin_) {
+    void Renderer::DrawRectangle(Vector2 position_, float width_, float height_, Color color_, float rotation_,
+                                 Vector2 origin_) {
         DrawRectangle(position_, {width_, height_}, color_, rotation_);
     }
 
-    void Renderer::DrawRectangle(TVector2 position_, TVector2 size_, TColor color_, float rotation_, TVector2 origin_) {
+    void Renderer::DrawRectangle(Vector2 position_, Vector2 size_, Color color_, float rotation_, Vector2 origin_) {
         DrawRectangle({position_.X, position_.Y, size_.X, size_.Y}, color_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangle(TRectangle rectangle_, TColor color_, float rotation_, TVector2 origin_) {
+    void Renderer::DrawRectangle(Rectangle rectangle_, Color color_, float rotation_, Vector2 origin_) {
         if (OpenGL::GL::AtBufferLimit(4)) OpenGL::GL::Draw();
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -308,50 +308,50 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawRectangleGradientV(TVector2 position_, float width_, float height_, TColor color1_, TColor color2_,
-                                     float rotation_, TVector2 origin_) {
+    Renderer::DrawRectangleGradientV(Vector2 position_, float width_, float height_, Color color1_, Color color2_,
+                                     float rotation_, Vector2 origin_) {
         DrawRectangleGradientV(position_, {width_, height_}, color1_, color2_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangleGradientV(TVector2 position_, TVector2 size_, TColor color1_, TColor color2_,
-                                          float rotation_, TVector2 origin_) {
+    void Renderer::DrawRectangleGradientV(Vector2 position_, Vector2 size_, Color color1_, Color color2_,
+                                          float rotation_, Vector2 origin_) {
         DrawRectangleGradientV({position_, size_}, color1_, color2_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangleGradientV(TRectangle rectangle_, TColor color1_, TColor color2_, float rotation_,
-                                          TVector2 origin_) {
+    void Renderer::DrawRectangleGradientV(Rectangle rectangle_, Color color1_, Color color2_, float rotation_,
+                                          Vector2 origin_) {
         DrawRectangleGradientEx(rectangle_, color1_, color2_, color2_, color1_, rotation_, origin_);
     }
 
     void
-    Renderer::DrawRectangleGradientH(TVector2 position_, float width_, float height_, TColor color1_, TColor color2_,
-                                     float rotation_, TVector2 origin_) {
+    Renderer::DrawRectangleGradientH(Vector2 position_, float width_, float height_, Color color1_, Color color2_,
+                                     float rotation_, Vector2 origin_) {
         DrawRectangleGradientH(position_, {width_, height_}, color1_, color2_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangleGradientH(TVector2 position_, TVector2 size_, TColor color1_, TColor color2_,
-                                          float rotation_, TVector2 origin_) {
+    void Renderer::DrawRectangleGradientH(Vector2 position_, Vector2 size_, Color color1_, Color color2_,
+                                          float rotation_, Vector2 origin_) {
         DrawRectangleGradientH({position_, size_}, color1_, color2_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangleGradientH(TRectangle rectangle_, TColor color1_, TColor color2_, float rotation_,
-                                          TVector2 origin_) {
+    void Renderer::DrawRectangleGradientH(Rectangle rectangle_, Color color1_, Color color2_, float rotation_,
+                                          Vector2 origin_) {
         DrawRectangleGradientEx(rectangle_, color1_, color1_, color2_, color2_, rotation_, origin_);
     }
 
     void
-    Renderer::DrawRectangleGradientEx(TVector2 position_, float width_, float height_, TColor color1_, TColor color2_,
-                                      TColor color3_, TColor color4_, float rotation_, TVector2 origin_) {
+    Renderer::DrawRectangleGradientEx(Vector2 position_, float width_, float height_, Color color1_, Color color2_,
+                                      Color color3_, Color color4_, float rotation_, Vector2 origin_) {
         DrawRectangleGradientEx(position_, {width_, height_}, color1_, color2_, color3_, color4_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangleGradientEx(TVector2 position_, TVector2 size_, TColor color1_, TColor color2_,
-                                           TColor color3_, TColor color4_, float rotation_, TVector2 origin_) {
+    void Renderer::DrawRectangleGradientEx(Vector2 position_, Vector2 size_, Color color1_, Color color2_,
+                                           Color color3_, Color color4_, float rotation_, Vector2 origin_) {
         DrawRectangleGradientEx({position_, size_}, color1_, color2_, color3_, color4_, rotation_, origin_);
     }
 
-    void Renderer::DrawRectangleGradientEx(TRectangle rectangle_, TColor color1_, TColor color2_, TColor color3_,
-                                           TColor color4_, float rotation_, TVector2 origin_) {
+    void Renderer::DrawRectangleGradientEx(Rectangle rectangle_, Color color1_, Color color2_, Color color3_,
+                                           Color color4_, float rotation_, Vector2 origin_) {
         if (OpenGL::GL::AtBufferLimit(4)) OpenGL::GL::Draw();
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -388,15 +388,15 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawRectangleLines(TVector2 position_, float width_, float height_, TColor color_, int lineThickness_) {
+    Renderer::DrawRectangleLines(Vector2 position_, float width_, float height_, Color color_, int lineThickness_) {
         DrawRectangleLines(position_, {width_, height_}, color_, lineThickness_);
     }
 
-    void Renderer::DrawRectangleLines(TVector2 position_, TVector2 size_, TColor color_, int lineThickness_) {
+    void Renderer::DrawRectangleLines(Vector2 position_, Vector2 size_, Color color_, int lineThickness_) {
         DrawRectangleLines({position_, size_}, color_, lineThickness_);
     }
 
-    void Renderer::DrawRectangleLines(TRectangle rectangle_, TColor color_, int lineThickness_) {
+    void Renderer::DrawRectangleLines(Rectangle rectangle_, Color color_, int lineThickness_) {
         if (OpenGL::GL::AtBufferLimit(4 * 4)) OpenGL::GL::Draw();
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -418,8 +418,8 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawText(TFont *font_, const std::string &string_, TVector2 position_, float fontSize_, float spacing_,
-                       TColor color_) {
+    Renderer::DrawText(Font *font_, const std::string &string_, Vector2 position_, float fontSize_, float spacing_,
+                       Color color_) {
         int textOffsetY = 0;        // Required for line break!
         float textOffsetX = 0.0f;   // Offset between characters
         float scaleFactor = 0.0f;
@@ -467,14 +467,14 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void Renderer::DrawTextRect(TFont *font_, const std::string &string_, TRectangle rectangle_, float fontSize_,
-                                float spacing_, TColor color_, bool wordWrap_) {
-        DrawTextRectEx(font_, string_, rectangle_, fontSize_, spacing_, color_, 0, 0, TColor::White, TColor::White, wordWrap_);
+    void Renderer::DrawTextRect(Font *font_, const std::string &string_, Rectangle rectangle_, float fontSize_,
+                                float spacing_, Color color_, bool wordWrap_) {
+        DrawTextRectEx(font_, string_, rectangle_, fontSize_, spacing_, color_, 0, 0, Color::White, Color::White, wordWrap_);
     }
 
-    void Renderer::DrawTextRectEx(TFont *font_, const std::string &string_, TRectangle rectangle_, float fontSize_,
-                                  float spacing_, TColor color_, int selectStart_, int selectLength_,
-                                  TColor selectText_, TColor selectBack_, bool wordWrap_) {
+    void Renderer::DrawTextRectEx(Font *font_, const std::string &string_, Rectangle rectangle_, float fontSize_,
+                                  float spacing_, Color color_, int selectStart_, int selectLength_,
+                                  Color selectText_, Color selectBack_, bool wordWrap_) {
         int textOffsetY = 0;        // Required for line break!
         float textOffsetX = 0.0f;   // Offset between characters
         float scaleFactor = 0.0f;
@@ -555,7 +555,7 @@ namespace NerdThings::Ngine::Graphics {
                     bool isGlyphSelected = false;
                     if ((selectStart_ >= 0) && (k >= selectStart_) && (k < (selectStart_ + selectLength_)))
                     {
-                        TRectangle strec = {rectangle_.X + textOffsetX-1, rectangle_.Y + textOffsetY, (float)glyphWidth, font_->BaseSize*scaleFactor };
+                        Rectangle strec = {rectangle_.X + textOffsetX - 1, rectangle_.Y + textOffsetY, (float)glyphWidth, font_->BaseSize * scaleFactor };
                         DrawRectangle(strec, selectBack_);
                         isGlyphSelected = true;
                     }
@@ -589,36 +589,36 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::DrawTexture(TTexture2D *texture_, TVector2 position_, TColor color_, float scale_, TVector2 origin_,
+    Renderer::DrawTexture(Texture2D *texture_, Vector2 position_, Color color_, float scale_, Vector2 origin_,
                           float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_->Width, (float) texture_->Height}, position_, texture_->Width,
                     texture_->Height, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(TTexture2D *texture_, TVector2 position_, float width_, float height_, TColor color_,
-                          TVector2 origin_, float rotation_) {
+    Renderer::DrawTexture(Texture2D *texture_, Vector2 position_, float width_, float height_, Color color_,
+                          Vector2 origin_, float rotation_) {
         DrawTexture(texture_, {0, 0, (float) texture_->Width, (float) texture_->Height}, position_, width_, height_,
                     color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(TTexture2D *texture_, TRectangle sourceRectangle_, TVector2 position_, TColor color_,
-                          TVector2 origin_, float rotation_) {
+    Renderer::DrawTexture(Texture2D *texture_, Rectangle sourceRectangle_, Vector2 position_, Color color_,
+                          Vector2 origin_, float rotation_) {
         DrawTexture(texture_, sourceRectangle_, position_, sourceRectangle_.Width, sourceRectangle_.Height, color_,
                     origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(TTexture2D *texture_, TRectangle sourceRectangle_, TVector2 position_, float width_,
-                          float height_, TColor color_, TVector2 origin_, float rotation_) {
+    Renderer::DrawTexture(Texture2D *texture_, Rectangle sourceRectangle_, Vector2 position_, float width_,
+                          float height_, Color color_, Vector2 origin_, float rotation_) {
         DrawTexture(texture_, {position_, {width_, height_}}, sourceRectangle_, color_, origin_, rotation_);
     }
 
     void
-    Renderer::DrawTexture(TTexture2D *texture_, TRectangle destRectangle_, TRectangle sourceRectangle_,
-                          TColor color_,
-                          TVector2 origin_, float rotation_) {
+    Renderer::DrawTexture(Texture2D *texture_, Rectangle destRectangle_, Rectangle sourceRectangle_,
+                          Color color_,
+                          Vector2 origin_, float rotation_) {
         // Check null
         if (texture_ == nullptr) throw std::runtime_error("Texture is null.");
 
@@ -656,7 +656,7 @@ namespace NerdThings::Ngine::Graphics {
                 OpenGL::GL::TexCoord(
                         {(sourceRectangle_.X + sourceRectangle_.Width) / width, sourceRectangle_.Y / height});
             else OpenGL::GL::TexCoord({sourceRectangle_.X / width, sourceRectangle_.Y / height});
-            OpenGL::GL::Vertex(TVector2(0.0f, 0.0f));
+            OpenGL::GL::Vertex(Vector2(0.0f, 0.0f));
 
             // Bottom-right corner for texture and quad
             if (flipX)
@@ -665,7 +665,7 @@ namespace NerdThings::Ngine::Graphics {
             else
                 OpenGL::GL::TexCoord(
                         {sourceRectangle_.X / width, (sourceRectangle_.Y + sourceRectangle_.Height) / height});
-            OpenGL::GL::Vertex(TVector2(0.0f, destRectangle_.Height));
+            OpenGL::GL::Vertex(Vector2(0.0f, destRectangle_.Height));
 
             // Top-right corner for texture and quad
             if (flipX)
@@ -674,14 +674,14 @@ namespace NerdThings::Ngine::Graphics {
             else
                 OpenGL::GL::TexCoord({(sourceRectangle_.X + sourceRectangle_.Width) / width,
                                       (sourceRectangle_.Y + sourceRectangle_.Height) / height});
-            OpenGL::GL::Vertex(TVector2(destRectangle_.Width, destRectangle_.Height));
+            OpenGL::GL::Vertex(Vector2(destRectangle_.Width, destRectangle_.Height));
 
             // Top-left corner for texture and quad
             if (flipX) OpenGL::GL::TexCoord({sourceRectangle_.X / width, sourceRectangle_.Y / height});
             else
                 OpenGL::GL::TexCoord(
                         {(sourceRectangle_.X + sourceRectangle_.Width) / width, sourceRectangle_.Y / height});
-            OpenGL::GL::Vertex(TVector2(destRectangle_.Width, 0.0f));
+            OpenGL::GL::Vertex(Vector2(destRectangle_.Width, 0.0f));
 
             OpenGL::GL::PopMatrix();
 
@@ -693,7 +693,7 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void Renderer::DrawTriangle(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_) {
+    void Renderer::DrawTriangle(Vector2 v1_, Vector2 v2_, Vector2 v3_, Color color_) {
         // Check for buffer space
         if (OpenGL::GL::AtBufferLimit(4)) OpenGL::GL::Draw();
 
@@ -721,7 +721,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::StopUsingTexture();
     }
 
-    void Renderer::DrawTriangleLines(TVector2 v1_, TVector2 v2_, TVector2 v3_, TColor color_, float lineThickness_) {
+    void Renderer::DrawTriangleLines(Vector2 v1_, Vector2 v2_, Vector2 v3_, Color color_, float lineThickness_) {
         // Check for buffer space
         if (OpenGL::GL::AtBufferLimit(12)) OpenGL::GL::Draw();
 
@@ -739,7 +739,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::StopUsingTexture();
     }
 
-    void Renderer::DrawTriangleFan(const std::vector<TVector2> &points_, TColor color_) {
+    void Renderer::DrawTriangleFan(const std::vector<Vector2> &points_, Color color_) {
         if (points_.size() >= 3) {
             if (OpenGL::GL::AtBufferLimit((points_.size() - 2) * 4)) OpenGL::GL::Draw();
 
@@ -769,7 +769,7 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    void Renderer::DrawPoly(TVector2 center_, int sides_, float radius_, float rotation_, TColor color_) {
+    void Renderer::DrawPoly(Vector2 center_, int sides_, float radius_, float rotation_, Color color_) {
         if (sides_ < 3) sides_ = 3;
 
         if (OpenGL::GL::AtBufferLimit(4 * (360 / sides_))) OpenGL::GL::Draw();

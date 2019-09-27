@@ -17,12 +17,12 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TTileset::TTileset(TTexture2D *texture_, float tileWidth_, float tileHeight_)
-            : _Texture(std::shared_ptr<TTexture2D>(texture_)), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
+    Tileset::Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_)
+            : _Texture(std::shared_ptr<Texture2D>(texture_)), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
 
     // Public Methods
 
-    void TTileset::DrawTile(TVector2 position_, int tile_) {
+    void Tileset::DrawTile(Vector2 position_, int tile_) {
         // Tile's start from 1 to allow 0 to mean nothing
         tile_ -= 1;
 
@@ -41,21 +41,21 @@ namespace NerdThings::Ngine::Graphics {
         }
 
         // Get source rectangle
-        TRectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
+        Rectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
 
         // Draw
-        Renderer::DrawTexture(_Texture.get(), sourceRectangle, position_, TColor::White);
+        Renderer::DrawTexture(_Texture.get(), sourceRectangle, position_, Color::White);
     }
 
-    TTexture2D *TTileset::GetTexture() {
+    Texture2D *Tileset::GetTexture() {
         return _Texture.get();
     }
 
-    float TTileset::GetTileHeight() const {
+    float Tileset::GetTileHeight() const {
         return _TileHeight;
     }
 
-    float TTileset::GetTileWidth() const {
+    float Tileset::GetTileWidth() const {
         return _TileWidth;
     }
 }

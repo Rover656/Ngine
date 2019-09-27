@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The tileset
          */
-        TTileset _Tileset;
+        Tileset _Tileset;
 
     public:
         // Public Constructor(s)
@@ -44,14 +44,14 @@ namespace NerdThings::Ngine::Graphics {
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetCanvas(const TTileset& tileset_, float width_, float height_);
+        TilesetCanvas(const Tileset& tileset_, float width_, float height_);
 
         /*
          * Create a tileset with data.
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetCanvas(const TTileset& tileset_, float width_, float height_, std::vector<int> tiles_);
+        TilesetCanvas(const Tileset& tileset_, float width_, float height_, std::vector<int> tiles_);
 
         // Public Methods
 
@@ -59,35 +59,35 @@ namespace NerdThings::Ngine::Graphics {
          * Get collision shapes for a tile in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int tile_, TRectangle range_, TVector2 tilesetPosition_ = TVector2::Zero);
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(std::vector<int> tiles_, TRectangle range_, TVector2 tilesetPosition_ = TVector2::Zero);
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * min_ <= tile <= max_.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, TRectangle range_, TVector2 tilesetPosition_ = TVector2::Zero);
+        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
          */
-        int GetTileAt(TVector2 pos_);
+        int GetTileAt(Vector2 pos_);
 
         /*
          * Get the tileset being used
          */
-        TTileset *GetTileset();
+        Tileset *GetTileset();
 
         /*
          * Set the tile value at a position.
          */
-        void SetTileAt(TVector2 pos_, int tile_);
+        void SetTileAt(Vector2 pos_, int tile_);
 
         /*
          * Set all tile data

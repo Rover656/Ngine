@@ -50,7 +50,7 @@ namespace NerdThings::Ngine {
         /*
          * Currently active camera
          */
-        Graphics::TCamera *_ActiveCamera = nullptr;
+        Graphics::Camera *_ActiveCamera = nullptr;
 
         /*
          * Whether or not the cull area centers around
@@ -159,12 +159,12 @@ namespace NerdThings::Ngine {
         /*
          * Get the currently active camera
          */
-        [[nodiscard]] Graphics::TCamera *GetActiveCamera() const;
+        [[nodiscard]] Graphics::Camera *GetActiveCamera() const;
 
         /*
          * Get the culling area
          */
-        TRectangle GetCullArea() const;
+        Rectangle GetCullArea() const;
 
         /*
          * Get the parent game
@@ -199,7 +199,7 @@ namespace NerdThings::Ngine {
         /*
          * Set the currently active camera
          */
-        void SetActiveCamera(Graphics::TCamera *camera_);
+        void SetActiveCamera(Graphics::Camera *camera_);
 
         /*
          * Set the entity culling area

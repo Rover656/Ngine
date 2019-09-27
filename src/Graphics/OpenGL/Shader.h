@@ -191,17 +191,17 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Set uniform matrix value.
          */
-        void SetUniformMatrix(unsigned int loc_, const TMatrix &matrix_);
+        void SetUniformMatrix(unsigned int loc_, const Matrix &matrix_);
 
         /*
          * Set uniform matrix value with a predefined location.
          */
-        void SetUniformMatrixP(GLShaderLocation loc_, const TMatrix &matrix_);
+        void SetUniformMatrixP(GLShaderLocation loc_, const Matrix &matrix_);
 
         /*
          * Set uniform matrix value with a name.
          */
-        void SetUniformMatrixN(const std::string &loc_, const TMatrix &matrix_);
+        void SetUniformMatrixN(const std::string &loc_, const Matrix &matrix_);
 
         /*
          * Set a uniform int value

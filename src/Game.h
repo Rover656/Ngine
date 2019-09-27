@@ -24,7 +24,7 @@
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
-    struct TGameConfig {
+    struct GameConfig {
         // Public Fields
 
         /*
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine {
         /*
          * The render target used for enforcing resolution
          */
-        std::shared_ptr<Graphics::TRenderTarget> _RenderTarget;
+        std::shared_ptr<Graphics::RenderTarget> _RenderTarget;
 
         /*
          * Is the game loop running
@@ -95,12 +95,12 @@ namespace NerdThings::Ngine {
         /*
          * Background clear color
          */
-        Graphics::TColor ClearColor = Graphics::TColor::Black;
+        Graphics::Color ClearColor = Graphics::Color::Black;
 
         /*
          * Game config
          */
-        TGameConfig Config;
+        GameConfig Config;
 
         /*
          * The current game. If this isn't nullptr at start, it will error
@@ -125,14 +125,14 @@ namespace NerdThings::Ngine {
         /*
          * Filter mode for scaling render target
          */
-        Graphics::ETextureFilterMode RenderTargetFilterMode = Graphics::FILTER_BILINEAR;
+        Graphics::TextureFilterMode RenderTargetFilterMode = Graphics::FILTER_BILINEAR;
 
         // Public Constructor(s)
 
         /*
          * Create a new Game
          */
-        Game(const TGameConfig &config_);
+        Game(const GameConfig &config_);
 
         // Destructor
 
@@ -153,12 +153,12 @@ namespace NerdThings::Ngine {
         /*
          * Get the default OS window size
          */
-        TVector2 GetDefaultWindowDimensions() const;
+        Vector2 GetDefaultWindowDimensions() const;
 
         /*
          * Get game dimensions
          */
-        TVector2 GetDimensions() const;
+        Vector2 GetDimensions() const;
 
         /*
          * Get the target draw FPS.
@@ -200,7 +200,7 @@ namespace NerdThings::Ngine {
          * Set the intended game size.
          * Resizes the framebuffer next frame.
          */
-        void SetIntendedSize(TVector2 size_);
+        void SetIntendedSize(Vector2 size_);
 
         /*
          * Set whether or not the game is running

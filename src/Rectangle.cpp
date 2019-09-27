@@ -16,32 +16,32 @@ namespace NerdThings::Ngine {
 
     #ifdef INCLUDE_RAYLIB
 
-    Rectangle TRectangle::ToRaylibRect() const {
+    Rectangle Rectangle::ToRaylibRect() const {
         return {X, Y, Width, Height};
     }
 
-    TRectangle TRectangle::FromRaylibRect(const Rectangle &rect_) {
+    Rectangle Rectangle::FromRaylibRect(const Rectangle &rect_) {
         return {rect_.x, rect_.y, rect_.width, rect_.height};
     }
 
     #endif
 
-    bool TRectangle::Contains(TVector2 point_) const {
+    bool Rectangle::Contains(Vector2 point_) const {
         return X <= point_.X
             && point_.X < X + Width
             && Y <= point_.Y
             && point_.Y < Y + Height;
     }
 
-    Physics::TBoundingBox TRectangle::ToBoundingBox(const float rotation_, TVector2 origin_) const {
+    Physics::BoundingBox Rectangle::ToBoundingBox(const float rotation_, Vector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 
         // Get rectangle coords rotated
-        const auto tl = TVector2(X, Y).Rotate(origin_, rotation_);
-        const auto tr = TVector2(X + Width, Y).Rotate(origin_, rotation_);
-        const auto bl = TVector2(X, Y + Height).Rotate(origin_, rotation_);
-        const auto br = TVector2(X + Width, Y + Height).Rotate(origin_, rotation_);
+        const auto tl = Vector2(X, Y).Rotate(origin_, rotation_);
+        const auto tr = Vector2(X + Width, Y).Rotate(origin_, rotation_);
+        const auto bl = Vector2(X, Y + Height).Rotate(origin_, rotation_);
+        const auto br = Vector2(X + Width, Y + Height).Rotate(origin_, rotation_);
 
         // Find min and max
         auto minX = std::min(tl.X, std::min(tr.X, std::min(bl.X, br.X)));
@@ -50,41 +50,41 @@ namespace NerdThings::Ngine {
         auto maxY = std::max(tl.Y, std::max(tr.Y, std::max(bl.Y, br.Y)));
 
         // Create bounding box
-        Physics::TBoundingBox box;
+        Physics::BoundingBox box;
         box.Min = {minX, minY};
         box.Max = {maxX, maxY};
         return box;
     }
 
-    Physics::TBoundingBox *TRectangle::ToBoundingBoxPtr(float rotation_, TVector2 origin_) const {
+    Physics::BoundingBox *Rectangle::ToBoundingBoxPtr(float rotation_, Vector2 origin_) const {
         auto valbbox = ToBoundingBox(rotation_, origin_);
-        auto bbox = new Physics::TBoundingBox();
+        auto bbox = new Physics::BoundingBox();
         bbox->Min = valbbox.Min;
         bbox->Max = valbbox.Max;
         return bbox;
     }
 
-    Physics::TPolygon TRectangle::ToPolygon(const float rotation_, TVector2 origin_) const {
+    Physics::Polygon Rectangle::ToPolygon(const float rotation_, Vector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 
         // Make polygon
-        std::vector<TVector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
+        std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
             vertex = vertex.Rotate(origin_, rotation_);
         }
-        return Physics::TPolygon(vertices);
+        return Physics::Polygon(vertices);
     }
 
-    Physics::TPolygon *TRectangle::ToPolygonPtr(const float rotation_, TVector2 origin_) const {
+    Physics::Polygon *Rectangle::ToPolygonPtr(const float rotation_, Vector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 
         // Make polygon
-        std::vector<TVector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
+        std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
             vertex = vertex.Rotate(origin_, rotation_);
         }
-        return new Physics::TPolygon(vertices);
+        return new Physics::Polygon(vertices);
     }
 }

@@ -196,7 +196,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * The currently active matrix
          */
-        static TMatrix *_CurrentMatrix;
+        static Matrix *_CurrentMatrix;
 
         /*
          * Current Matrix Mode
@@ -206,7 +206,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * The Matrix stack
          */
-        static TMatrix _MatrixStack[MAX_MATRIX_STACK_SIZE];
+        static Matrix _MatrixStack[MAX_MATRIX_STACK_SIZE];
 
         /*
          * The matrix stack counter
@@ -216,17 +216,17 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * The modelview matrix
          */
-        static TMatrix _ModelView;
+        static Matrix _ModelView;
 
         /*
          * The projection matrix
          */
-        static TMatrix _Projection;
+        static Matrix _Projection;
 
         /*
          * The transform matrix
          */
-        static TMatrix _TransformMatrix;
+        static Matrix _TransformMatrix;
 
         /*
          * Whether or not to use the transformation matrix
@@ -366,7 +366,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Multiply the current matrix by another
          */
-        static void MultMatrix(TMatrix matrix_);
+        static void MultMatrix(Matrix matrix_);
 
         /*
          * Create an orthographic matrix
@@ -386,22 +386,22 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Apply a rotation to the current matrix
          */
-        static void Rotate(float angle_, TVector3 axis_);
+        static void Rotate(float angle_, Vector3 axis_);
 
         /*
          * Apply a scale to the current matrix
          */
-        static void Scale(TVector3 scale_);
+        static void Scale(Vector3 scale_);
 
         /*
          * Set the value of the current matrix
          */
-        static void SetMatrix(TMatrix matrix_);
+        static void SetMatrix(Matrix matrix_);
 
         /*
          * Apply a translation to the current matrix
          */
-        static void Translate(TVector3 translation_);
+        static void Translate(Vector3 translation_);
 
         // Vertex Methods
 
@@ -413,7 +413,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Set vertex color
          */
-        static void Color(TColor color_);
+        static void Color(Color color_);
 
         /*
          * End a set of vertices
@@ -428,7 +428,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Set vertex texture coordinate
          */
-        static void TexCoord(TVector2 coord_);
+        static void TexCoord(Vector2 coord_);
 
         /*
          * Use a texture with this set of vertices
@@ -438,12 +438,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Set vertex position
          */
-        static void Vertex(TVector2 pos_);
+        static void Vertex(Vector2 pos_);
 
         /*
          * Set vertex position TODO: Do we remove this and go for the above only?
          */
-        static void Vertex(TVector3 pos_);
+        static void Vertex(Vector3 pos_);
 
         // Buffering Methods
 
@@ -479,7 +479,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Set the clear color
          */
-        static void ClearColor(TColor color_);
+        static void ClearColor(Graphics::Color color_);
 
         /*
          * Get OpenGL equivalent texture formats

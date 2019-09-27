@@ -25,7 +25,7 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * Character information
      */
-    struct NEAPI TCharInfo {
+    struct NEAPI CharInfo {
         // Public Fields
 
         /*
@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Sprite font source rectangle
          */
-        TRectangle Rectangle;
+        Rectangle Rectangle;
 
         /*
          * Character X offset for drawing
@@ -56,11 +56,11 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Greyscale pixel data
          */
-        std::shared_ptr<TImage> Image;
+        std::shared_ptr<Image> Image;
 
         // Public Constructor
 
-        TCharInfo()
+        CharInfo()
             : Character(0),
               OffsetX(0),
               OffsetY(0),
@@ -70,18 +70,18 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A font
      */
-    struct NEAPI TFont : public TResource {
+    struct NEAPI Font : public IResource {
         // Public Fields
 
         /*
          * The default font
          */
-        static TFont *DefaultFont;
+        static Font *DefaultFont;
 
         /*
          * Font texture
          */
-        std::shared_ptr<TTexture2D> Texture;
+        std::shared_ptr<Texture2D> Texture;
 
         /*
          * Base size (default char height)
@@ -96,25 +96,25 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Character data
          */
-        std::vector<TCharInfo> Characters;
+        std::vector<CharInfo> Characters;
 
         // Public Constructor(s)
 
         /*
          * Create a null font
          */
-        TFont();
+        Font();
 
         // Destructor
 
-        virtual ~TFont();
+        virtual ~Font();
 
         // Public Methods
 
         /*
          * Get the default font
          */
-        static TFont *GetDefaultFont();
+        static Font *GetDefaultFont();
 
         /*
          * Get a character glyph index
@@ -124,7 +124,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the font texture
          */
-        TTexture2D *GetTexture() const;
+        Texture2D *GetTexture() const;
 
         /*
          * Whether or not the font is valid.
@@ -134,17 +134,17 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Load a true type font with specified characters
          */
-        static TFont *LoadTTFFont(const Filesystem::TPath &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
+        static Font *LoadTTFFont(const Filesystem::Path &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
 
         /*
          * Measure the dimensions of a string
          */
-        TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
+        Vector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
 
         /*
          * Set the default font
          */
-        static void SetDefaultFont(TFont *font_);
+        static void SetDefaultFont(Font *font_);
 
         /*
          * Unload the font
@@ -155,7 +155,7 @@ namespace NerdThings::Ngine::Graphics {
 
         void __GenerateAtlas();
 
-        void __LoadFontInfo(const Filesystem::TPath &path_, std::vector<int> chars_);
+        void __LoadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_);
     };
 }
 

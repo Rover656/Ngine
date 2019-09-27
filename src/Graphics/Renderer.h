@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::Graphics {
         // Internal OpenGL Methods
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 
-        static void __DrawLine(TVector2 a_, TVector2 b_, TColor c_, float thick_);
+        static void __DrawLine(Vector2 a_, Vector2 b_, Color c_, float thick_);
 
 #endif
     public:
@@ -43,232 +43,232 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Clear the screen with a color
          */
-        static void Clear(TColor color_);
+        static void Clear(Color color_);
 
         /*
          * Draw a pixel
          */
-        static void DrawPixel(TVector2 position_, TColor color_);
+        static void DrawPixel(Vector2 position_, Color color_);
 
         /*
          * Draw line
          */
-        static void DrawLine(TVector2 startPos_, TVector2 endPos_, TColor color_,
+        static void DrawLine(Vector2 startPos_, Vector2 endPos_, Color color_,
                              float thickness_ = 1);
 
         /*
          * Draw a polygon outline from a point array
          */
         // TODO: Thickness for this too?
-        static void DrawLineStrip(const std::vector<TVector2> &points_, TColor color_, float lineThickness_ = 1);
+        static void DrawLineStrip(const std::vector<Vector2> &points_, Color color_, float lineThickness_ = 1);
 
         /*
          * Draw a color-filled circle
          */
-        static void DrawCircle(TVector2 center_, float radius_, TColor color_);
+        static void DrawCircle(Vector2 center_, float radius_, Color color_);
 
         /*
          * Draw a circle outline
          */
-        static void DrawCircleLines(TVector2 center_, float radius_, TColor color_, float lineThickness_ = 1);
+        static void DrawCircleLines(Vector2 center_, float radius_, Color color_, float lineThickness_ = 1);
 
         /*
          * Draw a sector of a circle
          */
-        static void DrawCircleSector(TVector2 center_, float radius_, float startAngle_, float endAngle_,
-                                     int segments_, TColor color_);
+        static void DrawCircleSector(Vector2 center_, float radius_, float startAngle_, float endAngle_,
+                                     int segments_, Color color_);
 
         /*
          * Draw a circle sector outline
          */
-        static void DrawCircleSectorLines(TVector2 center_, float radius_, float startAngle_, float endAngle_,
-                                          int segments_, TColor color_, float lineThickness_ = 1);
+        static void DrawCircleSectorLines(Vector2 center_, float radius_, float startAngle_, float endAngle_,
+                                          int segments_, Color color_, float lineThickness_ = 1);
 
 //        /*
 //         * Draw a ring
 //         */
-//        static void DrawRing(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
-//                             int endAngle_, int segments_, TColor color_);
+//        static void DrawRing(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
+//                             int endAngle_, int segments_, Color color_);
 //
 //        /*
 //         * Draw a ring outline
 //         */
-//        static void DrawRingLines(TVector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
-//                                  int endAngle_, int segments_, TColor color_);
+//        static void DrawRingLines(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
+//                                  int endAngle_, int segments_, Color color_);
 
         /*
          * Draw a rectangle
          */
-        static void DrawRectangle(TVector2 position_, float width_, float height_, TColor color_,
-                                  float rotation_ = 0, TVector2 origin_ = TVector2());
+        static void DrawRectangle(Vector2 position_, float width_, float height_, Color color_,
+                                  float rotation_ = 0, Vector2 origin_ = Vector2());
 
         /*
          * Draw a rectangle
          */
-        static void DrawRectangle(TVector2 position_, TVector2 size_, TColor color_,
-                                  float rotation_ = 0, TVector2 origin_ = TVector2());
+        static void DrawRectangle(Vector2 position_, Vector2 size_, Color color_,
+                                  float rotation_ = 0, Vector2 origin_ = Vector2());
 
         /*
          * Draw a rectangle with additional parameters
          */
-        static void DrawRectangle(TRectangle rectangle_, TColor color_, float rotation_ = 0,
-                                  TVector2 origin_ = TVector2());
+        static void DrawRectangle(Rectangle rectangle_, Color color_, float rotation_ = 0,
+                                  Vector2 origin_ = Vector2());
 
         /*
          * Draw a vertical-gradient-filled rectangle
          */
-        static void DrawRectangleGradientV(TVector2 position_, float width_, float height_,
-                                           TColor color1_, TColor color2_, float rotation_ = 0,
-                                           TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientV(Vector2 position_, float width_, float height_,
+                                           Color color1_, Color color2_, float rotation_ = 0,
+                                           Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a vertical-gradient-filled rectangle
          */
-        static void DrawRectangleGradientV(TVector2 position_, TVector2 size_, TColor color1_,
-                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientV(Vector2 position_, Vector2 size_, Color color1_,
+                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a vertical-gradient-filled rectangle
          */
-        static void DrawRectangleGradientV(TRectangle rectangle_, TColor color1_,
-                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientV(Rectangle rectangle_, Color color1_,
+                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a horizonal-gradient-filled rectangle
          */
-        static void DrawRectangleGradientH(TVector2 position_, float width_, float height_,
-                                           TColor color1_, TColor color2_, float rotation_ = 0,
-                                           TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientH(Vector2 position_, float width_, float height_,
+                                           Color color1_, Color color2_, float rotation_ = 0,
+                                           Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a horizonal-gradient-filled rectangle
          */
-        static void DrawRectangleGradientH(TVector2 position_, TVector2 size_, TColor color1_,
-                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientH(Vector2 position_, Vector2 size_, Color color1_,
+                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a horizonal-gradient-filled rectangle
          */
-        static void DrawRectangleGradientH(TRectangle rectangle_, TColor color1_,
-                                           TColor color2_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientH(Rectangle rectangle_, Color color1_,
+                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a rectangle with a color per vertex
          */
-        static void DrawRectangleGradientEx(TVector2 position_, float width_, float height_,
-                                            TColor color1_, TColor color2_, TColor color3_,
-                                            TColor color4_, float rotation_ = 0, TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientEx(Vector2 position_, float width_, float height_,
+                                            Color color1_, Color color2_, Color color3_,
+                                            Color color4_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a rectangle with a color per vertex
          */
-        static void DrawRectangleGradientEx(TVector2 position_, TVector2 size_, TColor color1_,
-                                            TColor color2_, TColor color3_, TColor color4_, float rotation_ = 0,
-                                            TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientEx(Vector2 position_, Vector2 size_, Color color1_,
+                                            Color color2_, Color color3_, Color color4_, float rotation_ = 0,
+                                            Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw a rectangle with a color per vertex
          */
-        static void DrawRectangleGradientEx(TRectangle rectangle_, TColor color1_,
-                                            TColor color2_, TColor color3_, TColor color4_, float rotation_ = 0,
-                                            TVector2 origin_ = TVector2::Zero);
+        static void DrawRectangleGradientEx(Rectangle rectangle_, Color color1_,
+                                            Color color2_, Color color3_, Color color4_, float rotation_ = 0,
+                                            Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw rectangle outline
          */
-        static void DrawRectangleLines(TVector2 position_, float width_, float height_, TColor color_,
+        static void DrawRectangleLines(Vector2 position_, float width_, float height_, Color color_,
                                        int lineThickness_ = 1);
 
         /*
          * Draw rectangle outline
          */
-        static void DrawRectangleLines(TVector2 position_, TVector2 size_, TColor color_,
+        static void DrawRectangleLines(Vector2 position_, Vector2 size_, Color color_,
                                        int lineThickness_ = 1);
 
         /*
          * Draw rectangle outline
          */
-        static void DrawRectangleLines(TRectangle rectangle_, TColor color_, int lineThickness_ = 1);
+        static void DrawRectangleLines(Rectangle rectangle_, Color color_, int lineThickness_ = 1);
 
         /*
          * Draw text
          */
-        static void DrawText(TFont *font_, const std::string &string_, TVector2 position_,
-                             float fontSize_, float spacing_, TColor color_);
+        static void DrawText(Font *font_, const std::string &string_, Vector2 position_,
+                             float fontSize_, float spacing_, Color color_);
 
         // TODO: Work on these next 2 methods
 
         /*
          * Draw text with rectangle constraint
          */
-        static void DrawTextRect(TFont *font_, const std::string &string_,
-                                 TRectangle rectangle_, float fontSize_, float spacing_,
-                                 TColor color_, bool wordWrap_ = true);
+        static void DrawTextRect(Font *font_, const std::string &string_,
+                                 Rectangle rectangle_, float fontSize_, float spacing_,
+                                 Color color_, bool wordWrap_ = true);
 
         /*
          * Draw text with rectangle constraint and select support
          */
-        static void DrawTextRectEx(TFont *font_, const std::string &string_,
-                                   TRectangle rectangle_, float fontSize_, float spacing_,
-                                   TColor color_, int selectStart_, int selectLength_,
-                                   TColor selectText_, TColor selectBack_, bool wordWrap_ = true);
+        static void DrawTextRectEx(Font *font_, const std::string &string_,
+                                   Rectangle rectangle_, float fontSize_, float spacing_,
+                                   Color color_, int selectStart_, int selectLength_,
+                                   Color selectText_, Color selectBack_, bool wordWrap_ = true);
 
         /*
          * Draw a texture
          */
-        static void DrawTexture(TTexture2D *texture_, TVector2 position_, TColor color_,
-                                float scale_ = 1, TVector2 origin_ = TVector2(), float rotation_ = 0);
+        static void DrawTexture(Texture2D *texture_, Vector2 position_, Color color_,
+                                float scale_ = 1, Vector2 origin_ = Vector2(), float rotation_ = 0);
 
         /*
          * Draw a texture with specified dimensions
          */
-        static void DrawTexture(TTexture2D *texture_, TVector2 position_, float width_,
-                                float height_, TColor color_, TVector2 origin_ = TVector2(),
+        static void DrawTexture(Texture2D *texture_, Vector2 position_, float width_,
+                                float height_, Color color_, Vector2 origin_ = Vector2(),
                                 float rotation_ = 0);
 
         /*
          * Draw a part of a texture
          */
-        static void DrawTexture(TTexture2D *texture_, TRectangle sourceRectangle_,
-                                TVector2 position_, TColor color_,
-                                TVector2 origin_ = TVector2(), float rotation_ = 0);
+        static void DrawTexture(Texture2D *texture_, Rectangle sourceRectangle_,
+                                Vector2 position_, Color color_,
+                                Vector2 origin_ = Vector2(), float rotation_ = 0);
 
         /*
          * Draw a part of a texture with specified dimensions
          */
-        static void DrawTexture(TTexture2D *texture_, TRectangle sourceRectangle_,
-                                TVector2 position_, float width_, float height_, TColor color_,
-                                TVector2 origin_ = TVector2(), float rotation_ = 0);
+        static void DrawTexture(Texture2D *texture_, Rectangle sourceRectangle_,
+                                Vector2 position_, float width_, float height_, Color color_,
+                                Vector2 origin_ = Vector2(), float rotation_ = 0);
 
         /*
          * Draw a texture with pro parameters
          */
-        static void DrawTexture(TTexture2D *texture_, TRectangle destRectangle_,
-                                TRectangle sourceRectangle_, TColor color_,
-                                TVector2 origin_ = TVector2(), float rotation_ = 0);
+        static void DrawTexture(Texture2D *texture_, Rectangle destRectangle_,
+                                Rectangle sourceRectangle_, Color color_,
+                                Vector2 origin_ = Vector2(), float rotation_ = 0);
 
         /*
          * Draw a triangle
          */
-        static void DrawTriangle(TVector2 v1_, TVector2 v2_, TVector2 v3_,
-                                 TColor color_);
+        static void DrawTriangle(Vector2 v1_, Vector2 v2_, Vector2 v3_,
+                                 Color color_);
 
         /*
          * Draw a triangle outline
          */
-        static void DrawTriangleLines(TVector2 v1_, TVector2 v2_, TVector2 v3_,
-                                      TColor color_, float lineThickness_ = 1);
+        static void DrawTriangleLines(Vector2 v1_, Vector2 v2_, Vector2 v3_,
+                                      Color color_, float lineThickness_ = 1);
 
         /*
          * Draw a triangle fan from a point array
          */
-        static void DrawTriangleFan(const std::vector<TVector2> &points_, TColor color_);
+        static void DrawTriangleFan(const std::vector<Vector2> &points_, Color color_);
 
         /*
          * Draw a polygon
          */
-        static void DrawPoly(TVector2 center_, int sides_, float radius_, float rotation_,
-                             TColor color_);
+        static void DrawPoly(Vector2 center_, int sides_, float radius_, float rotation_,
+                             Color color_);
 
         /*
          * End a drawing loop.

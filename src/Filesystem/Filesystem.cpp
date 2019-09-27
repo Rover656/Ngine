@@ -29,17 +29,17 @@
 
 namespace NerdThings::Ngine::Filesystem {
     ////////
-    // TPath
+    // Path
     ////////
 
     // Public Constructors
 
-    TPath::TPath() {
+    Path::Path() {
         // Mark as improper
         _HasProperValue = false;
     }
 
-    TPath::TPath(const std::string &pathString_) {
+    Path::Path(const std::string &pathString_) {
         // Set internal path
         _InternalPath = pathString_;
 
@@ -47,7 +47,7 @@ namespace NerdThings::Ngine::Filesystem {
         __CorrectPath();
     }
 
-    TPath::TPath(const std::string &path_, const std::string &pathB_) {
+    Path::Path(const std::string &path_, const std::string &pathB_) {
         // Set internal path
         _InternalPath = path_ + __GetJoinChar() + pathB_;
 
@@ -55,7 +55,7 @@ namespace NerdThings::Ngine::Filesystem {
         __CorrectPath();
     }
 
-    TPath::TPath(const TPath& path_, const TPath& pathB_) {
+    Path::Path(const Path& path_, const Path& pathB_) {
         // Set internal path
         _InternalPath = path_._InternalPath + __GetJoinChar() + pathB_._InternalPath;
 
@@ -63,7 +63,7 @@ namespace NerdThings::Ngine::Filesystem {
         __CorrectPath();
     }
 
-    TPath::TPath(const TPath &path_, const std::string &pathB_) {
+    Path::Path(const Path &path_, const std::string &pathB_) {
         // Set internal path
         _InternalPath = path_._InternalPath + __GetJoinChar() + pathB_;
 
@@ -71,7 +71,7 @@ namespace NerdThings::Ngine::Filesystem {
         __CorrectPath();
     }
 
-    TPath::TPath(const std::string &path_, const TPath &pathB_) {
+    Path::Path(const std::string &path_, const Path &pathB_) {
         // Set internal path
         _InternalPath = path_ + __GetJoinChar() + pathB_._InternalPath;
 
@@ -81,7 +81,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Public Methods
 
-    TPath TPath::GetAbsolute() const {
+    Path Path::GetAbsolute() const {
         // If we are already absolute, ignore
         if (IsAbsolute()) return *this;
 
@@ -89,7 +89,7 @@ namespace NerdThings::Ngine::Filesystem {
         return GetExecutableDirectory() / *this;
     }
 
-    TPath TPath::GetExecutableDirectory() {
+    Path Path::GetExecutableDirectory() {
 #if defined(PLATFORM_UWP)
         auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
         std::wstring tmp(installed->Begin());
@@ -101,25 +101,25 @@ namespace NerdThings::Ngine::Filesystem {
 #endif
     }
 
-    TPath TPath::GetExecutablePath() {
+    Path Path::GetExecutablePath() {
         // https://github.com/cginternals/cpplocate/blob/master/source/liblocate/source/liblocate.c#L39
         // I trust this works as there are no issues about it...
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
         char exePath[MAX_PATH];
         unsigned int len = GetModuleFileNameA(GetModuleHandleA(nullptr), exePath, MAX_PATH);
         if (len == 0)
-            return TPath("");
+            return Path("");
 
-        return TPath(std::string(exePath));
+        return Path(std::string(exePath));
 #elif defined(_WIN32) && defined(PLATFORM_UWP)
         throw std::runtime_error("Cannot get executable path of UWP app, get executable directory instead.");
 #elif defined(__linux__)
         char exePath[PATH_MAX];
         int len = readlink("/proc/self/exe", exePath, PATH_MAX);
         if (len <= 0 || len == PATH_MAX)
-            return TPath("");
+            return Path("");
 
-        return TPath(std::string(exePath));
+        return Path(std::string(exePath));
 #elif defined(__APPLE__)
         char exePath[PATH_MAX];
 
@@ -131,14 +131,14 @@ namespace NerdThings::Ngine::Filesystem {
 
             if (realPath == 0x0)
             {
-                return TPath("");
+                return Path("");
             }
 
             auto pathStr = std::string(realPath);
 
             free(realPath);
 
-            return TPath(pathStr);
+            return Path(pathStr);
         }
         else
         {
@@ -147,7 +147,7 @@ namespace NerdThings::Ngine::Filesystem {
             if (_NSGetExecutablePath(intermediatePath, &len) != 0)
             {
                 free(intermediatePath);
-                return TPath("");
+                return Path("");
             }
 
             char * realPath = realpath(intermediatePath, 0x0);
@@ -156,23 +156,23 @@ namespace NerdThings::Ngine::Filesystem {
 
             if (realPath == 0x0)
             {
-                return TPath("");
+                return Path("");
             }
 
             auto pathStr = std::string(realPath);
 
             free(realPath);
 
-            return TPath(pathStr);
+            return Path(pathStr);
         }
 
         #else
         // Returns blank, this cannot be used
-        return TPath("");
+        return Path("");
 #endif
     }
 
-    std::string TPath::GetFileExtension() const {
+    std::string Path::GetFileExtension() const {
         // Get path string
         auto path = GetString();
 
@@ -189,7 +189,7 @@ namespace NerdThings::Ngine::Filesystem {
         return "";
     }
 
-    std::string TPath::GetObjectName() const {
+    std::string Path::GetObjectName() const {
         // Get path string
         auto nameTemp = GetString();
 
@@ -208,15 +208,15 @@ namespace NerdThings::Ngine::Filesystem {
         return nameTemp;
     }
 
-    TPath TPath::GetParent() const {
+    Path Path::GetParent() const {
         auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
 
         if (std::string::npos != lastSlash)
-            return TPath(_InternalPath.substr(0, lastSlash));
-        else return TPath();
+            return Path(_InternalPath.substr(0, lastSlash));
+        else return Path();
     }
 
-    TPath TPath::GetRelativeTo(const TPath &base_) const {
+    Path Path::GetRelativeTo(const Path &base_) const {
         // The base must be absolute
         auto basePath = base_;
         if (!basePath.IsAbsolute()) basePath = basePath.GetAbsolute();
@@ -274,7 +274,7 @@ namespace NerdThings::Ngine::Filesystem {
         return str;
     }
 
-    EResourceType TPath::GetResourceType() const {
+    ResourceType Path::GetResourceType() const {
 #if defined(_WIN32)
         DWORD dwAttrib = GetFileAttributesA(GetString().c_str());
 
@@ -294,11 +294,11 @@ namespace NerdThings::Ngine::Filesystem {
         return TYPE_INVALID;
     }
 
-    std::string TPath::GetString() const {
+    std::string Path::GetString() const {
         return _InternalPath;
     }
 
-    std::string TPath::GetStringNoExtension() const {
+    std::string Path::GetStringNoExtension() const {
         auto lastDot = _InternalPath.find_last_of('.');
         auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
 
@@ -315,7 +315,7 @@ namespace NerdThings::Ngine::Filesystem {
         return _InternalPath;
     }
 
-    TPath TPath::GetWorkingDirectory() {
+    Path Path::GetWorkingDirectory() {
 #if defined(_WIN32)
         // Create buffer
         DWORD bufferLen = MAX_PATH;
@@ -334,7 +334,7 @@ namespace NerdThings::Ngine::Filesystem {
         delete[] buffer;
 
         // Return
-        return TPath(string);
+        return Path(string);
 #elif defined(__linux) || defined(__APPLE__)
         // Create buffer
         auto buffer = new char[PATH_MAX];
@@ -349,11 +349,11 @@ namespace NerdThings::Ngine::Filesystem {
         delete[] buffer;
 
         // Return
-        return TPath(string);
+        return Path(string);
 #endif
     }
 
-    bool TPath::IsAbsolute() const {
+    bool Path::IsAbsolute() const {
 #if defined(_WIN32)
         // Test if we have (*):\ at the start
         if (_InternalPath.size() > 3)
@@ -366,37 +366,37 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    TPath TPath::Join(const std::string &pathA_, const std::string &pathB_) {
-        return TPath(pathA_, pathB_);
+    Path Path::Join(const std::string &pathA_, const std::string &pathB_) {
+        return Path(pathA_, pathB_);
     }
 
-    TPath TPath::Join(const TPath &pathA_, const TPath &pathB_) {
-        return TPath(pathA_, pathB_);
+    Path Path::Join(const Path &pathA_, const Path &pathB_) {
+        return Path(pathA_, pathB_);
     }
 
-    bool TPath::Valid() const {
+    bool Path::Valid() const {
         return _HasProperValue;
     }
 
     // Operators
 
-    TPath operator/(const std::string &path_, const std::string &pathB_) {
-        return TPath(path_, pathB_);
+    Path operator/(const std::string &path_, const std::string &pathB_) {
+        return Path(path_, pathB_);
     }
 
-    TPath operator/(const TPath &path_, const TPath &pathB_) {
-        return TPath(path_, pathB_);
+    Path operator/(const Path &path_, const Path &pathB_) {
+        return Path(path_, pathB_);
     }
 
-    TPath operator/(const std::string &path_, const TPath &pathB_) {
-        return TPath(path_, pathB_);
+    Path operator/(const std::string &path_, const Path &pathB_) {
+        return Path(path_, pathB_);
     }
 
-    TPath operator/(const TPath &path_, const std::string &pathB_) {
-        return TPath(path_, pathB_);
+    Path operator/(const Path &path_, const std::string &pathB_) {
+        return Path(path_, pathB_);
     }
 
-    void TPath::operator/=(const TPath &pathB_) {
+    void Path::operator/=(const Path &pathB_) {
         // Set internal path
         _InternalPath = _InternalPath + __GetJoinChar() + pathB_._InternalPath;
 
@@ -404,7 +404,7 @@ namespace NerdThings::Ngine::Filesystem {
         __CorrectPath();
     }
 
-    void TPath::operator/=(const std::string &pathB_) {
+    void Path::operator/=(const std::string &pathB_) {
         // Set internal path
         _InternalPath = _InternalPath + __GetJoinChar() + pathB_;
 
@@ -412,13 +412,13 @@ namespace NerdThings::Ngine::Filesystem {
         __CorrectPath();
     }
 
-    TPath::operator std::string() const {
+    Path::operator std::string() const {
         return _InternalPath;
     }
 
     // Private Methods
 
-    std::string TPath::__CleanPathString(const std::string &str_) {
+    std::string Path::__CleanPathString(const std::string &str_) {
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
         // Get path length
         auto len = GetShortPathNameA(str_.c_str(), nullptr, 0);
@@ -456,7 +456,7 @@ namespace NerdThings::Ngine::Filesystem {
         return str_;
     }
 
-    void TPath::__CorrectPath() {
+    void Path::__CorrectPath() {
         // Clean path
         _InternalPath = __CleanPathString(_InternalPath);
 
@@ -495,7 +495,7 @@ namespace NerdThings::Ngine::Filesystem {
         _HasProperValue = true;
     }
 
-    char TPath::__GetJoinChar() {
+    char Path::__GetJoinChar() {
         // TODO: See if there are any more variations
 #if defined(_WIN32)
         return '\\';
@@ -505,40 +505,40 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     ////////
-    // TFilesystemObject
+    // FilesystemObject
     ////////
 
     // Public Methods
 
-    void TFilesystemObject::Move(const TPath &newPath_) {
+    void FilesystemObject::Move(const Path &newPath_) {
         // Move file
         rename(ObjectPath.GetString().c_str(), newPath_.GetString().c_str());
     }
 
-    void TFilesystemObject::Rename(const std::string &newName_) {
+    void FilesystemObject::Rename(const std::string &newName_) {
         // Rename
         Move(ObjectPath / newName_);
     }
 
-    std::string TFilesystemObject::GetObjectName() const {
+    std::string FilesystemObject::GetObjectName() const {
         return ObjectPath.GetObjectName();
     }
 
-    TPath TFilesystemObject::GetObjectPath() const {
+    Path FilesystemObject::GetObjectPath() const {
         return ObjectPath;
     }
 
     // Protected Constructors
 
-    TFilesystemObject::TFilesystemObject(const TPath &path_) : ObjectPath(path_) {}
+    FilesystemObject::FilesystemObject(const Path &path_) : ObjectPath(path_) {}
 
     ////////
-    // TFile
+    // File
     ////////
 
     // InternalFileHandler Destructor
 
-    TFile::InternalFileHandler::~InternalFileHandler() {
+    File::InternalFileHandler::~InternalFileHandler() {
         if (InternalHandle != nullptr)
             fclose(InternalHandle);
         InternalHandle = nullptr;
@@ -546,12 +546,12 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Public Constructor(s)
 
-    TFile::TFile() : TFilesystemObject(TPath()) {
+    File::File() : FilesystemObject(Path()) {
         // Create an empty handler
         _InternalHandle = std::make_shared<InternalFileHandler>();
     }
 
-    TFile::TFile(const TPath &path_) : TFilesystemObject(path_) {
+    File::File(const Path &path_) : FilesystemObject(path_) {
         // Check path is valid
         if (!path_.Valid()) throw std::runtime_error("File must be given a valid path.");
 
@@ -561,14 +561,14 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Destructor
 
-    TFile::~TFile() {
+    File::~File() {
         // Close file in case it isnt gone already
         Close();
     }
 
     // Public Methods
 
-    void TFile::Close() {
+    void File::Close() {
         // Close file
         if (_InternalHandle->InternalHandle != nullptr) {
             fclose(_InternalHandle->InternalHandle);
@@ -579,15 +579,15 @@ namespace NerdThings::Ngine::Filesystem {
         _InternalOpenMode = MODE_NONE;
     }
 
-    TFile TFile::CreateNewFile(const TPath &path_, bool leaveOpen_, bool binary_) {
-        TFile f(path_);
+    File File::CreateNewFile(const Path &path_, bool leaveOpen_, bool binary_) {
+        File f(path_);
         f.Open(MODE_WRITE, binary_);
         if (!leaveOpen_)
             f.Close();
         return f;
     }
 
-    bool TFile::Delete() {
+    bool File::Delete() {
         // Ensure that we are closed
         Close();
 
@@ -595,7 +595,7 @@ namespace NerdThings::Ngine::Filesystem {
         return remove(ObjectPath.GetString().c_str()) == 0;
     }
 
-    bool TFile::Exists() const {
+    bool File::Exists() const {
         // If we are open, we know we exist
         if (IsOpen()) return true;
 
@@ -608,30 +608,30 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    EFileOpenMode TFile::GetCurrentMode() const {
+    FileOpenMode File::GetCurrentMode() const {
         return _InternalOpenMode;
     }
 
-    TFile TFile::GetFile(const TPath &path_) {
-        return TFile(path_);
+    File File::GetFile(const Path &path_) {
+        return File(path_);
     }
 
-    std::string TFile::GetFileExtension() const {
+    std::string File::GetFileExtension() const {
         return ObjectPath.GetFileExtension();
     }
 
-    FILE *TFile::GetFileHandle() const {
+    FILE *File::GetFileHandle() const {
         if (!IsOpen()) {
-            ConsoleMessage("Cannot get handle of file that is not open.", "WARN", "TFile");
+            ConsoleMessage("Cannot get handle of file that is not open.", "WARN", "File");
             return nullptr;
         }
 
         return _InternalHandle->InternalHandle;
     }
 
-    int TFile::GetSize() const {
+    int File::GetSize() const {
         if (!IsOpen()) {
-            ConsoleMessage("Cannot determine size of file that is not open.", "WARN", "TFile");
+            ConsoleMessage("Cannot determine size of file that is not open.", "WARN", "File");
             return 0;
         }
 
@@ -642,13 +642,13 @@ namespace NerdThings::Ngine::Filesystem {
         return s;
     }
 
-    bool TFile::IsOpen() const {
+    bool File::IsOpen() const {
         if (_InternalHandle == nullptr) return false;
 
         return _InternalHandle->InternalHandle != nullptr;
     }
 
-    bool TFile::Open(EFileOpenMode mode_, bool binary_) {
+    bool File::Open(FileOpenMode mode_, bool binary_) {
         // Check validity of path
         if (!ObjectPath.Valid()) throw std::runtime_error("This file's path is invalid");
 
@@ -693,7 +693,7 @@ namespace NerdThings::Ngine::Filesystem {
                 _InternalOpenMode = mode_;
                 break;
             default:
-                ConsoleMessage("File mode not supported.", "WARN", "TFile");
+                ConsoleMessage("File mode not supported.", "WARN", "File");
 
                 // Set mode
                 _InternalOpenMode = MODE_NONE;
@@ -704,7 +704,7 @@ namespace NerdThings::Ngine::Filesystem {
         return IsOpen();
     }
 
-    unsigned char *TFile::ReadBytes(int size_, int offset_) {
+    unsigned char *File::ReadBytes(int size_, int offset_) {
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
@@ -743,7 +743,7 @@ namespace NerdThings::Ngine::Filesystem {
         return buffer;
     }
 
-    std::string TFile::ReadString(int size_, int offset_) {
+    std::string File::ReadString(int size_, int offset_) {
         // Check we're open
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
@@ -791,7 +791,7 @@ namespace NerdThings::Ngine::Filesystem {
         return str;
     }
 
-    bool TFile::WriteBytes(unsigned char *data_, int size_) {
+    bool File::WriteBytes(unsigned char *data_, int size_) {
         // Check we're open
         if (!IsOpen()) throw std::runtime_error("Cannot write to a closed file.");
 
@@ -806,7 +806,7 @@ namespace NerdThings::Ngine::Filesystem {
         return fwrite(data_, 1, size_, _InternalHandle->InternalHandle) == 1;
     }
 
-    bool TFile::WriteString(const std::string &string_) {
+    bool File::WriteString(const std::string &string_) {
         // Check we're open
         if (!IsOpen()) throw std::runtime_error("Cannot write to closed file.");
 
@@ -822,12 +822,12 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     ////////
-    // TDirectory
+    // Directory
     ////////
 
-    TDirectory::TDirectory() : TFilesystemObject(TPath()) {}
+    Directory::Directory() : FilesystemObject(Path()) {}
 
-    TDirectory::TDirectory(const TPath &path_) : TFilesystemObject(path_) {
+    Directory::Directory(const Path &path_) : FilesystemObject(path_) {
         // Check for valid path
         if (!path_.Valid()) throw std::runtime_error("Directory must be given a valid path.");
 
@@ -835,7 +835,7 @@ namespace NerdThings::Ngine::Filesystem {
         if (path_.GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("This path does not point to a directory.");
     }
 
-    std::pair<bool, TDirectory> TDirectory::Create(const TPath &path_) {
+    std::pair<bool, Directory> Directory::Create(const Path &path_) {
         auto success = false;
 #if defined(_WIN32)
         // Create directory
@@ -845,11 +845,11 @@ namespace NerdThings::Ngine::Filesystem {
         success = mkdir(path_.GetString().c_str(), 0777) == 0;
 #endif
         if (success)
-            return {success, TDirectory(path_)};
-        return {success, TDirectory()};
+            return {success, Directory(path_)};
+        return {success, Directory()};
     }
 
-    bool TDirectory::Delete() {
+    bool Directory::Delete() {
 #if defined(_WIN32)
         // Try to delete (not recursive)
         auto del = RemoveDirectoryA(ObjectPath.GetString().c_str());
@@ -860,7 +860,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool TDirectory::DeleteRecursive() {
+    bool Directory::DeleteRecursive() {
         // Success tracker
         auto success = true;
 
@@ -899,7 +899,7 @@ namespace NerdThings::Ngine::Filesystem {
         return success;
     }
 
-    bool TDirectory::Exists() const {
+    bool Directory::Exists() const {
 #if defined(_WIN32)
         // https://stackoverflow.com/a/6218445
         // Get attributes for directory
@@ -919,12 +919,12 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    std::vector<TDirectory> TDirectory::GetDirectories() const {
+    std::vector<Directory> Directory::GetDirectories() const {
         // Check exists
         if (!Exists()) throw std::runtime_error("This directory does not exist.");
 
         // Directories vector
-        auto dirs = std::vector<TDirectory>();
+        auto dirs = std::vector<Directory>();
 #if defined(_WIN32)
         // Find first directory
         WIN32_FIND_DATAA FindFileData;
@@ -941,7 +941,7 @@ namespace NerdThings::Ngine::Filesystem {
                 auto dirName = FindFileData.cFileName;
                 // Avoids . and .. directories
                 if (strcmp(dirName, ".") != 0 && strcmp(dirName, "..") != 0)
-                    dirs.push_back(TDirectory(TPath(ObjectPath, dirName)));
+                    dirs.push_back(Directory(Path(ObjectPath, dirName)));
             }
         } while (FindNextFileA(hFind, &FindFileData) != 0);
 
@@ -962,7 +962,7 @@ namespace NerdThings::Ngine::Filesystem {
         while ((entry = readdir(dir)) != nullptr) {
             if (entry->d_type == DT_DIR) {
                 if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
-                    dirs.push_back(TDirectory(TPath(ObjectPath, entry->d_name)));
+                    dirs.push_back(Directory(Path(ObjectPath, entry->d_name)));
             }
         }
 
@@ -972,12 +972,12 @@ namespace NerdThings::Ngine::Filesystem {
         return dirs;
     }
 
-    std::vector<TFile> TDirectory::GetFiles() const {
+    std::vector<File> Directory::GetFiles() const {
         // Check exists
         if (!Exists()) throw std::runtime_error("This directory does not exist.");
 
         // Files vector
-        auto files = std::vector<TFile>();
+        auto files = std::vector<File>();
 #if defined(_WIN32)
         // Find the first file in the directory
         WIN32_FIND_DATAA FindFileData;
@@ -993,7 +993,7 @@ namespace NerdThings::Ngine::Filesystem {
         do {
             if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
                 auto filename = FindFileData.cFileName;
-                files.push_back(TFile(TPath(ObjectPath, filename)));
+                files.push_back(File(Path(ObjectPath, filename)));
             }
         } while (FindNextFileA(hFind, &FindFileData) != 0);
 
@@ -1013,7 +1013,7 @@ namespace NerdThings::Ngine::Filesystem {
         // Read all directories
         while ((entry = readdir(dir)) != nullptr) {
             if (entry->d_type != DT_DIR) {
-                files.push_back(TFile(TPath(ObjectPath, entry->d_name)));
+                files.push_back(File(Path(ObjectPath, entry->d_name)));
             }
         }
 
@@ -1023,9 +1023,9 @@ namespace NerdThings::Ngine::Filesystem {
         return files;
     }
 
-    std::vector<TFile> TDirectory::GetFilesRecursive() const {
+    std::vector<File> Directory::GetFilesRecursive() const {
         // Keep track of all files
-        auto files = std::vector<TFile>();
+        auto files = std::vector<File>();
 
         // Grab my files
         auto myFiles = GetFiles();
@@ -1042,15 +1042,15 @@ namespace NerdThings::Ngine::Filesystem {
         return files;
     }
 
-    TDirectory TDirectory::GetDirectory(const TPath &path_) {
-        return TDirectory(path_);
+    Directory Directory::GetDirectory(const Path &path_) {
+        return Directory(path_);
     }
 
-    TDirectory TDirectory::GetExecutableDirectory() {
-        return TDirectory(TPath::GetExecutableDirectory());
+    Directory Directory::GetExecutableDirectory() {
+        return Directory(Path::Path());
     }
 
-    TDirectory TDirectory::GetWorkingDirectory() {
-        return TDirectory(TPath::GetWorkingDirectory());
+    Directory Directory::GetWorkingDirectory() {
+        return Directory(Path::Path());
     }
 }

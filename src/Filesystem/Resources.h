@@ -27,22 +27,22 @@ namespace NerdThings::Ngine::Filesystem {
     class NEAPI Resources {
         // Private Fields
 
-        static std::unordered_map<std::string, std::unique_ptr<Graphics::TFont>> _Fonts;
+        static std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> _Fonts;
 
         /*
          * All named music
          */
-        static std::unordered_map<std::string, std::unique_ptr<Audio::TMusic>> _Music;
+        static std::unordered_map<std::string, std::unique_ptr<Audio::Music>> _Music;
 
         /*
          * All named sounds
          */
-        static std::unordered_map<std::string, std::unique_ptr<Audio::TSound>> _Sounds;
+        static std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> _Sounds;
 
         /*
          * All named textures
          */
-        static std::unordered_map<std::string, std::unique_ptr<Graphics::TTexture2D>> _Textures;
+        static std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> _Textures;
     public:
 
         // Public Fields
@@ -50,7 +50,7 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * The directory to load resources from
          */
-        static TPath ResourcesDirectory;
+        static Path ResourcesDirectory;
 
         // TODO: Directory config - provides information on what directories contain what filetypes
 
@@ -84,22 +84,22 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Get a named font
          */
-        static Graphics::TFont *GetFont(const std::string &name_);
+        static Graphics::Font *GetFont(const std::string &name_);
 
         /*
          * Get a named music
          */
-        static Audio::TMusic *GetMusic(const std::string &name_);
+        static Audio::Music *GetMusic(const std::string &name_);
 
         /*
          * Get a named sound
          */
-        static Audio::TSound *GetSound(const std::string &name_);
+        static Audio::Sound *GetSound(const std::string &name_);
 
         /*
          * Get a named texture
          */
-        static Graphics::TTexture2D *GetTexture(const std::string &name_);
+        static Graphics::Texture2D *GetTexture(const std::string &name_);
 
         /*
          * Loads all files in the resources directory.
@@ -110,22 +110,22 @@ namespace NerdThings::Ngine::Filesystem {
         /*
          * Load font from file
          */
-        static bool LoadFont(const TPath &inPath_, const std::string &name_);
+        static bool LoadFont(const Path &inPath_, const std::string &name_);
 
         /*
          * Load music from file
          */
-        static bool LoadMusic(const TPath &inPath_, const std::string &name_);
+        static bool LoadMusic(const Path &inPath_, const std::string &name_);
 
         /*
          * Load sound from file
          */
-        static bool LoadSound(const TPath &inPath_, const std::string &name_);
+        static bool LoadSound(const Path &inPath_, const std::string &name_);
 
         /*
          * Load texture from file
          */
-        static bool LoadTexture(const TPath &inPath_, const std::string &name_);
+        static bool LoadTexture(const Path &inPath_, const std::string &name_);
     };
 }
 

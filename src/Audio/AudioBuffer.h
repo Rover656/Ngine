@@ -11,7 +11,7 @@ namespace NerdThings::Ngine::Audio {
         BUFFER_USAGE_STREAM
     };
 
-    struct NEAPI TAudioBuffer {
+    struct NEAPI AudioBuffer {
         // Public Fields
 
         /*
@@ -47,7 +47,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * The next buffer in the list
          */
-        TAudioBuffer *Next;
+        AudioBuffer *Next;
 
         /*
          * Whether or not the buffer is paused
@@ -67,7 +67,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Previous buffer on the list
          */
-        TAudioBuffer *Prev;
+        AudioBuffer *Prev;
 
         /*
          * Total frames processed in this buffer

@@ -20,17 +20,17 @@
 namespace NerdThings::Ngine::Audio {
     // Destructor
 
-    TMusic::~TMusic() {
+    Music::~Music() {
         Unload();
     }
 
     // Public Methods
 
-    float TMusic::GetLength() {
+    float Music::GetLength() {
         return (float)SampleCount/(float)(Stream.SampleRate*Stream.Channels);
     }
 
-    float TMusic::GetTimePlayed() {
+    float Music::GetTimePlayed() {
         float secondsPlayed = 0.0f;
 
         unsigned int samplesPlayed = Stream.Buffer->TotalFramesProcessed*Stream.Channels;
@@ -39,16 +39,16 @@ namespace NerdThings::Ngine::Audio {
         return secondsPlayed;
     }
 
-    bool TMusic::IsPlaying() const {
+    bool Music::IsPlaying() const {
         return Stream.Buffer->IsPlaying();
     }
 
-    bool TMusic::IsValid() const {
+    bool Music::IsValid() const {
         return CTXData != nullptr;
     }
 
-    TMusic *TMusic::LoadMusic(const Filesystem::TPath &path_) {
-        auto music = new TMusic();
+    Music *Music::LoadMusic(const Filesystem::Path &path_) {
+        auto music = new Music();
         bool loaded = false;
 
         if (path_.GetFileExtension() == "mp3") {
@@ -122,11 +122,11 @@ namespace NerdThings::Ngine::Audio {
         }
     }
 
-    void TMusic::Pause() {
+    void Music::Pause() {
         Stream.Buffer->Pause();
     }
 
-    void TMusic::Play() {
+    void Music::Play() {
         ma_uint32 curCursorPos = Stream.Buffer->FrameCursorPos;
         Stream.Buffer->Play();
         Stream.Buffer->FrameCursorPos = curCursorPos;
@@ -137,19 +137,19 @@ namespace NerdThings::Ngine::Audio {
             _ActiveMusic.push_back(this);
     }
 
-    void TMusic::Resume() {
+    void Music::Resume() {
         Stream.Buffer->Resume();
     }
 
-    void TMusic::SetPitch(float pitch_) {
+    void Music::SetPitch(float pitch_) {
         Stream.Buffer->SetPitch(pitch_);
     }
 
-    void TMusic::SetVolume(float vol_) {
+    void Music::SetVolume(float vol_) {
         Stream.Buffer->SetVolume(vol_);
     }
 
-    void TMusic::Stop() {
+    void Music::Stop() {
         Stream.Buffer->Stop();
 
         switch(CTXType) {
@@ -170,7 +170,7 @@ namespace NerdThings::Ngine::Audio {
         _ActiveMusic.erase(std::remove(_ActiveMusic.begin(), _ActiveMusic.end(), this), _ActiveMusic.end());
     }
 
-    void TMusic::Unload() {
+    void Music::Unload() {
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
 
         switch(CTXType) {
@@ -192,7 +192,7 @@ namespace NerdThings::Ngine::Audio {
         ConsoleMessage("Unloaded music stream.", "NOTICE", "Music");
     }
 
-    void TMusic::Update() {
+    void Music::Update() {
         for (auto mus : _ActiveMusic) {
             mus->__Update();
         }
@@ -200,11 +200,11 @@ namespace NerdThings::Ngine::Audio {
 
     // Private Fields
 
-    std::vector<TMusic *> TMusic::_ActiveMusic;
+    std::vector<Music *> Music::_ActiveMusic;
 
     // Private Methods
 
-    void TMusic::__Update() {
+    void Music::__Update() {
         bool streamEnding = false;
 
         unsigned int subBufferSizeInFrames = Stream.Buffer->BufferSizeInFrames / 2;

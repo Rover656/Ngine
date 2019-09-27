@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * Texture filter mode
      */
-    enum ETextureFilterMode {
+    enum TextureFilterMode {
         /*
          * No filter, just approximation
          */
@@ -61,7 +61,7 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * Texture wrap mode
      */
-    enum ETextureWrapMode {
+    enum TextureWrapMode {
         /*
          * Repeats texture
          */
@@ -86,7 +86,7 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture stored in the GPU memory
      */
-    struct NEAPI TTexture2D : public TResource {
+    struct NEAPI Texture2D : public IResource {
         // Public Fields
 
         /*
@@ -111,29 +111,29 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Create a null texture
          */
-        TTexture2D();
+        Texture2D();
 
         /*
          * Create a texture from raw pixel data.
          */
-        TTexture2D(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
+        Texture2D(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
          * Load a texture file.
          */
-        TTexture2D(const Filesystem::TPath &path_);
+        Texture2D(const Filesystem::Path &path_);
 
         /*
          * Create a texture from an image.
          */
-        TTexture2D(const std::shared_ptr<TImage> &img_);
+        Texture2D(const std::shared_ptr<Image> &img_);
 
         // Public Methods
 
         /*
          * Create a texture from an image.
          */
-        static std::shared_ptr<TTexture2D> FromImage(const std::shared_ptr<TImage> &img_);
+        static std::shared_ptr<Texture2D> FromImage(const std::shared_ptr<Image> &img_);
 
         /*
          * Get the number of mipmaps this texture has
@@ -149,22 +149,22 @@ namespace NerdThings::Ngine::Graphics {
          * Load a texture from pixel data.
          * This expects 8 bits for R, G, B and A.
          */
-        static TTexture2D *LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, EPixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
+        static Texture2D *LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
          * Load a texture and get a pointer
          */
-        static TTexture2D *LoadTexture(const Filesystem::TPath &path_);
+        static Texture2D *LoadTexture(const Filesystem::Path &path_);
 
         /*
          * Set the texture filter mode
          */
-        void SetTextureFilter(ETextureFilterMode filterMode_) const;
+        void SetTextureFilter(TextureFilterMode filterMode_) const;
 
         /*
          * Set the texture wrap mode
          */
-        void SetTextureWrap(ETextureWrapMode wrapMode_) const;
+        void SetTextureWrap(TextureWrapMode wrapMode_) const;
 
         /*
          * Unload the texture
@@ -173,14 +173,14 @@ namespace NerdThings::Ngine::Graphics {
 
         // Operators
 
-        bool operator==(const TTexture2D &tex_) const;
+        bool operator==(const Texture2D &tex_) const;
 
-        bool operator!=(const TTexture2D &tex_) const;
+        bool operator!=(const Texture2D &tex_) const;
 
         /*
          * Copy a texture
          */
-        TTexture2D &operator=(const TTexture2D &tex_) = default;
+        Texture2D &operator=(const Texture2D &tex_) = default;
     };
 }
 

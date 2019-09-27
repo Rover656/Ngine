@@ -15,28 +15,28 @@
 #include "ngine.h"
 
 namespace NerdThings::Ngine {
-    struct NEAPI TMatrix;
+    struct NEAPI Matrix;
 
     /*
      * A 3 component vector
      */
-    struct NEAPI TVector3 {
+    struct NEAPI Vector3 {
         // Public fields
 
         /*
          * X unit vector
          */
-        static const TVector3 UnitX;
+        static const Vector3 UnitX;
 
         /*
          * Y unit vector
          */
-        static const TVector3 UnitY;
+        static const Vector3 UnitY;
 
         /*
          * Z unit vector
          */
-        static const TVector3 UnitZ;
+        static const Vector3 UnitZ;
 
         /*
          * X component
@@ -56,24 +56,24 @@ namespace NerdThings::Ngine {
         /*
          * Zero vector
          */
-        static const TVector3 Zero;
+        static const Vector3 Zero;
 
         // Public Constructor(s)
 
         /*
          * Create a zero vector
          */
-        TVector3() : X(0), Y(0), Z(0) {}
+        Vector3() : X(0), Y(0), Z(0) {}
 
         /*
          * Create a vector with a single value
          */
-        explicit TVector3(float val_) : X(val_), Y(val_), Z(val_) {}
+        explicit Vector3(float val_) : X(val_), Y(val_), Z(val_) {}
 
         /*
          * Create a 3D vector
          */
-        TVector3(float x_, float y_, float z_) : X(x_), Y(y_), Z(z_) {}
+        Vector3(float x_, float y_, float z_) : X(x_), Y(y_), Z(z_) {}
 
         // Public Methods
 
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine {
         /*
          * Get the dot product of the two vectors
          */
-        float Dot(TVector3 b_) const;
+        float Dot(Vector3 b_) const;
 
         /*
          * Magnitude
@@ -95,21 +95,21 @@ namespace NerdThings::Ngine {
          */
         float MagnitudeSquared() const;
         
-        TVector3 Transform(TMatrix matrix_) const;
+        Vector3 Transform(Matrix matrix_) const;
         
         // Operators
 
         // Operators
 
-        bool operator==(const TVector3 &b_) const {
+        bool operator==(const Vector3 &b_) const {
             return X == b_.X && Y == b_.Y && Z == b_.Z;
         }
 
-        bool operator!=(const TVector3 &b_) const {
+        bool operator!=(const Vector3 &b_) const {
             return X != b_.X || Y != b_.Y || Z != b_.Z;
         }
 
-        friend TVector3 operator+(TVector3 a_, const TVector3 &b_) {
+        friend Vector3 operator+(Vector3 a_, const Vector3 &b_) {
             return {
                     a_.X + b_.X,
                     a_.Y + b_.Y,
@@ -117,7 +117,7 @@ namespace NerdThings::Ngine {
             };
         }
 
-        void operator+=(const TVector3 &b_) {
+        void operator+=(const Vector3 &b_) {
             X += b_.X;
             Y += b_.Y;
             Z += b_.Z;
@@ -129,7 +129,7 @@ namespace NerdThings::Ngine {
             Z += b_;
         }
 
-        friend TVector3 operator-(TVector3 a_, const TVector3 &b_) {
+        friend Vector3 operator-(Vector3 a_, const Vector3 &b_) {
             return {
                     a_.X - b_.X,
                     a_.Y - b_.Y,
@@ -137,7 +137,7 @@ namespace NerdThings::Ngine {
             };
         }
 
-        void operator-=(const TVector3 &b_) {
+        void operator-=(const Vector3 &b_) {
             X -= b_.X;
             Y -= b_.Y;
             Z -= b_.Z;
@@ -149,7 +149,7 @@ namespace NerdThings::Ngine {
             Z -= b_;
         }
 
-        friend TVector3 operator*(TVector3 a_, const TVector3 &b_) {
+        friend Vector3 operator*(Vector3 a_, const Vector3 &b_) {
             return {
                     a_.X * b_.X,
                     a_.Y * b_.Y,
@@ -157,7 +157,7 @@ namespace NerdThings::Ngine {
             };
         }
 
-        void operator*=(const TVector3 &b_) {
+        void operator*=(const Vector3 &b_) {
             X *= b_.X;
             Y *= b_.Y;
             Z *= b_.Z;
@@ -169,7 +169,7 @@ namespace NerdThings::Ngine {
             Z *= b_;
         }
 
-        friend TVector3 operator/(TVector3 a_, const TVector3 &b_) {
+        friend Vector3 operator/(Vector3 a_, const Vector3 &b_) {
             return {
                     a_.X / b_.X,
                     a_.Y / b_.Y,
@@ -177,7 +177,7 @@ namespace NerdThings::Ngine {
             };
         }
 
-        void operator/=(const TVector3 &b_) {
+        void operator/=(const Vector3 &b_) {
             X /= b_.X;
             Y /= b_.Y;
             Z /= b_.Z;

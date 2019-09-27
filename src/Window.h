@@ -20,7 +20,7 @@ namespace NerdThings::Ngine {
     /*
      * Window config.
      */
-    struct TWindowConfig {
+    struct WindowConfig {
         /*
          * Fullscreen window.
          * TODO: This has not been implemented.
@@ -35,7 +35,7 @@ namespace NerdThings::Ngine {
         /*
          * Window icon
          */
-        Graphics::TImage *Icon = nullptr;
+        Graphics::Image *Icon = nullptr;
 
         /*
          * Enable MSAA 4X.
@@ -97,7 +97,7 @@ namespace NerdThings::Ngine {
         /*
          * Window config
          */
-        static TWindowConfig Config;
+        static WindowConfig Config;
 
 #if defined(PLATFORM_DESKTOP)
         /*
@@ -158,7 +158,7 @@ namespace NerdThings::Ngine {
          * Set window config.
          * Must be set before Initialization.
          */
-        static void SetConfig(const TWindowConfig &config_);
+        static void SetConfig(const WindowConfig &config_);
 
         /*
          * Set fullscreen

@@ -22,9 +22,7 @@ namespace NerdThings::Ngine {
     /*
      * A mathematical matrix
      */
-    struct NEAPI TMatrix {
-        // Note: This is a copy of raymath.h in OO form
-
+    struct NEAPI Matrix {
         // Public Fields
 
         // NOTE: Using raylib layout in case we need to pass matrices in the future
@@ -33,47 +31,47 @@ namespace NerdThings::Ngine {
         float M2, M6, M10, M14;
         float M3, M7, M11, M15;
 
-        static const TMatrix Identity;
+        static const Matrix Identity;
 
         // Public Methods
 
         [[nodiscard]] float Determinant() const;
 
-        static TMatrix Frustum(float left_, float right_, float bottom_, float top_, float near_, float far_);
+        static Matrix Frustum(float left_, float right_, float bottom_, float top_, float near_, float far_);
 
-        static TMatrix LookAt(TVector3 eye_, TVector3 target_, TVector3 up_);
+        static Matrix LookAt(Vector3 eye_, Vector3 target_, Vector3 up_);
 
-        static TMatrix Orthographic(float left_, float right_, float bottom_, float top_, float near_, float far_);
+        static Matrix Orthographic(float left_, float right_, float bottom_, float top_, float near_, float far_);
 
-        static TMatrix Perspective(float fovy_, float aspect_, float near_, float far_);
+        static Matrix Perspective(float fovy_, float aspect_, float near_, float far_);
 
-        static TMatrix Rotate(TVector3 axis_, float angle_);
+        static Matrix Rotate(Vector3 axis_, float angle_);
 
-        static TMatrix RotateX(float angle_);
+        static Matrix RotateX(float angle_);
 
-        static TMatrix RotateY(float angle_);
+        static Matrix RotateY(float angle_);
 
-        static TMatrix RotateZ(float angle_);
+        static Matrix RotateZ(float angle_);
 
-        static TMatrix Scale(float x, float y, float z);
+        static Matrix Scale(float x, float y, float z);
 
         std::unique_ptr<float[]> ToFloatArray() const;
 
         float Trace() const;
 
-        static TMatrix Translate(TVector3 translation_);
+        static Matrix Translate(Vector3 translation_);
 
-        static TMatrix Translate(float x_, float y_, float z_);
+        static Matrix Translate(float x_, float y_, float z_);
 
-        TMatrix Transpose() const;
+        Matrix Transpose() const;
 
-        TMatrix Invert() const;
+        Matrix Invert() const;
 
-        TMatrix Normalize() const;
+        Matrix Normalize() const;
 
         // Operators
 
-        friend TMatrix operator+(const TMatrix left_, const TMatrix right_) {
+        friend Matrix operator+(const Matrix left_, const Matrix right_) {
             auto result = Identity;
 
             result.M0 = left_.M0 + right_.M0;
@@ -96,7 +94,7 @@ namespace NerdThings::Ngine {
             return result;
         }
 
-        void operator+=(const TMatrix right_) {
+        void operator+=(const Matrix right_) {
             M0 += right_.M0;
             M1 += right_.M1;
             M2 += right_.M2;
@@ -115,7 +113,7 @@ namespace NerdThings::Ngine {
             M15 += right_.M15;
         }
 
-        friend TMatrix operator-(const TMatrix left_, const TMatrix right_) {
+        friend Matrix operator-(const Matrix left_, const Matrix right_) {
             auto result = Identity;
 
             result.M0 = left_.M0 - right_.M0;
@@ -138,7 +136,7 @@ namespace NerdThings::Ngine {
             return result;
         }
 
-        void operator-=(const TMatrix right_) {
+        void operator-=(const Matrix right_) {
             M0 -= right_.M0;
             M1 -= right_.M1;
             M2 -= right_.M2;
@@ -157,8 +155,8 @@ namespace NerdThings::Ngine {
             M15 -= right_.M15;
         }
 
-        friend TMatrix operator*(const TMatrix left_, const TMatrix right_) {
-            TMatrix result = {0};
+        friend Matrix operator*(const Matrix left_, const Matrix right_) {
+            Matrix result = {0};
 
             result.M0 = left_.M0 * right_.M0 + left_.M1 * right_.M4 + left_.M2 * right_.M8 + left_.M3 * right_.M12;
             result.M1 = left_.M0 * right_.M1 + left_.M1 * right_.M5 + left_.M2 * right_.M9 + left_.M3 * right_.M13;

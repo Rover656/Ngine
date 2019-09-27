@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Sprite used
          */
-        Graphics::TSprite _Sprite;
+        Graphics::Sprite _Sprite;
     public:
 
         // Public Constructor(s)
@@ -39,7 +39,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a sprite component
          */
-        SpriteComponent(BaseEntity *parent_, const Graphics::TSprite &sprite_)
+        SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_)
             : Component(parent_), _Sprite(sprite_) {
             SubscribeToDraw();
             SubscribeToUpdate();
@@ -52,11 +52,11 @@ namespace NerdThings::Ngine::Components {
             _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
         }
 
-        Graphics::TSprite *GetSprite() {
+        Graphics::Sprite *GetSprite() {
             return &_Sprite;
         }
 
-        void SetSprite(const Graphics::TSprite &sprite_) {
+        void SetSprite(const Graphics::Sprite &sprite_) {
             if (_Sprite != sprite_)
                 _Sprite = sprite_;
         }

@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * The circle used
          */
-        Physics::TCircle _Circle;
+        Physics::Circle _Circle;
 
         /*
          * The circle radius
@@ -68,9 +68,9 @@ namespace NerdThings::Ngine::Components {
             auto par = GetParent<BaseEntity>();
 
             // Determine color
-            auto col = Graphics::TColor::Red;
+            auto col = Graphics::Color::Red;
             if (CheckCollision<BaseEntity>())
-                col = Graphics::TColor::Green;
+                col = Graphics::Color::Green;
 
             // Draw the circle outline
             Graphics::Renderer::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
@@ -88,16 +88,16 @@ namespace NerdThings::Ngine::Components {
             return false;
         }
 
-        void Offset(TVector2 offset_) override {
+        void Offset(Vector2 offset_) override {
             const auto par = GetParent<BaseEntity>();
 
             // Rebuild with offset
-            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             const auto par = GetParent<BaseEntity>();
-            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
 
     public:
@@ -113,14 +113,14 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        Physics::TCircle GetCircle() const {
+        Physics::Circle GetCircle() const {
             return _Circle;
         }
 
         void SetRadius(float radius_) {
             const auto par = GetParent<BaseEntity>();
             _Radius = radius_;
-            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
     };
 }

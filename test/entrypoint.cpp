@@ -87,13 +87,13 @@ public:
 
 class PlayerEntity : public BaseEntity {
 public:
-    PlayerEntity(Scene *parentScene_, TVector2 position_)
+    PlayerEntity(Scene *parentScene_, Vector2 position_)
             : BaseEntity(parentScene_, position_) {
         SetOrigin({16, 16});
 
-        AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, Rectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
 
         auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
 
@@ -118,35 +118,35 @@ public:
 
 class OtherEntity : public BaseEntity {
 public:
-    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero, 0, true) {
+    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, Vector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
 
         AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
         AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
 
-        //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
+        //std::vector<Vector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
 
-        TRectangle rect = {0, 0, 32, 32};
+        Rectangle rect = {0, 0, 32, 32};
 
         //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw();
 
         SubscribeToUpdate();
     }
 
-    bool CheckForCulling(TRectangle cullArea_) override {
+    bool CheckForCulling(Rectangle cullArea_) override {
         auto a = cullArea_.ToPolygon();
-        auto b = TRectangle(GetPosition(), { 100, 100 }).ToPolygon();
+        auto b = Rectangle(GetPosition(), {100, 100 }).ToPolygon();
         return !a.CheckCollision(&b);
     }
 };
 
 class TestWidget : public UIWidget {
 public:
-    TestWidget(TVector2 pos_) : UIWidget(pos_) {
-        auto fnt = TFont::GetDefaultFont();
+    TestWidget(Vector2 pos_) : UIWidget(pos_) {
+        auto fnt = Font::GetDefaultFont();
         auto panelStyle = TUIStyle();
-        panelStyle.BackColor = TColor::White;
-        panelStyle.BorderColor = TColor::Gray;
+        panelStyle.BackColor = Color::White;
+        panelStyle.BorderColor = Color::Gray;
         panelStyle.BorderThickness = 2;
         panelStyle.SetPadding(5, 0, 5, 0);
         SetPanel(new VerticalPanel(250.0f, 500.0f));
@@ -159,36 +159,36 @@ public:
 
         auto style = TUIStyle();
         style.BorderThickness = 2;
-        style.BorderColor = TColor::Blue;
+        style.BorderColor = Color::Blue;
         //style.SetPadding(5);
-        style.BackColor = TColor::Green;
+        style.BackColor = Color::Green;
         style.Margin[2] = 5; // 5 bottom margin
         style.Margin[3] = 5; // 5 left margin
 
-        auto l = new Label("Hello World", TFont::GetDefaultFont());
-        style.ForeColor = Graphics::TColor::Orange;
+        auto l = new Label("Hello World", Font::GetDefaultFont());
+        style.ForeColor = Graphics::Color::Orange;
         l->SetFontSize(32);
         l->SetStyle(style);
         GetPanel()->AddChild("testLabel", l);
 
-        l = new Label("Hello world", TFont::GetDefaultFont());
-        style.ForeColor = Graphics::TColor::Blue;
+        l = new Label("Hello world", Font::GetDefaultFont());
+        style.ForeColor = Graphics::Color::Blue;
         l->SetFontSize(62);
         l->SetStyle(style);
         //l->SetConstrainToPanel(true);
         GetPanel()->AddChild("testLabel1", l);
 
         auto bStyle = TUIStyle();
-        bStyle.BackColor = TColor::Blue;
+        bStyle.BackColor = Color::Blue;
 
-        auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 200, 100);
+        auto btn = new BasicButton("Test", Font::GetDefaultFont(), 32, 200, 100);
         btn->OnClick.Bind(&TestWidget::Test);
         btn->SetStyle(bStyle);
         GetPanel()->AddChild("testButton", (UIControl *)btn);
 
 //        auto imgStyle = TUIStyle();
 //        imgStyle.Margin[0] = 5;
-//        auto img = new Image(TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
+//        auto img = new Image(Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
 //        img->SetStyle(imgStyle);
 //        //GetPanel()->AddChild("testImage", img);
     }
@@ -214,13 +214,13 @@ float colors[] = {
 
 class TestScene : public Scene {
 public:
-    TCamera cam;
+    Camera cam;
 
     TestWidget widg;
 
     TilesetCanvas *testTiles;
 
-    TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
+    TestScene(Game* game) : Scene(game), widg(Vector2(120, 120)) {
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
         AddEntity("Player", new PlayerEntity(this, {100, 100}));
@@ -243,7 +243,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles = new TilesetCanvas(Tileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 
@@ -264,18 +264,18 @@ public:
         rot += Mouse::GetMouseWheelYDelta();
         rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
 
-        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, TColor::White, {} , DegToRad(rot));
+        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, Color::White, {} , DegToRad(rot));
 
         if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
             testTiles->Draw({0, 0});
         }
 
-        Renderer::DrawCircleLines({100, 100}, 30, TColor::Red);
-        Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, TColor::Green);
+        Renderer::DrawCircleLines({100, 100}, 30, Color::Red);
+        Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, Color::Green);
     }
 
     void DrawCam(EventArgs &e) {
-        Renderer::DrawRectangleLines(GetCullArea(), TColor::Green, 1);
+        Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
     }
 
     void Update(EventArgs &e) {
@@ -287,7 +287,7 @@ class TestGame : public Game {
     TestScene *_Scene;
 public:
 
-    TestGame(const TGameConfig &config_) : Game(config_) {
+    TestGame(const GameConfig &config_) : Game(config_) {
         OnRun.Bind(this, &TestGame::Init);
 
         Keyboard::SetExitKey(KEY_ESCAPE);
@@ -298,10 +298,10 @@ public:
         Resources::LoadResources();
 
         // Load arial as default font
-        TFont::SetDefaultFont(Resources::GetFont("Arial"));
+        Font::SetDefaultFont(Resources::GetFont("Arial"));
 
         // Output readme
-        auto f = TFile::GetFile(TPath(TPath::GetExecutableDirectory() / "content" / "readme.txt"));
+        auto f = File::File(Path(Path::GetExecutableDirectory() / "content" / "readme.txt"));
 
         if (f.Open(MODE_READ)) {
             auto t = f.ReadString();
@@ -331,14 +331,14 @@ int main() {
 int main(Platform::Array<Platform::String^>^) {
 #endif
     // Load icon
-    auto icon = new TImage(TPath::GetExecutableDirectory() / "content" / "test_icon.png");
+    auto icon = new Graphics::Image(Path::GetExecutableDirectory() / "content" / "test_icon.png");
 
-    TGameConfig gameConfig;
+    GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     gameConfig.MaintainResolution = true;
 
-    TWindowConfig windowConfig;
+    WindowConfig windowConfig;
     windowConfig.Resizable = true;
     windowConfig.MSAA_4X = true;
     windowConfig.VSync = true;

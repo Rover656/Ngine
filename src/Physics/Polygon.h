@@ -20,7 +20,10 @@
 #define MAX_POLY_VERTS 8
 
 namespace NerdThings::Ngine::Physics {
-    struct NEAPI TPolygon : public ICollisionShape {
+    /*
+     * Polygon shape
+     */
+    struct NEAPI Polygon : public ICollisionShape {
     private:
         // Private Methods
 
@@ -39,25 +42,25 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Polygon vertices
          */
-        TVector2 Vertices[MAX_POLY_VERTS];
+        Vector2 Vertices[MAX_POLY_VERTS];
 
         /*
          * Polygon normals
          */
-        TVector2 Normals[MAX_POLY_VERTS];
+        Vector2 Normals[MAX_POLY_VERTS];
 
         // Public Constructor(s)
 
         /*
          * Create an empty polygon
          */
-        TPolygon()
+        Polygon()
                 : VertexCount(0) {}
 
         /*
          * Create a polygon from vertices
          */
-        TPolygon(const std::vector<TVector2> &vertices_) {
+        Polygon(const std::vector<Vector2> &vertices_) {
             if (vertices_.size() > MAX_POLY_VERTS)
                 throw std::runtime_error("Too many vertices");
 

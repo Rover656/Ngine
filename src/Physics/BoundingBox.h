@@ -21,7 +21,7 @@ namespace NerdThings::Ngine::Physics {
     /*
      * A 2D Bounding Box
      */
-    struct NEAPI TBoundingBox : public ICollisionShape {
+    struct NEAPI BoundingBox : public ICollisionShape {
     private:
         // Private Methods
 
@@ -34,19 +34,19 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Maximum coordinate
          */
-        TVector2 Max;
+        Vector2 Max;
 
         /*
          * Minimum coordinate
          */
-        TVector2 Min;
+        Vector2 Min;
 
         // Public Constructor(s)
 
         /*
          * Create a default bounding box
          */
-        TBoundingBox()
+        BoundingBox()
             : Max({}), Min({}) {}
 
         // Public Methods

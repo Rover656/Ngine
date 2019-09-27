@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * The sprite used for drawing
          */
-        Graphics::TSprite _Sprite;
+        Graphics::Sprite _Sprite;
 
     public:
 
@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * Create a new image control
          */
-        Image(Graphics::TSprite sprite_, float width_, float height_) {
+        Image(Graphics::Sprite sprite_, float width_, float height_) {
             _Sprite = sprite_;
             SetWidth(width_);
             SetHeight(height_);

@@ -32,8 +32,8 @@ namespace NerdThings::Ngine::Input {
 
     // Private Methods
 
-    EGamepadAxis Gamepad::GetAxis(int axis_) {
-        EGamepadAxis axis = GAMEPAD_AXIS_UNKNOWN;
+    GamepadAxis Gamepad::GetAxis(int axis_) {
+        GamepadAxis axis = GAMEPAD_AXIS_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
         switch (axis_) {
             case GLFW_GAMEPAD_AXIS_LEFT_X: axis = GAMEPAD_AXIS_LEFT_X; break;
@@ -44,7 +44,7 @@ namespace NerdThings::Ngine::Input {
             case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER: axis = GAMEPAD_AXIS_RIGHT_TRIGGER; break;
         }
 #elif defined(PLATFORM_UWP)
-        axis = (EGamepadAxis) axis_;     // UWP will provide the correct axis
+        axis = (GamepadAxis) axis_;     // UWP will provide the correct axis
 #endif
         return axis;
     }
@@ -105,7 +105,7 @@ namespace NerdThings::Ngine::Input {
 
     // Public Methods
 
-    float Gamepad::GetAxisValue(EGamepadNumber pad_, const EGamepadAxis axis_) {
+    float Gamepad::GetAxisValue(EGamepadNumber pad_, const GamepadAxis axis_) {
         return _CurrentAxisValue[pad_][axis_];
     }
 
@@ -158,7 +158,7 @@ namespace NerdThings::Ngine::Input {
                 auto axes = state.axes;
 
                 for (auto j = 0; (axes != nullptr) && (j <= GLFW_GAMEPAD_AXIS_LAST) && (j <= GAMEPAD_AXIS_RIGHT_TRIGGER); j++){
-                    EGamepadAxis a = GetAxis(j);
+                    GamepadAxis a = GetAxis(j);
 
                     _CurrentAxisValue[i][a] = axes[j];
                 }

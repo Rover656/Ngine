@@ -23,7 +23,7 @@ namespace NerdThings::Ngine::Audio {
     /*
      * A sound source
      */
-    struct NEAPI TSound : public TResource {
+    struct NEAPI Sound : public IResource {
         // Public Fields
 
         /*
@@ -34,18 +34,18 @@ namespace NerdThings::Ngine::Audio {
         /*
          * The audio stream
          */
-        TAudioStream Stream;
+        AudioStream Stream;
 
         // Public Constructor(s)
 
         /*
          * Create a null sound
          */
-        TSound() {}
+        Sound() {}
 
         // Destructor
 
-        ~TSound();
+        ~Sound();
 
         // Public Methods
 
@@ -62,12 +62,12 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Load a sound from a file
          */
-        static TSound *LoadSound(const Filesystem::TPath &path_);
+        static Sound *LoadSound(const Filesystem::Path &path_);
 
         /*
          * Load sound from wave data.
          */
-        static TSound *LoadSoundFromWave(TWave *wave_);
+        static Sound *LoadSoundFromWave(Wave *wave_);
 
         /*
          * Pause sound

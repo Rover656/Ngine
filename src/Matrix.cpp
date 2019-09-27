@@ -18,7 +18,7 @@ namespace NerdThings::Ngine {
 
     // Public Fields
 
-    const TMatrix TMatrix::Identity = {
+    const Matrix Matrix::Identity = {
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
@@ -27,7 +27,7 @@ namespace NerdThings::Ngine {
 
     // Public Methods
 
-    float TMatrix::Determinant() const {
+    float Matrix::Determinant() const {
         float result = {0};
 
         // Cache the matrix values (speed optimization)
@@ -46,9 +46,9 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Frustum(const float left_, const float right_, const float bottom_, const float top_,
-                             const float near_, const float far_) {
-        TMatrix result = {0};
+    Matrix Matrix::Frustum(const float left_, const float right_, const float bottom_, const float top_,
+                           const float near_, const float far_) {
+        Matrix result = {0};
 
         const auto rl = right_ - left_;
         const auto tb = top_ - bottom_;
@@ -77,9 +77,9 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::LookAt(TVector3 eye_, TVector3 target_, TVector3 up_) {
+    Matrix Matrix::LookAt(Vector3 eye_, Vector3 target_, Vector3 up_) {
         // TODO: Vector3 math
-        /*TMatrix result = { 0 };
+        /*Matrix result = { 0 };
 
         Vector3 z = Vector3Subtract(eye, target);
         z = Vector3Normalize(z);
@@ -111,9 +111,9 @@ namespace NerdThings::Ngine {
         return {};
     }
 
-    TMatrix TMatrix::Orthographic(const float left_, const float right_, const float bottom_, const float top_,
-                                  const float near_, const float far_) {
-        TMatrix result = {0};
+    Matrix Matrix::Orthographic(const float left_, const float right_, const float bottom_, const float top_,
+                                const float near_, const float far_) {
+        Matrix result = {0};
 
         const auto rl = right_ - left_;
         const auto tb = top_ - bottom_;
@@ -139,7 +139,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Perspective(const float fovy_, const float aspect_, const float near_, const float far_) {
+    Matrix Matrix::Perspective(const float fovy_, const float aspect_, const float near_, const float far_) {
         const auto top = near_ * tanf(fovy_ * 0.5f);
         const auto right = top * aspect_;
         const auto result = Frustum(-right, right, -top, top, near_, far_);
@@ -147,8 +147,8 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Rotate(const TVector3 axis_, const float angle_) {
-        TMatrix result = {0};
+    Matrix Matrix::Rotate(const Vector3 axis_, const float angle_) {
+        Matrix result = {0};
 
         auto x = axis_.X, y = axis_.Y, z = axis_.Z;
 
@@ -188,7 +188,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::RotateX(const float angle_) {
+    Matrix Matrix::RotateX(const float angle_) {
         auto result = Identity;
 
         const auto cosres = cosf(angle_);
@@ -202,7 +202,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::RotateY(const float angle_) {
+    Matrix Matrix::RotateY(const float angle_) {
         auto result = Identity;
 
         const auto cosres = cosf(angle_);
@@ -216,7 +216,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::RotateZ(const float angle_) {
+    Matrix Matrix::RotateZ(const float angle_) {
         auto result = Identity;
 
         const auto cosres = cosf(angle_);
@@ -230,8 +230,8 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Scale(float x, float y, float z) {
-        const TMatrix result = {
+    Matrix Matrix::Scale(float x, float y, float z) {
+        const Matrix result = {
             x, 0.0f, 0.0f, 0.0f,
             0.0f, y, 0.0f, 0.0f,
             0.0f, 0.0f, z, 0.0f,
@@ -241,7 +241,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    std::unique_ptr<float[]> TMatrix::ToFloatArray() const {
+    std::unique_ptr<float[]> Matrix::ToFloatArray() const {
         auto buffer = std::make_unique<float[]>(16);
         buffer[0] = M0;
         buffer[1] = M1;
@@ -263,17 +263,17 @@ namespace NerdThings::Ngine {
         return buffer;
     }
 
-    float TMatrix::Trace() const {
+    float Matrix::Trace() const {
         const auto result = (M0 + M5 + M10 + M15);
         return result;
     }
 
-    TMatrix TMatrix::Translate(TVector3 translation_) {
+    Matrix Matrix::Translate(Vector3 translation_) {
         return Translate(translation_.X, translation_.Y, translation_.Z);
     }
 
-    TMatrix TMatrix::Translate(float x_, float y_, float z_) {
-        const TMatrix result = {
+    Matrix Matrix::Translate(float x_, float y_, float z_) {
+        const Matrix result = {
             1.0f, 0.0f, 0.0f, x_,
             0.0f, 1.0f, 0.0f, y_,
             0.0f, 0.0f, 1.0f, z_,
@@ -283,8 +283,8 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Transpose() const {
-        TMatrix result = {0};
+    Matrix Matrix::Transpose() const {
+        Matrix result = {0};
 
         result.M0 = M0;
         result.M1 = M4;
@@ -306,8 +306,8 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Invert() const {
-        TMatrix result = {0};
+    Matrix Matrix::Invert() const {
+        Matrix result = {0};
 
         // Cache the matrix values (speed optimization)
         const auto a00 = M0, a01 = M1, a02 = M2, a03 = M3;
@@ -351,8 +351,8 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    TMatrix TMatrix::Normalize() const {
-        TMatrix result = {0};
+    Matrix Matrix::Normalize() const {
+        Matrix result = {0};
 
         const auto det = Determinant();
 
