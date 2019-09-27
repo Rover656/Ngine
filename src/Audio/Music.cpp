@@ -26,6 +26,19 @@ namespace NerdThings::Ngine::Audio {
 
     // Public Methods
 
+    float TMusic::GetLength() {
+        return (float)SampleCount/(float)(Stream.SampleRate*Stream.Channels);
+    }
+
+    float TMusic::GetTimePlayed() {
+        float secondsPlayed = 0.0f;
+
+        unsigned int samplesPlayed = Stream.Buffer->TotalFramesProcessed*Stream.Channels;
+        secondsPlayed = (float)samplesPlayed/(float)(Stream.SampleRate*Stream.Channels);
+
+        return secondsPlayed;
+    }
+
     bool TMusic::IsPlaying() const {
         return Stream.Buffer->IsPlaying();
     }
@@ -157,6 +170,28 @@ namespace NerdThings::Ngine::Audio {
         _ActiveMusic.erase(std::remove(_ActiveMusic.begin(), _ActiveMusic.end(), this), _ActiveMusic.end());
     }
 
+    void TMusic::Unload() {
+        AudioDevice::CloseAudioBuffer(Stream.Buffer);
+
+        switch(CTXType) {
+            case AUDIO_MP3: {
+                drmp3_uninit((drmp3 *) CTXData);
+                free(CTXData);
+            } break;
+
+            case AUDIO_OGG: {
+                stb_vorbis_close((stb_vorbis *) CTXData);
+            } break;
+
+            case AUDIO_FLAC: {
+                drflac_free((drflac *) CTXData);
+            } break;
+        }
+
+        CTXData = nullptr;
+        ConsoleMessage("Unloaded music stream.", "NOTICE", "Music");
+    }
+
     void TMusic::Update() {
         for (auto mus : _ActiveMusic) {
             mus->__Update();
@@ -232,27 +267,5 @@ namespace NerdThings::Ngine::Audio {
         } else {
             if (Stream.Buffer->IsPlaying()) Play();
         }
-    }
-
-    void TMusic::Unload() {
-        AudioDevice::CloseAudioBuffer(Stream.Buffer);
-
-        switch(CTXType) {
-            case AUDIO_MP3: {
-                drmp3_uninit((drmp3 *) CTXData);
-                free(CTXData);
-            } break;
-
-            case AUDIO_OGG: {
-                stb_vorbis_close((stb_vorbis *) CTXData);
-            } break;
-
-            case AUDIO_FLAC: {
-                drflac_free((drflac *) CTXData);
-            } break;
-        }
-
-        CTXData = nullptr;
-        ConsoleMessage("Unloaded music stream.", "NOTICE", "Music");
     }
 }

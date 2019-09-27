@@ -239,16 +239,6 @@ namespace NerdThings::Ngine::Audio {
         } else ConsoleMessage("Could not close audio device as it is not open.", "WARN", "AudioDevice");
     }
 
-    float AudioDevice::GetMusicLength(TMusic *mus_) {
-        //return GetMusicTimeLength(mus_->ToRaylibMusic());
-        return 0;
-    }
-
-    float AudioDevice::GetMusicTimePlayed(TMusic *mus_) {
-        //return ::GetMusicTimePlayed(mus_->ToRaylibMusic());
-        return 0;
-    }
-
     TAudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
                                                ma_uint32 bufferSizeInFrames_, int usage_) {
         if (!_Initialized) return nullptr;

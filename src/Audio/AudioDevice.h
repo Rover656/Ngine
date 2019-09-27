@@ -119,16 +119,6 @@ namespace NerdThings::Ngine::Audio {
         static void Close();
 
         /*
-         * Get the length of a music stream
-         */
-        static float GetMusicLength(TMusic *mus_);
-
-        /*
-         * Get the amount of time of a music stream played
-         */
-        static float GetMusicTimePlayed(TMusic *mus_);
-
-        /*
          * Init audio buffer
          */
         static TAudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, int usage_);

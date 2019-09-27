@@ -65,6 +65,16 @@ namespace NerdThings::Ngine::Audio {
         // Public Methods
 
         /*
+         * Get length in seconds
+         */
+        float GetLength();
+
+        /*
+         * Get the current amount of time played in seconds.
+         */
+        float GetTimePlayed();
+
+        /*
          * Whether or not music is playing
          */
         bool IsPlaying() const;
