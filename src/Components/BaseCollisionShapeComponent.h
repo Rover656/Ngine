@@ -39,7 +39,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * On position changed
          */
-        EventHandleRef<EntityTransformChangedEventArgs> *_OnTransformChangeRef;
+        EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
 
         // Private Methods
 
@@ -77,7 +77,7 @@ namespace NerdThings::Ngine::Components {
         // Destructor
 
         virtual ~BaseCollisionShapeComponent() {
-            _OnTransformChangeRef->UnBind();
+            _OnTransformChangeRef.UnBind();
 
             // Remove from collision map
             auto scene = GetParent<BaseEntity>()->GetParentScene();

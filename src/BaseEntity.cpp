@@ -155,7 +155,7 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
-        if (_OnUpdateRef != nullptr)
+        if (_OnUpdateRef.IsValid())
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
         _PersistentUpdates = persistentUpdates_;
     }
@@ -177,7 +177,7 @@ namespace NerdThings::Ngine {
 
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
-            if (_OnUpdateRef == nullptr) {
+            if (_OnUpdateRef.IsValid()) {
                 if (_PersistentUpdates) _OnUpdateRef = _ParentScene->OnPersistentUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 else _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 return true;
@@ -190,7 +190,7 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::UnsubscribeFromUpdate() {
-        _OnUpdateRef->UnBind();
+        _OnUpdateRef.UnBind();
     }
 
     void BaseEntity::Update(EventArgs &e) {
