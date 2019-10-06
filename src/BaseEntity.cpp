@@ -177,7 +177,7 @@ namespace NerdThings::Ngine {
 
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
-            if (_OnUpdateRef.IsValid()) {
+            if (!_OnUpdateRef.IsValid()) {
                 if (_PersistentUpdates) _OnUpdateRef = _ParentScene->OnPersistentUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 else _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 return true;
