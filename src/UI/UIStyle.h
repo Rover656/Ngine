@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The background texture
          */
-        std::shared_ptr<Graphics::Texture2D> BackgroundTexture;
+        Graphics::Texture2D *BackgroundTexture;
 
         /*
          * Border color
@@ -99,7 +99,7 @@ namespace NerdThings::Ngine::UI {
         }
 
         Graphics::Texture2D *GetBackgroundTexture() {
-            return BackgroundTexture.get();
+            return BackgroundTexture;
         }
 
         /*
