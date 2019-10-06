@@ -154,7 +154,7 @@ namespace NerdThings::Ngine {
          */
         void Clear() {
             // Unbind all
-            for (auto h : _Handles) h.UnBind();
+            for (auto h : _Handles) h->UnBind();
 
             // Clear
             _Handles.clear();
