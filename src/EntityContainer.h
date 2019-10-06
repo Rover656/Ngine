@@ -107,8 +107,8 @@ namespace NerdThings::Ngine {
         template <typename EntityType>
         int CountEntitiesOfType() {
             int c = 0;
-            for (auto e : _Entities) {
-                if (dynamic_cast<EntityType*>(e.second.get()) != nullptr) c++;
+            for (auto e : GetEntities()) {
+                if (dynamic_cast<EntityType*>(e) != nullptr) c++;
             }
             return c;
         }
