@@ -82,10 +82,14 @@ namespace NerdThings::Ngine::Components {
             // Remove from collision map
             auto scene = GetParent<BaseEntity>()->GetParentScene();
 
-            for (auto cVec : scene->CollisionMap) {
-                for (auto ent : cVec.second) {
+            for (auto i = 0; i < scene->CollisionMap.size(); i++) {
+
+            }
+
+            for (auto it = scene->CollisionMap.begin(); it != scene->CollisionMap.end(); it++) {
+                for (auto ent : it->second) {
                     if (ent == GetParent<BaseEntity>()) {
-                        scene->CollisionMap[cVec.first].erase(std::remove(scene->CollisionMap[cVec.first].begin(), scene->CollisionMap[cVec.first].end(), ent), scene->CollisionMap[cVec.first].end());
+                        scene->CollisionMap[it->first].erase(std::remove(scene->CollisionMap[it->first].begin(), scene->CollisionMap[it->first].end(), ent), scene->CollisionMap[it->first].end());
                     }
                 }
             }
