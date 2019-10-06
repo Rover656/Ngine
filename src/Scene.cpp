@@ -50,7 +50,10 @@ namespace NerdThings::Ngine {
     // Destructor
 
     Scene::~Scene() {
-        ConsoleMessage("Deleting entities.", "NOTICE", "SCENE");
+        ConsoleMessage("Deleting Scene.", "NOTICE", "SCENE");
+        CollisionMap.clear();
+        _EntityActivities.clear();
+        _EntityDepths.clear();
     }
 
     // Public Methods
