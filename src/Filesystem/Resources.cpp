@@ -36,48 +36,56 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     void Resources::DeleteFont(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Fonts.find(name_) != _Fonts.end()) {
             _Fonts.erase(name_);
         }
     }
 
     void Resources::DeleteMusic(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Music.find(name_) != _Music.end()) {
             _Music.erase(name_);
         }
     }
 
     void Resources::DeleteSound(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Sounds.find(name_) != _Sounds.end()) {
             _Sounds.erase(name_);
         }
     }
 
     void Resources::DeleteTexture(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Textures.find(name_) != _Textures.end()) {
             _Textures.erase(name_);
         }
     }
 
     Graphics::Font *Resources::GetFont(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Fonts.find(name_) != _Fonts.end())
             return _Fonts[name_].get();
         return nullptr;
     }
 
     Audio::Music *Resources::GetMusic(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Music.find(name_) != _Music.end())
             return _Music[name_].get();
         return nullptr;
     }
 
     Audio::Sound *Resources::GetSound(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Sounds.find(name_) != _Sounds.end())
             return _Sounds[name_].get();
         return nullptr;
     }
 
     Graphics::Texture2D *Resources::GetTexture(const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Textures.find(name_) != _Textures.end())
             return _Textures[name_].get();
         return nullptr;
@@ -130,6 +138,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadFont(const Path &inPath_, const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         auto fnt = Graphics::Font::LoadTTFFont(inPath_);
         if (fnt->IsValid()) {
             _Fonts.insert({ name_, std::unique_ptr<Graphics::Font>(fnt) });
@@ -139,6 +148,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadMusic(const Path &inPath_, const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         auto mus = Audio::Music::LoadMusic(inPath_);
         if (mus->IsValid()) {
             _Music.insert({ name_, std::unique_ptr<Audio::Music>(mus) });
@@ -148,6 +158,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadSound(const Path &inPath_, const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         auto snd = Audio::Sound::LoadSound(inPath_);
         if (snd->IsValid()) {
             _Sounds.insert({ name_, std::unique_ptr<Audio::Sound>(snd) });
@@ -157,6 +168,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadTexture(const Path &inPath_, const std::string &name_) {
+        name_ = std::regex_replace(name_, std::regex("\\\\"), "/");
         auto tex = Graphics::Texture2D::LoadTexture(inPath_);
         if (tex->IsValid()) {
             _Textures.insert({ name_, std::unique_ptr<Graphics::Texture2D>(tex) });
