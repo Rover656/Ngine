@@ -22,7 +22,7 @@
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine {
-    struct NEAPI Game;
+    class NEAPI Game;
 
     /*
      * Scene loaded event args.
