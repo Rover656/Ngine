@@ -1,36 +1,26 @@
 #include <ngine.h>
 
 #include <Audio/AudioDevice.h>
-#include <Audio/Music.h>
-#include <Audio/Sound.h>
 #include <Audio/Wave.h>
 #include <Components/BoundingBoxCollisionShapeComponent.h>
 #include <Components/CameraComponent.h>
 #include <Components/CircleCollisionShapeComponent.h>
 #include <Components/PolygonCollisionShapeComponent.h>
 #include <Components/SpriteComponent.h>
-#include <Filesystem/Filesystem.h>
 #include <Filesystem/Resources.h>
-#include <Graphics/Sprite.h>
 #include <Graphics/TilesetCanvas.h>
 #include <Input/Gamepad.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
-#include <Physics/BoundingBox.h>
-#include <Physics/Circle.h>
-#include <Physics/Polygon.h>
 #include <UI/Controls/BasicButton.h>
 #include <UI/Controls/HorizontalPanel.h>
 #include <UI/Controls/Image.h>
 #include <UI/Controls/Label.h>
 #include <UI/Controls/VerticalPanel.h>
-#include <UI/UIControl.h>
-#include <UI/UIPanel.h>
 #include <UI/UIWidget.h>
 #include <BaseEntity.h>
 #include <Component.h>
 #include <Game.h>
-#include <Vector2.h>
 #include <Window.h>
 
 using namespace NGINE_NS;
@@ -45,7 +35,7 @@ using namespace NGINE_NS::UI::Controls;
 
 class KeyboardMovementComponent2D : public Component {
 public:
-    float MoveSpeed = 1;//5;
+    float MoveSpeed = 1;
 
     KeyboardMovementComponent2D(BaseEntity *parent_) : Component(parent_) {
         SubscribeToUpdate();
@@ -95,9 +85,7 @@ public:
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
         AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, Rectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
 
-        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
-
-        cam->Activate();
+        AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}))->Activate();
     }
 };
 
@@ -108,8 +96,6 @@ public:
     }
 
     void Update(EventArgs &e) override {
-        //tst.Update();
-
         if (Keyboard::IsKeyPressed(KEY_SPACE)) {
             Resources::GetSound("test_sound")->Play();
         }
@@ -120,15 +106,8 @@ class OtherEntity : public BaseEntity {
 public:
     OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, Vector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
-
         AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
         AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
-
-        //std::vector<Vector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
-
-        Rectangle rect = {0, 0, 32, 32};
-
-        //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw();
 
         SubscribeToUpdate();
     }
@@ -150,17 +129,12 @@ public:
         panelStyle.BorderThickness = 2;
         panelStyle.SetPadding(5, 0, 5, 0);
         SetPanel(new VerticalPanel(250.0f, 500.0f));
-        //GetPanel<VerticalPanel>()->SetWidth(250.0f);
-        //GetPanel<VerticalPanel>()->SetHeight(500.0f);
         GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
-        //SetPanel(new HorizontalPanel(550.0f, 250.0f));
-        //GetPanel<HorizontalPanel>()->EVerticalAlignment = ALIGN_MIDDLE;
         GetPanel()->SetStyle(panelStyle);
 
         auto style = TUIStyle();
         style.BorderThickness = 2;
         style.BorderColor = Color::Blue;
-        //style.SetPadding(5);
         style.BackColor = Color::Green;
         style.Margin[2] = 5; // 5 bottom margin
         style.Margin[3] = 5; // 5 left margin
@@ -175,7 +149,6 @@ public:
         style.ForeColor = Graphics::Color::Blue;
         l->SetFontSize(62);
         l->SetStyle(style);
-        //l->SetConstrainToPanel(true);
         GetPanel()->AddChild("testLabel1", l);
 
         auto bStyle = TUIStyle();
@@ -301,7 +274,7 @@ public:
         Font::SetDefaultFont(Resources::GetFont("Arial"));
 
         // Output readme
-        auto f = File::File(Path(Path::GetExecutableDirectory() / "content" / "readme.txt"));
+        auto f = File(Path(Path::GetExecutableDirectory() / "content" / "readme.txt"));
 
         if (f.Open(MODE_READ)) {
             auto t = f.ReadString();
