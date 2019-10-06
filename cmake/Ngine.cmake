@@ -121,7 +121,7 @@ function(ngine_add_content target root_dir content_dir)
         add_custom_command(TARGET ${target} PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${root_dir}/${content_dir}
-                $<TARGET_FILE_DIR:NgineTest>/${content_dir})
+                $<TARGET_FILE_DIR:${target}>/${content_dir})
     elseif(${PLATFORM} MATCHES "UWP")
         # Get all files
         file(GLOB_RECURSE content_files "${root_dir}/${content_dir}/*")
