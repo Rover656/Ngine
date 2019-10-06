@@ -84,6 +84,12 @@ namespace NerdThings::Ngine {
 
         EventHandler<ArgsType>() = default;
 
+        // Destructor
+
+        ~EventHandler() {
+            Clear();
+        }
+
         // Public Methods
 
         /*
