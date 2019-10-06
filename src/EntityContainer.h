@@ -50,6 +50,13 @@ namespace NerdThings::Ngine {
          */
         virtual void SetEntityParent(BaseEntity *ent_) = 0;
     public:
+        // Destructors
+
+        ~EntityContainer() {
+            // Clear
+            _Entities.clear();
+        }
+
         // Public Methods
 
         /*
