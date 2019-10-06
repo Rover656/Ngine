@@ -40,10 +40,6 @@ namespace NerdThings::Ngine {
     // Destructor
 
     BaseEntity::~BaseEntity() {
-        // Delete all components
-        ConsoleMessage("Deleting components and removing update subscription.", "NOTICE", "BASEENTITY");
-        _Components.clear();
-
         // Unbind all events
         UnsubscribeFromUpdate();
     }
