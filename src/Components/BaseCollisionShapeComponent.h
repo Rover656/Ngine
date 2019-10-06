@@ -82,10 +82,6 @@ namespace NerdThings::Ngine::Components {
             // Remove from collision map
             auto scene = GetParent<BaseEntity>()->GetParentScene();
 
-            for (auto i = 0; i < scene->CollisionMap.size(); i++) {
-
-            }
-
             for (auto it = scene->CollisionMap.begin(); it != scene->CollisionMap.end(); it++) {
                 for (auto ent : it->second) {
                     if (ent == GetParent<BaseEntity>()) {
