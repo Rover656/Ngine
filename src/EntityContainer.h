@@ -52,10 +52,7 @@ namespace NerdThings::Ngine {
     public:
         // Destructors
 
-        ~EntityContainer() {
-            // Clear
-            _Entities.clear();
-        }
+        ~EntityContainer();
 
         // Public Methods
 

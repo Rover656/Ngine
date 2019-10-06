@@ -16,6 +16,13 @@
 #include "BaseEntity.h"
 
 namespace NerdThings::Ngine {
+    // Destructor
+
+    EntityContainer::~EntityContainer() {
+        // Clear
+        _Entities.clear();
+    }
+
     // Public Methods
 
     std::vector<BaseEntity *> EntityContainer::GetEntities() {
