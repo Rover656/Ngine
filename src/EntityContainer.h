@@ -124,8 +124,8 @@ namespace NerdThings::Ngine {
         template <typename EntityType>
         std::vector<EntityType*> GetEntitiesByType() {
             std::vector<EntityType*> ents;
-            for (auto e : _Entities) {
-                auto t = dynamic_cast<EntityType*>(e.second.get());
+            for (auto e : GetEntities()) {
+                auto t = dynamic_cast<EntityType*>(e);
                 if (t != nullptr) ents.push_back(t);
             }
             return ents;
