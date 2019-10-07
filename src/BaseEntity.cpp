@@ -42,6 +42,9 @@ namespace NerdThings::Ngine {
     BaseEntity::~BaseEntity() {
         // Unbind all events
         UnsubscribeFromUpdate();
+
+        // Delete children
+        DeleteAllEntities();
     }
 
     // Public Methods
