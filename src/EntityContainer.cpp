@@ -16,16 +16,11 @@
 #include "BaseEntity.h"
 
 namespace NerdThings::Ngine {
-    // Protected Methods
-
-    void EntityContainer::DeleteAllEntities() {
-        _Entities.clear();
-    }
-
     // Destructor
 
     EntityContainer::~EntityContainer() {
-        DeleteAllEntities();
+        // Clear
+        _Entities.clear();
     }
 
     // Public Methods

@@ -18,7 +18,7 @@ namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     Tileset::Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_)
-            : _Texture(std::shared_ptr<Texture2D>(texture_)), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
+            : _Texture(texture_), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
 
     // Public Methods
 
@@ -44,11 +44,7 @@ namespace NerdThings::Ngine::Graphics {
         Rectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
 
         // Draw
-        Renderer::DrawTexture(_Texture.get(), sourceRectangle, position_, Color::White);
-    }
-
-    Texture2D *Tileset::GetTexture() {
-        return _Texture.get();
+        Renderer::DrawTexture(_Texture, sourceRectangle, position_, Color::White);
     }
 
     float Tileset::GetTileHeight() const {

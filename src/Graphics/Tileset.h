@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The tileset texture
          */
-        std::shared_ptr<Texture2D> _Texture;
+        Texture2D *_Texture;
 
         /*
          * Tile width
@@ -47,11 +47,6 @@ namespace NerdThings::Ngine::Graphics {
         // Public Methods
 
         void DrawTile(Vector2 position_, int tile_);
-
-        /*
-         * Get the tileset texture
-         */
-        Texture2D *GetTexture();
 
         /*
          * Get the tile height

@@ -49,13 +49,6 @@ namespace NerdThings::Ngine {
          * Set the entity parent
          */
         virtual void SetEntityParent(BaseEntity *ent_) = 0;
-    protected:
-        // Protected Methods
-
-        /*
-         * Delete all child entities. This is for a destructor.
-         */
-        void DeleteAllEntities();
     public:
         // Destructors
 
