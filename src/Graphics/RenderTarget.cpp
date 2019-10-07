@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Graphics {
 #endif
 
         // Create texture
-        _Texture = std::make_shared<Texture2D>();
+        _Texture = new Texture2D();
         _Texture->Width = Width;
         _Texture->Height = Height;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -34,10 +34,16 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
+    // Destructor
+
+    RenderTarget::~RenderTarget() {
+        delete _Texture;
+    }
+
     // Public Methods
 
     Texture2D *RenderTarget::GetTexture() {
-        return _Texture.get();
+        return _Texture;
     }
 
     bool RenderTarget::IsValid() const {

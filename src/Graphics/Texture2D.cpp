@@ -57,9 +57,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Texture2D::IsValid() const {
+        if (InternalTexture != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        if (InternalTexture->ID > 0)
-            return true;
+            if (InternalTexture->ID > 0)
+                return true;
 #endif
         return false;
     }

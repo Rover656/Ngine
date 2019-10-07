@@ -26,6 +26,14 @@ namespace NerdThings::Ngine::Graphics {
      * A 2D Texture in the GPU that can be rendered to
      */
     struct NEAPI RenderTarget : public IResource {
+    private:
+        // Private Fields
+
+        /*
+         * The texture that the render target renders to.
+         */
+        Texture2D *_Texture;
+    public:
         // Public Fields
 
         /*
@@ -57,6 +65,10 @@ namespace NerdThings::Ngine::Graphics {
          */
         RenderTarget(int width_, int height_);
 
+        // Destructor
+
+        ~RenderTarget();
+
         // Public Methods
 
         /*
@@ -80,14 +92,6 @@ namespace NerdThings::Ngine::Graphics {
         bool operator==(const RenderTarget &b) const;
 
         bool operator!=(const RenderTarget &b) const;
-
-    private:
-        // Private Fields
-
-        /*
-         * The texture that the render target renders to.
-         */
-        std::shared_ptr<Texture2D> _Texture;
     };
 }
 
