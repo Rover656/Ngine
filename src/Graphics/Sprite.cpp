@@ -147,7 +147,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Sprite::SetTexture(Texture2D *texture_) {
         _Textures.clear();
-        _Textures.push_back(std::shared_ptr<Texture2D>(texture_));
+        _Textures.push_back(texture_);
     }
 
     void Sprite::SetTextures(const std::vector<Texture2D *> &textures_) {
@@ -155,7 +155,7 @@ namespace NerdThings::Ngine::Graphics {
 
         for (auto t : textures_) {
             // Look for existing shared pointer first.
-            _Textures.push_back(std::shared_ptr<Texture2D>(t));
+            _Textures.push_back(t);
         }
     }
 
