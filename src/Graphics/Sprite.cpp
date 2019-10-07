@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::Graphics {
 
     Sprite::Sprite(Texture2D *texture_) {
         // Add texture
-        _Textures.push_back(std::shared_ptr<Texture2D>(texture_));
+        _Textures.push_back(texture_);
 
         // Set draw dimensions
         DrawHeight = texture_->Height;
@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::Graphics {
         : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
           ImageSpeed(imageSpeed_) {
         // Add texture
-        _Textures.push_back(std::shared_ptr<Texture2D>(texture_));
+        _Textures.push_back(texture_);
 
         // Set frame
         CurrentFrame = startingFrame;
@@ -49,7 +49,7 @@ namespace NerdThings::Ngine::Graphics {
     Sprite::Sprite(const std::vector<Texture2D*> &textures_, float imageSpeed_, int startingFrame_) {
         // Set textures
         for (auto tex : textures_) {
-            _Textures.push_back(std::shared_ptr<Texture2D>(tex));
+            _Textures.push_back(tex);
         }
 
         // Set frame
@@ -111,10 +111,10 @@ namespace NerdThings::Ngine::Graphics {
             return nullptr;
 
         if (_SpriteSheet) {
-            return _Textures[0].get();
+            return _Textures[0];
         }
 
-        return _Textures[CurrentFrame].get();
+        return _Textures[CurrentFrame];
     }
 
     Rectangle Sprite::GetSourceRectangle() {

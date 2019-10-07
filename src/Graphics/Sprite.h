@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The textures associated
          */
-        std::vector<std::shared_ptr<Texture2D>> _Textures;
+        std::vector<Texture2D *> _Textures;
 
         /*
          * Whether or not this is a spritesheet
