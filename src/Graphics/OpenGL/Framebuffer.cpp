@@ -43,10 +43,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         }
 
         // Set parameters
-        RenderTexture->SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_LINEAR);
-        RenderTexture->SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_LINEAR);
-        RenderTexture->SetParameter(TEXPARAM_WRAP_S, WRAP_CLAMP);
-        RenderTexture->SetParameter(TEXPARAM_WRAP_T, WRAP_CLAMP);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // Depth buffer

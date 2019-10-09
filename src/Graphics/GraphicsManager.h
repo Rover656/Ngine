@@ -71,19 +71,9 @@ namespace NerdThings::Ngine::Graphics {
         static void PushTarget(RenderTarget *target_);
 
         /*
-         * Push a target onto the stack
-         */
-        static void PushTarget(const std::shared_ptr<RenderTarget> &target_);
-
-        /*
-         const * Replace a target on the stack
+         * Replace a target on the stack
          */
         static void ReplaceTarget(RenderTarget *old_, RenderTarget *new_);
-
-        /*
-         const * Replace a target on the stack
-         */
-        static void ReplaceTarget(const std::shared_ptr<RenderTarget> &old_, const std::shared_ptr<RenderTarget> &new_);
     };
 }
 

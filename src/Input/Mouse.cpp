@@ -23,7 +23,7 @@ namespace NerdThings::Ngine::Input {
     MouseState Mouse::_CurrentMouseState;
     MouseState Mouse::_LastMouseState;
     Vector2 Mouse::_MouseOffset;
-    Vector2 Mouse::_MouseScale;
+    Vector2 Mouse::_MouseScale = Vector2(1, 1);
     MouseState Mouse::_NextMouseState;
 
     // Private Methods

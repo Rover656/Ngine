@@ -205,7 +205,8 @@ namespace NerdThings::Ngine {
             for (auto i = 0; i < _Handles.size(); i++) {
                 auto handle = _Handles[i];
                 ArgsType sendE = e;
-                handle.HandleInfo->Function(sendE);
+                if (handle.HandleInfo->AttachedHandler != nullptr) // TODO: remove
+                    handle.HandleInfo->Function(sendE);
 
                 if (sendE.UnBind)
                     UnBind(handle);

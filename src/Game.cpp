@@ -96,6 +96,7 @@ namespace NerdThings::Ngine {
         // Create render target
         if (Config.MaintainResolution) {
             _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
         // Timing
@@ -132,9 +133,13 @@ namespace NerdThings::Ngine {
 
             if (Config.MaintainResolution && _RenderTarget == nullptr) {
                 _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+                _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
             } else if (Config.MaintainResolution && (!_RenderTarget->IsValid() || (_RenderTarget->Width != Config.TargetWidth || _RenderTarget->Height != Config.TargetHeight))) {
                 _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+                _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
             }
+
+            _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
 
             // Get the time since the last frame
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
@@ -148,7 +153,6 @@ namespace NerdThings::Ngine {
             if (Config.UpdateFPS != lastFPS) {
                 lastFPS = Config.UpdateFPS;
                 timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
-
                 ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
             }
 
@@ -161,13 +165,15 @@ namespace NerdThings::Ngine {
             // Skip if we are going to catch up more than 5 seconds, that is too much (May not fix what I am experiencing)
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
-            // Poll inputs
-            Input::Gamepad::PollInputs();
-            Input::Mouse::PollInputs();
-            Input::Keyboard::PollInputs();
-
             // Run Updates (only if visible or run while hidden)
             if (Window::Visible() || Config.RunWhileHidden) {
+                // Poll inputs only if we are about to process updates.
+                if (lag >= timeStep) {
+                    Input::Gamepad::PollInputs();
+                    Input::Mouse::PollInputs();
+                    Input::Keyboard::PollInputs();
+                }
+
                 while (lag >= timeStep) {
                     // Run a single update
                     lag -= timeStep;
@@ -177,9 +183,6 @@ namespace NerdThings::Ngine {
 
             // Only render if visible
             if (Window::Visible()) {
-                // Take note of starting
-                auto drawStart = std::chrono::high_resolution_clock::now();
-
                 // Prep for drawing
                 Graphics::Renderer::BeginDrawing();
 
@@ -188,9 +191,7 @@ namespace NerdThings::Ngine {
 
                 // If using, start using target
                 if (Config.MaintainResolution && _RenderTarget->IsValid()) {
-                    _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
-                    _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
-                    Graphics::GraphicsManager::PushTarget(_RenderTarget);
+                    Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
                 }
 
                 // Clear the background
@@ -205,19 +206,19 @@ namespace NerdThings::Ngine {
                     Graphics::GraphicsManager::PopTarget(popped);
 
                     Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
-                        {
-                            (w - iw * scale) * 0.5f,
-                            (h - ih * scale) * 0.5f,
-                            iw * scale,
-                            ih * scale
-                        },
-                        {
-                                                   0,
-                                                   0,
-                                                   static_cast<float>(_RenderTarget->Width),
-                                                   static_cast<float>(_RenderTarget->Height) * -1
-                                               },
-                        Graphics::Color::White);
+                                                    {
+                                                            (w - iw * scale) * 0.5f,
+                                                            (h - ih * scale) * 0.5f,
+                                                            iw * scale,
+                                                            ih * scale
+                                                    },
+                                                    {
+                                                            0,
+                                                            0,
+                                                            static_cast<float>(_RenderTarget->Width),
+                                                            static_cast<float>(_RenderTarget->Height) * -1
+                                                    },
+                                                    Graphics::Color::White);
                 }
 
                 // Finish drawing
@@ -225,14 +226,6 @@ namespace NerdThings::Ngine {
 
                 // Swap buffers
                 Window::SwapBuffers();
-
-                auto renderTime = std::chrono::high_resolution_clock::now() - drawStart;
-                auto renderTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(renderTime).count();
-
-                // Wait for the rest of the frame
-                if (renderTimeMS < 1000 / Config.DrawFPS) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(renderTimeMS));
-                }
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
@@ -245,6 +238,7 @@ namespace NerdThings::Ngine {
 
             // Poll events
             Window::PollEvents();
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
         // Delete render target now so that it doesnt try after GL is gone.

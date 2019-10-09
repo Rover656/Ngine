@@ -22,6 +22,7 @@ namespace NerdThings::Ngine::Graphics {
         // Force draw and load
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
+        OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
         OpenGL::GL::LoadIdentity();
         OpenGL::GL::MultMatrix(GetTranslationMatrix());
 #endif
@@ -31,6 +32,7 @@ namespace NerdThings::Ngine::Graphics {
         // Force draw and reload
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
+        OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
         OpenGL::GL::LoadIdentity();
 #endif
     }

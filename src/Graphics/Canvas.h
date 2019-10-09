@@ -32,7 +32,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The render target
          */
-        std::shared_ptr<RenderTarget> _RenderTarget;
+        RenderTarget *_RenderTarget;
 
         /*
          * Canvas width

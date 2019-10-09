@@ -232,6 +232,8 @@ public:
     int rot = 0;
 
     void Draw(EventArgs &e) {
+        auto p = Mouse::GetMousePosition();
+
         widg.Draw();
 
         rot += Mouse::GetMouseWheelYDelta();

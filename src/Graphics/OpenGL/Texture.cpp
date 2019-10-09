@@ -157,9 +157,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_NEAREST);
             SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_NEAREST);
         }
-
-        // Generate mipmap data
-        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     GLTexture::~GLTexture() {
@@ -177,7 +174,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     void GLTexture::Delete() {
         if (ID > 0) {
             // Delete texture
-            glDeleteTextures(0, &ID);
+            glDeleteTextures(1, &ID);
 
             // Set ID to 0
             ID = 0;

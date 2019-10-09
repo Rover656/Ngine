@@ -25,7 +25,7 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::Draw() {
         DrawStyles();
 
-        Graphics::GraphicsManager::PushTarget(_RenderTarget);
+        Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
 
         Graphics::Renderer::Clear(Graphics::Color::Transparent);
 

@@ -124,10 +124,6 @@ namespace NerdThings::Ngine::Graphics {
         UseRenderTarget(target_);
     }
 
-    void GraphicsManager::PushTarget(const std::shared_ptr<RenderTarget> &target_) {
-        PushTarget(target_.get());
-    }
-
     void GraphicsManager::ReplaceTarget(RenderTarget *old_, RenderTarget *new_) {
         const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.
             begin();
@@ -140,10 +136,5 @@ namespace NerdThings::Ngine::Graphics {
 
         // Send to stack
         _RenderTargetStack[oldPos] = new_;
-    }
-
-    void GraphicsManager::ReplaceTarget(const std::shared_ptr<RenderTarget> &old_,
-                                        const std::shared_ptr<RenderTarget> &new_) {
-        ReplaceTarget(old_.get(), new_.get());
     }
 }

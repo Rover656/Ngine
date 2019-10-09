@@ -19,13 +19,14 @@ namespace NerdThings::Ngine::Graphics {
 
     Canvas::Canvas(unsigned int width_, unsigned int height_)
             : _Width(width_), _Height(height_) {
-        _RenderTarget = std::make_shared<RenderTarget>(_Width, _Height);
+        _RenderTarget = new RenderTarget(_Width, _Height);
     }
 
     // Destructor
 
     Canvas::~Canvas() {
         ConsoleMessage("Deleting canvas.", "NOTICE", "CANVAS");
+        delete _RenderTarget;
     }
 
     // Public Methods
@@ -65,9 +66,10 @@ namespace NerdThings::Ngine::Graphics {
 
     void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {
         ConsoleMessage("Resizing canvas.", "NOTICE", "CANVAS");
+        delete _RenderTarget;
         _Width = width_;
         _Height = height_;
-        _RenderTarget = std::make_shared<RenderTarget>(_Width, _Height);
+        _RenderTarget = new RenderTarget(_Width, _Height);
         ReDraw();
     }
 }

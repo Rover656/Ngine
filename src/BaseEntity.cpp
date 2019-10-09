@@ -51,11 +51,19 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::Destroy() {
+        // Detach all events
+        OnDraw.Clear();
+        OnTransformChanged.Clear();
+        OnUpdate.Clear();
+
+        // Detach components
+        _Components.clear();
+
+        // Unsubscribe from update
+        UnsubscribeFromUpdate();
+
         // Remove from our parent
         GetParentContainer()->RemoveEntity(this);
-
-        // Delete ourselves. THIS IS DANGEROUS, NO CALLS MUST BE MADE ANYMORE
-        delete this;
     }
 
     void BaseEntity::Draw() {
