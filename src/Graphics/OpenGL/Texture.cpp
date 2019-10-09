@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Set mipmap count and format
         MipmapCount = mipmapCount_;
         _Format = format_;
-        
+
         // Check format support
         if ((!GL::TexCompDXTSupported) && ((format_ == COMPRESSED_DXT1_RGB) || (format_ == COMPRESSED_DXT1_RGBA) ||
                                        (format_ == COMPRESSED_DXT3_RGBA) || (format_ == COMPRESSED_DXT5_RGBA)))
@@ -52,17 +52,17 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         {
             throw std::runtime_error("ETC1 compressed texture format not supported");
         }
-    
+
         if ((!GL::TexCompETC2Supported) && ((format_ == COMPRESSED_ETC2_RGB) || (format_ == COMPRESSED_ETC2_EAC_RGBA)))
         {
             throw std::runtime_error("ETC2 compressed texture format not supported");
         }
-    
+
         if ((!GL::TexCompPVRTSupported) && ((format_ == COMPRESSED_PVRT_RGB) || (format_ == COMPRESSED_PVRT_RGBA)))
         {
             throw std::runtime_error("PVRT compressed texture format not supported");
         }
-    
+
         if ((!GL::TexCompASTCSupported) && ((format_ == COMPRESSED_ASTC_4x4_RGBA) || (format_ == COMPRESSED_ASTC_8x8_RGBA)))
         {
             throw std::runtime_error("ASTC compressed texture format not supported");

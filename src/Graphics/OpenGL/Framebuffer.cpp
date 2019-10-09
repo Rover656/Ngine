@@ -101,13 +101,21 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     void GLFramebuffer::Delete() {
-        if (ID > 0) {
+        if (RenderTexture != nullptr && RenderTexture->ID > 0) {
             // Delete texture
+            RenderTexture->Delete();
             RenderTexture = nullptr;
+        }
 
+        if (_DepthBufferID > 0) {
             // Delete depth buffer
             glDeleteRenderbuffers(1, &_DepthBufferID);
 
+            // Set ID to 0
+            _DepthBufferID = 0;
+        }
+
+        if (ID > 0) {
             // Delete framebuffer
             glDeleteFramebuffers(1, &ID);
 
