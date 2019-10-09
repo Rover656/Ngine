@@ -82,10 +82,12 @@ namespace NerdThings::Ngine::Components {
             // Remove from collision map
             auto scene = GetParent<BaseEntity>()->GetParentScene();
 
-            for (auto it = scene->CollisionMap.begin(); it != scene->CollisionMap.end(); it++) {
-                for (auto i = 0; i < it->second.size(); i++) {
-                    if (it->second[i] == GetParent<BaseEntity>()) {
-                        scene->CollisionMap[it->first].erase(std::remove(scene->CollisionMap[it->first].begin(), scene->CollisionMap[it->first].end(), it->second[i]), scene->CollisionMap[it->first].end());
+            if (!scene->CollisionMap.empty()) {
+                for (auto it = scene->CollisionMap.begin(); it != scene->CollisionMap.end(); it++) {
+                    for (auto i = 0; i < it->second.size(); i++) {
+                        if (it->second[i] == GetParent<BaseEntity>()) {
+                            scene->CollisionMap[it->first].erase(std::remove(scene->CollisionMap[it->first].begin(), scene->CollisionMap[it->first].end(), it->second[i]), scene->CollisionMap[it->first].end());
+                        }
                     }
                 }
             }
@@ -316,9 +318,9 @@ namespace NerdThings::Ngine::Components {
          * Create a base collision shape component.
          */
         BaseCollisionShapeComponent(BaseEntity *parent_, std::string collisionGroup_ = "General")
-            : Component(parent_) {
+                : Component(parent_) {
             _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged.Bind(
-                this, &BaseCollisionShapeComponent::UpdateShape);
+                    this, &BaseCollisionShapeComponent::UpdateShape);
 
             AddCollisionGroup(std::move(collisionGroup_));
         }
