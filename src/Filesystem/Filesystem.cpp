@@ -420,38 +420,41 @@ namespace NerdThings::Ngine::Filesystem {
 
     std::string Path::__CleanPathString(const std::string &str_) {
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
-        // Get path length
-        auto len = GetShortPathNameA(str_.c_str(), nullptr, 0);
-
-        // Check length
-        if (len == 0) {
-            auto e = GetLastError();
-            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
-                return str_;
-            else throw std::runtime_error("GetShortPathNameA error.");
-        }
-
-        // Allocate buffer
-        auto buffer = new char[len];
-
-        // Get path
-        len = GetShortPathNameA(str_.c_str(), buffer, len);
-
-        // Check length
-        if (len == 0) {
-            auto e = GetLastError();
-            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
-                return str_;
-            else throw std::runtime_error("GetShortPathNameA error.");
-        }
-
-        // Convert to string
-        auto string = std::string(buffer);
-
-        // Delete buffer
-        delete[] buffer;
-
-        return string;
+        // TODO: Another way to fix Unicode path names.
+        // TODO: Basically Ngine needs better Unicode support in general
+        return str_;
+//        // Get path length
+//        auto len = GetShortPathNameA(str_.c_str(), nullptr, 0);
+//
+//        // Check length
+//        if (len == 0) {
+//            auto e = GetLastError();
+//            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
+//                return str_;
+//            else throw std::runtime_error("GetShortPathNameA error.");
+//        }
+//
+//        // Allocate buffer
+//        auto buffer = new char[len];
+//
+//        // Get path
+//        len = GetShortPathNameA(str_.c_str(), buffer, len);
+//
+//        // Check length
+//        if (len == 0) {
+//            auto e = GetLastError();
+//            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
+//                return str_;
+//            else throw std::runtime_error("GetShortPathNameA error.");
+//        }
+//
+//        // Convert to string
+//        auto string = std::string(buffer);
+//
+//        // Delete buffer
+//        delete[] buffer;
+//
+//        return string;
 #endif
         return str_;
     }
@@ -1047,10 +1050,10 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     Directory Directory::GetExecutableDirectory() {
-        return Directory(Path::Path());
+        return Directory(Path::GetExecutableDirectory());
     }
 
     Directory Directory::GetWorkingDirectory() {
-        return Directory(Path::Path());
+        return Directory(Path::GetWorkingDirectory());
     }
 }
