@@ -94,22 +94,23 @@ namespace NerdThings::Ngine::Graphics {
         int letter = 0;                 // Current character
         int index = 0;                  // Index position in sprite font
 
-        scaleFactor = fontSize_/BaseSize;
+        for (auto i = 0; i < string_.length(); i++) {
+            lenCounter++;
 
-        for (int i = 0; i < string_.length(); i += 1) {
-            int next = 0;
             letter = string_[i];
             index = GetGlyphIndex(letter);
 
             if (letter != '\n') {
-                if (Characters[index].AdvanceX == 0) textWidth += ((float)Characters[index].Rectangle.Width*scaleFactor + spacing_);
-                else textWidth += ((float)Characters[index].AdvanceX*scaleFactor + spacing_);
+                if (Characters[index].AdvanceX == 0) textWidth += Characters[index].Rectangle.Width + spacing_;
+                else textWidth += Characters[index].AdvanceX;
             } else {
                 if (tempTextWidth < textWidth) tempTextWidth = textWidth;
                 lenCounter = 0;
                 textWidth = 0;
                 textHeight += ((float)BaseSize*1.5f);
             }
+
+            if (tempLen < lenCounter) tempLen = lenCounter;
         }
 
         if (tempTextWidth < textWidth) tempTextWidth = textWidth;
