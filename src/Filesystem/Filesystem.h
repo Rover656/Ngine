@@ -57,6 +57,13 @@ namespace NerdThings::Ngine::Filesystem {
         Path GetAbsolute() const;
 
         /*
+         * Get app data directory.
+         * This will return a varying degree of paths (Documents, Roaming app data, etc.).
+         * NOTE: You MUST create a folder within this path for your app data. Otherwise you risk overriding other data.
+         */
+        static Path GetAppDataDirectory();
+
+        /*
          * Get the executable directory
          */
         static Path GetExecutableDirectory();
@@ -188,6 +195,11 @@ namespace NerdThings::Ngine::Filesystem {
          * Run correction checks on path strings.
          */
         void __CorrectPath();
+
+        /*
+         * Get home directory (mac and linux)
+         */
+        static std::string __GetHome();
 
         /*
          * Get the string to join by
@@ -459,6 +471,13 @@ namespace NerdThings::Ngine::Filesystem {
          * Determine whether or not this object exists on the filesystem.
          */
         bool Exists() const override;
+
+        /*
+         * Get the app data directory for the operating system.
+         * This will return a varying degree of paths (Documents, Roaming app data, etc.).
+         * NOTE: You MUST create a folder within this path for your app data. Otherwise you risk overriding other data.
+         */
+        static Directory GetAppDataDirectory();
 
         /*
          * Get all of the children directories.

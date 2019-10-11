@@ -113,7 +113,7 @@ namespace NerdThings::Ngine {
 
         // Windows Console
 #if defined(_WIN32)
-        if (Config.DebugConsole && !_ConsoleAllocated) {
+        if (Config.NativeDebugConsole && !_ConsoleAllocated) {
             // Add console
             AllocConsole();
             SetConsoleTitle((Config.Title + ": Debug Console").c_str());

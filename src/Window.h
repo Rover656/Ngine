@@ -25,9 +25,9 @@ namespace NerdThings::Ngine {
      */
     struct WindowConfig {
         /*
-         * Display console (Windows Only).
+         * Display native console (Windows Only).
          */
-        bool DebugConsole = false;
+        bool NativeDebugConsole = false;
 
         /*
          * Fullscreen window.
@@ -94,23 +94,51 @@ namespace NerdThings::Ngine {
         static bool _Initialized;
 
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
+
+        /*
+         * Whether or not a native console is allocated
+         */
         static bool _ConsoleAllocated;
 
+        /*
+         * Console input stream
+         */
         static std::fstream _ConsoleIn;
+
+        /*
+         * Console output stream
+         */
         static std::fstream _ConsoleOut;
+
+        /*
+         * Console error stream
+         */
         static std::fstream _ConsoleErr;
 
+        /*
+         * Pointer to original input buffer
+         */
         static std::streambuf *_OldCinBuffer;
+
+        /*
+         * Pointer to original output buffer
+         */
         static std::streambuf *_OldCoutBuffer;
+
+        /*
+         * Pointer to original error buffer
+         */
         static std::streambuf *_OldCerrBuffer;
 
 #endif
 
 #if defined(PLATFORM_UWP)
+
         /*
          * When the application is suspended
          */
         static void Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args);
+
 #endif
     public:
         // Public Fields
@@ -121,12 +149,15 @@ namespace NerdThings::Ngine {
         static WindowConfig Config;
 
 #if defined(PLATFORM_DESKTOP)
+
         /*
          * GLFW Window pointer
          * Most likely will be nullptr on non-desktop platforms
          */
         static void *WindowPtr;
+
 #elif defined(PLATFORM_UWP)
+
         /*
          * EGL Context
          */
@@ -141,6 +172,7 @@ namespace NerdThings::Ngine {
          * EGL Surface
          */
         static EGLSurface Surface;
+
 #endif
 
         // Public Methods

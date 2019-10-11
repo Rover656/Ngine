@@ -1,7 +1,8 @@
 #include "Filesystem.h"
 
 #if defined(_WIN32)
-#include <windows.h>
+#include <Windows.h>
+#include <shlobj.h>
 #elif defined(__linux__)
 #define _GNU_SOURCE
 #define __USE_GNU
@@ -87,6 +88,40 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Get relative to executable dir
         return GetExecutableDirectory() / *this;
+    }
+
+    Path Path::GetAppDataDirectory() {
+#if defined(PLATFORM_DESKTOP)
+#if defined(_WIN32)
+        // %APPDATA%
+
+        // Get path
+        PWSTR *appDataPath;
+        SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, appDataPath);
+
+        // To string
+        std::stringstream ss;
+        ss << appDataPath;
+        auto path = ss.str();
+
+        // Free
+        CoTaskMemFree(appDataPath);
+
+        return path;
+#elif defined(__linux__)
+        // Home local share
+        return __GetHome() + ".local/share";
+#elif defined(__APPLE__)
+        // Application Support
+        return __GetHome() + "/Library/Application Support"
+#endif
+#elif defined(PLATFORM_UWP)
+        // Windows specific path
+        auto roamingAppData = Windows::Storage::ApplicationData::Current->RoamingFolder->Path->ToString();
+        std::wstring tmp(roamingAppData->Begin());
+        std::string path(tmp.begin(), tmp.end());
+        return path;
+#endif
     }
 
     Path Path::GetExecutableDirectory() {
@@ -496,6 +531,21 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Is valid
         _HasProperValue = true;
+    }
+
+    std::string Path::__GetHome() {
+#if defined(__linux__) || defined(__APPLE__)
+        int uid = getuid();
+
+        // Use HOME environment variable if not run as root
+        const char *homeVar = std::getenv("HOME");
+        if (uid != 0 && homeVar) return std::string(homeVar);
+
+        // Use psswd home
+        struct passwd *pw = getpwuid(uid);
+        return std::string(pw->pw_dir);
+#endif
+        return "";
     }
 
     char Path::__GetJoinChar() {
@@ -920,6 +970,10 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
 #endif
         return false;
+    }
+
+    Directory Directory::GetAppDataDirectory() {
+        return Directory(Path::GetAppDataDirectory());
     }
 
     std::vector<Directory> Directory::GetDirectories() const {

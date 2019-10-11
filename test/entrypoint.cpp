@@ -323,7 +323,7 @@ int main(Platform::Array<Platform::String^>^) {
     windowConfig.Height = 1080/2;
     windowConfig.Title = "Test Game";
     windowConfig.Icon = icon;
-    windowConfig.DebugConsole = true;
+    windowConfig.NativeDebugConsole = true;
     Window::SetConfig(windowConfig);
 
     auto game = TestGame(gameConfig);
