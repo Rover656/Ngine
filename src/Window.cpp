@@ -116,7 +116,7 @@ namespace NerdThings::Ngine {
         if (Config.DebugConsole && !_ConsoleAllocated) {
             // Add console
             AllocConsole();
-            SetConsoleTitle("Debug Console");
+            SetConsoleTitle((Config.Title + ": Debug Console").c_str());
 
             // Save old buffers
             _OldCinBuffer = std::cin.rdbuf();
@@ -130,6 +130,17 @@ namespace NerdThings::Ngine {
             std::cin.rdbuf(_ConsoleIn.rdbuf());
             std::cout.rdbuf(_ConsoleOut.rdbuf());
             std::cerr.rdbuf(_ConsoleErr.rdbuf());
+
+            // Disable close button
+            HWND hwnd = GetConsoleWindow();
+            if (hwnd != nullptr)
+            {
+                HMENU hMenu = ::GetSystemMenu(hwnd, FALSE);
+                if (hMenu != nullptr) DeleteMenu(hMenu, SC_CLOSE, MF_BYCOMMAND);
+            }
+
+            // Disable Ctrl+C
+            SetConsoleCtrlHandler(nullptr, true);
 
             // Mark as open
             _ConsoleAllocated = true;
