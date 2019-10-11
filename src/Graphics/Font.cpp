@@ -170,6 +170,7 @@ namespace NerdThings::Ngine::Graphics {
         int offsetY = padding;
 
         // NOTE: Using simple packaging, one char after another
+        auto maxH = 0;
         for (int i = 0; i < CharacterCount; i++)
         {
             // Copy pixel data from fc.data to atlas
@@ -187,6 +188,8 @@ namespace NerdThings::Ngine::Graphics {
             recs[i].Width = (float)Characters[i].Image->Width;
             recs[i].Height = (float)Characters[i].Image->Height;
 
+            if (maxH < recs[i].Height) maxH = recs[i].Height;
+
             // Save rectangle
             Characters[i].Rectangle = recs[i];
 
@@ -200,7 +203,9 @@ namespace NerdThings::Ngine::Graphics {
                 // NOTE: Be careful on offsetY for SDF fonts, by default SDF
                 // use an internal padding of 4 pixels, it means char rectangle
                 // height is bigger than fontSize, it could be up to (fontSize + 8)
-                offsetY += (BaseSize + 2*padding);
+                offsetY += (maxH + 2*padding);
+
+                maxH = 0;
 
                 if (offsetY > (atlas->Height - BaseSize - padding)) break;
             }

@@ -225,7 +225,7 @@ public:
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
-        Resources::GetMusic("test_music")->Play();
+        //Resources::GetMusic("test_music")->Play();
         AudioDevice::SetMasterVolume(0.25);
     }
 
@@ -247,6 +247,8 @@ public:
 
         Renderer::DrawCircleLines({100, 100}, 30, Color::Red);
         Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, Color::Green);
+
+        //Renderer::DrawTexture(Font::GetDefaultFont()->GetTexture(), {100, 100}, Color::White);
     }
 
     void DrawCam(EventArgs &e) {
@@ -273,7 +275,7 @@ public:
         Resources::LoadResources();
 
         // Load arial as default font
-        Font::SetDefaultFont(Resources::GetFont("Arial"));
+        Font::SetDefaultFont(Resources::GetFont("Upheaval"));
 
         // Output readme
         auto f = File(Path(Path::GetExecutableDirectory() / "content" / "readme.txt"));
