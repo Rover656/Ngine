@@ -10,6 +10,11 @@
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
+
+#if defined(_WIN32)
+#include <Windows.h>
+#endif
+
 #elif defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
 #include "Platform/UWP/GameApp.h"
@@ -41,6 +46,16 @@ namespace NerdThings::Ngine {
     EGLSurface Window::Surface = nullptr;
 #endif
 
+#if defined(PLATFORM_DESKTOP) && defined(_WIN32)
+    bool Window::_ConsoleAllocated = false;
+    std::fstream Window::_ConsoleIn;
+    std::fstream Window::_ConsoleOut;
+    std::fstream Window::_ConsoleErr;
+    std::streambuf *Window::_OldCinBuffer = nullptr;
+    std::streambuf *Window::_OldCoutBuffer = nullptr;
+    std::streambuf *Window::_OldCerrBuffer = nullptr;
+#endif
+
     // Private Methods
 #if defined(PLATFORM_UWP)
     void Window::Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
@@ -65,6 +80,8 @@ namespace NerdThings::Ngine {
 
     void Window::ApplyConfig() {
         if (!_Initialized) return;
+
+        ConsoleMessage("Updating window config.", "NOTICE", "Window");
 
 #if defined(PLATFORM_DESKTOP)
         // V-Sync
@@ -93,7 +110,56 @@ namespace NerdThings::Ngine {
 
         // Window size
         glfwSetWindowSize((GLFWwindow *)WindowPtr, Config.Width, Config.Height);
+
+        // Windows Console
+#if defined(_WIN32)
+        if (Config.DebugConsole && !_ConsoleAllocated) {
+            // Add console
+            AllocConsole();
+            SetConsoleTitle("Debug Console");
+
+            // Save old buffers
+            _OldCinBuffer = std::cin.rdbuf();
+            _OldCoutBuffer = std::cout.rdbuf();
+            _OldCerrBuffer = std::cerr.rdbuf();
+
+            // Open new buffers
+            _ConsoleIn.open("CONIN$", std::ios::in);
+            _ConsoleOut.open("CONOUT$", std::ios::out);
+            _ConsoleErr.open("CONOUT$", std::ios::out);
+            std::cin.rdbuf(_ConsoleIn.rdbuf());
+            std::cout.rdbuf(_ConsoleOut.rdbuf());
+            std::cerr.rdbuf(_ConsoleErr.rdbuf());
+
+            // Mark as open
+            _ConsoleAllocated = true;
+            ConsoleMessage("Allocated a console to the game window. Output logs forwarded.", "NOTICE", "Window");
+        } else if (_ConsoleAllocated) {
+            // Close our buffers
+            _ConsoleIn.close();
+            _ConsoleOut.close();
+            _ConsoleErr.close();
+
+            // Reset old
+            std::cin.rdbuf(_OldCinBuffer);
+            std::cout.rdbuf(_OldCoutBuffer);
+            std::cerr.rdbuf(_OldCerrBuffer);
+
+            _OldCinBuffer = nullptr;
+            _OldCoutBuffer = nullptr;
+            _OldCerrBuffer = nullptr;
+
+            // Release console
+            FreeConsole();
+
+            // Mark as deallocated
+            _ConsoleAllocated = false;
+            ConsoleMessage("Deallocated the console from the game window. Output logs restored.", "NOTICE", "Window");
+        }
 #endif
+#endif
+
+        // TODO: Add some of the above for UWP
     }
 
     void Window::Close() {
@@ -131,7 +197,6 @@ namespace NerdThings::Ngine {
         // Unset width and height as the window is closed
         _CurrentWidth = 0;
         _CurrentHeight = 0;
-
         _Initialized = false;
     }
 

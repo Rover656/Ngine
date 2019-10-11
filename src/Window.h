@@ -13,6 +13,9 @@ typedef void *EGLSurface;
 typedef void *EGLContext;
 #endif
 
+#include <fstream>
+#include <iostream>
+
 #include "Graphics/Image.h"
 #include "EventHandler.h"
 
@@ -21,6 +24,11 @@ namespace NerdThings::Ngine {
      * Window config.
      */
     struct WindowConfig {
+        /*
+         * Display console (Windows Only).
+         */
+        bool DebugConsole = false;
+
         /*
          * Fullscreen window.
          * TODO: This has not been implemented.
@@ -84,6 +92,19 @@ namespace NerdThings::Ngine {
          * Whether or not the window is initialized
          */
         static bool _Initialized;
+
+#if defined(PLATFORM_DESKTOP) && defined(_WIN32)
+        static bool _ConsoleAllocated;
+
+        static std::fstream _ConsoleIn;
+        static std::fstream _ConsoleOut;
+        static std::fstream _ConsoleErr;
+
+        static std::streambuf *_OldCinBuffer;
+        static std::streambuf *_OldCoutBuffer;
+        static std::streambuf *_OldCerrBuffer;
+
+#endif
 
 #if defined(PLATFORM_UWP)
         /*
