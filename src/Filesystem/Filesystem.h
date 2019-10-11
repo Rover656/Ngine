@@ -451,6 +451,11 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Methods
 
         /*
+         * Create this directory.
+         */
+        bool Create();
+
+        /*
          * Create a new directory.
          * Returns success and the new directory (may be reference to nothing).
          */

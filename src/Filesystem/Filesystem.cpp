@@ -885,18 +885,21 @@ namespace NerdThings::Ngine::Filesystem {
         if (!path_.Valid()) throw std::runtime_error("Directory must be given a valid path.");
     }
 
-    std::pair<bool, Directory> Directory::Create(const Path &path_) {
+    bool Directory::Create() {
         auto success = false;
 #if defined(_WIN32)
         // Create directory
-        success = CreateDirectoryA(path_.GetString().c_str(), nullptr) != 0;
+        success = CreateDirectoryA(GetObjectPath().GetString().c_str(), nullptr) != 0;
 #elif defined(__linux__) || defined(__APPLE__)
         // Create directory
-        success = mkdir(path_.GetString().c_str(), 0777) == 0;
+        success = mkdir(GetObjectPath().GetString().c_str(), 0777) == 0;
 #endif
-        if (success)
-            return {success, Directory(path_)};
-        return {success, Directory()};
+        return success;
+    }
+
+    std::pair<bool, Directory> Directory::Create(const Path &path_) {
+        auto dir = Directory(path_);
+        return {dir.Create(), dir};
     }
 
     bool Directory::Delete() {
