@@ -883,9 +883,6 @@ namespace NerdThings::Ngine::Filesystem {
     Directory::Directory(const Path &path_) : FilesystemObject(path_) {
         // Check for valid path
         if (!path_.Valid()) throw std::runtime_error("Directory must be given a valid path.");
-
-        // Check this is actually a directory
-        if (path_.GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("This path does not point to a directory.");
     }
 
     std::pair<bool, Directory> Directory::Create(const Path &path_) {
@@ -903,6 +900,9 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Directory::Delete() {
+        // Check
+        __ThrowAccessErrors();
+
 #if defined(_WIN32)
         // Try to delete (not recursive)
         auto del = RemoveDirectoryA(ObjectPath.GetString().c_str());
@@ -914,6 +914,9 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Directory::DeleteRecursive() {
+        // Check
+        __ThrowAccessErrors();
+
         // Success tracker
         auto success = true;
 
@@ -977,8 +980,8 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     std::vector<Directory> Directory::GetDirectories() const {
-        // Check exists
-        if (!Exists()) throw std::runtime_error("This directory does not exist.");
+        // Check
+        __ThrowAccessErrors();
 
         // Directories vector
         auto dirs = std::vector<Directory>();
@@ -1030,8 +1033,8 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     std::vector<File> Directory::GetFiles() const {
-        // Check exists
-        if (!Exists()) throw std::runtime_error("This directory does not exist.");
+        // Check
+        __ThrowAccessErrors();
 
         // Files vector
         auto files = std::vector<File>();
@@ -1081,6 +1084,9 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     std::vector<File> Directory::GetFilesRecursive() const {
+        // Check
+        __ThrowAccessErrors();
+
         // Keep track of all files
         auto files = std::vector<File>();
 
@@ -1109,5 +1115,15 @@ namespace NerdThings::Ngine::Filesystem {
 
     Directory Directory::GetWorkingDirectory() {
         return Directory(Path::GetWorkingDirectory());
+    }
+
+    // Private Fields
+
+    void Directory::__ThrowAccessErrors() const {
+        // Check exists
+        if (!Exists()) throw std::runtime_error("This directory does not exist.");
+
+        // Check this is actually a directory
+        if (GetObjectPath().GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("This path does not point to a directory.");
     }
 }

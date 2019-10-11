@@ -508,6 +508,12 @@ namespace NerdThings::Ngine::Filesystem {
          * Get the working directory for the program.
          */
         static Directory GetWorkingDirectory();
+
+    private:
+        /*
+         * Throw any errors before we access directory.
+         */
+        void __ThrowAccessErrors() const;
     };
 }
 
