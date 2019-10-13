@@ -1,4 +1,5 @@
 # General functions
+set(NGINE_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # Check all config is okay
 function(ngine_check_config)
@@ -61,7 +62,7 @@ function(ngine_add_game)
 
             # UWP Store association resources
             UWP_PACKAGE_STORE_ASSOCIATION_PATH # If set, included in project root
-            UWP_PACKAGE_STORE_KEY_PATH # If set, included in project root
+            UWP_PACKAGE_STORE_KEY # If set, included in project root
             )
     set (multiValueArgs
             SOURCE_FILES
@@ -158,7 +159,7 @@ function(ngine_add_game)
         if (${PLATFORM} MATCHES "UWP")
             # Configure manifest
             configure_file(
-                    ${CMAKE_MODULE_PATH}/UWP/Package.appxmanifest.in
+                    ${NGINE_MODULE_DIR}/UWP/Package.appxmanifest.in
                     ${CMAKE_CURRENT_BINARY_DIR}/Package.appxmanifest
                     @ONLY)
 
