@@ -18,33 +18,17 @@ include(Ngine)
 # Check config is ok
 ngine_check_config()
 
-# Get UWP extras TODO: Add a function for this??
+# Get UWP resources
 if (${PLATFORM} MATCHES "UWP")
     # Configure asset files
-    set(ASSET_FILES
-            ${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/SplashScreen.png
-            ${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/Square44x44Logo.png
-            ${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/Square150x150Logo.png
-            ${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/Wide310x150Logo.png
-            )
-    set(RESOURCE_FILES ${ASSET_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.appxmanifest)
+    file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/*")
 endif()
 
-# Configure UWP
-ngine_configure_uwp_executable(${PROJECT_SOURCE_DIR}/cmake/UWP/Package.appxmanifest.in ${PROJECT_NAME} ${PACKAGE_GUID} ${PUBLISHER} ${PUBLISHER_DISPLAY_NAME} ${VERSION_MAJOR} ${VERSION_MINOR} ${VERSION_PATCH})
-
-# Visual Studio Source Groups
-if(MSVC)
-    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "\\Source Files" FILES ${SOURCE_FILES})
-    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/content PREFIX "\\Content" FILES ${CONTENT_FILES})
-    source_group("Assets" FILES ${RESOURCE_FILES})
-endif()
-
-# Add EXE
-ngine_add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${CONTENT_FILES} ${RESOURCE_FILES})
-
-# Link Ngine
-ngine_link_ngine(${PROJECT_NAME})
-
-# Add content
-ngine_add_content(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR} content ${RESOURCE_FILES})
+ngine_add_game(
+        NAME "TestGame"
+        TARGET_NAME "NgineTest"
+        SOURCE_FILES ${SOURCE_FILES}
+        RESOURCE_FILES ${RESOURCE_FILES}
+        UWP_PACKAGE_GUID "62ab7c15-145e-4798-a843-a771f4ef8e9a"
+        UWP_PUBLISHER_DISPLAY_NAME "NerdThings"
+        )

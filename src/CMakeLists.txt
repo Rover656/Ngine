@@ -41,7 +41,14 @@ if ((${OPENGL_VERSION} MATCHES "2.1" OR ${OPENGL_VERSION} MATCHES "3.3") AND ${P
 endif()
 
 # Add library
-ngine_add_library(${PROJECT_NAME} ${BUILD_SHARED} ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
+if (${BUILD_SHARED})
+    add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
+else()
+    add_library(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
+endif()
+
+# UWP additions
+__ngine_post_uwp_additions(${PROJECT_NAME})
 
 # Enable exports
 if (${BUILD_SHARED} AND NOT ${PLATFORM} MATCHES "UWP")
