@@ -1,4 +1,5 @@
 # General functions
+include (CMakeParseArguments)
 set(NGINE_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # Check all config is okay
@@ -37,21 +38,30 @@ function(ngine_add_game)
     # Get parameters
     set (options)
     set (oneValueArgs
+            # Game info
             NAME # Game name
             SHORT_NAME # Shortened game name
             TARGET_NAME # Target name
+            DESCRIPTION # Game description, otherwise it will be set to short name
 
+            # Content
             CONTENT_DIR # Content directory
 
+            # Version info
             VERSION_MAJOR
             VERSION_MINOR
             VERSION_PATCH
 
+            # Package info
+            PUBLISHER_NAME # Publisher name
+            COPYRIGHT # Package copyright notice
+
+            # Windows specifics
+            WIN_ICON # Executable icon (Windows)
+
             UWP_PACKAGE_NAME # Ex 00000DeveloperName.AppName
             UWP_PACKAGE_GUID
             UWP_PUBLISHER # Publisher ID or name if unknown, CN=...
-            UWP_PUBLISHER_DISPLAY_NAME # Publisher display name, E.g. NerdThings
-            UWP_DESCRIPTION # Game description, otherwise it will be set to short name
 
             # UWP Asset names
             UWP_STORE_LOGO_NAME # StoreLogo.png
@@ -84,6 +94,10 @@ function(ngine_add_game)
         message(FATAL_ERROR "[Ngine] Target name cannot be blank")
     endif()
 
+    if (NOT GAME_DESCRIPTION OR "${GAME_DESCRIPTION}" STREQUAL "")
+        set(GAME_DESCRIPTION ${GAME_SHORT_NAME})
+    endif()
+
     if (NOT GAME_CONTENT_DIR OR "${GAME_CONTENT_DIR}" STREQUAL "")
         set(GAME_CONTENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/content")
     endif()
@@ -100,6 +114,14 @@ function(ngine_add_game)
         set(GAME_VERSION_PATCH "0")
     endif()
 
+    if (NOT GAME_PUBLISHER_NAME OR "${GAME_PUBLISHER_NAME}" STREQUAL "")
+        if (${PLATFORM} MATCHES "UWP")
+            message(FATAL_ERROR "[Ngine] Must set the UWP publisher name")
+        else()
+            message("[Ngine] You must set the publisher name if you wish to target UWP.")
+        endif()
+    endif()
+
     if (NOT GAME_UWP_PACKAGE_NAME OR "${GAME_UWP_PACKAGE_NAME}" STREQUAL "")
         set(GAME_UWP_PACKAGE_NAME ${GAME_NAME})
     endif()
@@ -112,23 +134,11 @@ function(ngine_add_game)
         endif()
     endif()
 
-    if (NOT GAME_UWP_PUBLISHER_DISPLAY_NAME OR "${GAME_UWP_PUBLISHER_DISPLAY_NAME}" STREQUAL "")
-        if (${PLATFORM} MATCHES "UWP")
-            message(FATAL_ERROR "[Ngine] Must set the UWP publisher display name")
-        else()
-            message("[Ngine] You must set the UWP publisher display name if you wish to target UWP.")
-        endif()
-    endif()
-
     if (NOT GAME_UWP_PUBLISHER OR "${GAME_UWP_PUBLISHER}" STREQUAL "")
         if (${PLATFORM} MATCHES "UWP")
             message(WARNING "[Ngine] Setting publisher parameter to publisher display name.")
         endif()
         set(GAME_UWP_PUBLISHER ${GAME_UWP_PUBLISHER_DISPLAY_NAME})
-    endif()
-
-    if (NOT GAME_UWP_DESCRIPTION OR "${GAME_UWP_DESCRIPTION}" STREQUAL "")
-        set(GAME_UWP_DESCRIPTION ${GAME_SHORT_NAME})
     endif()
 
     if (NOT GAME_UWP_STORE_LOGO_NAME OR "${GAME_UWP_STORE_LOGO_NAME}" STREQUAL "")
@@ -165,6 +175,11 @@ function(ngine_add_game)
 
             set(GAME_RESOURCE_FILES ${GAME_RESOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.appxmanifest)
         endif()
+    endif()
+
+    # Windows versioning info
+    if(${PLATFORM} MATCHES "Desktop" AND MSVC)
+        # TODO: Adapt generate_product_version to work with this
     endif()
 
     # Configure game

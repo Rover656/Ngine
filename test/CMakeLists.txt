@@ -27,10 +27,10 @@ endif()
 ngine_add_game(
         NAME "TestGame"
         TARGET_NAME "NgineTest"
+        PUBLISHER_NAME "NerdThings"
         SOURCE_FILES ${SOURCE_FILES}
         RESOURCE_FILES ${RESOURCE_FILES}
         UWP_PACKAGE_GUID "62ab7c15-145e-4798-a843-a771f4ef8e9a"
-        UWP_PUBLISHER_DISPLAY_NAME "NerdThings"
         )
 
 if(MSVC)
