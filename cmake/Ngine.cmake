@@ -62,7 +62,7 @@ function(ngine_add_game)
 
             # UWP Store association resources
             UWP_PACKAGE_STORE_ASSOCIATION_PATH # If set, included in project root
-            UWP_PACKAGE_STORE_KEY # If set, included in project root
+            UWP_PACKAGE_STORE_KEY_PATH # If set, included in project root
             )
     set (multiValueArgs
             SOURCE_FILES
@@ -165,19 +165,10 @@ function(ngine_add_game)
 
             set(GAME_RESOURCE_FILES ${GAME_RESOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.appxmanifest)
         endif()
-
-        # UWP add store association stuff if present
-        if (GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH AND NOT "${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH}" STREQUAL "")
-            set (GAME_ADDITIONAL_FILES ${GAME_ADDITIONAL_FILES} ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH})
-        endif()
-
-        if (GAME_UWP_PACKAGE_STORE_KEY AND NOT "${GAME_UWP_PACKAGE_STORE_KEY}" STREQUAL "")
-            set (GAME_ADDITIONAL_FILES ${GAME_ADDITIONAL_FILES} ${GAME_UWP_PACKAGE_STORE_KEY})
-        endif()
     endif()
 
     # Configure game
-    add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${GAME_ADDITIONAL_FILES})
+    add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${GAME_ADDITIONAL_FILES} ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH} ${GAME_UWP_PACKAGE_STORE_KEY_PATH})
 
     # Visual Studio Source Groups
     if(MSVC)
