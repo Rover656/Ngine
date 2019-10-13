@@ -61,7 +61,7 @@ function(ngine_add_game)
 
             # UWP Store association resources
             UWP_PACKAGE_STORE_ASSOCIATION_PATH # If set, included in project root
-            UWP_PACKAGE_STORE_KEY # If set, included in project root
+            UWP_PACKAGE_STORE_KEY_PATH # If set, included in project root
             )
     set (multiValueArgs
             SOURCE_FILES
