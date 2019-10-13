@@ -1,6 +1,6 @@
 # Fetch source files
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
-file(GLOB_RECURSE CONTENT_FILES "content/*")
+file(GLOB_RECURSE HEADER_FILES "*.h")
 
 # Product information (Some for UWP)
 set(PROJECT_NAME NgineTest)
@@ -32,3 +32,9 @@ ngine_add_game(
         UWP_PACKAGE_GUID "62ab7c15-145e-4798-a843-a771f4ef8e9a"
         UWP_PUBLISHER_DISPLAY_NAME "NerdThings"
         )
+
+if(MSVC)
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "\\Source Files" FILES ${SOURCE_FILES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "\\Header Files" FILES ${HEADER_FILES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/content PREFIX "\\Content" FILES ${CONTENT_FILES})
+endif()
