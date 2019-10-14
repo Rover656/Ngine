@@ -175,6 +175,13 @@ function(ngine_add_game)
 
             set(GAME_RESOURCE_FILES ${GAME_RESOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.appxmanifest)
         endif()
+
+        # UWP Store association
+        file (COPY ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        file (COPY ${GAME_UWP_PACKAGE_STORE_KEY_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+        get_filename_component(KEY_NAME ${GAME_UWP_PACKAGE_STORE_KEY_PATH} NAME)
+        set(ADDITIONAL_FILES ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
     endif()
 
     # Windows versioning info
@@ -183,7 +190,7 @@ function(ngine_add_game)
     endif()
 
     # Configure game
-    add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH} ${GAME_UWP_PACKAGE_STORE_KEY_PATH})
+    add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${ADDITIONAL_FILES})
 
     # Visual Studio Source Groups
     if(MSVC)
