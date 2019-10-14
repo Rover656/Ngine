@@ -276,7 +276,7 @@ function(ngine_add_game)
         endforeach()
 
         # Mark as deployable
-        foreach(RESOURCE_FILE ${RESOURCE_FILES})
+        foreach(RESOURCE_FILE ${GAME_RESOURCE_FILES})
             # TODO: Support subdirectories
             set_property(SOURCE ${RESOURCE_FILE} PROPERTY VS_DEPLOYMENT_CONTENT 1)
             set_property(SOURCE ${RESOURCE_FILE} PROPERTY VS_DEPLOYMENT_LOCATION "Assets")
