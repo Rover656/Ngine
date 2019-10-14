@@ -115,11 +115,16 @@ function(ngine_add_game)
     endif()
 
     if (NOT GAME_PUBLISHER_NAME OR "${GAME_PUBLISHER_NAME}" STREQUAL "")
-        if (${PLATFORM} MATCHES "UWP")
-            message(FATAL_ERROR "[Ngine] Must set the UWP publisher name")
-        else()
-            message("[Ngine] You must set the publisher name if you wish to target UWP.")
-        endif()
+        message(FATAL_ERROR "[Ngine] Must set the publisher name")
+    endif()
+
+    if (NOT GAME_COPYRIGHT OR "${GAME_COPYRIGHT}" STREQUAL "")
+        string (TIMESTAMP CURRENT_YEAR "%Y")
+        set(GAME_COPYRIGHT "(C) ${GAME_PUBLISHER_NAME} ${CURRENT_YEAR}")
+    endif()
+
+    if (NOT GAME_WIN_ICON OR "${GAME_WIN_ICON}" STREQUAL "")
+        set(GAME_HAS_ICON "//")
     endif()
 
     if (NOT GAME_UWP_PACKAGE_NAME OR "${GAME_UWP_PACKAGE_NAME}" STREQUAL "")
@@ -181,12 +186,22 @@ function(ngine_add_game)
         file (COPY ${GAME_UWP_PACKAGE_STORE_KEY_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
         get_filename_component(KEY_NAME ${GAME_UWP_PACKAGE_STORE_KEY_PATH} NAME)
-        set(ADDITIONAL_FILES ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
+        set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
     endif()
 
     # Windows versioning info
     if(${PLATFORM} MATCHES "Desktop" AND MSVC)
-        # TODO: Adapt generate_product_version to work with this
+        # Generate product info
+        configure_file(
+                ${NGINE_MODULE_DIR}/WIN/VersionInfo.in
+                ${CMAKE_CURRENT_BINARY_DIR}/VersionInfo.h
+                @ONLY)
+        configure_file(
+                ${NGINE_MODULE_DIR}/WIN/VersionResource.rc
+                ${CMAKE_CURRENT_BINARY_DIR}/VersionResource.rc
+                @ONLY)
+
+        set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/VersionInfo.h ${CMAKE_CURRENT_BINARY_DIR}/VersionResource.rc)
     endif()
 
     # Configure game

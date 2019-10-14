@@ -2,16 +2,6 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 file(GLOB_RECURSE HEADER_FILES "*.h")
 
-# Product information (Some for UWP)
-set(PROJECT_NAME NgineTest)
-set(SHORT_NAME ${PROJECT_NAME})
-set(PACKAGE_GUID "62ab7c15-145e-4798-a843-a771f4ef8e9a")
-set(PUBLISHER "NerdThings")
-set(PUBLISHER_DISPLAY_NAME "NerdThings")
-set(VERSION_MAJOR 1)
-set(VERSION_MINOR 0)
-set(VERSION_PATCH 0)
-
 # Include Ngine cmake functions
 include(Ngine)
 
@@ -27,6 +17,11 @@ endif()
 ngine_add_game(
         NAME "TestGame"
         TARGET_NAME "NgineTest"
+
+        VERSION_MAJOR 1
+        VERSION_MINOR 0
+        VERSION_PATCH 0
+
         PUBLISHER_NAME "NerdThings"
         SOURCE_FILES ${SOURCE_FILES}
         RESOURCE_FILES ${RESOURCE_FILES}
