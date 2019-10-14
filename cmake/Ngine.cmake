@@ -75,8 +75,20 @@ function(ngine_add_game)
             UWP_PACKAGE_STORE_KEY_PATH # If set, included in project root
             )
     set (multiValueArgs
+            # Standard files
             SOURCE_FILES
-            RESOURCE_FILES)
+            HEADER_FILES
+            RESOURCE_FILES
+
+            # Platform specifics
+            DESKTOP_SOURCE_FILES
+            DESKTOP_HEADER_FILES
+            DESKTOP_RESOURCE_FILES
+
+            UWP_SOURCE_FILES
+            UWP_HEADER_FILES
+            UWP_RESOURCE_FILES
+            )
     cmake_parse_arguments(GAME "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # TODO: UWP Capabilities
@@ -187,25 +199,36 @@ function(ngine_add_game)
 
         get_filename_component(KEY_NAME ${GAME_UWP_PACKAGE_STORE_KEY_PATH} NAME)
         set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
+
+        # Add UWP sources
+        set(GAME_SOURCE_FILES ${GAME_SOURCE_FILES} ${GAME_UWP_SOURCE_FILES})
+        set(GAME_HEADER_FILES ${GAME_HEADER_FILES} ${GAME_UWP_HEADER_FILES})
+        set(GAME_RESOURCE_FILES ${GAME_RESOURCE_FILES} ${GAME_UWP_RESOURCE_FILES})
     endif()
 
     # Windows versioning info
-    if(${PLATFORM} MATCHES "Desktop" AND MSVC)
-        # Generate product info
-        configure_file(
-                ${NGINE_MODULE_DIR}/WIN/VersionInfo.in
-                ${CMAKE_CURRENT_BINARY_DIR}/VersionInfo.h
-                @ONLY)
-        configure_file(
-                ${NGINE_MODULE_DIR}/WIN/VersionResource.rc
-                ${CMAKE_CURRENT_BINARY_DIR}/VersionResource.rc
-                @ONLY)
+    if(${PLATFORM} MATCHES "Desktop")
+        if (MSVC)
+            # Generate product info
+            configure_file(
+                    ${NGINE_MODULE_DIR}/WIN/VersionInfo.in
+                    ${CMAKE_CURRENT_BINARY_DIR}/VersionInfo.h
+                    @ONLY)
+            configure_file(
+                    ${NGINE_MODULE_DIR}/WIN/VersionResource.rc
+                    ${CMAKE_CURRENT_BINARY_DIR}/VersionResource.rc
+                    @ONLY)
+            set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/VersionInfo.h ${CMAKE_CURRENT_BINARY_DIR}/VersionResource.rc)
+        endif()
 
-        set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/VersionInfo.h ${CMAKE_CURRENT_BINARY_DIR}/VersionResource.rc)
+        # Add desktop sources
+        set(GAME_SOURCE_FILES ${GAME_SOURCE_FILES} ${GAME_DESKTOP_SOURCE_FILES})
+        set(GAME_HEADER_FILES ${GAME_HEADER_FILES} ${GAME_DESKTOP_HEADER_FILES})
+        set(GAME_RESOURCE_FILES ${GAME_RESOURCE_FILES} ${GAME_DESKTOP_RESOURCE_FILES})
     endif()
 
     # Configure game
-    add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${ADDITIONAL_FILES})
+    add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_HEADER_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${ADDITIONAL_FILES})
 
     # Visual Studio Source Groups
     if(MSVC)
