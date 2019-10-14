@@ -14,6 +14,13 @@
 #include "BaseEntity.h"
 
 namespace NerdThings::Ngine {
+    // Destructor
+
+    Component::~Component() {
+        UnsubscribeFromDraw();
+        UnsubscribeFromUpdate();
+    }
+
     // Public Methods
 
     void Component::Draw(EventArgs &e) { }
@@ -51,7 +58,7 @@ namespace NerdThings::Ngine {
     // Protected Constructor(s)
 
     Component::Component(BaseEntity *parent_)
-        : _ParentEntity(parent_) {
+            : _ParentEntity(parent_) {
         // Check our parent is valid
         if (parent_ == nullptr) {
             throw std::runtime_error("A valid parent must be attached to this component.");

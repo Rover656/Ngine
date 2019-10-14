@@ -17,9 +17,9 @@
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine {
-    #ifndef BASEENTITY_H
+#ifndef BASEENTITY_H
     class NEAPI BaseEntity;
-    #endif
+#endif
 
     /*
      * A component that can be attached to an entity
@@ -49,12 +49,12 @@ namespace NerdThings::Ngine {
          */
         EventHandler<EventArgs> OnDetached;
 
-        // Public Destructor
+        // Destructor
 
         /*
          * Destruct component
          */
-        virtual ~Component() = default;
+        virtual ~Component();
 
         // Public Methods
 
