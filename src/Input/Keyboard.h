@@ -151,7 +151,7 @@ namespace NerdThings::Ngine::Input {
         /*
          * The key this event is fore
          */
-        Key Key;
+        Input::Key Key;
 
         // Public Constructors
 
