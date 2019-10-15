@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 
+#include "Audio/AudioDevice.h"
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Input/Gamepad.h"
 #include "Input/Mouse.h"

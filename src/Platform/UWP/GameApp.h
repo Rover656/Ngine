@@ -1,22 +1,16 @@
+#include "../../ngine.h"
+
 #if defined(PLATFORM_UWP)
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 // TODO: Make not header only
 
-#include "../../ngine.h"
-
 #include <Windows.h>
 #include <chrono>
 #include <memory>
 #include <wrl.h>
 
-#include "../../Audio/AudioDevice.h"
-#include "../../Filesystem/Resources.h"
-#include "../../Graphics/OpenGL/OpenGL.h"
-#include "../../Graphics/GraphicsManager.h"
-#include "../../Input/Keyboard.h"
-#include "../../Input/Mouse.h"
 #include "../../Game.h"
 #include "../../Window.h"
 #include "../../Vector2.h"
@@ -28,7 +22,6 @@ using namespace Windows::UI::Input;
 using namespace Windows::Devices::Input;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
-//using namespace Windows::Gaming::Input;
 using namespace Windows::Graphics::Display;
 using namespace Microsoft::WRL;
 using namespace Platform;
@@ -41,14 +34,25 @@ namespace NerdThings::Ngine::UWP {
      */
     class UWPGameBootstrapper {
     public:
+        // Public Fields
+
+        /*
+         * The current game we are launching with
+         */
         static Game* CurrentGame;
 
-        static void ExecuteGame(Game *game_) {
-            CurrentGame = game_;
-        }
+        // Public Methods
+
+        /*
+         * Execute this game.
+         * Loads onto static member for GameApp.
+         */
+        static void ExecuteGame(Game *game_);
     };
 
     ref class GameApp sealed : public Windows::ApplicationModel::Core::IFrameworkView {
+        // Private Fields
+
         /*
          * The game we are running
          */
@@ -65,68 +69,77 @@ namespace NerdThings::Ngine::UWP {
         int _Width = 0;
     public:
 
-        GameApp() {
-            // Save game
-            _Game = UWPGameBootstrapper::CurrentGame;
+        // Public Constructor
 
-            // Get dimensions
-            auto dims = _Game->GetDefaultWindowDimensions();
+        /*
+         * Create a new game app
+         */
+        GameApp();
 
-            // Set dimensions
-            _Width = (int)dims.X;
-            _Height = (int)dims.Y;
-        }
+        // Public Methods
 
-        // IFrameworkView Methods.
+        /*
+         * Initialize app
+         */
+        virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView);
 
-        virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
-            // Get ready to get activated
-            applicationView->Activated += ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &GameApp::OnActivated);
-        }
+        /*
+         * Load app
+         */
+        virtual void Load(Platform::String^ entryPoint);
 
-        virtual void SetWindow(Windows::UI::Core::CoreWindow^ window) {
-            // Init
-            Window::Init();
+        /*
+         * Run app
+         */
+        virtual void Run();
 
-            // Navigation hack. Stops "B" from closing the game
-            auto navigation = SystemNavigationManager::GetForCurrentView();
-            navigation->BackRequested += ref new Windows::Foundation::EventHandler<Windows::UI::Core::BackRequestedEventArgs ^>(this, &GameApp::OnBackRequested);
-        }
-
-        virtual void Load(Platform::String^ entryPoint) {}
-
-        virtual void Run() {
-            // Run the game.
-            _Game->Run();
-        }
+        /*
+         * Set app window
+         */
+        virtual void SetWindow(Windows::UI::Core::CoreWindow^ window);
+        
 
         virtual void Uninitialize() {}
 
     protected:
 
-        // Application lifecycle event handlers.
+        // Protected Methods
 
-        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args) {
-            // Run() won't start until the CoreWindow is activated.
-            CoreWindow::GetForCurrentThread()->Activate();
-        }
+        /*
+         * OnBackRequested event handler
+         */
+        void OnBackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^args);
 
-        void OnBackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^args) {
-            args->Handled = true;
-        }
+        /*
+         * OnActivated event handler
+         */
+        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args);
     };
 
-    // Application source for creating the program
+    /*
+     * The application source for running the game
+     */
     ref class GameApplicationSource sealed : Windows::ApplicationModel::Core::IFrameworkViewSource {
+        // Private fields
+
+        /*
+         * The game app
+         */
         GameApp ^_App;
     public:
-        GameApplicationSource(GameApp ^app_) {
-            _App = app_;
-        }
+        // Public Constructor
 
-        virtual Windows::ApplicationModel::Core::IFrameworkView^ CreateView() {
-            return _App;
-        }
+        /*
+         * Create the application source.
+         */
+        GameApplicationSource(GameApp ^app_);
+
+        // Public Methods
+
+        /*
+         * Create the app view (returns the app).
+         */
+        virtual Windows::ApplicationModel::Core::IFrameworkView^ CreateView();
     };
 }
 
