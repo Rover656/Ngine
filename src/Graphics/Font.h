@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Sprite font source rectangle
          */
-        Rectangle Rectangle;
+        Ngine::Rectangle Rectangle;
 
         /*
          * Character X offset for drawing
@@ -56,7 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Greyscale pixel data
          */
-        std::shared_ptr<Image> Image;
+        std::shared_ptr<Graphics::Image> Image;
 
         // Public Constructor
 
