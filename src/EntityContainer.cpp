@@ -1,13 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 

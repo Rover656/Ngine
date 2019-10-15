@@ -1,3 +1,14 @@
+/**********************************************************************************************
+*
+*   Ngine - The 2D game engine.
+*
+*   Copyright (C) 2019 NerdThings
+*
+*   LICENSE: Apache License 2.0
+*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*
+**********************************************************************************************/
+
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 #ifndef TEXTURE_H
 #define TEXTURE_H
