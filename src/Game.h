@@ -30,7 +30,7 @@ namespace NerdThings::Ngine {
         /*
          * Number of times to draw every second
          */
-        int DrawFPS = 60;
+        int FPS = 60;
 
         /*
          * Target game height
@@ -51,21 +51,6 @@ namespace NerdThings::Ngine {
          * Target game width
          */
         int TargetWidth = 0;
-
-        /*
-         * Number of times to update very second
-         */
-        int UpdateFPS = 60;
-
-        // Public Methods
-
-        /*
-         * Set FPS (simple)
-         */
-        void SetFPS(int fps_) {
-            DrawFPS = fps_;
-            UpdateFPS = fps_;
-        }
     };
 
     /*
@@ -163,12 +148,7 @@ namespace NerdThings::Ngine {
         /*
          * Get the target draw FPS.
          */
-        int GetDrawFPS() const;
-
-        /*
-         * Get the target update FPS.
-         */
-        int GetUpdateFPS() const;
+        int GetTargetFPS() const;
 
         /*
          * Is the game running
@@ -192,11 +172,6 @@ namespace NerdThings::Ngine {
         void SetFPS(int FPS_);
 
         /*
-         * Set the target draw FPS
-         */
-        void SetDrawFPS(int FPS_);
-
-        /*
          * Set the intended game size.
          * Resizes the framebuffer next frame.
          */
@@ -211,11 +186,6 @@ namespace NerdThings::Ngine {
          * Set the current scene
          */
         void SetScene(Scene *scene_);
-
-        /*
-         * Set the target update FPS
-         */
-        void SetUpdateFPS(int FPS_);
 
         /*
          * Update logic

@@ -166,7 +166,7 @@ namespace NerdThings::Ngine {
             return;
         }
 
-        auto fps = _ParentGame->GetUpdateFPS();
+        auto fps = _ParentGame->GetTargetFPS();
 
         _UpdateCounter++;
 

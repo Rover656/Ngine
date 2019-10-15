@@ -76,12 +76,8 @@ namespace NerdThings::Ngine {
         return { (float)Config.TargetWidth, (float)Config.TargetHeight };
     }
 
-    int Game::GetDrawFPS() const {
-        return Config.DrawFPS;
-    }
-
-    int Game::GetUpdateFPS() const {
-        return Config.UpdateFPS;
+    int Game::GetTargetFPS() const {
+        return Config.FPS;
     }
 
     bool Game::IsRunning() {
@@ -99,13 +95,6 @@ namespace NerdThings::Ngine {
             _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
-        // Timing
-        std::chrono::nanoseconds lag(0);
-        auto started = std::chrono::high_resolution_clock::now();
-
-        auto lastFPS = Config.UpdateFPS;
-        auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
-
         // Init audio
         ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "Game");
         Audio::AudioDevice::Initialize();
@@ -121,7 +110,26 @@ namespace NerdThings::Ngine {
         // Start game
         _Running = true;
 
+        // Timing
+        std::chrono::nanoseconds lag(0);
+        auto started = std::chrono::high_resolution_clock::now();
+        auto lastFPS = Config.FPS;
+        auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
+
         while (!Window::ShouldClose() && _Running) {
+            // Update timestep if FPS has changed
+            if (Config.FPS != lastFPS) {
+                lastFPS = Config.FPS;
+                timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
+                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
+            }
+
+            if (!Window::Visible() && !Config.RunWhileHidden) {
+                // Do nothing this frame.
+                std::this_thread::sleep_for(timeStep);
+                continue;
+            }
+
             // Window/Game Size variables
             const auto w = static_cast<float>(Window::GetWidth());
             const auto h = static_cast<float>(Window::GetHeight());
@@ -145,44 +153,33 @@ namespace NerdThings::Ngine {
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
             started = std::chrono::high_resolution_clock::now();
 
-            // Only increment lag if visible or allow running while hidden
-            if (Window::Visible() || Config.RunWhileHidden)
-                lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
+            // Increment lag
+            lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
-            // Update timestep if FPS has changed
-            if (Config.UpdateFPS != lastFPS) {
-                lastFPS = Config.UpdateFPS;
-                timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
-                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
-            }
+            // Get the time that we begin (for timing)
+            auto frameBegin = std::chrono::high_resolution_clock::now();
 
-            // Setup mouse
+            // Setup mouse translation
             if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
 
-            // Skip if we are going to catch up more than 5 seconds, that is too much (May not fix what I am experiencing)
+            // If we are lagging more than 5 seconds, don't count any further
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
-            // Run Updates (only if visible or run while hidden)
-            if (Window::Visible() || Config.RunWhileHidden) {
-                // Poll inputs only if we are about to process updates.
-                if (lag >= timeStep) {
-                    Input::Gamepad::PollInputs();
-                    Input::Mouse::PollInputs();
-                    Input::Keyboard::PollInputs();
-                }
+            // Poll inputs if window is visible only.
+            if (Window::Visible()) { // TODO: This needs to detect window that is not focussed
+                Input::Gamepad::PollInputs();
+                Input::Mouse::PollInputs();
+                Input::Keyboard::PollInputs();
+            }
 
-                while (lag >= timeStep) {
-                    // Run a single update
-                    lag -= timeStep;
-
-                    auto start = std::chrono::high_resolution_clock::now();
-                    Update();
-                    auto timeToRun = std::chrono::high_resolution_clock::now() - start;
-                    auto t = timeToRun.count();
-                }
+            // Run required updates
+            while (lag >= timeStep) {
+                // Run a single update
+                lag -= timeStep;
+                Update();
             }
 
             // Only render if visible
@@ -230,8 +227,6 @@ namespace NerdThings::Ngine {
 
                 // Swap buffers
                 Window::SwapBuffers();
-            } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
 
             // Reset mouse
@@ -242,7 +237,15 @@ namespace NerdThings::Ngine {
 
             // Poll events
             Window::PollEvents();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+            // Wait for remaining frame time if we were too quick
+            auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
+            auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
+
+            // TODO: Work out why we drop about 2 frames...
+            if (frameTimeMS < timeStep) {
+                std::this_thread::sleep_for(timeStep - frameTimeMS);
+            }
         }
 
         // Delete render target now so that it doesnt try after GL is gone.
@@ -265,12 +268,7 @@ namespace NerdThings::Ngine {
     }
 
     void Game::SetFPS(int FPS_) {
-        Config.UpdateFPS = FPS_;
-        Config.DrawFPS = FPS_;
-    }
-
-    void Game::SetDrawFPS(int FPS_) {
-        Config.DrawFPS = FPS_;
+        Config.FPS = FPS_;
     }
 
     void Game::SetIntendedSize(Vector2 size_) {
@@ -292,10 +290,6 @@ namespace NerdThings::Ngine {
             _CurrentScene->OnLoad({this});
 
         ConsoleMessage("A new scene has been loaded.", "NOTICE", "Game");
-    }
-
-    void Game::SetUpdateFPS(int FPS_) {
-        Config.UpdateFPS = FPS_;
     }
 
     void Game::Update() {
