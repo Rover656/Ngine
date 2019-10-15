@@ -1,5 +1,4 @@
-#define NGINE_ENTRYPOINT // Tell Ngine I want entrypoint macros
-#include <ngine.h>
+#include <Ngine.h>
 
 #include <Audio/AudioDevice.h>
 #include <Audio/Wave.h>
@@ -295,6 +294,8 @@ public:
         SetScene(_Scene);
     }
 };
+
+#include <NgineEntry.h> // Entrypoint stuff
 
 NGINE_GAME_ENTRY {
     // Load icon

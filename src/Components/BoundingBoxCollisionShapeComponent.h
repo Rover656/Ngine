@@ -14,7 +14,7 @@
 #ifndef BOUNDINGBOXCOLLISIONSHAPECOMPONENT_H
 #define BOUNDINGBOXCOLLISIONSHAPECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/Color.h"
 #include "Graphics/Renderer.h"

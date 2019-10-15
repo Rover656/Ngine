@@ -12,7 +12,7 @@
 #ifndef TILESETCANVAS_H
 #define TILESETCANVAS_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Physics/Polygon.h"
 #include "../Rectangle.h"

@@ -12,7 +12,7 @@
 #ifndef POLYGON_H
 #define POLYGON_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Vector2.h"
 #include "CollisionShape.h"

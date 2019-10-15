@@ -2,7 +2,7 @@
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 #include "Buffer.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {

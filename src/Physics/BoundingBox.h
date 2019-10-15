@@ -12,7 +12,7 @@
 #ifndef BOUNDINGBOX2D_H
 #define BOUNDINGBOX2D_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Vector2.h"
 #include "CollisionShape.h"

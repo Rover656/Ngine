@@ -12,7 +12,7 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Filesystem/Filesystem.h"
 #include "../Resource.h"

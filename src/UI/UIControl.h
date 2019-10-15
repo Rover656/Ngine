@@ -12,7 +12,7 @@
 #ifndef UICONTROL_H
 #define UICONTROL_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Vector2.h"
 #include "UIStyle.h"

@@ -12,7 +12,7 @@
 #ifndef GAMEPAD_H
 #define GAMEPAD_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 namespace NerdThings::Ngine::Input {
     /*

@@ -12,7 +12,7 @@
 #ifndef AUDIODEVICE_H
 #define AUDIODEVICE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../../third-party/miniaudio/miniaudio.h"
 #include "../EventHandler.h"

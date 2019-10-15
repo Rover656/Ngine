@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #if defined(PLATFORM_UWP)
 namespace NerdThings::Ngine::UWP {

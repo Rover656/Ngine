@@ -2,7 +2,7 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "Texture.h"
 

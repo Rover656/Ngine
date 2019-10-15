@@ -12,7 +12,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Audio/Music.h"
 #include "../Audio/Sound.h"

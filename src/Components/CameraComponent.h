@@ -14,7 +14,7 @@
 #ifndef CAMERACOMPONENT_H
 #define CAMERACOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/Camera.h"
 #include "../BaseEntity.h"

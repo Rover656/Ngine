@@ -12,7 +12,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include <functional>
 

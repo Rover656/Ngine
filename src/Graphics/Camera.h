@@ -12,7 +12,7 @@
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Matrix.h"
 #include "../Vector2.h"

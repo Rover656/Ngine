@@ -14,7 +14,7 @@
 #ifndef CIRCLECOLLISIONSHAPECOMPONENT_H
 #define CIRCLECOLLISIONSHAPECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "Graphics/Renderer.h"
 #include "../Physics/BoundingBox.h"

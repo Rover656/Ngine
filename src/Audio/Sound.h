@@ -12,7 +12,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Filesystem/Filesystem.h"
 #include "../Resource.h"

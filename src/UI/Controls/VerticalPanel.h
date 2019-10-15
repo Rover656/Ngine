@@ -12,7 +12,7 @@
 #ifndef VERTICALPANEL_H
 #define VERTICALPANEL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../UIPanel.h"
 

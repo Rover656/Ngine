@@ -12,7 +12,7 @@
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #include "OpenGL/Texture.h"

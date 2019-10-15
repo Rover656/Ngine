@@ -12,7 +12,7 @@
 #ifndef UIWIDGETCOMPONENT_H
 #define UIWIDGETCOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../UI/UIWidget.h"
 #include "../BaseEntity.h"

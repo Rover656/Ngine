@@ -12,7 +12,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Rectangle.h"
 #include "../Vector2.h"

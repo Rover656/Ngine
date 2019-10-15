@@ -12,7 +12,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Graphics/Color.h"
 #include "Graphics/Renderer.h"

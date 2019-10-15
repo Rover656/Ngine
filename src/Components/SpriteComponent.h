@@ -14,7 +14,7 @@
 #ifndef SPRITECOMPONENT_H
 #define SPRITECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/Sprite.h"
 #include "../Component.h"

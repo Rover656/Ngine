@@ -15,7 +15,7 @@
 #ifndef POLYGONCOLLISIONSHAPECOMPONENT_H
 #define POLYGONCOLLISIONSHAPECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "Graphics/Renderer.h"
 #include "../Physics/BoundingBox.h"

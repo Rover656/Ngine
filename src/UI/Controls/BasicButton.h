@@ -12,7 +12,7 @@
 #ifndef BASICBUTTON_H
 #define BASICBUTTON_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../UIControlInteractible.h"
 #include "../UIControlSized.h"

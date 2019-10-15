@@ -14,7 +14,7 @@
 #ifndef BASECOLLISIONSHAPECOMPONENT_H
 #define BASECOLLISIONSHAPECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../BaseEntity.h"
 #include "../Component.h"

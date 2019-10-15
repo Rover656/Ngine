@@ -12,7 +12,7 @@
 #ifndef UISTYLE_H
 #define UISTYLE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/Color.h"
 #include "../Graphics/Texture2D.h"

@@ -12,7 +12,7 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Physics/BoundingBox.h"
 #include "Physics/Polygon.h"

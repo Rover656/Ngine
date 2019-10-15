@@ -1,7 +1,7 @@
 #ifndef AUDIOSTREAM_H
 #define AUDIOSTREAM_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "AudioBuffer.h"
 

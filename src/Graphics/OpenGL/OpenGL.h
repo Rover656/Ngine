@@ -3,7 +3,7 @@
 #define OPENGL_H
 
 #include "../../Matrix.h"
-#include "../../ngine.h"
+#include "../../Ngine.h"
 #include "../../Vector2.h"
 #include "../../Vector3.h"
 #include "../Color.h"

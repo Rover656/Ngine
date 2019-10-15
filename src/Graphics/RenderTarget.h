@@ -12,7 +12,7 @@
 #ifndef RENDERTARGET_H
 #define RENDERTARGET_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Resource.h"
 #include "Texture2D.h"

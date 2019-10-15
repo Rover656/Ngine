@@ -1,7 +1,7 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 namespace NerdThings::Ngine {
     /*

@@ -14,7 +14,7 @@
 #ifndef BASESCENE_H
 #define BASESCENE_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Rectangle.h"
 #include "Graphics/Camera.h"

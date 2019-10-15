@@ -121,33 +121,4 @@ void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", 
 #include <Windows.h>
 #endif
 
-// Entrypoint definitions
-#if defined(NGINE_ENTRYPOINT)
-
-// Game endpoint
-#if defined(PLATFORM_DESKTOP)
-#if defined(_WIN32)
-#define NGINE_GAME_ENTRY int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
-#else
-#define NGINE_GAME_ENTRY int main()
-#endif
-#elif defined(PLATFORM_UWP)
-#define NGINE_GAME_ENTRY [Platform::MTAThread] int main(Platform::Array<Platform::String^>^)
-#endif
-
-// Game runner
-#if defined(PLATFORM_UWP)
-#include "Platform/UWP/GameApp.h"
-#define NGINE_RUN_GAME(game) UWP::UWPGameBootstrapper::ExecuteGame(&game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
-#define NGINE_RUN_GAME_PTR(game) UWP::UWPGameBootstrapper::ExecuteGame(game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
-#else
-#define NGINE_RUN_GAME(game) game.Run();
-#define NGINE_RUN_GAME_PTR(game) game->Run();
-#endif
-
-// Undefine to fix any problems
-#undef NGINE_ENTRYPOINT
-
-#endif
-
 #endif // NGINE_H

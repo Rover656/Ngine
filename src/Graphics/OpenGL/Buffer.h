@@ -2,7 +2,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     enum GLBufferType {

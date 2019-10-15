@@ -12,7 +12,7 @@
 #ifndef CANVAS_H
 #define CANVAS_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Vector2.h"
 #include "RenderTarget.h"

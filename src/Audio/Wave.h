@@ -1,7 +1,7 @@
 #ifndef WAVE_H
 #define WAVE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Filesystem/Filesystem.h"
 #include "../Resource.h"

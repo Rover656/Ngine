@@ -12,7 +12,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../EventHandler.h"
 

@@ -12,7 +12,7 @@
 #ifndef UICONTROLINTERACTIBLE_H
 #define UICONTROLINTERACTIBLE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../EventHandler.h"
 #include "UIControl.h"

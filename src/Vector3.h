@@ -12,7 +12,7 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 namespace NerdThings::Ngine {
     struct NEAPI Matrix;

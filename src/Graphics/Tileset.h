@@ -12,7 +12,7 @@
 #ifndef TILESET_H
 #define TILESET_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Vector2.h"
 #include "Texture2D.h"

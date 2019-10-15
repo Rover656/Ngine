@@ -1,7 +1,7 @@
 #ifndef AUDIOBUFFER_H
 #define AUDIOBUFFER_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../../third-party/miniaudio/miniaudio.h"
 

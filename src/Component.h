@@ -12,7 +12,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "EventHandler.h"
 

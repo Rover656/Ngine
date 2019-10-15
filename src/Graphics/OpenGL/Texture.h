@@ -2,7 +2,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     /*

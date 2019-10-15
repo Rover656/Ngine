@@ -12,7 +12,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Filesystem/Filesystem.h"
 #include "../Rectangle.h"

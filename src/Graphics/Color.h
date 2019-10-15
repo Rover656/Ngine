@@ -12,7 +12,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*

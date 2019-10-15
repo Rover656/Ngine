@@ -17,7 +17,7 @@
 #define BASEENTITY_H
 
 // Include ngine
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Vector2.h"
 #include "EntityContainer.h"

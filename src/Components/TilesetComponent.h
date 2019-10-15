@@ -12,7 +12,7 @@
 #ifndef TILESETCOMPONENT_H
 #define TILESETCOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/TilesetCanvas.h"
 #include "../BaseEntity.h"

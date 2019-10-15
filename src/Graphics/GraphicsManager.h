@@ -12,7 +12,7 @@
 #ifndef GRAPHICSMANAGER_H
 #define GRAPHICSMANAGER_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "RenderTarget.h"
 

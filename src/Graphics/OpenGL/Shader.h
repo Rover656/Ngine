@@ -2,7 +2,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 #include "../../Matrix.h"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {

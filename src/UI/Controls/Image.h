@@ -12,7 +12,7 @@
 #ifndef IMAGECONTROL_H
 #define IMAGECONTROL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../../Graphics/Sprite.h"
 #include "../UIControlSized.h"

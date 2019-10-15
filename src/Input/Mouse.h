@@ -12,7 +12,7 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #if defined(PLATFORM_DESKTOP)
 struct GLFWwindow;

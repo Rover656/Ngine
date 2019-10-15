@@ -1,4 +1,4 @@
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #if defined(PLATFORM_UWP)
 #ifndef GAMEAPP_H

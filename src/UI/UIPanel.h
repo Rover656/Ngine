@@ -12,7 +12,7 @@
 #ifndef UIPANEL_H
 #define UIPANEL_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/RenderTarget.h"
 #include "../Graphics/GraphicsManager.h"

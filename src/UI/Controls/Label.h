@@ -1,7 +1,3 @@
-#include <utility>
-
-#include <utility>
-
 /**********************************************************************************************
 *
 *   Ngine - A (mainly) 2D game engine.
@@ -16,7 +12,7 @@
 #ifndef LABEL_H
 #define LABEL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../../Graphics/Renderer.h"
 #include "../UIControlSized.h"
