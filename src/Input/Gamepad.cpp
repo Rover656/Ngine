@@ -198,9 +198,9 @@ namespace NerdThings::Ngine::Input {
 
                 // Get axis
                 _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_X] = (float)reading.LeftThumbstickX;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_Y] = (float)reading.LeftThumbstickY;
+                _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_Y] = (float)-reading.LeftThumbstickY;
                 _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_X] = (float)reading.RightThumbstickX;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_Y] = (float)reading.RightThumbstickY;
+                _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_Y] = (float)-reading.RightThumbstickY;
                 _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] = (float)reading.LeftTrigger;
                 _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] = (float)reading.RightTrigger;
 

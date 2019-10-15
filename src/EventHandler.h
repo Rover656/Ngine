@@ -205,7 +205,7 @@ namespace NerdThings::Ngine {
             for (auto i = 0; i < _Handles.size(); i++) {
                 auto handle = _Handles[i];
                 ArgsType sendE = e;
-                if (handle.HandleInfo->AttachedHandler != nullptr) // TODO: remove
+                if (handle.HandleInfo->AttachedHandler != nullptr)
                     handle.HandleInfo->Function(sendE);
 
                 if (sendE.UnBind)
@@ -217,9 +217,6 @@ namespace NerdThings::Ngine {
          * Unbind an event handle by value
          */
         void UnBind(EventHandleRef<ArgsType> handler_) {
-            if (!handler_.IsValid())
-                return;
-
             // Find and remove
             for (auto i = 0; i < _Handles.size(); i++) {
                 if (_Handles[i] == handler_) {

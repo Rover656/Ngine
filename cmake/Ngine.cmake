@@ -155,7 +155,7 @@ function(ngine_add_game)
         if (${PLATFORM} MATCHES "UWP")
             message(WARNING "[Ngine] Setting publisher parameter to publisher display name.")
         endif()
-        set(GAME_UWP_PUBLISHER ${GAME_UWP_PUBLISHER_DISPLAY_NAME})
+        set(GAME_UWP_PUBLISHER ${GAME_PUBLISHER_NAME})
     endif()
 
     if (NOT GAME_UWP_STORE_LOGO_NAME OR "${GAME_UWP_STORE_LOGO_NAME}" STREQUAL "")
@@ -194,11 +194,16 @@ function(ngine_add_game)
         endif()
 
         # UWP Store association
-        file (COPY ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-        file (COPY ${GAME_UWP_PACKAGE_STORE_KEY_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+        if (${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH})
+            file (COPY ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+            get_filename_component(KEY_NAME ${GAME_UWP_PACKAGE_STORE_KEY_PATH} NAME)
+            set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml)
+        endif()
 
-        get_filename_component(KEY_NAME ${GAME_UWP_PACKAGE_STORE_KEY_PATH} NAME)
-        set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
+        if (${GAME_UWP_PACKAGE_STORE_KEY_PATH})
+            file (COPY ${GAME_UWP_PACKAGE_STORE_KEY_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+            set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
+        endif()
 
         # Add UWP sources
         set(GAME_SOURCE_FILES ${GAME_SOURCE_FILES} ${GAME_UWP_SOURCE_FILES})

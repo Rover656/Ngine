@@ -177,7 +177,11 @@ namespace NerdThings::Ngine {
                 while (lag >= timeStep) {
                     // Run a single update
                     lag -= timeStep;
+
+                    auto start = std::chrono::high_resolution_clock::now();
                     Update();
+                    auto timeToRun = std::chrono::high_resolution_clock::now() - start;
+                    auto t = timeToRun.count();
                 }
             }
 
