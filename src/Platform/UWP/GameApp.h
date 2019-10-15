@@ -35,8 +35,7 @@ using namespace Microsoft::WRL;
 using namespace Platform;
 
 namespace NerdThings::Ngine::UWP {
-    ref class GameApp sealed : public Windows::ApplicationModel::Core::IFrameworkView
-    {
+    ref class GameApp sealed : public Windows::ApplicationModel::Core::IFrameworkView {
         /*
          * App window height
          */
@@ -59,22 +58,23 @@ namespace NerdThings::Ngine::UWP {
 
         // IFrameworkView Methods.
 
-        virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView)
-        {
+        virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
             // Get ready to get activated
             applicationView->Activated += ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &GameApp::OnActivated);
         }
 
-        virtual void SetWindow(Windows::UI::Core::CoreWindow^ window)
-        {
+        virtual void SetWindow(Windows::UI::Core::CoreWindow^ window) {
             // Init
             Window::Init();
+
+            // Navigation hack. Stops "B" from closing the game
+            auto navigation = SystemNavigationManager::GetForCurrentView();
+            navigation->BackRequested += ref new Windows::Foundation::EventHandler<Windows::UI::Core::BackRequestedEventArgs ^>(this, &GameApp::OnBackRequested);
         }
 
         virtual void Load(Platform::String^ entryPoint) {}
 
-        virtual void Run()
-        {
+        virtual void Run() {
             // Run the current game.
             // We had to do this because .NET c++ does not like native pointers inside of this class
             Game::CurrentGame->Run();
@@ -86,25 +86,25 @@ namespace NerdThings::Ngine::UWP {
 
         // Application lifecycle event handlers.
 
-        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args)
-        {
+        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args) {
             // Run() won't start until the CoreWindow is activated.
             CoreWindow::GetForCurrentThread()->Activate();
+        }
+
+        void OnBackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^args) {
+            args->Handled = true;
         }
     };
 
     // Application source for creating the program
-    ref class GameApplicationSource sealed : Windows::ApplicationModel::Core::IFrameworkViewSource
-    {
+    ref class GameApplicationSource sealed : Windows::ApplicationModel::Core::IFrameworkViewSource {
         GameApp ^_App;
     public:
-        GameApplicationSource(GameApp ^app_)
-        {
+        GameApplicationSource(GameApp ^app_) {
             _App = app_;
         }
 
-        virtual Windows::ApplicationModel::Core::IFrameworkView^ CreateView()
-        {
+        virtual Windows::ApplicationModel::Core::IFrameworkView^ CreateView() {
             return _App;
         }
     };
