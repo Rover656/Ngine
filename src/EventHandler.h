@@ -39,17 +39,17 @@ namespace NerdThings::Ngine {
     template <typename ArgsType = EventArgs>
     struct EventHandleRef {
     private:
-        template <typename ArgsType = EventArgs>
+        template <typename _ArgsType>
         struct InternalHandleInfo {
             /*
              * The handler that the handle is linked to
              */
-            EventHandler<ArgsType> *AttachedHandler = nullptr;
+            EventHandler<_ArgsType> *AttachedHandler = nullptr;
 
             /*
              * Attached function
              */
-            std::function<void(ArgsType &)> Function;
+            std::function<void(_ArgsType &)> Function;
         };
     public:
         // Public Fields
