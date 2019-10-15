@@ -38,8 +38,22 @@ namespace NerdThings::Ngine::Input {
 #elif defined(PLATFORM_UWP)
         auto window = CoreWindow::GetForCurrentThread();
         auto pointerPos = window->PointerPosition;
-        pos.X = pointerPos.X - window->Bounds.X;
-        pos.Y = pointerPos.Y - window->Bounds.Y;
+
+        // Get display resolution scale (Fixes a big bad bug)
+        auto resScale = (int)DisplayInformation::GetForCurrentView()->ResolutionScale;
+        auto sf = (float)resScale / 100.0f;
+
+        // Translate pointer position
+        pointerPos.X *= sf;
+        pointerPos.Y *= sf;
+
+        // Translate bound locations
+        auto wPosX = window->Bounds.X * sf;
+        auto wPosY = window->Bounds.Y * sf;
+
+        // Save position
+        pos.X = pointerPos.X - wPosX;
+        pos.Y = pointerPos.Y - wPosY;
 #endif
 
         return pos;
