@@ -21,10 +21,12 @@
 // Basic Definitions
 //----------------------------------------------------------------------------------
 
+// File includes TODO: Remove this need
 #if defined(NGINE_BUILD)
 #define INCLUDE_BOX2D
 #endif
 
+// DLL imports
 #if defined(_WIN32) && defined(NGINE_EXPORTS)
 #define NEAPI __declspec(dllexport)         // Windows DLL Export
 #elif defined(_WIN32) && defined(NGINE_SHARED)
@@ -41,12 +43,6 @@
 
 #define RadToDeg(rad) rad * 180/PI
 #define DegToRad(deg) deg * PI/180
-
-//----------------------------------------------------------------------------------
-// Project Info
-//----------------------------------------------------------------------------------
-
-#define NGINE_VERSION "0.1a"
 
 //----------------------------------------------------------------------------------
 // Libraries
@@ -66,12 +62,6 @@
 #include <unordered_map>
 #include <vector>
 
-#if defined(PLATFORM_UWP)
-// Fix UWP??
-#define NOMINMAX
-#include <Windows.h>
-#endif
-
 #if defined(INCLUDE_BOX2D)
 #include <Box2D/Box2D.h>
 
@@ -80,17 +70,84 @@
 bool NEAPI b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB);
 #endif
 
-// Remove stuff from Windows.h that break Ngine and raylib
-#ifdef _WIN32
-#define NOGDI
-#define NODRAWTEXT
-#define NOBITMAP
-#endif
-
 //----------------------------------------------------------------------------------
 // Helper Functions
 //----------------------------------------------------------------------------------
 
+// TODO: Rewrite with a logger class
 void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
+
+//----------------------------------------------------------------------------------
+// Platform Identification
+//----------------------------------------------------------------------------------
+
+#if defined(_WIN32)
+
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+#define PLATFORM_UWP
+#else
+#define PLATFORM_DESKTOP
+#endif
+
+#elif defined(__APPLE__)
+
+#include "TargetConditionals.h"
+#if defined(TARGET_OS_MAC)
+#define PLATFORM_DESKTOP
+#else
+#error "Unsupported platform"
+#endif
+
+#elif __linux__
+
+#define PLATFORM_DESKTOP
+
+#else
+#error "Unsupported platform"
+#endif
+
+//----------------------------------------------------------------------------------
+// Platform Specific Macros
+//----------------------------------------------------------------------------------
+
+#if defined(_WIN32)
+// Remove stuff from Windows.h that breaks Ngine
+#define NOBITMAP
+#define NODRAWTEXT
+#define NOGDI
+#define NOMINMAX
+
+// Include Windows
+#include <Windows.h>
+#endif
+
+// Entrypoint definitions
+#if defined(NGINE_ENTRYPOINT)
+
+// Game endpoint
+#if defined(PLATFORM_DESKTOP)
+#if defined(_WIN32)
+#define NGINE_GAME_ENTRY int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
+#else
+#define NGINE_GAME_ENTRY int main()
+#endif
+#elif defined(PLATFORM_UWP)
+#define NGINE_GAME_ENTRY [Platform::MTAThread] int main(Platform::Array<Platform::String^>^)
+#endif
+
+// Game runner
+#if defined(PLATFORM_UWP)
+#include "Platform/UWP/GameApp.h"
+#define NGINE_RUN_GAME(game) UWP::UWPGameBootstrapper::ExecuteGame(&game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
+#define NGINE_RUN_GAME_PTR(game) UWP::UWPGameBootstrapper::ExecuteGame(game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
+#else
+#define NGINE_RUN_GAME(game) game.Run();
+#define NGINE_RUN_GAME_PTR(game) game->Run();
+#endif
+
+// Undefine to fix any problems
+#undef NGINE_ENTRYPOINT
+
+#endif
 
 #endif // NGINE_H

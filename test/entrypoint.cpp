@@ -1,3 +1,4 @@
+#define NGINE_ENTRYPOINT // Tell Ngine I want entrypoint macros
 #include <ngine.h>
 
 #include <Audio/AudioDevice.h>
@@ -295,18 +296,7 @@ public:
     }
 };
 
-#if defined(PLATFORM_DESKTOP)
-#ifdef _WIN32
-#include <Windows.h>
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow) {
-#else
-int main() {
-#endif
-#elif defined(PLATFORM_UWP)
-#include <Platform/UWP/GameApp.h>
-[Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^) {
-#endif
+NGINE_GAME_ENTRY {
     // Load icon
     auto icon = new Graphics::Image(Path::GetExecutableDirectory() / "content" / "test_icon.png");
 
@@ -318,7 +308,7 @@ int main(Platform::Array<Platform::String^>^) {
     WindowConfig windowConfig;
     windowConfig.Resizable = true;
     windowConfig.MSAA_4X = true;
-    windowConfig.VSync = true;
+    windowConfig.VSync = false;
     windowConfig.Width = 1920/2;
     windowConfig.Height = 1080/2;
     windowConfig.Title = "Test Game";
@@ -326,13 +316,11 @@ int main(Platform::Array<Platform::String^>^) {
     windowConfig.NativeDebugConsole = true;
     Window::SetConfig(windowConfig);
 
+    // Create game
     auto game = TestGame(gameConfig);
 
-#if defined(PLATFORM_UWP)
-    CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
-#else
-    game.Run();
-#endif
+    // Run game
+    NGINE_RUN_GAME(game);
 
     // Delete icon
     delete icon;

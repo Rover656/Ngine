@@ -6,7 +6,6 @@
 
 #include "../../ngine.h"
 
-#define NOMINMAX
 #include <Windows.h>
 #include <chrono>
 #include <memory>
@@ -35,7 +34,26 @@ using namespace Microsoft::WRL;
 using namespace Platform;
 
 namespace NerdThings::Ngine::UWP {
+    /*
+     * Quick and nasty bootstrapper.
+     * This saves the game pointer until the UWP app starts.
+     * This helps us to bypass UWP restrictions.
+     */
+    class UWPGameBootstrapper {
+    public:
+        static Game* CurrentGame;
+
+        static void ExecuteGame(Game *game_) {
+            CurrentGame = game_;
+        }
+    };
+
     ref class GameApp sealed : public Windows::ApplicationModel::Core::IFrameworkView {
+        /*
+         * The game we are running
+         */
+        Game *_Game = nullptr;
+
         /*
          * App window height
          */
@@ -48,8 +66,11 @@ namespace NerdThings::Ngine::UWP {
     public:
 
         GameApp() {
+            // Save game
+            _Game = UWPGameBootstrapper::CurrentGame;
+
             // Get dimensions
-            auto dims = Game::CurrentGame->GetDefaultWindowDimensions();
+            auto dims = _Game->GetDefaultWindowDimensions();
 
             // Set dimensions
             _Width = (int)dims.X;
@@ -75,9 +96,8 @@ namespace NerdThings::Ngine::UWP {
         virtual void Load(Platform::String^ entryPoint) {}
 
         virtual void Run() {
-            // Run the current game.
-            // We had to do this because .NET c++ does not like native pointers inside of this class
-            Game::CurrentGame->Run();
+            // Run the game.
+            _Game->Run();
         }
 
         virtual void Uninitialize() {}

@@ -27,18 +27,9 @@
 #endif
 
 namespace NerdThings::Ngine {
-    // Public Fields
-
-    Game *Game::CurrentGame = nullptr;
-
     // Public Constructor(s)
 
     Game::Game(const GameConfig &config_) {
-        // Check a game is not present
-        if (CurrentGame != nullptr)
-            throw std::runtime_error("Cannot create a second game before deleting the first!");
-        CurrentGame = this;
-
         // Save config
         Config = config_;
 
@@ -51,9 +42,7 @@ namespace NerdThings::Ngine {
 
     // Destructor
 
-    Game::~Game() {
-        CurrentGame = nullptr;
-    }
+    Game::~Game() {}
 
     // Public Methods
 
@@ -116,7 +105,8 @@ namespace NerdThings::Ngine {
         auto lastFPS = Config.FPS;
         auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
 
-        while (!Window::ShouldClose() && _Running) {
+        // This checks the game is still running, the window is still running and the exit key is not pushed
+        while (!Window::ShouldClose() && !Input::Keyboard::ShouldClose() && _Running) {
             // Update timestep if FPS has changed
             if (Config.FPS != lastFPS) {
                 lastFPS = Config.FPS;

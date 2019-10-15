@@ -168,13 +168,6 @@ namespace NerdThings::Ngine::Input {
     }
 
     void Keyboard::PollInputs() {
-        // Exit key
-        if (_ExitKey != KEY_NONE) {
-            if (IsKeyDown(_ExitKey)) {
-                Game::CurrentGame->Quit();
-            }
-        }
-
         // Move current to last and next into current
         for (auto i = 0; i <= KEY_MAX; i++) {
             _PreviousKeyState[i] = _CurrentKeyState[i];
@@ -194,5 +187,16 @@ namespace NerdThings::Ngine::Input {
 
     void Keyboard::SetExitKey(const Key key_) {
         _ExitKey = key_;
+    }
+
+    bool Keyboard::ShouldClose() {
+        // Exit key
+        if (_ExitKey != KEY_NONE) {
+            if (IsKeyDown(_ExitKey)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

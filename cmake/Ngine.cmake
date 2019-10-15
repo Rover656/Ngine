@@ -1,3 +1,5 @@
+# TODO: Review needed, determine how to handle shared vs static Ngine linking
+
 # General functions
 include (CMakeParseArguments)
 set(NGINE_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -347,11 +349,5 @@ function(__ngine_link_ngine GAME_TARGET_NAME)
                     ${NGINE_SOURCE_DIR}/../third-party/ANGLE/lib/x86/d3dcompiler_47.dll
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>)
         endif()
-    endif()
-
-    if (${PLATFORM} MATCHES "Desktop")
-        target_compile_definitions(${GAME_TARGET_NAME} PRIVATE PLATFORM_DESKTOP=1)
-    elseif(${PLATFORM} MATCHES "UWP")
-        target_compile_definitions(${GAME_TARGET_NAME} PRIVATE PLATFORM_UWP=1)
     endif()
 endfunction()

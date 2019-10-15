@@ -173,16 +173,11 @@ namespace NerdThings::Ngine::Input {
         // Private Methods
 
 #if defined(PLATFORM_DESKTOP)
-
         static void GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_);
-
 #elif defined(PLATFORM_UWP)
-
         static Key KeyFromVirtualKey(int key_);
-
         static void UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
         static void UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
-
 #endif
 
     public:
@@ -239,6 +234,12 @@ namespace NerdThings::Ngine::Input {
          * Set the key to close the game
          */
         static void SetExitKey(Key key_);
+
+        /*
+         * Whether or not the game should exit.
+         * If the exit key is pressed, this is true
+         */
+        static bool ShouldClose();
     };
 }
 

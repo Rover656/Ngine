@@ -67,7 +67,7 @@ namespace NerdThings::Ngine {
         /*
          * The render target used for enforcing resolution
          */
-        std::shared_ptr<Graphics::RenderTarget> _RenderTarget;
+        std::shared_ptr<Graphics::RenderTarget> _RenderTarget = nullptr;
 
         /*
          * Is the game loop running
@@ -86,11 +86,6 @@ namespace NerdThings::Ngine {
          * Game config
          */
         GameConfig Config;
-
-        /*
-         * The current game. If this isn't nullptr at start, it will error
-         */
-        static Game *CurrentGame;
 
         /*
          * On update event

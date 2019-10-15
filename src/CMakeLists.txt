@@ -80,9 +80,6 @@ if (${PLATFORM} MATCHES "Desktop")
         target_compile_definitions(${PROJECT_NAME} PUBLIC GRAPHICS_OPENGLES2=1)
     endif()
 
-    # Mark as desktop
-    target_compile_definitions(${PROJECT_NAME} PUBLIC PLATFORM_DESKTOP=1)
-
     # Link glfw
     target_link_libraries(${PROJECT_NAME} glfw)
     target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/third-party/glfw/include)
@@ -95,9 +92,6 @@ elseif(${PLATFORM} MATCHES "UWP")
         # Mark OpenGLES2
         target_compile_definitions(${PROJECT_NAME} PRIVATE GRAPHICS_OPENGLES2=1)
     endif()
-
-    # Mark as UWP
-    target_compile_definitions(${PROJECT_NAME} PRIVATE PLATFORM_UWP=1)
 
     # Add ANGLE via NuGet
     configure_file(${PROJECT_SOURCE_DIR}/cmake/UWP/packages.config.in
