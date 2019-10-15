@@ -194,13 +194,13 @@ function(ngine_add_game)
         endif()
 
         # UWP Store association
-        if (${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH})
+        if (NOT "${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH}" STREQUAL "")
             file (COPY ${GAME_UWP_PACKAGE_STORE_ASSOCIATION_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
             get_filename_component(KEY_NAME ${GAME_UWP_PACKAGE_STORE_KEY_PATH} NAME)
             set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/Package.StoreAssociation.xml)
         endif()
 
-        if (${GAME_UWP_PACKAGE_STORE_KEY_PATH})
+        if (NOT "${GAME_UWP_PACKAGE_STORE_KEY_PATH}" STREQUAL "")
             file (COPY ${GAME_UWP_PACKAGE_STORE_KEY_PATH} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
             set(ADDITIONAL_FILES ${ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${KEY_NAME})
         endif()
