@@ -42,19 +42,23 @@ namespace NerdThings::Ngine {
 
         /*
          * Fullscreen window.
-         * TODO: This has not been implemented.
          */
         bool Fullscreen = false;
-
-        /*
-         * Window height
-         */
-        int Height = 0;
 
         /*
          * Window icon
          */
         Graphics::Image *Icon = nullptr;
+
+        /*
+         * Initial window height
+         */
+        int InitialHeight = 0;
+
+        /*
+         * Initial window width
+         */
+        int InitialWidth = 0;
 
         /*
          * Enable MSAA 4X.
@@ -76,11 +80,6 @@ namespace NerdThings::Ngine {
          * Whether or not to use V-Sync
          */
         bool VSync = false;
-
-        /*
-         * Window width
-         */
-        int Width = 0;
     };
 
     /*
@@ -104,8 +103,32 @@ namespace NerdThings::Ngine {
          */
         static bool _Initialized;
 
-#if defined(PLATFORM_DESKTOP) && defined(_WIN32)
+        /*
+         * Is the window currently fullscreen
+         */
+        static bool _IsFullscreen;
 
+        /*
+         * X Position of window before fullscreen.
+         */
+        static int _PreFullscreenPosX;
+
+        /*
+         * Y Position of window before fullscreen.
+         */
+        static int _PreFullscreenPosY;
+
+        /*
+         * Width of window before fullscreen.
+         */
+        static int _PreFullscreenSizeWidth;
+
+        /*
+         * Height of window before fullscreen.
+         */
+        static int _PreFullscreenSizeHeight;
+
+#if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /*
          * Whether or not a native console is allocated
          */
@@ -140,16 +163,6 @@ namespace NerdThings::Ngine {
          * Pointer to original error buffer
          */
         static std::streambuf *_OldCerrBuffer;
-
-#endif
-
-#if defined(PLATFORM_UWP)
-
-        /*
-         * When the application is suspended
-         */
-        static void Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args);
-
 #endif
     public:
         // Public Fields
@@ -160,15 +173,12 @@ namespace NerdThings::Ngine {
         static WindowConfig Config;
 
 #if defined(PLATFORM_DESKTOP)
-
         /*
          * GLFW Window pointer
          * Most likely will be nullptr on non-desktop platforms
          */
         static void *WindowPtr;
-
 #elif defined(PLATFORM_UWP)
-
         /*
          * EGL Context
          */
@@ -183,7 +193,6 @@ namespace NerdThings::Ngine {
          * EGL Surface
          */
         static EGLSurface Surface;
-
 #endif
 
         // Public Methods
@@ -219,6 +228,11 @@ namespace NerdThings::Ngine {
         static void PollEvents();
 
         /*
+         * Resize the window
+         */
+        static void Resize(int width_, int height_);
+
+        /*
          * Set window config.
          * Must be set before Initialization.
          */
@@ -245,7 +259,7 @@ namespace NerdThings::Ngine {
         static void SetVSync(bool vsync_);
 
         /*
-         * Whether or not the window should be const closed
+         * Whether or not the window should be closed
          */
         static bool ShouldClose();
 

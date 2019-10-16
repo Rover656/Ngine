@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "../../Ngine.h"
+#include "../Ngine.h"
 
 #if defined(PLATFORM_UWP)
 #ifndef GAMEAPP_H
@@ -22,9 +22,9 @@
 #include <memory>
 #include <wrl.h>
 
-#include "../../Game.h"
-#include "../../Window.h"
-#include "../../Vector2.h"
+#include "../Game.h"
+#include "../Window.h"
+#include "../Vector2.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::ApplicationModel::Activation;
@@ -43,7 +43,7 @@ namespace NerdThings::Ngine::UWP {
      * This saves the game pointer until the UWP app starts.
      * This helps us to bypass UWP restrictions.
      */
-    class UWPGameBootstrapper {
+    class NEAPI UWPGameBootstrapper {
     public:
         // Public Fields
 
@@ -70,14 +70,9 @@ namespace NerdThings::Ngine::UWP {
         Game *_Game = nullptr;
 
         /*
-         * App window height
+         * Whether or not the game should be restarted
          */
-        int _Height = 0;
-
-        /*
-         * App window width
-         */
-        int _Width = 0;
+        bool _ShouldRestart = false;
     public:
 
         // Public Constructor
@@ -97,7 +92,7 @@ namespace NerdThings::Ngine::UWP {
         /*
          * Load app
          */
-        virtual void Load(Platform::String^ entryPoint);
+        virtual void Load(Platform::String^ entryPoint);        
 
         /*
          * Run app
@@ -109,8 +104,10 @@ namespace NerdThings::Ngine::UWP {
          */
         virtual void SetWindow(Windows::UI::Core::CoreWindow^ window);
         
-
-        virtual void Uninitialize() {}
+        /*
+         * Uninitialize the app
+         */
+        virtual void Uninitialize();
 
     protected:
 
@@ -122,9 +119,9 @@ namespace NerdThings::Ngine::UWP {
         void OnBackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^args);
 
         /*
-         * OnActivated event handler
+         * OnSuspended event handler
          */
-        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args);
+        void OnSuspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args);
     };
 
     /*

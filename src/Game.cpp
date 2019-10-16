@@ -23,21 +23,54 @@
 #endif
 
 #if defined(PLATFORM_UWP)
-#include "Platform/UWP/GameApp.h"
+#include "UWP/GameApp.h"
 #endif
 
 namespace NerdThings::Ngine {
+    // Private Methods
+
+    void Game::__DoDraw() {
+        // Prep for drawing
+        Graphics::Renderer::BeginDrawing();
+
+        // If using, start using target
+        if (Config.MaintainResolution && _RenderTarget->IsValid()) {
+            // Clear the main framebuffer (for black bars)
+            Graphics::Renderer::Clear(Graphics::Color::Black);
+
+            // Enable our main framebuffer
+            Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
+        }
+
+        // Clear with the correct background colour
+        Graphics::Renderer::Clear(ClearColor);
+
+        // Render scene
+        if (_CurrentScene != nullptr) {
+            _CurrentScene->Draw();
+        }
+
+        // OnDraw event
+        OnDraw({});
+    }
+
+    void Game::__DoUpdate() {
+        // Run update events
+        OnUpdate({});
+
+        if (_CurrentScene != nullptr) {
+            _CurrentScene->Update();
+        }
+
+        // AudioDevice update
+        Audio::AudioDevice::Update();
+    }
+
     // Public Constructor(s)
 
     Game::Game(const GameConfig &config_) {
         // Save config
         Config = config_;
-
-#if !defined(PLATFORM_UWP) // UWP init elsewhere
-        // Initialize window
-        Window::Init();
-        ConsoleMessage("Window has been initialized.", "NOTICE", "Game");
-#endif
     }
 
     // Destructor
@@ -45,17 +78,6 @@ namespace NerdThings::Ngine {
     Game::~Game() {}
 
     // Public Methods
-
-    void Game::Clear() const {
-        Graphics::Renderer::Clear(ClearColor);
-    }
-
-    void Game::Draw() {
-        if (_CurrentScene != nullptr) {
-            OnDraw({});
-            _CurrentScene->Draw();
-        }
-    }
 
     Vector2 Game::GetDefaultWindowDimensions() const {
         return { (float)Window::GetWidth(), (float)Window::GetHeight() };
@@ -70,7 +92,7 @@ namespace NerdThings::Ngine {
     }
 
     bool Game::IsRunning() {
-        return _Running;
+        return !_HasStopped;
     }
 
     void Game::Quit() {
@@ -78,6 +100,10 @@ namespace NerdThings::Ngine {
     }
 
     void Game::Run() {
+        // Initialize window
+        Window::Init();
+        ConsoleMessage("Window has been initialized.", "NOTICE", "Game");
+
         // Create render target
         if (Config.MaintainResolution) {
             _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
@@ -105,8 +131,11 @@ namespace NerdThings::Ngine {
         auto lastFPS = Config.FPS;
         auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
 
+        // Mark as running
+        _HasStopped = false;
+
         // This checks the game is still running, the window is still running and the exit key is not pushed
-        while (!Window::ShouldClose() && !Input::Keyboard::ShouldClose() && _Running) {
+        while (!Window::ShouldClose() && !Input::Keyboard::ShouldClose()) {
             // Update timestep if FPS has changed
             if (Config.FPS != lastFPS) {
                 lastFPS = Config.FPS;
@@ -115,6 +144,12 @@ namespace NerdThings::Ngine {
             }
 
             if (!Window::Visible() && !Config.RunWhileHidden) {
+                // Poll window events
+                Window::PollEvents();
+
+                // If told to quit, quit
+                if (!_Running) break;
+
                 // Do nothing this frame.
                 std::this_thread::sleep_for(timeStep);
                 continue;
@@ -158,8 +193,8 @@ namespace NerdThings::Ngine {
             // If we are lagging more than 5 seconds, don't count any further
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
-            // Poll inputs if window is visible only.
-            if (Window::Visible()) { // TODO: This needs to detect window that is not focussed
+            // Poll inputs if window is visible and if we're going to update this frame
+            if (Window::Visible() && lag >= timeStep) { // TODO: This needs to detect window that is not focussed
                 Input::Gamepad::PollInputs();
                 Input::Mouse::PollInputs();
                 Input::Keyboard::PollInputs();
@@ -169,27 +204,21 @@ namespace NerdThings::Ngine {
             while (lag >= timeStep) {
                 // Run a single update
                 lag -= timeStep;
-                Update();
+                __DoUpdate();
+
+                // If we need to quit, don't run any more frames
+                if (!_Running) break;
             }
+
+            // If we need to quit, don't render
+            if (!_Running) break;
 
             // Only render if visible
             if (Window::Visible()) {
-                // Prep for drawing
-                Graphics::Renderer::BeginDrawing();
-
-                // Clear
-                Graphics::Renderer::Clear(Graphics::Color::Black);
-
-                // If using, start using target
-                if (Config.MaintainResolution && _RenderTarget->IsValid()) {
-                    Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
-                }
-
-                // Clear the background
-                Clear();
-
                 // Draw
-                Draw();
+                __DoDraw();
+
+                // TODO: Deal with all the const variables so this can live in __DoDraw()
 
                 // If using a target, draw target
                 if (Config.MaintainResolution && _RenderTarget->IsValid()) {
@@ -236,25 +265,25 @@ namespace NerdThings::Ngine {
             if (frameTimeMS < timeStep) {
                 std::this_thread::sleep_for(timeStep - frameTimeMS);
             }
+
+            if (!_Running) break;
         }
 
         // Delete render target now so that it doesnt try after GL is gone.
         _RenderTarget = nullptr;
 
-#if !defined(PLATFORM_UWP) // UWP handles this elsewhere because this is ignored
         // Delete loaded resources
         Filesystem::Resources::DeleteAll();
 
         // Close audio
-        ConsoleMessage("Closing audio device.", "NOTICE", "Game");
+        ConsoleMessage("Closing audio device.", "NOTICE", "Window");
         Audio::AudioDevice::Close();
 
         // Close window
-        ConsoleMessage("Closing window.", "NOTICE", "Game");
         Window::Close();
 
-        ConsoleMessage("Game successfully stopped.", "NOTICE", "Game");
-#endif
+        // Mark as stopped
+        _HasStopped = true;
     }
 
     void Game::SetFPS(int FPS_) {
@@ -280,17 +309,5 @@ namespace NerdThings::Ngine {
             _CurrentScene->OnLoad({this});
 
         ConsoleMessage("A new scene has been loaded.", "NOTICE", "Game");
-    }
-
-    void Game::Update() {
-        // Run update events
-        OnUpdate({});
-
-        if (_CurrentScene != nullptr) {
-            _CurrentScene->Update();
-        }
-
-        // AudioDevice update
-        Audio::AudioDevice::Update();
     }
 }

@@ -12,6 +12,8 @@
 #include "GameApp.h"
 #if defined(PLATFORM_UWP)
 
+#include "../Audio/AudioDevice.h"
+
 namespace NerdThings::Ngine::UWP {
     ////////
     // UWPGameBootstrapper
@@ -34,39 +36,34 @@ namespace NerdThings::Ngine::UWP {
     // Public Constructor
 
     GameApp::GameApp() {
-        // Save game
+        // Store the game
         _Game = UWPGameBootstrapper::CurrentGame;
-
-        // Get dimensions
-        auto dims = _Game->GetDefaultWindowDimensions();
-
-        // Set dimensions
-        _Width = (int)dims.X;
-        _Height = (int)dims.Y;
     }
 
     // Public Methods
 
     void GameApp::Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
-        // Get ready to get activated
-        applicationView->Activated += ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &GameApp::OnActivated);
+        // Register application events
+        CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(this, &GameApp::OnSuspended);
     }
 
     void GameApp::Load(Platform::String^ entryPoint) {}
 
     void GameApp::Run() {
+        // Activate window
+        CoreWindow::GetForCurrentThread()->Activate();
+
         // Run the game.
         _Game->Run();
     }
 
     void GameApp::SetWindow(Windows::UI::Core::CoreWindow^ window) {
-        // Init
-        Window::Init();
-
-        // Navigation hack. Stops "B" from closing the game
+        // Register window events
         auto navigation = SystemNavigationManager::GetForCurrentView();
         navigation->BackRequested += ref new Windows::Foundation::EventHandler<Windows::UI::Core::BackRequestedEventArgs ^>(this, &GameApp::OnBackRequested);
     }
+
+    void GameApp::Uninitialize() { }
 
     // Protected Methods
 
@@ -74,9 +71,10 @@ namespace NerdThings::Ngine::UWP {
         args->Handled = true;
     }
 
-    void GameApp::OnActivated(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView, Windows::ApplicationModel::Activation::IActivatedEventArgs^ args) {
-        // Run() won't start until the CoreWindow is activated.
-        CoreWindow::GetForCurrentThread()->Activate();
+    void GameApp::OnSuspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
+        // Tell UWP we're done, for now we don't do anything
+        // TODO: Smarter way to do this
+        args->SuspendingOperation->GetDeferral()->Complete();
     }
 
     ////////

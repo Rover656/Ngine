@@ -27,12 +27,10 @@
 
 // Game runner
 #if defined(PLATFORM_UWP)
-#include "Platform/UWP/GameApp.h"
+#include "UWP/GameApp.h"
 #define NGINE_RUN_GAME(game) UWP::UWPGameBootstrapper::ExecuteGame(&game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
-#define NGINE_RUN_GAME_PTR(game) UWP::UWPGameBootstrapper::ExecuteGame(game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
 #else
 #define NGINE_RUN_GAME(game) game.Run();
-#define NGINE_RUN_GAME_PTR(game) game->Run();
 #endif
 
 #endif //NGINEENTRY_H

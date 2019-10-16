@@ -28,7 +28,7 @@
 
 #elif defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
-#include "Platform/UWP/GameApp.h"
+#include "UWP/GameApp.h"
 #endif
 
 #include <stdexcept>
@@ -45,6 +45,11 @@ namespace NerdThings::Ngine {
     int Window::_CurrentHeight = 0;
     int Window::_CurrentWidth = 0;
     bool Window::_Initialized = false;
+    bool Window::_IsFullscreen = false;
+    int Window::_PreFullscreenPosX = 0;
+    int Window::_PreFullscreenPosY = 0;
+    int Window::_PreFullscreenSizeWidth = 0;
+    int Window::_PreFullscreenSizeHeight = 0;
 
     // Public Fields
 
@@ -70,14 +75,7 @@ namespace NerdThings::Ngine {
 
     // Private Methods
 #if defined(PLATFORM_UWP)
-    void Window::Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
-        /*
-         * According to the UWP Lifecycle, this is called when the app is placed into the background.
-         * I reckon that because we have a constant loop running, this will only be called when the game is closed.
-         * This is used because the Run thread is immediately killed, it is not allowed to run to the end.
-         * Resuming event should not be required because of this, so we can assume that the application is closing.
-         */
-
+    /*void Window::Suspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
         // Delete loaded resources
         Filesystem::Resources::DeleteAll();
 
@@ -87,7 +85,7 @@ namespace NerdThings::Ngine {
 
         // Close window
         Window::Close();
-    }
+    }*/
 #endif
 
     void Window::ApplyConfig() {
@@ -97,9 +95,7 @@ namespace NerdThings::Ngine {
 
 #if defined(PLATFORM_DESKTOP)
         // V-Sync
-        if (Config.VSync) {
-            glfwSwapInterval(1);
-        }
+        glfwSwapInterval(Config.VSync ? 1 : 0);
 
         // Window Resize
         glfwSetWindowAttrib((GLFWwindow *)WindowPtr, GLFW_RESIZABLE, Config.Resizable ? 1 : 0);
@@ -107,7 +103,27 @@ namespace NerdThings::Ngine {
         // Window title
         glfwSetWindowTitle((GLFWwindow *)WindowPtr, Config.Title.c_str());
 
-        // TODO: Fullscreen toggling
+        // Get display info
+        auto display = glfwGetPrimaryMonitor();
+        auto vidmode = glfwGetVideoMode(display);
+
+        // Toggle fullscreen
+        if (Config.Fullscreen && !_IsFullscreen) {
+            // Save info
+            glfwGetWindowSize((GLFWwindow *)WindowPtr, &_PreFullscreenSizeWidth, &_PreFullscreenSizeHeight);
+            glfwGetWindowPos((GLFWwindow *)WindowPtr, &_PreFullscreenPosX, &_PreFullscreenPosY);
+
+            // Fullscreen
+            glfwSetWindowMonitor((GLFWwindow *)WindowPtr, display, 0, 0, vidmode->width, vidmode->height, GLFW_DONT_CARE);
+            _IsFullscreen = true;
+        } else {
+            // No fullscreen
+            if (_IsFullscreen) {
+                glfwSetWindowMonitor((GLFWwindow *)WindowPtr, nullptr, _PreFullscreenPosX, _PreFullscreenPosY, _PreFullscreenSizeWidth, _PreFullscreenSizeHeight, GLFW_DONT_CARE);
+
+                _IsFullscreen = false;
+            }
+        }
 
         // Window icon
         if (Config.Icon != nullptr && Config.Icon->Format == Graphics::UNCOMPRESSED_R8G8B8A8) {
@@ -119,9 +135,6 @@ namespace NerdThings::Ngine {
 
             glfwSetWindowIcon((GLFWwindow *)WindowPtr, 1, icon);
         }
-
-        // Window size
-        glfwSetWindowSize((GLFWwindow *)WindowPtr, Config.Width, Config.Height);
 
         // Windows Console
 #if defined(_WIN32)
@@ -157,7 +170,7 @@ namespace NerdThings::Ngine {
             // Mark as open
             _ConsoleAllocated = true;
             ConsoleMessage("Allocated a console to the game window. Output logs forwarded.", "NOTICE", "Window");
-        } else if (_ConsoleAllocated) {
+        } else if (!Config.NativeDebugConsole && _ConsoleAllocated) {
             // Close our buffers
             _ConsoleIn.close();
             _ConsoleOut.close();
@@ -180,9 +193,18 @@ namespace NerdThings::Ngine {
             ConsoleMessage("Deallocated the console from the game window. Output logs restored.", "NOTICE", "Window");
         }
 #endif
-#endif
+#elif defined(PLATFORM_UWP)
+        // V-sync
+        eglSwapInterval(Display, Config.VSync ? 1 : 0);
 
-        // TODO: Add some of the above for UWP
+        // Fullscreen
+        if (Config.Fullscreen && !_IsFullscreen) {
+            Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryEnterFullScreenMode();
+            _IsFullscreen = true;
+        } else if (!Config.Fullscreen && _IsFullscreen) {
+            Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->ExitFullScreenMode();
+        }
+#endif
     }
 
     void Window::Close() {
@@ -195,6 +217,8 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         // Destroy window
         glfwDestroyWindow((GLFWwindow*)WindowPtr);
+
+        // Disable GLFW
         glfwTerminate();
 #elif defined(PLATFORM_UWP)
         // Close surface, context and Display
@@ -277,7 +301,7 @@ namespace NerdThings::Ngine {
         // Creation
 #if defined(PLATFORM_DESKTOP)
         // Create window
-        WindowPtr = glfwCreateWindow(Config.Width, Config.Height, Config.Title.c_str(), nullptr, nullptr);
+        WindowPtr = glfwCreateWindow(Config.InitialWidth, Config.InitialHeight, Config.Title.c_str(), nullptr, nullptr);
         if (!WindowPtr) {
             glfwTerminate();
             throw std::runtime_error("Failed to create game window.");
@@ -481,7 +505,7 @@ namespace NerdThings::Ngine {
         }
 
         // UWP on suspend. This handles resource cleanup
-        CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(&Window::Suspended);
+        //CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(&Window::Suspended);
 #endif
         ConsoleMessage("Successfully created window.", "NOTICE", "Window");
 
@@ -521,6 +545,16 @@ namespace NerdThings::Ngine {
         // Query dimensions
         eglQuerySurface(Display, Surface, EGL_WIDTH, &_CurrentWidth);
         eglQuerySurface(Display, Surface, EGL_HEIGHT, &_CurrentHeight);
+#endif
+    }
+
+    void Window::Resize(int width_, int height_) {
+#if defined(PLATFORM_DESKTOP)
+        // Set size
+        glfwSetWindowSize((GLFWwindow *)WindowPtr, width_, height_);
+#elif defined(PLATFORM_UWP)
+        // Set size
+        Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryResizeView(Windows::Foundation::Size(width_, height_));
 #endif
     }
 

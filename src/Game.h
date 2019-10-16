@@ -65,6 +65,11 @@ namespace NerdThings::Ngine {
         Scene *_CurrentScene = nullptr;
 
         /*
+         * Whether or not the game has stopped.
+         */
+        bool _HasStopped = false;
+
+        /*
          * The render target used for enforcing resolution
          */
         std::shared_ptr<Graphics::RenderTarget> _RenderTarget = nullptr;
@@ -73,6 +78,18 @@ namespace NerdThings::Ngine {
          * Is the game loop running
          */
         bool _Running = false;
+
+        // Private Methods
+
+        /*
+         * Render a frame
+         */
+        void __DoDraw();
+
+        /*
+         * Run a game update
+         */
+        void __DoUpdate();
 
     public:
         // Public Fields
@@ -119,16 +136,6 @@ namespace NerdThings::Ngine {
         virtual ~Game();
 
         // Public Methods
-
-        /*
-         * Clear the game background
-         */
-        void Clear() const;
-
-        /*
-         * Draw a frame.
-         */
-        void Draw();
 
         /*
          * Get the default OS window size
@@ -181,11 +188,6 @@ namespace NerdThings::Ngine {
          * Set the current scene
          */
         void SetScene(Scene *scene_);
-
-        /*
-         * Update logic
-         */
-        void Update();
     };
 }
 

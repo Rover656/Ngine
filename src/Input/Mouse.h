@@ -17,7 +17,7 @@
 #if defined(PLATFORM_DESKTOP)
 struct GLFWwindow;
 #elif defined(PLATFORM_UWP)
-#include "../Platform/UWP/GameApp.h"
+#include "../UWP/GameApp.h"
 #endif
 
 #include "../Vector2.h"

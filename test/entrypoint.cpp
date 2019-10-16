@@ -257,6 +257,11 @@ public:
 
     void Update(EventArgs &e) {
         widg.Update();
+
+        if (Keyboard::IsKeyPressed(KEY_F11)) {
+            Window::Config.Fullscreen = !Window::Config.Fullscreen;
+            Window::ApplyConfig();
+        }
     }
 };
 
@@ -266,11 +271,12 @@ public:
 
     TestGame(const GameConfig &config_) : Game(config_) {
         OnRun.Bind(this, &TestGame::Init);
-
-        Keyboard::SetExitKey(KEY_ESCAPE);
     }
 
     void Init(EventArgs &e) {
+        // Set exit key
+        Keyboard::SetExitKey(KEY_ESCAPE);
+
         // Load all content
         Resources::LoadResources();
 
@@ -293,6 +299,10 @@ public:
         // Set scene
         SetScene(_Scene);
     }
+
+    void Uninit(EventArgs &e) {
+
+    }
 };
 
 #include <NgineEntry.h> // Entrypoint stuff
@@ -310,8 +320,8 @@ NGINE_GAME_ENTRY {
     windowConfig.Resizable = true;
     windowConfig.MSAA_4X = true;
     windowConfig.VSync = false;
-    windowConfig.Width = 1920/2;
-    windowConfig.Height = 1080/2;
+    windowConfig.InitialWidth = 1920/2;
+    windowConfig.InitialHeight = 1080/2;
     windowConfig.Title = "Test Game";
     windowConfig.Icon = icon;
     windowConfig.NativeDebugConsole = true;
