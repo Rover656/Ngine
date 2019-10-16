@@ -14,7 +14,7 @@
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
 #elif defined(PLATFORM_UWP)
-#include "../Platform/UWP/GameApp.h"
+#include "../UWP/GameApp.h"
 #endif
 
 #include "../Game.h"
