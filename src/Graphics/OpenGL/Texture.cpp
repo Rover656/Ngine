@@ -164,7 +164,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         } else
 #endif
         {
-            // By default we filter by nearest. TODO: Look at pros and cons of this
+            // By default we filter by nearest. TODO: Is this the best way??
             SetParameter(TEXPARAM_MAG_FILTER, FILTER_FUNC_NEAREST);
             SetParameter(TEXPARAM_MIN_FILTER, FILTER_FUNC_NEAREST);
         }

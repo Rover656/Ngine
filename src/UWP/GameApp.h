@@ -15,8 +15,6 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
-// TODO: Make not header only
-
 #include <Windows.h>
 #include <chrono>
 #include <memory>

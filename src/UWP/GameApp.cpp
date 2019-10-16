@@ -72,9 +72,7 @@ namespace NerdThings::Ngine::UWP {
     }
 
     void GameApp::OnSuspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
-        // Tell UWP we're done, for now we don't do anything
-        // TODO: Smarter way to do this
-        args->SuspendingOperation->GetDeferral()->Complete();
+        // Do nothing, it works fine... right?
     }
 
     ////////

@@ -223,6 +223,11 @@ namespace NerdThings::Ngine {
         static void Init();
 
         /*
+         * Determine whether or not the window is focussed on.
+         */
+        static bool IsFocussed();
+
+        /*
          * Poll window events
          */
         static void PollEvents();

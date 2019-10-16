@@ -77,7 +77,6 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         /*
          * Push an element onto the layout.
-         * TODO: Template this instead???
          */
         void Push(GLType type_, unsigned int count_, unsigned int location_);
 

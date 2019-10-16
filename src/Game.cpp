@@ -104,6 +104,12 @@ namespace NerdThings::Ngine {
         Window::Init();
         ConsoleMessage("Window has been initialized.", "NOTICE", "Game");
 
+        // Init Input
+        Input::Gamepad::Init();
+        Input::Mouse::Init();
+        Input::Keyboard::Init();
+        ConsoleMessage("Input APIs have been initialized.", "NOTICE", "Game");
+
         // Create render target
         if (Config.MaintainResolution) {
             _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
@@ -194,7 +200,7 @@ namespace NerdThings::Ngine {
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
             // Poll inputs if window is visible and if we're going to update this frame
-            if (Window::Visible() && lag >= timeStep) { // TODO: This needs to detect window that is not focussed
+            if (Window::IsFocussed() && Window::Visible() && lag >= timeStep) {
                 Input::Gamepad::PollInputs();
                 Input::Mouse::PollInputs();
                 Input::Keyboard::PollInputs();
@@ -261,7 +267,6 @@ namespace NerdThings::Ngine {
             auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
             auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
 
-            // TODO: Work out why we drop about 2 frames...
             if (frameTimeMS < timeStep) {
                 std::this_thread::sleep_for(timeStep - frameTimeMS);
             }

@@ -35,7 +35,7 @@ namespace NerdThings::Ngine::Graphics {
 
             // Load data
             int width = 0, height = 0, bpp = 0;
-            // TODO: Work out why these cause havoc with the renderer
+            // TODO: One day: Work out why these cause havoc with the renderer
             //stbi_set_flip_vertically_on_load(true);
             auto data = stbi_load_from_file(file.GetFileHandle(), &width, &height, &bpp, 4);;
             //stbi_set_flip_vertically_on_load(false);
