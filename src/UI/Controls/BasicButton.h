@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,7 +12,7 @@
 #ifndef BASICBUTTON_H
 #define BASICBUTTON_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../UIControlInteractible.h"
 #include "../UIControlSized.h"
@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::UI::Controls {
 
         // Public Constructor(s)
 
-        BasicButton(std::string buttonText_, std::shared_ptr<Graphics::TFont> font_, float fontSize_, float width_, float height_, float fontSpacing_ = 2) {
+        BasicButton(std::string buttonText_, Graphics::Font *font_, float fontSize_, float width_, float height_, float fontSpacing_ = 2) {
             // Set dimensions
             UIControlSized::SetWidth(width_);
             UIControlSized::SetHeight(height_);

@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -16,52 +16,40 @@
 namespace NerdThings::Ngine {
     // Public Fields
 
-    const TVector2 TVector2::UnitX = {1, 0};
-    const TVector2 TVector2::UnitY = {0, 1};
-    const TVector2 TVector2::Zero = {0, 0};
+    const Vector2 Vector2::UnitX = {1, 0};
+    const Vector2 Vector2::UnitY = {0, 1};
+    const Vector2 Vector2::Zero = {0, 0};
 
     // Public Fields
 
-#ifdef INCLUDE_RAYLIB
-
-    Vector2 TVector2::ToRaylibVec() const {
-        return {X, Y};
-    }
-
-    TVector2 TVector2::FromRaylibVec(const Vector2 &vec) {
-        return {vec.x, vec.y};
-    }
-
-#endif
-
-    TVector2 TVector2::Clamp(TVector2 value_, TVector2 min_, TVector2 max_) {
+    Vector2 Vector2::Clamp(Vector2 value_, Vector2 min_, Vector2 max_) {
         return {
                 std::clamp(value_.X, min_.X, max_.X),
                 std::clamp(value_.Y, min_.Y, max_.Y)
         };
     }
 
-    float TVector2::Dot(TVector2 b_) const {
+    float Vector2::Dot(Vector2 b_) const {
         return (X * b_.X) + (Y * b_.Y);
     }
 
-    float TVector2::Distance(TVector2 b_) const {
+    float Vector2::Distance(Vector2 b_) const {
         const auto xdiff = X - b_.X;
         const auto ydiff = Y - b_.Y;
 
         return sqrtf(xdiff * xdiff + ydiff * ydiff);;
     }
 
-    float TVector2::Magnitude() const {
+    float Vector2::Magnitude() const {
         return sqrtf(MagnitudeSquared());
     }
 
-    float TVector2::MagnitudeSquared() const {
+    float Vector2::MagnitudeSquared() const {
         return (X * X) + (Y * Y);
     }
 
-    struct TVector2 TVector2::Rotate(TVector2 center, float rotation_) {
-        TVector2 ret = {X, Y};
+    struct Vector2 Vector2::Rotate(Vector2 center, float rotation_) {
+        Vector2 ret = {X, Y};
 
         float s = sinf(rotation_);
         float c = cosf(rotation_);
@@ -80,7 +68,7 @@ namespace NerdThings::Ngine {
         return ret;
     }
 
-    TVector2 TVector2::Transform(TMatrix matrix_) const {
+    Vector2 Vector2::Transform(Matrix matrix_) const {
         return {
                 (X * matrix_.M0) + (Y * matrix_.M4) + matrix_.M12,
                 (X * matrix_.M1) + (Y * matrix_.M5) + matrix_.M13

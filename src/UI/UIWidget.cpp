@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::UI {
             _Panel->Draw();
     }
 
-    TVector2 UIWidget::GetPosition() {
+    Vector2 UIWidget::GetPosition() {
         return _Position;
     }
 
@@ -36,7 +36,7 @@ namespace NerdThings::Ngine::UI {
         _Panel->InternalSetParentWidget(this);
     }
 
-    void UIWidget::SetPosition(TVector2 pos_) {
+    void UIWidget::SetPosition(Vector2 pos_) {
         _Position = pos_;
     }
 

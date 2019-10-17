@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,9 +12,9 @@
 #ifndef UICONTROL_H
 #define UICONTROL_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "UIStyle.h"
 
 namespace NerdThings::Ngine::UI {
@@ -123,22 +123,22 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the render position.
          */
-        virtual TVector2 GetLogicPosition();
+        virtual Vector2 GetLogicPosition();
 
         /*
          * Get the render rectangle
          */
-        TRectangle GetLogicRectangle();
+        Rectangle GetLogicRectangle();
 
         /*
          * Get the render position.
          */
-        virtual TVector2 GetRenderPosition();
+        virtual Vector2 GetRenderPosition();
 
         /*
          * Get the render rectangle
          */
-        TRectangle GetRenderRectangle();
+        Rectangle GetRenderRectangle();
 
         /*
          * Get the current style

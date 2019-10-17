@@ -1,14 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
-*       Needs a review again after adding physics engine
 *
 **********************************************************************************************/
 
@@ -50,10 +47,10 @@ namespace NerdThings::Ngine {
     // Destructor
 
     Scene::~Scene() {
-        ConsoleMessage("Deleting entities.", "NOTICE", "SCENE");
-        for (auto ent : GetEntities()) {
-            delete ent;
-        }
+        ConsoleMessage("Deleting Scene.", "NOTICE", "SCENE");
+        CollisionMap.clear();
+        _EntityActivities.clear();
+        _EntityDepths.clear();
     }
 
     // Public Methods
@@ -97,19 +94,23 @@ namespace NerdThings::Ngine {
         }
     }
 
-    Graphics::TCamera *Scene::GetActiveCamera() const {
+    Graphics::Camera *Scene::GetActiveCamera() const {
         return _ActiveCamera;
     }
 
-    TRectangle Scene::GetCullArea() const {
+    Rectangle Scene::GetCullArea() const {
         auto cam = GetActiveCamera();
+
+        if (cam == nullptr) {
+            return {0, 0, 0, 0};
+        }
 
         if (_CullAreaCenter)
             return {
-                cam->Target.X - _CullAreaWidth * 0.5f, cam->Target.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,
+                cam->Position.X - _CullAreaWidth * 0.5f, cam->Position.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,
                 _CullAreaHeight
             };
-        return {cam->Target.X - cam->Origin.X, cam->Target.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
+        return {cam->Position.X - cam->Origin.X, cam->Position.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
     }
 
     Game *Scene::GetParentGame() {
@@ -146,7 +147,7 @@ namespace NerdThings::Ngine {
         _Paused = false;
     }
 
-    void Scene::SetActiveCamera(Graphics::TCamera *camera_) {
+    void Scene::SetActiveCamera(Graphics::Camera *camera_) {
         _ActiveCamera = camera_;
     }
 
@@ -162,7 +163,7 @@ namespace NerdThings::Ngine {
             return;
         }
 
-        auto fps = _ParentGame->GetUpdateFPS();
+        auto fps = _ParentGame->GetTargetFPS();
 
         _UpdateCounter++;
 
@@ -177,11 +178,7 @@ namespace NerdThings::Ngine {
                         auto area = GetCullArea();
                         if (_EntityActivities.find(ent) == _EntityActivities.end())
                             _EntityActivities.insert({ent, true});
-                        if (!ent->CheckForCulling(area)) {
-                            _EntityActivities[ent] = true;
-                        } else {
-                            _EntityActivities[ent] = false;
-                        }
+                        _EntityActivities[ent] = !ent->CheckForCulling(area);
                     }
                 }
             }
@@ -191,7 +188,7 @@ namespace NerdThings::Ngine {
             _UpdateCounter -= fps;
 
         // Invoke updates
-        OnUpdate({});
-        OnPersistentUpdate({});
+        OnUpdate();
+        OnPersistentUpdate();
     }
 }

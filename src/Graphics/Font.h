@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,17 +12,20 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Rectangle.h"
-#include "Vector2.h"
+#include "../Filesystem/Filesystem.h"
+#include "../Rectangle.h"
+#include "../Resource.h"
+#include "../Vector2.h"
+#include "Image.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
      * Character information
      */
-    struct NEAPI TCharInfo {
+    struct NEAPI CharInfo {
         // Public Fields
 
         /*
@@ -33,7 +36,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Sprite font source rectangle
          */
-        TRectangle Rectangle;
+        Ngine::Rectangle Rectangle;
 
         /*
          * Character X offset for drawing
@@ -53,152 +56,106 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Greyscale pixel data
          */
-        unsigned char *Data;
+        std::shared_ptr<Graphics::Image> Image;
 
         // Public Constructor
 
-        TCharInfo()
+        CharInfo()
             : Character(0),
               OffsetX(0),
               OffsetY(0),
-              AdvanceX(0),
-              Data(nullptr) {}
-
-        // Public Methods
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib charinfo
-         */
-        CharInfo ToRaylibInfo() const;
-
-        /*
-         * Convert from raylib charinfo
-         */
-        static TCharInfo FromRaylibInfo(const CharInfo &info_);
-
-        #endif
+              AdvanceX(0) {}
     };
 
     /*
      * A font
      */
-    struct NEAPI TFont {
-    private:
+    struct NEAPI Font : public IResource {
+        // Public Fields
+
         /*
          * The default font
          */
-        static std::shared_ptr<TFont> _DefaultFont;
-    public:
-
-        // Public Fields
+        static Font *DefaultFont;
 
         /*
          * Font texture
          */
-        std::shared_ptr<TTexture2D> Texture;
+        std::shared_ptr<Texture2D> Texture;
 
         /*
          * Base size (default char height)
          */
-        int BaseSize;
+        int BaseSize = 0;
 
         /*
          * Character count
          */
-        int CharacterCount;
+        int CharacterCount = 0;
 
         /*
          * Character data
          */
-        TCharInfo *Characters;
+        std::vector<CharInfo> Characters;
 
         // Public Constructor(s)
 
         /*
          * Create a null font
          */
-        TFont()
-            : BaseSize(0), CharacterCount(0), Characters(nullptr) {}
-
-        /*
-         * Move a font
-         */
-        TFont(TFont &&font_) noexcept;
-
-        /*
-         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
-         */
-        TFont(const TFont &font_) = default;
+        Font();
 
         // Destructor
 
-        virtual ~TFont();
+        virtual ~Font();
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
+        /*
+         * Get the default font
+         */
+        static Font *GetDefaultFont();
 
         /*
-         * Convert to raylib font
+         * Get a character glyph index
          */
-        Font ToRaylibFont() const;
+        int GetGlyphIndex(int char_) const;
 
         /*
-         * Convert from raylib font
+         * Get the font texture
          */
-        static std::shared_ptr<TFont> FromRaylibFont(const Font &font_);
-
-        #endif
+        Texture2D *GetTexture() const;
 
         /*
-         * Get the default font (Supplied by raylib)
+         * Whether or not the font is valid.
          */
-        static std::shared_ptr<TFont> GetDefaultFont();
+        bool IsValid() const override;
 
         /*
-         * Load a font
+         * Load a true type font with specified characters
          */
-        static std::shared_ptr<TFont> LoadFont(const std::string &filename_);
+        static Font *LoadTTFFont(const Filesystem::Path &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
 
         /*
          * Measure the dimensions of a string
          */
-        [[nodiscard]] TVector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
-
-        // Operators
+        Vector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
 
         /*
-         * Move a font
+         * Set the default font
          */
-        TFont &operator=(TFont &&font_) noexcept {
-            Texture = std::move(font_.Texture);
-            BaseSize = font_.BaseSize;
-            CharacterCount = font_.CharacterCount;
-            Characters = font_.Characters;
-
-            font_.Texture = std::shared_ptr<TTexture2D>(nullptr);
-            font_.BaseSize = 0;
-            font_.CharacterCount = 0;
-            font_.Characters = nullptr;
-
-            return *this;
-        }
+        static void SetDefaultFont(Font *font_);
 
         /*
-         * Copy a font (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
+         * Unload the font
          */
-        TFont &operator=(const TFont &font_) = default;
-
+        void Unload() override;
     private:
-        // Private Constructor(s)
+        // Private Methods
 
-        TFont(std::shared_ptr<TTexture2D> tex_, int baseSize_, int charCount_, TCharInfo *chars_)
-            : BaseSize(baseSize_), CharacterCount(charCount_), Characters(chars_) {
-            Texture = tex_;
-        }
+        void __GenerateAtlas();
+
+        void __LoadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_);
     };
 }
 

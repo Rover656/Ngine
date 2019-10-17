@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -14,8 +14,8 @@
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
-    bool TBoundingBox::IsCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
+    bool BoundingBox::IsCompatible(ICollisionShape *shape_) {
+        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
 
         // Bounding Box 2D against Bounding Box 2D
         if (boundingBox2D != nullptr)
@@ -26,10 +26,10 @@ namespace NerdThings::Ngine::Physics {
         return false;
     }
 
-    bool TBoundingBox::RunCollisionCheck(ICollisionShape *shape_) {
+    bool BoundingBox::RunCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
-        auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
+        auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
 
         // Bounding Box 2D against Bounding Box 2D
         auto myAABB = ToB2Shape();
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Physics {
 
 #ifdef INCLUDE_BOX2D
 
-    b2PolygonShape TBoundingBox::ToB2Shape() {
+    b2PolygonShape BoundingBox::ToB2Shape() {
         b2PolygonShape tmpShape;
         b2Vec2 vertices[4];
 

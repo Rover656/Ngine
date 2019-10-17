@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,16 +12,56 @@
 #ifndef UIPANEL_H
 #define UIPANEL_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "../Graphics/RenderTarget.h"
 #include "../Graphics/GraphicsManager.h"
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "UIControl.h"
 #include "UIControlSized.h"
 
 namespace NerdThings::Ngine::UI {
     class NEAPI UIWidget;
+
+    /*
+     * Horizontal alignment enum
+     */
+    enum EHorizontalAlignment {
+        /*
+         * Align elements with the left side
+         */
+        ALIGN_LEFT = 0,
+
+        /*
+         * Align elements with the middle
+         */
+        ALIGN_CENTER,
+
+        /*
+         * Align elements with the right side
+         */
+        ALIGN_RIGHT
+    };
+
+    /*
+     * Vertical alignment enum
+     */
+    enum EVerticalAlignment {
+        /*
+         * Align elements with top
+         */
+        ALIGN_TOP = 0,
+
+        /*
+         * Align elements with middle
+         */
+        ALIGN_MIDDLE,
+
+        /*
+         * Align elements with bottom
+         */
+        ALIGN_BOTTOM
+    };
 
     /*
      * A UI Panel base, contains entities
@@ -37,7 +77,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * The panel render target
          */
-        std::shared_ptr<Graphics::TRenderTarget> _RenderTarget = nullptr;
+        std::shared_ptr<Graphics::RenderTarget> _RenderTarget;
     public:
 
         // Destructor
@@ -84,12 +124,12 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the panel on screen
          */
-        TVector2 GetLogicPosition();
+        Vector2 GetLogicPosition();
 
         /*
          * Gets the panel position relative to the render target (0, 0)
          */
-        TVector2 GetRenderPosition() override;
+        Vector2 GetRenderPosition() override;
 
         /*
          * Set the parent widget.

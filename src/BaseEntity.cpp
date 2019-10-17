@@ -1,13 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -28,7 +26,7 @@ namespace NerdThings::Ngine {
 
     // Public Constructor(s)
 
-    BaseEntity::BaseEntity(Scene *parentScene_, const TVector2 position_, int depth_, bool canCull_)
+    BaseEntity::BaseEntity(Scene *parentScene_, const Vector2 position_, int depth_, bool canCull_)
         : _CanCull(canCull_), _Depth(depth_), _ParentScene(parentScene_), _Position(position_) {
         if (parentScene_ == nullptr)
             throw std::runtime_error("Cannot give an entity a null parent scene.");
@@ -40,28 +38,30 @@ namespace NerdThings::Ngine {
     // Destructor
 
     BaseEntity::~BaseEntity() {
-        // Delete all components
-        ConsoleMessage("Deleting components and removing update subscription.", "NOTICE", "BASEENTITY");
-        for (auto comp : _Components) {
-            delete comp.second;
-        }
-
         // Unbind all events
         UnsubscribeFromUpdate();
     }
 
     // Public Methods
 
-    bool BaseEntity::CheckForCulling(TRectangle cullArea_) {
+    bool BaseEntity::CheckForCulling(Rectangle cullArea_) {
         return !cullArea_.Contains(GetPosition());
     }
 
     void BaseEntity::Destroy() {
+        // Detach all events
+        OnDraw.Clear();
+        OnTransformChanged.Clear();
+        OnUpdate.Clear();
+
+        // Detach components
+        _Components.clear();
+
+        // Unsubscribe from update
+        UnsubscribeFromUpdate();
+
         // Remove from our parent
         GetParentContainer()->RemoveEntity(this);
-
-        // Delete ourselves. THIS IS DANGEROUS, NO CALLS MUST BE MADE ANYMORE
-        delete this;
     }
 
     void BaseEntity::Draw() {
@@ -76,8 +76,8 @@ namespace NerdThings::Ngine {
     std::vector<Component *> BaseEntity::GetComponents() {
         std::vector<Component*> vec;
 
-        for (auto it = _Components.begin(); it != _Components.end(); ++it) {
-            vec.push_back(it->second);
+        for (auto & _Component : _Components) {
+            vec.push_back(_Component.second.get());
         }
 
         return vec;
@@ -87,7 +87,7 @@ namespace NerdThings::Ngine {
         return _Depth;
     }
 
-    TVector2 BaseEntity::GetOrigin() const {
+    Vector2 BaseEntity::GetOrigin() const {
         return _Origin;
     }
 
@@ -111,7 +111,7 @@ namespace NerdThings::Ngine {
         return _PersistentUpdates;
     }
 
-    TVector2 BaseEntity::GetPosition() const {
+    Vector2 BaseEntity::GetPosition() const {
         return _Position;
     }
 
@@ -127,7 +127,7 @@ namespace NerdThings::Ngine {
         return _Components.find(name_) != _Components.end();
     }
 
-    void BaseEntity::MoveBy(const TVector2 moveBy_) {
+    void BaseEntity::MoveBy(const Vector2 moveBy_) {
         _Position += moveBy_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
@@ -155,18 +155,18 @@ namespace NerdThings::Ngine {
         _Depth = depth_;
     }
 
-    void BaseEntity::SetOrigin(TVector2 origin_) {
+    void BaseEntity::SetOrigin(Vector2 origin_) {
         _Origin = origin_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
 
     void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
-        if (_OnUpdateRef.ID > 0)
+        if (_OnUpdateRef.IsValid())
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
         _PersistentUpdates = persistentUpdates_;
     }
 
-    void BaseEntity::SetPosition(const TVector2 position_) {
+    void BaseEntity::SetPosition(const Vector2 position_) {
         _Position = position_;
         OnTransformChanged({_Origin, _Position, _Rotation, 1});
     }
@@ -183,7 +183,7 @@ namespace NerdThings::Ngine {
 
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
-            if (_OnUpdateRef.ID < 0) {
+            if (!_OnUpdateRef.IsValid()) {
                 if (_PersistentUpdates) _OnUpdateRef = _ParentScene->OnPersistentUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 else _OnUpdateRef = _ParentScene->OnUpdate.Bind<BaseEntity>(this, &BaseEntity::Update);
                 return true;
@@ -201,6 +201,6 @@ namespace NerdThings::Ngine {
 
     void BaseEntity::Update(EventArgs &e) {
         // Trigger update
-        OnUpdate({});
+        OnUpdate();
     }
 }

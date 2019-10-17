@@ -1,13 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
@@ -16,13 +14,20 @@
 #include "BaseEntity.h"
 
 namespace NerdThings::Ngine {
+    // Destructor
+
+    EntityContainer::~EntityContainer() {
+        // Clear
+        _Entities.clear();
+    }
+
     // Public Methods
 
     std::vector<BaseEntity *> EntityContainer::GetEntities() {
         std::vector<BaseEntity*> vec;
 
         for (auto it = _Entities.begin(); it != _Entities.end(); ++it) {
-            vec.push_back(it->second);
+            vec.push_back(it->second.get());
         }
 
         return vec;
@@ -56,7 +61,7 @@ namespace NerdThings::Ngine {
     bool EntityContainer::RemoveEntity(BaseEntity *entity_) {
         // Search for the entity
         for (const auto& ent : _Entities) {
-            if (ent.second == entity_) {
+            if (ent.second.get() == entity_) {
                 return RemoveEntity(ent.first);;
             }
         }

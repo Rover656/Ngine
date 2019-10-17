@@ -1,23 +1,21 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef BASECOLLISIONSHAPECOMPONENT_H
 #define BASECOLLISIONSHAPECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "BaseEntity.h"
-#include "Component.h"
+#include "../BaseEntity.h"
+#include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
     /*
@@ -67,7 +65,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Offset shape
          */
-        virtual void Offset(TVector2 offset_) = 0;
+        virtual void Offset(Vector2 offset_) = 0;
 
         /*
          * Update shape information
@@ -82,10 +80,12 @@ namespace NerdThings::Ngine::Components {
             // Remove from collision map
             auto scene = GetParent<BaseEntity>()->GetParentScene();
 
-            for (auto cVec : scene->CollisionMap) {
-                for (auto ent : cVec.second) {
-                    if (ent == GetParent<BaseEntity>()) {
-                        scene->CollisionMap[cVec.first].erase(std::remove(scene->CollisionMap[cVec.first].begin(), scene->CollisionMap[cVec.first].end(), ent), scene->CollisionMap[cVec.first].end());
+            if (!scene->CollisionMap.empty()) {
+                for (auto it = scene->CollisionMap.begin(); it != scene->CollisionMap.end(); it++) {
+                    for (auto i = 0; i < it->second.size(); i++) {
+                        if (it->second[i] == GetParent<BaseEntity>()) {
+                            scene->CollisionMap[it->first].erase(std::remove(scene->CollisionMap[it->first].begin(), scene->CollisionMap[it->first].end(), it->second[i]), scene->CollisionMap[it->first].end());
+                        }
                     }
                 }
             }
@@ -119,7 +119,7 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision at a position
          */
         template <typename EntityType>
-        bool CheckCollisionAt(TVector2 position_) {
+        bool CheckCollisionAt(Vector2 position_) {
             auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
@@ -177,7 +177,7 @@ namespace NerdThings::Ngine::Components {
          * Check for a collision with a collision group at a position
          * Component must have the collision group to work
          */
-        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, TVector2 position_) {
+        bool CheckCollisionFromAt(std::vector<Physics::ICollisionShape *> shapes, Vector2 position_) {
             auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
@@ -214,7 +214,7 @@ namespace NerdThings::Ngine::Components {
          * Component must have the collision group to work
          */
         template <typename EntityType>
-        bool CheckCollisionWithAt(const std::string &collisionGroup_, TVector2 position_) {
+        bool CheckCollisionWithAt(const std::string &collisionGroup_, Vector2 position_) {
             auto curPos = GetParent<BaseEntity>()->GetPosition();
             auto diff = position_ - curPos;
 
@@ -316,9 +316,9 @@ namespace NerdThings::Ngine::Components {
          * Create a base collision shape component.
          */
         BaseCollisionShapeComponent(BaseEntity *parent_, std::string collisionGroup_ = "General")
-            : Component(parent_) {
+                : Component(parent_) {
             _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged.Bind(
-                this, &BaseCollisionShapeComponent::UpdateShape);
+                    this, &BaseCollisionShapeComponent::UpdateShape);
 
             AddCollisionGroup(std::move(collisionGroup_));
         }

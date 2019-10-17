@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,17 +12,47 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Graphics/Color.h"
-#include "Graphics/Drawing.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/RenderTarget.h"
-#include "Resources.h"
-#include "Vector2.h"
+#include "Filesystem/Resources.h"
 #include "EventHandler.h"
 #include "Scene.h"
+#include "Window.h"
+#include "Vector2.h"
 
 namespace NerdThings::Ngine {
+    struct GameConfig {
+        // Public Fields
+
+        /*
+         * Number of times to draw every second
+         */
+        int FPS = 60;
+
+        /*
+         * Target game height
+         */
+        int TargetHeight;
+
+        /*
+         * Maintain game virtual resolution
+         */
+        bool MaintainResolution = false;
+
+        /*
+         * Run the game while not visible.
+         */
+        bool RunWhileHidden = true;
+
+        /*
+         * Target game width
+         */
+        int TargetWidth = 0;
+    };
+
     /*
      * The main container of the game
      */
@@ -30,44 +60,36 @@ namespace NerdThings::Ngine {
         // Private Fields
 
         /*
-         * The game config (stored)
-         */
-        int _Config;
-
-        /*
          * The currently loaded scene
          */
         Scene *_CurrentScene = nullptr;
 
         /*
-         * The target draw FPS
+         * Whether or not the game has stopped.
          */
-        int _DrawFPS = 0;
-
-        /*
-         * The intended game height
-         */
-        int _IntendedHeight = 0;
-
-        /*
-         * The intended game width
-         */
-        int _IntendedWidth = 0;
+        bool _HasStopped = false;
 
         /*
          * The render target used for enforcing resolution
          */
-        std::shared_ptr<Graphics::TRenderTarget> _RenderTarget;
+        std::shared_ptr<Graphics::RenderTarget> _RenderTarget = nullptr;
 
         /*
          * Is the game loop running
          */
         bool _Running = false;
 
+        // Private Methods
+
         /*
-         * The target update FPS
+         * Render a frame
          */
-        int _UpdateFPS = 0;
+        void __DoDraw();
+
+        /*
+         * Run a game update
+         */
+        void __DoUpdate();
 
     public:
         // Public Fields
@@ -75,7 +97,12 @@ namespace NerdThings::Ngine {
         /*
          * Background clear color
          */
-        Graphics::TColor ClearColor = Graphics::TColor::Black;
+        Graphics::Color ClearColor = Graphics::Color::Black;
+
+        /*
+         * Game config
+         */
+        GameConfig Config;
 
         /*
          * On update event
@@ -95,57 +122,40 @@ namespace NerdThings::Ngine {
         /*
          * Filter mode for scaling render target
          */
-        ETextureFilterMode RenderTargetFilterMode = FILTER_BILINEAR;
+        Graphics::TextureFilterMode RenderTargetFilterMode = Graphics::FILTER_BILINEAR;
 
         // Public Constructor(s)
 
         /*
          * Create a new Game
          */
-        Game(int width_, int height_, int FPS_, const std::string &title_, int config_ = NONE);
-
-        /*
-         * Create a new Game (Extra FPS options)
-         */
-        Game(int width_, int height_, int drawFPS_, int updateFPS_, const std::string &title_, int config_ = NONE);
-
-        /*
-         * Create a new Game (Advanced)
-         */
-        Game(int windowWidth_, int windowHeight_, int targetWidth_, int targetHeight_, int drawFPS_, int updateFPS_,
-             const std::string &title_, int config_ = NONE);
+        Game(const GameConfig &config_);
 
         // Destructor
 
-        virtual ~Game() = default;
+        virtual ~Game();
 
         // Public Methods
 
         /*
-         * Draw a frame.
+         * Get the default OS window size
          */
-        void Draw();
-
-        /*
-         * Get the target FPS.
-         * If using advanced game will return update FPS
-         */
-        [[nodiscard]] int GetFPS() const;
+        Vector2 GetDefaultWindowDimensions() const;
 
         /*
          * Get game dimensions
          */
-        TVector2 GetDimensions() const;
+        Vector2 GetDimensions() const;
 
         /*
          * Get the target draw FPS.
          */
-        [[nodiscard]] int GetDrawFPS() const;
+        int GetTargetFPS() const;
 
         /*
-         * Get the target update FPS.
+         * Is the game running
          */
-        [[nodiscard]] int GetUpdateFPS() const;
+        bool IsRunning();
 
         /*
          * Quit the game
@@ -153,7 +163,7 @@ namespace NerdThings::Ngine {
         void Quit();
 
         /*
-         * Start the game loop
+         * Start the game loop.
          */
         void Run();
 
@@ -164,38 +174,20 @@ namespace NerdThings::Ngine {
         void SetFPS(int FPS_);
 
         /*
-         * Set the target draw FPS
-         */
-        void SetDrawFPS(int FPS_);
-
-        /*
          * Set the intended game size.
          * Resizes the framebuffer next frame.
          */
-        void SetIntendedSize(TVector2 size_);
+        void SetIntendedSize(Vector2 size_);
+
+        /*
+         * Set whether or not the game is running
+         */
+        void SetIsRunning(bool running_);
 
         /*
          * Set the current scene
          */
         void SetScene(Scene *scene_);
-
-        /*
-         * Set the target update FPS
-         */
-        void SetUpdateFPS(int FPS_);
-
-        /*
-         * Update logic
-         */
-        void Update();
-
-    protected:
-        // Protected Methods
-
-        /*
-         * Clear the game background
-         */
-        void Clear() const;
     };
 }
 

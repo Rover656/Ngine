@@ -1,25 +1,23 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef CIRCLECOLLISIONSHAPECOMPONENT_H
 #define CIRCLECOLLISIONSHAPECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "../Graphics/Drawing.h"
+#include "Graphics/Renderer.h"
 #include "../Physics/BoundingBox.h"
 #include "../Physics/Circle.h"
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "BaseCollisionShapeComponent.h"
 #include "BoundingBoxCollisionShapeComponent.h"
 
@@ -33,7 +31,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * The circle used
          */
-        Physics::TCircle _Circle;
+        Physics::Circle _Circle;
 
         /*
          * The circle radius
@@ -68,12 +66,12 @@ namespace NerdThings::Ngine::Components {
             auto par = GetParent<BaseEntity>();
 
             // Determine color
-            auto col = Graphics::TColor::Red;
+            auto col = Graphics::Color::Red;
             if (CheckCollision<BaseEntity>())
-                col = Graphics::TColor::Green;
+                col = Graphics::Color::Green;
 
             // Draw the circle outline
-            Graphics::Drawing::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
+            Graphics::Renderer::DrawCircleLines(_Circle.Center, _Circle.Radius, col);
         }
 
         bool IsCompatible(BaseCollisionShapeComponent *b) override {
@@ -88,16 +86,16 @@ namespace NerdThings::Ngine::Components {
             return false;
         }
 
-        void Offset(TVector2 offset_) override {
+        void Offset(Vector2 offset_) override {
             const auto par = GetParent<BaseEntity>();
 
             // Rebuild with offset
-            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             const auto par = GetParent<BaseEntity>();
-            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
 
     public:
@@ -113,14 +111,14 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        Physics::TCircle GetCircle() const {
+        Physics::Circle GetCircle() const {
             return _Circle;
         }
 
         void SetRadius(float radius_) {
             const auto par = GetParent<BaseEntity>();
             _Radius = radius_;
-            _Circle = Physics::TCircle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius);
         }
     };
 }

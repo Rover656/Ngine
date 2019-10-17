@@ -1,20 +1,18 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef ENTITYCONTAINER_H
 #define ENTITYCONTAINER_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 namespace NerdThings::Ngine {
     // We do this forward declaration instead of include because BaseEntity uses this.
@@ -36,7 +34,7 @@ namespace NerdThings::Ngine {
          * All of the entities in the scene.
          * Every entity has a name.
          */
-        std::map<std::string, BaseEntity*> _Entities;
+        std::map<std::string, std::unique_ptr<BaseEntity>> _Entities;
 
         // Private Methods
 
@@ -50,6 +48,10 @@ namespace NerdThings::Ngine {
          */
         virtual void SetEntityParent(BaseEntity *ent_) = 0;
     public:
+        // Destructors
+
+        ~EntityContainer();
+
         // Public Methods
 
         /*
@@ -64,7 +66,7 @@ namespace NerdThings::Ngine {
 
             if (ent != nullptr) {
                 std::string name = "Unique" + std::to_string(_Counter);
-                _Entities.insert({name, ent});
+                _Entities.insert({name, std::unique_ptr<BaseEntity>(ent)});
                 _Counter++;
 
                 // Set parent
@@ -90,7 +92,7 @@ namespace NerdThings::Ngine {
             auto ent = dynamic_cast<BaseEntity*>(entity_);
 
             if (ent != nullptr) {
-                _Entities.insert({name_, ent});
+                _Entities.insert({name_, std::unique_ptr<BaseEntity>(ent)});
 
                 // Set parent
                 SetEntityParent(ent);
@@ -107,8 +109,8 @@ namespace NerdThings::Ngine {
         template <typename EntityType>
         int CountEntitiesOfType() {
             int c = 0;
-            for (auto e : _Entities) {
-                if (dynamic_cast<EntityType*>(e.second) != nullptr) c++;
+            for (auto e : GetEntities()) {
+                if (dynamic_cast<EntityType*>(e) != nullptr) c++;
             }
             return c;
         }
@@ -124,8 +126,8 @@ namespace NerdThings::Ngine {
         template <typename EntityType>
         std::vector<EntityType*> GetEntitiesByType() {
             std::vector<EntityType*> ents;
-            for (auto e : _Entities) {
-                auto t = dynamic_cast<EntityType*>(e.second);
+            for (auto e : GetEntities()) {
+                auto t = dynamic_cast<EntityType*>(e);
                 if (t != nullptr) ents.push_back(t);
             }
             return ents;
@@ -138,7 +140,7 @@ namespace NerdThings::Ngine {
         EntityType *GetEntity(const std::string &name_) {
             // Try to find the entity
             if (HasEntity(name_)) {
-                return dynamic_cast<EntityType*>(_Entities.at(name_)); // Will return null if its the wrong type
+                return dynamic_cast<EntityType*>(_Entities.at(name_).get()); // Will return null if its the wrong type
             }
 
             return nullptr;

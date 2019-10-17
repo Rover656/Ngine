@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,133 +12,175 @@
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
+
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#include "OpenGL/Texture.h"
+#endif
+
+#include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
+#include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
+     * Texture filter mode
+     */
+    enum TextureFilterMode {
+        /*
+         * No filter, just approximation
+         */
+        FILTER_POINT = 0,
+
+        /*
+         * Linear filtering
+         */
+        FILTER_BILINEAR,
+
+        /*
+         * Trilinear filtering (with mipmaps)
+         */
+        FILTER_TRILINEAR,
+
+        /*
+         * Anisotropic filtering 4x
+         */
+        FILTER_ANISOTROPIC_4X,
+
+        /*
+         * Anisotropic filtering 8x
+         */
+        FILTER_ANISOTROPIC_8X,
+
+        /*
+         * Anisotropic filtering 16x
+         */
+        FILTER_ANISOTROPIC_16X
+    };
+
+    /*
+     * Texture wrap mode
+     */
+    enum TextureWrapMode {
+        /*
+         * Repeats texture
+         */
+        WRAP_REPEAT = 0,
+
+        /*
+         * Clamps texture to edge pixel
+         */
+        WRAP_CLAMP,
+
+        /*
+         * Mirrors and repeats the texture
+         */
+        WRAP_MIRROR_REPEAT,
+
+        /*
+         * Mirrors and clamps to the border
+         */
+        WRAP_MIRROR_CLAMP
+    };
+
+    /*
      * A 2D Texture stored in the GPU memory
      */
-    struct NEAPI TTexture2D {
+    struct NEAPI Texture2D : public IResource {
         // Public Fields
-
-        /*
-         * OpenGL Texture ID
-         */
-        unsigned int ID;
-
-        /*
-         * Texture width
-         */
-        int Width;
 
         /*
          * Texture Height
          */
-        int Height;
+        unsigned int Height = 0;
 
         /*
-         * Mipmap levels
+         * Internal texture (Graphics API dependant)
          */
-        int Mipmaps;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        std::shared_ptr<OpenGL::GLTexture> InternalTexture = nullptr;
+#endif
 
         /*
-         * Data format
+         * Texture width
          */
-        int Format;
+        unsigned int Width = 0;
 
         // Public Constructor(s)
 
         /*
          * Create a null texture
          */
-        TTexture2D()
-            : ID(0), Width(0), Height(0), Mipmaps(1), Format(0) {}
+        Texture2D();
 
         /*
-         * Move a texture
+         * Create a texture from raw pixel data.
          */
-        TTexture2D(TTexture2D &&tex_) noexcept;
+        Texture2D(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
-         * Copy a texture (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
+         * Load a texture file.
          */
-        TTexture2D(const TTexture2D &tex_) = default;
+        Texture2D(const Filesystem::Path &path_);
 
-        // Destructor
-
-        ~TTexture2D();
+        /*
+         * Create a texture from an image.
+         */
+        Texture2D(const std::shared_ptr<Image> &img_);
 
         // Public Methods
-        #ifdef INCLUDE_RAYLIB
 
         /*
-         * Convert to raylib texture
+         * Create a texture from an image.
          */
-        [[nodiscard]] Texture2D ToRaylibTex() const;
+        static std::shared_ptr<Texture2D> FromImage(const std::shared_ptr<Image> &img_);
 
         /*
-         * Convert from raylib texture
+         * Get the number of mipmaps this texture has
          */
-        static std::shared_ptr<TTexture2D> FromRaylibTex(Texture2D tex_);
-
-        #endif
+        int GetMipmapCount() const;
 
         /*
-         * Generate texture mipmaps
+         * Is the texture valid and ready for use
          */
-        void GenerateMipmaps() const;
+        bool IsValid() const override;
 
-        // TODO: Add LoadTexture pixel data support
-        //static TTexture2D LoadPixels()
+        /*
+         * Load a texture from pixel data.
+         * This expects 8 bits for R, G, B and A.
+         */
+        static Texture2D *LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /*
          * Load a texture and get a pointer
          */
-        static std::shared_ptr<TTexture2D> LoadTexture(const std::string &filename_);
-
-        // Operators
-
-        /*
-         * Move a texture
-         */
-        TTexture2D &operator=(TTexture2D &&tex_) noexcept {
-            ID = tex_.ID;
-            Width = tex_.Width;
-            Height = tex_.Height;
-            Mipmaps = tex_.Mipmaps;
-            Format = tex_.Format;
-
-            tex_.ID = 0;
-            tex_.Width = 0;
-            tex_.Height = 0;
-            tex_.Mipmaps = 0;
-            tex_.Format = 0;
-
-            return *this;
-        }
+        static Texture2D *LoadTexture(const Filesystem::Path &path_);
 
         /*
          * Set the texture filter mode
          */
-        void SetTextureFilter(ETextureFilterMode filterMode_) const;
+        void SetTextureFilter(TextureFilterMode filterMode_) const;
 
         /*
          * Set the texture wrap mode
          */
-        void SetTextureWrap(ETextureWrapMode wrapMode_) const;
+        void SetTextureWrap(TextureWrapMode wrapMode_) const;
 
         /*
-         * Copy a texture (Reference, if one is deleted, both will stop working correctly.)
-         * Use with caution.
+         * Unload the texture
          */
-        TTexture2D &operator=(const TTexture2D &tex_) = default;
+        void Unload() override;
 
-    private:
-        // Private Constructor(s)
+        // Operators
 
-        TTexture2D(unsigned int id_, int width_, int height_, int mipmaps_, int format_)
-            : ID(id_), Width(width_), Height(height_), Mipmaps(mipmaps_), Format(format_) {}
+        bool operator==(const Texture2D &tex_) const;
+
+        bool operator!=(const Texture2D &tex_) const;
+
+        /*
+         * Copy a texture
+         */
+        Texture2D &operator=(const Texture2D &tex_) = default;
     };
 }
 

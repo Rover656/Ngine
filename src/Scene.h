@@ -1,28 +1,44 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef BASESCENE_H
 #define BASESCENE_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Rectangle.h"
 #include "Graphics/Camera.h"
-#include "EventArgs.h"
 #include "EntityContainer.h"
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine {
+    class NEAPI Game;
+
+    /*
+     * Scene loaded event args.
+     */
+    struct SceneLoadEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The game that the scene has been loaded into
+         */
+        Game *ParentGame;
+
+        // Public Constructor(s)
+
+        SceneLoadEventArgs(Game *game_)
+                : ParentGame(game_) {}
+    };
+
     /*
      * A container for entities
      */
@@ -32,7 +48,7 @@ namespace NerdThings::Ngine {
         /*
          * Currently active camera
          */
-        Graphics::TCamera *_ActiveCamera = nullptr;
+        Graphics::Camera *_ActiveCamera = nullptr;
 
         /*
          * Whether or not the cull area centers around
@@ -141,12 +157,12 @@ namespace NerdThings::Ngine {
         /*
          * Get the currently active camera
          */
-        [[nodiscard]] Graphics::TCamera *GetActiveCamera() const;
+        [[nodiscard]] Graphics::Camera *GetActiveCamera() const;
 
         /*
          * Get the culling area
          */
-        TRectangle GetCullArea() const;
+        Rectangle GetCullArea() const;
 
         /*
          * Get the parent game
@@ -181,7 +197,7 @@ namespace NerdThings::Ngine {
         /*
          * Set the currently active camera
          */
-        void SetActiveCamera(Graphics::TCamera *camera_);
+        void SetActiveCamera(Graphics::Camera *camera_);
 
         /*
          * Set the entity culling area

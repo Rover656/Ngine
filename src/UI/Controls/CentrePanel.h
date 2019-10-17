@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -13,7 +13,7 @@
 #ifndef CENTREPANEL_H
 #define CENTREPANEL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../UIPanel.h"
 

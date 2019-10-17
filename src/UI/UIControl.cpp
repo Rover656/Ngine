@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -11,7 +11,7 @@
 
 #include "UIControl.h"
 
-#include "../Graphics/Drawing.h"
+#include "../Graphics/Renderer.h"
 #include "UIPanel.h"
 
 namespace NerdThings::Ngine::UI {
@@ -22,9 +22,11 @@ namespace NerdThings::Ngine::UI {
     // Destructor
 
     UIControl::~UIControl() {
-        for (auto child : _Children) {
-            delete child.second;
+        for (auto child : _ChildrenOrdered) {
+            delete child;
         }
+        _Children.clear();
+        _ChildrenOrdered.clear();
     }
 
     // Public Method(s)
@@ -52,8 +54,8 @@ namespace NerdThings::Ngine::UI {
     void UIControl::DrawChildren() {
         // Draw children
 
-        for (auto pair : _Children) {
-            pair.second->Draw();
+        for (auto child : _ChildrenOrdered) {
+            child->Draw();
         }
     }
 
@@ -69,8 +71,8 @@ namespace NerdThings::Ngine::UI {
         // Draw geometry
         if (style.DrawDefaults) {
             // Background
-            if (style.BackgroundTexture != nullptr)
-                Graphics::Drawing::DrawTexture(style.BackgroundTexture,
+            if (style.BackgroundTexture != nullptr && style.BackgroundTexture->IsValid())
+                Graphics::Renderer::DrawTexture(style.GetBackgroundTexture(),
                                                controlBackgroundRect,
                                                {
                                                        0,
@@ -80,11 +82,11 @@ namespace NerdThings::Ngine::UI {
                                                },
                                                style.BackColor);
             else
-                Graphics::Drawing::DrawRectangle(controlBackgroundRect, style.BackColor);
+                Graphics::Renderer::DrawRectangle(controlBackgroundRect, style.BackColor);
 
             // Border
             if (style.BorderThickness > 0) {
-                Graphics::Drawing::DrawRectangleLines(controlBorderRect, style.BorderColor,
+                Graphics::Renderer::DrawRectangleLines(controlBorderRect, style.BorderColor,
                                                       static_cast<int>(style.BorderThickness));
             }
         }
@@ -103,7 +105,7 @@ namespace NerdThings::Ngine::UI {
             _GlobalStyles.insert({type_, style_});
     }
 
-    TVector2 UIControl::GetLogicPosition() {
+    Vector2 UIControl::GetLogicPosition() {
         auto parPanel = GetParent<UIPanel>();
         if (parPanel == nullptr) {
             auto par = GetParent<UIControl>();
@@ -118,11 +120,11 @@ namespace NerdThings::Ngine::UI {
         }
     }
 
-    TRectangle UIControl::GetLogicRectangle() {
-        return TRectangle(GetLogicPosition(), GetWidth(), GetHeight());
+    Rectangle UIControl::GetLogicRectangle() {
+        return Rectangle(GetLogicPosition(), GetWidth(), GetHeight());
     }
 
-    TVector2 UIControl::GetRenderPosition() {
+    Vector2 UIControl::GetRenderPosition() {
         auto parPanel = GetParent<UIPanel>();
         if (parPanel == nullptr) {
             auto par = GetParent<UIControl>();
@@ -130,15 +132,15 @@ namespace NerdThings::Ngine::UI {
             return parStyle.GetContentPosition(par->GetRenderPosition());
         } else {
             // Get panel setup
-            auto pos = TVector2::Zero;
+            auto pos = Vector2::Zero;
             pos.X += parPanel->GetOffsetBeside(this);
             pos.Y += parPanel->GetOffsetAbove(this);
             return pos;
         }
     }
 
-    TRectangle UIControl::GetRenderRectangle() {
-        return TRectangle(GetRenderPosition(), GetWidth(), GetHeight());
+    Rectangle UIControl::GetRenderRectangle() {
+        return Rectangle(GetRenderPosition(), GetWidth(), GetHeight());
     }
 
     TUIStyle UIControl::GetStyle() {
@@ -159,8 +161,8 @@ namespace NerdThings::Ngine::UI {
     }
 
     void UIControl::Update() {
-        for (auto pair : _Children) {
-            pair.second->Update();
+        for (auto child : _ChildrenOrdered) {
+            child->Update();
         }
     }
 }

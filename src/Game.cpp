@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -11,85 +11,88 @@
 
 #include "Game.h"
 
-#include "Audio/AudioManager.h"
+#include "Audio/AudioDevice.h"
 #include "Graphics/GraphicsManager.h"
+#include "Input/Gamepad.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "Resources.h"
-#include "WindowManager.h"
+#include "Filesystem/Resources.h"
+
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#include "Graphics/OpenGL/OpenGL.h"
+#endif
+
+#if defined(PLATFORM_UWP)
+#include "UWP/GameApp.h"
+#endif
 
 namespace NerdThings::Ngine {
+    // Private Methods
+
+    void Game::__DoDraw() {
+        // Prep for drawing
+        Graphics::Renderer::BeginDrawing();
+
+        // If using, start using target
+        if (Config.MaintainResolution && _RenderTarget->IsValid()) {
+            // Clear the main framebuffer (for black bars)
+            Graphics::Renderer::Clear(Graphics::Color::Black);
+
+            // Enable our main framebuffer
+            Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
+        }
+
+        // Clear with the correct background colour
+        Graphics::Renderer::Clear(ClearColor);
+
+        // Render scene
+        if (_CurrentScene != nullptr) {
+            _CurrentScene->Draw();
+        }
+
+        // OnDraw event
+        OnDraw({});
+    }
+
+    void Game::__DoUpdate() {
+        // Run update events
+        OnUpdate({});
+
+        if (_CurrentScene != nullptr) {
+            _CurrentScene->Update();
+        }
+
+        // AudioDevice update
+        Audio::AudioDevice::Update();
+    }
+
     // Public Constructor(s)
 
-    Game::Game(const int width_, const int height_, const int FPS_, const std::string &title_, int config_)
-        : Game(width_, height_, FPS_, FPS_, title_, config_) {}
-
-    Game::Game(const int width_, const int height_, const int drawFPS_, const int updateFPS_,
-               const std::string &title_, int config_)
-        : Game(width_, height_, width_, height_, drawFPS_, updateFPS_, title_, config_) {}
-
-    Game::Game(int windowWidth_, int windowHeight_, int targetWidth_, int targetHeight_, int drawFPS_, int updateFPS_,
-               const std::string &title_, int config_) {
-        #if !defined(PLATFORM_UWP)
-
+    Game::Game(const GameConfig &config_) {
         // Save config
-        _Config = config_;
-
-        // Apply raylib config
-        WindowManager::ApplyConfig(_Config);
-        ConsoleMessage("Window config has been applied.", "NOTICE", "GAME");
-
-        // Set intended dimensions
-        _IntendedHeight = targetHeight_;
-        _IntendedWidth = targetWidth_;
-
-        // Initialize raylib's window
-        WindowManager::Init(windowWidth_, windowHeight_, title_);
-        ConsoleMessage("Window has been initialized.", "NOTICE", "GAME");
-
-        // Set Target FPS
-        SetDrawFPS(drawFPS_);
-        SetUpdateFPS(updateFPS_);
-
-        // Register default events
-        OnRun.Bind(Input::Mouse::OnGameRun);
-        OnUpdate.Bind(Input::Mouse::OnGameUpdate);
-        OnUpdate.Bind(Audio::AudioManager::Update);
-        ConsoleMessage("Engine events have been registered.", "NOTICE", "GAME");
-
-        // By default, disable exit key
-        Input::Keyboard::SetExitKey(KEY_NONE);
-
-        #else
-
-        // TODO: UWP Support
-
-        #endif
+        Config = config_;
     }
+
+    // Destructor
+
+    Game::~Game() {}
 
     // Public Methods
 
-    void Game::Draw() {
-        if (_CurrentScene != nullptr) {
-            OnDraw({});
-            _CurrentScene->Draw();
-        }
+    Vector2 Game::GetDefaultWindowDimensions() const {
+        return { (float)Window::GetWidth(), (float)Window::GetHeight() };
     }
 
-    int Game::GetFPS() const {
-        return _UpdateFPS;
+    Vector2 Game::GetDimensions() const {
+        return { (float)Config.TargetWidth, (float)Config.TargetHeight };
     }
 
-    TVector2 Game::GetDimensions() const {
-        return { (float)_IntendedWidth, (float)_IntendedHeight };
+    int Game::GetTargetFPS() const {
+        return Config.FPS;
     }
 
-    int Game::GetDrawFPS() const {
-        return _DrawFPS;
-    }
-
-    int Game::GetUpdateFPS() const {
-        return _UpdateFPS;
+    bool Game::IsRunning() {
+        return !_HasStopped;
     }
 
     void Game::Quit() {
@@ -97,160 +100,208 @@ namespace NerdThings::Ngine {
     }
 
     void Game::Run() {
-        #if !defined(PLATFORM_UWP)
+        // Initialize window
+        Window::Init();
+        ConsoleMessage("Window has been initialized.", "NOTICE", "Game");
+
+        // Init Input
+        Input::Gamepad::Init();
+        Input::Mouse::Init();
+        Input::Keyboard::Init();
+        ConsoleMessage("Input APIs have been initialized.", "NOTICE", "Game");
 
         // Create render target
-        if (_Config & MAINTAIN_DIMENSIONS) {
-            _RenderTarget = std::make_shared<Graphics::TRenderTarget>(_IntendedWidth, _IntendedHeight);
+        if (Config.MaintainResolution) {
+            _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
-
-        // Timing
-        std::chrono::nanoseconds lag(0);
-        auto started = std::chrono::high_resolution_clock::now();
-
-        auto lastFPS = _UpdateFPS;
-        auto timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
 
         // Init audio
-        ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "GAME");
-        Audio::AudioManager::InitDevice();
+        ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "Game");
+        Audio::AudioDevice::Initialize();
 
         // Check if the device was created
-        if (Audio::AudioManager::IsReady()) {
-            ConsoleMessage("Audio device initialized successfully..", "NOTICE", "GAME");
-        } else {
-            ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARNING", "GAME");
-        }
+        if (Audio::AudioDevice::IsReady())
+            ConsoleMessage("Audio device initialized successfully..", "NOTICE", "Game");
+        else ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "Game");
 
         // Invoke OnRun
         OnRun({});
 
+        // Start game
         _Running = true;
 
-        while (!WindowManager::ShouldClose() && _Running) {
+        // Timing
+        std::chrono::nanoseconds lag(0);
+        auto started = std::chrono::high_resolution_clock::now();
+        auto lastFPS = Config.FPS;
+        auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
+
+        // Mark as running
+        _HasStopped = false;
+
+        // This checks the game is still running, the window is still running and the exit key is not pushed
+        while (!Window::ShouldClose() && !Input::Keyboard::ShouldClose()) {
+            // Update timestep if FPS has changed
+            if (Config.FPS != lastFPS) {
+                lastFPS = Config.FPS;
+                timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
+                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
+            }
+
+            if (!Window::Visible() && !Config.RunWhileHidden) {
+                // Poll window events
+                Window::PollEvents();
+
+                // If told to quit, quit
+                if (!_Running) break;
+
+                // Do nothing this frame.
+                std::this_thread::sleep_for(timeStep);
+                continue;
+            }
+
             // Window/Game Size variables
-            const auto w = static_cast<float>(WindowManager::GetWindowWidth());
-            const auto h = static_cast<float>(WindowManager::GetWindowHeight());
-            const auto iw = static_cast<float>(_IntendedWidth);
-            const auto ih = static_cast<float>(_IntendedHeight);
+            const auto w = static_cast<float>(Window::GetWidth());
+            const auto h = static_cast<float>(Window::GetHeight());
+            const auto iw = static_cast<float>(Config.TargetWidth);
+            const auto ih = static_cast<float>(Config.TargetHeight);
             const auto scale = std::min(w / iw, h / ih);
             const auto offsetX = (w - iw * scale) * 0.5;
             const auto offsetY = (h - ih * scale) * 0.5;
 
+            if (Config.MaintainResolution && _RenderTarget == nullptr) {
+                _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+                _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+            } else if (Config.MaintainResolution && (!_RenderTarget->IsValid() || (_RenderTarget->Width != Config.TargetWidth || _RenderTarget->Height != Config.TargetHeight))) {
+                _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+                _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+            }
+
+            _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
+
             // Get the time since the last frame
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
             started = std::chrono::high_resolution_clock::now();
+
+            // Increment lag
             lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
-            // Update timestep if FPS has changed
-            if (_UpdateFPS != lastFPS) {
-                lastFPS = _UpdateFPS;
-                timeStep = std::chrono::milliseconds(int(1.0f / float(lastFPS) * 1000.0f));
+            // Get the time that we begin (for timing)
+            auto frameBegin = std::chrono::high_resolution_clock::now();
 
-                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "GAME");
-            }
-
-            // Setup mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
+            // Setup mouse translation
+            if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
                 Input::Mouse::SetOffset(-offsetX, -offsetY);
             }
 
-            // Skip if we are going to catch up more than 5 seconds, that is too much (May not fix what I am experiencing)
+            // If we are lagging more than 5 seconds, don't count any further
             if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
 
-            // Run Updates
+            // Poll inputs if window is visible and if we're going to update this frame
+            if (Window::IsFocussed() && Window::Visible() && lag >= timeStep) {
+                Input::Gamepad::PollInputs();
+                Input::Mouse::PollInputs();
+                Input::Keyboard::PollInputs();
+            }
+
+            // Run required updates
             while (lag >= timeStep) {
                 // Run a single update
                 lag -= timeStep;
-                Update();
+                __DoUpdate();
+
+                // If we need to quit, don't run any more frames
+                if (!_Running) break;
             }
 
-            // Prep for drawing
-            Graphics::Drawing::BeginDrawing();
+            // If we need to quit, don't render
+            if (!_Running) break;
 
-            // Clear
-            Graphics::Drawing::Clear(Graphics::TColor::Black);
+            // Only render if visible
+            if (Window::Visible()) {
+                // Draw
+                __DoDraw();
 
-            // If using, start using target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
-                _RenderTarget->Texture->SetTextureWrap(WRAP_CLAMP);
-                _RenderTarget->Texture->SetTextureFilter(RenderTargetFilterMode);
-                Graphics::GraphicsManager::PushTarget(_RenderTarget);
-            }
+                // TODO: Deal with all the const variables so this can live in __DoDraw()
 
-            // Clear the background
-            Clear();
+                // If using a target, draw target
+                if (Config.MaintainResolution && _RenderTarget->IsValid()) {
+                    auto popped = false;
+                    Graphics::GraphicsManager::PopTarget(popped);
 
-            // Draw
-            Draw();
+                    Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
+                                                    {
+                                                            (w - iw * scale) * 0.5f,
+                                                            (h - ih * scale) * 0.5f,
+                                                            iw * scale,
+                                                            ih * scale
+                                                    },
+                                                    {
+                                                            0,
+                                                            0,
+                                                            static_cast<float>(_RenderTarget->Width),
+                                                            static_cast<float>(_RenderTarget->Height) * -1
+                                                    },
+                                                    Graphics::Color::White);
+                }
 
-            // If using a target, draw target
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
-                auto popped = false;
-                Graphics::GraphicsManager::PopTarget(popped);
+                // Finish drawing
+                Graphics::Renderer::EndDrawing();
 
-                Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
-                                               {
-                                                   (w - iw * scale) * 0.5f,
-                                                   (h - ih * scale) * 0.5f,
-                                                   iw * scale,
-                                                   ih * scale
-                                               },
-                                               {
-                                                   0,
-                                                   0,
-                                                   static_cast<float>(_RenderTarget->Texture->Width),
-                                                   static_cast<float>(-_RenderTarget->Texture->Height)
-                                               },
-                                               Graphics::TColor::White);
+                // Swap buffers
+                Window::SwapBuffers();
             }
 
             // Reset mouse
-            if (_Config & MAINTAIN_DIMENSIONS && _RenderTarget->ID > 0) {
+            if (Config.MaintainResolution && _RenderTarget->IsValid()) {
                 Input::Mouse::SetScale(1, 1);
                 Input::Mouse::SetOffset(0, 0);
             }
 
-            // Finish drawing
-            Graphics::Drawing::EndDrawing();
+            // Poll events
+            Window::PollEvents();
 
-            // Release thread to CPU (Stops weird idle cpu usage and fps drops)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            // Wait for remaining frame time if we were too quick
+            auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
+            auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
+
+            if (frameTimeMS < timeStep) {
+                std::this_thread::sleep_for(timeStep - frameTimeMS);
+            }
+
+            if (!_Running) break;
         }
 
         // Delete render target now so that it doesnt try after GL is gone.
         _RenderTarget = nullptr;
 
         // Delete loaded resources
-        Resources::DeleteAll();
+        Filesystem::Resources::DeleteAll();
 
         // Close audio
-        ConsoleMessage("Closing audio device.", "NOTICE", "GAME");
-        Audio::AudioManager::CloseDevice();
+        ConsoleMessage("Closing audio device.", "NOTICE", "Window");
+        Audio::AudioDevice::Close();
 
         // Close window
-        ConsoleMessage("Closing window.", "NOTICE", "GAME");
-        WindowManager::Close();
+        Window::Close();
 
-        ConsoleMessage("Game successfully shut down.", "NOTICE", "GAME");
-
-        #else
-
-        // TODO: UWP Support
-
-        #endif
+        // Mark as stopped
+        _HasStopped = true;
     }
 
     void Game::SetFPS(int FPS_) {
-        _UpdateFPS = FPS_;
-        _DrawFPS = FPS_;
-        WindowManager::SetTargetFPS(FPS_);
+        Config.FPS = FPS_;
     }
 
-    void Game::SetDrawFPS(int FPS_) {
-        _DrawFPS = FPS_;
-        WindowManager::SetTargetFPS(FPS_);
+    void Game::SetIntendedSize(Vector2 size_) {
+        Config.TargetWidth = (int)size_.X;
+        Config.TargetHeight = (int)size_.Y;
+    }
+
+    void Game::SetIsRunning(bool running_) {
+        _Running = running_;
     }
 
     void Game::SetScene(Scene *scene_) {
@@ -262,25 +313,6 @@ namespace NerdThings::Ngine {
         if (_CurrentScene != nullptr)
             _CurrentScene->OnLoad({this});
 
-        ConsoleMessage("A new scene has been loaded.", "NOTICE", "GAME");
-    }
-
-    void Game::SetUpdateFPS(int FPS_) {
-        _UpdateFPS = FPS_;
-    }
-
-    void Game::Update() {
-        // Run update events
-        OnUpdate({});
-
-        if (_CurrentScene != nullptr) {
-            _CurrentScene->Update();
-        }
-    }
-
-    // Protected Methods
-
-    void Game::Clear() const {
-        Graphics::Drawing::Clear(ClearColor);
+        ConsoleMessage("A new scene has been loaded.", "NOTICE", "Game");
     }
 }

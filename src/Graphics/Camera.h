@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,32 +12,32 @@
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Matrix.h"
-#include "Vector2.h"
+#include "../Matrix.h"
+#include "../Vector2.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
      * A Camera
      */
-    struct NEAPI TCamera {
+    struct NEAPI Camera {
         // Public Fields
 
         /*
          * Camera offset/origin
          */
-        TVector2 Origin;
+        Vector2 Origin;
+
+        /*
+         * Camera position
+         */
+        Vector2 Position;
 
         /*
          * Camera rotation
          */
         float Rotation;
-
-        /*
-         * Camera target
-         */
-        TVector2 Target;
 
         /*
          * Camera zoom
@@ -46,25 +46,11 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Constructor(s)
 
-        TCamera(float rotation_ = 0, float zoom_ = 0, TVector2 target_ = TVector2(),
-                TVector2 origin_ = TVector2()) : Rotation(rotation_), Zoom(zoom_), Target(target_),
-                                                             Origin(origin_) {}
+        Camera(Vector2 position_ = Vector2(), float rotation_ = 0, float zoom_ = 0,
+               Vector2 origin_ = Vector2()) : Position(position_), Rotation(rotation_), Zoom(zoom_),
+                                              Origin(origin_) {}
 
         // Public Methods
-
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to raylib camera
-         */
-        [[nodiscard]] Camera2D ToRaylibCam() const;
-
-        /*
-         * Convert from raylib camera
-         */
-        static TCamera FromRaylibCam(const Camera2D &cam_);
-
-        #endif
 
         /*
          * Begin using the camera
@@ -79,17 +65,17 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert a screen/window position to a world position
          */
-        TVector2 ScreenToWorld(TVector2 pos_);
+        Vector2 ScreenToWorld(Vector2 pos_);
 
         /*
          * Convert a world position to a screen/window position
          */
-        TVector2 WorldToScreen(TVector2 pos_);
+        Vector2 WorldToScreen(Vector2 pos_);
 
         /*
          * Get the translation matrix
          */
-        TMatrix GetTranslationMatrix() const;
+        Matrix GetTranslationMatrix() const;
     };
 }
 

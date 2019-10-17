@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,7 +12,7 @@
 #ifndef UICONTROLSIZED_H
 #define UICONTROLSIZED_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 #include "UIControl.h"
 

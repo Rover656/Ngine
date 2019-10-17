@@ -1,25 +1,23 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef CAMERACOMPONENT_H
 #define CAMERACOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Component.h"
 #include "../Graphics/Camera.h"
-#include "Vector2.h"
-#include "../EventArgs.h"
+#include "../BaseEntity.h"
+#include "../Component.h"
+#include "../Vector2.h"
 
 namespace NerdThings::Ngine::Components {
     /*
@@ -31,7 +29,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * The internal camera
          */
-        Graphics::TCamera _Camera;
+        Graphics::Camera _Camera;
 
         /*
          * Reference to on position changed event
@@ -51,7 +49,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a camera component
          */
-        CameraComponent(BaseEntity *parent_, float zoom_, TVector2 origin_ = TVector2::Zero,
+        CameraComponent(BaseEntity *parent_, float zoom_, Vector2 origin_ = Vector2::Zero,
                         float rotation_ = 0);
 
         // Destructor
@@ -69,7 +67,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Set the camera origin
          */
-        void SetOrigin(TVector2 origin_);
+        void SetOrigin(Vector2 origin_);
 
         /*
          * Set camera rotation

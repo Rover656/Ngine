@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -14,88 +14,70 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TRenderTarget::TRenderTarget(const int width_, const int height_) {
-        const auto tmp = LoadRenderTexture(width_, height_);
+    RenderTarget::RenderTarget() {}
 
-        ID = tmp.id;
-        Texture = TTexture2D::FromRaylibTex(tmp.texture);
-        if (tmp.depthTexture) DepthBuffer = TTexture2D::FromRaylibTex(tmp.depth);
-        else DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
-        DepthTexture = tmp.depthTexture;
-    }
+    RenderTarget::RenderTarget(const int width_, const int height_) : RenderTarget() {
+        Width = width_;
+        Height = height_;
 
-    TRenderTarget::TRenderTarget(TRenderTarget &&target_) {
-        ID = target_.ID;
-        Texture = target_.Texture;
-        DepthBuffer = target_.DepthBuffer;
-        DepthTexture = target_.DepthTexture;
+        // Create framebuffer
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
+#endif
 
-        target_.ID = 0;
-        DepthTexture = false;
+        // Create texture
+        _Texture = new Texture2D();
+        _Texture->Width = Width;
+        _Texture->Height = Height;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        _Texture->InternalTexture = InternalFramebuffer->RenderTexture;
+#endif
     }
 
     // Destructor
 
-    TRenderTarget::~TRenderTarget() {
-        ConsoleMessage("Unloading and deleting render target.", "NOTICE", "RENDER TARGET");
-        UnloadRenderTexture(ToRaylibTarget());
-        ID = 0;
-        Texture = std::shared_ptr<TTexture2D>(nullptr);
-        DepthBuffer = std::shared_ptr<TTexture2D>(nullptr);
-        DepthTexture = false;
+    RenderTarget::~RenderTarget() {
+        delete _Texture;
     }
 
     // Public Methods
 
-    #ifdef INCLUDE_RAYLIB
-
-    RenderTexture2D TRenderTarget::ToRaylibTarget() const {
-        auto target = RenderTexture2D();
-
-        target.id = ID;
-        target.texture = Texture->ToRaylibTex();
-
-        if (DepthTexture) {
-            target.depth = DepthBuffer->ToRaylibTex();
-            target.depthTexture = DepthTexture;
-        }
-
-        return target;
+    Texture2D *RenderTarget::GetTexture() {
+        return _Texture;
     }
 
-    TRenderTarget TRenderTarget::FromRaylibTarget(RenderTexture2D target_) {
-        auto target = TRenderTarget();
-
-        target.ID = target_.id;
-        target.Texture = TTexture2D::FromRaylibTex(target_.texture);
-        target.DepthBuffer = TTexture2D::FromRaylibTex(target_.depth);
-        target.DepthTexture = target_.depthTexture;
-
-        return target;
+    bool RenderTarget::IsValid() const {
+        if (InternalFramebuffer != nullptr)
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+            if (InternalFramebuffer->ID > 0)
+#endif
+                return true;
+        return false;
     }
 
-    #endif
+    void RenderTarget::Unload() {
+        // Unload framebuffer
+        Height = 0;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        InternalFramebuffer = nullptr;
+#endif
+        Width = 0;
+    }
 
     // Operators
 
-    TRenderTarget &TRenderTarget::operator=(TRenderTarget &&target_) {
-        ID = target_.ID;
-        Texture = std::move(target_.Texture);
-        DepthBuffer = std::move(target_.DepthBuffer);
-        DepthTexture = target_.DepthTexture;
-
-        target_.ID = 0;
-        DepthTexture = false;
-
-        return *this;
+    bool RenderTarget::operator==(const RenderTarget &b) const {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        return InternalFramebuffer->ID == b.InternalFramebuffer->ID;
+#endif
+        return false;
     }
 
-    bool TRenderTarget::operator==(const TRenderTarget &b) const {
-        return ID == b.ID;
-    }
-
-    bool TRenderTarget::operator!=(const TRenderTarget &b) const {
-        return ID != b.ID;
+    bool RenderTarget::operator!=(const RenderTarget &b) const {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        return InternalFramebuffer->ID != b.InternalFramebuffer->ID;
+#endif
+        return true;
     }
 
 }

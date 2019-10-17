@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,11 +12,11 @@
 #ifndef TILESETCOMPONENT_H
 #define TILESETCOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "BaseEntity.h"
-#include "Component.h"
-#include "Graphics/TilesetCanvas.h"
+#include "../Graphics/TilesetCanvas.h"
+#include "../BaseEntity.h"
+#include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
     class TilesetComponent : public Component {

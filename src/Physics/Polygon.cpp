@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -17,10 +17,10 @@
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
-    bool TPolygon::IsCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
-        const auto circle = dynamic_cast<TCircle*>(shape_);
-        const auto polygon = dynamic_cast<TPolygon*>(shape_);
+    bool Polygon::IsCompatible(ICollisionShape *shape_) {
+        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
+        const auto circle = dynamic_cast<Circle*>(shape_);
+        const auto polygon = dynamic_cast<Polygon*>(shape_);
 
         if (boundingBox2D != nullptr)
             return true;
@@ -31,12 +31,12 @@ namespace NerdThings::Ngine::Physics {
         return false;
     }
 
-    bool TPolygon::RunCollisionCheck(ICollisionShape *shape_) {
+    bool Polygon::RunCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
-        const auto boundingBox2D = dynamic_cast<TBoundingBox*>(shape_);
-        const auto circle = dynamic_cast<TCircle*>(shape_);
-        const auto polygon = dynamic_cast<TPolygon*>(shape_);
+        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
+        const auto circle = dynamic_cast<Circle*>(shape_);
+        const auto polygon = dynamic_cast<Polygon*>(shape_);
 
         auto myPoly = ToB2Shape();
 
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Physics {
     // Public Methods
 
 #ifdef INCLUDE_BOX2D
-    b2PolygonShape TPolygon::ToB2Shape() {
+    b2PolygonShape Polygon::ToB2Shape() {
         b2PolygonShape tmpShape;
         b2Vec2 vertices[b2_maxPolygonVertices];
         for (auto i = 0; i < VertexCount; i++) vertices[i] = {Vertices[i].X, Vertices[i].Y};
@@ -66,7 +66,7 @@ namespace NerdThings::Ngine::Physics {
     }
 #endif
 
-    void TPolygon::GenerateNormals() {
+    void Polygon::GenerateNormals() {
         // Create c2 poly
         auto tmpPoly = ToB2Shape();
 

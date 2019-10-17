@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,9 +12,9 @@
 #ifndef UIWIDGET_H
 #define UIWIDGET_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "UIPanel.h"
 
 namespace NerdThings::Ngine::UI {
@@ -32,14 +32,14 @@ namespace NerdThings::Ngine::UI {
         /*
          * Widget position
          */
-        TVector2 _Position;
+        Vector2 _Position;
     public:
         // Public Constructor(s)
 
         /*
          * Create a UI widget
          */
-        UIWidget(TVector2 pos_)
+        UIWidget(Vector2 pos_)
                 : _Position(pos_) {}
 
         // Destructor
@@ -64,7 +64,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Get the position of the widget
          */
-        TVector2 GetPosition();
+        Vector2 GetPosition();
 
         /*
          * Set the panel
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Set the position of the widget
          */
-        void SetPosition(TVector2 pos_);
+        void SetPosition(Vector2 pos_);
 
         /*
          * Update the widget

@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -14,7 +14,7 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TColor::TColor(const int r_, const int g_, const int b_, const int a_) {
+    Color::Color(const int r_, const int g_, const int b_, const int a_) {
         if (((r_ | g_ | b_ | a_) & 0xFFFFFFFF00) != 0) {
             const auto clampedR = static_cast<const unsigned int>(std::clamp(r_, 0, 255));
             const auto clampedG = static_cast<const unsigned int>(std::clamp(g_, 0, 255));
@@ -35,41 +35,41 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    float TColor::RedFloat() const {
+    float Color::RedF() const {
         return static_cast<unsigned char>(PackedValue) / 255.0f;
     }
 
-    float TColor::GreenFloat() const {
+    float Color::GreenF() const {
         return static_cast<unsigned char>(PackedValue >> 8) / 255.0f;
     }
 
-    float TColor::BlueFloat() const {
+    float Color::BlueF() const {
         return static_cast<unsigned char>(PackedValue >> 16) / 255.0f;
     }
 
-    float TColor::AlphaFloat() const {
+    float Color::AlphaF() const {
         return static_cast<unsigned char>(PackedValue >> 24) / 255.0f;
     }
 
-    int TColor::RedInt() const {
+    int Color::RedI() const {
         return static_cast<unsigned char>(PackedValue);
     }
 
-    int TColor::GreenInt() const {
+    int Color::GreenI() const {
         return static_cast<unsigned char>(PackedValue >> 8);
     }
 
-    int TColor::BlueInt() const {
+    int Color::BlueI() const {
         return static_cast<unsigned char>(PackedValue >> 16);
     }
 
-    int TColor::AlphaInt() const {
+    int Color::AlphaI() const {
         return static_cast<unsigned char>(PackedValue >> 24);
     }
 
     #ifdef INCLUDE_RAYLIB // We don't really need this, but just to save any issues
 
-    Color TColor::ToRaylibColor() const {
+    Color Color::ToRaylibColor() const {
         return {
             static_cast<unsigned char>(RedInt()),
             static_cast<unsigned char>(GreenInt()),
@@ -78,46 +78,46 @@ namespace NerdThings::Ngine::Graphics {
         };
     }
 
-    TColor TColor::FromRaylibColor(const Color &col_) {
-        return TColor(col_.r, col_.g, col_.b, col_.a);
+    Color Color::FromRaylibColor(const Color &col_) {
+        return Color(col_.r, col_.g, col_.b, col_.a);
     }
 
     #endif
 
     // Operators
 
-    bool TColor::operator==(const TColor &b_) const {
+    bool Color::operator==(const Color &b_) const {
         return PackedValue == b_.PackedValue;
     }
 
-    bool TColor::operator!=(const TColor &b_) const {
+    bool Color::operator!=(const Color &b_) const {
         return PackedValue != b_.PackedValue;
     }
 
     // Predefined Colors
 
-    const TColor TColor::Beige = TColor(0xffdcf5f5);
-    const TColor TColor::Black = TColor(0xff000000);
-    const TColor TColor::Blue = TColor(0xffff0000);
-    const TColor TColor::Brown = TColor(0xff2a2aa5);
-    const TColor TColor::DarkBlue = TColor(0xff8b0000);
-    const TColor TColor::DarkBrown = TColor(76, 63, 47, 255);
-    const TColor TColor::DarkGray = TColor(0xffa9a9a9);
-    const TColor TColor::DarkGreen = TColor(0xff006400);
-    const TColor TColor::DarkPurple = TColor(112, 31, 126, 255);
-    const TColor TColor::Gold = TColor(0xff00d7ff);
-    const TColor TColor::Gray = TColor(0xff808080);
-    const TColor TColor::Green = TColor(0xff008000);
-    const TColor TColor::LightGray = TColor(0xffd3d3d3);
-    const TColor TColor::Lime = TColor(0xff00ff00);
-    const TColor TColor::Magenta = TColor(0xffff00ff);
-    const TColor TColor::Orange = TColor(0xff00a5ff);
-    const TColor TColor::Pink = TColor(0xffcbc0ff);
-    const TColor TColor::Purple = TColor(0xff800080);
-    const TColor TColor::Red = TColor(0xff0000ff);
-    const TColor TColor::SkyBlue = TColor(0xffebce87);
-    const TColor TColor::Transparent = TColor(0);
-    const TColor TColor::Violet = TColor(0xffee82ee);
-    const TColor TColor::White = TColor(0xffffffff);
-    const TColor TColor::Yellow = TColor(0xff00ffff);
+    const Color Color::Beige = Color(0xffdcf5f5);
+    const Color Color::Black = Color(0xff000000);
+    const Color Color::Blue = Color(0xffff0000);
+    const Color Color::Brown = Color(0xff2a2aa5);
+    const Color Color::DarkBlue = Color(0xff8b0000);
+    const Color Color::DarkBrown = Color(76, 63, 47, 255);
+    const Color Color::DarkGray = Color(0xffa9a9a9);
+    const Color Color::DarkGreen = Color(0xff006400);
+    const Color Color::DarkPurple = Color(112, 31, 126, 255);
+    const Color Color::Gold = Color(0xff00d7ff);
+    const Color Color::Gray = Color(0xff808080);
+    const Color Color::Green = Color(0xff008000);
+    const Color Color::LightGray = Color(0xffd3d3d3);
+    const Color Color::Lime = Color(0xff00ff00);
+    const Color Color::Magenta = Color(0xffff00ff);
+    const Color Color::Orange = Color(0xff00a5ff);
+    const Color Color::Pink = Color(0xffcbc0ff);
+    const Color Color::Purple = Color(0xff800080);
+    const Color Color::Red = Color(0xff0000ff);
+    const Color Color::SkyBlue = Color(0xffebce87);
+    const Color Color::Transparent = Color(0);
+    const Color Color::Violet = Color(0xffee82ee);
+    const Color Color::White = Color(0xffffffff);
+    const Color Color::Yellow = Color(0xff00ffff);
 }

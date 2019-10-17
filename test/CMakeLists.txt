@@ -1,40 +1,35 @@
-# Add executable
-add_executable(NgineTest WIN32 entrypoint.cpp)
+# Fetch source files
+file(GLOB_RECURSE SOURCE_FILES "*.cpp")
+file(GLOB_RECURSE HEADER_FILES "*.h")
 
-# Include directories
-target_include_directories(Ngine PUBLIC ${PROJECT_SOURCE_DIR}/src)
+# Include Ngine cmake functions
+include(Ngine)
 
-# Link libraries
-target_link_libraries(NgineTest Ngine)
+# Check config is ok
+ngine_check_config()
 
-# Use Ngine shared if building as shared
-if (${BUILD_SHARED})
-    target_compile_definitions(NgineTest PRIVATE NGINE_SHARED=1)
+# Get UWP resources
+if (${PLATFORM} MATCHES "UWP")
+    # Configure asset files
+    file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/*")
 endif()
 
-# Set output directory
-set_target_properties(NgineTest
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/NgineTest"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/NgineTest"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/NgineTest"
-)
+ngine_add_game(
+        NAME "TestGame"
+        TARGET_NAME "NgineTest"
 
-# Copy dependant dlls
-if (${BUILD_SHARED})
-    add_custom_command(TARGET NgineTest POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:Ngine>
-            $<TARGET_FILE_DIR:NgineTest>)
+        VERSION_MAJOR 1
+        VERSION_MINOR 0
+        VERSION_PATCH 0
 
-    add_custom_command(TARGET NgineTest POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:raylib>
-            $<TARGET_FILE_DIR:NgineTest>)
+        PUBLISHER_NAME "NerdThings"
+        SOURCE_FILES ${SOURCE_FILES}
+        RESOURCE_FILES ${RESOURCE_FILES}
+        UWP_PACKAGE_GUID "62ab7c15-145e-4798-a843-a771f4ef8e9a"
+        )
+
+if(MSVC)
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "\\Source Files" FILES ${SOURCE_FILES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "\\Header Files" FILES ${HEADER_FILES})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/content PREFIX "\\Content" FILES ${CONTENT_FILES})
 endif()
-
-# Copy content
-add_custom_command(TARGET NgineTest PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_CURRENT_LIST_DIR}/content"
-        "${CMAKE_BINARY_DIR}/NgineTest/content")

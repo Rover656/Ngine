@@ -1,15 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
-*       Will need to review again once scaling is added
-*       Entity parenting also needs reviewing to decide what we do about positioning and origins
 *
 **********************************************************************************************/
 
@@ -17,15 +13,44 @@
 #define BASEENTITY_H
 
 // Include ngine
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Vector2.h"
-#include "EventArgs.h"
 #include "EntityContainer.h"
 #include "Scene.h"
 
 namespace NerdThings::Ngine {
+    // Forward declare
     class Component;
+
+    struct EntityTransformChangedEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * Entity origin
+         */
+        Vector2 EntityOrigin;
+
+        /*
+         * The new entity position
+         */
+        Vector2 EntityPosition;
+
+        /*
+         * The new rotation
+         */
+        float EntityRotation;
+
+        /*
+         * The new scale
+         */
+        float EntityScale;
+
+        // Public Constructor(s)
+
+        EntityTransformChangedEventArgs(Vector2 origin_, Vector2 pos_, float rot_, float scale_)
+                : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
+    };
 
     /*
      * The root class for an entity within a scene
@@ -42,7 +67,7 @@ namespace NerdThings::Ngine {
          * The list of all components.
          * All components are given a name for easy identification.
          */
-        std::map<std::string, Component*> _Components;
+        std::map<std::string, std::unique_ptr<Component>> _Components;
 
         /*
          * Depth layer
@@ -57,7 +82,7 @@ namespace NerdThings::Ngine {
         /*
          * The entity origin
          */
-        TVector2 _Origin;
+        Vector2 _Origin;
 
         /*
          * The parent entity
@@ -77,7 +102,7 @@ namespace NerdThings::Ngine {
         /*
          * The entity position
          */
-        TVector2 _Position = TVector2::Zero;
+        Vector2 _Position = Vector2::Zero;
 
         /*
          * The entity rotation (in radians)
@@ -123,7 +148,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a BaseEntity.
          */
-        BaseEntity(Scene *parentScene_, TVector2 position_, int depth_ = 0, bool canCull_ = false);
+        BaseEntity(Scene *parentScene_, Vector2 position_, int depth_ = 0, bool canCull_ = false);
 
         // Destructor
 
@@ -146,7 +171,7 @@ namespace NerdThings::Ngine {
             auto comp = dynamic_cast<Component*>(component_);
 
             if (comp != nullptr) {
-                _Components.insert({name_, comp});
+                _Components.insert({name_, std::unique_ptr<Component>(comp)});
                 return component_;
             }
 
@@ -157,7 +182,7 @@ namespace NerdThings::Ngine {
          * This is used to determine if this entity should be culled.
          * This can allow you to hide this if the collision box is not contained instead.
          */
-        virtual bool CheckForCulling(TRectangle cullArea_);
+        virtual bool CheckForCulling(Rectangle cullArea_);
 
         /*
          * Remove from our parent and delete ourselves.
@@ -177,7 +202,7 @@ namespace NerdThings::Ngine {
         ComponentType *GetComponent(const std::string &name_) {
             // Try to find the component
             if (HasComponent(name_)) {
-                return dynamic_cast<ComponentType*>(_Components.at(name_)); // Will return null if its the wrong type
+                return dynamic_cast<ComponentType*>(_Components.at(name_).get()); // Will return null if its the wrong type
             }
 
             return nullptr;
@@ -201,7 +226,7 @@ namespace NerdThings::Ngine {
         /*
          * Get entity origin
          */
-        [[nodiscard]] TVector2 GetOrigin() const;
+        Vector2 GetOrigin() const;
 
         /*
          * Get our parent container.
@@ -212,21 +237,21 @@ namespace NerdThings::Ngine {
         /*
          * Get the parent entity
          */
-        [[nodiscard]] BaseEntity *GetParentEntity() const;
+        BaseEntity *GetParentEntity() const;
 
         /*
          * Get the parent entity as.
          * If there is no parent or the parent is not of this type it returns null
          */
         template <typename EntityType>
-        [[nodiscard]] EntityType *GetParentEntityAs() const {
+        EntityType *GetParentEntityAs() const {
             return dynamic_cast<EntityType*>(_ParentEntity);
         }
 
         /*
          * Get the parent scene
          */
-        [[nodiscard]] Scene *GetParentScene() const;
+        Scene *GetParentScene() const;
 
         /*
          * Test if we update when the scene is paused
@@ -236,17 +261,17 @@ namespace NerdThings::Ngine {
         /*
          * Get the entity position
          */
-        [[nodiscard]] TVector2 GetPosition() const;
+        Vector2 GetPosition() const;
 
         /*
          * Get the entity rotation
          */
-        [[nodiscard]] float GetRotation() const;
+        float GetRotation() const;
 
         // /*
         //  * Get the entity scale
         //  */
-        // [[nodiscard]] float GetScale() const;
+        // float GetScale() const;
 
         /*
          * Test if a component exists by a name.
@@ -256,7 +281,7 @@ namespace NerdThings::Ngine {
         /*
          * Move an entity
          */
-        void MoveBy(TVector2 moveBy_);
+        void MoveBy(Vector2 moveBy_);
 
         /*
          * Removes the entity from the component.
@@ -277,7 +302,7 @@ namespace NerdThings::Ngine {
         /*
          * Set entity origin
          */
-        void SetOrigin(TVector2 origin_);
+        void SetOrigin(Vector2 origin_);
 
         /*
          * Set whether or not we update when the scene is paused
@@ -287,7 +312,7 @@ namespace NerdThings::Ngine {
         /*
          * Set entity position
          */
-        void SetPosition(TVector2 position_);
+        void SetPosition(Vector2 position_);
 
         /*
          * Set entity rotation

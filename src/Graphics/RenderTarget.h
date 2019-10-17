@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,89 +12,86 @@
 #ifndef RENDERTARGET_H
 #define RENDERTARGET_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
+#include "../Resource.h"
 #include "Texture2D.h"
+
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#include "OpenGL/Framebuffer.h"
+#endif
 
 namespace NerdThings::Ngine::Graphics {
     /*
      * A 2D Texture in the GPU that can be rendered to
      */
-    struct NEAPI TRenderTarget {
+    struct NEAPI RenderTarget : public IResource {
+    private:
+        // Private Fields
+
+        /*
+         * The texture that the render target renders to.
+         */
+        Texture2D *_Texture;
+    public:
         // Public Fields
 
         /*
-         * OpenGL ID
+         * Render target height
          */
-        unsigned int ID;
+        int Height = 0;
 
         /*
-         * Texture buffer
+         * Internal framebuffer on the GPU
          */
-        std::shared_ptr<TTexture2D> Texture;
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer = nullptr;
+#endif
 
         /*
-         * Depth buffer
+         * Render target width
          */
-        std::shared_ptr<TTexture2D> DepthBuffer;
-
-        /*
-         * Is depth attachment is a texture or renderbuffer
-         */
-        bool DepthTexture;
+        int Width = 0;
 
         // Public Constructor(s)
 
         /*
          * Create a null render target
          */
-        TRenderTarget()
-            : ID(0), DepthTexture(false) {}
+        RenderTarget();
 
         /*
          * Create a render target
          */
-        TRenderTarget(int width_, int height_);
-
-        /*
-         * Move a render target
-         */
-        TRenderTarget(TRenderTarget &&target_);
-
-        /*
-         * Copy a render target (reference)
-         */
-        TRenderTarget(const TRenderTarget &target_) = default;
+        RenderTarget(int width_, int height_);
 
         // Destructor
 
-        ~TRenderTarget();
+        ~RenderTarget();
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
+        /*
+         * Get rendered texture
+         */
+        Texture2D *GetTexture();
 
-        RenderTexture2D ToRaylibTarget() const;
+        /*
+         * Whether or not the render target is valid and usable.
+         */
+        bool IsValid() const override;
 
-        static TRenderTarget FromRaylibTarget(RenderTexture2D target_);
-
-        #endif
+        /*
+         * Unload the render target.
+         * Invalidates all copies.
+         */
+        void Unload() override;
 
         // Operators
 
-        /*
-         * Move a render target
-         */
-        TRenderTarget &operator=(TRenderTarget &&target_);
+        bool operator==(const RenderTarget &b) const;
 
-        /*
-         * Copy a render target (reference)
-         */
-        TRenderTarget &operator=(const TRenderTarget &target_) = default;
-
-        bool operator==(const TRenderTarget &b) const;
-
-        bool operator!=(const TRenderTarget &b) const;
+        bool operator!=(const RenderTarget &b) const;
     };
 }
 

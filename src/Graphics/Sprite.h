@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,14 +12,17 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Rectangle.h"
-#include "Vector2.h"
+#include "../Rectangle.h"
+#include "../Vector2.h"
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
-    class NEAPI TSprite {
+    /*
+     * A sprite which may be animated
+     */
+    class NEAPI Sprite {
         // Private Fields
 
         /*
@@ -30,7 +33,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * The textures associated
          */
-        std::vector<std::shared_ptr<TTexture2D>> _Textures;
+        std::vector<Texture2D *> _Textures;
 
         /*
          * Whether or not this is a spritesheet
@@ -75,34 +78,34 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Null sprite
          */
-        TSprite() = default;
+        Sprite() = default;
 
         /*
          * Create a sprite
          */
-        TSprite(std::shared_ptr<TTexture2D> texture_);
+        Sprite(Texture2D *texture_);
 
         /*
          * Create an animated sprite sheet
          */
-        TSprite(std::shared_ptr<TTexture2D> texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
-                float imageSpeed_ = 30, int startingFrame = 0);
+        Sprite(Texture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
+               float imageSpeed_ = 30, int startingFrame = 0);
 
         /*
          * Create an animated sequence of textures
          */
-        TSprite(std::vector<std::shared_ptr<TTexture2D>> textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
+        Sprite(const std::vector<Texture2D *> &textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
 
         // Destructor
 
-        virtual ~TSprite() = default;
+        virtual ~Sprite() = default;
 
         // Public Methods
 
         /*
          * Draw the sprite
          */
-        void Draw(TVector2 position_, float rotation_, TVector2 origin_ = TVector2::Zero);
+        void Draw(Vector2 position_, float rotation_, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Get the current X coordinate
@@ -117,12 +120,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Get the current texture
          */
-        std::shared_ptr<TTexture2D> GetCurrentTexture();
+        Texture2D *GetCurrentTexture();
 
         /*
          * Get the source rectangle for drawing with
          */
-        TRectangle GetSourceRectangle();
+        Rectangle GetSourceRectangle();
 
         /*
          * Whether or not the sprite is animated
@@ -132,12 +135,12 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Set the sprite texture
          */
-        void SetTexture(std::shared_ptr<TTexture2D> texture_);
+        void SetTexture(Texture2D *texture_);
 
         /*
          * Set the sprite textures
          */
-        void SetTextures(std::vector<std::shared_ptr<TTexture2D> > textures_);
+        void SetTextures(const std::vector<Texture2D*> &textures_);
 
         /*
          * Update the sprite timer
@@ -147,8 +150,8 @@ namespace NerdThings::Ngine::Graphics {
 
         // Operators
 
-        bool operator==(const TSprite &b);
-        bool operator!=(const TSprite &b);
+        bool operator==(const Sprite &b);
+        bool operator!=(const Sprite &b);
     };
 }
 

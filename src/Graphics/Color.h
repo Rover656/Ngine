@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,13 +12,13 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
 namespace NerdThings::Ngine::Graphics {
     /*
      * A 32-bit packed color
      */
-    struct NEAPI TColor {
+    struct NEAPI Color {
         // Public Fields
 
         /*
@@ -31,68 +31,68 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Create the default color (White)
          */
-        TColor() : PackedValue(0xFFFFFFFF) {}
+        Color() : PackedValue(0xFFFFFFFF) {}
 
         /*
          * Create a color using an existing packed value
          */
-        explicit TColor(const unsigned int packedValue_) : PackedValue(packedValue_) {}
+        explicit Color(const unsigned int packedValue_) : PackedValue(packedValue_) {}
 
         /*
          * Create a color using float values between 0 and 1
          */
-        TColor(const float r_, const float g_, float b_, const float a_)
-            : TColor(static_cast<int>(r_ * 255),
-                     static_cast<int>(g_ * 255),
-                     static_cast<int>(b_ * 255),
-                     static_cast<int>(a_ * 255)) {}
+        Color(const float r_, const float g_, float b_, const float a_)
+            : Color(static_cast<int>(r_ * 255),
+                    static_cast<int>(g_ * 255),
+                    static_cast<int>(b_ * 255),
+                    static_cast<int>(a_ * 255)) {}
 
         /*
          * Create a color using int values between 0 and 255
          */
-        TColor(int r_, int g_, int b_, int a_);
+        Color(int r_, int g_, int b_, int a_);
 
         // Public Methods
 
         /*
          * Get the red value as a float
          */
-        [[nodiscard]] float RedFloat() const;
+        [[nodiscard]] float RedF() const;
 
         /*
          * Get the green value as a float
          */
-        [[nodiscard]] float GreenFloat() const;
+        [[nodiscard]] float GreenF() const;
 
         /*
          * Get the blue value as a float
          */
-        [[nodiscard]] float BlueFloat() const;
+        [[nodiscard]] float BlueF() const;
 
         /*
          * Get the alpha value as a float
          */
-        [[nodiscard]] float AlphaFloat() const;
+        [[nodiscard]] float AlphaF() const;
 
         /*
          * Get the red value as an int
          */
-        [[nodiscard]] int RedInt() const;
+        [[nodiscard]] int RedI() const;
 
         /*
          * Get the green value as an int
          */
-        [[nodiscard]] int GreenInt() const;
+        [[nodiscard]] int GreenI() const;
 
         /*
          * Get the blue value as an int
          */
-        [[nodiscard]] int BlueInt() const;
+        [[nodiscard]] int BlueI() const;
 
         /*
          * Get the alpha value as an int
          */
-        [[nodiscard]] int AlphaInt() const;
+        [[nodiscard]] int AlphaI() const;
 
         #ifdef INCLUDE_RAYLIB
         /*
@@ -103,41 +103,41 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Convert from a raylib color
          */
-        static TColor FromRaylibColor(const Color &col_);
+        static Color FromRaylibColor(const Color &col_);
 
         #endif
 
         // Operators
 
-        bool operator==(const TColor &b_) const;
-        bool operator!=(const TColor &b_) const;
+        bool operator==(const Color &b_) const;
+        bool operator!=(const Color &b_) const;
 
         // Predefined Colors
 
-        static const TColor Beige;
-        static const TColor Black;
-        static const TColor Blue;
-        static const TColor Brown;
-        static const TColor DarkBlue;
-        static const TColor DarkBrown;
-        static const TColor DarkGray;
-        static const TColor DarkGreen;
-        static const TColor DarkPurple;
-        static const TColor Gold;
-        static const TColor Gray;
-        static const TColor Green;
-        static const TColor LightGray;
-        static const TColor Lime;
-        static const TColor Magenta;
-        static const TColor Orange;
-        static const TColor Pink;
-        static const TColor Purple;
-        static const TColor Red;
-        static const TColor SkyBlue;
-        static const TColor Transparent;
-        static const TColor Violet;
-        static const TColor White;
-        static const TColor Yellow;
+        static const Color Beige;
+        static const Color Black;
+        static const Color Blue;
+        static const Color Brown;
+        static const Color DarkBlue;
+        static const Color DarkBrown;
+        static const Color DarkGray;
+        static const Color DarkGreen;
+        static const Color DarkPurple;
+        static const Color Gold;
+        static const Color Gray;
+        static const Color Green;
+        static const Color LightGray;
+        static const Color Lime;
+        static const Color Magenta;
+        static const Color Orange;
+        static const Color Pink;
+        static const Color Purple;
+        static const Color Red;
+        static const Color SkyBlue;
+        static const Color Transparent;
+        static const Color Violet;
+        static const Color White;
+        static const Color Yellow;
     };
 }
 

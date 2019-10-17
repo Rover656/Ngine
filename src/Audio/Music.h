@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,55 +12,139 @@
 #ifndef MUSIC_H
 #define MUSIC_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
+
+#include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
+#include "AudioStream.h"
 
 namespace NerdThings::Ngine::Audio {
+    enum EMusicContextType {
+        AUDIO_OGG = 1,
+        AUDIO_FLAC,
+        AUDIO_MP3,
+        MODULE_XM,
+        MODULE_MOD
+    };
+
     /*
      * Music stream
      */
-    struct NEAPI TMusic {
+    struct NEAPI Music : public IResource {
         // Public Fields
 
         /*
-         * Pointer to raylib music data
+         * Context data
          */
-        void *MusicData;
+        void *CTXData = nullptr;
 
-        // Public Constructor(s)
+        /*
+         * Music context type
+         */
+        EMusicContextType CTXType;
 
-        TMusic()
-            : MusicData(nullptr) {}
+        /*
+         * Number of times to loop, 0 = infinite.
+         */
+        unsigned int LoopCount;
+
+        /*
+         * Total number of samples
+         */
+        unsigned int SampleCount;
+
+        /*
+         * The audio stream
+         */
+        AudioStream Stream;
 
         // Destructor
 
-        ~TMusic();
+        ~Music();
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
+        /*
+         * Get length in seconds
+         */
+        float GetLength();
 
         /*
-         * Convert to raylib music
+         * Get the current amount of time played in seconds.
          */
-        Music ToRaylibMusic() const;
+        float GetTimePlayed();
 
         /*
-         * Convert from raylib music
+         * Whether or not music is playing
          */
-        static TMusic FromRaylibMusic(Music music_);
+        bool IsPlaying() const;
 
-        #endif
+        /*
+         * Test if the music is valid
+         */
+        bool IsValid() const override;
 
         /*
          * Load music from a file
          */
-        static std::shared_ptr<TMusic> LoadMusic(const std::string &filename_);
+        static Music *LoadMusic(const Filesystem::Path &path_);
+
+        /*
+         * Pause music
+         */
+        void Pause();
+
+        /*
+         * Play music
+         */
+        void Play();
+
+        /*
+         * Resume music
+         */
+        void Resume();
+
+        /*
+         * Set music pitch
+         */
+        void SetPitch(float pitch_);
+
+        /*
+         * Set music volume
+         */
+        void SetVolume(float vol_);
+
+        /*
+         * Stop music
+         */
+        void Stop();
+
+        /*
+         * Unload the music
+         */
+        void Unload() override;
+
+        /*
+         * Update all active music
+         */
+        static void Update();
+
+    private:
+        // Private Fields
+
+        static std::vector<Music *> _ActiveMusic;
+
+        /*
+         * Number of loops completed since last play.
+         */
+        int _LoopsCompleted;
+
+        // Private Methods
 
         /*
          * Update music stream.
-         * Should be called by AudioManager
          */
-        void Update();
+        void __Update();
     };
 }
 

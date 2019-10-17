@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -9,10 +9,10 @@
 *
 **********************************************************************************************/
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef IMAGECONTROL_H
+#define IMAGECONTROL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../../Graphics/Sprite.h"
 #include "../UIControlSized.h"
@@ -28,7 +28,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * The sprite used for drawing
          */
-        Graphics::TSprite _Sprite;
+        Graphics::Sprite _Sprite;
 
     public:
 
@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * Create a new image control
          */
-        Image(Graphics::TSprite sprite_, float width_, float height_) {
+        Image(Graphics::Sprite sprite_, float width_, float height_) {
             _Sprite = sprite_;
             SetWidth(width_);
             SetHeight(height_);
@@ -67,4 +67,4 @@ namespace NerdThings::Ngine::UI::Controls {
     };
 };
 
-#endif // IMAGE_H
+#endif // IMAGECONTROL_H

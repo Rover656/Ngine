@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,13 +12,29 @@
 #ifndef UICONTROLINTERACTIBLE_H
 #define UICONTROLINTERACTIBLE_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "EventHandler.h"
-#include "../EventArgs.h"
+#include "../EventHandler.h"
 #include "UIControl.h"
 
 namespace NerdThings::Ngine::UI {
+    /*
+     * UI Control event args
+     */
+    struct UIControlEventArgs : EventArgs {
+        // Public Fields
+
+        /*
+         * The control this belongs to
+         */
+        UI::UIControl *Control;
+
+        // Public Constructor(s)
+
+        UIControlEventArgs(UI::UIControl *control_)
+                : Control(control_) {}
+    };
+
     /*
      * An interactible UI Control
      */

@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,16 +12,16 @@
 #ifndef BOUNDINGBOX2D_H
 #define BOUNDINGBOX2D_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Vector2.h"
+#include "../Vector2.h"
 #include "CollisionShape.h"
 
 namespace NerdThings::Ngine::Physics {
     /*
      * A 2D Bounding Box
      */
-    struct NEAPI TBoundingBox : public ICollisionShape {
+    struct NEAPI BoundingBox : public ICollisionShape {
     private:
         // Private Methods
 
@@ -34,19 +34,19 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Maximum coordinate
          */
-        TVector2 Max;
+        Vector2 Max;
 
         /*
          * Minimum coordinate
          */
-        TVector2 Min;
+        Vector2 Min;
 
         // Public Constructor(s)
 
         /*
          * Create a default bounding box
          */
-        TBoundingBox()
+        BoundingBox()
             : Max({}), Min({}) {}
 
         // Public Methods

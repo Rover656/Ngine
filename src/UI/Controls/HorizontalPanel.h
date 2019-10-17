@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,7 +12,7 @@
 #ifndef HORIZONTALPANEL_H
 #define HORIZONTALPANEL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
 #include "../UIPanel.h"
 

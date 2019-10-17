@@ -1,10 +1,6 @@
-#include <utility>
-
-#include <utility>
-
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -16,9 +12,9 @@
 #ifndef LABEL_H
 #define LABEL_H
 
-#include "../../ngine.h"
+#include "../../Ngine.h"
 
-#include "../../Graphics/Drawing.h"
+#include "../../Graphics/Renderer.h"
 #include "../UIControlSized.h"
 #include "../UIPanel.h"
 
@@ -33,7 +29,7 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * The font to be used
          */
-        std::shared_ptr<Graphics::TFont> _Font;
+        Graphics::Font *_Font = nullptr;
 
         /*
          * The font size
@@ -71,12 +67,12 @@ namespace NerdThings::Ngine::UI::Controls {
         /*
          * Create a label
          */
-        Label(std::string text_, std::shared_ptr<Graphics::TFont> font_)
+        Label(std::string text_, Graphics::Font *font_)
                 : UIControlSized(), _Text(std::move(text_)), _Font(font_), _IsFixedSize(false) {
             SetDynamicSize();
         }
 
-        Label(std::string text_, std::shared_ptr<Graphics::TFont> font_, float width_, float height_)
+        Label(std::string text_, Graphics::Font *font_, float width_, float height_)
                 : UIControlSized(), _Text(std::move(text_)), _Font(font_), _IsFixedSize(true) {
             SetWidth(width_);
             SetHeight(height_);
@@ -91,14 +87,12 @@ namespace NerdThings::Ngine::UI::Controls {
 
             auto controlContentRect = style.GetContentRect(GetRenderRectangle());
 
-            auto textSize = _Font->MeasureString(_Text, _FontSize, _FontSpacing);
-
             if (_Font != nullptr && style.DrawDefaults)
-                Graphics::Drawing::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
-                                                style.ForeColor); // TODO: Wordwrap option
+                Graphics::Renderer::DrawTextRect(_Font, _Text, controlContentRect, _FontSize, _FontSpacing,
+                                                 style.ForeColor); // TODO: Wordwrap option
         }
 
-        std::shared_ptr<Graphics::TFont> GetFont() {
+        Graphics::Font *GetFont() {
             return _Font;
         }
 
@@ -118,7 +112,7 @@ namespace NerdThings::Ngine::UI::Controls {
             return _Text;
         }
 
-        void SetFont(std::shared_ptr<Graphics::TFont> font_) {
+        void SetFont(Graphics::Font *font_) {
             _Font = font_;
             if (!_IsFixedSize)
                 SetDynamicSize();

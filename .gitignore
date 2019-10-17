@@ -6,6 +6,9 @@
 # CLion ignore cmake directories
 cmake-build-*/
 
+# BuildUWP.bat
+build-UWP/
+
 # User-specific files
 *.suo
 *.user

@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,7 +12,7 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
-#include "ngine.h"
+#include "Ngine.h"
 
 #include "Matrix.h"
 
@@ -20,18 +20,18 @@ namespace NerdThings::Ngine {
     /*
      * A vector with 2 Components
      */
-    struct NEAPI TVector2 {
+    struct NEAPI Vector2 {
         // Public Fields
 
         /*
          * Unit Vector X
          */
-        static const TVector2 UnitX;
+        static const Vector2 UnitX;
 
         /*
          * Unit Vector Y
          */
-        static const TVector2 UnitY;
+        static const Vector2 UnitY;
 
         /*
          * The X component
@@ -46,95 +46,81 @@ namespace NerdThings::Ngine {
         /*
          * Zero vector
          */
-        static const TVector2 Zero;
+        static const Vector2 Zero;
 
         // Public Constructor(s)
 
         /*
          * Create a zero vector
          */
-        TVector2() : X(0), Y(0) {}
+        Vector2() : X(0), Y(0) {}
 
         /*
          * Create a vector with a single value for all components
          */
-        explicit TVector2(float val_) : X(val_), Y(val_) {}
+        explicit Vector2(float val_) : X(val_), Y(val_) {}
 
         /*
          * Create a 2D vector
          */
-        TVector2(float x_, float y_) : X(x_), Y(y_) {}
+        Vector2(float x_, float y_) : X(x_), Y(y_) {}
 
         // Public Methods
-
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to a raylib vector
-         */
-        Vector2 ToRaylibVec() const;
-
-        /*
-         * Convert from a raylib vector
-         */
-        static TVector2 FromRaylibVec(const Vector2 &vec);
-
-        #endif
 
         /*
          * Clamp a vector
          */
-        static TVector2 Clamp(TVector2 value_, TVector2 min_, TVector2 max_);
+        static Vector2 Clamp(Vector2 value_, Vector2 min_, Vector2 max_);
 
         /*
          * Find the dot product between two vectors
          */
-        [[nodiscard]] float Dot(TVector2 b_) const;
+        float Dot(Vector2 b_) const;
 
         /*
          * Find the distance between two vectors
          */
-        [[nodiscard]] float Distance(TVector2 b_) const;
+        float Distance(Vector2 b_) const;
 
         /*
          * Find the magnitude of a vector
          */
-        [[nodiscard]] float Magnitude() const;
+        float Magnitude() const;
 
         /*
          * Find the magnitude of a vector squared.
          * Does not use sqrt so it is better for comparisons.
          */
-        [[nodiscard]] float MagnitudeSquared() const;
+        float MagnitudeSquared() const;
 
         /*
          * Rotate this point around another
          */
-        TVector2 Rotate(TVector2 center, float rotation_);
+        Vector2 Rotate(Vector2 center, float rotation_);
 
         /*
          * Transform by matrix
          */
-        [[nodiscard]] TVector2 Transform(TMatrix matrix_) const;
+        Vector2 Transform(Matrix matrix_) const;
 
         // Operators
 
-        bool operator==(const TVector2 &b_) const {
+        bool operator==(const Vector2 &b_) const {
             return X == b_.X && Y == b_.Y;
         }
 
-        bool operator!=(const TVector2 &b_) const {
+        bool operator!=(const Vector2 &b_) const {
             return X != b_.X || Y != b_.Y;
         }
 
-        friend TVector2 operator+(TVector2 a_, const TVector2 &b_) {
+        friend Vector2 operator+(Vector2 a_, const Vector2 &b_) {
             return {
                 a_.X + b_.X,
                 a_.Y + b_.Y
             };
         }
 
-        void operator+=(const TVector2 &b_) {
+        void operator+=(const Vector2 &b_) {
             X += b_.X;
             Y += b_.Y;
         }
@@ -144,14 +130,14 @@ namespace NerdThings::Ngine {
             Y += b_;
         }
 
-        friend TVector2 operator-(TVector2 a_, const TVector2 &b_) {
+        friend Vector2 operator-(Vector2 a_, const Vector2 &b_) {
             return {
                 a_.X - b_.X,
                 a_.Y - b_.Y
             };
         }
 
-        void operator-=(const TVector2 &b_) {
+        void operator-=(const Vector2 &b_) {
             X -= b_.X;
             Y -= b_.Y;
         }
@@ -161,14 +147,14 @@ namespace NerdThings::Ngine {
             Y -= b_;
         }
 
-        friend TVector2 operator*(TVector2 a_, const TVector2 &b_) {
+        friend Vector2 operator*(Vector2 a_, const Vector2 &b_) {
             return {
                 a_.X * b_.X,
                 a_.Y * b_.Y
             };
         }
 
-        void operator*=(const TVector2 &b_) {
+        void operator*=(const Vector2 &b_) {
             X *= b_.X;
             Y *= b_.Y;
         }
@@ -178,14 +164,14 @@ namespace NerdThings::Ngine {
             Y *= b_;
         }
 
-        friend TVector2 operator/(TVector2 a_, const TVector2 &b_) {
+        friend Vector2 operator/(Vector2 a_, const Vector2 &b_) {
             return {
                 a_.X / b_.X,
                 a_.Y / b_.Y
             };
         }
 
-        void operator/=(const TVector2 &b_) {
+        void operator/=(const Vector2 &b_) {
             X /= b_.X;
             Y /= b_.Y;
         }

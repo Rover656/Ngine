@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -12,67 +12,97 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
+
+#include "../Filesystem/Filesystem.h"
+#include "../Resource.h"
+#include "AudioStream.h"
+#include "Wave.h"
 
 namespace NerdThings::Ngine::Audio {
     /*
      * A sound source
      */
-    struct NEAPI TSound {
+    struct NEAPI Sound : public IResource {
         // Public Fields
 
         /*
-         * Pointer to internal data within audio system
+         * The number of samples
          */
-        void *AudioBuffer;
+        unsigned int SampleCount;
 
         /*
-         * Audio buffer id
+         * The audio stream
          */
-        unsigned int Buffer;
-
-        /*
-         * Audio format
-         */
-        int Format;
-
-        /*
-         * Audio source id
-         */
-        unsigned int Source;
+        AudioStream Stream;
 
         // Public Constructor(s)
 
         /*
          * Create a null sound
          */
-        TSound()
-            : AudioBuffer(nullptr), Buffer(0), Format(0), Source(0) {}
+        Sound() {}
 
         // Destructor
 
-        ~TSound();
+        ~Sound();
 
         // Public Methods
 
-        #ifdef INCLUDE_RAYLIB
+        /*
+         * Whether or not the sound is playing.
+         */
+        bool IsPlaying() const;
 
         /*
-         * To a raylib sound
+         * Whether or not the sound is valid
          */
-        Sound ToRaylibSound() const;
-
-        /*
-         * From a raylib sound
-         */
-        static TSound FromRaylibSound(Sound snd_);
-
-        #endif
+        bool IsValid() const override;
 
         /*
          * Load a sound from a file
          */
-        static std::shared_ptr<TSound> LoadSound(const std::string &filename_);
+        static Sound *LoadSound(const Filesystem::Path &path_);
+
+        /*
+         * Load sound from wave data.
+         */
+        static Sound *LoadSoundFromWave(Wave *wave_);
+
+        /*
+         * Pause sound
+         */
+        void Pause();
+
+        /*
+         * Play sound
+         */
+        void Play();
+
+        /*
+         * Resume sound
+         */
+        void Resume();
+
+        /*
+         * Set sound pitch
+         */
+        void SetPitch(float pitch_);
+
+        /*
+         * Set sound volume
+         */
+        void SetVolume(float vol_);
+
+        /*
+         * Stop sound
+         */
+        void Stop();
+
+        /*
+         * Unload sound
+         */
+        void Unload() override;
     };
 }
 

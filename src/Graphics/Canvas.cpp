@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -11,63 +11,65 @@
 
 #include "Canvas.h"
 
-#include "Drawing.h"
+#include "Renderer.h"
 #include "GraphicsManager.h"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Constructors
 
-    Canvas::Canvas(float width_, float height_)
+    Canvas::Canvas(unsigned int width_, unsigned int height_)
             : _Width(width_), _Height(height_) {
-        _RenderTarget = std::make_shared<TRenderTarget>(_Width, _Height);
+        _RenderTarget = new RenderTarget(_Width, _Height);
     }
 
     // Destructor
 
     Canvas::~Canvas() {
         ConsoleMessage("Deleting canvas.", "NOTICE", "CANVAS");
+        delete _RenderTarget;
     }
 
     // Public Methods
 
-    void Canvas::Draw(TVector2 pos_) {
-        Graphics::Drawing::DrawTexture(_RenderTarget->Texture,
+    void Canvas::Draw(Vector2 pos_) {
+        Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
                                        {
                                                pos_.X,
                                                pos_.Y,
-                                               _Width,
-                                               _Height
+                                               static_cast<float>(_Width),
+                                               static_cast<float>(_Height)
                                        },
                                        {
                                                0,
                                                0,
-                                               static_cast<float>(_RenderTarget->Texture->Width),
-                                               static_cast<float>(-_RenderTarget->Texture->Height)
+                                               static_cast<float>(_RenderTarget->Width),
+                                               static_cast<float>(_RenderTarget->Height) * -1
                                        },
-                                       Graphics::TColor::White);
+                                       Graphics::Color::White);
     }
 
-    float Canvas::GetHeight() {
+    unsigned int Canvas::GetHeight() {
         return _Height;
     }
 
-    float Canvas::GetWidth() {
+    unsigned int Canvas::GetWidth() {
         return _Width;
     }
 
     void Canvas::ReDraw() {
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
-        Graphics::Drawing::Clear(TColor::Transparent);
+        Graphics::Renderer::Clear(Color::Transparent);
         RenderTargetRedraw();
         bool popped = false;
         Graphics::GraphicsManager::PopTarget(popped);
     }
 
-    void Canvas::SetDimensions(float width_, float height_) {
+    void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {
         ConsoleMessage("Resizing canvas.", "NOTICE", "CANVAS");
+        delete _RenderTarget;
         _Width = width_;
         _Height = height_;
-        _RenderTarget = std::make_shared<TRenderTarget>(_Width, _Height);
+        _RenderTarget = new RenderTarget(_Width, _Height);
         ReDraw();
     }
 }

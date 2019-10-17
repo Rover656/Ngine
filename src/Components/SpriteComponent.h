@@ -1,25 +1,23 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
 *   LICENSE: Apache License 2.0
 *   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
-*   
-*   File reviewed on 01/06/2019 by R.M
 *
 **********************************************************************************************/
 
 #ifndef SPRITECOMPONENT_H
 #define SPRITECOMPONENT_H
 
-#include "../ngine.h"
+#include "../Ngine.h"
 
-#include "Component.h"
-#include "BaseEntity.h"
-#include "EventHandler.h"
 #include "../Graphics/Sprite.h"
+#include "../Component.h"
+#include "../BaseEntity.h"
+#include "../EventHandler.h"
 
 namespace NerdThings::Ngine::Components {
     /*
@@ -31,7 +29,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Sprite used
          */
-        Graphics::TSprite _Sprite;
+        Graphics::Sprite _Sprite;
     public:
 
         // Public Constructor(s)
@@ -39,7 +37,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a sprite component
          */
-        SpriteComponent(BaseEntity *parent_, const Graphics::TSprite &sprite_)
+        SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_)
             : Component(parent_), _Sprite(sprite_) {
             SubscribeToDraw();
             SubscribeToUpdate();
@@ -52,11 +50,11 @@ namespace NerdThings::Ngine::Components {
             _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetOrigin());
         }
 
-        Graphics::TSprite *GetSprite() {
+        Graphics::Sprite *GetSprite() {
             return &_Sprite;
         }
 
-        void SetSprite(const Graphics::TSprite &sprite_) {
+        void SetSprite(const Graphics::Sprite &sprite_) {
             if (_Sprite != sprite_)
                 _Sprite = sprite_;
         }

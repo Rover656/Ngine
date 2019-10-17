@@ -1,6 +1,6 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - The 2D game engine.
 *
 *   Copyright (C) 2019 NerdThings
 *
@@ -21,26 +21,26 @@ namespace NerdThings::Ngine::UI {
         auto style = GetStyle();
         auto rect = style.GetBorderRect(GetLogicRectangle());
 
-        // Check for mouse click
-        auto mState = Input::Mouse::GetMouseState();
+        // Get mouse position
+        auto mPos = Input::Mouse::GetMousePosition();
 
         // Check the mouse is within our parent too, if not we cant be clicked
         auto par = GetParent<UIControl>();
         if (par != nullptr) {
             auto parentRect = par->GetLogicRectangle();
 
-            if (!parentRect.Contains(mState.Position))
+            if (!parentRect.Contains(mPos))
                 return;
         }
 
-        if (rect.Contains(mState.Position)) {
+        if (rect.Contains(mPos)) {
             // The mouse is over the button
-            if (mState.ButtonsPressed[MOUSE_BUTTON_LEFT]) {
+            if (Input::Mouse::IsButtonPressed(Input::MOUSE_BUTTON_LEFT)) {
                 // Clicked
                 OnClick({this});
 
                 // Deregister click so double events dont happen
-                Input::Mouse::CancelButton(MOUSE_BUTTON_LEFT);
+                Input::Mouse::CancelButton(Input::MOUSE_BUTTON_LEFT);
             } else if (!_Hovered) {
                 // Hovered
                 OnHover({this});

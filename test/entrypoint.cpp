@@ -1,38 +1,32 @@
-#define INCLUDE_WINDOWS
-#include "ngine.h"
+#include <Ngine.h>
 
-#include <Audio/AudioManager.h>
-#include <Audio/Music.h>
-#include <Audio/Sound.h>
+#include <Audio/AudioDevice.h>
+#include <Audio/Wave.h>
 #include <Components/BoundingBoxCollisionShapeComponent.h>
 #include <Components/CameraComponent.h>
 #include <Components/CircleCollisionShapeComponent.h>
 #include <Components/PolygonCollisionShapeComponent.h>
 #include <Components/SpriteComponent.h>
-#include <BaseEntity.h>
-#include <Component.h>
-#include <Game.h>
-#include <Resources.h>
-#include <Graphics/Sprite.h>
+#include <Filesystem/Resources.h>
 #include <Graphics/TilesetCanvas.h>
+#include <Input/Gamepad.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
-#include <Vector2.h>
-#include <Physics/BoundingBox.h>
-#include <Physics/Circle.h>
-#include <Physics/Polygon.h>
 #include <UI/Controls/BasicButton.h>
 #include <UI/Controls/HorizontalPanel.h>
 #include <UI/Controls/Image.h>
 #include <UI/Controls/Label.h>
 #include <UI/Controls/VerticalPanel.h>
-#include <UI/UIControl.h>
-#include <UI/UIPanel.h>
 #include <UI/UIWidget.h>
+#include <BaseEntity.h>
+#include <Component.h>
+#include <Game.h>
+#include <Window.h>
 
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
 using namespace NGINE_NS::Components;
+using namespace NGINE_NS::Filesystem;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 using namespace NGINE_NS::Physics;
@@ -41,7 +35,7 @@ using namespace NGINE_NS::UI::Controls;
 
 class KeyboardMovementComponent2D : public Component {
 public:
-    float MoveSpeed = 1;//5;
+    float MoveSpeed = 1;
 
     KeyboardMovementComponent2D(BaseEntity *parent_) : Component(parent_) {
         SubscribeToUpdate();
@@ -83,18 +77,15 @@ public:
 
 class PlayerEntity : public BaseEntity {
 public:
-    PlayerEntity(Scene *parentScene_, TVector2 position_)
-        : BaseEntity(parentScene_, position_) {
+    PlayerEntity(Scene *parentScene_, Vector2 position_)
+            : BaseEntity(parentScene_, position_) {
         SetOrigin({16, 16});
 
-        AddComponent("Sprite", new SpriteComponent(this, TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, TRectangle(0, 0, 32, 32).ToPolygon()))->
-            EnableDebugDraw();
+        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, Rectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
 
-        auto cam = AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}));
-
-        cam->Activate();
+        AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}))->Activate();
     }
 };
 
@@ -105,87 +96,74 @@ public:
     }
 
     void Update(EventArgs &e) override {
-        //tst.Update();
-
         if (Keyboard::IsKeyPressed(KEY_SPACE)) {
-            AudioManager::Play(Resources::GetSound("test_sound"));
+            Resources::GetSound("test_sound")->Play();
         }
     }
 };
 
 class OtherEntity : public BaseEntity {
 public:
-    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, TVector2::Zero, 0, true) {
+    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, Vector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
-
         AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
-        //AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
+        AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
 
-        //std::vector<TVector2> vertices = { {0, 0}, {100, 0}, {100, 100}, {0, 100} };
-
-        TRectangle rect = {0, 0, 32, 32};
-
-        //AddComponent("TestPolygon", new PolygonCollisionShapeComponent(this, rect.ToPolygon()))->EnableDebugDraw();
+        SubscribeToUpdate();
     }
 
-    bool CheckForCulling(TRectangle cullArea_) override {
+    bool CheckForCulling(Rectangle cullArea_) override {
         auto a = cullArea_.ToPolygon();
-        auto b = TRectangle(GetPosition(), { 100, 100 }).ToPolygon();
-        return a.CheckCollision(&b);
+        auto b = Rectangle(GetPosition(), {100, 100 }).ToPolygon();
+        return !a.CheckCollision(&b);
     }
 };
 
 class TestWidget : public UIWidget {
 public:
-    TestWidget(TVector2 pos_) : UIWidget(pos_) {
+    TestWidget(Vector2 pos_) : UIWidget(pos_) {
+        auto fnt = Font::GetDefaultFont();
         auto panelStyle = TUIStyle();
-        panelStyle.BackColor = TColor::White;
-        panelStyle.BorderColor = TColor::Gray;
+        panelStyle.BackColor = Color::White;
+        panelStyle.BorderColor = Color::Gray;
         panelStyle.BorderThickness = 2;
         panelStyle.SetPadding(5, 0, 5, 0);
         SetPanel(new VerticalPanel(250.0f, 500.0f));
-        //GetPanel<VerticalPanel>()->SetWidth(250.0f);
-        //GetPanel<VerticalPanel>()->SetHeight(500.0f);
         GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
-        //SetPanel(new HorizontalPanel(550.0f, 250.0f));
-        //GetPanel<HorizontalPanel>()->EVerticalAlignment = ALIGN_MIDDLE;
         GetPanel()->SetStyle(panelStyle);
 
         auto style = TUIStyle();
         style.BorderThickness = 2;
-        style.BorderColor = TColor::Blue;
-        style.SetPadding(5);
-        style.BackColor = TColor::Green;
+        style.BorderColor = Color::Blue;
+        style.BackColor = Color::Green;
         style.Margin[2] = 5; // 5 bottom margin
         style.Margin[3] = 5; // 5 left margin
 
-        auto l = new Label("Hello world", TFont::GetDefaultFont());
-        style.ForeColor = Graphics::TColor::Orange;
+        auto l = new Label("Hello World", Font::GetDefaultFont());
+        style.ForeColor = Graphics::Color::Orange;
         l->SetFontSize(32);
         l->SetStyle(style);
         GetPanel()->AddChild("testLabel", l);
 
-        l = new Label("Hello world", TFont::GetDefaultFont());
-        style.ForeColor = Graphics::TColor::Blue;
+        l = new Label("Hello world", Font::GetDefaultFont());
+        style.ForeColor = Graphics::Color::Blue;
         l->SetFontSize(62);
         l->SetStyle(style);
-        //l->SetConstrainToPanel(true);
         GetPanel()->AddChild("testLabel1", l);
 
         auto bStyle = TUIStyle();
-        bStyle.BackColor = TColor::Blue;
+        bStyle.BackColor = Color::Blue;
 
-        auto btn = new BasicButton("Test", TFont::GetDefaultFont(), 32, 200, 100);
+        auto btn = new BasicButton("Test", Font::GetDefaultFont(), 32, 200, 100);
         btn->OnClick.Bind(&TestWidget::Test);
         btn->SetStyle(bStyle);
-
         GetPanel()->AddChild("testButton", (UIControl *)btn);
 
-        auto imgStyle = TUIStyle();
-        imgStyle.Margin[0] = 5;
-        auto img = new Image(TSprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
-        img->SetStyle(imgStyle);
-        //GetPanel()->AddChild("testImage", img);
+//        auto imgStyle = TUIStyle();
+//        imgStyle.Margin[0] = 5;
+//        auto img = new Image(Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
+//        img->SetStyle(imgStyle);
+//        //GetPanel()->AddChild("testImage", img);
     }
 
     static void Test(UIControlEventArgs &e) {
@@ -193,16 +171,29 @@ public:
     }
 };
 
+// Define rectangle
+float vertices[] = {
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
+};
+float colors[] = {
+        1.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 0.5f, 1.0f
+};
+
 class TestScene : public Scene {
 public:
-    TCamera cam;
+    Camera cam;
 
     TestWidget widg;
 
     TilesetCanvas *testTiles;
 
-    TestScene(Game* game) : Scene(game), widg(TVector2(120, 120)) {
-
+    TestScene(Game* game) : Scene(game), widg(Vector2(120, 120)) {
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
 
         AddEntity("Player", new PlayerEntity(this, {100, 100}));
@@ -225,7 +216,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetCanvas(TTileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles = new TilesetCanvas(Tileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 
@@ -234,29 +225,43 @@ public:
     }
 
     void OnLoaded(SceneLoadEventArgs &e) {
-        // AudioManager::Play(Resources::GetMusic("test_music"));
-
-        AudioManager::SetMasterVolume(0.5);
+        //Resources::GetMusic("test_music")->Play();
+        AudioDevice::SetMasterVolume(0.25);
     }
 
+    int rot = 0;
+
     void Draw(EventArgs &e) {
-        // for (auto i = 0; i < 800; i++) {
-        //     Drawing::DrawCircle({ 10.0f, 10.0f }, 5, TColor::Orange);
-        // }
+        auto p = Mouse::GetMousePosition();
 
-        Drawing::DrawFPS({ 500, 300 });
+        widg.Draw();
 
-        //widg.Draw();
+        rot += Mouse::GetMouseWheelYDelta();
+        rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
 
-        testTiles->Draw({100, 100});
+        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, Color::White, {} , DegToRad(rot));
+
+        if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
+            testTiles->Draw({0, 0});
+        }
+
+        Renderer::DrawCircleLines({100, 100}, 30, Color::Red);
+        Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, Color::Green);
+
+        //Renderer::DrawTexture(Font::GetDefaultFont()->GetTexture(), {100, 100}, Color::White);
     }
 
     void DrawCam(EventArgs &e) {
-        Drawing::DrawRectangleLines(GetCullArea(), TColor::Green, 1);
+        Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
     }
 
     void Update(EventArgs &e) {
         widg.Update();
+
+        if (Keyboard::IsKeyPressed(KEY_F11)) {
+            Window::Config.Fullscreen = !Window::Config.Fullscreen;
+            Window::ApplyConfig();
+        }
     }
 };
 
@@ -264,17 +269,29 @@ class TestGame : public Game {
     TestScene *_Scene;
 public:
 
-    TestGame(int width_, int height_, int DrawFPS_, int UpdateFPS_, std::string title_) : Game(
-        width_, height_, 1280, 768, DrawFPS_, UpdateFPS_, title_,
-        MAINTAIN_DIMENSIONS | RESIZEABLE_WINDOW) {
+    TestGame(const GameConfig &config_) : Game(config_) {
         OnRun.Bind(this, &TestGame::Init);
     }
 
     void Init(EventArgs &e) {
+        // Set exit key
+        Keyboard::SetExitKey(KEY_ESCAPE);
+
         // Load all content
-        auto succ = false;
-        auto exeDir = Resources::GetExecutableDirectory(succ);
-        Resources::LoadDirectory(exeDir + "/content");
+        Resources::LoadResources();
+
+        // Load arial as default font
+        Font::SetDefaultFont(Resources::GetFont("Upheaval"));
+
+        // Output readme
+        auto f = File(Path(Path::GetExecutableDirectory() / "content" / "readme.txt"));
+
+        if (f.Open(MODE_READ)) {
+            auto t = f.ReadString();
+            ConsoleMessage("Readme Reads:", "NOTICE", "entrypoint");
+            ConsoleMessage(t, "NOTICE", "entrypoint - readme.txt");
+            f.Close();
+        }
 
         // Create scene
         _Scene = new TestScene(this);
@@ -282,17 +299,42 @@ public:
         // Set scene
         SetScene(_Scene);
     }
+
+    void Uninit(EventArgs &e) {
+
+    }
 };
 
-#ifdef _WIN32
-#include <Windows.h>
+#include <NgineEntry.h> // Entrypoint stuff
 
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow) {
-    #else
-int main() {
-    #endif
-    auto game = new TestGame(1280, 768, 60, 60, "Hi");
-    game->Run();
-    delete game;
+NGINE_GAME_ENTRY {
+    // Load icon
+    auto icon = new Graphics::Image(Path::GetExecutableDirectory() / "content" / "test_icon.png");
+
+    GameConfig gameConfig;
+    gameConfig.TargetWidth = 1280;
+    gameConfig.TargetHeight = 768;
+    gameConfig.MaintainResolution = true;
+
+    WindowConfig windowConfig;
+    windowConfig.Resizable = true;
+    windowConfig.MSAA_4X = true;
+    windowConfig.VSync = false;
+    windowConfig.InitialWidth = 1920/2;
+    windowConfig.InitialHeight = 1080/2;
+    windowConfig.Title = "Test Game";
+    windowConfig.Icon = icon;
+    windowConfig.NativeDebugConsole = true;
+    Window::SetConfig(windowConfig);
+
+    // Create game
+    auto game = TestGame(gameConfig);
+
+    // Run game
+    NGINE_RUN_GAME(game);
+
+    // Delete icon
+    delete icon;
+
     return 0;
 }
