@@ -51,7 +51,7 @@ namespace NerdThings::Ngine::Graphics {
         if (renderFrom_.X < pos_.X) renderFrom_.X = pos_.X;
         if (renderFrom_.Y < pos_.Y) renderFrom_.Y = pos_.Y;
         if (renderFrom_.X > pos_.X + _Width * tileWidth) renderFrom_.X = pos_.X  + _Width * tileWidth;
-        if (renderFrom_.Y > pos_.Y + _Height) renderFrom_.Y = pos_.Y + _Height * tileHeight;
+        if (renderFrom_.Y > pos_.Y + _Height * tileHeight) renderFrom_.Y = pos_.Y + _Height * tileHeight;
 
         if (renderTo_.X < pos_.X) renderTo_.X = pos_.X;
         if (renderTo_.Y < pos_.Y) renderTo_.Y = pos_.Y;

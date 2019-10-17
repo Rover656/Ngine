@@ -115,6 +115,7 @@ namespace NerdThings::Ngine {
 
     Vector2 Scene::GetCullAreaPosition() const {
         if (_CullAreaCenterInViewport) {
+            // TODO: Bug: Zoom breaks this
             // Get viewport position
             auto pos = GetViewportPosition();
 
