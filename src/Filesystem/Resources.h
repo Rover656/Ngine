@@ -48,6 +48,12 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Fields
 
         /*
+         * Default base size for loaded fonts.
+         * Default: 36
+         */
+        static float DefaultFontBaseSize;
+
+        /*
          * The directory to load resources from
          */
         static Path ResourcesDirectory;
@@ -108,9 +114,10 @@ namespace NerdThings::Ngine::Filesystem {
         static void LoadResources();
 
         /*
-         * Load font from file
+         * Load font from file.
+         * If base size == -1, default will be used.
          */
-        static bool LoadFont(const Path &inPath_, const std::string &name_);
+        static bool LoadFont(const Path &inPath_, const std::string &name_, int baseSize_ = -1);
 
         /*
          * Load music from file

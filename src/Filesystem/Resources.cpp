@@ -24,6 +24,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Public Fields
 
+    float Resources::DefaultFontBaseSize = 36;
     Path Resources::ResourcesDirectory = Path("content");
 
     // Public Methods
@@ -137,9 +138,11 @@ namespace NerdThings::Ngine::Filesystem {
         }
     }
 
-    bool Resources::LoadFont(const Path &inPath_, const std::string &name_) {
+    bool Resources::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
+        if (baseSize_ == -1) baseSize_ = DefaultFontBaseSize;
+
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        auto fnt = Graphics::Font::LoadTTFFont(inPath_);
+        auto fnt = Graphics::Font::LoadTTFFont(inPath_, baseSize_);
         if (fnt->IsValid()) {
             _Fonts.insert({ name, std::unique_ptr<Graphics::Font>(fnt) });
             return true;

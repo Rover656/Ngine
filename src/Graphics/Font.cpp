@@ -57,6 +57,9 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     Font *Font::LoadTTFFont(const Filesystem::Path &path_, int baseSize_, std::vector<int> fontChars_) {
+        // Check size
+        if (baseSize_ < 1) throw std::runtime_error("Invalid base size.");
+
         // Initialize font
         auto font = new Font();
 
@@ -236,6 +239,8 @@ namespace NerdThings::Ngine::Graphics {
         // Characters
         std::vector<CharInfo> characters;
 
+        // TODO: Support for bitmap fonts something to consider?
+
         // Load font file
         auto fontFile = Filesystem::File(path_);
         if (fontFile.Open(Filesystem::MODE_READ, true)) {
@@ -282,8 +287,6 @@ namespace NerdThings::Ngine::Graphics {
 
                 // Load image
                 Characters[i].Image = std::make_shared<Image>(pixels, chw, chh, UNCOMPRESSED_GRAYSCALE);
-
-                // TODO: Option to remove anti-aliasing
 
                 // Set offset
                 Characters[i].OffsetY += (int)((float)ascent*scaleFactor);
