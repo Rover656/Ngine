@@ -15,6 +15,8 @@
 
 #include "../../Ngine.h"
 #include "../../Matrix.h"
+#include "../../Vector2.h"
+#include "../../Vector3.h""
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     /*
@@ -24,12 +26,12 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Fragment shader.
          */
-        SHADER_FRAGMENT = 0x8B30,
+                SHADER_FRAGMENT = 0x8B30,
 
         /*
          * Vertex shader
          */
-        SHADER_VERTEX = 0x8B31
+                SHADER_VERTEX = 0x8B31
     };
 
     /*
@@ -153,7 +155,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         /*
          * Create a GL shader program with two shaders
          */
-        GLShaderProgram(std::shared_ptr<GLShader> fragmentShader_, std::shared_ptr<GLShader> vertexShader_, bool doLink_ = true);
+        GLShaderProgram(std::shared_ptr<GLShader> fragmentShader_, std::shared_ptr<GLShader> vertexShader_,
+                        bool doLink_ = true);
 
         /*
          * Destruct and delete shader program
@@ -197,22 +200,28 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
          */
         bool Link();
 
-        // TODO: The rest of set attribs and uniforms
+        // TODO: Work out how to handle attributes when we come to add them
+        // TODO: Also work out how to add arrays to this system
 
         /*
-         * Set uniform matrix value.
+         * Set a uniform float value
          */
-        void SetUniformMatrix(unsigned int loc_, const Matrix &matrix_);
+        void SetUniformFloat(unsigned int loc_, float float_);
 
         /*
-         * Set uniform matrix value with a predefined location.
+         * Set a uniform float 2 value
          */
-        void SetUniformMatrixP(GLShaderLocation loc_, const Matrix &matrix_);
+        void SetUniformFloat(unsigned int loc_, float float1_, float float2_);
 
         /*
-         * Set uniform matrix value with a name.
+         * Set a uniform float 3 value
          */
-        void SetUniformMatrixN(const std::string &loc_, const Matrix &matrix_);
+        void SetUniformFloat(unsigned int loc_, float float1_, float float2_, float float3_);
+
+        /*
+         * Set a uniform float 4 value
+         */
+        void SetUniformFloat(unsigned int loc_, float float1_, float float2_, float float3_, float float4_);
 
         /*
          * Set a uniform int value
@@ -220,14 +229,55 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         void SetUniformInt(unsigned int loc_, int int_);
 
         /*
-         * Set a uniform int value with a predefined location.
+         * Set a uniform int 2 value
          */
-        void SetUniformIntP(GLShaderLocation loc_, int int_);
+        void SetUniformInt(unsigned int loc_, int int1_, int int2_);
 
         /*
-         * Set a uniform int value with a name.
+         * Set a uniform int 3 value
          */
-        void SetUniformIntN(const std::string & loc_, int int_);
+        void SetUniformInt(unsigned int loc_, int int1_, int int2_, int int3_);
+
+        /*
+         * Set a uniform int 4 value
+         */
+        void SetUniformInt(unsigned int loc_, int int1_, int int2_, int int3_, int int4_);
+
+        /*
+         * Set uniform matrix value.
+         */
+        void SetUniformMatrix(unsigned int loc_, const Matrix &matrix_);
+
+        /*
+         * Set a uniform int value
+         */
+        void SetUniformUInt(unsigned int loc_, unsigned int int_);
+
+        /*
+         * Set a uniform int 2 value
+         */
+        void SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_);
+
+        /*
+         * Set a uniform int 3 value
+         */
+        void SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_, unsigned int int3_);
+
+        /*
+         * Set a uniform int 4 value
+         */
+        void SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_, unsigned int int3_,
+                            unsigned int int4_);
+
+        /*
+         * Set a uniform vector 2 value
+         */
+        void SetUniformVector2(unsigned int loc_, Vector2 vec_);
+
+        /*
+         * Set a uniform vector 3 value
+         */
+        void SetUniformVector3(unsigned int loc_, Vector3 vec_);
 
         /*
          * Use the shader program

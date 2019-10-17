@@ -213,20 +213,36 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         return IsLinked();
     }
 
-    void GLShaderProgram::SetUniformMatrix(unsigned int loc_, const Matrix &matrix_) {
+    void GLShaderProgram::SetUniformFloat(unsigned int loc_, float float_) {
         // No unlinked shaders
         if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
 
         // Set value
-        glUniformMatrix4fv(loc_, 1, false, matrix_.ToFloatArray().get());
+        glUniform1f(loc_, float_);
     }
 
-    void GLShaderProgram::SetUniformMatrixP(GLShaderLocation loc_, const Matrix &matrix_) {
-        SetUniformMatrix(Locations[loc_], matrix_);
+    void GLShaderProgram::SetUniformFloat(unsigned int loc_, float float1_, float float2_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform2f(loc_, float1_, float2_);
     }
 
-    void GLShaderProgram::SetUniformMatrixN(const std::string &loc_, const Matrix &matrix_) {
-        SetUniformMatrix(GetUniformLocation(loc_), matrix_);
+    void GLShaderProgram::SetUniformFloat(unsigned int loc_, float float1_, float float2_, float float3_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform3f(loc_, float1_, float2_, float3_);
+    }
+
+    void GLShaderProgram::SetUniformFloat(unsigned int loc_, float float1_, float float2_, float float3_, float float4_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform4f(loc_, float1_, float2_, float3_, float4_);
     }
 
     void GLShaderProgram::SetUniformInt(unsigned int loc_, int int_) {
@@ -237,12 +253,77 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glUniform1i(loc_, int_);
     }
 
-    void GLShaderProgram::SetUniformIntP(GLShaderLocation loc_, int int_) {
-        SetUniformInt(Locations[loc_], int_);
+    void GLShaderProgram::SetUniformInt(unsigned int loc_, int int1_, int int2_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform2i(loc_, int1_, int2_);
     }
 
-    void GLShaderProgram::SetUniformIntN(const std::string &loc_, int int_) {
-        SetUniformInt(GetUniformLocation(loc_), int_);
+    void GLShaderProgram::SetUniformInt(unsigned int loc_, int int1_, int int2_, int int3_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform3i(loc_, int1_, int2_, int3_);
+    }
+
+    void GLShaderProgram::SetUniformInt(unsigned int loc_, int int1_, int int2_, int int3_, int int4_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform4i(loc_, int1_, int2_, int3_, int4_);
+    }
+
+    void GLShaderProgram::SetUniformMatrix(unsigned int loc_, const Matrix &matrix_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniformMatrix4fv(loc_, 1, false, matrix_.ToFloatArray().get());
+    }
+
+    void GLShaderProgram::SetUniformUInt(unsigned int loc_, unsigned int int_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform1ui(loc_, int_);
+    }
+
+    void GLShaderProgram::SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform2i(loc_, int1_, int2_);
+    }
+
+    void GLShaderProgram::SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_, unsigned int int3_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform3i(loc_, int1_, int2_, int3_);
+    }
+
+    void GLShaderProgram::SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_, unsigned int int3_,
+                                         unsigned int int4_) {
+        // No unlinked shaders
+        if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
+
+        // Set value
+        glUniform4i(loc_, int1_, int2_, int3_, int4_);
+    }
+
+    void GLShaderProgram::SetUniformVector2(unsigned int loc_, Vector2 vec_) {
+        SetUniformFloat(loc_, vec_.X, vec_.Y);
+    }
+
+    void GLShaderProgram::SetUniformVector3(unsigned int loc_, Vector3 vec_) {
+        SetUniformFloat(loc_, vec_.X, vec_.Y, vec_.Z);
     }
 
     void GLShaderProgram::Use() {

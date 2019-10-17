@@ -106,19 +106,7 @@ namespace NerdThings::Ngine::Filesystem {
 #if defined(_WIN32)
         // %APPDATA%
 
-        // Get path
-        PWSTR *appDataPath;
-        SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, nullptr, appDataPath);
-
-        // To string
-        std::stringstream ss;
-        ss << appDataPath;
-        auto path = ss.str();
-
-        // Free
-        CoTaskMemFree(appDataPath);
-
-        return path;
+        return std::string(getenv("APPDATA"));
 #elif defined(__linux__)
         // Home local share
         return __GetHome() + ".local/share";

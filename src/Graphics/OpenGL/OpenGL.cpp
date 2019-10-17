@@ -32,9 +32,7 @@
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-
 #include <GLFW/glfw3.h>
-
 #elif defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
 #endif
@@ -43,60 +41,60 @@
 
 // Fix missing definitions (Straight from rlgl)
 #ifndef GL_SHADING_LANGUAGE_VERSION
-#define GL_SHADING_LANGUAGE_VERSION         0x8B8C
+#define GL_SHADING_LANGUAGE_VERSION 0x8B8C
 #endif
 
 #ifndef GL_COMPRESSED_RGB_S3TC_DXT1_EXT
-#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT     0x83F0
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0x83F0
 #endif
 #ifndef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
-#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT    0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
 #endif
 #ifndef GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
-#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT    0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
 #endif
 #ifndef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
-#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT    0x83F3
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
 #endif
 #ifndef GL_ETC1_RGB8_OES
-#define GL_ETC1_RGB8_OES                    0x8D64
+#define GL_ETC1_RGB8_OES 0x8D64
 #endif
 #ifndef GL_COMPRESSED_RGB8_ETC2
-#define GL_COMPRESSED_RGB8_ETC2             0x9274
+#define GL_COMPRESSED_RGB8_ETC2 0x9274
 #endif
 #ifndef GL_COMPRESSED_RGBA8_ETC2_EAC
-#define GL_COMPRESSED_RGBA8_ETC2_EAC        0x9278
+#define GL_COMPRESSED_RGBA8_ETC2_EAC 0x9278
 #endif
 #ifndef GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG
-#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG  0x8C00
+#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG 0x8C00
 #endif
 #ifndef GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG
 #define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG 0x8C02
 #endif
 #ifndef GL_COMPRESSED_RGBA_ASTC_4x4_KHR
-#define GL_COMPRESSED_RGBA_ASTC_4x4_KHR     0x93b0
+#define GL_COMPRESSED_RGBA_ASTC_4x4_KHR 0x93b0
 #endif
 #ifndef GL_COMPRESSED_RGBA_ASTC_8x8_KHR
-#define GL_COMPRESSED_RGBA_ASTC_8x8_KHR     0x93b7
+#define GL_COMPRESSED_RGBA_ASTC_8x8_KHR 0x93b7
 #endif
 
 #ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT   0x84FF
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
 
 #ifndef GL_TEXTURE_MAX_ANISOTROPY_EXT
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT       0x84FE
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
 #endif
 
 #if defined(GRAPHICS_OPENGLES2)
-#define glClearDepth                glClearDepthf
-#define GL_READ_FRAMEBUFFER         GL_FRAMEBUFFER
-#define GL_DRAW_FRAMEBUFFER         GL_FRAMEBUFFER
+#define glClearDepth glClearDepthf
+#define GL_READ_FRAMEBUFFER GL_FRAMEBUFFER
+#define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
 #endif
 
 #if defined(GRAPHICS_OPENGL21)
-#define GL_LUMINANCE                        0x1909
-#define GL_LUMINANCE_ALPHA                  0x190A
+#define GL_LUMINANCE 0x1909
+#define GL_LUMINANCE_ALPHA 0x190A
 #endif
 
 // GLES2 extensions
@@ -177,8 +175,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
             // Pass shader data
             Matrix matMVP = _ModelView * _Projection;
-            _CurrentShaderProgram->SetUniformMatrixP(LOCATION_MATRIX_MVP, matMVP);
-            _CurrentShaderProgram->SetUniformIntP(LOCATION_TEXTURE, 0);
+            _CurrentShaderProgram->SetUniformMatrix(_CurrentShaderProgram->Locations[LOCATION_MATRIX_MVP], matMVP);
+            _CurrentShaderProgram->SetUniformInt(_CurrentShaderProgram->Locations[LOCATION_TEXTURE], 0);
 
             // Prepare buffers
             int vertexOffset = 0;
