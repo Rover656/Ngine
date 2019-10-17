@@ -25,6 +25,10 @@ namespace NerdThings::Ngine {
 
     void Component::Draw(EventArgs &e) { }
 
+    Scene *Component::GetParentScene() const {
+        return _ParentEntity->GetParentScene();
+    }
+
     bool Component::HasParent() const {
         return _ParentEntity != nullptr;
     }

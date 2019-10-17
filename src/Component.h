@@ -15,6 +15,7 @@
 #include "Ngine.h"
 
 #include "EventHandler.h"
+#include "Scene.h"
 
 namespace NerdThings::Ngine {
 #ifndef BASEENTITY_H
@@ -66,15 +67,22 @@ namespace NerdThings::Ngine {
         /*
          * Get the parent entity as a type
          */
-        template <typename EntityType>
+        template <typename EntityType = BaseEntity>
         EntityType *GetParent() const {
             return dynamic_cast<EntityType*>(_ParentEntity);
         }
 
+        // TODO: Functions like this also need templates.
+
+        /*
+         * Get the parent scene
+         */
+        Scene *GetParentScene() const;
+
         /*
          * Whether or not the component has a parent
          */
-        [[nodiscard]] bool HasParent() const;
+        bool HasParent() const;
 
         /*
          * Subscribe to entity draw

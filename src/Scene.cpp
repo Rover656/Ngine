@@ -99,22 +99,94 @@ namespace NerdThings::Ngine {
     }
 
     Rectangle Scene::GetCullArea() const {
-        auto cam = GetActiveCamera();
+        return {GetCullAreaPosition(), _CullAreaWidth, _CullAreaHeight};
+    }
 
-        if (cam == nullptr) {
-            return {0, 0, 0, 0};
+    Vector2 Scene::GetCullAreaEndPosition() const {
+        auto pos = GetCullAreaPosition();
+        pos.X += _CullAreaWidth;
+        pos.Y += _CullAreaHeight;
+        return pos;
+    }
+
+    float Scene::GetCullAreaHeight() const {
+        return _CullAreaHeight;
+    }
+
+    Vector2 Scene::GetCullAreaPosition() const {
+        if (_CullAreaCenterInViewport) {
+            // Get viewport position
+            auto pos = GetViewportPosition();
+
+            // Get center of viewport
+            pos.X += GetViewportWidth() / 2.0f;
+            pos.Y += GetViewportHeight() / 2.0f;
+
+            // Offset from cull area size
+            pos.X -= _CullAreaWidth / 2.0f;
+            pos.Y -= _CullAreaHeight / 2.0f;
+
+            return pos;
         }
+        return GetViewportPosition();
+    }
 
-        if (_CullAreaCenter)
-            return {
-                cam->Position.X - _CullAreaWidth * 0.5f, cam->Position.Y - _CullAreaHeight * 0.5f, _CullAreaWidth,
-                _CullAreaHeight
-            };
-        return {cam->Position.X - cam->Origin.X, cam->Position.Y - cam->Origin.Y, _CullAreaWidth, _CullAreaHeight};
+    float Scene::GetCullAreaWidth() const {
+        return _CullAreaWidth;
     }
 
     Game *Scene::GetParentGame() {
         return _ParentGame;
+    }
+
+    Rectangle Scene::GetViewport() const {
+        return {GetViewportPosition(), GetViewportWidth(), GetViewportHeight()};
+    }
+
+    Vector2 Scene::GetViewportEndPosition() const {
+        auto pos = GetViewportPosition();
+        pos.X += GetViewportWidth();
+        pos.Y += GetViewportHeight();
+        return pos;
+    }
+
+    float Scene::GetViewportHeight() const {
+        if (_ActiveCamera != nullptr) {
+            if (_ParentGame->Config.MaintainResolution) {
+                return _ParentGame->Config.TargetHeight / _ActiveCamera->Zoom;
+            } else {
+                return Window::GetHeight() / _ActiveCamera->Zoom;
+            }
+        } else if (_ParentGame->Config.MaintainResolution) {
+            // Virtual size
+            return _ParentGame->Config.TargetHeight;
+        } else {
+            // Window size
+            return Window::GetHeight();
+        }
+    }
+
+    Vector2 Scene::GetViewportPosition() const {
+        if (_ActiveCamera != nullptr) {
+            return _ActiveCamera->Position - _ActiveCamera->Origin;
+        }
+        return {0, 0}; // If we add a viewport system, this will have different values
+    }
+
+    float Scene::GetViewportWidth() const {
+        if (_ActiveCamera != nullptr) {
+            if (_ParentGame->Config.MaintainResolution) {
+                return _ParentGame->Config.TargetWidth / _ActiveCamera->Zoom;
+            } else {
+                return Window::GetHeight() / _ActiveCamera->Zoom;
+            }
+        } else if (_ParentGame->Config.MaintainResolution) {
+            // Virtual size
+            return _ParentGame->Config.TargetWidth;
+        } else {
+            // Window size
+            return Window::GetHeight();
+        }
     }
 
     void Scene::InternalSetEntityDepth(int depth_, BaseEntity *ent_) {
@@ -151,10 +223,10 @@ namespace NerdThings::Ngine {
         _ActiveCamera = camera_;
     }
 
-    void Scene::SetCullArea(float width_, float height_, bool centerOnCamera_) {
+    void Scene::SetCullArea(float width_, float height_, bool centerInViewport_) {
         _CullAreaWidth = width_;
         _CullAreaHeight = height_;
-        _CullAreaCenter = centerOnCamera_;
+        _CullAreaCenterInViewport = centerInViewport_;
     }
 
     void Scene::Update() {

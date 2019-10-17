@@ -8,7 +8,7 @@
 #include <Components/PolygonCollisionShapeComponent.h>
 #include <Components/SpriteComponent.h>
 #include <Filesystem/Resources.h>
-#include <Graphics/TilesetCanvas.h>
+#include <Graphics/TilesetRenderer.h>
 #include <Input/Gamepad.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
@@ -191,7 +191,7 @@ public:
 
     TestWidget widg;
 
-    TilesetCanvas *testTiles;
+    TilesetRenderer *testTiles;
 
     TestScene(Game* game) : Scene(game), widg(Vector2(120, 120)) {
         AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
@@ -200,7 +200,9 @@ public:
 
         OnLoad.Bind(this, &TestScene::OnLoaded);
 
-        OnDraw.Bind(this, &TestScene::Draw);
+        //OnDraw.Bind(this, &TestScene::Draw);
+
+        OnDrawCamera.Bind(this, &TestScene::Draw);
 
         OnUpdate.Bind(this, &TestScene::Update);
 
@@ -216,7 +218,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetCanvas(Tileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles = new TilesetRenderer(Tileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 
@@ -232,21 +234,22 @@ public:
     int rot = 0;
 
     void Draw(EventArgs &e) {
-        auto p = Mouse::GetMousePosition();
+        //auto p = Mouse::GetMousePosition();
 
-        widg.Draw();
+        //widg.Draw();
 
-        rot += Mouse::GetMouseWheelYDelta();
-        rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
+        //rot += Mouse::GetMouseWheelYDelta();
+        //rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
 
-        Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, Color::White, {} , DegToRad(rot));
+        //Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, Color::White, {} , DegToRad(rot));
 
-        if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
-            testTiles->Draw({0, 0});
-        }
+        //if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
+            testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition());
+            //testTiles->Draw({0, 0});
+        //}
 
-        Renderer::DrawCircleLines({100, 100}, 30, Color::Red);
-        Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, Color::Green);
+        //Renderer::DrawCircleLines({100, 100}, 30, Color::Red);
+        //Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, Color::Green);
 
         //Renderer::DrawTexture(Font::GetDefaultFont()->GetTexture(), {100, 100}, Color::White);
     }

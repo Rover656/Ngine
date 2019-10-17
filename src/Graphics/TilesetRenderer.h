@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef TILESETCANVAS_H
-#define TILESETCANVAS_H
+#ifndef TILESETRENDERER_H
+#define TILESETRENDERER_H
 
 #include "../Ngine.h"
 
@@ -23,8 +23,13 @@ namespace NerdThings::Ngine::Graphics {
     /*
      * A tileset canvas
      */
-    class NEAPI TilesetCanvas : public Canvas {
+    class NEAPI TilesetRenderer {
         // Private Fields
+
+        /*
+         * Render area height in tile units
+         */
+        int _Height;
 
         /*
          * The tile data
@@ -36,6 +41,11 @@ namespace NerdThings::Ngine::Graphics {
          */
         Tileset _Tileset;
 
+        /*
+         * Render area width in tile units
+         */
+        int _Width;
+
     public:
         // Public Constructor(s)
 
@@ -44,16 +54,29 @@ namespace NerdThings::Ngine::Graphics {
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetCanvas(const Tileset& tileset_, float width_, float height_);
+        TilesetRenderer(const Tileset& tileset_, float width_, float height_);
 
         /*
          * Create a tileset with data.
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetCanvas(const Tileset& tileset_, float width_, float height_, std::vector<int> tiles_);
+        TilesetRenderer(const Tileset& tileset_, float width_, float height_, std::vector<int> tiles_);
 
         // Public Methods
+
+        /*
+         * Draw the tileset.
+         */
+        void Draw(Vector2 pos_);
+
+        /*
+         * Draw the tileset.
+         * position defines the top-left corner of the entire tileset.
+         * renderFrom defines where to begin rendering. Normally the viewport position.
+         * renderTo defines where to finish rendering. Normally the viewport position + dimensions.
+         */
+        void Draw(Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_);
 
         /*
          * Get collision shapes for a tile in a range.
@@ -75,6 +98,11 @@ namespace NerdThings::Ngine::Graphics {
         std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
+         * Get render area height in tile units
+         */
+        int GetHeight();
+
+        /*
          * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
          */
         int GetTileAt(Vector2 pos_);
@@ -85,6 +113,11 @@ namespace NerdThings::Ngine::Graphics {
         Tileset *GetTileset();
 
         /*
+         * Get render area width in tile units
+         */
+        int GetWidth();
+
+        /*
          * Set the tile value at a position.
          */
         void SetTileAt(Vector2 pos_, int tile_);
@@ -93,15 +126,7 @@ namespace NerdThings::Ngine::Graphics {
          * Set all tile data
          */
         void SetTileData(std::vector<int> data_);
-    protected:
-
-        // Protected Methods
-
-        /*
-         * Redraw the canvas
-         */
-        void RenderTargetRedraw() override;
     };
 }
 
-#endif //TILESETCANVAS_H
+#endif //TILESETRENDERER_H

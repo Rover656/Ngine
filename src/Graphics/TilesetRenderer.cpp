@@ -9,33 +9,71 @@
 *
 **********************************************************************************************/
 
-#include "TilesetCanvas.h"
+#include "TilesetRenderer.h"
 
 #include <cmath>
 
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TilesetCanvas::TilesetCanvas(const Tileset &tileset_, float width_, float height_)
-            : _Tileset(tileset_), Canvas(width_ * tileset_.GetTileWidth(), height_ * tileset_.GetTileHeight()),
+    TilesetRenderer::TilesetRenderer(const Tileset &tileset_, float width_, float height_)
+            : _Tileset(tileset_), _Width(width_), _Height(height_),
               _Tiles(width_ * height_) {
-        ReDraw();
     }
 
-    TilesetCanvas::TilesetCanvas(const Tileset &tileset_, float width_, float height_, std::vector<int> tiles_)
-            : _Tileset(tileset_), Canvas(width_ * tileset_.GetTileWidth(), height_ * tileset_.GetTileHeight()) {
+    TilesetRenderer::TilesetRenderer(const Tileset &tileset_, float width_, float height_, std::vector<int> tiles_)
+            : _Tileset(tileset_), _Width(width_), _Height(height_) {
         if (tiles_.size() != width_ * height_) {
             throw std::runtime_error("Tile data does not match dimensions.");
         }
         _Tiles = tiles_;
-
-        ReDraw();
     }
 
     // Public Methods
 
+    void TilesetRenderer::Draw(Vector2 pos_) {
+        auto tileWidth = _Tileset.GetTileWidth();
+        auto tileHeight = _Tileset.GetTileHeight();
+
+        for (auto x = 0; x < _Width; x++) {
+            for (auto y = 0; y < _Height; y++) {
+                Vector2 pos = {pos_.X + x * tileWidth, pos_.Y + y * tileHeight};
+                _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}));
+            }
+        }
+    }
+
+    void TilesetRenderer::Draw(Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_) {
+        auto tileWidth = _Tileset.GetTileWidth();
+        auto tileHeight = _Tileset.GetTileHeight();
+
+        // Correct coordinates
+        if (renderFrom_.X < pos_.X) renderFrom_.X = pos_.X;
+        if (renderFrom_.Y < pos_.Y) renderFrom_.Y = pos_.Y;
+        if (renderFrom_.X > pos_.X + _Width * tileWidth) renderFrom_.X = pos_.X  + _Width * tileWidth;
+        if (renderFrom_.Y > pos_.Y + _Height) renderFrom_.Y = pos_.Y + _Height * tileHeight;
+
+        if (renderTo_.X < pos_.X) renderTo_.X = pos_.X;
+        if (renderTo_.Y < pos_.Y) renderTo_.Y = pos_.Y;
+        if (renderTo_.X > pos_.X + _Width * tileWidth) renderTo_.X = pos_.X + _Width * tileWidth;
+        if (renderTo_.Y > pos_.Y + _Height * tileHeight) renderTo_.Y = pos_.Y + _Height * tileHeight;
+
+        // Get coordinates
+        auto tXFrom = (int)floorf((renderFrom_.X - pos_.X) / tileWidth);
+        auto tYFrom = (int)floorf((renderFrom_.Y - pos_.Y) / tileHeight);
+        auto tXTo = (int)ceilf((renderTo_.X - pos_.X) / tileWidth);
+        auto tYTo = (int)ceilf((renderTo_.Y - pos_.Y) / tileHeight);
+
+        for (auto x = tXFrom; x < tXTo; x++) {
+            for (auto y = tYFrom; y < tYTo; y++) {
+                Vector2 pos = {pos_.X + x * tileWidth, pos_.Y + y * tileHeight};
+                _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}));
+            }
+        }
+    }
+
     std::vector<Physics::ICollisionShape *>
-    TilesetCanvas::GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_) {
+    TilesetRenderer::GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_) {
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -44,8 +82,8 @@ namespace NerdThings::Ngine::Graphics {
         int eY = range_.Y + range_.Height;
 
         // Validate
-        auto w = GetWidth() / _Tileset.GetTileWidth();
-        auto h = GetHeight() / _Tileset.GetTileHeight();
+        auto w = GetWidth();
+        auto h = GetHeight();
 
         if (sX < 0) sX = 0;
         if (sY < 0) sY = 0;
@@ -73,8 +111,8 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     std::vector<Physics::ICollisionShape *>
-    TilesetCanvas::GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_,
-                                         Vector2 tilesetPosition_) {
+    TilesetRenderer::GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_,
+                                           Vector2 tilesetPosition_) {
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -112,7 +150,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     std::vector<Physics::ICollisionShape *>
-    TilesetCanvas::GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_) {
+    TilesetRenderer::GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_) {
         std::vector<Physics::ICollisionShape *> shapes;
 
         int sX = range_.X;
@@ -150,48 +188,40 @@ namespace NerdThings::Ngine::Graphics {
         return shapes;
     }
 
-    int TilesetCanvas::GetTileAt(Vector2 pos_) {
-        auto w = GetWidth() / _Tileset.GetTileWidth();
-        auto h = GetHeight() / _Tileset.GetTileHeight();
+    int TilesetRenderer::GetHeight() {
+        return _Height;
+    }
+
+    int TilesetRenderer::GetTileAt(Vector2 pos_) {
+        auto w = GetWidth();
+        auto h = GetHeight();
 
         auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
 
         return _Tiles[i];
     }
 
-    Tileset *TilesetCanvas::GetTileset() {
+    Tileset *TilesetRenderer::GetTileset() {
         return &_Tileset;
     }
 
-    void TilesetCanvas::SetTileAt(Vector2 pos_, int tile_) {
-        auto w = GetWidth() / _Tileset.GetTileWidth();
-        auto h = GetHeight() / _Tileset.GetTileHeight();
+    int TilesetRenderer::GetWidth() {
+        return _Width;
+    }
+
+    void TilesetRenderer::SetTileAt(Vector2 pos_, int tile_) {
+        auto w = GetWidth();
+        auto h = GetHeight();
 
         auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
 
         _Tiles[i] = tile_;
-
-        ReDraw();
     }
 
-    void TilesetCanvas::SetTileData(std::vector<int> data_) {
-        if (data_.size() != GetWidth() / _Tileset.GetTileWidth() * GetHeight() / _Tileset.GetTileHeight()) {
+    void TilesetRenderer::SetTileData(std::vector<int> data_) {
+        if (data_.size() != GetWidth() * GetHeight()) {
             throw std::runtime_error("Tile data does not match dimensions.");
         }
         _Tiles = data_;
-        ReDraw();
-    }
-
-    // Protected Method(s)
-
-    void TilesetCanvas::RenderTargetRedraw() {
-        auto w = GetWidth() / _Tileset.GetTileWidth();
-        auto h = GetHeight() / _Tileset.GetTileHeight();
-
-        for (auto i = 0; i < w * h; i++) {
-            Vector2 pos = {static_cast<float>(fmod(i, w)) * _Tileset.GetTileWidth(),
-                                  static_cast<float>(i / static_cast<int>(w)) * _Tileset.GetTileHeight()};
-            _Tileset.DrawTile(pos, _Tiles[i]);
-        }
     }
 }

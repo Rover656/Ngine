@@ -46,14 +46,9 @@ namespace NerdThings::Ngine {
         // Private Fields
 
         /*
-         * Currently active camera
+         * Currently active camera which controls the viewport
          */
         Graphics::Camera *_ActiveCamera = nullptr;
-
-        /*
-         * Whether or not the cull area centers around
-         */
-        bool _CullAreaCenter = false;
 
         /*
          * The culling area height
@@ -64,6 +59,11 @@ namespace NerdThings::Ngine {
          * The culling area width
          */
         float _CullAreaWidth;
+
+        /*
+         * Whether or not to center the cull area in the viewport.
+         */
+        bool _CullAreaCenterInViewport = true;
 
         /*
          * Whether or not an entity is active
@@ -157,7 +157,7 @@ namespace NerdThings::Ngine {
         /*
          * Get the currently active camera
          */
-        [[nodiscard]] Graphics::Camera *GetActiveCamera() const;
+        Graphics::Camera *GetActiveCamera() const;
 
         /*
          * Get the culling area
@@ -165,9 +165,55 @@ namespace NerdThings::Ngine {
         Rectangle GetCullArea() const;
 
         /*
+         * Get the bottom-right coordinate of the cull area.
+         */
+        Vector2 GetCullAreaEndPosition() const;
+
+        /*
+         * Get cull area height
+         */
+        float GetCullAreaHeight() const;
+
+        /*
+         * Get the top-left coordinate of the cull area. (Same as viewport).
+         */
+        Vector2 GetCullAreaPosition() const;
+
+        /*
+         * Get cull area width
+         */
+        float GetCullAreaWidth() const;
+
+        /*
          * Get the parent game
          */
         Game *GetParentGame();
+
+        /*
+         * Get the current viewport.
+         */
+        Rectangle GetViewport() const;
+
+        /*
+         * Get the current viewport position + width and height
+         */
+        Vector2 GetViewportEndPosition() const;
+
+        /*
+         * Get the height of the current viewport.
+         */
+        float GetViewportHeight() const;
+
+        /*
+         * Get the current viewport position.
+         * This is the top-left position.
+         */
+        Vector2 GetViewportPosition() const;
+
+        /*
+         * Get the width of the current viewport
+         */
+        float GetViewportWidth() const;
 
         /*
          * Set the entity depth in the scene (internally used)
@@ -202,7 +248,7 @@ namespace NerdThings::Ngine {
         /*
          * Set the entity culling area
          */
-        void SetCullArea(float width_, float height_, bool centerOnCamera_);
+        void SetCullArea(float width_, float height_, bool centerInViewport_);
 
         /*
          * Update the scene
