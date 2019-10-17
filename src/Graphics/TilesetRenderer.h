@@ -54,14 +54,14 @@ namespace NerdThings::Ngine::Graphics {
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetRenderer(const Tileset& tileset_, float width_, float height_);
+        TilesetRenderer(const Tileset& tileset_, int width_, int height_);
 
         /*
          * Create a tileset with data.
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetRenderer(const Tileset& tileset_, float width_, float height_, std::vector<int> tiles_);
+        TilesetRenderer(const Tileset& tileset_, int width_, int height_, std::vector<int> tiles_);
 
         // Public Methods
 

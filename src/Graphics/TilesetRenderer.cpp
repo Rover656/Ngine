@@ -16,12 +16,12 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
-    TilesetRenderer::TilesetRenderer(const Tileset &tileset_, float width_, float height_)
+    TilesetRenderer::TilesetRenderer(const Tileset &tileset_, int width_, int height_)
             : _Tileset(tileset_), _Width(width_), _Height(height_),
               _Tiles(width_ * height_) {
     }
 
-    TilesetRenderer::TilesetRenderer(const Tileset &tileset_, float width_, float height_, std::vector<int> tiles_)
+    TilesetRenderer::TilesetRenderer(const Tileset &tileset_, int width_, int height_, std::vector<int> tiles_)
             : _Tileset(tileset_), _Width(width_), _Height(height_) {
         if (tiles_.size() != width_ * height_) {
             throw std::runtime_error("Tile data does not match dimensions.");
