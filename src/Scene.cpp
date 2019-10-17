@@ -37,7 +37,7 @@ namespace NerdThings::Ngine {
     // Public Constructor(s)
 
     Scene::Scene(Game *parentGame_)
-        : _ParentGame(parentGame_) {
+            : _ParentGame(parentGame_) {
         if (parentGame_ == nullptr) {
             ConsoleMessage("A scene has been fed null for the parent game.", "FATAL", "SCENE");
             throw std::runtime_error("Cannot have a null game.");
@@ -99,7 +99,7 @@ namespace NerdThings::Ngine {
     }
 
     Rectangle Scene::GetCullArea() const {
-        return {GetCullAreaPosition(), _CullAreaWidth, _CullAreaHeight};
+        return {GetCullAreaPosition(), GetCullAreaWidth(), GetCullAreaHeight()};
     }
 
     Vector2 Scene::GetCullAreaEndPosition() const {
@@ -110,39 +110,38 @@ namespace NerdThings::Ngine {
     }
 
     float Scene::GetCullAreaHeight() const {
-        auto scale = 1;
+        float scale = 1;
         if (_ActiveCamera != nullptr) {
-            scale = 1 / _ActiveCamera->Zoom;
+            scale = _ActiveCamera->Zoom;
         }
 
-        return _CullAreaHeight * scale;
+        return _CullAreaHeight / scale;
     }
 
     Vector2 Scene::GetCullAreaPosition() const {
+        // Get viewport position
+        auto pos = GetViewportPosition();
+
+        // Get center of viewport
+        pos.X += GetViewportWidth() / 2.0f;
+        pos.Y += GetViewportHeight() / 2.0f;
+
         if (_CullAreaCenterInViewport) {
-            // Get viewport position
-            auto pos = GetViewportPosition();
-
-            // Get center of viewport
-            pos.X += GetViewportWidth() / 2.0f;
-            pos.Y += GetViewportHeight() / 2.0f;
-
             // Offset from cull area size
             pos.X -= GetCullAreaWidth() / 2.0f;
             pos.Y -= GetCullAreaHeight() / 2.0f;
-
-            return pos;
         }
-        return GetViewportPosition();
+
+        return pos;
     }
 
     float Scene::GetCullAreaWidth() const {
-        auto scale = 1;
+        float scale = 1;
         if (_ActiveCamera != nullptr) {
-            scale = 1 / _ActiveCamera->Zoom;
+            scale = _ActiveCamera->Zoom;
         }
 
-        return _CullAreaWidth * scale;
+        return _CullAreaWidth / scale;
     }
 
     Game *Scene::GetParentGame() {
@@ -161,40 +160,41 @@ namespace NerdThings::Ngine {
     }
 
     float Scene::GetViewportHeight() const {
-        auto scale = 1;
+        float scale = 1;
         if (_ActiveCamera != nullptr) {
-            scale = 1 / _ActiveCamera->Zoom;
+            scale = _ActiveCamera->Zoom;
         }
 
         if (_ParentGame->Config.MaintainResolution) {
             // Virtual size
-            return _ParentGame->Config.TargetHeight * scale;
+            return _ParentGame->Config.TargetHeight / scale;
         } else {
             // Window size
-            return Window::GetHeight() * scale;
+            return Window::GetHeight() / scale;
         }
     }
 
     Vector2 Scene::GetViewportPosition() const {
         if (_ActiveCamera != nullptr) {
-            return _ActiveCamera->Position - _ActiveCamera->Origin;
+            // Top left coordinate of camera is screen 0,0
+            auto pos = _ActiveCamera->ScreenToWorld({0, 0});
+            return pos;
         }
-        return {0, 0}; // If we add a viewport system, this will have different values
+        return {0, 0};
     }
 
     float Scene::GetViewportWidth() const {
+        float scale = 1;
         if (_ActiveCamera != nullptr) {
-            if (_ParentGame->Config.MaintainResolution) {
-                return _ParentGame->Config.TargetWidth / _ActiveCamera->Zoom;
-            } else {
-                return Window::GetHeight() / _ActiveCamera->Zoom;
-            }
-        } else if (_ParentGame->Config.MaintainResolution) {
+            scale = _ActiveCamera->Zoom;
+        }
+
+        if (_ParentGame->Config.MaintainResolution) {
             // Virtual size
-            return _ParentGame->Config.TargetWidth;
+            return _ParentGame->Config.TargetWidth / scale;
         } else {
             // Window size
-            return Window::GetHeight();
+            return Window::GetWidth() / scale;
         }
     }
 
@@ -208,8 +208,8 @@ namespace NerdThings::Ngine {
         if (oldDepth_ == newDepth_)
             return; // Short circuit if depth's are the same because we don't want to remove and re-add
         _EntityDepths[oldDepth_].erase(
-            std::remove(_EntityDepths[oldDepth_].begin(), _EntityDepths[oldDepth_].end(), ent_),
-            _EntityDepths[oldDepth_].end());
+                std::remove(_EntityDepths[oldDepth_].begin(), _EntityDepths[oldDepth_].end(), ent_),
+                _EntityDepths[oldDepth_].end());
 
         if (_EntityDepths.find(newDepth_) == _EntityDepths.end())
             _EntityDepths.insert({newDepth_, {}});
