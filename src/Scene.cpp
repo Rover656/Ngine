@@ -110,12 +110,16 @@ namespace NerdThings::Ngine {
     }
 
     float Scene::GetCullAreaHeight() const {
-        return _CullAreaHeight;
+        auto scale = 1;
+        if (_ActiveCamera != nullptr) {
+            scale = 1 / _ActiveCamera->Zoom;
+        }
+
+        return _CullAreaHeight * scale;
     }
 
     Vector2 Scene::GetCullAreaPosition() const {
         if (_CullAreaCenterInViewport) {
-            // TODO: Bug: Zoom breaks this
             // Get viewport position
             auto pos = GetViewportPosition();
 
@@ -124,8 +128,8 @@ namespace NerdThings::Ngine {
             pos.Y += GetViewportHeight() / 2.0f;
 
             // Offset from cull area size
-            pos.X -= _CullAreaWidth / 2.0f;
-            pos.Y -= _CullAreaHeight / 2.0f;
+            pos.X -= GetCullAreaWidth() / 2.0f;
+            pos.Y -= GetCullAreaHeight() / 2.0f;
 
             return pos;
         }
@@ -133,7 +137,12 @@ namespace NerdThings::Ngine {
     }
 
     float Scene::GetCullAreaWidth() const {
-        return _CullAreaWidth;
+        auto scale = 1;
+        if (_ActiveCamera != nullptr) {
+            scale = 1 / _ActiveCamera->Zoom;
+        }
+
+        return _CullAreaWidth * scale;
     }
 
     Game *Scene::GetParentGame() {
@@ -152,18 +161,17 @@ namespace NerdThings::Ngine {
     }
 
     float Scene::GetViewportHeight() const {
+        auto scale = 1;
         if (_ActiveCamera != nullptr) {
-            if (_ParentGame->Config.MaintainResolution) {
-                return _ParentGame->Config.TargetHeight / _ActiveCamera->Zoom;
-            } else {
-                return Window::GetHeight() / _ActiveCamera->Zoom;
-            }
-        } else if (_ParentGame->Config.MaintainResolution) {
+            scale = 1 / _ActiveCamera->Zoom;
+        }
+
+        if (_ParentGame->Config.MaintainResolution) {
             // Virtual size
-            return _ParentGame->Config.TargetHeight;
+            return _ParentGame->Config.TargetHeight * scale;
         } else {
             // Window size
-            return Window::GetHeight();
+            return Window::GetHeight() * scale;
         }
     }
 
