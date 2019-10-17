@@ -22,6 +22,8 @@ namespace NerdThings::Ngine::Components {
         _Camera.Position = e.EntityPosition;
 
         // We ignore scale and rotation as this is independently controlled
+
+        // TODO: Should entity origin be used for the camera??
     }
 
     // Destructor

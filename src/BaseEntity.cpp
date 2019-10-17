@@ -119,9 +119,9 @@ namespace NerdThings::Ngine {
         return _Rotation;
     }
 
-    // float BaseEntity::GetScale() const {
-    //     return _Scale;
-    // }
+     float BaseEntity::GetScale() const {
+         return _Scale;
+     }
 
     bool BaseEntity::HasComponent(const std::string &name_) {
         return _Components.find(name_) != _Components.end();
@@ -129,7 +129,7 @@ namespace NerdThings::Ngine {
 
     void BaseEntity::MoveBy(const Vector2 moveBy_) {
         _Position += moveBy_;
-        OnTransformChanged({_Origin, _Position, _Rotation, 1});
+        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
     }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
@@ -157,7 +157,7 @@ namespace NerdThings::Ngine {
 
     void BaseEntity::SetOrigin(Vector2 origin_) {
         _Origin = origin_;
-        OnTransformChanged({_Origin, _Position, _Rotation, 1});
+        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
     }
 
     void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
@@ -168,18 +168,18 @@ namespace NerdThings::Ngine {
 
     void BaseEntity::SetPosition(const Vector2 position_) {
         _Position = position_;
-        OnTransformChanged({_Origin, _Position, _Rotation, 1});
+        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
     }
 
     void BaseEntity::SetRotation(float rotation_) {
         _Rotation = rotation_;
-        OnTransformChanged({_Origin, _Position, _Rotation, 1});
+        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
     }
 
-    // void BaseEntity::SetScale(float scale_) {
-    //     _Scale = scale_;
-    //     OnTransformChanged({ _Origin, _Position, _Rotation, _Scale });
-    // }
+     void BaseEntity::SetScale(float scale_) {
+         _Scale = scale_;
+         OnTransformChanged({ _Origin, _Position, _Rotation, _Scale });
+     }
 
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {

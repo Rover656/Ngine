@@ -52,9 +52,9 @@ namespace NerdThings::Ngine::Components {
             auto par = GetParent();
 
             if (_UseCullArea) {
-                _Tileset->Draw(par->GetPosition(), GetParentScene()->GetCullAreaPosition(), GetParentScene()->GetCullAreaEndPosition());
+                _Tileset->Draw(par->GetPosition(), GetParentScene()->GetCullAreaPosition(), GetParentScene()->GetCullAreaEndPosition(), par->GetScale());
             } else {
-                _Tileset->Draw(par->GetPosition(), GetParentScene()->GetViewportPosition(), GetParentScene()->GetViewportEndPosition());
+                _Tileset->Draw(par->GetPosition(), GetParentScene()->GetViewportPosition(), GetParentScene()->GetViewportEndPosition(), par->GetScale());
             }
         }
 

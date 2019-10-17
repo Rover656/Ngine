@@ -61,14 +61,14 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void Sprite::Draw(Vector2 position_, float rotation_, Vector2 origin_) {
+    void Sprite::Draw(Vector2 position_, float rotation_, float scale_, Vector2 origin_) {
         if (_Textures.empty()) return;
 
         Renderer::DrawTexture(GetCurrentTexture(),
                               Rectangle(
                                  position_,
-                                 static_cast<float>(DrawWidth),
-                                 static_cast<float>(DrawHeight)),
+                                 static_cast<float>(DrawWidth * scale_),
+                                 static_cast<float>(DrawHeight * scale_)),
                               GetSourceRectangle(),
                               Color::White,
                               origin_,

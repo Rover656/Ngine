@@ -46,7 +46,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Public Methods
 
-        void DrawTile(Vector2 position_, int tile_);
+        void DrawTile(Vector2 position_, int tile_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Get the tile height

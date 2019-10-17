@@ -248,8 +248,8 @@ namespace NerdThings::Ngine {
 
         _UpdateCounter++;
 
-        // Every half second
-        if (_UpdateCounter % fps / 2 == 0) {
+        // Every quarter second
+        if (_UpdateCounter % fps / 4 == 0) {
             // Check culling
 
             for (auto ent : GetEntities()) {

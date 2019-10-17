@@ -90,12 +90,12 @@ namespace NerdThings::Ngine::Components {
             const auto par = GetParent<BaseEntity>();
 
             // Rebuild with offset
-            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin() + offset_, _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin() + offset_, _Radius * sqrtf(par->GetScale()));
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             const auto par = GetParent<BaseEntity>();
-            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::Circle(e.EntityPosition - e.EntityOrigin, _Radius * sqrtf(e.EntityScale));
         }
 
     public:
@@ -118,7 +118,7 @@ namespace NerdThings::Ngine::Components {
         void SetRadius(float radius_) {
             const auto par = GetParent<BaseEntity>();
             _Radius = radius_;
-            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius);
+            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius * sqrtf(par->GetScale()));
         }
     };
 }

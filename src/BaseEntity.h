@@ -110,10 +110,10 @@ namespace NerdThings::Ngine {
         float _Rotation = 0;
 
         // TODO: Add logic and draw scaling
-        // /*
-        //  * The entity scale (Used for rendering and physics)
-        //  */
-        // float _Scale = 1;
+         /*
+          * The entity scale (Used for rendering and physics)
+          */
+         float _Scale = 1;
 
         // Private Methods
 
@@ -268,10 +268,10 @@ namespace NerdThings::Ngine {
          */
         float GetRotation() const;
 
-        // /*
-        //  * Get the entity scale
-        //  */
-        // float GetScale() const;
+         /*
+          * Get the entity scale
+          */
+         float GetScale() const;
 
         /*
          * Test if a component exists by a name.
@@ -319,10 +319,10 @@ namespace NerdThings::Ngine {
          */
         void SetRotation(float rotation_);
 
-        // /*
-        //  * Set entity scale
-        //  */
-        // void SetScale(float scale_);
+         /*
+          * Set entity scale
+          */
+         void SetScale(float scale_);
 
         /*
          * Subscribe to update events in the scene

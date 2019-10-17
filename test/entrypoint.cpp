@@ -79,7 +79,8 @@ class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, Vector2 position_)
             : BaseEntity(parentScene_, position_) {
-        SetOrigin({16, 16});
+        SetScale(2);
+        SetOrigin({16*GetScale(), 16*GetScale()});
 
         AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
@@ -244,8 +245,8 @@ public:
         //Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, Color::White, {} , DegToRad(rot));
 
         //if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
-            testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition());
-            //testTiles->Draw({0, 0});
+            testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
+            //testTiles->Draw({0, 0}, 2.0f, 3.14f, {10, 10});
         //}
 
         //Renderer::DrawCircleLines({100, 100}, 30, Color::Red);

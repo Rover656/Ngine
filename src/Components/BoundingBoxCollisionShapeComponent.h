@@ -90,14 +90,14 @@ namespace NerdThings::Ngine::Components {
             auto par = GetParent<BaseEntity>();
             _BoundingBox = Rectangle(
                     par->GetPosition() - par->GetOrigin() + offset_ + Vector2(_Rectangle.X, _Rectangle.Y),
-                _Rectangle.Width, _Rectangle.Height).ToBoundingBox(par->GetRotation(), par->GetOrigin());
+                _Rectangle.Width * par->GetScale(), _Rectangle.Height * par->GetScale()).ToBoundingBox(par->GetRotation(), par->GetOrigin());
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             // Recreate with new information
             _BoundingBox = Rectangle(
                     e.EntityPosition - e.EntityOrigin + Vector2(_Rectangle.X, _Rectangle.Y),
-                _Rectangle.Width, _Rectangle.Height).ToBoundingBox(
+                _Rectangle.Width * e.EntityScale, _Rectangle.Height * e.EntityScale).ToBoundingBox(
                 e.EntityRotation, e.EntityOrigin);
         }
 
@@ -127,7 +127,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * Get the bounding box
          */
-        [[nodiscard]] Physics::BoundingBox GetBoundingBox() const {
+        Physics::BoundingBox GetBoundingBox() const {
             return _BoundingBox;
         }
 
@@ -139,7 +139,7 @@ namespace NerdThings::Ngine::Components {
             _Rectangle = rectangle_;
             _BoundingBox = Rectangle(
                     par->GetPosition() - par->GetOrigin() + Vector2(_Rectangle.X, _Rectangle.Y),
-                _Rectangle.Width, _Rectangle.Height).ToBoundingBox(
+                _Rectangle.Width * par->GetScale(), _Rectangle.Height * par->GetScale()).ToBoundingBox(
                 par->GetRotation(), par->GetOrigin());
         }
     };

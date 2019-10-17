@@ -104,6 +104,7 @@ namespace NerdThings::Ngine::Components {
             std::vector<Vector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
+                vertices[i] *= par->GetScale();
                 vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
                 vertices[i] += par->GetPosition() - par->GetOrigin() + offset_;
             }
@@ -114,6 +115,7 @@ namespace NerdThings::Ngine::Components {
             std::vector<Vector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
+                vertices[i] *= e.EntityScale;
                 vertices[i] = vertices[i].Rotate(e.EntityOrigin, e.EntityRotation);
                 vertices[i] += e.EntityPosition - e.EntityOrigin;
             }
@@ -163,6 +165,7 @@ namespace NerdThings::Ngine::Components {
             std::vector<Vector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];
+                vertices[i] *= par->GetScale();
                 vertices[i] = vertices[i].Rotate(par->GetOrigin(), par->GetRotation());
                 vertices[i] += par->GetPosition() - par->GetOrigin();
             }

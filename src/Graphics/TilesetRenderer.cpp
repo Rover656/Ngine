@@ -31,43 +31,60 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void TilesetRenderer::Draw(Vector2 pos_) {
+    void TilesetRenderer::Draw(Vector2 pos_, float scale_, float rotation_, Vector2 origin_) {
         auto tileWidth = _Tileset.GetTileWidth();
         auto tileHeight = _Tileset.GetTileHeight();
 
         for (auto x = 0; x < _Width; x++) {
             for (auto y = 0; y < _Height; y++) {
-                Vector2 pos = {pos_.X + x * tileWidth, pos_.Y + y * tileHeight};
-                _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}));
+                // Get tile position
+                Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
+
+                // Don't know why this needs doubled, but sure
+                auto tilePos = pos_ - Vector2(-origin_.X * tileWidth * 2, -origin_.Y * tileHeight * 2);
+                Vector2 tileOrigin = {-pos.X, -pos.Y};
+
+                // Cheaty: Putting the wrong values in each argument for this to work
+                _Tileset.DrawTile(tilePos, GetTileAt({(float)x, (float)y}), scale_, rotation_, tileOrigin);
             }
         }
     }
 
-    void TilesetRenderer::Draw(Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_) {
+    void TilesetRenderer::Draw(Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_) {
+        // TODO: How do we rotate this stuff??
+
+        // Get tile sizes
         auto tileWidth = _Tileset.GetTileWidth();
         auto tileHeight = _Tileset.GetTileHeight();
+
+        // Tileset size
+        auto tilesetWidth = _Width * scale_;
+        auto tilesetHeight = _Height * scale_;
 
         // Correct coordinates
         if (renderFrom_.X < pos_.X) renderFrom_.X = pos_.X;
         if (renderFrom_.Y < pos_.Y) renderFrom_.Y = pos_.Y;
-        if (renderFrom_.X > pos_.X + _Width * tileWidth) renderFrom_.X = pos_.X  + _Width * tileWidth;
-        if (renderFrom_.Y > pos_.Y + _Height * tileHeight) renderFrom_.Y = pos_.Y + _Height * tileHeight;
+        if (renderFrom_.X > pos_.X + tilesetWidth * tileWidth) renderFrom_.X = pos_.X  + tilesetWidth * tileWidth;
+        if (renderFrom_.Y > pos_.Y + tilesetHeight * tileHeight) renderFrom_.Y = pos_.Y + tilesetHeight * tileHeight;
 
         if (renderTo_.X < pos_.X) renderTo_.X = pos_.X;
         if (renderTo_.Y < pos_.Y) renderTo_.Y = pos_.Y;
-        if (renderTo_.X > pos_.X + _Width * tileWidth) renderTo_.X = pos_.X + _Width * tileWidth;
-        if (renderTo_.Y > pos_.Y + _Height * tileHeight) renderTo_.Y = pos_.Y + _Height * tileHeight;
+        if (renderTo_.X > pos_.X + tilesetWidth * tileWidth) renderTo_.X = pos_.X + tilesetWidth * tileWidth;
+        if (renderTo_.Y > pos_.Y + tilesetHeight * tileHeight) renderTo_.Y = pos_.Y + tilesetHeight * tileHeight;
 
         // Get coordinates
-        auto tXFrom = (int)floorf((renderFrom_.X - pos_.X) / tileWidth);
-        auto tYFrom = (int)floorf((renderFrom_.Y - pos_.Y) / tileHeight);
-        auto tXTo = (int)ceilf((renderTo_.X - pos_.X) / tileWidth);
-        auto tYTo = (int)ceilf((renderTo_.Y - pos_.Y) / tileHeight);
+        auto tXFrom = (int)floorf((renderFrom_.X - pos_.X) / tileWidth / scale_);
+        auto tYFrom = (int)floorf((renderFrom_.Y - pos_.Y) / tileHeight / scale_);
+        auto tXTo = (int)ceilf((renderTo_.X - pos_.X) / tileWidth / scale_);
+        auto tYTo = (int)ceilf((renderTo_.Y - pos_.Y) / tileHeight / scale_);
 
         for (auto x = tXFrom; x < tXTo; x++) {
             for (auto y = tYFrom; y < tYTo; y++) {
-                Vector2 pos = {pos_.X + x * tileWidth, pos_.Y + y * tileHeight};
-                _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}));
+                // Get tile position
+                Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
+
+                // Cheaty: Putting the wrong values in each argument for this to work
+                _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}), scale_);
             }
         }
     }
