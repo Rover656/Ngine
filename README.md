@@ -1,5 +1,5 @@
 # Ngine
-A (mainly) 2D game engine written in C++ with raylib at its heart.
+A 2D game engine written in C++.
 
 
 [![Build Status](https://travis-ci.org/NerdThings/Ngine.svg?branch=master)](https://travis-ci.org/NerdThings/Ngine)
