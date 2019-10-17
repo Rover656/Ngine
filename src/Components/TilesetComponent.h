@@ -14,7 +14,7 @@
 
 #include "../Ngine.h"
 
-#include "Graphics/TilesetRenderer.h"
+#include "../Graphics/TilesetRenderer.h"
 #include "../BaseEntity.h"
 #include "../Component.h"
 
