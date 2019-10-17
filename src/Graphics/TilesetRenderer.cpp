@@ -82,8 +82,6 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = tYFrom; y < tYTo; y++) {
                 // Get tile position
                 Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
-
-                // Cheaty: Putting the wrong values in each argument for this to work
                 _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}), scale_);
             }
         }
