@@ -47,7 +47,7 @@ namespace NerdThings::Ngine::Components {
 
         void Draw(EventArgs &e) override {
             const auto par = GetParent<BaseEntity>();
-            _Sprite.Draw(par->GetPosition(), par->GetRotation(), par->GetScale(), par->GetOrigin());
+            _Sprite.Draw(par->GetPosition(), par->GetScale(), par->GetRotation(), par->GetOrigin());
         }
 
         Graphics::Sprite *GetSprite() {

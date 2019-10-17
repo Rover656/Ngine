@@ -109,7 +109,6 @@ namespace NerdThings::Ngine {
          */
         float _Rotation = 0;
 
-        // TODO: Add logic and draw scaling
          /*
           * The entity scale (Used for rendering and physics)
           */

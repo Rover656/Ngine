@@ -105,7 +105,7 @@ namespace NerdThings::Ngine::Graphics {
         /*
          * Draw the sprite
          */
-        void Draw(Vector2 position_, float rotation_, float scale_ = 1, Vector2 origin_ = Vector2::Zero);
+        void Draw(Vector2 position_, float scale_ = 1, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Get the current X coordinate

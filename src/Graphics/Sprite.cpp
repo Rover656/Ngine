@@ -61,7 +61,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void Sprite::Draw(Vector2 position_, float rotation_, float scale_, Vector2 origin_) {
+    void Sprite::Draw(Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
         if (_Textures.empty()) return;
 
         Renderer::DrawTexture(GetCurrentTexture(),
