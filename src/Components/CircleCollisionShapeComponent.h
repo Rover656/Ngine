@@ -29,6 +29,11 @@ namespace NerdThings::Ngine::Components {
         // Private Fields
 
         /*
+         * The circle center
+         */
+        Vector2 _Center;
+
+        /*
          * The circle used
          */
         Physics::Circle _Circle;
@@ -90,23 +95,23 @@ namespace NerdThings::Ngine::Components {
             const auto par = GetParent<BaseEntity>();
 
             // Rebuild with offset
-            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin() + offset_, _Radius * sqrtf(par->GetScale()));
+            _Circle = Physics::Circle(_Center + par->GetPosition() - par->GetOrigin() + offset_, _Radius * par->GetScale());
         }
 
         void UpdateShape(EntityTransformChangedEventArgs &e) override {
             const auto par = GetParent<BaseEntity>();
-            _Circle = Physics::Circle(e.EntityPosition - e.EntityOrigin, _Radius * sqrtf(e.EntityScale));
+            _Circle = Physics::Circle(_Center + e.EntityPosition - e.EntityOrigin, _Radius * e.EntityScale);
         }
 
     public:
         // Public Constructor(s)
 
-        CircleCollisionShapeComponent(BaseEntity *parent_, float radius_, std::string collisionGroup_ = "General")
-            : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Radius(radius_) {
+        CircleCollisionShapeComponent(BaseEntity *parent_, Physics::Circle circle_, std::string collisionGroup_ = "General")
+            : BaseCollisionShapeComponent(parent_, std::move(collisionGroup_)), _Center(circle_.Center), _Radius(circle_.Radius) {
             const auto par = GetParent<BaseEntity>();
 
             // Create circle
-            SetRadius(_Radius);
+            SetCircle(circle_);
         }
 
         // Public Methods
@@ -115,10 +120,11 @@ namespace NerdThings::Ngine::Components {
             return _Circle;
         }
 
-        void SetRadius(float radius_) {
+        void SetCircle(Physics::Circle circle_) {
             const auto par = GetParent<BaseEntity>();
-            _Radius = radius_;
-            _Circle = Physics::Circle(par->GetPosition() - par->GetOrigin(), _Radius * sqrtf(par->GetScale()));
+            _Radius = circle_.Radius;
+            _Center = circle_.Center;
+            _Circle = Physics::Circle(_Center + par->GetPosition() - par->GetOrigin(), _Radius * par->GetScale());
         }
     };
 }

@@ -79,12 +79,14 @@ class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, Vector2 position_)
             : BaseEntity(parentScene_, position_) {
-        SetScale(2);
+        SetScale(10);
         SetOrigin({16*GetScale(), 16*GetScale()});
 
         AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
         AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, Rectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
+
+        AddComponent("Circle", new CircleCollisionShapeComponent(this, Circle({16*GetScale(), 16*GetScale()}, 16)))->EnableDebugDraw();
 
         AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}))->Activate();
     }
@@ -108,7 +110,7 @@ public:
     OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, Vector2::Zero, 0, true) {
         AddComponent("OtherComponent", new OtherComponent(this));
         AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
-        AddComponent("TestCircle", new CircleCollisionShapeComponent(this, 50))->EnableDebugDraw();
+        AddComponent("TestCircle", new CircleCollisionShapeComponent(this, Circle(Vector2::Zero, 50)))->EnableDebugDraw();
 
         SubscribeToUpdate();
     }
