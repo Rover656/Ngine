@@ -108,33 +108,33 @@ namespace NerdThings::Ngine {
         /*
          * On draw event
          */
-        EventHandler<EventArgs> OnDraw;
+        Event<> OnDraw;
 
         /*
          * On draw with the camera
          */
-        EventHandler<EventArgs> OnDrawCamera;
+        Event<> OnDrawCamera;
 
         /*
          * On scene load
          */
-        EventHandler<SceneLoadEventArgs> OnLoad;
+        Event<SceneLoadEventArgs> OnLoad;
 
         /*
          * On persistent update event.
          * This means updates will run through pauses.
          */
-        EventHandler<EventArgs> OnPersistentUpdate;
+        Event<> OnPersistentUpdate;
 
         /*
          * On scene unload
          */
-        EventHandler<SceneLoadEventArgs> OnUnLoad;
+        Event<SceneLoadEventArgs> OnUnLoad;
 
         /*
          * On update event
          */
-        EventHandler<EventArgs> OnUpdate;
+        Event<> OnUpdate;
 
         // Public Constructor(s)
 

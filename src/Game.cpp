@@ -51,12 +51,12 @@ namespace NerdThings::Ngine {
         }
 
         // OnDraw event
-        OnDraw({});
+        OnDraw();
     }
 
     void Game::__DoUpdate() {
         // Run update events
-        OnUpdate({});
+        OnUpdate();
 
         if (_CurrentScene != nullptr) {
             _CurrentScene->Update();
@@ -126,7 +126,7 @@ namespace NerdThings::Ngine {
         else ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "Game");
 
         // Invoke OnRun
-        OnRun({});
+        OnRun();
 
         // Start game
         _Running = true;
@@ -167,8 +167,8 @@ namespace NerdThings::Ngine {
             const auto iw = static_cast<float>(Config.TargetWidth);
             const auto ih = static_cast<float>(Config.TargetHeight);
             const auto scale = std::min(w / iw, h / ih);
-            const auto offsetX = (w - iw * scale) * 0.5;
-            const auto offsetY = (h - ih * scale) * 0.5;
+            const auto offsetX = (w - iw * scale) * 0.5f;
+            const auto offsetY = (h - ih * scale) * 0.5f;
 
             if (Config.MaintainResolution && _RenderTarget == nullptr) {
                 _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);

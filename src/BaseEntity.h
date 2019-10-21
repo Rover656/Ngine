@@ -77,7 +77,7 @@ namespace NerdThings::Ngine {
         /*
          * On update event reference
          */
-        EventHandleRef<EventArgs> _OnUpdateRef;
+        EventAttachment<> _OnUpdateRef;
 
         /*
          * The entity origin
@@ -130,17 +130,17 @@ namespace NerdThings::Ngine {
         /*
          * On draw event
          */
-        EventHandler<EventArgs> OnDraw;
+        Event<> OnDraw;
 
         /*
          * On position changed event
          */
-        EventHandler<EntityTransformChangedEventArgs> OnTransformChanged;
+        Event<EntityTransformChangedEventArgs> OnTransformChanged;
 
         /*
          * On update event
          */
-        EventHandler<EventArgs> OnUpdate;
+        Event<> OnUpdate;
 
         // Public Constructor(s)
 
@@ -336,7 +336,7 @@ namespace NerdThings::Ngine {
         /*
          * Update the entity
          */
-        virtual void Update(EventArgs &e);
+        virtual void Update();
     };
 }
 

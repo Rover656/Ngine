@@ -34,14 +34,14 @@ namespace NerdThings::Ngine::Components {
         /*
          * Reference to on position changed event
          */
-        EventHandleRef<EntityTransformChangedEventArgs> _TransformChangeEvent;
+        EventAttachment<EntityTransformChangedEventArgs> _TransformChangeEvent;
 
         // Private Methods
 
         /*
          * Update camera parameters
          */
-        void UpdateCamera(EntityTransformChangedEventArgs &e);
+        void UpdateCamera(EntityTransformChangedEventArgs e);
     public:
 
         // Public Constructors

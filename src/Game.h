@@ -107,17 +107,17 @@ namespace NerdThings::Ngine {
         /*
          * On update event
          */
-        EventHandler<EventArgs> OnDraw;
+        Event<> OnDraw;
 
         /*
          * On run event
          */
-        EventHandler<EventArgs> OnRun;
+        Event<> OnRun;
 
         /*
          * On update event
          */
-        EventHandler<EventArgs> OnUpdate;
+        Event<> OnUpdate;
 
         /*
          * Filter mode for scaling render target

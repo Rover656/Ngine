@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        void Draw(EventArgs &e) override {
+        void Draw() override {
             const auto par = GetParent<BaseEntity>();
             _Sprite.Draw(par->GetPosition(), par->GetScale(), par->GetRotation(), par->GetOrigin());
         }
@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Components {
                 _Sprite = sprite_;
         }
 
-        void Update(EventArgs &e) override {
+        void Update() override {
             _Sprite.Update();
         }
     };

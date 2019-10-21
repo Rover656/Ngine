@@ -66,7 +66,7 @@ namespace NerdThings::Ngine::Physics {
 
             VertexCount = vertices_.size();
 
-            for (auto i = 0; i < VertexCount; i++) {
+            for (unsigned int i = 0; i < VertexCount; i++) {
                 Vertices[i] = vertices_[i];
             }
 

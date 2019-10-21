@@ -17,7 +17,7 @@
 namespace NerdThings::Ngine::Components {
     // Private Methods
 
-    void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs &e) {
+    void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
         _Camera.Position = e.EntityPosition;
 
@@ -29,7 +29,7 @@ namespace NerdThings::Ngine::Components {
     // Destructor
 
     CameraComponent::~CameraComponent() {
-        _TransformChangeEvent.UnBind();
+        _TransformChangeEvent.Detach();
     }
 
     // Public Constructors
@@ -43,7 +43,8 @@ namespace NerdThings::Ngine::Components {
         _Camera = Graphics::Camera(par->GetPosition(), rotation_, zoom_, origin_);;
 
         // Attach to on position changed
-        _TransformChangeEvent = par->OnTransformChanged.Bind(this, &CameraComponent::UpdateCamera);
+        _TransformChangeEvent = par->OnTransformChanged +=
+                new ClassMethodEventHandler<CameraComponent, EntityTransformChangedEventArgs>(this, &CameraComponent::UpdateCamera);
     }
 
     // Public Methods

@@ -57,13 +57,13 @@ namespace NerdThings::Ngine {
 
     void Scene::Draw() {
         // Invoke draw calls
-        OnDraw({});
+        OnDraw();
 
         // Draw with camera
         if (_ActiveCamera != nullptr)
             _ActiveCamera->BeginCamera();
 
-        OnDrawCamera({});
+        OnDrawCamera();
 
         // Draw entities with camera
         for (auto pair : _EntityDepths) {
@@ -240,7 +240,7 @@ namespace NerdThings::Ngine {
 
     void Scene::Update() {
         if (_Paused) {
-            OnPersistentUpdate({});
+            OnPersistentUpdate();
             return;
         }
 

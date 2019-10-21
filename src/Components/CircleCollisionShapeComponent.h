@@ -98,7 +98,7 @@ namespace NerdThings::Ngine::Components {
             _Circle = Physics::Circle(_Center + par->GetPosition() - par->GetOrigin() + offset_, _Radius * par->GetScale());
         }
 
-        void UpdateShape(EntityTransformChangedEventArgs &e) override {
+        void UpdateShape(EntityTransformChangedEventArgs e) override {
             const auto par = GetParent<BaseEntity>();
             _Circle = Physics::Circle(_Center + e.EntityPosition - e.EntityOrigin, _Radius * e.EntityScale);
         }

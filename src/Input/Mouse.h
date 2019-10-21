@@ -175,27 +175,27 @@ namespace NerdThings::Ngine::Input {
         /*
          * On mouse button pressed
          */
-        static EventHandler<MouseButtonEventArgs> OnMouseButtonPressed;
+        static Event<MouseButtonEventArgs> OnMouseButtonPressed;
 
         /*
          * On mouse button released
          */
-        static EventHandler<MouseButtonEventArgs> OnMouseButtonReleased;
+        static Event<MouseButtonEventArgs> OnMouseButtonReleased;
 
         /*
          * On mouse moved event
          */
-        static EventHandler<MouseMovedEventArgs> OnMouseMoved;
+        static Event<MouseMovedEventArgs> OnMouseMoved;
 
         /*
          * On mouse scroll X changed
          */
-        static EventHandler<MouseScrollChangedEventArgs> OnMouseScrollXChanged;
+        static Event<MouseScrollChangedEventArgs> OnMouseScrollXChanged;
 
         /*
          * On mouse scroll Y changed
          */
-        static EventHandler<MouseScrollChangedEventArgs> OnMouseScrollYChanged;
+        static Event<MouseScrollChangedEventArgs> OnMouseScrollYChanged;
 
         // Public Methods
 

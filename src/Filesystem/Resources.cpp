@@ -24,7 +24,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Public Fields
 
-    float Resources::DefaultFontBaseSize = 36;
+    int Resources::DefaultFontBaseSize = 36;
     Path Resources::ResourcesDirectory = Path("content");
 
     // Public Methods

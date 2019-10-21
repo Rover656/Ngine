@@ -60,7 +60,7 @@ namespace NerdThings::Ngine::Physics {
     b2PolygonShape Polygon::ToB2Shape() {
         b2PolygonShape tmpShape;
         b2Vec2 vertices[b2_maxPolygonVertices];
-        for (auto i = 0; i < VertexCount; i++) vertices[i] = {Vertices[i].X, Vertices[i].Y};
+        for (unsigned int i = 0; i < VertexCount; i++) vertices[i] = {Vertices[i].X, Vertices[i].Y};
         tmpShape.Set(vertices, VertexCount);
         return tmpShape;
     }

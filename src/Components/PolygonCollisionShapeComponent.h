@@ -111,7 +111,7 @@ namespace NerdThings::Ngine::Components {
             _Polygon = Physics::Polygon(vertices);
         }
 
-        void UpdateShape(EntityTransformChangedEventArgs &e) override {
+        void UpdateShape(EntityTransformChangedEventArgs e) override {
             std::vector<Vector2> vertices(_Vertices.size());
             for (auto i = 0; i < _Vertices.size(); i++) {
                 vertices[i] = _Vertices[i];

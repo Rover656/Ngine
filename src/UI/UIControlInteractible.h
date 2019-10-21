@@ -51,17 +51,17 @@ namespace NerdThings::Ngine::UI {
         /*
          * On click
          */
-        EventHandler<UIControlEventArgs> OnClick;
+        Event<UIControlEventArgs> OnClick;
 
         /*
          * On hover
          */
-        EventHandler<UIControlEventArgs> OnHover;
+        Event<UIControlEventArgs> OnHover;
 
         /*
          * On un hover/mouse out
          */
-        EventHandler<UIControlEventArgs> OnUnHover;
+        Event<UIControlEventArgs> OnUnHover;
 
         // Public Methods
 

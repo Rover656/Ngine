@@ -77,7 +77,7 @@ namespace NerdThings::Ngine::Graphics {
         }
 
         // Set viewport
-        OpenGL::GL::Viewport(0, 0, (float)_CurrentWidth, (float)_CurrentHeight);
+        OpenGL::GL::Viewport(0, 0, _CurrentWidth, _CurrentHeight);
 
         // Start new matrix with orthographic applied
         OpenGL::GL::MatrixMode(OpenGL::MATRIX_PROJECTION);

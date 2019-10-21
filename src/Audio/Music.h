@@ -137,7 +137,7 @@ namespace NerdThings::Ngine::Audio {
         /*
          * Number of loops completed since last play.
          */
-        int _LoopsCompleted;
+        unsigned int _LoopsCompleted;
 
         // Private Methods
 

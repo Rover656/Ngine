@@ -93,7 +93,7 @@ namespace NerdThings::Ngine::Components {
                 _Rectangle.Width * par->GetScale(), _Rectangle.Height * par->GetScale()).ToBoundingBox(par->GetRotation(), par->GetOrigin());
         }
 
-        void UpdateShape(EntityTransformChangedEventArgs &e) override {
+        void UpdateShape(EntityTransformChangedEventArgs e) override {
             // Recreate with new information
             _BoundingBox = Rectangle(
                     e.EntityPosition - e.EntityOrigin + Vector2(_Rectangle.X, _Rectangle.Y),

@@ -51,7 +51,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Default base size for loaded fonts.
          * Default: 36
          */
-        static float DefaultFontBaseSize;
+        static int DefaultFontBaseSize;
 
         /*
          * The directory to load resources from

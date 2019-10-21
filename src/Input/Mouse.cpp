@@ -96,11 +96,11 @@ namespace NerdThings::Ngine::Input {
 
     // Public Fields
 
-    EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonPressed;
-    EventHandler<MouseButtonEventArgs> Mouse::OnMouseButtonReleased;
-    EventHandler<MouseMovedEventArgs> Mouse::OnMouseMoved;
-    EventHandler<MouseScrollChangedEventArgs> Mouse::OnMouseScrollXChanged;
-    EventHandler<MouseScrollChangedEventArgs> Mouse::OnMouseScrollYChanged;
+    Event<MouseButtonEventArgs> Mouse::OnMouseButtonPressed;
+    Event<MouseButtonEventArgs> Mouse::OnMouseButtonReleased;
+    Event<MouseMovedEventArgs> Mouse::OnMouseMoved;
+    Event<MouseScrollChangedEventArgs> Mouse::OnMouseScrollXChanged;
+    Event<MouseScrollChangedEventArgs> Mouse::OnMouseScrollYChanged;
 
     // Public Methods
 

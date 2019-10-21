@@ -23,7 +23,7 @@ namespace NerdThings::Ngine {
 
     // Public Methods
 
-    void Component::Draw(EventArgs &e) { }
+    void Component::Draw() { }
 
     Scene *Component::GetParentScene() const {
         return _ParentEntity->GetParentScene();
@@ -35,7 +35,7 @@ namespace NerdThings::Ngine {
 
     void Component::SubscribeToDraw() {
         if (HasParent()) {
-            _OnDrawRef = _ParentEntity->OnDraw.Bind(this, &Component::Draw);
+            _OnDrawRef = _ParentEntity->OnDraw += new ClassMethodEventHandler<Component>(this, &Component::Draw);
         }
     }
 
@@ -44,20 +44,20 @@ namespace NerdThings::Ngine {
             // Check the entity subscribed to update
             // If not, subscribe
             if (_ParentEntity->SubscribeToUpdate()) {
-                _OnUpdateRef = _ParentEntity->OnUpdate.Bind(this, &Component::Update);
+                _OnUpdateRef = _ParentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::Update);
             }
         }
     }
 
     void Component::UnsubscribeFromDraw() {
-        _OnDrawRef.UnBind();
+        _OnDrawRef.Detach();
     }
 
     void Component::UnsubscribeFromUpdate() {
-        _OnUpdateRef.UnBind();
+        _OnUpdateRef.Detach();
     }
 
-    void Component::Update(EventArgs &e) { }
+    void Component::Update() { }
 
     // Protected Constructor(s)
 

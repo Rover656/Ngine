@@ -18,222 +18,229 @@
 
 namespace NerdThings::Ngine {
     /*
-     * Default event arguments
+     * Base struct for event arguments (for events that need it)
      */
-    struct EventArgs {
-        // Public Fields
+    struct EventArgs { };
 
-        /*
-         * Unbind event handle once run
-         */
-        bool UnBind = false;
-    };
-
-    // Forward declare for EventHandleRef
-    template <typename ArgsType = EventArgs>
-    class EventHandler;
+    // Forward declare
+    template<typename... ArgTypes>
+    class Event;
 
     /*
-     * A reference to an EventHandle attached to an EventHandler
+     * Abstract event handler.
      */
-    template <typename ArgsType = EventArgs>
-    struct EventHandleRef {
+    template<typename... ArgTypes>
+    struct AbstractEventHandler {
+        /*
+         * Invoke the event handler.
+         */
+        virtual void Invoke(ArgTypes... args) = 0;
+
+        void operator()(ArgTypes... args) {
+            Invoke(args...);
+        }
+    };
+
+    /*
+     * An event handler that uses a static function.
+     */
+    template<typename... ArgTypes>
+    struct FunctionEventHandler : public AbstractEventHandler<ArgTypes...> {
+        /*
+         * The function attached to to the handler.
+         */
+        void(*AttachedFunction)(ArgTypes...) = nullptr;
+
+        /*
+         * Create a null event handler.
+         */
+        FunctionEventHandler() {}
+
+        /*
+         * Create an event handler.
+         */
+        FunctionEventHandler(void(*func_)(ArgTypes...)) {
+            AttachedFunction = func_;
+        }
+
+        void Invoke(ArgTypes... args) override {
+            if (AttachedFunction != nullptr)
+                AttachedFunction(args...);
+        }
+    };
+
+    /*
+     * An event handler that uses a class method.
+     */
+    template<typename Class, typename... ArgTypes>
+    struct ClassMethodEventHandler : public AbstractEventHandler<ArgTypes...> {
+        /*
+         * The attached class.
+         */
+        Class *AttachedClass = nullptr;
+
+        /*
+         * The attached method
+         */
+        void (Class::*AttachedMethod)(ArgTypes...) = nullptr;
+
+        /*
+         * Initialize a null event handler.
+         */
+        ClassMethodEventHandler() {}
+
+        /*
+         * Create a class method event handler.
+         */
+        ClassMethodEventHandler(Class *obj_, void (Class::*func_)(ArgTypes...)) {
+            AttachedClass = obj_;
+            AttachedMethod = func_;
+        }
+
+        void Invoke(ArgTypes... args) override {
+            if (AttachedClass != nullptr && AttachedMethod != nullptr)
+                (AttachedClass->*AttachedMethod)(args...);
+        }
+    };
+
+    /*
+     * Contains persistent information about the attachment of an event handler.
+     */
+    template<typename... ArgTypes>
+    struct EventAttachment {
     private:
-        template <typename _ArgsType>
-        struct InternalHandleInfo {
+        struct InternalAttachmentInformation {
             /*
-             * The handler that the handle is linked to
+             * The attached event.
              */
-            EventHandler<_ArgsType> *AttachedHandler = nullptr;
+            Event<ArgTypes...> *AttachedEvent;
 
             /*
-             * Attached function
+             * The handler this attachment is referring to.
              */
-            std::function<void(_ArgsType &)> Function;
+            AbstractEventHandler<ArgTypes...> *Handler;
         };
     public:
-        // Public Fields
+        /*
+         * Information regarding the attachment.
+         */
+        std::shared_ptr<InternalAttachmentInformation> AttachmentInfo;
 
-        std::shared_ptr<InternalHandleInfo<ArgsType>> HandleInfo;
+        /*
+         * Create a null event handler attachment.
+         */
+        EventAttachment() {}
 
-        // Constructor
-
-        EventHandleRef() {
-            HandleInfo = std::make_shared<InternalHandleInfo<ArgsType>>();
-        }
-
-        // Public Methods
-
-        bool IsValid() {
-            if (HandleInfo != nullptr)
-                if (HandleInfo->AttachedHandler != nullptr)
-                    return true;
-            return false;
+        /*
+         * Create an event handler attachment.
+         */
+        EventAttachment(Event<ArgTypes...> * event_, AbstractEventHandler<ArgTypes...> *handler_) {
+            // Create attachment info
+            AttachmentInfo = std::make_shared<InternalAttachmentInformation>();
+            AttachmentInfo->AttachedEvent = event_;
+            AttachmentInfo->Handler = handler_;
         }
 
         /*
-         * Unattach the handler
+         * Detach the handler.
          */
-        void UnBind() {
-            if (HandleInfo != nullptr) {
-                if (IsValid())
-                    HandleInfo->AttachedHandler->UnBind(*this);
-                HandleInfo->AttachedHandler = nullptr;
-            }
-        }
+        void Detach() {
+            if (AttachmentInfo != nullptr) {
+                if (AttachmentInfo->AttachedEvent != nullptr && AttachmentInfo->Handler != nullptr) {
+                    // Detach from event
+                    AttachmentInfo->AttachedEvent->Detach(AttachmentInfo->Handler);
 
-        // Operators
-
-        bool operator==(EventHandleRef<ArgsType> b) {
-            return HandleInfo == b.HandleInfo;
-        }
-
-        bool operator!=(EventHandleRef<ArgsType> b) {
-            return HandleInfo != b.HandleInfo;
-        }
-    };
-
-    /*
-     * An event handler
-     */
-    template <typename ArgsType>
-    class EventHandler {
-        // Private Fields
-
-        /*
-         * All of the handles for the event handler
-         */
-        std::vector<EventHandleRef<ArgsType>> _Handles;
-
-        /*
-         * Unused indices in the Handles vector
-         */
-        std::vector<int> _UnusedIndices;
-
-    public:
-        // Public Constructor(s)
-
-        EventHandler<ArgsType>() = default;
-
-        // Destructor
-
-        ~EventHandler() {
-            Clear();
-        }
-
-        // Public Methods
-
-        /*
-         * Bind a function
-         */
-        EventHandleRef<ArgsType> Bind(void (*func_)(ArgsType &e)) {
-            auto f = std::bind(func_, std::placeholders::_1);
-            if (_UnusedIndices.size() > 0) {
-                auto id = _UnusedIndices.back();
-
-                auto ref = EventHandleRef<ArgsType>();
-                ref.HandleInfo->AttachedHandler = this;
-                ref.HandleInfo->Function = f;
-
-                _Handles[id] = ref;
-
-                _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
-
-                return ref;
-            }
-
-            auto ref = EventHandleRef<ArgsType>();
-            ref.HandleInfo->AttachedHandler = this;
-            ref.HandleInfo->Function = f;
-
-            _Handles.push_back(ref);
-
-            return ref;
-        }
-
-        /*
-         * Bind a class method
-         */
-        template <typename Class>
-        EventHandleRef<ArgsType> Bind(Class *obj_, void (Class::*func_)(ArgsType &e)) {
-            auto f = std::bind(func_, obj_, std::placeholders::_1);
-            if (!_UnusedIndices.empty()) {
-                auto id = _UnusedIndices.back();
-
-                auto ref = EventHandleRef<ArgsType>();
-                ref.HandleInfo->AttachedHandler = this;
-                ref.HandleInfo->Function = f;
-
-                _Handles[id] = ref;
-
-                _UnusedIndices.erase(_UnusedIndices.end() - 1, _UnusedIndices.end());
-
-                return ref;
-            }
-
-            auto ref = EventHandleRef<ArgsType>();
-            ref.HandleInfo->AttachedHandler = this;
-            ref.HandleInfo->Function = f;
-
-            _Handles.push_back(ref);
-
-            return ref;
-        }
-
-        /*
-         * Clear all event handles
-         */
-        void Clear() {
-            // Unbind all
-            for (auto h : _Handles) h.UnBind();
-
-            // Clear
-            _Handles.clear();
-        }
-
-        /*
-         * Invokes the handles attached to the event using a default constructor for the args
-         */
-        void Invoke() {
-            Invoke({});
-        }
-
-        /*
-         * Invoke the handles attached to the event
-         */
-        void Invoke(ArgsType e) {
-            for (auto i = 0; i < _Handles.size(); i++) {
-                auto handle = _Handles[i];
-                ArgsType sendE = e;
-                if (handle.HandleInfo->AttachedHandler != nullptr)
-                    handle.HandleInfo->Function(sendE);
-
-                if (sendE.UnBind)
-                    UnBind(handle);
-            }
-        }
-
-        /*
-         * Unbind an event handle by value
-         */
-        void UnBind(EventHandleRef<ArgsType> handler_) {
-            // Find and remove
-            for (auto i = 0; i < _Handles.size(); i++) {
-                if (_Handles[i] == handler_) {
-                    _Handles[i] = EventHandleRef<ArgsType>();
-                    _UnusedIndices.push_back(i);
+                    // Delete internal attachment info
+                    AttachmentInfo = nullptr;
                 }
             }
         }
 
-        // Operators
+        /*
+         * Determine if the event is attached.
+         */
+        bool IsAttached() {
+            if (AttachmentInfo != nullptr) {
+                if (AttachmentInfo->AttachedEvent != nullptr && AttachmentInfo->Handler != nullptr) {
+                    auto attached = AttachmentInfo->AttachedEvent->IsAttached(AttachmentInfo->Handler);
 
-        void operator()() {
-            Invoke();
+                    // Delete internal attachment info if we aren't attached any more
+                    if (!attached) AttachmentInfo = nullptr;
+
+                    return attached;
+                }
+            }
+            return false;
+        }
+    };
+
+    /*
+     * An event can be fired at any time. Handlers will be called with appropriate arguments when fired.
+     */
+    template<typename... ArgTypes>
+    class Event {
+        /*
+         * All the attached handlers
+         */
+        std::vector<AbstractEventHandler<ArgTypes...> *> _Handlers;
+    public:
+
+        /*
+         * Attach the event handler
+         */
+        EventAttachment<ArgTypes...> Attach(AbstractEventHandler<ArgTypes...> *handler_) {
+            // Add
+            _Handlers.push_back(handler_);
+
+            // Return attachment information
+            return {this, handler_};
         }
 
-        void operator()(ArgsType e) {
-            Invoke(e);
+        /*
+         * Clear the entire event.
+         */
+        void Clear() {
+            for (auto handler : _Handlers) {
+                Detach(handler);
+            }
+        }
+
+        /*
+         * Detach an event handler from the event.
+         */
+        void Detach(AbstractEventHandler<ArgTypes...> *handler_) {
+            // Find in handler array
+            auto iterator = std::find(_Handlers.begin(), _Handlers.end(), handler_);
+            if (iterator == _Handlers.end())
+                throw std::runtime_error("This event handler is not attached to this event.");
+
+            // Remove from handlers vector
+            _Handlers.erase(std::remove(_Handlers.begin(), _Handlers.end(), handler_), _Handlers.end());
+
+            // Delete handler
+            delete handler_;
+        }
+
+        /*
+         * Invoke the handlers attached to the event
+         */
+        void Invoke(ArgTypes... args) {
+            for (auto handler : _Handlers) {
+                handler->Invoke(args...);
+            }
+        }
+
+        bool IsAttached(AbstractEventHandler<ArgTypes...> *handler_) {
+            auto iterator = std::find(_Handlers.begin(), _Handlers.end(), handler_);
+            return iterator != _Handlers.end();
+        }
+
+        void operator()(ArgTypes... args) {
+            Invoke(args...);
+        }
+
+        EventAttachment<ArgTypes...> operator+=(AbstractEventHandler<ArgTypes...> *handler_) {
+            return Attach(handler_);
         }
     };
 }

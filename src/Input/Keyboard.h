@@ -186,12 +186,12 @@ namespace NerdThings::Ngine::Input {
         /*
          * Key pressed
          */
-        static EventHandler<KeyEventArgs> KeyPressed;
+        static Event<KeyEventArgs> KeyPressed;
 
         /*
          * Key released
          */
-        static EventHandler<KeyEventArgs> KeyReleased;
+        static Event<KeyEventArgs> KeyReleased;
 
         // Public Methods
 

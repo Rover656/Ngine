@@ -37,7 +37,7 @@ namespace NerdThings::Ngine::Components {
         /*
          * On position changed
          */
-        EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
+        EventAttachment<EntityTransformChangedEventArgs> _OnTransformChangeRef;
 
         // Private Methods
 
@@ -70,12 +70,12 @@ namespace NerdThings::Ngine::Components {
         /*
          * Update shape information
          */
-        virtual void UpdateShape(EntityTransformChangedEventArgs &e) = 0;
+        virtual void UpdateShape(EntityTransformChangedEventArgs e) = 0;
     public:
         // Destructor
 
         virtual ~BaseCollisionShapeComponent() {
-            _OnTransformChangeRef.UnBind();
+            _OnTransformChangeRef.Detach();
 
             // Remove from collision map
             auto scene = GetParent<BaseEntity>()->GetParentScene();
@@ -269,7 +269,7 @@ namespace NerdThings::Ngine::Components {
             }
         }
 
-        void Draw(EventArgs &e) override {
+        void Draw() override {
             if (_DebugDraw) {
                 DrawDebug();
             }
@@ -317,8 +317,8 @@ namespace NerdThings::Ngine::Components {
          */
         BaseCollisionShapeComponent(BaseEntity *parent_, std::string collisionGroup_ = "General")
                 : Component(parent_) {
-            _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged.Bind(
-                    this, &BaseCollisionShapeComponent::UpdateShape);
+            _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged +=
+                    new ClassMethodEventHandler<BaseCollisionShapeComponent, EntityTransformChangedEventArgs>(this, &BaseCollisionShapeComponent::UpdateShape);
 
             AddCollisionGroup(std::move(collisionGroup_));
         }

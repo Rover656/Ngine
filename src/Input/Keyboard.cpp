@@ -127,8 +127,8 @@ namespace NerdThings::Ngine::Input {
 
     // Public Fields
 
-    EventHandler<KeyEventArgs> Keyboard::KeyPressed;
-    EventHandler<KeyEventArgs> Keyboard::KeyReleased;
+    Event<KeyEventArgs> Keyboard::KeyPressed;
+    Event<KeyEventArgs> Keyboard::KeyReleased;
 
     // Public Methods
 

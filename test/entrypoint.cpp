@@ -41,7 +41,7 @@ public:
         SubscribeToUpdate();
     }
 
-    void Update(EventArgs &e) override {
+    void Update() override {
         auto par = GetParent<BaseEntity>();
         if (Keyboard::IsKeyDown(KEY_W)) {
             par->MoveBy({0, -MoveSpeed});
@@ -98,7 +98,7 @@ public:
         SubscribeToUpdate();
     }
 
-    void Update(EventArgs &e) override {
+    void Update() override {
         if (Keyboard::IsKeyPressed(KEY_SPACE)) {
             Resources::GetSound("test_sound")->Play();
         }
@@ -158,7 +158,7 @@ public:
         bStyle.BackColor = Color::Blue;
 
         auto btn = new BasicButton("Test", Font::GetDefaultFont(), 32, 200, 100);
-        btn->OnClick.Bind(&TestWidget::Test);
+        btn->OnClick += new FunctionEventHandler<UIControlEventArgs>(&TestWidget::Test);
         btn->SetStyle(bStyle);
         GetPanel()->AddChild("testButton", (UIControl *)btn);
 
@@ -169,7 +169,7 @@ public:
 //        //GetPanel()->AddChild("testImage", img);
     }
 
-    static void Test(UIControlEventArgs &e) {
+    static void Test(UIControlEventArgs e) {
         ConsoleMessage("Button was clicked", "NOTICE", "TestGame Entrypoint");
     }
 };
@@ -201,15 +201,15 @@ public:
 
         AddEntity("Player", new PlayerEntity(this, {100, 100}));
 
-        OnLoad.Bind(this, &TestScene::OnLoaded);
+        OnLoad += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::OnLoaded);
 
         //OnDraw.Bind(this, &TestScene::Draw);
 
-        OnDrawCamera.Bind(this, &TestScene::Draw);
+        OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::Draw);
 
-        OnUpdate.Bind(this, &TestScene::Update);
+        OnUpdate += new ClassMethodEventHandler<TestScene>(this, &TestScene::Update);
 
-        OnDrawCamera.Bind(this, &TestScene::DrawCam);
+        OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::DrawCam);
 
         SetCullArea(1280 - 50, 768 - 50, true);
 
@@ -229,14 +229,14 @@ public:
         delete testTiles;
     }
 
-    void OnLoaded(SceneLoadEventArgs &e) {
+    void OnLoaded(SceneLoadEventArgs e) {
         //Resources::GetMusic("test_music")->Play();
         AudioDevice::SetMasterVolume(0.25);
     }
 
     int rot = 0;
 
-    void Draw(EventArgs &e) {
+    void Draw() {
         //auto p = Mouse::GetMousePosition();
 
         //widg.Draw();
@@ -257,11 +257,11 @@ public:
         //Renderer::DrawTexture(Font::GetDefaultFont()->GetTexture(), {100, 100}, Color::White);
     }
 
-    void DrawCam(EventArgs &e) {
+    void DrawCam() {
         Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
     }
 
-    void Update(EventArgs &e) {
+    void Update() {
         widg.Update();
 
         if (Keyboard::IsKeyPressed(KEY_F11)) {
@@ -271,15 +271,23 @@ public:
     }
 };
 
+void TestFunc(std::string module) {
+    ConsoleMessage("HELLO", "NOTICE", module);
+}
+
 class TestGame : public Game {
     TestScene *_Scene;
 public:
 
     TestGame(const GameConfig &config_) : Game(config_) {
-        OnRun.Bind(this, &TestGame::Init);
+        OnRun += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
     }
 
-    void Init(EventArgs &e) {
+    void TestMethod(std::string module) {
+        ConsoleMessage("HELLO FROM METHOD.", "NOTICE", module);
+    }
+
+    void Init() {
         // Set exit key
         Keyboard::SetExitKey(KEY_ESCAPE);
 
@@ -304,6 +312,18 @@ public:
 
         // Set scene
         SetScene(_Scene);
+
+
+        // Test new events
+        Event<std::string> testEvent;
+
+        auto test = new FunctionEventHandler<std::string>(TestFunc);
+        auto attachment = testEvent += test;
+        auto attachmentB = testEvent += new ClassMethodEventHandler<TestGame, std::string>(this, &TestGame::TestMethod);
+        testEvent("HELLOWORLD");
+
+        //NEW::ClassMethodEventHandler<TestGame> testMeth(this, &TestGame::TestMethod);
+        //testMeth.Invoke();
     }
 
     void Uninit(EventArgs &e) {

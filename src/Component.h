@@ -31,12 +31,12 @@ namespace NerdThings::Ngine {
         /*
          * On draw ref
          */
-        EventHandleRef<EventArgs> _OnDrawRef;
+        EventAttachment<> _OnDrawRef;
 
         /*
          * On update ref
          */
-        EventHandleRef<EventArgs> _OnUpdateRef;
+        EventAttachment<> _OnUpdateRef;
 
         /*
          * The parent entity
@@ -48,7 +48,7 @@ namespace NerdThings::Ngine {
         /*
          * On detached from an entity
          */
-        EventHandler<EventArgs> OnDetached;
+        Event<> OnDetached;
 
         // Destructor
 
@@ -62,7 +62,7 @@ namespace NerdThings::Ngine {
         /*
          * Draw
          */
-        virtual void Draw(EventArgs &e);
+        virtual void Draw();
 
         /*
          * Get the parent entity as a type
@@ -107,7 +107,7 @@ namespace NerdThings::Ngine {
         /*
          * Update
          */
-        virtual void Update(EventArgs &e);
+        virtual void Update();
 
     protected:
 
