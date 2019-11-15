@@ -14,6 +14,7 @@
 
 #include "Ngine.h"
 
+#include "Physics/PhysicsWorld.h"
 #include "Rectangle.h"
 #include "Graphics/Camera.h"
 #include "EntityContainer.h"
@@ -87,6 +88,16 @@ namespace NerdThings::Ngine {
         bool _Paused = false;
 
         /*
+         * Whether or not physics is enabled.
+         */
+        bool _PhysicsEnabled = false;
+
+        /*
+         * The physics world, if enabled.
+         */
+        Physics::PhysicsWorld *_PhysicsWorld;
+
+        /*
          * The update counter
          */
         int _UpdateCounter = 0;
@@ -98,12 +109,6 @@ namespace NerdThings::Ngine {
         void SetEntityParent(BaseEntity *ent_) override;
     public:
         // Public Fields
-
-        /*
-         * The collision map.
-         * This is controlled by collision components
-         */
-        std::unordered_map<std::string, std::vector<BaseEntity*>> CollisionMap;
 
         /*
          * On draw event
@@ -141,7 +146,7 @@ namespace NerdThings::Ngine {
         /*
          * Create a new Scene
          */
-        Scene(Game* parentGame_);
+        Scene(Game* parentGame_, bool physicsEnabled_ = false, Vector2 grav = Vector2::Zero, float ppm = 1);
 
         // Public Destructor
 
@@ -188,6 +193,11 @@ namespace NerdThings::Ngine {
          * Get the parent game
          */
         Game *GetParentGame();
+
+        /*
+         * Get the current physics world.
+         */
+        Physics::PhysicsWorld *GetPhysicsWorld();
 
         /*
          * Get the current viewport.

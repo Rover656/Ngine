@@ -450,6 +450,14 @@ namespace NerdThings::Ngine::Filesystem {
         return _InternalPath;
     }
 
+    bool Path::operator==(Path rhs) {
+        return GetAbsolute() == rhs.GetAbsolute();
+    }
+
+    bool Path::operator!=(Path rhs) {
+        return GetAbsolute() != rhs.GetAbsolute();
+    }
+
     // Private Methods
 
     std::string Path::__CleanPathString(const std::string &str_) {

@@ -75,7 +75,7 @@ namespace NerdThings::Ngine {
 
     // Destructor
 
-    Game::~Game() {}
+    Game::~Game() = default;
 
     // Public Methods
 
@@ -92,7 +92,7 @@ namespace NerdThings::Ngine {
     }
 
     bool Game::IsRunning() {
-        return !_HasStopped;
+        return _Running;
     }
 
     void Game::Quit() {
@@ -110,12 +110,6 @@ namespace NerdThings::Ngine {
         Input::Keyboard::Init();
         ConsoleMessage("Input APIs have been initialized.", "NOTICE", "Game");
 
-        // Create render target
-        if (Config.MaintainResolution) {
-            _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
-            _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
-        }
-
         // Init audio
         ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "Game");
         Audio::AudioDevice::Initialize();
@@ -123,22 +117,25 @@ namespace NerdThings::Ngine {
         // Check if the device was created
         if (Audio::AudioDevice::IsReady())
             ConsoleMessage("Audio device initialized successfully..", "NOTICE", "Game");
-        else ConsoleMessage("Failed to create audio device, audio will be unavailable.", "WARN", "Game");
+        else ConsoleMessage("Failed to create audio device. Audio APIs will be unavailable.", "WARN", "Game");
+
+        // Create render target
+        if (Config.MaintainResolution) {
+            _RenderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+        }
 
         // Invoke OnRun
-        OnRun();
+        OnInit();
 
         // Start game
-        _Running = true;
+        _Running = true; // TODO: We have too many of these kind of variables
 
         // Timing
         std::chrono::nanoseconds lag(0);
         auto started = std::chrono::high_resolution_clock::now();
         auto lastFPS = Config.FPS;
         auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
-
-        // Mark as running
-        _HasStopped = false;
 
         // This checks the game is still running, the window is still running and the exit key is not pushed
         while (!Window::ShouldClose() && !Input::Keyboard::ShouldClose()) {
@@ -286,9 +283,6 @@ namespace NerdThings::Ngine {
 
         // Close window
         Window::Close();
-
-        // Mark as stopped
-        _HasStopped = true;
     }
 
     void Game::SetFPS(int FPS_) {

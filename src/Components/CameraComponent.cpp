@@ -20,10 +20,6 @@ namespace NerdThings::Ngine::Components {
     void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
         _Camera.Position = e.EntityPosition;
-
-        // We ignore scale and rotation as this is independently controlled
-
-        // TODO: Should entity origin be used for the camera??
     }
 
     // Destructor

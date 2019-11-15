@@ -38,6 +38,9 @@ namespace NerdThings::Ngine {
     // Destructor
 
     BaseEntity::~BaseEntity() {
+        // Destroy physics body
+        if (_PhysicsBody != nullptr) _PhysicsBody->Destroy();
+
         // Unbind all events
         UnsubscribeFromUpdate();
     }
@@ -61,12 +64,19 @@ namespace NerdThings::Ngine {
         UnsubscribeFromUpdate();
 
         // Remove from our parent
-        GetParentContainer()->RemoveEntity(this);
+        GetParentContainer()->RemoveChild(this);
     }
 
     void BaseEntity::Draw() {
         // Trigger draw
         OnDraw();
+
+        // Debug draw
+        if (_PhysicsBody != nullptr) {
+            if (_PhysicsBody->GetWorld()->DebugDraw) {
+                _PhysicsBody->DebugDraw();
+            }
+        }
     }
 
     bool BaseEntity::GetCanCull() {
@@ -85,10 +95,6 @@ namespace NerdThings::Ngine {
 
     int BaseEntity::GetDepth() const {
         return _Depth;
-    }
-
-    Vector2 BaseEntity::GetOrigin() const {
-        return _Origin;
     }
 
     EntityContainer *BaseEntity::GetParentContainer() const {
@@ -112,24 +118,47 @@ namespace NerdThings::Ngine {
     }
 
     Vector2 BaseEntity::GetPosition() const {
-        return _Position;
+        if (_PhysicsBody == nullptr) {
+            return _Position;
+        } else {
+            return _PhysicsBody->GetPosition();
+        }
+    }
+
+    Physics::PhysicsBody *BaseEntity::GetPhysicsBody() const {
+        return _PhysicsBody;
+    }
+
+    Physics::PhysicsWorld *BaseEntity::GetPhysicsWorld() const {
+        return _PhysicsBody->GetWorld();
     }
 
     float BaseEntity::GetRotation() const {
-        return _Rotation;
+        if (_PhysicsBody == nullptr) {
+            return _Rotation;
+        } else {
+            return _PhysicsBody->GetRotation();
+        }
     }
-
-     float BaseEntity::GetScale() const {
-         return _Scale;
-     }
 
     bool BaseEntity::HasComponent(const std::string &name_) {
         return _Components.find(name_) != _Components.end();
     }
 
+    bool BaseEntity::IsPhysicsEntity() {
+        return _PhysicsBody != nullptr;
+    }
+
     void BaseEntity::MoveBy(const Vector2 moveBy_) {
-        _Position += moveBy_;
-        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
+        if (_PhysicsBody == nullptr) {
+            _Position += moveBy_;
+        } else {
+            auto p = _PhysicsBody->GetPosition();
+            _PhysicsBody->SetPosition(p + moveBy_);
+        }
+
+        // Fire event
+        OnTransformChanged({GetPosition(), GetRotation()});
     }
 
     bool BaseEntity::RemoveComponent(const std::string &name_) {
@@ -155,11 +184,6 @@ namespace NerdThings::Ngine {
         _Depth = depth_;
     }
 
-    void BaseEntity::SetOrigin(Vector2 origin_) {
-        _Origin = origin_;
-        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
-    }
-
     void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
         if (_OnUpdateRef.IsAttached())
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
@@ -167,19 +191,35 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetPosition(const Vector2 position_) {
-        _Position = position_;
-        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
+        if (_PhysicsBody == nullptr) {
+            _Position = position_;
+        } else {
+            _PhysicsBody->SetPosition(position_);
+        }
+
+        // Fire event
+        OnTransformChanged({GetPosition(), GetRotation()});
     }
 
     void BaseEntity::SetRotation(float rotation_) {
-        _Rotation = rotation_;
-        OnTransformChanged({_Origin, _Position, _Rotation, _Scale});
+        if (_PhysicsBody == nullptr) {
+            // Set our rotation
+            _Rotation = rotation_;
+        } else {
+            // Set the body rotation
+            _PhysicsBody->SetRotation(rotation_);
+        }
+
+        // Fire event
+        OnTransformChanged({GetPosition(), GetRotation()});
     }
 
-     void BaseEntity::SetScale(float scale_) {
-         _Scale = scale_;
-         OnTransformChanged({ _Origin, _Position, _Rotation, _Scale });
-     }
+    void BaseEntity::SetPhysicsBody(Physics::PhysicsBody *body_) {
+        auto physicsWorld = GetParentScene()->GetPhysicsWorld();
+        if (physicsWorld == nullptr) throw std::runtime_error("Cannot make a physics entity in non-physics scene.");
+        if (_PhysicsBody != nullptr) _PhysicsBody->Destroy(); // Destroy current fixture;
+        _PhysicsBody = body_;
+    }
 
     bool BaseEntity::SubscribeToUpdate() {
         if (_ParentScene != nullptr) {
@@ -202,5 +242,10 @@ namespace NerdThings::Ngine {
     void BaseEntity::Update() {
         // Trigger update
         OnUpdate();
+
+        if (_PhysicsBody != nullptr) {
+            // As we are a physics entity, fire this each frame
+            OnTransformChanged({GetPosition(), GetRotation()});
+        }
     }
 }

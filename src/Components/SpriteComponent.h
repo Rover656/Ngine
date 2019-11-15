@@ -27,6 +27,11 @@ namespace NerdThings::Ngine::Components {
         // Private Fields
 
         /*
+         * Render origin
+         */
+        Vector2 _Origin;
+
+        /*
          * Sprite used
          */
         Graphics::Sprite _Sprite;
@@ -37,31 +42,39 @@ namespace NerdThings::Ngine::Components {
         /*
          * Create a sprite component
          */
-        SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_)
-            : Component(parent_), _Sprite(sprite_) {
-            SubscribeToDraw();
-            SubscribeToUpdate();
-        }
+        SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
 
         // Public Methods
 
-        void Draw() override {
-            const auto par = GetParent<BaseEntity>();
-            _Sprite.Draw(par->GetPosition(), par->GetScale(), par->GetRotation(), par->GetOrigin());
-        }
+        /*
+         * Draw the sprite (called by the engine)
+         */
+        void Draw() override;
 
-        Graphics::Sprite *GetSprite() {
-            return &_Sprite;
-        }
+        /*
+         * Get the sprite render origin.
+         */
+        Vector2 GetOrigin() const;
 
-        void SetSprite(const Graphics::Sprite &sprite_) {
-            if (_Sprite != sprite_)
-                _Sprite = sprite_;
-        }
+        /*
+         * Get a pointer to the sprite.
+         */
+        Graphics::Sprite *GetSprite();
 
-        void Update() override {
-            _Sprite.Update();
-        }
+        /*
+         * Set the sprite render origin.
+         */
+        void SetOrigin(const Vector2 &origin_);
+
+        /*
+         * Set the sprite.
+         */
+        void SetSprite(const Graphics::Sprite &sprite_);
+
+        /*
+         * Update the sprite (called by the engine)
+         */
+        void Update() override;
     };
 }
 

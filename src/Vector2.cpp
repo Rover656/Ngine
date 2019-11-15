@@ -51,8 +51,8 @@ namespace NerdThings::Ngine {
     struct Vector2 Vector2::Rotate(Vector2 center, float rotation_) {
         Vector2 ret = {X, Y};
 
-        float s = sinf(rotation_);
-        float c = cosf(rotation_);
+        float s = sinf(DegToRad(rotation_));
+        float c = cosf(DegToRad(rotation_));
 
         // Translate point back to origin
         ret.X -= center.X;

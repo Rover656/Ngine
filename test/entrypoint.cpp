@@ -2,18 +2,14 @@
 
 #include <Audio/AudioDevice.h>
 #include <Audio/Wave.h>
-#include <Components/BoundingBoxCollisionShapeComponent.h>
 #include <Components/CameraComponent.h>
-#include <Components/CircleCollisionShapeComponent.h>
-#include <Components/PolygonCollisionShapeComponent.h>
 #include <Components/SpriteComponent.h>
 #include <Filesystem/Resources.h>
 #include <Graphics/TilesetRenderer.h>
-#include <Input/Gamepad.h>
 #include <Input/Keyboard.h>
-#include <Input/Mouse.h>
+#include <Physics/Shapes/CircleShape.h>
+#include <Physics/Shapes/PolygonShape.h>
 #include <UI/Controls/BasicButton.h>
-#include <UI/Controls/HorizontalPanel.h>
 #include <UI/Controls/Image.h>
 #include <UI/Controls/Label.h>
 #include <UI/Controls/VerticalPanel.h>
@@ -30,12 +26,13 @@ using namespace NGINE_NS::Filesystem;
 using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 using namespace NGINE_NS::Physics;
+using namespace NGINE_NS::Physics::Shapes;
 using namespace NGINE_NS::UI;
 using namespace NGINE_NS::UI::Controls;
 
 class KeyboardMovementComponent2D : public Component {
 public:
-    float MoveSpeed = 1;
+    float MoveSpeed = 32;
 
     KeyboardMovementComponent2D(BaseEntity *parent_) : Component(parent_) {
         SubscribeToUpdate();
@@ -43,30 +40,42 @@ public:
 
     void Update() override {
         auto par = GetParent<BaseEntity>();
+        Vector2 velocity;
+
+        if (par->IsPhysicsEntity()) {
+            velocity = par->GetPhysicsWorld()->GetGravityPixels();
+        }
+
         if (Keyboard::IsKeyDown(KEY_W)) {
-            par->MoveBy({0, -MoveSpeed});
+            velocity.Y -= MoveSpeed;
         }
 
         if (Keyboard::IsKeyDown(KEY_S)) {
-            par->MoveBy({0, MoveSpeed});
+            velocity.Y += MoveSpeed;
         }
 
         if (Keyboard::IsKeyDown(KEY_A)) {
-            par->MoveBy({-MoveSpeed, 0});
+            velocity.X -= MoveSpeed;
         }
 
         if (Keyboard::IsKeyDown(KEY_D)) {
-            par->MoveBy({MoveSpeed, 0});
+            velocity.X += MoveSpeed;
+        }
+
+        if (par->IsPhysicsEntity()) {
+            par->GetPhysicsBody()->SetLinearVelocityPixels(velocity);
+        } else {
+            par->MoveBy(velocity);
         }
 
         // Test
 
         if (Keyboard::IsKeyDown(KEY_LEFT)) {
-            par->SetRotation(par->GetRotation() - DegToRad(5));
+            par->SetRotation(par->GetRotation() - 5);
         }
 
         if (Keyboard::IsKeyDown(KEY_RIGHT)) {
-            par->SetRotation(par->GetRotation() + DegToRad(5));
+            par->SetRotation(par->GetRotation() + 5);
         }
 
         if (Keyboard::IsKeyDown(KEY_ZERO)) {
@@ -79,46 +88,36 @@ class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(Scene *parentScene_, Vector2 position_)
             : BaseEntity(parentScene_, position_) {
-        SetScale(10);
-        SetOrigin({16*GetScale(), 16*GetScale()});
+        PhysicsBody::BodyInfo bi;
+        bi.Type = PhysicsBody::BODY_DYNAMIC;
+        bi.Position = position_;
+        bi.FixedRotation = true;
+        auto body = GetParentScene()->GetPhysicsWorld()->CreateBody(bi);
+        auto shape = CircleShape(1);
+        body->CreateFixture(&shape, 1);
+        //auto shapeb = PolygonShape::CreateAsBox(16, 16);
+        //body->CreateFixture(&shapeb, 1);
+        body->SetAngularVelocity(5);
+        SetPhysicsBody(body);
 
-        AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        s->SetOrigin({16, 16});
+
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
-        AddComponent("Rectangle", new PolygonCollisionShapeComponent(this, Rectangle(0, 0, 32, 32).ToPolygon()))->EnableDebugDraw();
-
-        AddComponent("Circle", new CircleCollisionShapeComponent(this, Circle({16*GetScale(), 16*GetScale()}, 16)))->EnableDebugDraw();
-
         AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}))->Activate();
     }
 };
 
-class OtherComponent : public Component {
+class Floor : public BaseEntity {
 public:
-    OtherComponent(BaseEntity *parent_) : Component(parent_) {
-        SubscribeToUpdate();
-    }
-
-    void Update() override {
-        if (Keyboard::IsKeyPressed(KEY_SPACE)) {
-            Resources::GetSound("test_sound")->Play();
-        }
-    }
-};
-
-class OtherEntity : public BaseEntity {
-public:
-    OtherEntity(Scene *parentScene_) : BaseEntity(parentScene_, Vector2::Zero, 0, true) {
-        AddComponent("OtherComponent", new OtherComponent(this));
-        AddComponent("TestBoundingBox", new BoundingBoxCollisionShapeComponent(this, {0, 0, 100, 100}))->EnableDebugDraw();
-        AddComponent("TestCircle", new CircleCollisionShapeComponent(this, Circle(Vector2::Zero, 50)))->EnableDebugDraw();
-
-        SubscribeToUpdate();
-    }
-
-    bool CheckForCulling(Rectangle cullArea_) override {
-        auto a = cullArea_.ToPolygon();
-        auto b = Rectangle(GetPosition(), {100, 100 }).ToPolygon();
-        return !a.CheckCollision(&b);
+    Floor(Scene *parentScene_, Vector2 position_) : BaseEntity(parentScene_, position_) {
+        PhysicsBody::BodyInfo bi;
+        bi.Type = PhysicsBody::BODY_STATIC;
+        bi.Position = position_;
+        auto body = GetParentScene()->GetPhysicsWorld()->CreateBody(bi);
+        auto box = PolygonShape::CreateAsBox(5, 5);
+        body->CreateFixture(&box, 0);
+        SetPhysicsBody(body);
     }
 };
 
@@ -174,20 +173,6 @@ public:
     }
 };
 
-// Define rectangle
-float vertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left
-};
-float colors[] = {
-        1.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 0.5f, 1.0f
-};
-
 class TestScene : public Scene {
 public:
     Camera cam;
@@ -196,19 +181,15 @@ public:
 
     TilesetRenderer *testTiles;
 
-    TestScene(Game* game) : Scene(game), widg(Vector2(120, 120)) {
-        AddEntity("OtherEntity", new OtherEntity(this)); // ->SetRotation(DegToRad(58));
+    TestScene(Game* game) : Scene(game, true, {0, 4}, 16), widg(Vector2(120, 120)) {
+        AddChild("Player", new PlayerEntity(this, {100, 100}));
+        AddChild("Floor", new Floor(this, {100, 500}));
 
-        AddEntity("Player", new PlayerEntity(this, {100, 100}));
+        GetPhysicsWorld()->DebugDraw = true;
 
         OnLoad += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::OnLoaded);
-
-        //OnDraw.Bind(this, &TestScene::Draw);
-
         OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::Draw);
-
         OnUpdate += new ClassMethodEventHandler<TestScene>(this, &TestScene::Update);
-
         OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::DrawCam);
 
         SetCullArea(1280 - 50, 768 - 50, true);
@@ -237,24 +218,7 @@ public:
     int rot = 0;
 
     void Draw() {
-        //auto p = Mouse::GetMousePosition();
-
-        //widg.Draw();
-
-        //rot += Mouse::GetMouseWheelYDelta();
-        //rot += (int)Gamepad::GetAxisValue(GAMEPAD_1, GAMEPAD_AXIS_LEFT_X);
-
-        //Renderer::DrawTexture(Resources::GetTexture("test_tiles"), Mouse::GetMousePosition(), 100, 100, Color::White, {} , DegToRad(rot));
-
-        //if (Keyboard::IsKeyDown(KEY_SPACE) || Gamepad::IsButtonDown(GAMEPAD_1, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
-            testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
-            //testTiles->Draw({0, 0}, 2.0f, 3.14f, {10, 10});
-        //}
-
-        //Renderer::DrawCircleLines({100, 100}, 30, Color::Red);
-        //Renderer::DrawCircleSectorLines({100, 100}, 10, DegToRad(90), DegToRad(180), 2, Color::Green);
-
-        //Renderer::DrawTexture(Font::GetDefaultFont()->GetTexture(), {100, 100}, Color::White);
+        testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
     }
 
     void DrawCam() {
@@ -271,20 +235,12 @@ public:
     }
 };
 
-void TestFunc(std::string module) {
-    ConsoleMessage("HELLO", "NOTICE", module);
-}
-
 class TestGame : public Game {
     TestScene *_Scene;
 public:
 
     TestGame(const GameConfig &config_) : Game(config_) {
-        OnRun += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
-    }
-
-    void TestMethod(std::string module) {
-        ConsoleMessage("HELLO FROM METHOD.", "NOTICE", module);
+        OnInit += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
     }
 
     void Init() {
@@ -297,37 +253,11 @@ public:
         // Load arial as default font
         Font::SetDefaultFont(Resources::GetFont("Upheaval"));
 
-        // Output readme
-        auto f = File(Path(Path::GetExecutableDirectory() / "content" / "readme.txt"));
-
-        if (f.Open(MODE_READ)) {
-            auto t = f.ReadString();
-            ConsoleMessage("Readme Reads:", "NOTICE", "entrypoint");
-            ConsoleMessage(t, "NOTICE", "entrypoint - readme.txt");
-            f.Close();
-        }
-
         // Create scene
         _Scene = new TestScene(this);
 
         // Set scene
         SetScene(_Scene);
-
-
-        // Test new events
-        Event<std::string> testEvent;
-
-        auto test = new FunctionEventHandler<std::string>(TestFunc);
-        auto attachment = testEvent += test;
-        auto attachmentB = testEvent += new ClassMethodEventHandler<TestGame, std::string>(this, &TestGame::TestMethod);
-        testEvent("HELLOWORLD");
-
-        //NEW::ClassMethodEventHandler<TestGame> testMeth(this, &TestGame::TestMethod);
-        //testMeth.Invoke();
-    }
-
-    void Uninit(EventArgs &e) {
-
     }
 };
 

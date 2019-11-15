@@ -65,11 +65,6 @@ namespace NerdThings::Ngine {
         Scene *_CurrentScene = nullptr;
 
         /*
-         * Whether or not the game has stopped.
-         */
-        bool _HasStopped = false;
-
-        /*
          * The render target used for enforcing resolution
          */
         std::shared_ptr<Graphics::RenderTarget> _RenderTarget = nullptr;
@@ -110,9 +105,9 @@ namespace NerdThings::Ngine {
         Event<> OnDraw;
 
         /*
-         * On run event
+         * On init event
          */
-        Event<> OnRun;
+        Event<> OnInit;
 
         /*
          * On update event
@@ -169,13 +164,12 @@ namespace NerdThings::Ngine {
 
         /*
          * Set the target FPS.
-         * If using advanced game, this will set both update and draw FPS
          */
         void SetFPS(int FPS_);
 
         /*
          * Set the intended game size.
-         * Resizes the framebuffer next frame.
+         * Will resize the framebuffer next frame.
          */
         void SetIntendedSize(Vector2 size_);
 

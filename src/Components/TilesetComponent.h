@@ -23,7 +23,7 @@ namespace NerdThings::Ngine::Components {
         // Private Fields
 
         /*
-         * The tileset
+         * The tileset renderer
          */
         Graphics::TilesetRenderer *_Tileset;
 
@@ -35,32 +35,26 @@ namespace NerdThings::Ngine::Components {
 
         // Public Constructor(s)
 
-        TilesetComponent(BaseEntity *parent_, Graphics::TilesetRenderer *tileset_)
-         : Component(parent_), _Tileset(tileset_) {
-            SubscribeToDraw();
-        }
+        /*
+         * Create a tileset component with a tileset renderer
+         */
+        TilesetComponent(BaseEntity *parent_, Graphics::TilesetRenderer *tileset_);
 
         // Destructor
 
-        virtual ~TilesetComponent() {
-            delete _Tileset;
-        }
+        virtual ~TilesetComponent();
 
         // Public Methods
 
-        void Draw(EventArgs &e) override {
-            auto par = GetParent();
+        /*
+         * Draw the tileset (called by engine).
+         */
+        void Draw() override;
 
-            if (_UseCullArea) {
-                _Tileset->Draw(par->GetPosition(), GetParentScene()->GetCullAreaPosition(), GetParentScene()->GetCullAreaEndPosition(), par->GetScale());
-            } else {
-                _Tileset->Draw(par->GetPosition(), GetParentScene()->GetViewportPosition(), GetParentScene()->GetViewportEndPosition(), par->GetScale());
-            }
-        }
-
-        Graphics::TilesetRenderer *GetTileset() {
-            return _Tileset;
-        }
+        /*
+         * Get the tileset renderer
+         */
+        Graphics::TilesetRenderer *GetTileset();
     };
 }
 

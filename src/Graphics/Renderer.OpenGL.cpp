@@ -46,7 +46,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::PushMatrix();
 
         OpenGL::GL::Translate({a_.X, a_.Y, 0.0f});
-        OpenGL::GL::Rotate(angle, {0.0f, 0.0f, 1.0f});
+        OpenGL::GL::Rotate(RadToDeg(angle), {0.0f, 0.0f, 1.0f});
         OpenGL::GL::Translate({0, (thick_ > 1.0f) ? -thick_ / 2.0f : -1.0f, 0.0f});
 
         OpenGL::GL::Color(c_);

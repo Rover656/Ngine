@@ -36,11 +36,18 @@ namespace NerdThings::Ngine {
 
     // Public Constructor(s)
 
-    Scene::Scene(Game *parentGame_)
+    Scene::Scene(Game *parentGame_, bool physicsEnabled_, Vector2 grav, float ppm)
             : _ParentGame(parentGame_) {
+        // Check game
         if (parentGame_ == nullptr) {
             ConsoleMessage("A scene has been fed null for the parent game.", "FATAL", "SCENE");
             throw std::runtime_error("Cannot have a null game.");
+        }
+
+        // Physics setup
+        _PhysicsEnabled = physicsEnabled_;
+        if (_PhysicsEnabled) {
+            _PhysicsWorld = new Physics::PhysicsWorld(grav, ppm);
         }
     }
 
@@ -48,7 +55,11 @@ namespace NerdThings::Ngine {
 
     Scene::~Scene() {
         ConsoleMessage("Deleting Scene.", "NOTICE", "SCENE");
-        CollisionMap.clear();
+
+        // Delete physics world
+        if (_PhysicsWorld != nullptr) delete _PhysicsWorld;
+
+        // Clear vectors
         _EntityActivities.clear();
         _EntityDepths.clear();
     }
@@ -146,6 +157,10 @@ namespace NerdThings::Ngine {
 
     Game *Scene::GetParentGame() {
         return _ParentGame;
+    }
+
+    Physics::PhysicsWorld *Scene::GetPhysicsWorld() {
+        return _PhysicsWorld;
     }
 
     Rectangle Scene::GetViewport() const {
@@ -252,7 +267,7 @@ namespace NerdThings::Ngine {
         if (_UpdateCounter % fps / 4 == 0) {
             // Check culling
 
-            for (auto ent : GetEntities()) {
+            for (auto ent : GetChildren()) {
                 if (ent != nullptr) {
                     // Check if we can cull
                     if (ent->GetCanCull()) {
@@ -271,5 +286,10 @@ namespace NerdThings::Ngine {
         // Invoke updates
         OnUpdate();
         OnPersistentUpdate();
+
+        // Physics
+        if (_PhysicsWorld != nullptr) {
+            _PhysicsWorld->Step(1.0f/_ParentGame->GetTargetFPS(), 6, 2); // TODO: Proper values
+        }
     }
 }

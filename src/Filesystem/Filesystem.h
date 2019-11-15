@@ -181,6 +181,9 @@ namespace NerdThings::Ngine::Filesystem {
          */
         operator std::string() const;
 
+        bool operator==(Path rhs);
+        bool operator!=(Path rhs);
+
     private:
         // Private Fields
 

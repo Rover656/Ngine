@@ -23,23 +23,13 @@ namespace NerdThings::Ngine {
 
     // Public Methods
 
-    std::vector<BaseEntity *> EntityContainer::GetEntities() {
-        std::vector<BaseEntity*> vec;
-
-        for (auto it = _Entities.begin(); it != _Entities.end(); ++it) {
-            vec.push_back(it->second.get());
-        }
-
-        return vec;
-    }
-
-    bool EntityContainer::HasEntity(const std::string &name_) {
+    bool EntityContainer::HasChild(const std::string &name_) {
         return _Entities.find(name_) != _Entities.end();
     }
 
-    bool EntityContainer::RemoveEntity(const std::string &name_) {
+    bool EntityContainer::RemoveChild(const std::string &name_) {
         // Get the entity
-        const auto ent = GetEntity<BaseEntity>(name_);
+        const auto ent = GetChild<BaseEntity>(name_);
 
         if (ent != nullptr) {
             // Unsubscribe from updates
@@ -58,11 +48,11 @@ namespace NerdThings::Ngine {
         return false;
     }
 
-    bool EntityContainer::RemoveEntity(BaseEntity *entity_) {
+    bool EntityContainer::RemoveChild(BaseEntity *entity_) {
         // Search for the entity
         for (const auto& ent : _Entities) {
             if (ent.second.get() == entity_) {
-                return RemoveEntity(ent.first);;
+                return RemoveChild(ent.first);;
             }
         }
 

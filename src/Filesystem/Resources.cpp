@@ -24,8 +24,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Public Fields
 
-    int Resources::DefaultFontBaseSize = 36;
-    Path Resources::ResourcesDirectory = Path("content");
+    ResourceManagerConfig Resources::Config;
 
     // Public Methods
 
@@ -93,53 +92,49 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     void Resources::LoadResources() {
-        // Get content dir
-        auto contentDir = Directory(Path::GetExecutableDirectory() / ResourcesDirectory);
-
-        // Get all files
-        auto files = contentDir.GetFilesRecursive();
-
         // File extension definitions
         std::vector<std::string> fntExts = {"ttf", "otf"};
         std::vector<std::string> musExts = {"ogg", "flac", "mp3"};//, "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
         std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd"};
 
-        // Load all files
-        for (auto file : files) {
-            // Get name (relative path to the content folder)
-            auto name = file.GetObjectPath().GetRelativeTo(contentDir.GetObjectPath()).GetStringNoExtension();
+        // Loop over all resource directories
+        for (auto dir : Config.ResourceDirectories) {
+            // TODO: Will this need to be more robust for some platforms?
+            auto contentDir = Directory(dir.first.GetAbsolute());
 
-            // Replace windows slashes with forward slashes
-            name = std::regex_replace(name, std::regex("\\\\"), "/");
+            // Get all files
+            auto files = contentDir.GetFilesRecursive();
 
-            // Get extension
-            auto ext = file.GetFileExtension();
+            // Load all files
+            for (auto file : files) {
+                // Get name (relative path to the content folder)
+                auto name = file.GetObjectPath().GetRelativeTo(contentDir.GetObjectPath()).GetStringNoExtension();
 
-            // Get actual path
-            auto path = file.GetObjectPath();
+                // Replace windows slashes with forward slashes
+                name = std::regex_replace(name, std::regex("\\\\"), "/");
 
-            // Load resources
-            if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end()) { // Font
-                LoadFont(path, name);
-            }
+                // Get extension
+                auto ext = file.GetFileExtension();
 
-            if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end()) { // Music
-                LoadMusic(path, name);
-            }
+                // Get actual path
+                auto path = file.GetObjectPath();
 
-            if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end()) { // Sound
-                LoadSound(path, name);
-            }
-
-            if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end()) { // Texture
-                LoadTexture(path, name);
+                // Load resources
+                if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end() && dir.second & CONTENT_FONTS)
+                    LoadFont(path, name);
+                if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end() && dir.second & CONTENT_MUSIC)
+                    LoadMusic(path, name);
+                if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end() && dir.second & CONTENT_SOUNDS)
+                    LoadSound(path, name);
+                if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end() && dir.second & CONTENT_TEXTURES)
+                    LoadTexture(path, name);
             }
         }
     }
 
     bool Resources::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
-        if (baseSize_ == -1) baseSize_ = DefaultFontBaseSize;
+        if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
 
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         auto fnt = Graphics::Font::LoadTTFFont(inPath_, baseSize_);

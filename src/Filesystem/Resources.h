@@ -22,6 +22,35 @@
 
 namespace NerdThings::Ngine::Filesystem {
     /*
+     * Content type for content directories
+     */
+    enum ResourceDirectoryContentType {
+        CONTENT_NONE = 0,
+        CONTENT_TEXTURES = 1,
+        CONTENT_SOUNDS = 2,
+        CONTENT_MUSIC = 4,
+        CONTENT_FONTS = 8, // TODO: Custom type support
+    };
+
+    struct ResourceManagerConfig {
+        /*
+         * Default base size for loaded fonts.
+         * Default: 36
+         */
+        int DefaultFontBaseSize = 36;
+
+        /*
+         * The directory structure of the resources directory.
+         */
+        std::vector<std::pair<Filesystem::Path, int>> ResourceDirectories = {
+                {
+                    Path("content"),
+                    CONTENT_TEXTURES | CONTENT_SOUNDS | CONTENT_MUSIC | CONTENT_FONTS
+                }
+        };
+    };
+
+    /*
      * Resource management class
      */
     class NEAPI Resources {
@@ -48,17 +77,9 @@ namespace NerdThings::Ngine::Filesystem {
         // Public Fields
 
         /*
-         * Default base size for loaded fonts.
-         * Default: 36
+         * The resource manager config
          */
-        static int DefaultFontBaseSize;
-
-        /*
-         * The directory to load resources from
-         */
-        static Path ResourcesDirectory;
-
-        // TODO: Directory config - provides information on what directories contain what filetypes
+        static ResourceManagerConfig Config;
 
         // Public Methods
 

@@ -60,7 +60,7 @@ namespace NerdThings::Ngine {
          * Returns pair of name and entity if success, null for both if fail
          */
         template <typename EntityType>
-        std::pair<std::string, EntityType *> AddEntity(EntityType *entity_) {
+        std::pair<std::string, EntityType *> AddChild(EntityType *entity_) {
             // Cast to BaseEntity to ensure this is a valid type
             auto ent = dynamic_cast<BaseEntity*>(entity_);
 
@@ -83,9 +83,9 @@ namespace NerdThings::Ngine {
          * Returns entity if success, null if fail
          */
         template <typename EntityType>
-        EntityType *AddEntity(std::string name_, EntityType *entity_) {
+        EntityType *AddChild(std::string name_, EntityType *entity_) {
             // Check the name is not taken
-            if (HasEntity(name_))
+            if (HasChild(name_))
                 return nullptr;
 
             // Cast to BaseEntity to ensure this is a valid type
@@ -106,8 +106,8 @@ namespace NerdThings::Ngine {
         /*
          * Count all of the entities by type
          */
-        template <typename EntityType>
-        int CountEntitiesOfType() {
+        template <typename EntityType = BaseEntity>
+        int CountChildren() {
             int c = 0;
             for (auto e : GetEntities()) {
                 if (dynamic_cast<EntityType*>(e) != nullptr) c++;
@@ -116,19 +116,15 @@ namespace NerdThings::Ngine {
         }
 
         /*
-         * Get all of the entities
-         */
-        std::vector<BaseEntity*> GetEntities();
-
-        /*
          * Get all of the entities of type
          */
-        template <typename EntityType>
-        std::vector<EntityType*> GetEntitiesByType() {
+        template <typename EntityType = BaseEntity>
+        std::vector<EntityType*> GetChildren() {
             std::vector<EntityType*> ents;
-            for (auto e : GetEntities()) {
-                auto t = dynamic_cast<EntityType*>(e);
-                if (t != nullptr) ents.push_back(t);
+            for (auto it = _Entities.begin(); it != _Entities.end(); ++it) {
+                auto ent = it->second.get();
+                auto casted = dynamic_cast<EntityType*>(ent);
+                if (casted != nullptr) ents.push_back(ent);
             }
             return ents;
         }
@@ -136,10 +132,10 @@ namespace NerdThings::Ngine {
         /*
          * Get an entity by name.
          */
-        template <typename EntityType>
-        EntityType *GetEntity(const std::string &name_) {
+        template <typename EntityType = BaseEntity>
+        EntityType *GetChild(const std::string &name_) {
             // Try to find the entity
-            if (HasEntity(name_)) {
+            if (HasChild(name_)) {
                 return dynamic_cast<EntityType*>(_Entities.at(name_).get()); // Will return null if its the wrong type
             }
 
@@ -149,18 +145,18 @@ namespace NerdThings::Ngine {
         /*
          * Test whether there is an entity by this name.
          */
-        bool HasEntity(const std::string &name_);
+        bool HasChild(const std::string &name_);
 
         /*
          * Remove an entity by name.
          * Returns success or fail.
          */
-        bool RemoveEntity(const std::string &name_);
+        bool RemoveChild(const std::string &name_);
 
         /*
          * Remove entity by pointer.
          */
-        bool RemoveEntity(BaseEntity *entity_);
+        bool RemoveChild(BaseEntity *entity_);
     };
 }
 

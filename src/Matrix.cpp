@@ -161,8 +161,8 @@ namespace NerdThings::Ngine {
             z *= length;
         }
 
-        const auto sinres = sinf(angle_);
-        const auto cosres = cosf(angle_);
+        const auto sinres = sinf(DegToRad(angle_));
+        const auto cosres = cosf(DegToRad(angle_));
         const auto t = 1.0f - cosres;
 
         result.M0 = x * x * t + cosres;
@@ -191,8 +191,8 @@ namespace NerdThings::Ngine {
     Matrix Matrix::RotateX(const float angle_) {
         auto result = Identity;
 
-        const auto cosres = cosf(angle_);
-        const auto sinres = sinf(angle_);
+        const auto cosres = cosf(DegToRad(angle_));
+        const auto sinres = sinf(DegToRad(angle_));
 
         result.M5 = cosres;
         result.M6 = -sinres;
@@ -205,8 +205,8 @@ namespace NerdThings::Ngine {
     Matrix Matrix::RotateY(const float angle_) {
         auto result = Identity;
 
-        const auto cosres = cosf(angle_);
-        const auto sinres = sinf(angle_);
+        const auto cosres = cosf(DegToRad(angle_));
+        const auto sinres = sinf(DegToRad(angle_));
 
         result.M0 = cosres;
         result.M2 = sinres;
@@ -219,8 +219,8 @@ namespace NerdThings::Ngine {
     Matrix Matrix::RotateZ(const float angle_) {
         auto result = Identity;
 
-        const auto cosres = cosf(angle_);
-        const auto sinres = sinf(angle_);
+        const auto cosres = cosf(DegToRad(angle_));
+        const auto sinres = sinf(DegToRad(angle_));
 
         result.M0 = cosres;
         result.M1 = -sinres;

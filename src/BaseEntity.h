@@ -15,6 +15,7 @@
 // Include ngine
 #include "Ngine.h"
 
+#include "Physics/PhysicsBody.h"
 #include "Vector2.h"
 #include "EntityContainer.h"
 #include "Scene.h"
@@ -27,11 +28,6 @@ namespace NerdThings::Ngine {
         // Public Fields
 
         /*
-         * Entity origin
-         */
-        Vector2 EntityOrigin;
-
-        /*
          * The new entity position
          */
         Vector2 EntityPosition;
@@ -41,15 +37,10 @@ namespace NerdThings::Ngine {
          */
         float EntityRotation;
 
-        /*
-         * The new scale
-         */
-        float EntityScale;
-
         // Public Constructor(s)
 
-        EntityTransformChangedEventArgs(Vector2 origin_, Vector2 pos_, float rot_, float scale_)
-                : EntityOrigin(origin_), EntityPosition(pos_), EntityRotation(rot_), EntityScale(scale_) {}
+        EntityTransformChangedEventArgs(Vector2 pos_, float rot_)
+                : EntityPosition(pos_), EntityRotation(rot_) {}
     };
 
     /*
@@ -109,10 +100,15 @@ namespace NerdThings::Ngine {
          */
         float _Rotation = 0;
 
-         /*
-          * The entity scale (Used for rendering and physics)
-          */
-         float _Scale = 1;
+        /*
+         * The current physics body.
+         */
+        Physics::PhysicsBody *_PhysicsBody = nullptr;
+
+        /*
+         * The entity scale (Used for rendering and physics)
+         */
+        float _Scale = 1;
 
         // Private Methods
 
@@ -223,11 +219,6 @@ namespace NerdThings::Ngine {
         int GetDepth() const;
 
         /*
-         * Get entity origin
-         */
-        Vector2 GetOrigin() const;
-
-        /*
          * Get our parent container.
          * This will either be another entity or the scene
          */
@@ -263,19 +254,29 @@ namespace NerdThings::Ngine {
         Vector2 GetPosition() const;
 
         /*
+         * Get the attached physics body.
+         */
+        Physics::PhysicsBody *GetPhysicsBody() const;
+
+        /*
+         * Get the world our body is a member of.
+         */
+        Physics::PhysicsWorld *GetPhysicsWorld() const;
+
+        /*
          * Get the entity rotation
          */
         float GetRotation() const;
-
-         /*
-          * Get the entity scale
-          */
-         float GetScale() const;
 
         /*
          * Test if a component exists by a name.
          */
         bool HasComponent(const std::string &name_);
+
+        /*
+         * Determine if this entity is affected by physics.
+         */
+        bool IsPhysicsEntity();
 
         /*
          * Move an entity
@@ -299,11 +300,6 @@ namespace NerdThings::Ngine {
         void SetDepth(int depth_);
 
         /*
-         * Set entity origin
-         */
-        void SetOrigin(Vector2 origin_);
-
-        /*
          * Set whether or not we update when the scene is paused
          */
         void SetDoPersistentUpdates(bool persistentUpdates_);
@@ -318,10 +314,10 @@ namespace NerdThings::Ngine {
          */
         void SetRotation(float rotation_);
 
-         /*
-          * Set entity scale
-          */
-         void SetScale(float scale_);
+        /*
+         * Set the entity physics body.
+         */
+        void SetPhysicsBody(Physics::PhysicsBody *body_);
 
         /*
          * Subscribe to update events in the scene
