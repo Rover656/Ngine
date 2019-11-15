@@ -9,6 +9,9 @@ cmake-build-*/
 # BuildUWP.bat
 build-UWP/
 
+# Doxygen output
+[Dd]ocs/
+
 # User-specific files
 *.suo
 *.user

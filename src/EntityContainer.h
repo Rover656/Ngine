@@ -14,6 +14,8 @@
 
 #include "Ngine.h"
 
+// TODO: Needs rewritten.
+
 namespace NerdThings::Ngine {
     // We do this forward declaration instead of include because BaseEntity uses this.
     class NEAPI BaseEntity;

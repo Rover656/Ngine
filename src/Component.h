@@ -22,50 +22,50 @@ namespace NerdThings::Ngine {
     class NEAPI BaseEntity;
 #endif
 
-    /*
-     * A component that can be attached to an entity
+    /**
+     * A component is an object that is attached to an entity and manipulates its behaviour.
      */
     class NEAPI Component {
         // Private Fields
 
-        /*
-         * On draw ref
+        /**
+         * Entity OnDraw reference.
          */
         EventAttachment<> _OnDrawRef;
 
-        /*
-         * On update ref
+        /**
+         * Entity OnUpdate reference.
          */
         EventAttachment<> _OnUpdateRef;
 
-        /*
-         * The parent entity
+        /**
+         * The parent entity.
          */
         BaseEntity *_ParentEntity = nullptr;
     public:
         // Public Fields
 
-        /*
-         * On detached from an entity
+        /**
+         * On detached from an entity.
          */
         Event<> OnDetached;
 
         // Destructor
 
-        /*
-         * Destruct component
-         */
         virtual ~Component();
 
         // Public Methods
 
-        /*
-         * Draw
+        /**
+         * Component draw event.
          */
         virtual void Draw();
 
-        /*
+        /**
          * Get the parent entity as a type
+         *
+         * @tparam The type to get the entity as.
+         * @returns The entity casted to the provided type.
          */
         template <typename EntityType = BaseEntity>
         EntityType *GetParent() const {
@@ -74,38 +74,42 @@ namespace NerdThings::Ngine {
 
         // TODO: Functions like this also need templates.
 
-        /*
+        /**
          * Get the parent scene
+         *
+         * @returns The parent entity's parent scene.
          */
         Scene *GetParentScene() const;
 
-        /*
-         * Whether or not the component has a parent
+        /**
+         * Whether or not the component has a parent.
+         *
+         * @returns Whether or not this component is parented by an entity.
          */
         bool HasParent() const;
 
-        /*
-         * Subscribe to entity draw
+        /**
+         * Subscribe to the entity's draw event.
          */
         void SubscribeToDraw();
 
-        /*
-         * Subscribe to entity update
+        /**
+         * Subscribe to the entity's update event.
          */
         void SubscribeToUpdate();
 
-        /*
-         * Unsubscribe from entity draw
+        /**
+         * Unsubscribe from the entity's draw event.
          */
         void UnsubscribeFromDraw();
 
-        /*
-         * Unsubscribe from entity update
+        /**
+         * Unsubscribe from the entity's update event.
          */
         void UnsubscribeFromUpdate();
 
-        /*
-         * Update
+        /**
+         * Component update logic
          */
         virtual void Update();
 
@@ -113,8 +117,10 @@ namespace NerdThings::Ngine {
 
         // Protected Constructor(s)
 
-        /*
+        /**
          * Initialise component
+         *
+         * @param The parent entity.
          */
         Component(BaseEntity *parent_);
     };

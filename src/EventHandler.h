@@ -17,8 +17,8 @@
 #include <functional>
 
 namespace NerdThings::Ngine {
-    /*
-     * Base struct for event arguments (for events that need it)
+    /**
+     * Base structure for event arguments.
      */
     struct EventArgs { };
 
@@ -26,13 +26,17 @@ namespace NerdThings::Ngine {
     template<typename... ArgTypes>
     class Event;
 
-    /*
+    /**
      * Abstract event handler.
+     *
+     * @tparam ArgTypes The argument types the event will pass to the handler.
      */
     template<typename... ArgTypes>
     struct AbstractEventHandler {
-        /*
+        /**
          * Invoke the event handler.
+         *
+         * @param args Arguments to be passed to the callback
          */
         virtual void Invoke(ArgTypes... args) = 0;
 
@@ -41,23 +45,27 @@ namespace NerdThings::Ngine {
         }
     };
 
-    /*
-     * An event handler that uses a static function.
+    /**
+     * An event handler that uses a static function as a callback.
+     *
+     * @tparam ArgTypes The argument types the event will pass to the handler.
      */
     template<typename... ArgTypes>
     struct FunctionEventHandler : public AbstractEventHandler<ArgTypes...> {
-        /*
+        /**
          * The function attached to to the handler.
          */
         void(*AttachedFunction)(ArgTypes...) = nullptr;
 
-        /*
-         * Create a null event handler.
+        /**
+         * Create an empty event handler.
          */
         FunctionEventHandler() {}
 
-        /*
+        /**
          * Create an event handler.
+         *
+         * @param func_ The function to be used as the callback
          */
         FunctionEventHandler(void(*func_)(ArgTypes...)) {
             AttachedFunction = func_;
@@ -69,28 +77,34 @@ namespace NerdThings::Ngine {
         }
     };
 
-    /*
-     * An event handler that uses a class method.
+    /**
+     * An event handler that uses a class method as a callback.
+     *
+     * @tparam Class The class the callback method is a member of.
+     * @tparam ArgTypes The argument types the event will pass to the handler.
      */
     template<typename Class, typename... ArgTypes>
     struct ClassMethodEventHandler : public AbstractEventHandler<ArgTypes...> {
-        /*
+        /**
          * The attached class.
          */
         Class *AttachedClass = nullptr;
 
-        /*
+        /**
          * The attached method
          */
         void (Class::*AttachedMethod)(ArgTypes...) = nullptr;
 
-        /*
-         * Initialize a null event handler.
+        /**
+         * Initialize an empty event handler.
          */
         ClassMethodEventHandler() {}
 
-        /*
+        /**
          * Create a class method event handler.
+         *
+         * @param obj_ The class whose member method we will use.
+         * @param func_ The class method we will use.
          */
         ClassMethodEventHandler(Class *obj_, void (Class::*func_)(ArgTypes...)) {
             AttachedClass = obj_;
@@ -103,36 +117,44 @@ namespace NerdThings::Ngine {
         }
     };
 
-    /*
+    /**
      * Contains persistent information about the attachment of an event handler.
+     *
+     * @tparam ArgTypes The argument types the event will pass to the handler.
      */
     template<typename... ArgTypes>
     struct EventAttachment {
     private:
+        /**
+         * The structure that contains information about the attachment.
+         */
         struct InternalAttachmentInformation {
-            /*
+            /**
              * The attached event.
              */
             Event<ArgTypes...> *AttachedEvent;
 
-            /*
+            /**
              * The handler this attachment is referring to.
              */
             AbstractEventHandler<ArgTypes...> *Handler;
         };
     public:
-        /*
+        /**
          * Information regarding the attachment.
          */
         std::shared_ptr<InternalAttachmentInformation> AttachmentInfo;
 
-        /*
-         * Create a null event handler attachment.
+        /**
+         * Create an empty event handler attachment.
          */
         EventAttachment() {}
 
-        /*
+        /**
          * Create an event handler attachment.
+         *
+         * @param event_ The event we are following attachment to.
+         * @param handler_ The handlerer we are following.
          */
         EventAttachment(Event<ArgTypes...> * event_, AbstractEventHandler<ArgTypes...> *handler_) {
             // Create attachment info
@@ -141,7 +163,7 @@ namespace NerdThings::Ngine {
             AttachmentInfo->Handler = handler_;
         }
 
-        /*
+        /**
          * Detach the handler.
          */
         void Detach() {
@@ -156,8 +178,10 @@ namespace NerdThings::Ngine {
             }
         }
 
-        /*
+        /**
          * Determine if the event is attached.
+         *
+         * @returns Whether or not the event handler is still attached to the event.
          */
         bool IsAttached() {
             if (AttachmentInfo != nullptr) {
@@ -174,19 +198,23 @@ namespace NerdThings::Ngine {
         }
     };
 
-    /*
+    /**
      * An event can be fired at any time. Handlers will be called with appropriate arguments when fired.
+     *
+     * @tparam ArgTypes The argument types the event will pass to the handler.
      */
     template<typename... ArgTypes>
     class Event {
-        /*
+        /**
          * All the attached handlers
          */
         std::vector<AbstractEventHandler<ArgTypes...> *> _Handlers;
     public:
-
-        /*
+        /**
          * Attach the event handler
+         *
+         * @param handler_ The event handler to be attached.
+         * @returns The event attachment information.
          */
         EventAttachment<ArgTypes...> Attach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Add
@@ -196,7 +224,7 @@ namespace NerdThings::Ngine {
             return {this, handler_};
         }
 
-        /*
+        /**
          * Clear the entire event.
          */
         void Clear() {
@@ -205,8 +233,10 @@ namespace NerdThings::Ngine {
             }
         }
 
-        /*
+        /**
          * Detach an event handler from the event.
+         *
+         * @param handler_ The handler to be detached.
          */
         void Detach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Find in handler array
@@ -221,8 +251,10 @@ namespace NerdThings::Ngine {
             delete handler_;
         }
 
-        /*
+        /**
          * Invoke the handlers attached to the event
+         *
+         * @param args The arguments to pass to the handlers.
          */
         void Invoke(ArgTypes... args) {
             for (auto handler : _Handlers) {
@@ -230,6 +262,12 @@ namespace NerdThings::Ngine {
             }
         }
 
+        /**
+         * Whether or not the handler is attached to us.
+         *
+         * @param handler_ The handler to check.
+         * @returns If the handler is attached.
+         */
         bool IsAttached(AbstractEventHandler<ArgTypes...> *handler_) {
             auto iterator = std::find(_Handlers.begin(), _Handlers.end(), handler_);
             return iterator != _Handlers.end();
