@@ -19,42 +19,64 @@
 #include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
+    /**
+     * A tileset renderer component.
+     * Attaches a tileset renderer to an entity for easy rendering.
+     */
     class TilesetComponent : public Component {
-        // Private Fields
-
-        /*
-         * The tileset renderer
+        /**
+         * The tileset renderer.
          */
         Graphics::TilesetRenderer *_Tileset;
 
-        /*
+        /**
          * Use the cull area instead of the viewport for rendering tiles.
          */
         bool _UseCullArea = false;
     public:
-
-        // Public Constructor(s)
-
-        /*
-         * Create a tileset component with a tileset renderer
+        /**
+         * Create a tileset component with a tileset renderer.
+         *
+         * @note The lifecycle of the tileset renderer will be managed by this component now.
+         * @param parent_ The entity we are attaching to.
+         * @param tileset_ The tileset renderer we will be using.
          */
         TilesetComponent(BaseEntity *parent_, Graphics::TilesetRenderer *tileset_);
-
-        // Destructor
-
         virtual ~TilesetComponent();
 
-        // Public Methods
+        /**
+         * Get the tileset renderer.
+         *
+         * @return The tileset renderer.
+         */
+        Graphics::TilesetRenderer *GetTileset();
 
-        /*
+        /**
+         * Get a read-only pointer to the tileset renderer.
+         *
+         * @return The (read-only) tileset renderer.
+         */
+        const Graphics::TilesetRenderer *GetTileset() const;
+
+        /**
+         * Determine whether we render tiles only inside the cull area, or in the viewport.
+         *
+         * @return true for rendering only in cull area, false for viewport.
+         */
+        bool GetCullAreaDraw() const;
+
+        /**
+         * Set whether or not we render tiles inside the cull area, or viewport
+         *
+         * @note Normally, rendering only in viewport is the best option, but if you have black-bars or something, cull area is better.
+         * @param flag_ true for rendering only in cull area, false for viewport.
+         */
+        void SetCullAreaDraw(bool flag_);
+
+        /**
          * Draw the tileset (called by engine).
          */
         void Draw() override;
-
-        /*
-         * Get the tileset renderer
-         */
-        Graphics::TilesetRenderer *GetTileset();
     };
 }
 

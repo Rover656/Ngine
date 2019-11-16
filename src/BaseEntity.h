@@ -122,9 +122,9 @@ namespace NerdThings::Ngine {
         // Private Methods
 
         // TODO: Remove this requirement
-        void RemoveEntityParent(BaseEntity *ent_) override;
+        void ProcessChildRemoved(BaseEntity *ent_) override;
 
-        void SetEntityParent(BaseEntity *ent_) override;
+        void ProcessChildAdded(BaseEntity *ent_) override;
     public:
         // Public Fields
 
@@ -173,7 +173,7 @@ namespace NerdThings::Ngine {
          * @tparam The component type. This must be a class derrived from NerdThings::Ngine::Component
          * @param name_ The name of the component.
          * @param component_ The component.
-         * @returns The component, so you may chain events.
+         * @return The component, so you may chain events.
          */
         template <typename ComponentType>
         ComponentType *AddComponent(const std::string &name_, ComponentType *component_) {
@@ -197,7 +197,7 @@ namespace NerdThings::Ngine {
          * This can be overridden for customisation.
          *
          * @param cullArea_ The scene cullarea.
-         * @returns Whether or not this entity should be culled.
+         * @return Whether or not this entity should be culled.
          */
         virtual bool CheckForCulling(Rectangle cullArea_);
 
@@ -231,21 +231,21 @@ namespace NerdThings::Ngine {
         /**
          * Check if this entity can be culled
          *
-         * @returns Whether or not this entity can be culled.
+         * @return Whether or not this entity can be culled.
          */
         bool GetCanCull();
 
         /**
          * Get all components.
          *
-         * @returns An vector containing all components.
+         * @return An vector containing all components.
          */
         std::vector<Component*> GetComponents();
 
         /**
          * Get the entity depth.
          *
-         * @returns The depth of the entity.
+         * @return The depth of the entity.
          */
         int GetDepth() const;
 
@@ -253,14 +253,14 @@ namespace NerdThings::Ngine {
          * Get our parent container.
          * This will either be another entity or the scene
          *
-         * @returns The parent container.
+         * @return The parent container.
          */
         EntityContainer *GetParentContainer() const;
 
         /**
          * Get the parent entity
          *
-         * @returns The parent entity, null if none.
+         * @return The parent entity, null if none.
          */
         BaseEntity *GetParentEntity() const;
 
@@ -269,7 +269,7 @@ namespace NerdThings::Ngine {
          * If there is no parent or the parent is not of this type it returns null.
          *
          * @tparam EntityType The type to cast the parent to.
-         * @returns The parent entity casted to the provided type.
+         * @return The parent entity casted to the provided type.
          */
         template <typename EntityType>
         EntityType *GetParentEntityAs() const {
@@ -279,42 +279,42 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent scene.
          *
-         * @returns The parent scene.
+         * @return The parent scene.
          */
         Scene *GetParentScene() const;
 
         /**
          * Test if we update when the scene is paused.
          *
-         * @returns Whether or not we will update even when the scene is paused.
+         * @return Whether or not we will update even when the scene is paused.
          */
         bool GetDoPersistentUpdates();
 
         /**
          * Get the entity position
          *
-         * @returns The position of the entity in world coordinates.
+         * @return The position of the entity in world coordinates.
          */
         Vector2 GetPosition() const;
 
         /**
          * Get the attached physics body.
          *
-         * @returns The physics body. If none, null.
+         * @return The physics body. If none, null.
          */
         Physics::PhysicsBody *GetPhysicsBody() const;
 
         /**
          * Get the world our body is a member of.
          *
-         * @returns The world the physics body is attached to, if any.
+         * @return The world the physics body is attached to, if any.
          */
         Physics::PhysicsWorld *GetPhysicsWorld() const;
 
         /**
          * Get the entity rotation
          *
-         * @returns The entity rotation, in degrees.
+         * @return The entity rotation, in degrees.
          */
         float GetRotation() const;
 
@@ -322,14 +322,14 @@ namespace NerdThings::Ngine {
          * Test if a component exists by a name.
          *
          * @param name_ The name of the component to check for.
-         * @returns Whether or not the component exists.
+         * @return Whether or not the component exists.
          */
         bool HasComponent(const std::string &name_);
 
         /**
          * Determine if this entity is affected by physics.
          *
-         * @returns Whether or not this entity has a physics body attached.
+         * @return Whether or not this entity has a physics body attached.
          */
         bool IsPhysicsEntity();
 
@@ -345,7 +345,7 @@ namespace NerdThings::Ngine {
          * Removes the entity from the component.
          *
          * @param name_ The name of the component to remove.
-         * @returns Whether or not the component was removed.
+         * @return Whether or not the component was removed.
          */
         bool RemoveComponent(const std::string &name_);
 
@@ -395,7 +395,7 @@ namespace NerdThings::Ngine {
         /**
          * Subscribe to update events in the scene.
          *
-         * @returns Whether or not updates were subscribed to.
+         * @return Whether or not updates were subscribed to.
          */
         bool SubscribeToUpdate();
 

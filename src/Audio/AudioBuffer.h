@@ -17,117 +17,136 @@
 #include "../../third-party/miniaudio/miniaudio.h"
 
 namespace NerdThings::Ngine::Audio {
-    enum EAudioBufferUsage {
+    /**
+     * Audio buffer usage type
+     */
+    enum AudioBufferUsage {
+        /**
+         * Static buffer.
+         */
         BUFFER_USAGE_STATIC = 0,
+
+        /**
+         * Streamed buffer
+         */
         BUFFER_USAGE_STREAM
     };
 
+    /**
+     * An audio data buffer.
+     */
     struct NEAPI AudioBuffer {
         // Public Fields
 
-        /*
-         * Data buffer
+        /**
+         * Data buffer.
          */
         void *Buffer;
 
-        /*
-         * Total buffer size in frames
+        /**
+         * Total buffer size in frames.
          */
         unsigned int BufferSizeInFrames;
 
-        /*
-         * PCM Data converter
+        /**
+         * PCM Data converter.
          */
         ma_pcm_converter DSP;
 
-        /*
-         * Frame cursor position
+        /**
+         * Frame cursor position.
          */
         unsigned int FrameCursorPos;
 
-        /*
-         * Sub buffer processed (virtual double buffer)
+        /**
+         * Sub buffer processed (virtual double buffer).
          */
         bool IsSubBufferProcessed[2];
 
-        /*
-         * Whether or not the buffer is looping
+        /**
+         * Whether or not the buffer is looping.
          */
         bool Looping;
 
-        /*
-         * The next buffer in the list
+        /**
+         * The next buffer in the list.
          */
         AudioBuffer *Next;
 
-        /*
-         * Whether or not the buffer is paused
+        /**
+         * Whether or not the buffer is paused.
          */
         bool Paused;
 
-        /*
+        /**
          * Buffer pitch
          */
         float Pitch;
 
-        /*
-         * Whether or not the buffer is playing
+        /**
+         * Whether or not the buffer is playing.
          */
         bool Playing;
 
-        /*
-         * Previous buffer on the list
+        /**
+         * Previous buffer on the list.
          */
         AudioBuffer *Prev;
 
-        /*
-         * Total frames processed in this buffer
+        /**
+         * Total frames processed in this buffer.
          */
         unsigned int TotalFramesProcessed;
 
-        /*
-         * Audio usage mode (STATIC/STREAM)
+        /**
+         * Audio usage mode.
          */
         int Usage;
 
-        /*
-         * Buffer volume
+        /**
+         * Buffer volume.
          */
         float Volume;
 
         // Public Methods
 
-        /*
-         * Is buffer playing
+        /**
+         * Is buffer playing.
+         *
+         * @return Whether the buffer is playing or not.
          */
         bool IsPlaying() const;
 
-        /*
-         * Pause buffer
+        /**
+         * Pause buffer.
          */
         void Pause();
 
-        /*
-         * Play buffer
+        /**
+         * Play buffer.
          */
         void Play();
 
-        /*
-         * Resume buffer
+        /**
+         * Resume buffer.
          */
         void Resume();
 
-        /*
+        /**
          * Set buffer pitch
+         *
+         * @param pitch_ The pitch for the buffer.
          */
         void SetPitch(float pitch_);
 
-        /*
+        /**
          * Set buffer volume
+         *
+         * @param vol_ The volume for the buffer.
          */
         void SetVolume(float vol_);
 
-        /*
+        /**
          * Stop buffer
          */
         void Stop();

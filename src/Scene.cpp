@@ -19,7 +19,7 @@ namespace NerdThings::Ngine {
 
     // The following two functions do nothing
     // This method is here for adding an entity parent
-    void Scene::RemoveEntityParent(BaseEntity *ent_) {
+    void Scene::ProcessChildRemoved(BaseEntity *ent_) {
         for (auto vec : _EntityDepths) {
             for (auto ent : vec.second) {
                 if (ent == ent_) {
@@ -29,7 +29,7 @@ namespace NerdThings::Ngine {
         }
     }
 
-    void Scene::SetEntityParent(BaseEntity *ent_) {
+    void Scene::ProcessChildAdded(BaseEntity *ent_) {
         // When an entity is added, mark as active
         _EntityActivities.insert({ent_, true});
     }

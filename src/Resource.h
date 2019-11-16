@@ -15,19 +15,19 @@
 #include "Ngine.h"
 
 namespace NerdThings::Ngine {
-    /*
+    /**
      * Abstract class defining requirements for a resource.
      */
     class IResource {
     public:
-        // Public Methods
-
-        /*
+        /**
          * Whether or not the resource is valid.
+         *
+         * @return Whether the resource is valid or not.
          */
         virtual bool IsValid() const = 0;
 
-        /*
+        /**
          * Unload this resource from memory.
          */
         virtual void Unload() = 0;

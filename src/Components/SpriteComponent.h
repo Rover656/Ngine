@@ -20,59 +20,71 @@
 #include "../EventHandler.h"
 
 namespace NerdThings::Ngine::Components {
-    /*
-     * Sprite component
+    /**
+     * Sprite component. Attaches a sprite at the position of the entity.
      */
     class SpriteComponent : public Component {
-        // Private Fields
-
-        /*
-         * Render origin
+        /**
+         * Render origin.
          */
         Vector2 _Origin;
 
-        /*
-         * Sprite used
+        /**
+         * Sprite to render.
          */
         Graphics::Sprite _Sprite;
     public:
-
-        // Public Constructor(s)
-
-        /*
-         * Create a sprite component
+        /**
+         * Create a sprite component.
+         *
+         * @param parent_ The parent entity we will attach to.
+         * @param sprite_ The sprite to render with.
+         * @param origin_ The sprite render origin.
          */
         SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
 
-        // Public Methods
-
-        /*
-         * Draw the sprite (called by the engine)
-         */
-        void Draw() override;
-
-        /*
+        /**
          * Get the sprite render origin.
+         *
+         * @return The rendering origin.
          */
         Vector2 GetOrigin() const;
 
-        /*
-         * Get a pointer to the sprite.
-         */
-        Graphics::Sprite *GetSprite();
-
-        /*
+        /**
          * Set the sprite render origin.
+         *
+         * @param origin_ The new rendering origin.
          */
         void SetOrigin(const Vector2 &origin_);
 
-        /*
+        /**
+         * Get a pointer to the sprite.
+         *
+         * @return The current sprite (pointer to it).
+         */
+        Graphics::Sprite *GetSprite();
+
+        /**
+         * Get a pointer to the sprite (read-only).
+         *
+         * @return A read-only pointer to the current sprite.
+         */
+        const Graphics::Sprite *GetSprite() const;
+
+        /**
          * Set the sprite.
+         *
+         * @param sprite_ The new sprite to use.
          */
         void SetSprite(const Graphics::Sprite &sprite_);
 
-        /*
-         * Update the sprite (called by the engine)
+        /**
+         * Draw the sprite (called by the engine).
+         */
+        void Draw() override;
+
+        /**
+         * Update the sprite (called by the engine).
          */
         void Update() override;
     };

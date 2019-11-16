@@ -18,6 +18,9 @@
 #include "../BaseEntity.h"
 #include "../Component.h"
 
+// Not being documented as this is broken and outdated.
+// UI engine will be replaced, then this will be fixed.
+
 namespace NerdThings::Ngine::Components {
     class UIWidgetComponent : public Component {
         // Private Fields

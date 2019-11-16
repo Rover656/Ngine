@@ -36,7 +36,7 @@ namespace NerdThings::Ngine {
             ent->UnsubscribeFromUpdate();
 
             // Remove parent
-            RemoveEntityParent(ent);
+            ProcessChildRemoved(ent);
 
             // Remove entity from map
             _Entities.erase(name_);

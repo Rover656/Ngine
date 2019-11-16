@@ -46,71 +46,6 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    Matrix Matrix::Frustum(const float left_, const float right_, const float bottom_, const float top_,
-                           const float near_, const float far_) {
-        Matrix result = {0};
-
-        const auto rl = right_ - left_;
-        const auto tb = top_ - bottom_;
-        const auto fn = far_ - near_;
-
-        result.M0 = near_ * 2.0f / rl;
-        result.M1 = 0.0f;
-        result.M2 = 0.0f;
-        result.M3 = 0.0f;
-
-        result.M4 = 0.0f;
-        result.M5 = near_ * 2.0f / tb;
-        result.M6 = 0.0f;
-        result.M7 = 0.0f;
-
-        result.M8 = right_ + left_ / rl;
-        result.M9 = top_ + bottom_ / tb;
-        result.M10 = -(far_ + near_) / fn;
-        result.M11 = -1.0f;
-
-        result.M12 = 0.0f;
-        result.M13 = 0.0f;
-        result.M14 = -(far_ * near_ * 2.0f) / fn;
-        result.M15 = 0.0f;
-
-        return result;
-    }
-
-    Matrix Matrix::LookAt(Vector3 eye_, Vector3 target_, Vector3 up_) {
-        // TODO: Vector3 math
-        /*Matrix result = { 0 };
-
-        Vector3 z = Vector3Subtract(eye, target);
-        z = Vector3Normalize(z);
-        Vector3 x = Vector3CrossProduct(up, z);
-        x = Vector3Normalize(x);
-        Vector3 y = Vector3CrossProduct(z, x);
-        y = Vector3Normalize(y);
-
-        result.m0 = x.X;
-        result.m1 = x.Y;
-        result.m2 = x.Z;
-        result.m3 = 0.0f;
-        result.m4 = y.X;
-        result.m5 = y.Y;
-        result.m6 = y.Z;
-        result.m7 = 0.0f;
-        result.m8 = z.X;
-        result.m9 = z.Y;
-        result.m10 = z.Z;
-        result.m11 = 0.0f;
-        result.m12 = eye.X;
-        result.m13 = eye.Y;
-        result.m14 = eye.Z;
-        result.m15 = 1.0f;
-
-        result = result.Invert();
-
-        return result;*/
-        return {};
-    }
-
     Matrix Matrix::Orthographic(const float left_, const float right_, const float bottom_, const float top_,
                                 const float near_, const float far_) {
         Matrix result = {0};
@@ -135,14 +70,6 @@ namespace NerdThings::Ngine {
         result.M13 = -(top_ + bottom_) / tb;
         result.M14 = -(far_ + near_) / fn;
         result.M15 = 1.0f;
-
-        return result;
-    }
-
-    Matrix Matrix::Perspective(const float fovy_, const float aspect_, const float near_, const float far_) {
-        const auto top = near_ * tanf(fovy_ * 0.5f);
-        const auto right = top * aspect_;
-        const auto result = Frustum(-right, right, -top, top, near_, far_);
 
         return result;
     }

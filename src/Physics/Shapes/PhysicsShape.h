@@ -19,7 +19,7 @@
 #include "../PhysicsTransform.h"
 
 // Forward declare box2d
-struct b2Shape;
+class b2Shape;
 
 namespace NerdThings::Ngine::Physics::Shapes {
     enum PhysicsShapeType {

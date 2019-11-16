@@ -19,13 +19,12 @@
 #include "Vector3.h"
 
 namespace NerdThings::Ngine {
-    /*
-     * A mathematical matrix
+    /**
+     * A 4x4 Matrix.
      */
     struct NEAPI Matrix {
         // Public Fields
 
-        // NOTE: Using raylib layout in case we need to pass matrices in the future
         float M0, M4, M8, M12;
         float M1, M5, M9, M13;
         float M2, M6, M10, M14;
@@ -35,15 +34,9 @@ namespace NerdThings::Ngine {
 
         // Public Methods
 
-        [[nodiscard]] float Determinant() const;
-
-        static Matrix Frustum(float left_, float right_, float bottom_, float top_, float near_, float far_);
-
-        static Matrix LookAt(Vector3 eye_, Vector3 target_, Vector3 up_);
+        float Determinant() const;
 
         static Matrix Orthographic(float left_, float right_, float bottom_, float top_, float near_, float far_);
-
-        static Matrix Perspective(float fovy_, float aspect_, float near_, float far_);
 
         static Matrix Rotate(Vector3 axis_, float angle_);
 

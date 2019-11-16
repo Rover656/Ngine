@@ -20,62 +20,82 @@
 #include "../Vector2.h"
 
 namespace NerdThings::Ngine::Components {
-    /*
-     * Camera component
+    /**
+     * Camera management component.
      */
     class NEAPI CameraComponent : public Component {
-        // Private Fields
-
-        /*
-         * The internal camera
+        /**
+         * The internal camera.
          */
         Graphics::Camera _Camera;
 
-        /*
-         * Reference to on position changed event
+        /**
+         * Reference to on position changed event.
          */
         EventAttachment<EntityTransformChangedEventArgs> _TransformChangeEvent;
 
-        // Private Methods
-
-        /*
-         * Update camera parameters
+        /**
+         * Update camera parameters.
          */
         void UpdateCamera(EntityTransformChangedEventArgs e);
     public:
-
-        // Public Constructors
-
-        /*
-         * Create a camera component
+        /**
+         * Create a camera component.
+         *
+         * @param parent_ The parent we are attaching to.
+         * @param zoom_ The camera zoom level.
+         * @param origin_ The camera origin. (defines camera center).
+         * @param rotation_ The camera rotation in degrees.
          */
         CameraComponent(BaseEntity *parent_, float zoom_, Vector2 origin_ = Vector2::Zero,
                         float rotation_ = 0);
-
-        // Destructor
-
         virtual ~CameraComponent();
 
-        // Public Fields
-
-        /*
+        /**
          * Mark this camera as the currently active camera.
-         * Overrides any other active camera
+         * Overrides any other active camera.
          */
         void Activate();
 
-        /*
-         * Set the camera origin
+        /**
+         * Get the camera origin
+         *
+         * @return The camera origin
+         */
+        Vector2 GetOrigin();
+
+        /**
+         * Set the camera origin.
+         *
+         * @param origin_ New camera origin.
          */
         void SetOrigin(Vector2 origin_);
 
-        /*
-         * Set camera rotation
+        /**
+         * Get the camera rotation.
+         *
+         * @return The camera rotation in degrees.
+         */
+        float GetRotation();
+
+        /**
+         * Set camera rotation.
+         *
+         * @param rotation_ New camera rotation.
          */
         void SetRotation(float rotation_);
 
-        /*
-         * Set camera zoom
+        /**
+         * Get the camera zoom.
+         *
+         * @return The camera's zoom level.
+         */
+        float GetZoom();
+
+        /**
+         * Set camera zoom.
+         *
+         * @param zoom_ New camera zoom;
          */
         void SetZoom(float zoom_);
     };

@@ -20,87 +20,92 @@
 #include "Wave.h"
 
 namespace NerdThings::Ngine::Audio {
-    /*
-     * A sound source
+    /**
+     * A sound.
      */
     struct NEAPI Sound : public IResource {
-        // Public Fields
-
-        /*
-         * The number of samples
+        /**
+         * The number of samples.
          */
         unsigned int SampleCount;
 
-        /*
-         * The audio stream
+        /**
+         * The audio stream.
          */
         AudioStream Stream;
 
-        // Public Constructor(s)
-
-        /*
-         * Create a null sound
+        /**
+         * Create an empty sound.
          */
         Sound() {}
-
-        // Destructor
-
         ~Sound();
 
-        // Public Methods
-
-        /*
+        /**
          * Whether or not the sound is playing.
+         *
+         * @return Whether the sound is playing or not.
          */
         bool IsPlaying() const;
 
-        /*
-         * Whether or not the sound is valid
+        /**
+         * Whether or not the sound is valid.
+         *
+         * @return Whether the sound is valid or not.
          */
         bool IsValid() const override;
 
-        /*
-         * Load a sound from a file
+        /**
+         * Load a sound from a file.
+         *
+         * @param path_ The file to load sound from.
+         * @return The loaded sound.
          */
         static Sound *LoadSound(const Filesystem::Path &path_);
 
-        /*
+        /**
          * Load sound from wave data.
+         *
+         * @param wave_ Wave data to load sound with.
+         * @return The loaded sound.
          */
         static Sound *LoadSoundFromWave(Wave *wave_);
 
-        /*
-         * Pause sound
+        /**
+         * Pause sound.
          */
         void Pause();
 
-        /*
-         * Play sound
+        /**
+         * Play sound.
          */
         void Play();
 
-        /*
-         * Resume sound
+        /**
+         * Resume sound.
          */
         void Resume();
 
-        /*
-         * Set sound pitch
+        /**
+         * Set sound pitch.
+         *
+         * @param pitch_ Sound pitch.
          */
         void SetPitch(float pitch_);
 
-        /*
-         * Set sound volume
+        /**
+         * Set sound volume.
+         *
+         * @param vol_ Sound volume.
          */
         void SetVolume(float vol_);
 
-        /*
-         * Stop sound
+        /**
+         * Stop sound.
          */
         void Stop();
 
-        /*
-         * Unload sound
+        /**
+         * Unload sound.
          */
         void Unload() override;
     };

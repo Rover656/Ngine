@@ -104,9 +104,9 @@ namespace NerdThings::Ngine {
 
         // Private Methods
 
-        void RemoveEntityParent(BaseEntity *ent_) override;
+        void ProcessChildRemoved(BaseEntity *ent_) override;
 
-        void SetEntityParent(BaseEntity *ent_) override;
+        void ProcessChildAdded(BaseEntity *ent_) override;
     public:
         // Public Fields
 

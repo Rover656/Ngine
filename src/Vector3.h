@@ -17,89 +17,144 @@
 namespace NerdThings::Ngine {
     struct NEAPI Matrix;
 
-    /*
-     * A 3 component vector
+    /**
+     * A vector with 3 components.
      */
     struct NEAPI Vector3 {
-        // Public fields
-
-        /*
+        /**
          * X unit vector
          */
         static const Vector3 UnitX;
 
-        /*
+        /**
          * Y unit vector
          */
         static const Vector3 UnitY;
 
-        /*
+        /**
          * Z unit vector
          */
         static const Vector3 UnitZ;
 
-        /*
+        /**
          * X component
          */
         float X;
 
-        /*
+        /**
          * Y component
          */
         float Y;
 
-        /*
+        /**
          * Z component
          */
         float Z;
 
-        /*
+        /**
          * Zero vector
          */
         static const Vector3 Zero;
 
-        // Public Constructor(s)
-
-        /*
+        /**
          * Create a zero vector
          */
         Vector3() : X(0), Y(0), Z(0) {}
 
-        /*
-         * Create a vector with a single value
+        /**
+         * Create a vector with a single value.
+         *
+         * @param val_ The value for the X, Y and Z components.
          */
         explicit Vector3(float val_) : X(val_), Y(val_), Z(val_) {}
 
-        /*
-         * Create a 3D vector
+        /**
+         * Create a 3D vector.
+         *
+         * @param x_ The X component.
+         * @param y_ The Y component.
+         * @param z_ The Z component.
          */
         Vector3(float x_, float y_, float z_) : X(x_), Y(y_), Z(z_) {}
 
-        // Public Methods
-
-        // TODO: Stuff like clamp
-
-        /*
-         * Get the dot product of the two vectors
+        /**
+         * Clamp this vector.
+         *
+         * @param min_ The minimum value.
+         * @param max_ The maximum value.
+         * @return The clamped vector.
          */
-        float Dot(Vector3 b_) const;
+        Vector3 Clamp(const Vector3 &min_, const Vector3 &max_);
 
-        /*
-         * Magnitude
+        /**
+         * Clamp a vector.
+         *
+         * @param value_ The vector to clamp.
+         * @param min_ The minimum value.
+         * @param max_ The maximum value.
+         * @return The clamped vector.
+         */
+        static Vector3 Clamp(const Vector3 &value_, const Vector3 &min_, const Vector3 &max_);
+
+        /**
+         * Find the dot (scalar) product between this and another vector.
+         *
+         * @param b_ The other vector.
+         * @return The dot (scalar) product.
+         */
+        float Dot(const Vector3 &b_) const;
+
+        /**
+         * Find the dot (scalar) product between two vectors.
+         *
+         * @param a_ The first vector.
+         * @param b_ The seconds vector.
+         * @return The dot (scalar) product.
+         */
+        static float Dot(const Vector3 &a_, const Vector3 &b_);
+
+        /**
+         * Find the distance between this and another vector.
+         *
+         * @param b_ The other vector.
+         * @return The distance between the vectors.
+         */
+        float Distance(const Vector3 &b_);
+
+        /**
+         * Find the distance between two vectors.
+         *
+         * @param a_ The first vector.
+         * @param b_ The second vector.
+         * @return The distance between the two vectors.
+         */
+        static float Distance(const Vector3 &a_, const Vector3 &b_);
+
+        /**
+         * Find the magnitude of this vector
+         *
+         * @return The magnitude of this vector.
+         * @note If using this for speed-critical comparisons, use MagnitudeSquared() instead.
          */
         float Magnitude() const;
 
-        /*
-         * Find the magnitude of the vector squared.
-         * Avoids sqrt for better comparisons.
+        /**
+         * Find the magnitude of this vector squared.
+         *
+         * @return The magnitude squared.
+         * @note Use this for speed-critical comparisons (doesn't use sqrt()).
          */
         float MagnitudeSquared() const;
-        
-        Vector3 Transform(Matrix matrix_) const;
-        
-        // Operators
 
-        // Operators
+        // TODO: Rotate??
+
+        /**
+         * Transform using a matrix.
+         *
+         * @param matrix_ Matrix to transform with.
+         * @return Transformed vector.
+         */
+        Vector3 Transform(Matrix matrix_) const;
 
         bool operator==(const Vector3 &b_) const {
             return X == b_.X && Y == b_.Y && Z == b_.Z;

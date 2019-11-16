@@ -219,14 +219,14 @@ namespace NerdThings::Ngine {
         /**
          * Get window height.
          *
-         * @returns Current window height.
+         * @return Current window height.
          */
         static int GetHeight();
 
         /**
          * Get window width.
          *
-         * @returns Current window width.
+         * @return Current window width.
          */
         static int GetWidth();
 
@@ -238,7 +238,7 @@ namespace NerdThings::Ngine {
         /**
          * Determine whether or not the window is focussed on.
          *
-         * @returns Whether or not the window has focus.
+         * @return Whether or not the window has focus.
          * @note This only works on Desktop and UWP platforms.
          */
         static bool IsFocussed();
@@ -297,7 +297,7 @@ namespace NerdThings::Ngine {
         /**
          * Determine Whether or not the program should close.
          *
-         * @returns Whether or not the program should close.
+         * @return Whether or not the program should close.
          */
         static bool ShouldClose();
 
@@ -309,7 +309,7 @@ namespace NerdThings::Ngine {
         /**
          * Whether or not the window is visible.
          *
-         * @returns If the window is visible or not.
+         * @return If the window is visible or not.
          */
         static bool Visible();
     };

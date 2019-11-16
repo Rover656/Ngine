@@ -15,20 +15,14 @@
 #include "../BaseEntity.h"
 
 namespace NerdThings::Ngine::Components {
-    // Private Methods
-
     void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
         _Camera.Position = e.EntityPosition;
     }
 
-    // Destructor
-
     CameraComponent::~CameraComponent() {
         _TransformChangeEvent.Detach();
     }
-
-    // Public Constructors
 
     CameraComponent::CameraComponent(BaseEntity *parent_, const float zoom_, const Vector2 origin_,
                                      const float rotation_)
@@ -43,18 +37,28 @@ namespace NerdThings::Ngine::Components {
                 new ClassMethodEventHandler<CameraComponent, EntityTransformChangedEventArgs>(this, &CameraComponent::UpdateCamera);
     }
 
-    // Public Methods
-
     void CameraComponent::Activate() {
         GetParent<BaseEntity>()->GetParentScene()->SetActiveCamera(&_Camera);
+    }
+
+    Vector2 CameraComponent::GetOrigin() {
+        return _Camera.Origin;
     }
 
     void CameraComponent::SetOrigin(const Vector2 origin_) {
         _Camera.Origin = origin_;
     }
 
+    float CameraComponent::GetRotation() {
+        return _Camera.Rotation;
+    }
+
     void CameraComponent::SetRotation(const float rotation_) {
         _Camera.Rotation = rotation_;
+    }
+
+    float CameraComponent::GetZoom() {
+        return _Camera.Zoom;
     }
 
     void CameraComponent::SetZoom(const float zoom_) {

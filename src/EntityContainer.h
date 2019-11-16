@@ -14,41 +14,40 @@
 
 #include "Ngine.h"
 
-// TODO: Needs rewritten.
-
 namespace NerdThings::Ngine {
     // We do this forward declaration instead of include because BaseEntity uses this.
     class NEAPI BaseEntity;
 
-    /*
-     * An Entity Container, this just provides functions for entity management.
-     * This is not normally used by a game.
+    /**
+     * This is a wrapper class which helps with having child entities.
      */
     class NEAPI EntityContainer {
         // Private Fields
 
-        /*
-         * The counter for unnamed entities
+        /**
+         * The counter for unnamed entities.
          */
         int _Counter = 0;
 
-        /*
+        /**
          * All of the entities in the scene.
          * Every entity has a name.
          */
         std::map<std::string, std::unique_ptr<BaseEntity>> _Entities;
 
-        // Private Methods
-
-        /*
-         * Remove an entity parent
+        /**
+         * Process the addition of a parent
+         *
+         * @param ent_ The entity that has been added.
          */
-        virtual void RemoveEntityParent(BaseEntity *ent_) = 0;
+        virtual void ProcessChildAdded(BaseEntity *ent_) = 0;
 
-        /*
-         * Set the entity parent
+        /**
+         * Process the removal of a parent
+         *
+         * @param ent_ The entity that has been removed.
          */
-        virtual void SetEntityParent(BaseEntity *ent_) = 0;
+        virtual void ProcessChildRemoved(BaseEntity *ent_) = 0;
     public:
         // Destructors
 
@@ -56,10 +55,12 @@ namespace NerdThings::Ngine {
 
         // Public Methods
 
-        /*
-         * Add an entity without a name.
-         * This will give the entity name a numerical value.
-         * Returns pair of name and entity if success, null for both if fail
+        /**
+         * Add an unnamed entity.
+         *
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @param entity_ The entity to add.
+         * @return An std::pair with first being name and second the entity
          */
         template <typename EntityType>
         std::pair<std::string, EntityType *> AddChild(EntityType *entity_) {
@@ -72,7 +73,7 @@ namespace NerdThings::Ngine {
                 _Counter++;
 
                 // Set parent
-                SetEntityParent(ent);
+                ProcessChildAdded(ent);
 
                 return std::make_pair(name, entity_);
             }
@@ -80,9 +81,13 @@ namespace NerdThings::Ngine {
             return std::make_pair("", nullptr);
         }
 
-        /*
+        /**
          * Add an entity.
-         * Returns entity if success, null if fail
+         *
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @param name_ The name of the entity.
+         * @param entity_ The entity to add.
+         * @return The entity, for chaining commands.
          */
         template <typename EntityType>
         EntityType *AddChild(std::string name_, EntityType *entity_) {
@@ -97,7 +102,7 @@ namespace NerdThings::Ngine {
                 _Entities.insert({name_, std::unique_ptr<BaseEntity>(ent)});
 
                 // Set parent
-                SetEntityParent(ent);
+                ProcessChildAdded(ent);
 
                 return entity_;
             }
@@ -105,8 +110,11 @@ namespace NerdThings::Ngine {
             return nullptr;
         }
 
-        /*
+        /**
          * Count all of the entities by type
+         *
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @return The number of children who match the selected type.
          */
         template <typename EntityType = BaseEntity>
         int CountChildren() {
@@ -117,8 +125,11 @@ namespace NerdThings::Ngine {
             return c;
         }
 
-        /*
-         * Get all of the entities of type
+        /**
+         * Get all of the entities of type.
+         *
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @return A vector with all of the entities of the provided type.
          */
         template <typename EntityType = BaseEntity>
         std::vector<EntityType*> GetChildren() {
@@ -131,8 +142,12 @@ namespace NerdThings::Ngine {
             return ents;
         }
 
-        /*
+        /**
          * Get an entity by name.
+         *
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @param name_ The name of the entity to get.
+         * @return The entity, or null if not found.
          */
         template <typename EntityType = BaseEntity>
         EntityType *GetChild(const std::string &name_) {
@@ -144,19 +159,27 @@ namespace NerdThings::Ngine {
             return nullptr;
         }
 
-        /*
+        /**
          * Test whether there is an entity by this name.
+         *
+         * @param name_ The entity to test for.
+         * @return Whether the entity exists or not.
          */
         bool HasChild(const std::string &name_);
 
-        /*
+        /**
          * Remove an entity by name.
-         * Returns success or fail.
+         *
+         * @param name_ The name of the entity to remove.
+         * @return Whether the entity was removed or not.
          */
         bool RemoveChild(const std::string &name_);
 
-        /*
+        /**
          * Remove entity by pointer.
+         *
+         * @param entity_ The entity to be removed.
+         * @return Whether the entity was removed or not.
          */
         bool RemoveChild(BaseEntity *entity_);
     };

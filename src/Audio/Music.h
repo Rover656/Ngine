@@ -19,113 +19,150 @@
 #include "AudioStream.h"
 
 namespace NerdThings::Ngine::Audio {
-    enum EMusicContextType {
+    /**
+     * The music context type.
+     */
+    enum MusicContextType {
+        /**
+         * OGG Music context.
+         */
         AUDIO_OGG = 1,
+
+        /**
+         * FLAC Music context.
+         */
         AUDIO_FLAC,
+
+        /**
+         * MP3 Music context.
+         */
         AUDIO_MP3,
+
+        /**
+         * XM Music context.
+         *
+         * @note Not implemented.
+         */
         MODULE_XM,
+
+        /**
+         * MOD Music context.
+         *
+         * @note Not implemented.
+         */
         MODULE_MOD
     };
 
-    /*
+    /**
      * Music stream
      */
     struct NEAPI Music : public IResource {
-        // Public Fields
-
-        /*
-         * Context data
+        /**
+         * Context data.
          */
         void *CTXData = nullptr;
 
-        /*
-         * Music context type
+        /**
+         * Music context type.
          */
-        EMusicContextType CTXType;
+        MusicContextType CTXType;
 
-        /*
-         * Number of times to loop, 0 = infinite.
+        /**
+         * Number of times to loop.
+         *
+         * @note Set to 0 for infinite.
          */
         unsigned int LoopCount;
 
-        /*
-         * Total number of samples
+        /**
+         * Total number of samples.
          */
         unsigned int SampleCount;
 
-        /*
-         * The audio stream
+        /**
+         * The audio stream.
          */
         AudioStream Stream;
 
-        // Destructor
-
         ~Music();
 
-        // Public Methods
-
-        /*
-         * Get length in seconds
+        /**
+         * Get length in seconds.
+         *
+         * @return Music length in seconds.
          */
         float GetLength();
 
-        /*
+        /**
          * Get the current amount of time played in seconds.
+         *
+         * @return The amount of time the music has played through.
          */
         float GetTimePlayed();
 
-        /*
-         * Whether or not music is playing
+        /**
+         * Whether or not music is playing.
+         *
+         * @return Whether or not the music is playing.
          */
         bool IsPlaying() const;
 
-        /*
-         * Test if the music is valid
+        /**
+         * Test if the music is valid.
+         *
+         * @return Whether the music is valid or not.
          */
         bool IsValid() const override;
 
-        /*
-         * Load music from a file
+        /**
+         * Load music from a file.
+         *
+         * @param path_ The music file to be loaded.
+         * @return The Music.
          */
         static Music *LoadMusic(const Filesystem::Path &path_);
 
-        /*
-         * Pause music
+        /**
+         * Pause music.
          */
         void Pause();
 
-        /*
-         * Play music
+        /**
+         * Play music.
          */
         void Play();
 
-        /*
-         * Resume music
+        /**
+         * Resume music.
          */
         void Resume();
 
-        /*
-         * Set music pitch
+        /**
+         * Set music pitch.
+         *
+         * @param pitch_ The pitch.
          */
         void SetPitch(float pitch_);
 
-        /*
-         * Set music volume
+        /**
+         * Set music volume.
+         *
+         * @param vol_ The music volume.
          */
         void SetVolume(float vol_);
 
-        /*
-         * Stop music
+        /**
+         * Stop music.
          */
         void Stop();
 
-        /*
-         * Unload the music
+        /**
+         * Unload the music.
          */
         void Unload() override;
 
-        /*
-         * Update all active music
+        /**
+         * Update all active music.
          */
         static void Update();
 

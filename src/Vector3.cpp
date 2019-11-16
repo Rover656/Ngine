@@ -14,8 +14,35 @@
 #include "Matrix.h"
 
 namespace NerdThings::Ngine {
-    float Vector3::Dot(Vector3 b_) const {
-        return (X * b_.X) + (Y * b_.Y) + (Z * b_.Z);
+    Vector3 Vector3::Clamp(const Vector3 &min_, const Vector3 &max_) {
+        return Clamp(*this, min_, max_);
+    }
+
+    Vector3 Vector3::Clamp(const Vector3 &value_, const Vector3 &min_, const Vector3 &max_) {
+        return {
+                std::clamp(value_.X, min_.X, max_.X),
+                std::clamp(value_.Y, min_.Y, max_.Y),
+                std::clamp(value_.Z, min_.Z, max_.Z)
+        };
+    }
+
+    float Vector3::Dot(const Vector3 &b_) const {
+        return Dot(*this, b_);
+    }
+
+    float Vector3::Dot(const Vector3 &a_, const Vector3 &b_) {
+        return (a_.X * b_.X) + (a_.Y * b_.Y) + (a_.Z * b_.Z);
+    }
+
+    float Vector3::Distance(const Vector3 &b_) {
+        return Distance(*this, b_);
+    }
+
+    float Vector3::Distance(const Vector3 &a_, const Vector3 &b_) {
+        const auto xdiff = a_.X - b_.X;
+        const auto ydiff = a_.Y - b_.Y;
+        const auto zdiff = a_.Z - b_.Z;
+        return sqrtf(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff);
     }
 
     float Vector3::Magnitude() const {
@@ -23,7 +50,7 @@ namespace NerdThings::Ngine {
     }
 
     float Vector3::MagnitudeSquared() const {
-        return (X * X) + (Y * Y);
+        return (X * X) + (Y * Y) + (Z * Z);
     }
 
     Vector3 Vector3::Transform(Matrix matrix_) const {

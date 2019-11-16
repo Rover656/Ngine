@@ -27,126 +27,166 @@
 #define AUDIO_BUFFER_SIZE 4096
 
 namespace NerdThings::Ngine::Audio {
-    /*
-     * Audio Manager
+    /**
+     * Audio device control
      */
     class NEAPI AudioDevice {
-        // Private Fields
-
-        /*
+        /**
          * Active music streams
          */
         static std::vector<Music *> _ActiveMusic;
 
-        /*
+        /**
          * The audio mutex
          */
         static ma_mutex _AudioLock;
 
-        /*
+        /**
          * The first tracked buffer
          */
         static AudioBuffer *_BufferFirst;
 
-        /*
+        /**
          * The last tracked buffer
          */
         static AudioBuffer *_BufferLast;
 
-        /*
+        /**
          * Miniaudio context
          */
         static ma_context _Context;
 
-        /*
+        /**
          * Miniaudio device
          */
         static ma_device _Device;
 
-        /*
+        /**
          * Whether or not the device is initialized
          */
         static bool _Initialized;
 
-        /*
+        /**
          * Device master volume
          */
         static float _MasterVolume;
 
-        // Private Methods
-
-        /*
-         * Read data from the converter
+        /**
+         * Read data from the converter.
+         *
+         * @param pDSP PCM converter
+         * @param pFramesOut Frame output array
+         * @param frameCount Frame count.
+         * @param pUserData Userdata.
+         * @return
          */
         static ma_uint32 __AudioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
 
-        /*
-         * Log miniaudio errors
+        /**
+         * Log miniaudio errors.
+         *
+         * @param pContext Miniaudio context.
+         * @param pDevice Miniaudio device.
+         * @param logLevel Log/Error level.
+         * @param msg Log message.
          */
         static void __LogCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char* msg);
 
-        /*
-         * Audio mixer
+        /**
+         * Audio mixer.
+         *
+         * @param framesOut_ Frame output.
+         * @param framesIn_ Frame input.
+         * @param frameCount_ Frame count.
+         * @param localVolume_ Local/Master volume.
          */
         static void __MixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_, float localVolume_);
 
-        /*
-         * Send audio data to the audio device
+        /**
+         * Send audio data to the audio device.
+         *
+         * @param pDevice Device to send to.
+         * @param pFramesOut Frames out.
+         * @param pFramesInput Frames in.
+         * @param frameCount Frame count.
          */
         static void __SendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput, ma_uint32 frameCount);
 
-        /*
-         * Track an audio device
+        /**
+         * Track an audio buffer.
+         *
+         * @param buffer_ Buffer to track
          */
         static void __TrackAudioBuffer(AudioBuffer *buffer_);
 
-        /*
-         * Untrack an audio device
+        /**
+         * Untrack an audio buffer.
+         *
+         * @param buffer_ Buffer to stop tracking.
          */
         static void __UntrackAudioBuffer(AudioBuffer *buffer_);
     public:
-        // Public Methods
-
-        /*
+        /**
          * Close an audio buffer
+         *
+         * @param buffer_ Buffer to close.
          */
         static void CloseAudioBuffer(AudioBuffer *buffer_);
 
-        /*
-         * Close audio device.
-         * Usually called by the base game class, be careful with this
+        /**
+         * Close the audio device.
+         *
+         * @warning Normally called by Game, don't use unless reimplementing Game or reinitialising audio.
          */
         static void Close();
 
-        /*
-         * Init audio buffer
+        /**
+         * Init audio buffer.
+         *
+         * @param format_ Audio format
+         * @param channels_ Channel number.
+         * @param sampleRate_ Sample rate.
+         * @param bufferSizeInFrames_ Buffer size (frames).
+         * @param usage_ Buffer usage.
+         * @return A new audio buffer.
          */
         static AudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, int usage_);
 
-        /*
-         * Init audio stream
+        /**
+         * Init audio stream.
+         *
+         * @param sampleRate_ Sample rate.
+         * @param sampleSize_ Sample size.
+         * @param channels_ Channel count.
+         * @return A new audio stream.
          */
         static AudioStream InitAudioStream(unsigned int sampleRate_, unsigned int sampleSize_, unsigned int channels_);
 
-        /*
+        /**
          * Init audio device.
-         * Usually called by the game class, be careful with this
+         *
+         * @note This is normally called by the Game. Should use with care.
          */
         static void Initialize();
 
-        /*
-         * Is the device ready
+        /**
+         * Determine if the device is ready.
+         *
+         * @return Whether the device is ready or not.
          */
         static bool IsReady();
 
-        /*
-         * Set the master volume
+        /**
+         * Set the master volume.
+         *
+         * @param vol_ The new master volume.
          */
         static void SetMasterVolume(float vol_);
 
-        /*
+        /**
          * Update.
-         * Handles music updating.
+         *
+         * @note This is just for updating audio streams and buffers.
          */
         static void Update();
     };

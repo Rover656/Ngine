@@ -17,36 +17,35 @@
 #include "AudioBuffer.h"
 
 namespace NerdThings::Ngine::Audio {
-    /*
-     * Audio stream
+    /**
+     * Audio stream.
      */
     struct AudioStream {
-        // Public Fields
-
-        /*
-         * The audio buffer
+        /**
+         * The audio buffer.
          */
         AudioBuffer *Buffer;
 
-        /*
-         * Number of channels
+        /**
+         * Number of channels.
          */
         unsigned int Channels;
 
-        /*
-         * Sample rate
+        /**
+         * Sample rate.
          */
         unsigned int SampleRate;
 
-        /*
-         * Bit depth
+        /**
+         * Bit depth.
          */
         unsigned int SampleSize;
 
-        // Public Methods
-
-        /*
-         * Update stream buffers with data
+        /**
+         * Update stream buffers with data.
+         *
+         * @param data_ New buffer data.
+         * @param samplesCount_ The number of samples.
          */
         void UpdateStream(const void* data_, int samplesCount_);
     };

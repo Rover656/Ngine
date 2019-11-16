@@ -16,11 +16,11 @@
 namespace NerdThings::Ngine {
     // Private Methods
 
-    void BaseEntity::RemoveEntityParent(BaseEntity *ent_) {
+    void BaseEntity::ProcessChildRemoved(BaseEntity *ent_) {
         ent_->_ParentEntity = nullptr;
     }
 
-    void BaseEntity::SetEntityParent(BaseEntity *ent_) {
+    void BaseEntity::ProcessChildAdded(BaseEntity *ent_) {
         ent_->_ParentEntity = this;
     }
 

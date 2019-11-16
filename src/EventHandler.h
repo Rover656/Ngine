@@ -181,7 +181,7 @@ namespace NerdThings::Ngine {
         /**
          * Determine if the event is attached.
          *
-         * @returns Whether or not the event handler is still attached to the event.
+         * @return Whether or not the event handler is still attached to the event.
          */
         bool IsAttached() {
             if (AttachmentInfo != nullptr) {
@@ -214,7 +214,7 @@ namespace NerdThings::Ngine {
          * Attach the event handler
          *
          * @param handler_ The event handler to be attached.
-         * @returns The event attachment information.
+         * @return The event attachment information.
          */
         EventAttachment<ArgTypes...> Attach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Add
@@ -266,7 +266,7 @@ namespace NerdThings::Ngine {
          * Whether or not the handler is attached to us.
          *
          * @param handler_ The handler to check.
-         * @returns If the handler is attached.
+         * @return If the handler is attached.
          */
         bool IsAttached(AbstractEventHandler<ArgTypes...> *handler_) {
             auto iterator = std::find(_Handlers.begin(), _Handlers.end(), handler_);

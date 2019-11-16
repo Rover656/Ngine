@@ -65,7 +65,7 @@ namespace NerdThings::Ngine {
          * Get the parent entity as a type
          *
          * @tparam The type to get the entity as.
-         * @returns The entity casted to the provided type.
+         * @return The entity casted to the provided type.
          */
         template <typename EntityType = BaseEntity>
         EntityType *GetParent() const {
@@ -77,14 +77,14 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent scene
          *
-         * @returns The parent entity's parent scene.
+         * @return The parent entity's parent scene.
          */
         Scene *GetParentScene() const;
 
         /**
          * Whether or not the component has a parent.
          *
-         * @returns Whether or not this component is parented by an entity.
+         * @return Whether or not this component is parented by an entity.
          */
         bool HasParent() const;
 

@@ -141,28 +141,28 @@ namespace NerdThings::Ngine {
         /**
          * Get the default OS window size
          *
-         * @returns The default window dimensions.
+         * @return The default window dimensions.
          */
         Vector2 GetDefaultWindowDimensions() const;
 
         /**
          * Get game dimensions
          *
-         * @returns The game's virtual dimensions.
+         * @return The game's virtual dimensions.
          */
         Vector2 GetDimensions() const;
 
         /**
          * Get the target FPS.
          *
-         * @returns The game target FPS.
+         * @return The game target FPS.
          */
         int GetTargetFPS() const;
 
         /**
          * Is the game running
          *
-         * @returns Whether or not the game is running.
+         * @return Whether or not the game is running.
          */
         bool IsRunning();
 
