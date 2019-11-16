@@ -18,16 +18,12 @@
 #include "Scene.h"
 
 namespace NerdThings::Ngine {
-#ifndef BASEENTITY_H
-    class NEAPI BaseEntity;
-#endif
+    class BaseEntity;
 
     /**
      * A component is an object that is attached to an entity and manipulates its behaviour.
      */
     class NEAPI Component {
-        // Private Fields
-
         /**
          * Entity OnDraw reference.
          */
@@ -43,19 +39,12 @@ namespace NerdThings::Ngine {
          */
         BaseEntity *_ParentEntity = nullptr;
     public:
-        // Public Fields
-
         /**
          * On detached from an entity.
          */
         Event<> OnDetached;
 
-        // Destructor
-
         virtual ~Component();
-
-        // Public Methods
-
         /**
          * Component draw event.
          */
@@ -114,9 +103,6 @@ namespace NerdThings::Ngine {
         virtual void Update();
 
     protected:
-
-        // Protected Constructor(s)
-
         /**
          * Initialise component
          *

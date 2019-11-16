@@ -21,7 +21,7 @@
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine {
-    class NEAPI Game;
+    class Game;
 
     /*
      * Scene loaded event args.

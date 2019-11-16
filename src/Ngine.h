@@ -1,11 +1,6 @@
 /**********************************************************************************************
 *
 *   Ngine - A (mainly) 2D game engine.
-*   
-*   CONFIGURATION:
-*   
-*   - #define INCLUDE_RAYLIB
-*       Include the raylib header
 *  
 *   Copyright (C) 2019 NerdThings
 *
@@ -120,5 +115,56 @@ void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", 
 // Include Windows
 #include <Windows.h>
 #endif
+
+//----------------------------------------------------------------------------------
+// Namespace documentation
+//----------------------------------------------------------------------------------
+
+namespace NerdThings {
+    /**
+     * The main Ngine namespace.
+     */
+    namespace Ngine {
+        /**
+         * Ngine Audio module.
+         */
+        namespace Audio {}
+
+        /**
+         * This namespace consists of useful components.
+         */
+        namespace Components {}
+
+        /**
+         * Ngine Filesystem module.
+         */
+        namespace Filesystem {}
+
+        /**
+         * Ngine Graphics module.
+         */
+        namespace Graphics {}
+
+        /**
+         * Ngine Input module.
+         */
+        namespace Input {}
+
+        /**
+         * Ngine Physics module.
+         */
+        namespace Physics {
+            /**
+             * Physics shapes.
+             */
+            namespace Shapes {}
+        }
+
+        /**
+         * Ngine UI module.
+         */
+        namespace UI {}
+    }
+}
 
 #endif // NGINE_H

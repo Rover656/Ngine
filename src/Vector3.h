@@ -15,7 +15,7 @@
 #include "Ngine.h"
 
 namespace NerdThings::Ngine {
-    struct NEAPI Matrix;
+    struct Matrix;
 
     /**
      * A vector with 3 components.

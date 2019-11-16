@@ -16,7 +16,7 @@
 
 namespace NerdThings::Ngine {
     // We do this forward declaration instead of include because BaseEntity uses this.
-    class NEAPI BaseEntity;
+    class BaseEntity;
 
     /**
      * This is a wrapper class which helps with having child entities.
