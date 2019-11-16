@@ -18,7 +18,7 @@
 #include "../Resource.h"
 
 namespace NerdThings::Ngine::Graphics {
-    /*
+    /**
      * Image/Texture Pixel Format.
      * Corresponds with OpenGL Abstraction values.
      */
@@ -46,74 +46,91 @@ namespace NerdThings::Ngine::Graphics {
         COMPRESSED_ASTC_8x8_RGBA
     };
 
-    /*
+    /**
      * An image stored in CPU memory.
      */
     struct NEAPI Image : public IResource {
-        // Public Fields
-
-        /*
-         * Pixel format
+    private:
+        /**
+         * Create the image with pixel data.
+         *
+         * @param pixelData_ The data to use.
+         * @param width_
+         * @param height_
+         * @param format_
          */
-        PixelFormat Format = UNCOMPRESSED_GRAYSCALE;
-
-        /*
-         * Image height
-         */
-        int Height = 0;
-
-        /*
-         * Image mipmaps
-         */
-        int Mipmaps = 0;
-
-        /*
-         * The raw pixel data pointer
-         */
-        unsigned char *PixelData = nullptr;
-
-        /*
-         * Image width
+        void __Create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
+    public:
+        /**
+         * Image width.
          */
         int Width = 0;
 
-        // Public Constructors
+        /**
+         * Image height.
+         */
+        int Height = 0;
 
-        /*
-         * Create a null image
+        /**
+         * Pixel format.
+         */
+        PixelFormat Format = UNCOMPRESSED_GRAYSCALE;
+
+        /**
+         * Image mipmap count.
+         */
+        int MipmapCount = 0;
+
+        /**
+         * The raw pixel data pointer.
+         */
+        unsigned char *PixelData = nullptr;
+
+        /**
+         * Empty image initializer.
          */
         Image();
 
-        /*
-         * Load an image file
+        /**
+         * Copy constructor.
+         *
+         * @param original_ The image to be copied
+         */
+        Image(const Image &original_) = default;
+
+        /**
+         * Move constructor.
+         *
+         * @param old_ The old image.
+         */
+        Image(Image &&old_);
+
+        /**
+         * Load an image file.
+         *
+         * @param path_ Image file to load.
          */
         Image(const Filesystem::Path &path_);
 
-        /*
+        /**
          * Create an image from raw pixel data.
-         * The pixel data will be copied.
+         *
+         * @note The pixel data will be copied.
+         * @param pixelData_ The pixel date for the image.
+         * @param width_ The image width.
+         * @param height_ The image height.
+         * @param format_ The image pixel format.
          */
-        Image(unsigned char *pixelData_, int width_, int height_, PixelFormat format_);
+        Image(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
 
-        // Public Methods
-
-        /*
+        /**
          * Test whether or not the image is valid
+         *
+         * @return Whether or not the image is valid.
          */
         bool IsValid() const override;
 
-        /*
-         * Load an image
-         */
-        static Image *LoadImage(const Filesystem::Path &path_);
-
-        /*
-         * Load raw pixel data.
-         * The pixel data will be copied.
-         */
-        static Image *LoadPixels(unsigned char *pixelData_, int width_, int height_, PixelFormat format_);
-
-        /*
+        /**
          * Unload image from memory.
          */
         void Unload() override;

@@ -14,9 +14,39 @@
 #include <stb_image.h>
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Constructors
+    void Image::__Create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
+        // Bits per pixel
+        int bpp = 0;
+        if (format_ == UNCOMPRESSED_GRAYSCALE) bpp = 1;
+        else if (format_ == UNCOMPRESSED_GRAY_ALPHA) bpp = 2;
+        else if (format_ == UNCOMPRESSED_R8G8B8) bpp = 3;
+        else if (format_ == UNCOMPRESSED_R8G8B8A8) bpp = 4;
+        else throw std::runtime_error("Incompatible format.");
+
+        // Copy pixel data
+        PixelData = new unsigned char[width_*height_*bpp];
+        memcpy(PixelData, pixelData_, width_*height_*sizeof(unsigned char)*bpp);
+
+        // Set fields
+        Width = width_;
+        Height = height_;
+        Format = format_;
+        MipmapCount = 1;
+    }
 
     Image::Image() {}
+
+    Image::Image(Image &&old_) {
+        // Copy data.
+        Width = old_.Width;
+        Height = old_.Height;
+        Format = old_.Format;
+        MipmapCount = old_.MipmapCount;
+        PixelData = old_.PixelData;
+
+        // Set pixel data to null so it is not deleted.
+        old_.PixelData = nullptr;
+    }
 
     Image::Image(const Filesystem::Path &path_) {
         // Check format
@@ -41,7 +71,7 @@ namespace NerdThings::Ngine::Graphics {
             //stbi_set_flip_vertically_on_load(false);
 
             // Load image
-            *this = Image(data, width, height, UNCOMPRESSED_R8G8B8A8);
+            __Create(data, width, height, UNCOMPRESSED_R8G8B8A8);
 
             // Close file
             stbi_image_free(data);
@@ -49,27 +79,9 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    Image::Image(unsigned char *pixelData_, int width_, int height_, PixelFormat format_) {
-        // Bits per pixel
-        int bpp = 0;
-        if (format_ == UNCOMPRESSED_GRAYSCALE) bpp = 1;
-        else if (format_ == UNCOMPRESSED_GRAY_ALPHA) bpp = 2;
-        else if (format_ == UNCOMPRESSED_R8G8B8) bpp = 3;
-        else if (format_ == UNCOMPRESSED_R8G8B8A8) bpp = 4;
-        else throw std::runtime_error("Incompatible format.");
-
-        // Copy pixel data
-        PixelData = new unsigned char[width_*height_*bpp];
-        memcpy(PixelData, pixelData_, width_*height_*sizeof(unsigned char)*bpp);
-
-        // Set fields
-        Width = width_;
-        Height = height_;
-        Format = format_;
-        Mipmaps = 1;
+    Image::Image(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
+        __Create(pixelData_, width_, height_, format_);
     }
-
-    // Public Methods
 
     bool Image::IsValid() const {
         return Width > 0
@@ -77,19 +89,11 @@ namespace NerdThings::Ngine::Graphics {
                 && PixelData != nullptr;
     }
 
-    Image *Image::LoadImage(const Filesystem::Path &path_) {
-        return new Image(path_);
-    }
-
-    Image *Image::LoadPixels(unsigned char *pixelData_, int width_, int height_, PixelFormat format_) {
-        return new Image(pixelData_, width_, height_, format_);
-    }
-
     void Image::Unload() {
         // Removes image data from the container (across all copies of this image)
         Format = UNCOMPRESSED_GRAYSCALE;
         Height = 0;
-        Mipmaps = 0;
+        MipmapCount = 0;
         delete[] PixelData;
         PixelData = nullptr;
         Width = 0;

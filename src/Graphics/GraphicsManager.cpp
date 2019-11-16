@@ -18,31 +18,9 @@
 #endif
 
 namespace NerdThings::Ngine::Graphics {
-    // Render Target Related Private Fields
-
     std::vector<RenderTarget *> GraphicsManager::_RenderTargetStack;
-
-    // General Rendering Fields
-
     unsigned int GraphicsManager::_CurrentHeight = 0;
     unsigned int GraphicsManager::_CurrentWidth = 0;
-
-    // Render Target Related Private Methods
-
-    void GraphicsManager::EndRenderTarget() {
-#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-        // Force draw
-        OpenGL::GL::Draw();
-
-        // Stop using target
-        OpenGL::GLFramebuffer::Unbind();
-
-        // Setup framebuffer
-        _CurrentWidth = Window::GetWidth();
-        _CurrentHeight = Window::GetHeight();
-        SetupFramebuffer();
-#endif
-    }
 
     void GraphicsManager::UseRenderTarget(RenderTarget *target_) {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
@@ -59,7 +37,20 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    // General Rendering Methods
+    void GraphicsManager::EndRenderTarget() {
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+        // Force draw
+        OpenGL::GL::Draw();
+
+        // Stop using target
+        OpenGL::GLFramebuffer::Unbind();
+
+        // Setup framebuffer
+        _CurrentWidth = Window::GetWidth();
+        _CurrentHeight = Window::GetHeight();
+        SetupFramebuffer();
+#endif
+    }
 
     unsigned int GraphicsManager::GetCurrentWidth() {
         return _CurrentWidth;
@@ -85,33 +76,6 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::Ortho(0, (float)_CurrentWidth, (float)_CurrentHeight, 0, -1, 1);
     }
 
-    // Render Target Related Methods
-
-    RenderTarget *GraphicsManager::PopTarget(bool &popped_) {
-        if (!_RenderTargetStack.empty()) {
-            // Get target
-            auto pop = _RenderTargetStack.back();
-
-            // Remove target
-            _RenderTargetStack.pop_back();
-
-            // Stop Render Target
-            EndRenderTarget();
-
-            // Start using another if it is available
-            if (!_RenderTargetStack.empty()) {
-                //BeginTextureMode(_RenderTargetStack.back());
-                UseRenderTarget(_RenderTargetStack.back());
-            }
-
-            popped_ = true;
-            return pop;
-        }
-
-        popped_ = false;
-        return nullptr;
-    }
-
     void GraphicsManager::PushTarget(RenderTarget *target_) {
         // Stop using current target
         if (!_RenderTargetStack.empty())
@@ -122,6 +86,21 @@ namespace NerdThings::Ngine::Graphics {
 
         // Use the target
         UseRenderTarget(target_);
+    }
+
+    void GraphicsManager::PopTarget() {
+        if (!_RenderTargetStack.empty()) {
+            // Remove target
+            _RenderTargetStack.pop_back();
+
+            // Stop Render Target
+            EndRenderTarget();
+
+            // Start using another if it is available
+            if (!_RenderTargetStack.empty()) {
+                UseRenderTarget(_RenderTargetStack.back());
+            }
+        }
     }
 
     void GraphicsManager::ReplaceTarget(RenderTarget *old_, RenderTarget *new_) {

@@ -26,13 +26,9 @@ namespace NerdThings::Ngine::UI {
         DrawStyles();
 
         Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
-
         Graphics::Renderer::Clear(Graphics::Color::Transparent);
-
         DrawChildren();
-
-        bool popped = false;
-        Graphics::GraphicsManager::PopTarget(popped);
+        Graphics::GraphicsManager::PopTarget();
 
         auto rPos = GetRenderPosition();
 

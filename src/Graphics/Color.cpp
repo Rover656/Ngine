@@ -12,7 +12,13 @@
 #include "Color.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Constructor(s)
+    Color::Color() : PackedValue(0xFFFFFFFF) {}
+    Color::Color(const unsigned int packedValue_) : PackedValue(packedValue_) {}
+    Color::Color(const float r_, const float g_, const float b_, const float a_)
+            : Color((int)(r_ * 255),
+                    (int)(g_ * 255),
+                    (int)(b_ * 255),
+                    (int)(a_ * 255)) {}
 
     Color::Color(const int r_, const int g_, const int b_, const int a_) {
         if (((r_ | g_ | b_ | a_) & 0xFFFFFFFF00) != 0) {
@@ -33,58 +39,37 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    // Public Methods
-
-    float Color::RedF() const {
-        return static_cast<unsigned char>(PackedValue) / 255.0f;
+    float Color::GetRed() const {
+        return (float)GetRedI() / 255.0f;
     }
 
-    float Color::GreenF() const {
-        return static_cast<unsigned char>(PackedValue >> 8) / 255.0f;
-    }
-
-    float Color::BlueF() const {
-        return static_cast<unsigned char>(PackedValue >> 16) / 255.0f;
-    }
-
-    float Color::AlphaF() const {
-        return static_cast<unsigned char>(PackedValue >> 24) / 255.0f;
-    }
-
-    int Color::RedI() const {
+    int Color::GetRedI() const {
         return static_cast<unsigned char>(PackedValue);
     }
 
-    int Color::GreenI() const {
+    float Color::GetGreen() const {
+        return (float)GetGreenI() / 255.0f;
+    }
+
+    int Color::GetGreenI() const {
         return static_cast<unsigned char>(PackedValue >> 8);
     }
 
-    int Color::BlueI() const {
+    float Color::GetBlue() const {
+        return (float)GetBlueI() / 255.0f;
+    }
+
+    int Color::GetBlueI() const {
         return static_cast<unsigned char>(PackedValue >> 16);
     }
 
-    int Color::AlphaI() const {
+    float Color::GetAlpha() const {
+        return (float)GetAlphaI() / 255.0f;
+    }
+
+    int Color::GetAlphaI() const {
         return static_cast<unsigned char>(PackedValue >> 24);
     }
-
-    #ifdef INCLUDE_RAYLIB // We don't really need this, but just to save any issues
-
-    Color Color::ToRaylibColor() const {
-        return {
-            static_cast<unsigned char>(RedInt()),
-            static_cast<unsigned char>(GreenInt()),
-            static_cast<unsigned char>(BlueInt()),
-            static_cast<unsigned char>(AlphaInt())
-        };
-    }
-
-    Color Color::FromRaylibColor(const Color &col_) {
-        return Color(col_.r, col_.g, col_.b, col_.a);
-    }
-
-    #endif
-
-    // Operators
 
     bool Color::operator==(const Color &b_) const {
         return PackedValue == b_.PackedValue;
@@ -93,8 +78,6 @@ namespace NerdThings::Ngine::Graphics {
     bool Color::operator!=(const Color &b_) const {
         return PackedValue != b_.PackedValue;
     }
-
-    // Predefined Colors
 
     const Color Color::Beige = Color(0xffdcf5f5);
     const Color Color::Black = Color(0xff000000);

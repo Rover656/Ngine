@@ -19,8 +19,6 @@
 #include "../Window.h"
 
 namespace NerdThings::Ngine::Input {
-    // Private Fields
-
     float Gamepad::_CurrentAxisValue[4][GAMEPAD_AXIS_RIGHT_TRIGGER+1];
     bool Gamepad::_CurrentButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB+1];
     bool Gamepad::_PreviousButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB+1];
@@ -29,8 +27,6 @@ namespace NerdThings::Ngine::Input {
 #if defined(PLATFORM_UWP)
     Windows::Gaming::Input::Gamepad ^Gamepad::_UWPGamepads[4] = {nullptr, nullptr, nullptr, nullptr};
 #endif
-
-    // Private Methods
 
     GamepadAxis Gamepad::GetAxis(int axis_) {
         GamepadAxis axis = GAMEPAD_AXIS_UNKNOWN;
@@ -49,8 +45,8 @@ namespace NerdThings::Ngine::Input {
         return axis;
     }
 
-    EGamepadButton Gamepad::GetButton(int button_) {
-        EGamepadButton btn = GAMEPAD_BUTTON_UNKNOWN;
+    GamepadButton Gamepad::GetButton(int button_) {
+        GamepadButton btn = GAMEPAD_BUTTON_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
         switch (button_) {
             case GLFW_GAMEPAD_BUTTON_Y: btn = GAMEPAD_BUTTON_RIGHT_FACE_UP; break;
@@ -75,7 +71,7 @@ namespace NerdThings::Ngine::Input {
         }
 #elif defined(PLATFORM_UWP)
         // Provided correctly
-        btn = (EGamepadButton) button_;
+        btn = (GamepadButton) button_;
 #endif
         return btn;
     }
@@ -103,12 +99,6 @@ namespace NerdThings::Ngine::Input {
     }
 #endif
 
-    // Public Methods
-
-    float Gamepad::GetAxisValue(EGamepadNumber pad_, const GamepadAxis axis_) {
-        return _CurrentAxisValue[pad_][axis_];
-    }
-
     void Gamepad::Init() {
 #if defined(PLATFORM_UWP)
         Windows::Gaming::Input::Gamepad::GamepadAdded += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&UWPGamepadAdded);
@@ -116,19 +106,23 @@ namespace NerdThings::Ngine::Input {
 #endif
     }
 
-    bool Gamepad::IsAvailable(EGamepadNumber pad_) {
+    float Gamepad::GetAxisValue(GamepadNumber pad_, const GamepadAxis axis_) {
+        return _CurrentAxisValue[pad_][axis_];
+    }
+
+    bool Gamepad::IsAvailable(GamepadNumber pad_) {
         return _Ready[pad_];
     }
 
-    bool Gamepad::IsButtonDown(EGamepadNumber pad_, const EGamepadButton button_) {
+    bool Gamepad::IsButtonDown(GamepadNumber pad_, const GamepadButton button_) {
         return _CurrentButtonState[pad_][button_];
     }
 
-    bool Gamepad::IsButtonPressed(EGamepadNumber pad_, const EGamepadButton button_) {
+    bool Gamepad::IsButtonPressed(GamepadNumber pad_, const GamepadButton button_) {
         return _CurrentButtonState[pad_][button_] != _PreviousButtonState[pad_][button_] && _CurrentButtonState[pad_][button_];
     }
 
-    bool Gamepad::IsButtonReleased(EGamepadNumber pad_, const EGamepadButton button_) {
+    bool Gamepad::IsButtonReleased(GamepadNumber pad_, const GamepadButton button_) {
         return _CurrentButtonState[pad_][button_] != _PreviousButtonState[pad_][button_] && !_CurrentButtonState[pad_][button_];
     }
 
@@ -141,7 +135,7 @@ namespace NerdThings::Ngine::Input {
 
         // Check for inputs
         for (auto i = 0; i < 4; i++) {
-            if (IsAvailable((EGamepadNumber) i)) {
+            if (IsAvailable((GamepadNumber) i)) {
                 for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) _PreviousButtonState[i][j] = _CurrentButtonState[i][j];
 
                 GLFWgamepadstate state;
@@ -149,7 +143,7 @@ namespace NerdThings::Ngine::Input {
                 auto buttons = state.buttons;
 
                 for (auto j = 0; (buttons != nullptr) && (j <= GLFW_GAMEPAD_BUTTON_DPAD_LEFT) && (j <= GAMEPAD_BUTTON_RIGHT_THUMB); j++) {
-                    EGamepadButton b = GetButton(j);
+                    GamepadButton b = GetButton(j);
 
                     _CurrentButtonState[i][b] = buttons[j] == GLFW_PRESS;
                 }
@@ -171,7 +165,7 @@ namespace NerdThings::Ngine::Input {
 #elif defined(PLATFORM_UWP)
         // Get gamepad states
         for (auto i = 0; i < 4; i++) {
-            if (IsAvailable((EGamepadNumber)i)) {
+            if (IsAvailable((GamepadNumber)i)) {
                 auto gamepad = _UWPGamepads[i];
                 auto reading = gamepad->GetCurrentReading();
 

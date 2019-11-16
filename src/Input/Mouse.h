@@ -24,7 +24,7 @@ struct GLFWwindow;
 #include "../EventHandler.h"
 
 namespace NerdThings::Ngine::Input {
-    /*
+    /**
      * Mouse button
      */
     enum MouseButton {
@@ -33,131 +33,132 @@ namespace NerdThings::Ngine::Input {
         MOUSE_BUTTON_MIDDLE
     };
 
-    /*
+    /**
      * Mouse button down event args
      */
     struct MouseButtonEventArgs : EventArgs {
-        // Public Fields
-
-        /*
-         * The mouse button
+        /**
+         * The mouse button.
          */
         MouseButton Button;
 
-        /*
-         * Whether or not the button is pressed
+        /**
+         * Whether or not the button is pressed.
          */
         bool Pressed;
 
         // Public Constructor(s)
 
+        /**
+         * Create a mouse changed event argument.
+         *
+         * @param button_ The button that has changed.
+         * @param pressed_ Whether it was pressed or not.
+         */
         MouseButtonEventArgs(const MouseButton button_, const bool pressed_)
                 : Button(button_), Pressed(pressed_) {}
     };
 
-    /*
-     * Mouse moved event args
+    /**
+     * Mouse moved event args.
      */
     struct MouseMovedEventArgs : EventArgs {
-        // Public Fields
-
-        /*
+        /**
          * The current mouse position
          */
         Vector2 MousePosition;
 
-        /*
+        /**
          * The change in mouse position
          */
         Vector2 DeltaMousePosition;
 
-        // Public Constructor(s)
-
+        /**
+         * Create a mouse moved event arg.
+         *
+         * @param mousePosition_ The current position.
+         * @param deltaMousePosition_ The delta position relative to the last position.
+         */
         MouseMovedEventArgs(Vector2 mousePosition_, Vector2 deltaMousePosition_)
                 : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
     };
 
     struct MouseScrollChangedEventArgs : EventArgs {
-        // Public Fields
-
         /*
          * Scroll wheel value
          */
         int Value;
 
-        // Public Constructor(s)
-
+        /**
+         * Create a scroll changed event argument.
+         *
+         * @param value_ Scroll value.
+         */
         MouseScrollChangedEventArgs(int value_)
                 : Value(value_) {}
     };
 
-    /*
+    /**
      * Mouse state info.
      */
     struct MouseState {
-        // Public Fields
-
-        /*
-         * Buttons that are down
+        /**
+         * Buttons that are down.
          */
         bool ButtonsDown[3] = {false, false, false};
 
-        /*
-         * The change in mouse wheel X offset between frames
+        /**
+         * The change in mouse wheel X offset between frames.
          */
         int MouseWheelXDelta = 0;
 
-        /*
-         * The change in mouse wheel Y offset between frames
+        /**
+         * The change in mouse wheel Y offset between frames.
          */
         int MouseWheelYDelta = 0;
 
-        /*
+        /**
          * Whether or not this mouse state struct has been populated with info.
          */
         bool Populated = false;
 
-        /*
-         * Mouse cursor position
+        /**
+         * Mouse cursor position.
          */
         Vector2 Position = {0, 0};
     };
 
-    /*
-     * Mouse input manager.
+    /**
+     * Mouse input provider.
      */
     class NEAPI Mouse {
-        // Private Fields
-
-        /*
+        /**
          * The current mouse state
          */
         static MouseState _CurrentMouseState;
 
-        /*
+        /**
          * The last frame mouse position
          */
         static MouseState _LastMouseState;
 
-        /*
-         * Mouse position offset
+        /**
+         * Mouse position offset.
          */
         static Vector2 _MouseOffset;
 
-        /*
-         * Mouse position scale
+        /**
+         * Mouse position scale.
          */
         static Vector2 _MouseScale;
 
-        /*
-         * The next mouse state that is being built while the frame is progressing
+        /**
+         * The next mouse state that is being built while the frame is progressing.
          */
         static MouseState _NextMouseState;
 
-        // Private Methods
-
-        /*
-         * Get the mouse position direct from the device
+        /**
+         * Get the mouse position direct from the device.
          */
         static Vector2 InternalGetMousePosition();
 
@@ -170,91 +171,110 @@ namespace NerdThings::Ngine::Input {
         static void UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
 #endif
     public:
-        // Public Fields
-
-        /*
-         * On mouse button pressed
+        /**
+         * On mouse button pressed.
          */
         static Event<MouseButtonEventArgs> OnMouseButtonPressed;
 
-        /*
-         * On mouse button released
+        /**
+         * On mouse button released.
          */
         static Event<MouseButtonEventArgs> OnMouseButtonReleased;
 
-        /*
-         * On mouse moved event
+        /**
+         * On mouse moved event.
          */
         static Event<MouseMovedEventArgs> OnMouseMoved;
 
-        /*
-         * On mouse scroll X changed
+        /**
+         * On mouse scroll X changed.
          */
         static Event<MouseScrollChangedEventArgs> OnMouseScrollXChanged;
 
-        /*
-         * On mouse scroll Y changed
+        /**
+         * On mouse scroll Y changed.
          */
         static Event<MouseScrollChangedEventArgs> OnMouseScrollYChanged;
 
-        // Public Methods
-
-        /*
+        /**
          * Cancel button press (Prevents double event checks).
+         *
+         * @param button_ The button to cancel.
          */
         static void CancelButton(MouseButton button_);
 
-        /*
-         * Get mouse position
+        /**
+         * Get mouse position.
+         *
+         * @return The mouse position in screen coordinates.
          */
         static Vector2 GetMousePosition();
 
-        /*
+        /**
          * Get mouse wheel X movement.
+         *
+         * @return Mouse wheel X movement.
          */
         static int GetMouseWheelXDelta();
 
-        /*
+        /**
          * Get mouse wheel Y movement.
+         *
+         * @return Mouse wheel Y movement.
          */
         static int GetMouseWheelYDelta();
 
-        /*
+        /**
          * Init mouse input APIs.
          */
         static void Init();
 
-        /*
-         * Is button down (even if cancelled).
+        /**
+         * Is button down.
+         *
+         * @param button_ Button to check.
+         * @return Whether or not the button is down.
          */
         static bool IsButtonDown(MouseButton button_);
 
-        /*
-         * Was button pushed this frame (even if cancelled).
+        /**
+         * Was button pushed this frame.
+         *
+         * @param button_Button to check.
+         * @return Whether or not the button was pushed this frame.
          */
         static bool IsButtonPressed(MouseButton button_);
 
-        /*
-         * Was button released this frame (even if cancelled).
+        /**
+         * Was button released this frame.
+         *
+         * @param button_Button to check.
+         * @return Whether or not the button was released this frame.
          */
         static bool IsButtonReleased(MouseButton button_);
 
-        /*
-         * Poll Mouse Inputs
+        /**
+         * Poll Mouse Inputs.
          */
         static void PollInputs();
 
-        /*
+        /**
          * Set mouse offset.
-         * This should only be used internally.
+         * This is used internally for fixing mouse input.
          * This may produce unexpected results if used.
+         *
+         * @param ox_ X offset.
+         * @param oy_ Y offset.
          */
         static void SetOffset(float ox_, float oy_);
 
-        /*
+        /**
          * Set mouse scale.
-         * This should only be used internally.
+         * This is used internally for fixing mouse input.
          * This may produce unexpected results if used.
+         *
+         * @param sx_ X scale.
+         * @param sy_ Y scale.
          */
         static void SetScale(float sx_, float sy_);
     };

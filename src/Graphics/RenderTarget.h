@@ -22,75 +22,69 @@
 #endif
 
 namespace NerdThings::Ngine::Graphics {
-    /*
-     * A 2D Texture in the GPU that can be rendered to
+    /**
+     * A 2D Texture in the GPU that can be rendered to.
      */
     struct NEAPI RenderTarget : public IResource {
     private:
-        // Private Fields
-
         /*
          * The texture that the render target renders to.
          */
         Texture2D *_Texture;
     public:
-        // Public Fields
-
-        /*
-         * Render target height
+        /**
+         * Render target width.
          */
-        int Height = 0;
+        unsigned int Width = 0;
 
-        /*
+        /**
+         * Render target height.
+         */
+        unsigned int Height = 0;
+
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+        /**
          * Internal framebuffer on the GPU
          */
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer = nullptr;
 #endif
 
-        /*
-         * Render target width
-         */
-        int Width = 0;
-
-        // Public Constructor(s)
-
-        /*
-         * Create a null render target
+        /**
+         * Create a null render target.
          */
         RenderTarget();
 
-        /*
-         * Create a render target
+        /**
+         * Create a render target.
+         *
+         * @param width_ Render target width.
+         * @param height_ Render target height.
          */
-        RenderTarget(int width_, int height_);
-
-        // Destructor
-
+        RenderTarget(unsigned int width_, unsigned int height_);
         ~RenderTarget();
 
-        // Public Methods
-
-        /*
-         * Get rendered texture
+        /**
+         * Get rendered texture.
+         *
+         * @return Get the texture that rendered to.
          */
         Texture2D *GetTexture();
 
-        /*
+        /**
          * Whether or not the render target is valid and usable.
+         *
+         * @return Whether the target is valid or not.
          */
         bool IsValid() const override;
 
-        /*
+        /**
          * Unload the render target.
-         * Invalidates all copies.
+
+         * @warning This will delete the texture too, ensure it is not going to be rendered this frame.
          */
         void Unload() override;
 
-        // Operators
-
         bool operator==(const RenderTarget &b) const;
-
         bool operator!=(const RenderTarget &b) const;
     };
 }

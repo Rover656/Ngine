@@ -14,8 +14,6 @@
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Constructor(s)
-
     Texture2D::Texture2D() {}
 
     Texture2D::Texture2D(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_, int mipmapCount_) {
@@ -35,18 +33,13 @@ namespace NerdThings::Ngine::Graphics {
 
     Texture2D::Texture2D(const Filesystem::Path &path_) {
         // Create
-        *this = Texture2D(std::make_shared<Image>(path_));
+        Image img(path_);
+        *this = Texture2D(&img);
     }
 
-    Texture2D::Texture2D(const std::shared_ptr<Image> &img_) {
+    Texture2D::Texture2D(const Image *img_) {
         // Create
-        *this = Texture2D(img_->PixelData, img_->Width, img_->Height, img_->Format, img_->Mipmaps);
-    }
-
-    // Public Methods
-
-    std::shared_ptr<Texture2D> Texture2D::FromImage(const std::shared_ptr<Image> &img_) {
-        return std::make_shared<Texture2D>(img_);
+        *this = Texture2D(img_->PixelData, img_->Width, img_->Height, img_->Format, img_->MipmapCount);
     }
 
     int Texture2D::GetMipmapCount() const {
@@ -63,14 +56,6 @@ namespace NerdThings::Ngine::Graphics {
                 return true;
 #endif
         return false;
-    }
-
-    Texture2D *Texture2D::LoadPixels(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_, int mipmapCount_) {
-        return new Texture2D(data_, width_, height_, format_, mipmapCount_);
-    }
-
-    Texture2D *Texture2D::LoadTexture(const Filesystem::Path &path_) {
-        return new Texture2D(path_);
     }
 
     void Texture2D::SetTextureFilter(const TextureFilterMode filterMode_) const {

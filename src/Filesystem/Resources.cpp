@@ -134,44 +134,77 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
+        // Fix base size
         if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
 
+        // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+
+        // Create font
         auto fnt = Graphics::Font::LoadTTFFont(inPath_, baseSize_);
+
+        // Check if it is valid
         if (fnt->IsValid()) {
             _Fonts.insert({ name, std::unique_ptr<Graphics::Font>(fnt) });
             return true;
         }
+
+        // Delete, it didnt work
+        delete fnt;
         return false;
     }
 
     bool Resources::LoadMusic(const Path &inPath_, const std::string &name_) {
+        // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+
+        // Create music
         auto mus = Audio::Music::LoadMusic(inPath_);
+
+        // Check if it is valid
         if (mus->IsValid()) {
             _Music.insert({ name, std::unique_ptr<Audio::Music>(mus) });
             return true;
         }
+
+        // Delete, it didnt work
+        delete mus;
         return false;
     }
 
     bool Resources::LoadSound(const Path &inPath_, const std::string &name_) {
+        // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+
+        // Create sound
         auto snd = Audio::Sound::LoadSound(inPath_);
+
+        // Check if it is valid
         if (snd->IsValid()) {
             _Sounds.insert({ name, std::unique_ptr<Audio::Sound>(snd) });
             return true;
         }
+
+        // Delete, it didnt work
+        delete snd;
         return false;
     }
 
     bool Resources::LoadTexture(const Path &inPath_, const std::string &name_) {
+        // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        auto tex = Graphics::Texture2D::LoadTexture(inPath_);
+
+        // Create texture
+        auto tex = new Graphics::Texture2D(inPath_);
+
+        // Check if it is valid.
         if (tex->IsValid()) {
             _Textures.insert({ name, std::unique_ptr<Graphics::Texture2D>(tex) });
             return true;
         }
+
+        // Delete, it didnt work
+        delete tex;
         return false;
     }
 }

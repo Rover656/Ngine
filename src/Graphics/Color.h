@@ -15,104 +15,89 @@
 #include "../Ngine.h"
 
 namespace NerdThings::Ngine::Graphics {
-    /*
-     * A 32-bit packed color
+    /**
+     * A 32-bit packed color.
      */
     struct NEAPI Color {
-        // Public Fields
-
-        /*
-         * The unsigned int value of the color
+        /**
+         * The packed value of the color.
          */
         unsigned int PackedValue;
 
-        // Public Constructor(s)
-
-        /*
-         * Create the default color (White)
+        /**
+         * Create the default color (White).
          */
-        Color() : PackedValue(0xFFFFFFFF) {}
+        Color();
 
-        /*
-         * Create a color using an existing packed value
+        /**
+         * Create a color using an existing packed value.
+         *
+         * @param packedValue_ The packed value for the color.
          */
-        explicit Color(const unsigned int packedValue_) : PackedValue(packedValue_) {}
+        explicit Color(const unsigned int packedValue_);
 
-        /*
-         * Create a color using float values between 0 and 1
+        /**
+         * Create a color using float values between 0 and 1.
+         *
+         * @param r_ The red value.
+         * @param g_ The green value.
+         * @param b_ The blue value.
+         * @param a_ The alpha (transparency) value.
          */
-        Color(const float r_, const float g_, float b_, const float a_)
-            : Color(static_cast<int>(r_ * 255),
-                    static_cast<int>(g_ * 255),
-                    static_cast<int>(b_ * 255),
-                    static_cast<int>(a_ * 255)) {}
+        Color(const float r_, const float g_, const float b_, const float a_);
 
-        /*
-         * Create a color using int values between 0 and 255
+        /**
+         * Create a color using int values between 0 and 255.
+         *
+         * @param r_ The red value.
+         * @param g_ The green value.
+         * @param b_ The blue value.
+         * @param a_ The alpha (transparency) value.
          */
-        Color(int r_, int g_, int b_, int a_);
+        Color(const int r_, const int g_, const int b_, const int a_);
 
-        // Public Methods
-
-        /*
-         * Get the red value as a float
+        /**
+         * Get the red value as a float (0 - 1).
          */
-        [[nodiscard]] float RedF() const;
+        float GetRed() const;
 
-        /*
-         * Get the green value as a float
+        /**
+         * Get the red value as an int (0-255).
          */
-        [[nodiscard]] float GreenF() const;
+        int GetRedI() const;
 
-        /*
-         * Get the blue value as a float
+        /**
+         * Get the green value as a float (0 - 1).
          */
-        [[nodiscard]] float BlueF() const;
+        float GetGreen() const;
 
-        /*
-         * Get the alpha value as a float
+        /**
+         * Get the green value as an int (0-255).
          */
-        [[nodiscard]] float AlphaF() const;
+        int GetGreenI() const;
 
-        /*
-         * Get the red value as an int
+        /**
+         * Get the blue value as a float (0 - 1).
          */
-        [[nodiscard]] int RedI() const;
+        float GetBlue() const;
 
-        /*
-         * Get the green value as an int
+        /**
+         * Get the blue value as an int (0-255).
          */
-        [[nodiscard]] int GreenI() const;
+        int GetBlueI() const;
 
-        /*
-         * Get the blue value as an int
+        /**
+         * Get the alpha value as a float (0 - 1).
          */
-        [[nodiscard]] int BlueI() const;
+        float GetAlpha() const;
 
-        /*
-         * Get the alpha value as an int
+        /**
+         * Get the alpha value as an int (0-255).
          */
-        [[nodiscard]] int AlphaI() const;
-
-        #ifdef INCLUDE_RAYLIB
-        /*
-         * Convert to a raylib color
-         */
-        [[nodiscard]] Color ToRaylibColor() const;
-
-        /*
-         * Convert from a raylib color
-         */
-        static Color FromRaylibColor(const Color &col_);
-
-        #endif
-
-        // Operators
+        int GetAlphaI() const;
 
         bool operator==(const Color &b_) const;
         bool operator!=(const Color &b_) const;
-
-        // Predefined Colors
 
         static const Color Beige;
         static const Color Black;

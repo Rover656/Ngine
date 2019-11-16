@@ -19,21 +19,12 @@
 #include "../Vector2.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Fields
-
     Font *Font::DefaultFont;
 
-    // Public Constructor(s)
-
     Font::Font() {}
-
-    // Destructor
-
     Font::~Font() {
         ConsoleMessage("Unloading and deleting font.", "NOTICE", "FONT");
     }
-
-    // Public Methods
 
     Font *Font::GetDefaultFont() {
         return DefaultFont;
@@ -140,18 +131,12 @@ namespace NerdThings::Ngine::Graphics {
         Characters.clear();
     }
 
-    // Private Methods
-
-    // All from raylib.
-
     void Font::__GenerateAtlas() {
         // Generate atlas texture.
         auto atlas = std::make_shared<Image>();
 
         // Undetermined constants
         int padding = 0;
-
-        // By this point, no validation is required.
 
         // Load rectangles
         std::vector<Rectangle> recs(CharacterCount);
@@ -167,7 +152,7 @@ namespace NerdThings::Ngine::Graphics {
         atlas->Height = imageSize;
         atlas->PixelData = new unsigned char[atlas->Width * atlas->Height];
         atlas->Format = UNCOMPRESSED_GRAYSCALE;
-        atlas->Mipmaps = 1;
+        atlas->MipmapCount = 1;
 
         // Default packing method (not adding skyline for now.)
         int offsetX = padding;
@@ -229,7 +214,7 @@ namespace NerdThings::Ngine::Graphics {
         atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
 
         // Create texture
-        Texture = std::make_shared<Texture2D>(atlas);
+        Texture = std::make_shared<Texture2D>(atlas.get());
 
         // Delete atlas
         atlas->Unload();

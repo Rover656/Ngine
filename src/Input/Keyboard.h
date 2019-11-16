@@ -21,7 +21,7 @@ struct GLFWwindow;
 #endif
 
 namespace NerdThings::Ngine::Input {
-    /*
+    /**
      * A keyboard key
      */
     enum Key {
@@ -142,35 +142,35 @@ namespace NerdThings::Ngine::Input {
 
 #define KEY_MAX 348
 
-    /*
+    /**
      * Key event args
      */
     struct KeyEventArgs : public EventArgs {
-        // Public Fields
-
-        /*
+        /**
          * The key this event is fore
          */
         Input::Key Key;
 
-        // Public Constructors
-
+        /**
+         * Create a key event argument.
+         *
+         * @param key_ The key changed.
+         */
         KeyEventArgs(Input::Key key_) : Key(key_) {}
     };
 
-    /*
-     * Keyboard input
+    /**
+     * Keyboard input provider.
+     *
+     * @todo Rewrite to have support for keymods.
+     * @todo Allow resetting the state of keys (to prevent any actions until it is released, overriding down).
      */
     class NEAPI Keyboard {
-        // Private Fields
-
         static bool _CurrentKeyState[];
         static Key _ExitKey;
         static bool _PreviousKeyState[];
         static Key _LatestKeyPress;
         static bool _NextKeyState[];
-
-        // Private Methods
 
 #if defined(PLATFORM_DESKTOP)
         static void GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_);
@@ -179,65 +179,78 @@ namespace NerdThings::Ngine::Input {
         static void UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
         static void UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
 #endif
-
     public:
-        // Public Fields
-
-        /*
-         * Key pressed
+        /**
+         * Key pressed.
          */
         static Event<KeyEventArgs> KeyPressed;
 
-        /*
-         * Key released
+        /**
+         * Key released.
          */
         static Event<KeyEventArgs> KeyReleased;
 
-        // Public Methods
-
-        /*
-         * Get the latest keypress
+        /**
+         * Get the latest keypress.
+         *
+         * @return The latest key that has been pressed.
          */
         static Key GetLatestKeypress();
 
-        /*
-         * Init keyboard input APIs
+        /**
+         * Init keyboard input APIs.
          */
         static void Init();
 
-        /*
-         * Is the key down
+        /**
+         * Is the key down.
+         *
+         * @param key_ Key to check
+         * @return Whether the key is down or not.
          */
         static bool IsKeyDown(Key key_);
 
-        /*
-         * Has a key been pressed this tick
+        /**
+         * Has a key been pressed this tick.
+         *
+         * @param key_ Key to check
+         * @return Whether the key is was pressed this frame.
          */
         static bool IsKeyPressed(Key key_);
 
-        /*
-         * Was the key released this frame
+        /**
+         * Was the key released this frame.
+         *
+         * @param key_ Key to check
+         * @return Whether the key was released this frame.
          */
         static bool IsKeyReleased(Key key_);
 
-        /*
-         * Is the key not pressed
+        /**
+         * Is the key up.
+         *
+         * @param key_ Key to check
+         * @return Whether the key is up or not.
          */
         static bool IsKeyUp(Key key_);
 
-        /*
-         * Poll keyboard inputs
+        /**
+         * Poll keyboard inputs.
          */
         static void PollInputs();
 
-        /*
-         * Set the key to close the game
+        /**
+         * Set the key to close the game.
+         *
+         * @note This is most useful for debugging.
+         * @todo Move this to Game??
+         * @param key_ Set the key that can close the game.
          */
         static void SetExitKey(Key key_);
 
-        /*
+        /**
          * Whether or not the game should exit.
-         * If the exit key is pressed, this is true
+         * If the exit key has been pressed, this is true.
          */
         static bool ShouldClose();
     };

@@ -12,11 +12,9 @@
 #include "RenderTarget.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Constructor(s)
-
     RenderTarget::RenderTarget() {}
 
-    RenderTarget::RenderTarget(const int width_, const int height_) : RenderTarget() {
+    RenderTarget::RenderTarget(unsigned int width_, unsigned int height_) : RenderTarget() {
         Width = width_;
         Height = height_;
 
@@ -34,13 +32,9 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    // Destructor
-
     RenderTarget::~RenderTarget() {
         delete _Texture;
     }
-
-    // Public Methods
 
     Texture2D *RenderTarget::GetTexture() {
         return _Texture;
@@ -63,8 +57,6 @@ namespace NerdThings::Ngine::Graphics {
 #endif
         Width = 0;
     }
-
-    // Operators
 
     bool RenderTarget::operator==(const RenderTarget &b) const {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)

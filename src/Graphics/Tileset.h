@@ -18,9 +18,11 @@
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // TODO: Animated tilesets
-    /*
-     * A tileset
+    /**
+     * Information about a tileset.
+     *
+     * @todo Animated tilesets.
+     * @todo Document after finishing API.
      */
     struct NEAPI Tileset {
         // Public Fields

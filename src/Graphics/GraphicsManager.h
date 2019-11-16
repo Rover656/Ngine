@@ -17,61 +17,74 @@
 #include "RenderTarget.h"
 
 namespace NerdThings::Ngine::Graphics {
-    /*
-     * Graphics management class
+    /**
+     * Graphics management class.
      */
     class NEAPI GraphicsManager {
-        // Render Target Related Private Fields
-
-        /*
-         * The render target stack
+        /**
+         * The render target stack.
          */
         static std::vector<RenderTarget *> _RenderTargetStack;
 
-        // General Rendering Fields
-
-        static unsigned int _CurrentHeight;
-
+        /**
+         * The current viewport width.
+         */
         static unsigned int _CurrentWidth;
 
-        // Render Target Related Private Methods
+        /**
+         * The current viewport height.
+         */
+        static unsigned int _CurrentHeight;
 
-        static void EndRenderTarget();
-
+        /**
+         * Configure the framebuffer for use with the render target.
+         *
+         * @param target_ Target to configure for.
+         */
         static void UseRenderTarget(RenderTarget *target_);
-    public:
-        // General Rendering Methods
 
-        /*
-         * Gets the current render width
+        /**
+         * Reset the framebuffer to defaults.
+         */
+        static void EndRenderTarget();
+    public:
+        /**
+         * Gets the current framebuffer width.
+         *
+         * @return The current framebuffer width.
          */
         static unsigned int GetCurrentWidth();
 
-        /*
-         * Gets the current render height
+        /**
+         * Gets the current render height.
+         *
+         * @return The current framebuffer height.
          */
         static unsigned int GetCurrentHeight();
 
-        /*
+        /**
          * Loads the default orthographic matrix and viewport.
          */
         static void SetupFramebuffer();
 
-        // Render Target Related Methods
-
-        /*
-         * Pop a target off the stack (if present)
-         * If not present, returns empty target
-         */
-        static RenderTarget *PopTarget(bool &popped_);
-
-        /*
-         * Push a target onto the stack
+        /**
+         * Push a target onto the stack.
+         * This target will begin to be used immediately.
          */
         static void PushTarget(RenderTarget *target_);
 
-        /*
-         * Replace a target on the stack
+        /**
+         * Pop a target off the stack (if present).
+         * If there is no render target, we will now be rendering directly to the framebuffer.
+         */
+        static void PopTarget();
+
+        /**
+         * Replace a target on the stack with another.
+         * Will immediately start using this target if it is currently active.
+         *
+         * @param old_ The target to be replaced.
+         * @param new_ The target to replace the old.
          */
         static void ReplaceTarget(RenderTarget *old_, RenderTarget *new_);
     };

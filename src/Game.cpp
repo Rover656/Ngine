@@ -225,9 +225,7 @@ namespace NerdThings::Ngine {
 
                 // If using a target, draw target
                 if (Config.MaintainResolution && _RenderTarget->IsValid()) {
-                    auto popped = false;
-                    Graphics::GraphicsManager::PopTarget(popped);
-
+                    Graphics::GraphicsManager::PopTarget();
                     Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
                                                     {
                                                             (w - iw * scale) * 0.5f,

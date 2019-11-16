@@ -18,8 +18,6 @@
 #include "Renderer.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Constructor(s)
-
     Sprite::Sprite(Texture2D *texture_) {
         // Add texture
         _Textures.push_back(texture_);
@@ -59,8 +57,6 @@ namespace NerdThings::Ngine::Graphics {
         _SpriteSheet = false;
     }
 
-    // Public Methods
-
     void Sprite::Draw(Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
         if (_Textures.empty()) return;
 
@@ -73,6 +69,43 @@ namespace NerdThings::Ngine::Graphics {
                               Color::White,
                               origin_,
                               rotation_);
+    }
+
+    void Sprite::Update() {
+        if (IsAnimated()) {
+            // Increment timer
+            _AnimationTimer++;
+
+            while (_AnimationTimer > 0 && fmod(_AnimationTimer, ImageSpeed) == 0) {
+                // Reset timer
+                _AnimationTimer = 0;
+
+                // Increase frame
+                CurrentFrame++;
+
+                // Reset if out of range
+                if (_SpriteSheet) {
+                    auto count = (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
+
+                    if (CurrentFrame > count - 1)
+                        CurrentFrame = 0;
+                } else {
+                    if (CurrentFrame > _Textures.size() - 1)
+                        CurrentFrame = 0;
+                }
+            }
+        }
+    }
+
+    bool Sprite::IsAnimated() {
+        if (_SpriteSheet) {
+            if (GetCurrentTexture()->IsValid())
+                return FrameHeight != GetCurrentTexture()->Height || FrameWidth != GetCurrentTexture()->Width;
+            else
+                return false;
+        } else {
+            return _Textures.size() > 1;
+        }
     }
 
     int Sprite::FrameX() {
@@ -117,6 +150,20 @@ namespace NerdThings::Ngine::Graphics {
         return _Textures[CurrentFrame];
     }
 
+    void Sprite::SetTexture(Texture2D *texture_) {
+        _Textures.clear();
+        _Textures.push_back(texture_);
+    }
+
+    void Sprite::SetTextures(const std::vector<Texture2D *> &textures_) {
+        _Textures.clear();
+
+        for (auto t : textures_) {
+            // Look for existing shared pointer first.
+            _Textures.push_back(t);
+        }
+    }
+
     Rectangle Sprite::GetSourceRectangle() {
         if (_SpriteSheet)
             return {
@@ -133,59 +180,6 @@ namespace NerdThings::Ngine::Graphics {
                 static_cast<float>(GetCurrentTexture()->Height)
             };
     }
-
-    bool Sprite::IsAnimated() {
-        if (_SpriteSheet) {
-            if (GetCurrentTexture()->IsValid())
-                return FrameHeight != GetCurrentTexture()->Height || FrameWidth != GetCurrentTexture()->Width;
-            else
-                return false;
-        } else {
-            return _Textures.size() > 1;
-        }
-    }
-
-    void Sprite::SetTexture(Texture2D *texture_) {
-        _Textures.clear();
-        _Textures.push_back(texture_);
-    }
-
-    void Sprite::SetTextures(const std::vector<Texture2D *> &textures_) {
-        _Textures.clear();
-
-        for (auto t : textures_) {
-            // Look for existing shared pointer first.
-            _Textures.push_back(t);
-        }
-    }
-
-    void Sprite::Update() {
-        if (IsAnimated()) {
-            // Increment timer
-            _AnimationTimer++;
-
-            while (_AnimationTimer > 0 && fmod(_AnimationTimer, ImageSpeed) == 0) {
-                // Reset timer
-                _AnimationTimer = 0;
-
-                // Increase frame
-                CurrentFrame++;
-
-                // Reset if out of range
-                if (_SpriteSheet) {
-                    auto count = (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
-
-                    if (CurrentFrame > count - 1)
-                        CurrentFrame = 0;
-                } else {
-                    if (CurrentFrame > _Textures.size() - 1)
-                        CurrentFrame = 0;
-                }
-            }
-        }
-    }
-
-    // Operators
 
     bool Sprite::operator==(const Sprite &b) {
         return _Textures == b._Textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth && FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;

@@ -15,21 +15,15 @@
 #include "GraphicsManager.h"
 
 namespace NerdThings::Ngine::Graphics {
-    // Public Constructors
-
     Canvas::Canvas(unsigned int width_, unsigned int height_)
             : _Width(width_), _Height(height_) {
         _RenderTarget = new RenderTarget(_Width, _Height);
     }
 
-    // Destructor
-
     Canvas::~Canvas() {
         ConsoleMessage("Deleting canvas.", "NOTICE", "CANVAS");
         delete _RenderTarget;
     }
-
-    // Public Methods
 
     void Canvas::Draw(Vector2 pos_) {
         Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
@@ -48,20 +42,19 @@ namespace NerdThings::Ngine::Graphics {
                                        Graphics::Color::White);
     }
 
-    unsigned int Canvas::GetHeight() {
-        return _Height;
+    void Canvas::ReDraw() {
+        Graphics::GraphicsManager::PushTarget(_RenderTarget);
+        Graphics::Renderer::Clear(Color::Transparent);
+        RenderTargetRedraw();
+        Graphics::GraphicsManager::PopTarget();
     }
 
     unsigned int Canvas::GetWidth() {
         return _Width;
     }
 
-    void Canvas::ReDraw() {
-        Graphics::GraphicsManager::PushTarget(_RenderTarget);
-        Graphics::Renderer::Clear(Color::Transparent);
-        RenderTargetRedraw();
-        bool popped = false;
-        Graphics::GraphicsManager::PopTarget(popped);
+    unsigned int Canvas::GetHeight() {
+        return _Height;
     }
 
     void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {

@@ -78,7 +78,7 @@ namespace NerdThings::Ngine::Audio {
          * @param pFramesOut Frame output array
          * @param frameCount Frame count.
          * @param pUserData Userdata.
-         * @return
+         * @return The number of frames read.
          */
         static ma_uint32 __AudioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
 

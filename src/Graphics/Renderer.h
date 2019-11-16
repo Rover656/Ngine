@@ -21,9 +21,11 @@
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
-    /*
-     * Render to the display.
+    /**
+     * Rendering class. Provides all drawing functions.
      * There is no concept of depth. First drawn is furthest behind.
+     *
+     * @todo Review this entire module. Until this is reviewed, no documentation will be written.
      */
     class NEAPI Renderer {
         // Internal OpenGL Methods

@@ -20,8 +20,10 @@
 #include "Tileset.h"
 
 namespace NerdThings::Ngine::Graphics {
-    /*
-     * A tileset canvas
+    /**
+     * A tileset canvas.
+     *
+     * @todo Wait for Tileset to be finished before documenting.
      */
     class NEAPI TilesetRenderer {
         // Private Fields

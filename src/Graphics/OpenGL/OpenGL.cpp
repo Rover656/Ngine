@@ -556,10 +556,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     void GL::Color(Graphics::Color color_) {
         if (_VertexData[_CurrentBuffer].CCounter < (MAX_BATCH_ELEMENTS * 4)) {
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter] = color_.RedF();
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 1] = color_.GreenF();
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 2] = color_.BlueF();
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 3] = color_.AlphaF();
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter] = color_.GetRed();
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 1] = color_.GetGreen();
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 2] = color_.GetBlue();
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 3] = color_.GetAlpha();
             _VertexData[_CurrentBuffer].CCounter++;
         } else throw std::runtime_error("Buffer overflow.");
     }
@@ -860,7 +860,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     void GL::ClearColor(Graphics::Color color_) {
         // Set clear color
-        glClearColor(color_.RedF(), color_.GreenF(), color_.BlueF(), color_.AlphaF());
+        glClearColor(color_.GetRed(), color_.GetGreen(), color_.GetBlue(), color_.GetAlpha());
     }
 
     void GL::GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_,
