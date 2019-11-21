@@ -143,7 +143,12 @@ namespace NerdThings {
         /**
          * Ngine Graphics module.
          */
-        namespace Graphics {}
+        namespace Graphics {
+            /**
+             * The experimental new renderer rewrite.
+             */
+             namespace Rewrite {}
+        }
 
         /**
          * Ngine Input module.
@@ -166,5 +171,8 @@ namespace NerdThings {
         namespace UI {}
     }
 }
+
+// ENABLE EXPERIMENTAL RENDERER
+#define USE_EXPERIMENTAL_RENDERER
 
 #endif // NGINE_H

@@ -282,7 +282,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
 
         // Set value
-        glUniformMatrix4fv(loc_, 1, false, matrix_.ToFloatArray().get());
+        glUniformMatrix4fv(loc_, 1, false, matrix_.ToFloatArray().data());
     }
 
     void GLShaderProgram::SetUniformUInt(unsigned int loc_, unsigned int int_) {
@@ -290,7 +290,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         if (!IsLinked()) throw std::runtime_error("Cannot set data inside unlinked shader programs.");
 
         // Set value
+        // TODO: This dont work on ANGLE
+#if defined(GRAPHICS_OPENGL33)
         glUniform1ui(loc_, int_);
+#endif
     }
 
     void GLShaderProgram::SetUniformUInt(unsigned int loc_, unsigned int int1_, unsigned int int2_) {

@@ -191,20 +191,21 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Resources::LoadTexture(const Path &inPath_, const std::string &name_) {
-        // Get the name
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-
-        // Create texture
-        auto tex = new Graphics::Texture2D(inPath_);
-
-        // Check if it is valid.
-        if (tex->IsValid()) {
-            _Textures.insert({ name, std::unique_ptr<Graphics::Texture2D>(tex) });
-            return true;
-        }
-
-        // Delete, it didnt work
-        delete tex;
+        // TODO: READD TEXTURE HERE!!!!!
+//        // Get the name
+//        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+//
+//        // Create texture
+//        auto tex = new Graphics::Texture2D(inPath_);
+//
+//        // Check if it is valid.
+//        if (tex->IsValid()) {
+//            _Textures.insert({ name, std::unique_ptr<Graphics::Texture2D>(tex) });
+//            return true;
+//        }
+//
+//        // Delete, it didnt work
+//        delete tex;
         return false;
     }
 }

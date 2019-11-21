@@ -18,8 +18,9 @@
 #include "OpenGL/Texture.h"
 #endif
 
-#include "../Filesystem/Filesystem.h"
+#include"../Filesystem/Filesystem.h"
 #include "../Resource.h"
+#include "Rewrite/GraphicsDevice.h"
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
@@ -86,7 +87,33 @@ namespace NerdThings::Ngine::Graphics {
     /**
      * A 2D Texture stored in the GPU memory.
      */
-    struct NEAPI Texture2D : public IResource {
+    class NEAPI Texture2D : public IResource {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#ifdef USE_EXPERIMENTAL_RENDERER
+        /**
+         * OpenGL Texture ID
+         */
+        unsigned int _ID = 0;
+
+        /**
+         * The number of mipmaps.
+         */
+        unsigned int _MipmapCount = 0;
+
+        /**
+         * The pixel format.
+         */
+        PixelFormat _Format = UNCOMPRESSED_R8G8B8A8;
+
+        /**
+         * Create the texture on the GPU
+         *
+         * @param data_ The pixel data.
+         */
+        void __CreateTexture(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_);
+#endif
+#endif
+    public:
         /**
          * Texture width
          */
@@ -98,10 +125,12 @@ namespace NerdThings::Ngine::Graphics {
         unsigned int Height = 0;
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#ifndef USE_EXPERIMENTAL_RENDERER
         /**
          * Internal texture (OpenGL)
          */
         std::shared_ptr<OpenGL::GLTexture> InternalTexture = nullptr;
+#endif
 #endif
 
         /**
@@ -118,27 +147,30 @@ namespace NerdThings::Ngine::Graphics {
          * Create a texture from raw pixel data.
          *
          * @note The pixel data is copied.
+         * @param graphicsDevice_ The current graphics device.
          * @param data_ Pixel data.
          * @param width_ Width of the texture.
          * @param height_ Height of the texture.
          * @param format_ Data pixel format.
          * @param mipmapCount_ Number of mipmaps to generate.
          */
-        Texture2D(unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
+        Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /**
          * Load a texture file.
          *
+         * @param graphicsDevice_ The current graphics device.
          * @param path_ Texture file to load.
          */
-        Texture2D(const Filesystem::Path &path_);
+        Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_);
 
         /**
          * Create a texture from an image.
          *
+         * @param graphicsDevice_ The current graphics device.
          * @param img_ Image to load onto GPU.
          */
-        Texture2D(const Image *img_);
+        Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, const Image *img_);
 
         /**
          * Get the number of mipmaps this texture has
@@ -146,13 +178,6 @@ namespace NerdThings::Ngine::Graphics {
          * @return The number of mipmaps generated.
          */
         int GetMipmapCount() const;
-
-        /**
-         * Is the texture valid and ready for use.
-         *
-         * @return Whether or not the texture is valid.
-         */
-        bool IsValid() const override;
 
         /**
          * Set the texture filter mode.
@@ -167,6 +192,13 @@ namespace NerdThings::Ngine::Graphics {
          * @param wrapMode_ The texture wrap mode.
          */
         void SetTextureWrap(TextureWrapMode wrapMode_) const;
+
+        /**
+         * Is the texture valid and ready for use.
+         *
+         * @return Whether or not the texture is valid.
+         */
+        bool IsValid() const override;
 
         /**
          * Unload the texture.

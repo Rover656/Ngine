@@ -197,9 +197,11 @@ namespace NerdThings::Ngine {
 
     void Window::Close() {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Window closing, clean OpenGL state
         Graphics::OpenGL::GL::Cleanup();
         ConsoleMessage("The OpenGL state has been cleaned.", "NOTICE", "Window");
+#endif
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -274,7 +276,6 @@ namespace NerdThings::Ngine {
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-
 #if defined(PLATFORM_DESKTOP)
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 #else
@@ -529,9 +530,11 @@ namespace NerdThings::Ngine {
         ConsoleMessage("Successfully created window.", "NOTICE", "Window");
 
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Window is now created, init OpenGL
         Graphics::OpenGL::GL::Init();
         ConsoleMessage("The OpenGL API has been initialized.", "NOTICE", "Window");
+#endif
 #endif
 
         // Initialized

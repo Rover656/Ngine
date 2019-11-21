@@ -367,7 +367,8 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "{\n"
                 "    fragTexCoord = vertexTexCoord;\n"
                 "    fragColor = vertexColor;\n"
-                "    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
+                //"    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
+                "    gl_Position = vec4(vertexPosition, 1.0);\n"
                 "}\n";
         std::string fragmentShaderSrc =
 #if defined(GRAPHICS_OPENGL21)
@@ -392,7 +393,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "    gl_FragColor = texelColor*fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
-                "    finalColor = texelColor*fragColor;\n"
+                //"    finalColor = texelColor*fragColor;\n"
+                "    finalColor = fragColor;\n"
+                //"    finalColor = vec4(1, 1, 1, 1);\n"
 #endif
                 "}\n";
 
@@ -417,6 +420,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
         ConsoleMessage("Loaded internal shader.", "NOTICE", "OpenGL");
+
+        // Init now (TEMP) TODO REMOVE THIS
+        auto a = _DefaultShaderProgram;
+        _DefaultShaderProgram->Use();
     }
 
     void GL::UpdateBuffersDefault() {
@@ -556,10 +563,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     void GL::Color(Graphics::Color color_) {
         if (_VertexData[_CurrentBuffer].CCounter < (MAX_BATCH_ELEMENTS * 4)) {
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter] = color_.GetRed();
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 1] = color_.GetGreen();
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 2] = color_.GetBlue();
-            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 3] = color_.GetAlpha();
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter] = color_.R;
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 1] = color_.G;
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 2] = color_.B;
+            _VertexData[_CurrentBuffer].Colors[4 * _VertexData[_CurrentBuffer].CCounter + 3] = color_.A;
             _VertexData[_CurrentBuffer].CCounter++;
         } else throw std::runtime_error("Buffer overflow.");
     }
@@ -839,12 +846,11 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _ModelView = Matrix::Identity;
         _CurrentMatrix = &_ModelView;
 
-        // Init OpenGL states
+        // Enable OpenGL Blending
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Clear
-        glClearDepth(1.0f);
         ClearColor(Graphics::Color(0, 0, 0, 1));
         Clear();
 
@@ -860,7 +866,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     void GL::ClearColor(Graphics::Color color_) {
         // Set clear color
-        glClearColor(color_.GetRed(), color_.GetGreen(), color_.GetBlue(), color_.GetAlpha());
+        glClearColor(color_.R, color_.G, color_.B, color_.A);
     }
 
     void GL::GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_,
@@ -871,7 +877,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         switch (format_) {
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-            // NOTE: on OpenGL ES 2.0 (WebGL), internalFormat must match format and options allowed are: GL_LUMINANCE, GL_RGB, GL_RGBA
+        // NOTE: on OpenGL ES 2.0 (WebGL), internalFormat must match format and options allowed are: GL_LUMINANCE, GL_RGB, GL_RGBA
         case UNCOMPRESSED_GRAYSCALE:
             *glInternalFormat_ = GL_LUMINANCE;
             *glFormat_ = GL_LUMINANCE;
@@ -997,25 +1003,25 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 break;
             case COMPRESSED_ETC1_RGB:
                 if (TexCompETC1Supported) *glInternalFormat_ = GL_ETC1_RGB8_OES;
-                break;                      // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
+                break; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
             case COMPRESSED_ETC2_RGB:
                 if (TexCompETC2Supported) *glInternalFormat_ = GL_COMPRESSED_RGB8_ETC2;
-                break;               // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+                break; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
             case COMPRESSED_ETC2_EAC_RGBA:
                 if (TexCompETC2Supported) *glInternalFormat_ = GL_COMPRESSED_RGBA8_ETC2_EAC;
-                break;     // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+                break; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
             case COMPRESSED_PVRT_RGB:
                 if (TexCompPVRTSupported) *glInternalFormat_ = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
-                break;    // NOTE: Requires PowerVR GPU
+                break; // NOTE: Requires PowerVR GPU
             case COMPRESSED_PVRT_RGBA:
                 if (TexCompPVRTSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
-                break;  // NOTE: Requires PowerVR GPU
+                break; // NOTE: Requires PowerVR GPU
             case COMPRESSED_ASTC_4x4_RGBA:
                 if (TexCompASTCSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
-                break;  // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+                break; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             case COMPRESSED_ASTC_8x8_RGBA:
                 if (TexCompASTCSupported) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
-                break;  // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+                break; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             default:
                 throw std::runtime_error("Unsupported format.");
         }

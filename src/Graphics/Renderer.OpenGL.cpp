@@ -29,6 +29,7 @@ namespace NerdThings::Ngine::Graphics {
 #define CIRCLE_ERROR_RATE 0.5f
 
     void Renderer::__DrawLine(Vector2 a_, Vector2 b_, Color c_, float thick_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Swap if start pos is past end pos
         if (a_.X > b_.X) {
             auto tmp = a_;
@@ -64,6 +65,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::Vertex({d, 0});
 
         OpenGL::GL::PopMatrix();
+#endif
     }
 
     void Renderer::BeginDrawing() {
@@ -72,11 +74,13 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::Clear(Color color_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Set clear color
         OpenGL::GL::ClearColor(color_);
 
         // Clear
         OpenGL::GL::Clear();
+#endif
     }
 
     void Renderer::DrawPixel(Vector2 position_, Color color_) {
@@ -84,6 +88,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::DrawLine(Vector2 startPos_, Vector2 endPos_, Color color_, float lineThickness_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (lineThickness_ < 0) lineThickness_ = -lineThickness_; // Cheeky liddle fix
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -95,9 +100,11 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void Renderer::DrawLineStrip(const std::vector<Vector2> &points_, Color color_, float lineThickness_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (points_.size() >= 2) {
             if (OpenGL::GL::AtBufferLimit(points_.size() * 2)) OpenGL::GL::Draw();
 
@@ -116,6 +123,7 @@ namespace NerdThings::Ngine::Graphics {
 
             OpenGL::GL::StopUsingTexture();
         }
+#endif
     }
 
     void Renderer::DrawCircle(Vector2 center_, float radius_, Color color_) {
@@ -128,6 +136,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::DrawCircleSector(Vector2 center_, float radius_, float startAngle_, float endAngle_, int segments_,
                                     Color color_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (radius_ <= 0.0f) radius_ = 0.1f;
 
         // Fix angles if wrong way around
@@ -197,11 +206,13 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void
     Renderer::DrawCircleSectorLines(Vector2 center_, float radius_, float startAngle_, float endAngle_, int segments_,
                                     Color color_, float lineThickness_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (radius_ <= 0.0f) radius_ = 0.1f;
 
         if (endAngle_ < startAngle_) {
@@ -257,6 +268,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
 //    void Renderer::DrawRing(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_, int endAngle_,
@@ -280,6 +292,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::DrawRectangle(Rectangle rectangle_, Color color_, float rotation_, Vector2 origin_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (OpenGL::GL::AtBufferLimit(4)) OpenGL::GL::Draw();
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -305,6 +318,7 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void
@@ -352,6 +366,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::DrawRectangleGradientEx(Rectangle rectangle_, Color color1_, Color color2_, Color color3_,
                                            Color color4_, float rotation_, Vector2 origin_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (OpenGL::GL::AtBufferLimit(4)) OpenGL::GL::Draw();
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -385,11 +400,14 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void
     Renderer::DrawRectangleLines(Vector2 position_, float width_, float height_, Color color_, int lineThickness_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         DrawRectangleLines(position_, {width_, height_}, color_, lineThickness_);
+#endif
     }
 
     void Renderer::DrawRectangleLines(Vector2 position_, Vector2 size_, Color color_, int lineThickness_) {
@@ -397,6 +415,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::DrawRectangleLines(Rectangle rectangle_, Color color_, int lineThickness_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (OpenGL::GL::AtBufferLimit(4 * 4)) OpenGL::GL::Draw();
 
         OpenGL::GL::UseTexture(OpenGL::GL::DefaultTexture);
@@ -415,11 +434,13 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void
     Renderer::DrawText(Font *font_, const std::string &string_, Vector2 position_, float fontSize_, float spacing_,
                        Color color_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         int textOffsetY = 0;        // Required for line break!
         float textOffsetX = 0.0f;   // Offset between characters
         float scaleFactor = 0.0f;
@@ -465,16 +486,20 @@ namespace NerdThings::Ngine::Graphics {
                 else textOffsetX += ((float)font_->Characters[index].AdvanceX*scaleFactor + spacing_);
             }
         }
+#endif
     }
 
     void Renderer::DrawTextRect(Font *font_, const std::string &string_, Rectangle rectangle_, float fontSize_,
                                 float spacing_, Color color_, bool wordWrap_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         DrawTextRectEx(font_, string_, rectangle_, fontSize_, spacing_, color_, 0, 0, Color::White, Color::White, wordWrap_);
+#endif
     }
 
     void Renderer::DrawTextRectEx(Font *font_, const std::string &string_, Rectangle rectangle_, float fontSize_,
                                   float spacing_, Color color_, int selectStart_, int selectLength_,
                                   Color selectText_, Color selectBack_, bool wordWrap_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         int textOffsetY = 0;        // Required for line break!
         float textOffsetX = 0.0f;   // Offset between characters
         float scaleFactor = 0.0f;
@@ -586,6 +611,7 @@ namespace NerdThings::Ngine::Graphics {
 
             textOffsetX += glyphWidth;
         }
+#endif
     }
 
     void
@@ -619,6 +645,7 @@ namespace NerdThings::Ngine::Graphics {
     Renderer::DrawTexture(Texture2D *texture_, Rectangle destRectangle_, Rectangle sourceRectangle_,
                           Color color_,
                           Vector2 origin_, float rotation_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Check null
         if (texture_ == nullptr) throw std::runtime_error("Texture is null.");
 
@@ -691,9 +718,11 @@ namespace NerdThings::Ngine::Graphics {
         } else {
             ConsoleMessage("Attempted to draw invalid texture.", "WARN", "Renderer.OpenGL");
         }
+#endif
     }
 
     void Renderer::DrawTriangle(Vector2 v1_, Vector2 v2_, Vector2 v3_, Color color_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Check for buffer space
         if (OpenGL::GL::AtBufferLimit(4)) OpenGL::GL::Draw();
 
@@ -719,9 +748,11 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void Renderer::DrawTriangleLines(Vector2 v1_, Vector2 v2_, Vector2 v3_, Color color_, float lineThickness_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Check for buffer space
         if (OpenGL::GL::AtBufferLimit(12)) OpenGL::GL::Draw();
 
@@ -737,9 +768,11 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void Renderer::DrawTriangleFan(const std::vector<Vector2> &points_, Color color_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (points_.size() >= 3) {
             if (OpenGL::GL::AtBufferLimit((points_.size() - 2) * 4)) OpenGL::GL::Draw();
 
@@ -767,9 +800,11 @@ namespace NerdThings::Ngine::Graphics {
 
             OpenGL::GL::StopUsingTexture();
         }
+#endif
     }
 
     void Renderer::DrawPoly(Vector2 center_, int sides_, float radius_, float rotation_, Color color_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         if (sides_ < 3) sides_ = 3;
 
         if (OpenGL::GL::AtBufferLimit(4 * (360 / sides_))) OpenGL::GL::Draw();
@@ -804,11 +839,14 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GL::End();
 
         OpenGL::GL::StopUsingTexture();
+#endif
     }
 
     void Renderer::EndDrawing() {
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Draw all batches
         OpenGL::GL::Draw();
+#endif
     }
 
 #endif

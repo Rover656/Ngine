@@ -214,7 +214,8 @@ namespace NerdThings::Ngine::Graphics {
         atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
 
         // Create texture
-        Texture = std::make_shared<Texture2D>(atlas.get());
+        //TODO: READD TEXTURE HERE!!!!
+        //Texture = std::make_shared<Texture2D>(atlas.get());
 
         // Delete atlas
         atlas->Unload();

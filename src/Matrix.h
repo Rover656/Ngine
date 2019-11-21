@@ -48,7 +48,7 @@ namespace NerdThings::Ngine {
 
         static Matrix Scale(float x, float y, float z);
 
-        std::unique_ptr<float[]> ToFloatArray() const;
+        std::vector<float> ToFloatArray() const;
 
         float Trace() const;
 

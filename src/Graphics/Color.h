@@ -19,22 +19,15 @@ namespace NerdThings::Ngine::Graphics {
      * A 32-bit packed color.
      */
     struct NEAPI Color {
-        /**
-         * The packed value of the color.
-         */
-        unsigned int PackedValue;
+        float R;
+        float G;
+        float B;
+        float A;
 
         /**
          * Create the default color (White).
          */
         Color();
-
-        /**
-         * Create a color using an existing packed value.
-         *
-         * @param packedValue_ The packed value for the color.
-         */
-        explicit Color(const unsigned int packedValue_);
 
         /**
          * Create a color using float values between 0 and 1.
@@ -44,7 +37,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param b_ The blue value.
          * @param a_ The alpha (transparency) value.
          */
-        Color(const float r_, const float g_, const float b_, const float a_);
+        Color(float r_, float g_, float b_, float a_ = 1);
 
         /**
          * Create a color using int values between 0 and 255.
@@ -54,47 +47,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param b_ The blue value.
          * @param a_ The alpha (transparency) value.
          */
-        Color(const int r_, const int g_, const int b_, const int a_);
-
-        /**
-         * Get the red value as a float (0 - 1).
-         */
-        float GetRed() const;
-
-        /**
-         * Get the red value as an int (0-255).
-         */
-        int GetRedI() const;
-
-        /**
-         * Get the green value as a float (0 - 1).
-         */
-        float GetGreen() const;
-
-        /**
-         * Get the green value as an int (0-255).
-         */
-        int GetGreenI() const;
-
-        /**
-         * Get the blue value as a float (0 - 1).
-         */
-        float GetBlue() const;
-
-        /**
-         * Get the blue value as an int (0-255).
-         */
-        int GetBlueI() const;
-
-        /**
-         * Get the alpha value as a float (0 - 1).
-         */
-        float GetAlpha() const;
-
-        /**
-         * Get the alpha value as an int (0-255).
-         */
-        int GetAlphaI() const;
+        Color(int r_, int g_, int b_, int a_ = 255);
 
         bool operator==(const Color &b_) const;
         bool operator!=(const Color &b_) const;

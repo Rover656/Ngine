@@ -168,8 +168,8 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    std::unique_ptr<float[]> Matrix::ToFloatArray() const {
-        auto buffer = std::make_unique<float[]>(16);
+    std::vector<float> Matrix::ToFloatArray() const {
+        auto buffer = std::vector<float>(16);
         buffer[0] = M0;
         buffer[1] = M1;
         buffer[2] = M2;

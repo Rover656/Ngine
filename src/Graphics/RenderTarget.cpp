@@ -20,7 +20,9 @@ namespace NerdThings::Ngine::Graphics {
 
         // Create framebuffer
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#ifndef USE_EXPERIMENTAL_RENDERER
         InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
+#endif
 #endif
 
         // Create texture
@@ -28,7 +30,9 @@ namespace NerdThings::Ngine::Graphics {
         _Texture->Width = Width;
         _Texture->Height = Height;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#ifndef USE_EXPERIMENTAL_RENDERER
         _Texture->InternalTexture = InternalFramebuffer->RenderTexture;
+#endif
 #endif
     }
 

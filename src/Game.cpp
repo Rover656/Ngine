@@ -30,6 +30,8 @@ namespace NerdThings::Ngine {
     // Private Methods
 
     void Game::__DoDraw() {
+#ifdef USE_EXPERIMENTAL_RENDERER
+#else
         // Prep for drawing
         Graphics::Renderer::BeginDrawing();
 
@@ -49,7 +51,7 @@ namespace NerdThings::Ngine {
         if (_CurrentScene != nullptr) {
             _CurrentScene->Draw();
         }
-
+#endif
         // OnDraw event
         OnDraw();
     }
@@ -175,7 +177,8 @@ namespace NerdThings::Ngine {
                 _RenderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
             }
 
-            _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
+            if (Config.MaintainResolution && _RenderTarget == nullptr)
+                _RenderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
 
             // Get the time since the last frame
             auto deltaTime = std::chrono::high_resolution_clock::now() - started;
@@ -225,6 +228,8 @@ namespace NerdThings::Ngine {
 
                 // If using a target, draw target
                 if (Config.MaintainResolution && _RenderTarget->IsValid()) {
+#ifdef USE_EXPERIMENTAL_RENDERER
+#else
                     Graphics::GraphicsManager::PopTarget();
                     Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
                                                     {
@@ -240,10 +245,14 @@ namespace NerdThings::Ngine {
                                                             static_cast<float>(_RenderTarget->Height) * -1
                                                     },
                                                     Graphics::Color::White);
+#endif
                 }
 
                 // Finish drawing
+#ifdef USE_EXPERIMENTAL_RENDERER
+#else
                 Graphics::Renderer::EndDrawing();
+#endif
 
                 // Swap buffers
                 Window::SwapBuffers();
