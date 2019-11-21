@@ -58,6 +58,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * @return The attached texture.
          */
         Texture2D *GetTexture() const;
+        void SetTexture(Texture2D *tex_);
 
         /**
          * Get the quads vertex data.

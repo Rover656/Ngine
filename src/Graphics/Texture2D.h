@@ -20,10 +20,10 @@
 
 #include"../Filesystem/Filesystem.h"
 #include "../Resource.h"
-#include "Rewrite/GraphicsDevice.h"
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
+    namespace Rewrite{class GraphicsDevice;class Renderer;};
     /**
      * Texture filter mode.
      */
@@ -90,6 +90,9 @@ namespace NerdThings::Ngine::Graphics {
     class NEAPI Texture2D : public IResource {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
+        // Friend renderer
+        friend class Rewrite::Renderer;
+
         /**
          * OpenGL Texture ID
          */
@@ -111,6 +114,11 @@ namespace NerdThings::Ngine::Graphics {
          * @param data_ The pixel data.
          */
         void __CreateTexture(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_);
+
+        /**
+         * Calculate the size of my pixel data.
+         */
+        int __CalculatePixelDataSize();
 #endif
 #endif
     public:

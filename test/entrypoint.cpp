@@ -249,6 +249,8 @@ class TestGame : public Game {
     Rewrite::Renderer *_Renderer;
 
     Rewrite::QuadsObject _Obj;
+
+    Texture2D *_Tex;
 public:
 
     TestGame(const GameConfig &config_) : Game(config_) {
@@ -259,8 +261,7 @@ public:
     void Draw() {
         _Renderer->Clear();
 
-        for (auto i = 0; i < 5000; i++)
-            _Renderer->AddRenderObject(&_Obj);
+        _Renderer->AddRenderObject(&_Obj);
 
         _Renderer->Render();
     }
@@ -275,13 +276,22 @@ public:
 
         _Renderer->SetClearColor(Color::Blue);
 
+        _Tex = new Texture2D(_GraphicsDevice, Path("content/test_tiles.png"));
+
         std::vector<Rewrite::VertexData> vdat;
-        vdat.push_back({{-0.5f, -0.5f, 0}, Color::Green, {0, 0}});
-        vdat.push_back({{0.5f, -0.5f, 0}, Color::Red, {0, 0}});
-        vdat.push_back({{0.5f, 0.5f, 0}, Color::Yellow, {0, 0}});
-        vdat.push_back({{-0.5f, 0.5f, 0}, Color::Blue, {0, 0}});
+//        vdat.push_back({{-0.5f, -0.5f, 0}, Color::Green, {0, 1}});
+//        vdat.push_back({{0.5f, -0.5f, 0}, Color::Red, {1, 1}});
+//        vdat.push_back({{0.5f, 0.5f, 0}, Color::Yellow, {1, 0}});
+//        vdat.push_back({{-0.5f, 0.5f, 0}, Color::Blue, {0, 0}});
+
+        vdat.push_back({{-0.5f, -0.5f, 0}, Color::White, {0, 1}});
+        vdat.push_back({{0.5f, -0.5f, 0}, Color::White, {1, 1}});
+        vdat.push_back({{0.5f, 0.5f, 0}, Color::White, {1, 0}});
+        vdat.push_back({{-0.5f, 0.5f, 0}, Color::White, {0, 0}});
+
         _Obj = Rewrite::QuadsObject(vdat);
 
+        _Obj.SetTexture(_Tex);
 
         return;
 

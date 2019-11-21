@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         }
 
         // Create quad VAO
-        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO) && _UseVAO) {
             glGenVertexArrays(1, &_QuadVAO);
             glBindVertexArray(_QuadVAO);
         }
@@ -60,7 +60,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2,
                               2,
-                              GL_UNSIGNED_SHORT,
+                              GL_FLOAT,
                               GL_FALSE,
                               sizeof(VertexData),
                               (GLvoid *) offsetof(VertexData, TexCoords));
@@ -71,7 +71,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                      GL_STATIC_DRAW);
 
         // Unbind VAO then unbind buffers
-        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO) && _UseVAO) {
             glBindVertexArray(0);
         }
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -105,8 +105,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                 "{\n"
                 "    fragTexCoord = NG_VertexTexCoord;\n"
                 "    fragColor = NG_VertexColor;\n"
-                //"    gl_Position = NGU_MATRIX_MVP*vec4(NG_VertexPos, 1.0);\n"
-                "    gl_Position = vec4(NG_VertexPos, 1.0);\n"
+                "    gl_Position = NGU_MATRIX_MVP*vec4(NG_VertexPos, 1.0);\n"
                 "}\n";
 
         // Fragment source
@@ -133,9 +132,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "    gl_FragColor = texelColor*fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
-                //"    finalColor = texelColor*fragColor;\n"
-                "    finalColor = fragColor;\n"
-                //"    finalColor = vec4(1, 1, 1, 1);\n"
+                "    finalColor = texelColor*fragColor;\n"
 #endif
                 "}\n";
 
@@ -151,6 +148,10 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         // Create shader program
         _DefaultShaderProgram = new ShaderProgram(_DefaultShader);
         auto linked = _DefaultShaderProgram->Link();
+
+        // Create default texture (for shader)
+        unsigned char pixels[4] = {255, 255, 255, 255};
+        _DefaultTexture = new Texture2D(_GraphicsDevice, pixels, 1, 1);
     }
 
     void Renderer::__SortBuckets() {
@@ -170,13 +171,13 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
     void Renderer::__ProcessBucket(int queue_) {
         if (!_Queue[queue_].empty()) {
-//            if (_Enable2DDepthTest) {
-//                glEnable(GL_DEPTH_TEST);
-//                glDepthMask(true);
-//            } else {
-//                glEnable(GL_DEPTH_TEST);
-//                glDepthMask(false);
-//            }
+            if (_Enable2DDepthTest) {
+                glEnable(GL_DEPTH_TEST);
+                glDepthMask(true);
+            } else {
+                glEnable(GL_DEPTH_TEST);
+                glDepthMask(false);
+            }
 
             for (auto obj : _Queue[queue_]) {
                 __ProcessObject(obj);
@@ -231,7 +232,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         if (_QuadCount == 0 || _BatchedQuads.empty()) return;
 
         // Upload to VBO
-        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO) && _UseVAO) {
 #if defined(GRAPHICS_OPENGL33)
             // Bind VAO
             glBindVertexArray(_QuadVAO);
@@ -251,6 +252,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             // TODO: This is broken
             glBindBuffer(GL_ARRAY_BUFFER, _QuadBuffersVBO[0]);
             glBufferData(GL_ARRAY_BUFFER, sizeof(_QuadVertices[0]) * _QuadCount * 4, _QuadVertices, GL_DYNAMIC_DRAW);
+            __ErrorReport();
 
             // Vertices
             glEnableVertexAttribArray(0);
@@ -261,6 +263,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                                   sizeof(VertexData),
                                   (GLvoid *) offsetof(VertexData, Position));
 
+            __ErrorReport();
+
             // Colors
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1,
@@ -270,26 +274,28 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                                   sizeof(VertexData),
                                   (GLvoid *) offsetof(VertexData, Color));
 
+            __ErrorReport();
+
             // Tex coords
             glEnableVertexAttribArray(2);
             glVertexAttribPointer(2,
                                   2,
-                                  GL_UNSIGNED_SHORT, // TODO: Review this type.
+                                  GL_FLOAT,
                                   GL_FALSE,
                                   sizeof(VertexData),
                                   (GLvoid *) offsetof(VertexData, TexCoords));
-        }
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _QuadBuffersVBO[1]);
+            __ErrorReport();
+        }
 
         // Get MVP matrix (technically just projection as model view is already accounted for.)
         auto MVP = _GraphicsDevice->GetProjectionMatrix();
 
         // Draw vertices in the batch
         Texture2D *lastTex = nullptr;
+        Texture2D *curTex = nullptr;
         ShaderProgram *lastProg = nullptr;
         ShaderProgram *curProg = nullptr;
-        bool firstProgramSet = false;
         int fromIndex = 0;
 
         for (auto quad : _BatchedQuads) {
@@ -298,7 +304,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
             // Apply shader
             auto sp = quad.GetShaderProgram();
-            if (sp != lastProg || !firstProgramSet) {
+            if (sp != lastProg || curProg == nullptr) {
                 // Set current program
                 if (sp == nullptr) {
                     curProg = _DefaultShaderProgram;
@@ -312,27 +318,40 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                 // Use the program
                 curProg->Use();
 
-                if (!firstProgramSet) firstProgramSet = true;
-
                 // Set texture unit
                 glUniform1i(curProg->GetUniformLocation("NGU_TEXTURE"), 0);
+                __ErrorReport();
 
                 // Set MVP
-                glUniformMatrix4fv(curProg->GetUniformLocation("NGU_MVP"), 1, false, MVP.ToFloatArray().data());
+                glUniformMatrix4fv(curProg->GetUniformLocation("NGU_MATRIX_MVP"), 1, false, MVP.ToFloatArray().data());
+                __ErrorReport();
             }
 
             // Apply texture
-            if (quad.GetTexture() != lastTex) {
-                // TODO: Use texture
+            if (quad.GetTexture() != lastTex || curTex == nullptr) {
+                // Save last texture
+                lastTex = quad.GetTexture();
+
+                // Set current texture
+                curTex = lastTex == nullptr ? _DefaultTexture : lastTex;
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, curTex->_ID);
             }
 
             // Draw quad
             glDrawElements(GL_TRIANGLES, (GLsizei) quad.GetQuadCount() * 6, GL_UNSIGNED_SHORT,
                            (GLvoid *) (fromIndex * sizeof(_QuadIndices[0])));
 
+            __ErrorReport();
+
             // Increment index
             fromIndex += quad.GetQuadCount() * 6;
         }
+    }
+
+    void Renderer::__ErrorReport() {
+        auto err = glGetError();
+        if (err != 0) ConsoleMessage("OpenGL Error: " + std::to_string(err), "ERR", "Renderer");
     }
 
     Renderer::Renderer(GraphicsDevice *graphicsDevice_)
@@ -348,10 +367,15 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
         // Create shader
         __CreateDefaultShader();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     Renderer::~Renderer() {
-
+        delete _DefaultShaderProgram;
+        delete _DefaultShader;
+        delete _DefaultTexture;
     }
 
     void Renderer::Clear() {

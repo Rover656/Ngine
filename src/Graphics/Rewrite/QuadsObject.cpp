@@ -23,6 +23,10 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         return _Texture;
     }
 
+    void QuadsObject::SetTexture(Texture2D *tex_) {
+        _Texture = tex_;
+    }
+
     const VertexData *QuadsObject::GetVertices() const {
         return _Vertices.data();
     }

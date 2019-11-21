@@ -15,6 +15,7 @@
 #include "../../Ngine.h"
 
 #include "../Color.h"
+#include "../Texture2D.h"
 #include "GraphicsDevice.h"
 #include "OpenGLDefines.h"
 #include "QuadsObject.h"
@@ -73,6 +74,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         bool _Enable2DDepthTest = false;
 
         /**
+         * Whether or not the renderer should use VAO's when available.
+         */
+        bool _UseVAO = false;
+
+        /**
          * The batched quads.
          */
         std::vector<QuadsObject> _BatchedQuads;
@@ -111,6 +117,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * The default shader program.
          */
         ShaderProgram *_DefaultShaderProgram = nullptr;
+
+        /**
+         * The default texture for use with the default shader.
+         */
+        Texture2D *_DefaultTexture = nullptr;
 
         /**
          * Create the OpenGL buffers
@@ -155,6 +166,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * Draw all batched quads.
          */
         void __DrawQuadsBatch();
+
+        /**
+         * Error reporter - for debugging.
+         */
+        void __ErrorReport();
     public:
         /**
          * Create a renderer.

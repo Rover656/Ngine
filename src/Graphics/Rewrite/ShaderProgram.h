@@ -31,12 +31,6 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
      */
     class NEAPI ShaderProgram {
     private:
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        /**
-         * Shader program ID.
-         */
-        unsigned int ID = 0;
-#endif
         /**
          * The attached shader.
          */
@@ -46,14 +40,31 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * Whether or not the shader program has linked.
          */
         bool _Linked = false;
+
+        /**
+         * Attribute location cache.
+         */
+        std::unordered_map<std::string, unsigned int> _AttribLocationCache;
+
+        /**
+         * Uniform location cache.
+         */
+        std::unordered_map<std::string, unsigned int> _UniformLocationCache;
     public:
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
+        /**
+         * Shader program ID.
+         */
+        unsigned int ID = 0;
+#endif
+
         ShaderProgram();
         explicit ShaderProgram(Shader *shader_);
-        ~ShaderProgram() = default;
+        ~ShaderProgram();
 
-        unsigned int GetAttribLocation(const std::string &name_) const;
+        unsigned int GetAttribLocation(const std::string &name_);
 
-        unsigned int GetUniformLocation(const std::string &name_) const;
+        unsigned int GetUniformLocation(const std::string &name_);
 
         void SetShader(Shader *shader_);
 

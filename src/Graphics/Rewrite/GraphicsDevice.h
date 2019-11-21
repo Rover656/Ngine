@@ -15,6 +15,7 @@
 #include "../../Ngine.h"
 
 #include "../../Matrix.h"
+#include "../Image.h"
 
 namespace NerdThings::Ngine::Graphics::Rewrite {
     /**
@@ -37,57 +38,57 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             /**
              * Anisotropic filtering support.
              */
-                    GL_ANISOTROPIC_TEXTURE_FILTER = 0,
+            GL_ANISOTROPIC_TEXTURE_FILTER = 0,
 
             /**
              * DDS texture compression support.
              */
-                    GL_COMP_DXT,
+            GL_COMP_DXT,
 
             /**
              * ETC1 texture compression support.
              */
-                    GL_COMP_ETC1,
+            GL_COMP_ETC1,
 
             /**
              * ETC2/EAC texture compression support.
              */
-                    GL_COMP_ETC2,
+            GL_COMP_ETC2,
 
             /**
              * PVR texture compression support.
              */
-                    GL_COMP_PVRT,
+            GL_COMP_PVRT,
 
             /**
              * ASTC texture compression support
              */
-                    GL_COMP_ASTC,
+            GL_COMP_ASTC,
 
             /**
              * Depth texture support.
              */
-                    GL_TEX_DEPTH,
+            GL_TEX_DEPTH,
 
             /**
              * Texture float support.
              */
-                    GL_TEX_FLOAT,
+            GL_TEX_FLOAT,
 
             /**
              * Clamp mirror wrap mode support,
              */
-                    GL_TEX_MIRROR_CLAMP,
+            GL_TEX_MIRROR_CLAMP,
 
             /**
              * NPOT Texture support
              */
-                    GL_TEX_NPOT,
+            GL_TEX_NPOT,
 
             /**
              * VAO Support.
              */
-                    GL_VAO
+            GL_VAO
         };
     private:
         /**
@@ -148,6 +149,16 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * @return The max depth buffer size.
          */
         int GetGLMaxDepthBits();
+
+        /**
+         * Get OpenGL Texture formats.
+         *
+         * @param format_ Our format.
+         * @param glInternalFormat_ The GL Internal format.
+         * @param glFormat_ The GL format.
+         * @param glType_ The GL type.
+         */
+        void GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
     };
 }
 

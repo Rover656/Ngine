@@ -27,16 +27,29 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         Link();
     }
 
-    unsigned int ShaderProgram::GetAttribLocation(const std::string &name_) const {
+    ShaderProgram::~ShaderProgram() {
+        glDeleteProgram(ID);
+        ID = 0;
+    }
+
+    unsigned int ShaderProgram::GetAttribLocation(const std::string &name_) {
+        if (_AttribLocationCache.find(name_) != _AttribLocationCache.end())
+            return _AttribLocationCache.at(name_);
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        return glGetAttribLocation(ID, name_.c_str());
+        unsigned int loc = glGetAttribLocation(ID, name_.c_str());
+        _AttribLocationCache.insert({name_, loc});
+        return loc;
 #endif
         return 0;
     }
 
-    unsigned int ShaderProgram::GetUniformLocation(const std::string &name_) const {
+    unsigned int ShaderProgram::GetUniformLocation(const std::string &name_) {
+        if (_UniformLocationCache.find(name_) != _UniformLocationCache.end())
+            return _UniformLocationCache.at(name_);
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        return glGetUniformLocation(ID, name_.c_str());
+        unsigned int loc = glGetUniformLocation(ID, name_.c_str());
+        _UniformLocationCache.insert({name_, loc});
+        return loc;
 #endif
         return 0;
     }
@@ -55,6 +68,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
     bool ShaderProgram::Link() {
         _Linked = false;
+        _AttribLocationCache.clear();
+        _UniformLocationCache.clear();
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         // Link program

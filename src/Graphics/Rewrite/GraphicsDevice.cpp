@@ -154,4 +154,163 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 #endif
         return 0;
     }
+
+    void GraphicsDevice::GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_,
+                                             unsigned int *glType_) {
+        *glInternalFormat_ = -1;
+        *glFormat_ = -1;
+        *glType_ = -1;
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
+        switch (format_) {
+#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+            // NOTE: on OpenGL ES 2.0 (WebGL), internalFormat must match format and options allowed are: GL_LUMINANCE, GL_RGB, GL_RGBA
+        case UNCOMPRESSED_GRAYSCALE:
+            *glInternalFormat_ = GL_LUMINANCE;
+            *glFormat_ = GL_LUMINANCE;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_GRAY_ALPHA:
+            *glInternalFormat_ = GL_LUMINANCE_ALPHA;
+            *glFormat_ = GL_LUMINANCE_ALPHA;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_R5G6B5:
+            *glInternalFormat_ = GL_RGB;
+            *glFormat_ = GL_RGB;
+            *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+            break;
+        case UNCOMPRESSED_R8G8B8:
+            *glInternalFormat_ = GL_RGB;
+            *glFormat_ = GL_RGB;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_R5G5B5A1:
+            *glInternalFormat_ = GL_RGBA;
+            *glFormat_ = GL_RGBA;
+            *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+            break;
+        case UNCOMPRESSED_R4G4B4A4:
+            *glInternalFormat_ = GL_RGBA;
+            *glFormat_ = GL_RGBA;
+            *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+            break;
+        case UNCOMPRESSED_R8G8B8A8:
+            *glInternalFormat_ = GL_RGBA;
+            *glFormat_ = GL_RGBA;
+            *glType_ = GL_UNSIGNED_BYTE;
+            break;
+        case UNCOMPRESSED_R32:
+            // NOTE: Requires extension OES_texture_float
+            if (TexFloatSupported) {
+                *glInternalFormat_ = GL_LUMINANCE;
+                *glFormat_ = GL_LUMINANCE;
+                *glType_ = GL_FLOAT;
+            }
+            break;
+        case UNCOMPRESSED_R32G32B32:
+            // NOTE: Requires extension OES_texture_float
+            if (TexFloatSupported) {
+                *glInternalFormat_ = GL_RGB;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_FLOAT;
+            }
+            break;
+        case UNCOMPRESSED_R32G32B32A32:
+            // NOTE: Requires extension OES_texture_float
+            if (TexFloatSupported) {
+                *glInternalFormat_ = GL_RGBA;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_FLOAT;
+            }
+            break;
+#elif defined(GRAPHICS_OPENGL33)
+            case UNCOMPRESSED_GRAYSCALE:
+                *glInternalFormat_ = GL_R8;
+                *glFormat_ = GL_RED;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_GRAY_ALPHA:
+                *glInternalFormat_ = GL_RG8;
+                *glFormat_ = GL_RG;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_R5G6B5:
+                *glInternalFormat_ = GL_RGB565;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+                break;
+            case UNCOMPRESSED_R8G8B8:
+                *glInternalFormat_ = GL_RGB8;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_R5G5B5A1:
+                *glInternalFormat_ = GL_RGB5_A1;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+                break;
+            case UNCOMPRESSED_R4G4B4A4:
+                *glInternalFormat_ = GL_RGBA4;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+                break;
+            case UNCOMPRESSED_R8G8B8A8:
+                *glInternalFormat_ = GL_RGBA8;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_UNSIGNED_BYTE;
+                break;
+            case UNCOMPRESSED_R32:
+                if (_GLSupportFlags[GL_TEX_FLOAT]) *glInternalFormat_ = GL_R32F;
+                *glFormat_ = GL_RED;
+                *glType_ = GL_FLOAT;
+                break;
+            case UNCOMPRESSED_R32G32B32:
+                if (_GLSupportFlags[GL_TEX_FLOAT]) *glInternalFormat_ = GL_RGB32F;
+                *glFormat_ = GL_RGB;
+                *glType_ = GL_FLOAT;
+                break;
+            case UNCOMPRESSED_R32G32B32A32:
+                if (_GLSupportFlags[GL_TEX_FLOAT]) *glInternalFormat_ = GL_RGBA32F;
+                *glFormat_ = GL_RGBA;
+                *glType_ = GL_FLOAT;
+                break;
+#endif
+            case COMPRESSED_DXT1_RGB:
+                if (_GLSupportFlags[GL_COMP_DXT]) *glInternalFormat_ = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                break;
+            case COMPRESSED_DXT1_RGBA:
+                if (_GLSupportFlags[GL_COMP_DXT]) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                break;
+            case COMPRESSED_DXT3_RGBA:
+                if (_GLSupportFlags[GL_COMP_DXT]) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                break;
+            case COMPRESSED_DXT5_RGBA:
+                if (_GLSupportFlags[GL_COMP_DXT]) *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                break;
+            case COMPRESSED_ETC1_RGB:
+                if (_GLSupportFlags[GL_COMP_ETC1]) *glInternalFormat_ = GL_ETC1_RGB8_OES;
+                break; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
+            case COMPRESSED_ETC2_RGB:
+                if (_GLSupportFlags[GL_COMP_ETC2]) *glInternalFormat_ = GL_COMPRESSED_RGB8_ETC2;
+                break; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+            case COMPRESSED_ETC2_EAC_RGBA:
+                if (_GLSupportFlags[GL_COMP_ETC2]) *glInternalFormat_ = GL_COMPRESSED_RGBA8_ETC2_EAC;
+                break; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+            case COMPRESSED_PVRT_RGB:
+                if (_GLSupportFlags[GL_COMP_PVRT]) *glInternalFormat_ = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                break; // NOTE: Requires PowerVR GPU
+            case COMPRESSED_PVRT_RGBA:
+                if (_GLSupportFlags[GL_COMP_PVRT]) *glInternalFormat_ = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+                break; // NOTE: Requires PowerVR GPU
+            case COMPRESSED_ASTC_4x4_RGBA:
+                if (_GLSupportFlags[GL_COMP_ASTC]) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+                break; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+            case COMPRESSED_ASTC_8x8_RGBA:
+                if (_GLSupportFlags[GL_COMP_ASTC]) *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
+                break; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+            default:
+                throw std::runtime_error("Unsupported format.");
+        }
+#endif
+    }
 }

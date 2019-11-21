@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef NEW_SHADER_H
+#define NEW_SHADER_H
 
 #include "../../Ngine.h"
 
@@ -75,4 +75,4 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
     };
 }
 
-#endif //SHADER_H
+#endif //NEW_SHADER_H

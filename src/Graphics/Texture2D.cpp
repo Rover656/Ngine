@@ -19,14 +19,14 @@
 #endif
 #endif
 
-#include "Image.h"
+#include "Rewrite/GraphicsDevice.h"
 
 namespace NerdThings::Ngine::Graphics {
     void Texture2D::__CreateTexture(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
 
-// Check format support
+        // Check format support
         if ((!graphicsDevice_->GetGLSupportFlag(Rewrite::GraphicsDevice::GL_COMP_DXT))
             && ((_Format == COMPRESSED_DXT1_RGB)
                 || (_Format == COMPRESSED_DXT1_RGBA)
@@ -54,9 +54,106 @@ namespace NerdThings::Ngine::Graphics {
             ((_Format == COMPRESSED_ASTC_4x4_RGBA) || (_Format == COMPRESSED_ASTC_8x8_RGBA))) {
             throw std::runtime_error("ASTC compressed texture format not supported");
         }
+
+        // Create texture
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glGenTextures(1, &_ID);
+
+        // Bind
+        glBindTexture(GL_TEXTURE_2D, _ID);
+
+        // Generate mipmaps
+        int mipWidth = Width;
+        int mipHeight = Height;
+        int mipOffset = 0;
+
+        unsigned int glInternalFormat, glFormat, glType;
+        graphicsDevice_->GetGLTextureFormats(_Format, &glInternalFormat, &glFormat, &glType);
+
+        for (int i = 0; i < _MipmapCount; i++) {
+            unsigned int mipSize = __CalculatePixelDataSize();
+
+            if (glInternalFormat != -1) {
+                if (_Format < COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *)data_ + mipOffset);
+                else glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize, (unsigned char *)data_ + mipOffset);
+
+#if defined(GRAPHICS_OPENGL33)
+                if (_Format == UNCOMPRESSED_GRAYSCALE)
+                {
+                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ONE };
+                    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                }
+                else if (_Format == UNCOMPRESSED_GRAY_ALPHA)
+                {
+#if defined(GRAPHICS_OPENGL21)
+                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ALPHA };
+#elif defined(GRAPHICS_OPENGL33)
+                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_GREEN };
+#endif
+                    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                }
+#endif
+            }
+
+            mipWidth /= 2;
+            mipHeight /= 2;
+            mipOffset += mipSize;
+
+            // Security check for NPOT textures
+            if (mipWidth < 1) mipWidth = 1;
+            if (mipHeight < 1) mipHeight = 1;
+        }
+
+        // TEMP: Needs proper implementation
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
-    Texture2D::Texture2D() {}
+    int Texture2D::__CalculatePixelDataSize() {
+        auto bpp = 0;
+
+        switch (_Format)
+        {
+            case UNCOMPRESSED_GRAYSCALE: bpp = 8; break;
+            case UNCOMPRESSED_GRAY_ALPHA:
+            case UNCOMPRESSED_R5G6B5:
+            case UNCOMPRESSED_R5G5B5A1:
+            case UNCOMPRESSED_R4G4B4A4: bpp = 16; break;
+            case UNCOMPRESSED_R8G8B8A8: bpp = 32; break;
+            case UNCOMPRESSED_R8G8B8: bpp = 24; break;
+            case UNCOMPRESSED_R32: bpp = 32; break;
+            case UNCOMPRESSED_R32G32B32: bpp = 32*3; break;
+            case UNCOMPRESSED_R32G32B32A32: bpp = 32*4; break;
+            case COMPRESSED_DXT1_RGB:
+            case COMPRESSED_DXT1_RGBA:
+            case COMPRESSED_ETC1_RGB:
+            case COMPRESSED_ETC2_RGB:
+            case COMPRESSED_PVRT_RGB:
+            case COMPRESSED_PVRT_RGBA: bpp = 4; break;
+            case COMPRESSED_DXT3_RGBA:
+            case COMPRESSED_DXT5_RGBA:
+            case COMPRESSED_ETC2_EAC_RGBA:
+            case COMPRESSED_ASTC_4x4_RGBA: bpp = 8; break;
+            case COMPRESSED_ASTC_8x8_RGBA: bpp = 2; break;
+            default: break;
+        }
+
+        auto dataSize = Width*Height*bpp/8;  // Total data size in bytes
+
+        // Most compressed formats works on 4x4 blocks,
+        // if texture is smaller, minimum dataSize is 8 or 16
+        if ((Width < 4) && (Height < 4))
+        {
+            if ((_Format >= COMPRESSED_DXT1_RGB) && (_Format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
+            else if ((_Format >= COMPRESSED_DXT3_RGBA) && (_Format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
+        }
+
+        return dataSize;
+    }
+
+    Texture2D::Texture2D() {
+        Unload();
+    }
 
     Texture2D::Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
                          unsigned height_, PixelFormat format_, int mipmapCount_) {
@@ -196,7 +293,10 @@ namespace NerdThings::Ngine::Graphics {
         Width = 0;
         Height = 0;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
+#ifdef USE_EXPERIMENTAL_RENDERER
+        glDeleteTextures(1, &_ID);
+        _ID = 0;
+#else
         InternalTexture = nullptr;
 #endif
 #endif
