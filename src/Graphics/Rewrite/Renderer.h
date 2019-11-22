@@ -169,6 +169,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         /**
          * Depth sort predicate.
          *
+         * @param a_ The first batch item.
+         * @param b_ The second batch.
          * @return Whether a's z-index is less than b's.
          */
         static bool __SortPredicate(Renderer::RenderBatchItem a_, Renderer::RenderBatchItem b_);
@@ -185,6 +187,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          */
         void __ProcessBucket(RenderBucket bucket_);
 
+        /**
+         * Process a batch item.
+         *
+         * @param i_ The batch item to process.
+         */
         void __ProcessBatch(RenderBatchItem i_);
 
         /**
@@ -192,11 +199,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          */
         void __DrawBatchedQuads();
 
-
-
-
-
-
+        GLuint64 startTime, stopTime;
+        unsigned int queryID[2];
     public:
         /**
          * Create a renderer.

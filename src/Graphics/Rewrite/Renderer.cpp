@@ -154,6 +154,12 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
         _DefaultTexture = new Texture2D(_GraphicsDevice, pixels, 1, 1);
+
+
+
+
+        // TEST
+        glGenQueries(2, queryID);
     }
 
     void Renderer::__SortQueue() {
@@ -333,9 +339,28 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                 glBindTexture(GL_TEXTURE_2D, curTex->_ID);
             }
 
+            // Query start time
+            glQueryCounter(queryID[0], GL_TIMESTAMP);
+
             // Draw quad
             glDrawElements(GL_TRIANGLES, quad.Size / 4 * 6, GL_UNSIGNED_SHORT,
                            (GLvoid *) (fromIndex * sizeof(_QuadIndices[0])));
+
+            // Query end time
+            glQueryCounter(queryID[1], GL_TIMESTAMP);
+
+            // Wait until results are available.
+            GLint stopTimerAvailable = 0;
+            while (!stopTimerAvailable) {
+                glGetQueryObjectiv(queryID[1],
+                                   GL_QUERY_RESULT_AVAILABLE,
+                                   &stopTimerAvailable);
+            }
+
+            glGetQueryObjectui64v(queryID[0], GL_QUERY_RESULT, &startTime);
+            glGetQueryObjectui64v(queryID[1], GL_QUERY_RESULT, &stopTime);
+
+            printf("Time spent on the GPU: %f ms\n", (stopTime - startTime) / 1000000.0);
 
             // Increment index
             fromIndex += quad.Size / 4 * 6;
@@ -371,6 +396,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         // Create shader
         __CreateDefaultShader();
 
+        // Enable blending
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }

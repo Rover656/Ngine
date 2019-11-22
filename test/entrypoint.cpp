@@ -261,7 +261,7 @@ public:
     void Draw() {
         _Renderer->Clear();
 
-        for (auto i = 0; i < 10000; i++)
+        for (auto i = 0; i < 1000; i++)
             _Renderer->AddRenderObject(&_Obj);
 
         _Renderer->Render();
