@@ -42,6 +42,32 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          */
         static const int MAX_INDEX_VBO_SIZE = MAX_VBO_SIZE * 6 / 4;
     private:
+        enum RenderMode {
+            MODE_QUADS,
+            MODE_TRIANGLES
+        };
+
+        /**
+         * A renderable batch item.
+         * This is produced by the data from a `RenderObject`
+         */
+        struct RenderBatchItem {
+            /**
+             * The number of vertices for this item
+             */
+            unsigned int Size = 0;
+
+            /**
+             * The model matrix for translating it's vertices.
+             */
+            Matrix ModMat;
+            const VertexData *VDat = nullptr;
+            Texture2D *Texture = nullptr;
+            ShaderProgram *Shader = nullptr;
+            float Z = 0;
+            RenderMode Mode;
+        };
+
         /**
          * The graphics device.
          */
@@ -60,7 +86,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         /**
          * Render bucket queue.
          */
-        std::vector<std::vector<RenderObject *>> _Queue;
+        std::vector<std::vector<RenderBatchItem>> _Queue;
 
         /**
          * Whether or not the renderer is rendering.
@@ -74,19 +100,24 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         bool _Enable2DDepthTest = false;
 
         /**
-         * Whether or not the renderer should use VAO's when available.
+         * The current render mode, used for identifying what the batch consists of.
          */
-        bool _UseVAO = false;
+        RenderMode _CurrentMode = MODE_TRIANGLES;
 
         /**
-         * The batched quads.
+         * The current vertices for rendering.
          */
-        std::vector<QuadsObject> _BatchedQuads;
+        VertexData _Vertices[MAX_VBO_SIZE];
 
         /**
-         * The quad vertex batch.
+         * The number of vertices ready to be rendered.
          */
-        VertexData _QuadVertices[MAX_VBO_SIZE];
+        unsigned int _VertexCount = 0;
+
+        /**
+         * The currently batched items, next to be rendered.
+         */
+        std::vector<RenderBatchItem> _CurrentBatchItems;
 
         /**
          * The quad index batch.
@@ -94,7 +125,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         GLushort _QuadIndices[MAX_INDEX_VBO_SIZE];
 
         /**
-         * The quad batch VAO.
+         * The quad rendering VAO.
          */
         GLuint _QuadVAO = 0;
 
@@ -102,11 +133,6 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * The quad batch VBO's.
          */
         GLuint _QuadBuffersVBO[2];
-
-        /**
-         * The number of quads that have been batched.
-         */
-        unsigned int _QuadCount = 0;
 
         /**
          * The default shader.
@@ -133,17 +159,19 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          */
         void __CreateDefaultShader();
 
+        void __AddToQueue(RenderBatchItem i_);
+
         /**
          * Sort the object buckets.
          */
-        void __SortBuckets();
+        void __SortQueue();
 
         /**
          * Depth sort predicate.
          *
          * @return Whether a's z-index is less than b's.
          */
-        static bool __SortPredicate(RenderObject *a_, RenderObject *b_);
+        static bool __SortPredicate(Renderer::RenderBatchItem a_, Renderer::RenderBatchItem b_);
 
         /**
          * Process the queue of render buckets.
@@ -152,25 +180,23 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
         /**
          * Process one of the render buckets.
-         */
-        void __ProcessBucket(int bucket_);
-
-        /**
-         * Process a `RenderObject`.
          *
-         * @param obj_ Object to process.
+         * @param bucket_ The bucket to render.
          */
-        void __ProcessObject(RenderObject *obj_);
+        void __ProcessBucket(RenderBucket bucket_);
+
+        void __ProcessBatch(RenderBatchItem i_);
 
         /**
          * Draw all batched quads.
          */
-        void __DrawQuadsBatch();
+        void __DrawBatchedQuads();
 
-        /**
-         * Error reporter - for debugging.
-         */
-        void __ErrorReport();
+
+
+
+
+
     public:
         /**
          * Create a renderer.

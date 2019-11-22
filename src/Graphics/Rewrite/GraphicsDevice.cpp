@@ -201,7 +201,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             break;
         case UNCOMPRESSED_R32:
             // NOTE: Requires extension OES_texture_float
-            if (TexFloatSupported) {
+            if (_GLSupportFlags[GL_TEX_FLOAT]) {
                 *glInternalFormat_ = GL_LUMINANCE;
                 *glFormat_ = GL_LUMINANCE;
                 *glType_ = GL_FLOAT;
@@ -209,7 +209,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             break;
         case UNCOMPRESSED_R32G32B32:
             // NOTE: Requires extension OES_texture_float
-            if (TexFloatSupported) {
+            if (_GLSupportFlags[GL_TEX_FLOAT]) {
                 *glInternalFormat_ = GL_RGB;
                 *glFormat_ = GL_RGB;
                 *glType_ = GL_FLOAT;
@@ -217,7 +217,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             break;
         case UNCOMPRESSED_R32G32B32A32:
             // NOTE: Requires extension OES_texture_float
-            if (TexFloatSupported) {
+            if (_GLSupportFlags[GL_TEX_FLOAT]) {
                 *glInternalFormat_ = GL_RGBA;
                 *glFormat_ = GL_RGBA;
                 *glType_ = GL_FLOAT;
