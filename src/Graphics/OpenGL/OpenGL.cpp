@@ -367,8 +367,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                 "{\n"
                 "    fragTexCoord = vertexTexCoord;\n"
                 "    fragColor = vertexColor;\n"
-                //"    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
-                "    gl_Position = vec4(vertexPosition, 1.0);\n"
+                "    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
                 "}\n";
         std::string fragmentShaderSrc =
 #if defined(GRAPHICS_OPENGL21)
@@ -393,9 +392,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "    gl_FragColor = texelColor*fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
-                //"    finalColor = texelColor*fragColor;\n"
-                "    finalColor = fragColor;\n"
-                //"    finalColor = vec4(1, 1, 1, 1);\n"
+                "    finalColor = texelColor*fragColor;\n"
 #endif
                 "}\n";
 
