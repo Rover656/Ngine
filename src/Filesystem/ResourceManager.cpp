@@ -15,18 +15,9 @@
 #include <sstream>
 
 namespace NerdThings::Ngine::Filesystem {
-    // Private Fields
-
-    std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> ResourceManager::m_fonts;
-    std::unordered_map<std::string, std::unique_ptr<Audio::Music>> ResourceManager::m_music;
-    std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> ResourceManager::m_sounds;
-    std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> ResourceManager::m_textures;
-
-    // Public Fields
-
-    ResourceManagerConfig ResourceManager::Config;
-
-    // Public Methods
+    ResourceManager::ResourceManager(Graphics::GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
+        if (m_graphicsDevice == nullptr) throw std::runtime_error("Graphics device cannot be null.");
+    }
 
     void ResourceManager::DeleteAll() {
         m_fonts.clear();
@@ -134,23 +125,24 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool ResourceManager::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
-        // Fix base size
-        if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
-
-        // Get the name
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-
-        // Create font
-        auto fnt = Graphics::Font::LoadTTFFont(inPath_, baseSize_);
-
-        // Check if it is valid
-        if (fnt->IsValid()) {
-            m_fonts.insert({name, std::unique_ptr<Graphics::Font>(fnt) });
-            return true;
-        }
-
-        // Delete, it didnt work
-        delete fnt;
+        // TODO: Fix font
+//        // Fix base size
+//        if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
+//
+//        // Get the name
+//        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+//
+//        // Create font
+//        auto fnt = Graphics::Font::LoadTTFFont(inPath_, baseSize_);
+//
+//        // Check if it is valid
+//        if (fnt->IsValid()) {
+//            m_fonts.insert({name, std::unique_ptr<Graphics::Font>(fnt) });
+//            return true;
+//        }
+//
+//        // Delete, it didnt work
+//        delete fnt;
         return false;
     }
 
@@ -191,21 +183,20 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool ResourceManager::LoadTexture(const Path &inPath_, const std::string &name_) {
-        // TODO: READD TEXTURE HERE!!!!!
-//        // Get the name
-//        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-//
-//        // Create texture
-//        auto tex = new Graphics::Texture2D(inPath_);
-//
-//        // Check if it is valid.
-//        if (tex->IsValid()) {
-//            m_textures.insert({ name, std::unique_ptr<Graphics::Texture2D>(tex) });
-//            return true;
-//        }
-//
-//        // Delete, it didnt work
-//        delete tex;
+        // Get the name
+        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+
+        // Create texture
+        auto tex = new Graphics::Texture2D(m_graphicsDevice, inPath_);
+
+        // Check if it is valid.
+        if (tex->IsValid()) {
+            m_textures.insert({ name, std::unique_ptr<Graphics::Texture2D>(tex) });
+            return true;
+        }
+
+        // Delete, it didnt work
+        delete tex;
         return false;
     }
 }

@@ -23,7 +23,8 @@
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
-    namespace Rewrite{class GraphicsDevice;class Renderer;};
+    class GraphicsDevice;
+    namespace Rewrite{class Renderer;};
     /**
      * Texture filter mode.
      */
@@ -113,7 +114,7 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @param data_ The pixel data.
          */
-        void __CreateTexture(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_);
+        void __CreateTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_);
 
         /**
          * Calculate the size of my pixel data.
@@ -162,7 +163,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param format_ Data pixel format.
          * @param mipmapCount_ Number of mipmaps to generate.
          */
-        Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
+        Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /**
          * Load a texture file.
@@ -170,7 +171,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param graphicsDevice_ The current graphics device.
          * @param path_ Texture file to load.
          */
-        Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_);
+        Texture2D(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_);
 
         /**
          * Create a texture from an image.
@@ -178,7 +179,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param graphicsDevice_ The current graphics device.
          * @param img_ Image to load onto GPU.
          */
-        Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, const Image *img_);
+        Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_);
 
         /**
          * Get the number of mipmaps this texture has

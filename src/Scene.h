@@ -196,7 +196,7 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent game.
          */
-        Game *GetParentGame();
+        Game *GetGameGame();
 
         /**
          * Get the current physics world.

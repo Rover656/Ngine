@@ -91,7 +91,7 @@ public:
 
 class PlayerEntity : public BaseEntity {
 public:
-    PlayerEntity(Scene *parentScene_, Vector2 position_)
+    PlayerEntity(ResourceManager *resources_, Scene *parentScene_, Vector2 position_)
             : BaseEntity(parentScene_, position_) {
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_DYNAMIC;
@@ -105,7 +105,7 @@ public:
         body->SetAngularVelocity(5);
         SetPhysicsBody(body);
 
-        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(ResourceManager::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(resources_->GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         s->SetOrigin({16, 16});
 
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
@@ -186,8 +186,10 @@ public:
 
     TilesetRenderer *testTiles;
 
-    TestScene(Game* game) : Scene(game, true, {0, 0}, 16) {//, widg(Vector2(120, 120)) {
-        AddChild("Player", new PlayerEntity(this, {100, 100}));
+    ResourceManager *_Resources;
+
+    TestScene(ResourceManager *resources_, Game* game) : Scene(game, true, {0, 0}, 16), _Resources(resources_) {//, widg(Vector2(120, 120)) {
+        AddChild("Player", new PlayerEntity(_Resources, this, {100, 100}));
         AddChild("Floor", new Floor(this, {100, 500}));
 
         GetPhysicsWorld()->DebugDraw = true;
@@ -207,7 +209,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetRenderer(Tileset(ResourceManager::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles = new TilesetRenderer(Tileset(_Resources->GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 
@@ -235,27 +237,29 @@ public:
     void Update() {
         //widg.Update();
 
-        if (Keyboard::IsKeyPressed(KEY_F11)) {
-            Window::Config.Fullscreen = !Window::Config.Fullscreen;
-            Window::ApplyConfig();
-        }
+//        if (Keyboard::IsKeyPressed(KEY_F11)) {
+//            GetGameGame()->GetGameWindow()->ToggleFullscreen();
+//        }
     }
 };
 
 class TestGame : public Game {
     TestScene *_Scene;
 
-    Rewrite::GraphicsDevice *_GraphicsDevice;
     Rewrite::Renderer *_Renderer;
 
     Rewrite::QuadRenderable _Obj;
 
     Texture2D *_Tex;
+
+    ResourceManager *_Resources;
 public:
 
-    TestGame(const GameConfig &config_) : Game(config_) {
+    TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
+        // Hook events
         OnInit += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
         OnDraw += new ClassMethodEventHandler<TestGame>(this, &TestGame::Draw);
+        OnCleanup += new ClassMethodEventHandler<TestGame>(this, &TestGame::Cleanup);
     }
 
     void Draw() {
@@ -271,45 +275,53 @@ public:
         // Set exit key
         Keyboard::SetExitKey(KEY_ESCAPE);
 
-        // EXPERIMENT: New renderer
-        _GraphicsDevice = new Rewrite::GraphicsDevice();
-        _Renderer = new Rewrite::Renderer(_GraphicsDevice);
+        // Create resource manager
+        _Resources = new ResourceManager(GetGraphicsDevice());
 
+        // Load all content
+        _Resources->LoadResources();
+
+        // Create renderer
+        _Renderer = new Rewrite::Renderer(GetGraphicsDevice());
+
+        // Set screen clear color
         _Renderer->SetClearColor(Color::Blue);
 
-        _Tex = new Texture2D(_GraphicsDevice, Path("content/test_tiles.png"));
-
+        // Create vertex data for our quad
         std::vector<Rewrite::VertexData> vdat;
         vdat.push_back({{-0.5f, -0.5f, 0}, Color::Green, {0, 1}});
         vdat.push_back({{0.5f, -0.5f, 0}, Color::Red, {1, 1}});
         vdat.push_back({{0.5f, 0.5f, 0}, Color::Yellow, {1, 0}});
         vdat.push_back({{-0.5f, 0.5f, 0}, Color::Blue, {0, 0}});
 
+        // Create our quad
         _Obj = Rewrite::QuadRenderable(vdat);
-
-        _Obj.SetTexture(_Tex);
+        _Obj.SetTexture(_Resources->GetTexture("test_tiles"));
 
         return;
 
-        // Load all content
-        ResourceManager::LoadResources();
-
         // Load arial as default font
-        Font::SetDefaultFont(ResourceManager::GetFont("Upheaval"));
+        Font::SetDefaultFont(_Resources->GetFont("Upheaval"));
 
         // Create scene
-        _Scene = new TestScene(this);
+        _Scene = new TestScene(_Resources, this);
 
         // Set scene
         SetScene(_Scene);
+    }
+
+    void Cleanup() {
+        _Resources->DeleteAll();
+        delete _Resources;
+        _Resources = nullptr;
     }
 };
 
 #include <NgineEntry.h> // Entrypoint stuff
 
 NGINE_GAME_ENTRY {
-    // Load icon
-    auto icon = new Graphics::Image(Path::GetExecutableDirectory() / "content" / "test_icon.png");
+    // Load icon (must remain in scope until NGINE_RUN_GAME happens)
+    Graphics::Image icon(Path::GetExecutableDirectory() / "content" / "test_icon.png");
 
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
@@ -323,18 +335,14 @@ NGINE_GAME_ENTRY {
     windowConfig.InitialWidth = 1920/2;
     windowConfig.InitialHeight = 1080/2;
     windowConfig.Title = "Test Game";
-    windowConfig.Icon = icon;
+    windowConfig.Icon = &icon;
     windowConfig.NativeDebugConsole = true;
-    Window::SetConfig(windowConfig);
 
     // Create game
-    auto game = TestGame(gameConfig);
+    auto game = TestGame(windowConfig, gameConfig);
 
     // Run game
     NGINE_RUN_GAME(game);
-
-    // Delete icon
-    delete icon;
 
     return 0;
 }

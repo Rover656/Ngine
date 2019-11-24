@@ -31,8 +31,8 @@ namespace NerdThings::Ngine::Input {
     Vector2 Mouse::InternalGetMousePosition() {
         auto pos = Vector2::Zero;
 #if defined(PLATFORM_DESKTOP)
-        double x, y;
-        glfwGetCursorPos((GLFWwindow*)Window::WindowPtr, &x, &y);
+        double x = 0, y = 0;
+//        glfwGetCursorPos((GLFWwindow*)Window::m_GLFWWindow, &x, &y);
         pos.X = static_cast<float>(x);
         pos.Y = static_cast<float>(y);
 #elif defined(PLATFORM_UWP)
@@ -131,8 +131,8 @@ namespace NerdThings::Ngine::Input {
 #if defined(PLATFORM_DESKTOP)
 
         // Register glfw callbacks
-        glfwSetMouseButtonCallback((GLFWwindow *)Window::WindowPtr, Mouse::GLFWMouseButtonCallback);
-        glfwSetScrollCallback((GLFWwindow *)Window::WindowPtr, Mouse::GLFWScrollCallback);
+//        glfwSetMouseButtonCallback((GLFWwindow *)Window::m_GLFWWindow, Mouse::GLFWMouseButtonCallback);
+//        glfwSetScrollCallback((GLFWwindow *)Window::m_GLFWWindow, Mouse::GLFWScrollCallback);
 
 #elif defined(PLATFORM_UWP)
 

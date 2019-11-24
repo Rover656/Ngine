@@ -12,12 +12,13 @@
 #ifndef GRAPHICSDEVICE_H
 #define GRAPHICSDEVICE_H
 
-#include "../../Ngine.h"
+#include "../Ngine.h"
 
-#include "../../Matrix.h"
-#include "../Image.h"
+#include "../Matrix.h"
+#include "../Window.h"
+#include "Image.h"
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+namespace NerdThings::Ngine::Graphics {
     /**
      * The graphics device.
      * Manages the OpenGL Context and it's features.
@@ -92,35 +93,44 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         };
     private:
         /**
+         * The window this graphics device is attached to.
+         */
+        Window *m_attachedWindow;
+
+        /**
          * The current projection matrix.
          */
-        Matrix _ProjectionMatrix;
+        Matrix m_projectionMatrix;
 
         // OpenGL Features
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         /**
          * Maximum anisotropic filtering level.
          */
-        float _GLMaxAnisotropicLevel;
+        float m_GLMaxAnisotropicLevel;
 
         /**
          * Maximum number of bits in a depth buffer/texture.
          */
-        int _GLMaxDepthBits;
+        int m_GLMaxDepthBits;
 
         /**
          * All OpenGL Support flags.
          */
-        bool _GLSupportFlags[GL_VAO + 1];
+        bool m_GLSupportFlags[GL_VAO + 1];
 #endif
     public:
 
         /**
          * Create a graphics device.
          */
-        GraphicsDevice();
-
+        explicit GraphicsDevice(Window *window_);
         ~GraphicsDevice() = default;
+
+        /**
+         * Get the window attached to this device.
+         */
+        Window *GetWindow();
 
         /**
          * Get the current projection matrix.
@@ -128,6 +138,14 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          * @return The current projection matrix.
          */
         Matrix GetProjectionMatrix() const;
+
+        /**
+         * Setup the framebuffer.
+         *
+         * This will create an orthographic projection matrix.
+         * This will be created for the framebuffer if there is no render target attached, otherwise it will be for the render target.
+         */
+        void SetupFramebuffer();
 
         /**
           * Get an OpenGL feature support flag (to determine feature set).

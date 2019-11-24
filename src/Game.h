@@ -61,38 +61,47 @@ namespace NerdThings::Ngine {
      * The game contains every scene in your game.
      */
     class NEAPI Game {
-        // Private Fields
+        /**
+         * The game window.
+         */
+        Window *m_gameWindow = nullptr;
+
+        /**
+         * The config to create the game window with.
+         */
+        WindowConfig m_gameWindowCreationConfig;
+
+        /**
+         * The graphics device for our window.
+         */
+        Graphics::GraphicsDevice *m_graphicsDevice;
 
         /**
          * The currently loaded scene
          */
-        Scene *_CurrentScene = nullptr;
+        Scene *m_currentScene = nullptr;
 
         /**
          * The render target used for enforcing resolution
          */
-        std::shared_ptr<Graphics::RenderTarget> _RenderTarget = nullptr;
+        std::shared_ptr<Graphics::RenderTarget> m_renderTarget = nullptr;
 
         /**
          * Is the game loop running
          */
-        bool _Running = false;
-
-        // Private Methods
+        bool m_running = false;
 
         /**
          * Render a frame
          */
-        void __DoDraw();
+        void _doDraw();
 
         /**
          * Run a game update
          */
-        void __DoUpdate();
+        void _doUpdate();
 
     public:
-        // Public Fields
-
         /**
          * Background clear color
          */
@@ -104,14 +113,20 @@ namespace NerdThings::Ngine {
         GameConfig Config;
 
         /**
-         * On update event
-         */
-        Event<> OnDraw;
-
-        /**
          * On init event
          */
         Event<> OnInit;
+
+        /**
+         * On cleanup event.
+         * This must delete all game resources.
+         */
+        Event<> OnCleanup;
+
+        /**
+         * On update event
+         */
+        Event<> OnDraw;
 
         /**
          * On update event
@@ -123,20 +138,27 @@ namespace NerdThings::Ngine {
          */
         Graphics::TextureFilterMode RenderTargetFilterMode = Graphics::FILTER_BILINEAR;
 
-        // Public Constructor(s)
-
         /**
          * Create a new Game
          *
          * @param config_ The game configuration.
          */
-        explicit Game(const GameConfig &config_);
+        Game(WindowConfig windowConfig_, const GameConfig &config_);
+        virtual ~Game() = default;
 
-        // Destructor
+        /**
+         * Get the game's window.
+         *
+         * @return The game window.
+         */
+        Window *GetGameWindow() const;
 
-        virtual ~Game();
-
-        // Public Methods
+        /**
+         * Get the graphics device.
+         *
+         * @return The graphics device.
+         */
+        Graphics::GraphicsDevice *GetGraphicsDevice();
 
         /**
          * Get the default OS window size

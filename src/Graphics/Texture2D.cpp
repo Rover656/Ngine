@@ -19,15 +19,15 @@
 #endif
 #endif
 
-#include "Rewrite/GraphicsDevice.h"
+#include "GraphicsDevice.h"
 
 namespace NerdThings::Ngine::Graphics {
-    void Texture2D::__CreateTexture(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_) {
+    void Texture2D::__CreateTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // Check format support
-        if ((!graphicsDevice_->GetGLSupportFlag(Rewrite::GraphicsDevice::GL_COMP_DXT))
+        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_DXT))
             && ((_Format == COMPRESSED_DXT1_RGB)
                 || (_Format == COMPRESSED_DXT1_RGBA)
                 || (_Format == COMPRESSED_DXT3_RGBA)
@@ -35,22 +35,22 @@ namespace NerdThings::Ngine::Graphics {
             throw std::runtime_error("DXT compressed texture format not supported");
         }
 
-        if ((!graphicsDevice_->GetGLSupportFlag(Rewrite::GraphicsDevice::GL_COMP_ETC1))
+        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ETC1))
             && (_Format == COMPRESSED_ETC1_RGB)) {
             throw std::runtime_error("ETC1 compressed texture format not supported");
         }
 
-        if ((!graphicsDevice_->GetGLSupportFlag(Rewrite::GraphicsDevice::GL_COMP_ETC2)) &&
+        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ETC2)) &&
             ((_Format == COMPRESSED_ETC2_RGB) || (_Format == COMPRESSED_ETC2_EAC_RGBA))) {
             throw std::runtime_error("ETC2 compressed texture format not supported");
         }
 
-        if ((!graphicsDevice_->GetGLSupportFlag(Rewrite::GraphicsDevice::GL_COMP_PVRT)) &&
+        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_PVRT)) &&
             ((_Format == COMPRESSED_PVRT_RGB) || (_Format == COMPRESSED_PVRT_RGBA))) {
             throw std::runtime_error("PVRT compressed texture format not supported");
         }
 
-        if ((!graphicsDevice_->GetGLSupportFlag(Rewrite::GraphicsDevice::GL_COMP_ASTC)) &&
+        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ASTC)) &&
             ((_Format == COMPRESSED_ASTC_4x4_RGBA) || (_Format == COMPRESSED_ASTC_8x8_RGBA))) {
             throw std::runtime_error("ASTC compressed texture format not supported");
         }
@@ -155,7 +155,7 @@ namespace NerdThings::Ngine::Graphics {
         Unload();
     }
 
-    Texture2D::Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
                          unsigned height_, PixelFormat format_, int mipmapCount_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
@@ -185,13 +185,13 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    Texture2D::Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
         // Create
         Image img(path_);
         *this = Texture2D(graphicsDevice_, &img);
     }
 
-    Texture2D::Texture2D(Rewrite::GraphicsDevice *graphicsDevice_, const Image *img_) {
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_) {
         // Create
         *this = Texture2D(graphicsDevice_, img_->PixelData, img_->Width, img_->Height, img_->Format, img_->MipmapCount);
     }
@@ -278,7 +278,9 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Texture2D::IsValid() const {
-#ifndef USE_EXPERIMENTAL_RENDERER
+#ifdef USE_EXPERIMENTAL_RENDERER
+        return _ID != 0 && Width > 0 && Height > 0;
+#else
         if (InternalTexture != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             if (InternalTexture->ID > 0)

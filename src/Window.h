@@ -14,7 +14,9 @@
 
 #include "Ngine.h"
 
-#if defined(PLATFORM_UWP)
+#if defined(PLATFORM_DESKTOP)
+typedef struct GLFWwindow GLFWwindow;
+#elif defined(PLATFORM_UWP)
 namespace NerdThings::Ngine::UWP {
     ref class GameApp;
 }
@@ -79,12 +81,13 @@ namespace NerdThings::Ngine {
         /**
          * The window title.
          *
-         * @note Only works on Desktop platforms.
+         * @note Only works on the Desktop platform.
          */
         std::string Title = "Game Window";
 
         /**
          * Whether or not to use V-Sync.
+         * This will lock the framerate of your game to the monitors refresh rate.
          */
         bool VSync = false;
     };
@@ -93,160 +96,149 @@ namespace NerdThings::Ngine {
      * Ngine window management wrapper.
      */
     class NEAPI Window {
-        // Private Fields
+        /**
+         * The current window.
+         */
+         static Window *m_currentWindow;
+
+#if defined(PLATFORM_DESKTOP)
+        /**
+         * GLFW Window.
+         */
+        GLFWwindow *m_GLFWWindow;
+#elif defined(PLATFORM_UWP)
+        /**
+         * EGL Context
+         */
+        EGLContext m_context;
 
         /**
-         * Current window height
+         * EGL Display
          */
-        static int _CurrentHeight;
+        EGLDisplay m_display;
 
         /**
-         * Current window width
+         * EGL Surface
          */
-        static int _CurrentWidth;
+        EGLSurface m_surface;
+#endif
+
+        /**
+         * Current window width.
+         */
+        int m_currentWidth = 0;
+
+        /**
+         * Current window height.
+         */
+        int m_currentHeight = 0;
 
         /**
          * Whether or not the window is initialized
          */
-        static bool _Initialized;
+        bool m_initialized = false;
 
         /**
          * Is the window currently fullscreen
          */
-        static bool _IsFullscreen;
+        bool m_isFullscreen = false;
 
         /**
          * X Position of window before fullscreen.
          */
-        static int _PreFullscreenPosX;
+        int m_preFullscreenPosX = 0;
 
         /**
          * Y Position of window before fullscreen.
          */
-        static int _PreFullscreenPosY;
+        int m_preFullscreenPosY = 0;
 
         /**
          * Width of window before fullscreen.
          */
-        static int _PreFullscreenSizeWidth;
+        int m_preFullscreenSizeWidth = 0;
 
         /**
          * Height of window before fullscreen.
          */
-        static int _PreFullscreenSizeHeight;
+        int m_preFullscreenSizeHeight = 0;
 
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
          * Whether or not a native console is allocated
          */
-        static bool _ConsoleAllocated;
+        bool m_consoleAllocated = false;
 
         /**
          * Console input stream
          */
-        static std::fstream _ConsoleIn;
+        std::fstream m_consoleIn;
 
         /**
          * Console output stream
          */
-        static std::fstream _ConsoleOut;
+        std::fstream m_consoleOut;
 
         /**
          * Console error stream
          */
-        static std::fstream _ConsoleErr;
+        std::fstream m_consoleErr;
 
         /**
          * Pointer to original input buffer
          */
-        static std::streambuf *_OldCinBuffer;
+        std::streambuf *m_oldCinBuffer;
 
         /**
          * Pointer to original output buffer
          */
-        static std::streambuf *_OldCoutBuffer;
+        std::streambuf *m_oldCoutBuffer;
 
         /**
          * Pointer to original error buffer
          */
-        static std::streambuf *_OldCerrBuffer;
+        std::streambuf *m_oldCerrBuffer;
 #endif
+
+        /**
+         * Apply the provided window config.
+         * This only happens when the window is created.
+         */
+        void _applyConfig(const WindowConfig &config_);
     public:
-        // Public Fields
-
         /**
-         * The current window config.
-         * When modified, you must call ApplyConfig().
-         */
-        static WindowConfig Config;
-
-#if defined(PLATFORM_DESKTOP)
-        /**
-         * GLFW Window pointer.
-         */
-        static void *WindowPtr;
-#elif defined(PLATFORM_UWP)
-        /**
-         * EGL Context
-         */
-        static EGLContext Context;
-
-        /**
-         * EGL Display
-         */
-        static EGLDisplay Display;
-
-        /**
-         * EGL Surface
-         */
-        static EGLSurface Surface;
-#endif
-
-        // Public Methods
-
-        /**
-         * Apply changes in config
-         */
-        static void ApplyConfig();
-
-        /**
-         * Close window and clean API.
+         * Create a new window.
          *
-         * @warning This will delete all data on the GPU. Rendering will no longer be possible.
+         * @param config_ The window config.
          */
-        static void Close();
+        explicit Window(const WindowConfig &config_);
+        ~Window();
 
         /**
-         * Get window height.
-         *
-         * @return Current window height.
+         * Make this window's context current.
          */
-        static int GetHeight();
+        void MakeCurrent();
+
+        /**
+         * Get the current window.
+         *
+         * @return The currently active window.
+         */
+        static Window *GetCurrent();
 
         /**
          * Get window width.
          *
          * @return Current window width.
          */
-        static int GetWidth();
+        int GetWidth();
 
         /**
-         * Create a new window.
-         */
-        static void Init();
-
-        /**
-         * Determine whether or not the window is focussed on.
+         * Get window height.
          *
-         * @return Whether or not the window has focus.
-         * @note This only works on Desktop and UWP platforms.
+         * @return Current window height.
          */
-        static bool IsFocussed();
-
-        /**
-         * Poll window events
-         */
-        static void PollEvents();
+        int GetHeight();
 
         /**
          * Resize the window
@@ -254,64 +246,114 @@ namespace NerdThings::Ngine {
          * @param width_ New window width.
          * @param height_ New window height.
          */
-        static void Resize(int width_, int height_);
+        void Resize(int width_, int height_);
 
         /**
-         * Set window config.
-         * Must be set before Initialization.
+         * Set whether or not VSync is enabled
          *
-         * @param config_ The new window configuration.
+         * @warning Makes this window's context current.
+         * @param flag_
          */
-        static void SetConfig(const WindowConfig &config_);
+        void SetVSyncEnabled(bool flag_);
+
+        /**
+         * Set the window icon.
+         *
+         * @param icon_ The new window icon.
+         */
+        void SetIcon(Graphics::Image *icon_);
+
+        /**
+         * Get whether or not the window is in fullscreen mode.
+         *
+         * @note This will still return false on platforms that don't support windowing, such as Xbox One or Android.
+         * @return Whether the window is full screen nor not.
+         */
+        bool IsFullscreen();
+
+        /**
+         * Toggle fullscreen. Enables if disabled and vice versa.
+         */
+        void ToggleFullscreen();
 
         /**
          * Set fullscreen.
          *
          * @param fullscreen_ Whether the window should be fullscreen.
          */
-        static void SetFullscreen(bool fullscreen_);
+        void SetFullscreen(bool fullscreen_);
 
         /**
          * Set whether or not the window can be resized.
          *
+         * @note This can only be enforced on the Desktop platform.
          * @param resizable_ Whether the window can be resized.
-         * @note Only works on Desktop platforms.
          */
-        static void SetResizable(bool resizable_);
+        void SetResizable(bool resizable_);
+
+        /**
+         * Get the window title.
+         *
+         * @warning This does not work yet.
+         * @todo Get this working.
+         */
+        std::string GetTitle();
 
         /**
          * Set window title.
          *
+         * @note Only works on Desktop platform.
          * @param title_ New window title.
-         * @note Only works on Desktop platforms.
          */
-        static void SetTitle(const std::string& title_);
+        void SetTitle(const std::string& title_);
 
         /**
-         * Enable or disable vsync.
+         * Set whether or not there should be a native debug console.
          *
-         * @param vsync_ Whether vsync is on or off.
+         * @note This only works on Windows native.
+         * @param flag_ Whether or not the debug console should be attached.
          */
-        static void SetVSync(bool vsync_);
+        void SetEnableNativeConsole(bool flag_);
 
         /**
-         * Determine Whether or not the program should close.
+         * Determine whether or not the window is focussed on.
          *
-         * @return Whether or not the program should close.
+         * @note This only works on Desktop and UWP platforms.
+         * @return Whether or not the window has focus.
          */
-        static bool ShouldClose();
-
-        /**
-         * Swap the window buffers
-         */
-        static void SwapBuffers();
+        bool IsFocussed();
 
         /**
          * Whether or not the window is visible.
          *
          * @return If the window is visible or not.
          */
-        static bool Visible();
+        bool IsVisible();
+
+        /**
+         * Poll window events.
+         */
+        void PollEvents();
+
+        /**
+         * Close window.
+         *
+         * @warning This will delete this window's context.
+         */
+        void Close();
+
+        /**
+         * Determine Whether or not the window should close.
+         * For example, the close button was pressed.
+         *
+         * @return Whether or not the window should close.
+         */
+        bool ShouldClose();
+
+        /**
+         * Swap the window buffers
+         */
+        void SwapBuffers();
     };
 }
 

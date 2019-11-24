@@ -17,6 +17,7 @@
 #include "../Audio/Music.h"
 #include "../Audio/Sound.h"
 #include "../Graphics/Font.h"
+#include "../Graphics/GraphicsDevice.h"
 #include "../Graphics/Texture2D.h"
 #include "Filesystem.h"
 
@@ -60,72 +61,84 @@ namespace NerdThings::Ngine::Filesystem {
     };
 
     /**
-     * Resource management.
+     * Resource management helper.
      * This will control the loading, unloading and overall lifetime of loadable assets.
      */
     class NEAPI ResourceManager {
         /**
+         * The graphics device we use to create graphics resources.
+         */
+        Graphics::GraphicsDevice *m_graphicsDevice;
+
+        /**
          * All named fonts.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> m_fonts;
+        std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> m_fonts;
 
         /**
          * All named music.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Audio::Music>> m_music;
+        std::unordered_map<std::string, std::unique_ptr<Audio::Music>> m_music;
 
         /**
          * All named sounds.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> m_sounds;
+        std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> m_sounds;
 
         /**
          * All named textures.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> m_textures;
+        std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> m_textures;
     public:
+        /**
+         * Create a new resource manager.
+         *
+         * @param graphicsDevice_ The graphics device for graphics resources.
+         */
+        ResourceManager(Graphics::GraphicsDevice *graphicsDevice_);
+        ~ResourceManager() = default;
         /**
          * The resource manager config.
          *
          * @note This should be configured *before* calling LoadResources().
          * @note To modify this, you should remember to DeleteAll() before calling LoadResources() again.
          */
-        static ResourceManagerConfig Config;
+        ResourceManagerConfig Config;
 
         /**
          * Delete all resources.
          *
          * @warning This will break any pointers to existing textures, fonts etc. Ensure this is handled before calling.
          */
-        static void DeleteAll();
+        void DeleteAll();
 
         /**
          * Delete a named font.
          *
          * @param name_ Font to be deleted.
          */
-        static void DeleteFont(const std::string &name_);
+        void DeleteFont(const std::string &name_);
 
         /**
          * Delete a named music.
          *
          * @param name_ Music to be deleted.
          */
-        static void DeleteMusic(const std::string &name_);
+        void DeleteMusic(const std::string &name_);
 
         /**
          * Delete a named sound.
          *
          * @param name_ Sound to be deleted.
          */
-        static void DeleteSound(const std::string &name_);
+        void DeleteSound(const std::string &name_);
 
         /**
          * Delete a named texture.
          *
          * @param name_ Texture to be deleted.
          */
-        static void DeleteTexture(const std::string &name_);
+        void DeleteTexture(const std::string &name_);
 
         /**
          * Get a named font.
@@ -133,7 +146,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ Font to get.
          * @return Pointer to the font.
          */
-        static Graphics::Font *GetFont(const std::string &name_);
+        Graphics::Font *GetFont(const std::string &name_);
 
         /**
          * Get a named music.
@@ -141,7 +154,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ Music to get.
          * @return Pointer to the music.
          */
-        static Audio::Music *GetMusic(const std::string &name_);
+        Audio::Music *GetMusic(const std::string &name_);
 
         /**
          * Get a named sound.
@@ -149,7 +162,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ Sound to get.
          * @return Pointer to the sound.
          */
-        static Audio::Sound *GetSound(const std::string &name_);
+        Audio::Sound *GetSound(const std::string &name_);
 
         /**
          * Get a named texture.
@@ -157,12 +170,12 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ Texture to get.
          * @return Pointer to the texture.
          */
-        static Graphics::Texture2D *GetTexture(const std::string &name_);
+        Graphics::Texture2D *GetTexture(const std::string &name_);
 
         /**
          * Loads all data according to the Config.
          */
-        static void LoadResources();
+        void LoadResources();
 
         /**
          * Load font from file.
@@ -173,7 +186,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param baseSize_ The base size for the font.
          * @return Whether or not the font was loaded.
          */
-        static bool LoadFont(const Path &inPath_, const std::string &name_, int baseSize_ = -1);
+        bool LoadFont(const Path &inPath_, const std::string &name_, int baseSize_ = -1);
 
         /**
          * Load music from file.
@@ -182,7 +195,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ The music's name.
          * @return Whether or not the music was loaded.
          */
-        static bool LoadMusic(const Path &inPath_, const std::string &name_);
+        bool LoadMusic(const Path &inPath_, const std::string &name_);
 
         /**
          * Load sound from file.
@@ -191,7 +204,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ The sound's name.
          * @return Whether or not the sound was loaded.
          */
-        static bool LoadSound(const Path &inPath_, const std::string &name_);
+        bool LoadSound(const Path &inPath_, const std::string &name_);
 
         /**
          * Load texture from file.
@@ -200,7 +213,7 @@ namespace NerdThings::Ngine::Filesystem {
          * @param name_ The texture's name.
          * @return Whether or not the texture was loaded.
          */
-        static bool LoadTexture(const Path &inPath_, const std::string &name_);
+        bool LoadTexture(const Path &inPath_, const std::string &name_);
     };
 }
 

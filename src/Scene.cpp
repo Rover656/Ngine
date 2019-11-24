@@ -155,7 +155,7 @@ namespace NerdThings::Ngine {
         return _CullAreaWidth / scale;
     }
 
-    Game *Scene::GetParentGame() {
+    Game *Scene::GetGameGame() {
         return _ParentGame;
     }
 
@@ -185,7 +185,7 @@ namespace NerdThings::Ngine {
             return _ParentGame->Config.TargetHeight / scale;
         } else {
             // Window size
-            return Window::GetHeight() / scale;
+            return _ParentGame->GetGameWindow()->GetWidth() / scale;
         }
     }
 
@@ -209,7 +209,7 @@ namespace NerdThings::Ngine {
             return _ParentGame->Config.TargetWidth / scale;
         } else {
             // Window size
-            return Window::GetWidth() / scale;
+            return _ParentGame->GetGameWindow()->GetWidth() / scale;
         }
     }
 

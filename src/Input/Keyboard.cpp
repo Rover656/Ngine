@@ -139,7 +139,7 @@ namespace NerdThings::Ngine::Input {
     void Keyboard::Init() {
 #if defined(PLATFORM_DESKTOP)
         // Register events
-        glfwSetKeyCallback((GLFWwindow *)Window::WindowPtr, Keyboard::GLFWKeyCallback);
+//        glfwSetKeyCallback((GLFWwindow *)Window::m_GLFWWindow, Keyboard::GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
         // UWP events
         auto window = CoreWindow::GetForCurrentThread();

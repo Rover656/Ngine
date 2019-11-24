@@ -15,8 +15,8 @@
 #include "../../Ngine.h"
 
 #include "../Color.h"
+#include "../GraphicsDevice.h"
 #include "../Texture2D.h"
-#include "GraphicsDevice.h"
 #include "OpenGLDefines.h"
 #include "QuadRenderable.h"
 #include "Renderable.h"
