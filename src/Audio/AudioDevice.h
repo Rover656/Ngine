@@ -34,42 +34,42 @@ namespace NerdThings::Ngine::Audio {
         /**
          * Active music streams
          */
-        static std::vector<Music *> _ActiveMusic;
+        static std::vector<Music *> m_activeMusic;
 
         /**
          * The audio mutex
          */
-        static ma_mutex _AudioLock;
+        static ma_mutex m_audioLock;
 
         /**
          * The first tracked buffer
          */
-        static AudioBuffer *_BufferFirst;
+        static AudioBuffer *m_bufferFirst;
 
         /**
          * The last tracked buffer
          */
-        static AudioBuffer *_BufferLast;
+        static AudioBuffer *m_bufferLast;
 
         /**
          * Miniaudio context
          */
-        static ma_context _Context;
+        static ma_context m_context;
 
         /**
          * Miniaudio device
          */
-        static ma_device _Device;
+        static ma_device m_device;
 
         /**
          * Whether or not the device is initialized
          */
-        static bool _Initialized;
+        static bool m_initialized;
 
         /**
          * Device master volume
          */
-        static float _MasterVolume;
+        static float m_masterVolume;
 
         /**
          * Read data from the converter.
@@ -80,7 +80,7 @@ namespace NerdThings::Ngine::Audio {
          * @param pUserData Userdata.
          * @return The number of frames read.
          */
-        static ma_uint32 __AudioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
+        static ma_uint32 _audioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
 
         /**
          * Log miniaudio errors.
@@ -90,7 +90,7 @@ namespace NerdThings::Ngine::Audio {
          * @param logLevel Log/Error level.
          * @param msg Log message.
          */
-        static void __LogCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char* msg);
+        static void _logCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char* msg);
 
         /**
          * Audio mixer.
@@ -100,7 +100,7 @@ namespace NerdThings::Ngine::Audio {
          * @param frameCount_ Frame count.
          * @param localVolume_ Local/Master volume.
          */
-        static void __MixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_, float localVolume_);
+        static void _mixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_, float localVolume_);
 
         /**
          * Send audio data to the audio device.
@@ -110,21 +110,21 @@ namespace NerdThings::Ngine::Audio {
          * @param pFramesInput Frames in.
          * @param frameCount Frame count.
          */
-        static void __SendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput, ma_uint32 frameCount);
+        static void _sendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput, ma_uint32 frameCount);
 
         /**
          * Track an audio buffer.
          *
          * @param buffer_ Buffer to track
          */
-        static void __TrackAudioBuffer(AudioBuffer *buffer_);
+        static void _trackAudioBuffer(AudioBuffer *buffer_);
 
         /**
          * Untrack an audio buffer.
          *
          * @param buffer_ Buffer to stop tracking.
          */
-        static void __UntrackAudioBuffer(AudioBuffer *buffer_);
+        static void _untrackAudioBuffer(AudioBuffer *buffer_);
     public:
         /**
          * Close an audio buffer

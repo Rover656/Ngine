@@ -18,21 +18,21 @@
 namespace NerdThings::Ngine::Audio {
     // Private Fields
 
-    std::vector<Music *> AudioDevice::_ActiveMusic;
+    std::vector<Music *> AudioDevice::m_activeMusic;
 
-    ma_mutex AudioDevice::_AudioLock;
-    AudioBuffer *AudioDevice::_BufferFirst;
-    AudioBuffer *AudioDevice::_BufferLast;
-    ma_context AudioDevice::_Context;
-    ma_device AudioDevice::_Device;
-    bool AudioDevice::_Initialized = false;
-    float AudioDevice::_MasterVolume = 1.0f;
+    ma_mutex AudioDevice::m_audioLock;
+    AudioBuffer *AudioDevice::m_bufferFirst;
+    AudioBuffer *AudioDevice::m_bufferLast;
+    ma_context AudioDevice::m_context;
+    ma_device AudioDevice::m_device;
+    bool AudioDevice::m_initialized = false;
+    float AudioDevice::m_masterVolume = 1.0f;
 
     // Private Methods
 
-    ma_uint32 AudioDevice::__AudioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount,
-                                                void *pUserData) {
-        if (!_Initialized) return 0;
+    ma_uint32 AudioDevice::_audioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount,
+                                               void *pUserData) {
+        if (!m_initialized) return 0;
         auto buffer = (AudioBuffer *)pUserData;
 
         auto subBufferSizeInFrames = (buffer->BufferSizeInFrames > 1) ? buffer->BufferSizeInFrames/2 : buffer->BufferSizeInFrames;
@@ -102,32 +102,32 @@ namespace NerdThings::Ngine::Audio {
         return framesRead;
     }
 
-    void AudioDevice::__LogCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char *msg) {
+    void AudioDevice::_logCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char *msg) {
         ConsoleMessage(std::string(msg), "ERR", "miniaudio");
     }
 
-    void AudioDevice::__MixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_,
-                                       float localVolume_) {
+    void AudioDevice::_mixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_,
+                                      float localVolume_) {
         for (ma_uint32 iFrame = 0; iFrame < frameCount_; ++iFrame) {
-            for (ma_uint32 iChannel = 0; iChannel < _Device.playback.channels; ++iChannel) {
-                float *frameOut = framesOut_ + (iFrame*_Device.playback.channels);
-                const float *frameIn = framesIn_ + (iFrame*_Device.playback.channels);
+            for (ma_uint32 iChannel = 0; iChannel < m_device.playback.channels; ++iChannel) {
+                float *frameOut = framesOut_ + (iFrame * m_device.playback.channels);
+                const float *frameIn = framesIn_ + (iFrame * m_device.playback.channels);
 
-                frameOut[iChannel] += (frameIn[iChannel]*_MasterVolume*localVolume_);
+                frameOut[iChannel] += (frameIn[iChannel] * m_masterVolume * localVolume_);
             }
         }
     }
 
-    void AudioDevice::__SendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput,
-                                              ma_uint32 frameCount) {
-        if (!_Initialized) return;
+    void AudioDevice::_sendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput,
+                                             ma_uint32 frameCount) {
+        if (!m_initialized) return;
         // Mixing is just an accumulation, init output buffer to 0
         memset(pFramesOut, 0, frameCount*pDevice->playback.channels*ma_get_bytes_per_sample(pDevice->playback.format));
 
         // Mutex for thread safety
-        ma_mutex_lock(&_AudioLock);
+        ma_mutex_lock(&m_audioLock);
         {
-            for (auto buffer = _BufferFirst; buffer != nullptr; buffer = buffer->Next) {
+            for (auto buffer = m_bufferFirst; buffer != nullptr; buffer = buffer->Next) {
                 // Ignore stopped or paused sounds
                 if (!buffer->Playing || buffer->Paused) continue;
 
@@ -154,10 +154,10 @@ namespace NerdThings::Ngine::Audio {
 
                         ma_uint32 framesJustRead = (ma_uint32)ma_pcm_converter_read(&buffer->DSP, tmpBuffer, framesToReadRightNow);
                         if (framesJustRead > 0) {
-                            float *framesOut = (float *)pFramesOut + (framesRead*_Device.playback.channels);
+                            float *framesOut = (float *)pFramesOut + (framesRead * m_device.playback.channels);
                             float *framesIn = tmpBuffer;
 
-                            __MixAudioFrames(framesOut, framesIn, framesJustRead, buffer->Volume);
+                            _mixAudioFrames(framesOut, framesIn, framesJustRead, buffer->Volume);
 
                             framesToRead -= framesJustRead;
                             framesRead += framesJustRead;
@@ -178,47 +178,47 @@ namespace NerdThings::Ngine::Audio {
                 }
             }
         }
-        ma_mutex_unlock(&_AudioLock);
+        ma_mutex_unlock(&m_audioLock);
     }
 
-    void AudioDevice::__TrackAudioBuffer(AudioBuffer *buffer_) {
-        if (!_Initialized) return;
-        ma_mutex_lock(&_AudioLock);
+    void AudioDevice::_trackAudioBuffer(AudioBuffer *buffer_) {
+        if (!m_initialized) return;
+        ma_mutex_lock(&m_audioLock);
         {
-            if (_BufferFirst == nullptr) _BufferFirst = buffer_;
+            if (m_bufferFirst == nullptr) m_bufferFirst = buffer_;
             else {
-                _BufferLast->Next = buffer_;
-                buffer_->Prev = _BufferLast;
+                m_bufferLast->Next = buffer_;
+                buffer_->Prev = m_bufferLast;
             }
 
-            _BufferLast = buffer_;
+            m_bufferLast = buffer_;
         }
-        ma_mutex_unlock(&_AudioLock);
+        ma_mutex_unlock(&m_audioLock);
     }
 
-    void AudioDevice::__UntrackAudioBuffer(AudioBuffer *buffer_) {
-        if (!_Initialized) return;
-        ma_mutex_lock(&_AudioLock);
+    void AudioDevice::_untrackAudioBuffer(AudioBuffer *buffer_) {
+        if (!m_initialized) return;
+        ma_mutex_lock(&m_audioLock);
         {
-            if (buffer_->Prev == nullptr) _BufferFirst = buffer_->Next;
+            if (buffer_->Prev == nullptr) m_bufferFirst = buffer_->Next;
             else buffer_->Prev->Next = buffer_->Next;
 
-            if (buffer_->Next == nullptr) _BufferLast = buffer_->Prev;
+            if (buffer_->Next == nullptr) m_bufferLast = buffer_->Prev;
             else buffer_->Next->Prev = buffer_->Prev;
 
             buffer_->Prev = nullptr;
             buffer_->Next = nullptr;
         }
-        ma_mutex_unlock(&_AudioLock);
+        ma_mutex_unlock(&m_audioLock);
     }
 
     // Public Methods
 
     void AudioDevice::CloseAudioBuffer(AudioBuffer *buffer_) {
-        if (!_Initialized) return;
+        if (!m_initialized) return;
         if (buffer_ != nullptr) {
             // Untrack buffer
-            __UntrackAudioBuffer(buffer_);
+            _untrackAudioBuffer(buffer_);
 
             // Delete
             free(buffer_->Buffer);
@@ -227,12 +227,12 @@ namespace NerdThings::Ngine::Audio {
     }
 
     void AudioDevice::Close() {
-        if (_Initialized) {
-            _Initialized = false;
+        if (m_initialized) {
+            m_initialized = false;
 
-            ma_mutex_uninit(&_AudioLock);
-            ma_device_uninit(&_Device);
-            ma_context_uninit(&_Context);
+            ma_mutex_uninit(&m_audioLock);
+            ma_device_uninit(&m_device);
+            ma_context_uninit(&m_context);
 
             ConsoleMessage("Audio device closed successfully.", "NOTICE", "AudioDevice");
 
@@ -241,7 +241,7 @@ namespace NerdThings::Ngine::Audio {
 
     AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
                                               ma_uint32 bufferSizeInFrames_, int usage_) {
-        if (!_Initialized) return nullptr;
+        if (!m_initialized) return nullptr;
         auto *buffer = new AudioBuffer();
 
         buffer->Buffer = calloc(bufferSizeInFrames_ * channels_ * ma_get_bytes_per_sample(format_), 1);
@@ -262,7 +262,7 @@ namespace NerdThings::Ngine::Audio {
         dspConfig.channelsOut = DEVICE_CHANNELS;
         dspConfig.sampleRateIn = sampleRate_;
         dspConfig.sampleRateOut = DEVICE_SAMPLE_RATE;
-        dspConfig.onRead = __AudioBufferDSPRead;
+        dspConfig.onRead = _audioBufferDSPRead;
         dspConfig.pUserData = buffer;
         dspConfig.allowDynamicSampleRate = true;
 
@@ -289,7 +289,7 @@ namespace NerdThings::Ngine::Audio {
         buffer->IsSubBufferProcessed[1] = true;
 
         // Track buffer
-        __TrackAudioBuffer(buffer);
+        _trackAudioBuffer(buffer);
 
         return buffer;
     }
@@ -305,7 +305,7 @@ namespace NerdThings::Ngine::Audio {
         ma_format formatIn = ((stream.SampleSize == 8) ? ma_format_u8 : ((stream.SampleSize == 16) ? ma_format_s16 : ma_format_f32));
 
         // The size of a streaming buffer must be at least double the size of a period
-        unsigned int periodSize = _Device.playback.internalBufferSizeInFrames/_Device.playback.internalPeriods;
+        unsigned int periodSize = m_device.playback.internalBufferSizeInFrames / m_device.playback.internalPeriods;
         unsigned int subBufferSize = AUDIO_BUFFER_SIZE;
 
         if (subBufferSize < periodSize) subBufferSize = periodSize;
@@ -322,13 +322,13 @@ namespace NerdThings::Ngine::Audio {
 
     void AudioDevice::Initialize() {
         // Cant run twice
-        if (_Initialized) return;
+        if (m_initialized) return;
 
         // Init context
         ma_context_config contextConfig = ma_context_config_init();
-        contextConfig.logCallback = __LogCallback;
+        contextConfig.logCallback = _logCallback;
 
-        ma_result result = ma_context_init(nullptr, 0, &contextConfig, &_Context);
+        ma_result result = ma_context_init(nullptr, 0, &contextConfig, &m_context);
         if (result != MA_SUCCESS) {
             ConsoleMessage("Failed to initialize audio context.", "ERR", "AudioDevice");
             return;
@@ -343,49 +343,49 @@ namespace NerdThings::Ngine::Audio {
         config.capture.format = ma_format_s16;
         config.capture.channels = 1;
         config.sampleRate = DEVICE_SAMPLE_RATE;
-        config.dataCallback = __SendAudioDataToDevice;
+        config.dataCallback = _sendAudioDataToDevice;
         config.pUserData = nullptr;
 
-        result = ma_device_init(&_Context, &config, &_Device);
+        result = ma_device_init(&m_context, &config, &m_device);
         if (result != MA_SUCCESS) {
             ConsoleMessage("Failed to initialize audio playback device.", "ERR", "AudioDevice");
-            ma_context_uninit(&_Context);
+            ma_context_uninit(&m_context);
             return;
         }
 
         // Keep device running all the time.
-        result = ma_device_start(&_Device);
+        result = ma_device_start(&m_device);
         if (result != MA_SUCCESS) {
             ConsoleMessage("Failed to start audio playback device.", "ERR", "AudioDevice");
-            ma_device_uninit(&_Device);
-            ma_context_uninit(&_Context);
+            ma_device_uninit(&m_device);
+            ma_context_uninit(&m_context);
             return;
         }
 
         // Thread mixer
-        result = ma_mutex_init(&_Context, &_AudioLock);
+        result = ma_mutex_init(&m_context, &m_audioLock);
         if (result != MA_SUCCESS) {
             ConsoleMessage("Failed to create mutex for audio mixing.", "ERR", "AudioDevice");
-            ma_device_uninit(&_Device);
-            ma_context_uninit(&_Context);
+            ma_device_uninit(&m_device);
+            ma_context_uninit(&m_context);
             return;
         }
 
         ConsoleMessage("Audio device initialized successfully!", "NOTICE", "AudioDevice");
-        ConsoleMessage("Audio backend: miniaudio/" + std::string(ma_get_backend_name(_Context.backend)), "NOTICE", "AudioDevice");
-        ConsoleMessage("Audio format: " + std::string(ma_get_format_name(_Device.playback.format)) + " -> " + std::string(ma_get_format_name(_Device.playback.internalFormat)), "NOTICE", "AudioDevice");
+        ConsoleMessage("Audio backend: miniaudio/" + std::string(ma_get_backend_name(m_context.backend)), "NOTICE", "AudioDevice");
+        ConsoleMessage("Audio format: " + std::string(ma_get_format_name(m_device.playback.format)) + " -> " + std::string(ma_get_format_name(m_device.playback.internalFormat)), "NOTICE", "AudioDevice");
 
-        _Initialized = true;
+        m_initialized = true;
     }
 
     bool AudioDevice::IsReady() {
-        return _Initialized;
+        return m_initialized;
     }
 
     void AudioDevice::SetMasterVolume(float vol_) {
-        _MasterVolume = vol_;
-        if (_MasterVolume < 0.0f) _MasterVolume = 0.0f;
-        if (_MasterVolume > 1.0f) _MasterVolume = 1.0f;
+        m_masterVolume = vol_;
+        if (m_masterVolume < 0.0f) m_masterVolume = 0.0f;
+        if (m_masterVolume > 1.0f) m_masterVolume = 1.0f;
     }
 
     void AudioDevice::Update() {

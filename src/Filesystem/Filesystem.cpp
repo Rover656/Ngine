@@ -48,47 +48,47 @@ namespace NerdThings::Ngine::Filesystem {
 
     Path::Path() {
         // Mark as improper
-        _HasProperValue = false;
+        m_hasProperValue = false;
     }
 
     Path::Path(const std::string &pathString_) {
         // Set internal path
-        _InternalPath = pathString_;
+        m_internalPath = pathString_;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     Path::Path(const std::string &path_, const std::string &pathB_) {
         // Set internal path
-        _InternalPath = path_ + __GetJoinChar() + pathB_;
+        m_internalPath = path_ + _getJoinChar() + pathB_;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     Path::Path(const Path& path_, const Path& pathB_) {
         // Set internal path
-        _InternalPath = path_._InternalPath + __GetJoinChar() + pathB_._InternalPath;
+        m_internalPath = path_.m_internalPath + _getJoinChar() + pathB_.m_internalPath;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     Path::Path(const Path &path_, const std::string &pathB_) {
         // Set internal path
-        _InternalPath = path_._InternalPath + __GetJoinChar() + pathB_;
+        m_internalPath = path_.m_internalPath + _getJoinChar() + pathB_;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     Path::Path(const std::string &path_, const Path &pathB_) {
         // Set internal path
-        _InternalPath = path_ + __GetJoinChar() + pathB_._InternalPath;
+        m_internalPath = path_ + _getJoinChar() + pathB_.m_internalPath;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     // Public Methods
@@ -212,7 +212,7 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Get file extension
         auto dot = path.find_last_of('.');
-        auto lastSlash = path.find_last_of(__GetJoinChar());
+        auto lastSlash = path.find_last_of(_getJoinChar());
 
         if (std::string::npos != dot) {
             if (dot > lastSlash) {
@@ -228,7 +228,7 @@ namespace NerdThings::Ngine::Filesystem {
         auto nameTemp = GetString();
 
         // Search for the last directory slash
-        auto fSlash = nameTemp.find_last_of(__GetJoinChar());
+        auto fSlash = nameTemp.find_last_of(_getJoinChar());
         if (std::string::npos != fSlash) {
             nameTemp.erase(0, fSlash + 1);
         }
@@ -243,10 +243,10 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     Path Path::GetParent() const {
-        auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
+        auto lastSlash = m_internalPath.find_last_of(_getJoinChar());
 
         if (std::string::npos != lastSlash)
-            return Path(_InternalPath.substr(0, lastSlash));
+            return Path(m_internalPath.substr(0, lastSlash));
         else return Path();
     }
 
@@ -285,23 +285,23 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Remove initial slash if left
         if (str.size() > 0) {
-            if (str[0] == __GetJoinChar()) {
+            if (str[0] == _getJoinChar()) {
                 str.erase(0, 1);
             }
         }
 
         // Prepend ../ for all extra parts
-        int subdirs = (int)std::count(baseStr.begin(), baseStr.end(), __GetJoinChar());
+        int subdirs = (int)std::count(baseStr.begin(), baseStr.end(), _getJoinChar());
 
         // Add one more if it doesn't end in a slash
         if (baseStr.size() > 0) {
-            if (baseStr[baseStr.size() - 1] != __GetJoinChar()) {
+            if (baseStr[baseStr.size() - 1] != _getJoinChar()) {
                 subdirs += 1;
             }
         }
 
         for (auto i = 0; i < subdirs; i++) {
-            str = std::string("..") + __GetJoinChar() + str;
+            str = std::string("..") + _getJoinChar() + str;
         }
 
         // Return, we're done
@@ -329,24 +329,24 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     std::string Path::GetString() const {
-        return _InternalPath;
+        return m_internalPath;
     }
 
     std::string Path::GetStringNoExtension() const {
-        auto lastDot = _InternalPath.find_last_of('.');
-        auto lastSlash = _InternalPath.find_last_of(__GetJoinChar());
+        auto lastDot = m_internalPath.find_last_of('.');
+        auto lastSlash = m_internalPath.find_last_of(_getJoinChar());
 
         if (std::string::npos != lastDot) {
             if (std::string::npos != lastSlash) {
                 if (lastDot > lastSlash) {
-                    return _InternalPath.substr(0, lastDot);
+                    return m_internalPath.substr(0, lastDot);
                 }
             } else {
-                return _InternalPath.substr(0, lastDot);
+                return m_internalPath.substr(0, lastDot);
             }
         }
 
-        return _InternalPath;
+        return m_internalPath;
     }
 
     Path Path::GetWorkingDirectory() {
@@ -390,12 +390,12 @@ namespace NerdThings::Ngine::Filesystem {
     bool Path::IsAbsolute() const {
 #if defined(_WIN32)
         // Test if we have (*):\ at the start
-        if (_InternalPath.size() > 3)
-            return _InternalPath[1] == ':' && _InternalPath[2] == '\\';
+        if (m_internalPath.size() > 3)
+            return m_internalPath[1] == ':' && m_internalPath[2] == '\\';
 #elif defined(__linux__) || defined(__APPLE__)
         // Test we have an initial slash
-        if (_InternalPath.size() > 0)
-            return _InternalPath[0] == '/';
+        if (m_internalPath.size() > 0)
+            return m_internalPath[0] == '/';
 #endif
         return false;
     }
@@ -409,7 +409,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool Path::Valid() const {
-        return _HasProperValue;
+        return m_hasProperValue;
     }
 
     // Operators
@@ -432,22 +432,22 @@ namespace NerdThings::Ngine::Filesystem {
 
     void Path::operator/=(const Path &pathB_) {
         // Set internal path
-        _InternalPath = _InternalPath + __GetJoinChar() + pathB_._InternalPath;
+        m_internalPath = m_internalPath + _getJoinChar() + pathB_.m_internalPath;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     void Path::operator/=(const std::string &pathB_) {
         // Set internal path
-        _InternalPath = _InternalPath + __GetJoinChar() + pathB_;
+        m_internalPath = m_internalPath + _getJoinChar() + pathB_;
 
         // Check path
-        __CorrectPath();
+        _correctPath();
     }
 
     Path::operator std::string() const {
-        return _InternalPath;
+        return m_internalPath;
     }
 
     bool Path::operator==(Path rhs) {
@@ -460,7 +460,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Private Methods
 
-    std::string Path::__CleanPathString(const std::string &str_) {
+    std::string Path::_cleanPathString(const std::string &str_) {
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
         // TODO: Another way to fix Unicode path names.
         // TODO: Basically Ngine needs better Unicode support in general
@@ -501,20 +501,20 @@ namespace NerdThings::Ngine::Filesystem {
         return str_;
     }
 
-    void Path::__CorrectPath() {
+    void Path::_correctPath() {
         // Clean path
-        _InternalPath = __CleanPathString(_InternalPath);
+        m_internalPath = _cleanPathString(m_internalPath);
 
         // Search for empty string
-        if (_InternalPath.empty()) {
+        if (m_internalPath.empty()) {
             // Not a correct value
-            _HasProperValue = false;
+            m_hasProperValue = false;
             return;
         }
 
         // Look for any non-whitespace chars
         bool hasNonWhitespace = false;
-        for (auto c : _InternalPath) {
+        for (auto c : m_internalPath) {
             if (c != ' ') {
                 hasNonWhitespace = true;
                 break;
@@ -523,24 +523,24 @@ namespace NerdThings::Ngine::Filesystem {
 
         if (!hasNonWhitespace) {
             // Not a correct value
-            _HasProperValue = false;
+            m_hasProperValue = false;
             return;
         }
 
         // Look for notation foreign to this OS
-        if (__GetJoinChar() != '\\') {
-            std::replace(_InternalPath.begin(), _InternalPath.end(), '\\', __GetJoinChar());
+        if (_getJoinChar() != '\\') {
+            std::replace(m_internalPath.begin(), m_internalPath.end(), '\\', _getJoinChar());
         }
 
-        if (__GetJoinChar() != '/') {
-            std::replace(_InternalPath.begin(), _InternalPath.end(), '/', __GetJoinChar());
+        if (_getJoinChar() != '/') {
+            std::replace(m_internalPath.begin(), m_internalPath.end(), '/', _getJoinChar());
         }
 
         // Is valid
-        _HasProperValue = true;
+        m_hasProperValue = true;
     }
 
-    std::string Path::__GetHome() {
+    std::string Path::_getHome() {
 #if defined(__linux__) || defined(__APPLE__)
         int uid = getuid();
 
@@ -555,7 +555,7 @@ namespace NerdThings::Ngine::Filesystem {
         return "";
     }
 
-    char Path::__GetJoinChar() {
+    char Path::_getJoinChar() {
         // TODO: See if there are any more variations
 #if defined(_WIN32)
         return '\\';
@@ -572,25 +572,25 @@ namespace NerdThings::Ngine::Filesystem {
 
     void FilesystemObject::Move(const Path &newPath_) {
         // Move file
-        rename(ObjectPath.GetString().c_str(), newPath_.GetString().c_str());
+        rename(m_objectPath.GetString().c_str(), newPath_.GetString().c_str());
     }
 
     void FilesystemObject::Rename(const std::string &newName_) {
         // Rename
-        Move(ObjectPath / newName_);
+        Move(m_objectPath / newName_);
     }
 
     std::string FilesystemObject::GetObjectName() const {
-        return ObjectPath.GetObjectName();
+        return m_objectPath.GetObjectName();
     }
 
     Path FilesystemObject::GetObjectPath() const {
-        return ObjectPath;
+        return m_objectPath;
     }
 
     // Protected Constructors
 
-    FilesystemObject::FilesystemObject(const Path &path_) : ObjectPath(path_) {}
+    FilesystemObject::FilesystemObject(const Path &path_) : m_objectPath(path_) {}
 
     ////////
     // File
@@ -608,7 +608,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     File::File() : FilesystemObject(Path()) {
         // Create an empty handler
-        _InternalHandle = std::make_shared<InternalFileHandler>();
+        m_internalHandle = std::make_shared<InternalFileHandler>();
     }
 
     File::File(const Path &path_) : FilesystemObject(path_) {
@@ -616,7 +616,7 @@ namespace NerdThings::Ngine::Filesystem {
         if (!path_.Valid()) throw std::runtime_error("File must be given a valid path.");
 
         // Create an empty handler
-        _InternalHandle = std::make_shared<InternalFileHandler>();
+        m_internalHandle = std::make_shared<InternalFileHandler>();
     }
 
     // Destructor
@@ -630,13 +630,13 @@ namespace NerdThings::Ngine::Filesystem {
 
     void File::Close() {
         // Close file
-        if (_InternalHandle->InternalHandle != nullptr) {
-            fclose(_InternalHandle->InternalHandle);
-            _InternalHandle->InternalHandle = nullptr;
+        if (m_internalHandle->InternalHandle != nullptr) {
+            fclose(m_internalHandle->InternalHandle);
+            m_internalHandle->InternalHandle = nullptr;
         }
 
         // Set mode
-        _InternalOpenMode = MODE_NONE;
+        m_internalOpenMode = MODE_NONE;
     }
 
     File File::CreateNewFile(const Path &path_, bool leaveOpen_, bool binary_) {
@@ -652,7 +652,7 @@ namespace NerdThings::Ngine::Filesystem {
         Close();
 
         // Remove from filesystem
-        return remove(ObjectPath.GetString().c_str()) == 0;
+        return remove(m_objectPath.GetString().c_str()) == 0;
     }
 
     bool File::Exists() const {
@@ -660,7 +660,7 @@ namespace NerdThings::Ngine::Filesystem {
         if (IsOpen()) return true;
 
         // Using C apis so that it is cross platform
-        FILE *file = fopen(ObjectPath.GetString().c_str(), "r");
+        FILE *file = fopen(m_objectPath.GetString().c_str(), "r");
         if (file != nullptr) {
             fclose(file);
             return true;
@@ -669,7 +669,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     FileOpenMode File::GetCurrentMode() const {
-        return _InternalOpenMode;
+        return m_internalOpenMode;
     }
 
     File File::GetFile(const Path &path_) {
@@ -677,7 +677,7 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     std::string File::GetFileExtension() const {
-        return ObjectPath.GetFileExtension();
+        return m_objectPath.GetFileExtension();
     }
 
     FILE *File::GetFileHandle() const {
@@ -686,7 +686,7 @@ namespace NerdThings::Ngine::Filesystem {
             return nullptr;
         }
 
-        return _InternalHandle->InternalHandle;
+        return m_internalHandle->InternalHandle;
     }
 
     int File::GetSize() const {
@@ -695,68 +695,68 @@ namespace NerdThings::Ngine::Filesystem {
             return 0;
         }
 
-        fseek(_InternalHandle->InternalHandle, 0, SEEK_END);
-        auto s = ftell(_InternalHandle->InternalHandle);
-        fseek(_InternalHandle->InternalHandle, 0, SEEK_SET);
+        fseek(m_internalHandle->InternalHandle, 0, SEEK_END);
+        auto s = ftell(m_internalHandle->InternalHandle);
+        fseek(m_internalHandle->InternalHandle, 0, SEEK_SET);
 
         return s;
     }
 
     bool File::IsOpen() const {
-        if (_InternalHandle == nullptr) return false;
+        if (m_internalHandle == nullptr) return false;
 
-        return _InternalHandle->InternalHandle != nullptr;
+        return m_internalHandle->InternalHandle != nullptr;
     }
 
     bool File::Open(FileOpenMode mode_, bool binary_) {
         // Check validity of path
-        if (!ObjectPath.Valid()) throw std::runtime_error("This file's path is invalid");
+        if (!m_objectPath.Valid()) throw std::runtime_error("This file's path is invalid");
 
         // Open with selected mode
         switch(mode_) {
             case MODE_READ:
                 // Check this is actually a file
-                if (ObjectPath.GetResourceType() != TYPE_FILE) throw std::runtime_error("This path does not point to a file.");
+                if (m_objectPath.GetResourceType() != TYPE_FILE) throw std::runtime_error("This path does not point to a file.");
 
                 // Open binary file for read
-                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "rb" : "r");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "rb" : "r");
 
                 // Set mode
-                _InternalOpenMode = mode_;
+                m_internalOpenMode = mode_;
                 break;
             case MODE_WRITE:
                 // Open binary file for write
-                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "wb" : "w");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "wb" : "w");
 
                 // Set mode
-                _InternalOpenMode = mode_;
+                m_internalOpenMode = mode_;
                 break;
             case MODE_APPEND:
                 // Open binary file for append
-                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "ab" : "a");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "ab" : "a");
 
                 // Set mode
-                _InternalOpenMode = mode_;
+                m_internalOpenMode = mode_;
                 break;
             case MODE_READ_WRITE:
                 // Open binary file for read and write
-                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "w+b" : "w+");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "w+b" : "w+");
 
                 // Set mode
-                _InternalOpenMode = mode_;
+                m_internalOpenMode = mode_;
                 break;
             case MODE_READ_APPEND:
                 // Open binary file for read and append
-                _InternalHandle->InternalHandle = fopen(ObjectPath.GetString().c_str(), binary_ ? "a+b" : "a+");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "a+b" : "a+");
 
                 // Set mode
-                _InternalOpenMode = mode_;
+                m_internalOpenMode = mode_;
                 break;
             default:
                 ConsoleMessage("File mode not supported.", "WARN", "File");
 
                 // Set mode
-                _InternalOpenMode = MODE_NONE;
+                m_internalOpenMode = MODE_NONE;
                 break;
         }
 
@@ -768,9 +768,9 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
-        if (_InternalOpenMode != MODE_READ
-            && _InternalOpenMode != MODE_READ_WRITE
-            && _InternalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != MODE_READ
+            && m_internalOpenMode != MODE_READ_WRITE
+            && m_internalOpenMode != MODE_READ_APPEND)
             throw std::runtime_error("File not opened for reading.");
 
         // Determine file size if size is -1
@@ -793,11 +793,11 @@ namespace NerdThings::Ngine::Filesystem {
         }
 
         // Seek to the offset
-        fseek(_InternalHandle->InternalHandle, offset_, SEEK_SET);
+        fseek(m_internalHandle->InternalHandle, offset_, SEEK_SET);
 
         // Read bytes to array
         auto *buffer = new unsigned char[size_];
-        fread(buffer, size_, 1, _InternalHandle->InternalHandle);
+        fread(buffer, size_, 1, m_internalHandle->InternalHandle);
 
         // Return data
         return buffer;
@@ -808,9 +808,9 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
-        if (_InternalOpenMode != MODE_READ
-            && _InternalOpenMode != MODE_READ_WRITE
-            && _InternalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != MODE_READ
+            && m_internalOpenMode != MODE_READ_WRITE
+            && m_internalOpenMode != MODE_READ_APPEND)
             throw std::runtime_error("File not opened for reading.");
 
         // Determine file size if size is -1
@@ -833,11 +833,11 @@ namespace NerdThings::Ngine::Filesystem {
         }
 
         // Seek to the offset
-        fseek(_InternalHandle->InternalHandle, offset_, SEEK_SET);
+        fseek(m_internalHandle->InternalHandle, offset_, SEEK_SET);
 
         // Read to c string
         auto buffer = new char[size_ + 1];
-        int r = fread(buffer, 1, size_, _InternalHandle->InternalHandle);
+        int r = fread(buffer, 1, size_, m_internalHandle->InternalHandle);
 
         // Null-terminate buffer
         buffer[r] = '\0';
@@ -856,14 +856,14 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot write to a closed file.");
 
         // Check for our mode
-        if (_InternalOpenMode != MODE_WRITE
-            && _InternalOpenMode != MODE_APPEND
-            && _InternalOpenMode != MODE_READ_WRITE
-            && _InternalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != MODE_WRITE
+            && m_internalOpenMode != MODE_APPEND
+            && m_internalOpenMode != MODE_READ_WRITE
+            && m_internalOpenMode != MODE_READ_APPEND)
             throw std::runtime_error("File not opened for writing.");
 
         // Write
-        return fwrite(data_, 1, size_, _InternalHandle->InternalHandle) == 1;
+        return fwrite(data_, 1, size_, m_internalHandle->InternalHandle) == 1;
     }
 
     bool File::WriteString(const std::string &string_) {
@@ -871,14 +871,14 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot write to closed file.");
 
         // Check for our mode
-        if (_InternalOpenMode != MODE_WRITE
-            && _InternalOpenMode != MODE_APPEND
-            && _InternalOpenMode != MODE_READ_WRITE
-            && _InternalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != MODE_WRITE
+            && m_internalOpenMode != MODE_APPEND
+            && m_internalOpenMode != MODE_READ_WRITE
+            && m_internalOpenMode != MODE_READ_APPEND)
             throw std::runtime_error("File not opened for writing.");
 
         // Write string
-        return fputs(string_.c_str(), _InternalHandle->InternalHandle) != EOF;
+        return fputs(string_.c_str(), m_internalHandle->InternalHandle) != EOF;
     }
 
     ////////
@@ -911,21 +911,21 @@ namespace NerdThings::Ngine::Filesystem {
 
     bool Directory::Delete() {
         // Check
-        __ThrowAccessErrors();
+        _throwAccessErrors();
 
 #if defined(_WIN32)
         // Try to delete (not recursive)
-        auto del = RemoveDirectoryA(ObjectPath.GetString().c_str());
+        auto del = RemoveDirectoryA(m_objectPath.GetString().c_str());
         return del != 0;
 #elif defined(__linux__) || defined(__APPLE__)
-        return remove(ObjectPath.GetString().c_str()) == 0;
+        return remove(m_objectPath.GetString().c_str()) == 0;
 #endif
         return false;
     }
 
     bool Directory::DeleteRecursive() {
         // Check
-        __ThrowAccessErrors();
+        _throwAccessErrors();
 
         // Success tracker
         auto success = true;
@@ -969,13 +969,13 @@ namespace NerdThings::Ngine::Filesystem {
 #if defined(_WIN32)
         // https://stackoverflow.com/a/6218445
         // Get attributes for directory
-        DWORD dwAttrib = GetFileAttributesA(ObjectPath.GetString().c_str());
+        DWORD dwAttrib = GetFileAttributesA(m_objectPath.GetString().c_str());
 
         return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
                 (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #elif defined(__linux__) || defined(__APPLE__)
         // Test opening of file
-        DIR *dir = opendir(ObjectPath.GetString().c_str());
+        DIR *dir = opendir(m_objectPath.GetString().c_str());
         if (dir) {
             closedir(dir);
             return true;
@@ -991,14 +991,14 @@ namespace NerdThings::Ngine::Filesystem {
 
     std::vector<Directory> Directory::GetDirectories() const {
         // Check
-        __ThrowAccessErrors();
+        _throwAccessErrors();
 
         // Directories vector
         auto dirs = std::vector<Directory>();
 #if defined(_WIN32)
         // Find first directory
         WIN32_FIND_DATAA FindFileData;
-        HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
+        HANDLE hFind = FindFirstFileA((m_objectPath.GetString() + "\\*").c_str(), &FindFileData);
 
         // Check exists
         if (hFind == INVALID_HANDLE_VALUE) {
@@ -1011,7 +1011,7 @@ namespace NerdThings::Ngine::Filesystem {
                 auto dirName = FindFileData.cFileName;
                 // Avoids . and .. directories
                 if (strcmp(dirName, ".") != 0 && strcmp(dirName, "..") != 0)
-                    dirs.push_back(Directory(Path(ObjectPath, dirName)));
+                    dirs.push_back(Directory(Path(m_objectPath, dirName)));
             }
         } while (FindNextFileA(hFind, &FindFileData) != 0);
 
@@ -1023,7 +1023,7 @@ namespace NerdThings::Ngine::Filesystem {
         dirent *entry;
 
         // Open dir
-        dir = opendir(ObjectPath.GetString().c_str());
+        dir = opendir(m_objectPath.GetString().c_str());
 
         // Test open
         if (!dir) throw std::runtime_error("Cannot open directory.");
@@ -1032,7 +1032,7 @@ namespace NerdThings::Ngine::Filesystem {
         while ((entry = readdir(dir)) != nullptr) {
             if (entry->d_type == DT_DIR) {
                 if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
-                    dirs.push_back(Directory(Path(ObjectPath, entry->d_name)));
+                    dirs.push_back(Directory(Path(m_objectPath, entry->d_name)));
             }
         }
 
@@ -1044,14 +1044,14 @@ namespace NerdThings::Ngine::Filesystem {
 
     std::vector<File> Directory::GetFiles() const {
         // Check
-        __ThrowAccessErrors();
+        _throwAccessErrors();
 
         // Files vector
         auto files = std::vector<File>();
 #if defined(_WIN32)
         // Find the first file in the directory
         WIN32_FIND_DATAA FindFileData;
-        HANDLE hFind = FindFirstFileA((ObjectPath.GetString() + "\\*").c_str(), &FindFileData);
+        HANDLE hFind = FindFirstFileA((m_objectPath.GetString() + "\\*").c_str(), &FindFileData);
 
         // Check it exists
         if (hFind == INVALID_HANDLE_VALUE) {
@@ -1063,7 +1063,7 @@ namespace NerdThings::Ngine::Filesystem {
         do {
             if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
                 auto filename = FindFileData.cFileName;
-                files.push_back(File(Path(ObjectPath, filename)));
+                files.push_back(File(Path(m_objectPath, filename)));
             }
         } while (FindNextFileA(hFind, &FindFileData) != 0);
 
@@ -1075,7 +1075,7 @@ namespace NerdThings::Ngine::Filesystem {
         dirent *entry;
 
         // Open dir
-        dir = opendir(ObjectPath.GetString().c_str());
+        dir = opendir(m_objectPath.GetString().c_str());
 
         // Test open
         if (!dir) throw std::runtime_error("Cannot open directory.");
@@ -1083,7 +1083,7 @@ namespace NerdThings::Ngine::Filesystem {
         // Read all directories
         while ((entry = readdir(dir)) != nullptr) {
             if (entry->d_type != DT_DIR) {
-                files.push_back(File(Path(ObjectPath, entry->d_name)));
+                files.push_back(File(Path(m_objectPath, entry->d_name)));
             }
         }
 
@@ -1095,7 +1095,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     std::vector<File> Directory::GetFilesRecursive() const {
         // Check
-        __ThrowAccessErrors();
+        _throwAccessErrors();
 
         // Keep track of all files
         auto files = std::vector<File>();
@@ -1129,7 +1129,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     // Private Fields
 
-    void Directory::__ThrowAccessErrors() const {
+    void Directory::_throwAccessErrors() const {
         // Check exists
         if (!Exists()) throw std::runtime_error("This directory does not exist.");
 

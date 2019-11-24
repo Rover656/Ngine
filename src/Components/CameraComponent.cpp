@@ -15,13 +15,13 @@
 #include "../BaseEntity.h"
 
 namespace NerdThings::Ngine::Components {
-    void CameraComponent::UpdateCamera(EntityTransformChangedEventArgs e) {
+    void CameraComponent::_updateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
-        _Camera.Position = e.EntityPosition;
+        m_camera.Position = e.EntityPosition;
     }
 
     CameraComponent::~CameraComponent() {
-        _TransformChangeEvent.Detach();
+        m_transformChangeEvent.Detach();
     }
 
     CameraComponent::CameraComponent(BaseEntity *parent_, const float zoom_, const Vector2 origin_,
@@ -30,38 +30,39 @@ namespace NerdThings::Ngine::Components {
         auto par = GetParent<BaseEntity>();
 
         // Setup camera
-        _Camera = Graphics::Camera(par->GetPosition(), rotation_, zoom_, origin_);;
+        m_camera = Graphics::Camera(par->GetPosition(), rotation_, zoom_, origin_);;
 
         // Attach to on position changed
-        _TransformChangeEvent = par->OnTransformChanged +=
-                new ClassMethodEventHandler<CameraComponent, EntityTransformChangedEventArgs>(this, &CameraComponent::UpdateCamera);
+        m_transformChangeEvent = par->OnTransformChanged +=
+                new ClassMethodEventHandler<CameraComponent, EntityTransformChangedEventArgs>(this,
+                                                                                              &CameraComponent::_updateCamera);
     }
 
     void CameraComponent::Activate() {
-        GetParent<BaseEntity>()->GetParentScene()->SetActiveCamera(&_Camera);
+        GetParent<BaseEntity>()->GetParentScene()->SetActiveCamera(&m_camera);
     }
 
     Vector2 CameraComponent::GetOrigin() {
-        return _Camera.Origin;
+        return m_camera.Origin;
     }
 
     void CameraComponent::SetOrigin(const Vector2 origin_) {
-        _Camera.Origin = origin_;
+        m_camera.Origin = origin_;
     }
 
     float CameraComponent::GetRotation() {
-        return _Camera.Rotation;
+        return m_camera.Rotation;
     }
 
     void CameraComponent::SetRotation(const float rotation_) {
-        _Camera.Rotation = rotation_;
+        m_camera.Rotation = rotation_;
     }
 
     float CameraComponent::GetZoom() {
-        return _Camera.Zoom;
+        return m_camera.Zoom;
     }
 
     void CameraComponent::SetZoom(const float zoom_) {
-        _Camera.Zoom = zoom_;
+        m_camera.Zoom = zoom_;
     }
 }

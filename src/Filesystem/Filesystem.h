@@ -237,19 +237,15 @@ namespace NerdThings::Ngine::Filesystem {
         bool operator!=(Path rhs);
 
     private:
-        // Private Fields
-
         /**
          * Whether or not the path points somewhere
          */
-        bool _HasProperValue = false;
+        bool m_hasProperValue = false;
 
         /**
          * The path string
          */
-        std::string _InternalPath = "";
-
-        // Private Methods
+        std::string m_internalPath = "";
 
         /**
          * Clean a path on windows.
@@ -257,26 +253,26 @@ namespace NerdThings::Ngine::Filesystem {
          *
          * @param str_ The path to clean.
          */
-        std::string __CleanPathString(const std::string &str_);
+        std::string _cleanPathString(const std::string &str_);
 
         /**
          * Run correction checks on path strings.
          */
-        void __CorrectPath();
+        void _correctPath();
 
         /**
          * Get home directory (mac and linux)
          *
          * @return The home directory.
          */
-        static std::string __GetHome();
+        static std::string _getHome();
 
         /**
          * Get the string to join by.
          *
          * @return \\ on Windows, / on anything else.
          */
-        static char __GetJoinChar();
+        static char _getJoinChar();
     };
 
     /**
@@ -336,7 +332,7 @@ namespace NerdThings::Ngine::Filesystem {
         /**
          * The path of this object.
          */
-        Path ObjectPath;
+        Path m_objectPath;
     };
 
     /**
@@ -400,12 +396,12 @@ namespace NerdThings::Ngine::Filesystem {
         /**
          * Internal handler.
          */
-        std::shared_ptr<InternalFileHandler> _InternalHandle = nullptr;
+        std::shared_ptr<InternalFileHandler> m_internalHandle = nullptr;
 
         /**
          * Get the current open mode.
          */
-        FileOpenMode  _InternalOpenMode = MODE_NONE;
+        FileOpenMode m_internalOpenMode = MODE_NONE;
     public:
         /**
          * Create an empty file reference.
@@ -665,7 +661,7 @@ namespace NerdThings::Ngine::Filesystem {
         /**
          * Throw any errors before we access directory.
          */
-        void __ThrowAccessErrors() const;
+        void _throwAccessErrors() const;
     };
 }
 

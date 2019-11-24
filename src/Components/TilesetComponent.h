@@ -27,12 +27,12 @@ namespace NerdThings::Ngine::Components {
         /**
          * The tileset renderer.
          */
-        Graphics::TilesetRenderer *_Tileset;
+        Graphics::TilesetRenderer *m_tileset;
 
         /**
          * Use the cull area instead of the viewport for rendering tiles.
          */
-        bool _UseCullArea = false;
+        bool m_useCullArea = false;
     public:
         /**
          * Create a tileset component with a tileset renderer.

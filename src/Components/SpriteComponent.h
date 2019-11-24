@@ -27,12 +27,12 @@ namespace NerdThings::Ngine::Components {
         /**
          * Render origin.
          */
-        Vector2 _Origin;
+        Vector2 m_origin;
 
         /**
          * Sprite to render.
          */
-        Graphics::Sprite _Sprite;
+        Graphics::Sprite m_sprite;
     public:
         /**
          * Create a sprite component.

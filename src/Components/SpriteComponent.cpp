@@ -13,7 +13,7 @@
 
 namespace NerdThings::Ngine::Components {
     SpriteComponent::SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_)
-            : Component(parent_), _Origin(origin_), _Sprite(sprite_) {
+            : Component(parent_), m_origin(origin_), m_sprite(sprite_) {
         SubscribeToDraw();
         SubscribeToUpdate();
     }
@@ -23,30 +23,30 @@ namespace NerdThings::Ngine::Components {
     }
 
     void SpriteComponent::SetOrigin(const Vector2 &origin_) {
-        _Origin = origin_;
+        m_origin = origin_;
     }
 
     Graphics::Sprite *SpriteComponent::GetSprite() {
-        return &_Sprite;
+        return &m_sprite;
     }
 
     const Graphics::Sprite *SpriteComponent::GetSprite() const {
-        return &_Sprite;
+        return &m_sprite;
     }
 
     void SpriteComponent::SetSprite(const Graphics::Sprite &sprite_) {
-        if (_Sprite != sprite_)
-            _Sprite = sprite_;
+        if (m_sprite != sprite_)
+            m_sprite = sprite_;
     }
 
     void SpriteComponent::Draw() {
         Component::Draw();
         const auto par = GetParent<BaseEntity>();
-        _Sprite.Draw(par->GetPosition(), 1, par->GetRotation(), _Origin);
+        m_sprite.Draw(par->GetPosition(), 1, par->GetRotation(), m_origin);
     }
 
     void SpriteComponent::Update() {
         Component::Update();
-        _Sprite.Update();
+        m_sprite.Update();
     }
 }

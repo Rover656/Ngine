@@ -67,22 +67,22 @@ namespace NerdThings::Ngine::Filesystem {
         /**
          * All named fonts.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> _Fonts;
+        static std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> m_fonts;
 
         /**
          * All named music.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Audio::Music>> _Music;
+        static std::unordered_map<std::string, std::unique_ptr<Audio::Music>> m_music;
 
         /**
          * All named sounds.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> _Sounds;
+        static std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> m_sounds;
 
         /**
          * All named textures.
          */
-        static std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> _Textures;
+        static std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> m_textures;
     public:
         /**
          * The resource manager config.

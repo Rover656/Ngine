@@ -27,17 +27,17 @@ namespace NerdThings::Ngine::Components {
         /**
          * The internal camera.
          */
-        Graphics::Camera _Camera;
+        Graphics::Camera m_camera;
 
         /**
          * Reference to on position changed event.
          */
-        EventAttachment<EntityTransformChangedEventArgs> _TransformChangeEvent;
+        EventAttachment<EntityTransformChangedEventArgs> m_transformChangeEvent;
 
         /**
          * Update camera parameters.
          */
-        void UpdateCamera(EntityTransformChangedEventArgs e);
+        void _updateCamera(EntityTransformChangedEventArgs e);
     public:
         /**
          * Create a camera component.
