@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef RENDEROBJECT_H
-#define RENDEROBJECT_H
+#ifndef RENDERABLE_H
+#define RENDERABLE_H
 
 #include "../../Ngine.h"
 
@@ -35,10 +35,10 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
     /**
      * This holds information about something that can be rendered to the framebuffer.
      */
-    class NEAPI RenderObject {
+    class NEAPI Renderable {
     public:
         /**
-         * `RenderObject` Type.
+         * `Renderable` Type.
          */
         enum Type
         {
@@ -62,6 +62,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
         /**
          * Custom shader program.
+         *
          * @todo Replace with program state once implemented.
          */
         ShaderProgram *_ShaderProgram = nullptr;
@@ -98,4 +99,4 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
     };
 }
 
-#endif //RENDEROBJECT_H
+#endif //RENDERABLE_H

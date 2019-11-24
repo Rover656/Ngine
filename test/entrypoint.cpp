@@ -4,7 +4,7 @@
 #include <Audio/Wave.h>
 #include <Components/CameraComponent.h>
 #include <Components/SpriteComponent.h>
-#include <Filesystem/Resources.h>
+#include <Filesystem/ResourceManager.h>
 #include <Graphics/OpenGL/OpenGL.h> // For cheeky hookin
 
 #include <Graphics/Rewrite/Renderer.h>
@@ -105,7 +105,7 @@ public:
         body->SetAngularVelocity(5);
         SetPhysicsBody(body);
 
-        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(ResourceManager::GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         s->SetOrigin({16, 16});
 
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
@@ -168,7 +168,7 @@ public:
 //
 ////        auto imgStyle = TUIStyle();
 ////        imgStyle.Margin[0] = 5;
-////        auto img = new Image(Sprite(Resources::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
+////        auto img = new Image(Sprite(ResourceManager::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
 ////        img->SetStyle(imgStyle);
 ////        //GetPanel()->AddChild("testImage", img);
 //    }
@@ -207,7 +207,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetRenderer(Tileset(Resources::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles = new TilesetRenderer(Tileset(ResourceManager::GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 
@@ -216,16 +216,16 @@ public:
     }
 
     void OnLoaded(SceneLoadEventArgs e) {
-        //Resources::GetMusic("test_music")->Play();
+        //ResourceManager::GetMusic("test_music")->Play();
         AudioDevice::SetMasterVolume(0.25);
     }
 
     int rot = 0;
 
     void Draw() {
-        ///Renderer::DrawTexture(Resources::GetTexture("test_spritesheet"), {0, 0}, Color::White);
+        ///Renderer::DrawTexture(ResourceManager::GetTexture("test_spritesheet"), {0, 0}, Color::White);
         testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
-        ///Renderer::DrawTexture(Resources::GetTexture("test_spritesheet"), {0, 64}, Color::White);
+        ///Renderer::DrawTexture(ResourceManager::GetTexture("test_spritesheet"), {0, 64}, Color::White);
     }
 
     void DrawCam() {
@@ -248,7 +248,7 @@ class TestGame : public Game {
     Rewrite::GraphicsDevice *_GraphicsDevice;
     Rewrite::Renderer *_Renderer;
 
-    Rewrite::QuadsObject _Obj;
+    Rewrite::QuadRenderable _Obj;
 
     Texture2D *_Tex;
 public:
@@ -262,7 +262,7 @@ public:
         _Renderer->Clear();
 
         for (auto i = 0; i < 1000; i++)
-            _Renderer->AddRenderObject(&_Obj);
+            _Renderer->Add(&_Obj);
 
         _Renderer->Render();
     }
@@ -285,22 +285,17 @@ public:
         vdat.push_back({{0.5f, 0.5f, 0}, Color::Yellow, {1, 0}});
         vdat.push_back({{-0.5f, 0.5f, 0}, Color::Blue, {0, 0}});
 
-//        vdat.push_back({{-0.5f, -0.5f, 0}, Color::White, {0, 1}});
-//        vdat.push_back({{0.5f, -0.5f, 0}, Color::White, {1, 1}});
-//        vdat.push_back({{0.5f, 0.5f, 0}, Color::White, {1, 0}});
-//        vdat.push_back({{-0.5f, 0.5f, 0}, Color::White, {0, 0}});
-
-        _Obj = Rewrite::QuadsObject(vdat);
+        _Obj = Rewrite::QuadRenderable(vdat);
 
         _Obj.SetTexture(_Tex);
 
         return;
 
         // Load all content
-        Resources::LoadResources();
+        ResourceManager::LoadResources();
 
         // Load arial as default font
-        Font::SetDefaultFont(Resources::GetFont("Upheaval"));
+        Font::SetDefaultFont(ResourceManager::GetFont("Upheaval"));
 
         // Create scene
         _Scene = new TestScene(this);

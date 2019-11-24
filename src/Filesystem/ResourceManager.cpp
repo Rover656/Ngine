@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Resources.h"
+#include "ResourceManager.h"
 
 #include <regex>
 #include <sstream>
@@ -17,81 +17,81 @@
 namespace NerdThings::Ngine::Filesystem {
     // Private Fields
 
-    std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> Resources::_Fonts;
-    std::unordered_map<std::string, std::unique_ptr<Audio::Music>> Resources::_Music;
-    std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> Resources::_Sounds;
-    std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> Resources::_Textures;
+    std::unordered_map<std::string, std::unique_ptr<Graphics::Font>> ResourceManager::_Fonts;
+    std::unordered_map<std::string, std::unique_ptr<Audio::Music>> ResourceManager::_Music;
+    std::unordered_map<std::string, std::unique_ptr<Audio::Sound>> ResourceManager::_Sounds;
+    std::unordered_map<std::string, std::unique_ptr<Graphics::Texture2D>> ResourceManager::_Textures;
 
     // Public Fields
 
-    ResourceManagerConfig Resources::Config;
+    ResourceManagerConfig ResourceManager::Config;
 
     // Public Methods
 
-    void Resources::DeleteAll() {
+    void ResourceManager::DeleteAll() {
         _Fonts.clear();
         _Music.clear();
         _Sounds.clear();
         _Textures.clear();
     }
 
-    void Resources::DeleteFont(const std::string &name_) {
+    void ResourceManager::DeleteFont(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Fonts.find(name) != _Fonts.end()) {
             _Fonts.erase(name);
         }
     }
 
-    void Resources::DeleteMusic(const std::string &name_) {
+    void ResourceManager::DeleteMusic(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Music.find(name) != _Music.end()) {
             _Music.erase(name);
         }
     }
 
-    void Resources::DeleteSound(const std::string &name_) {
+    void ResourceManager::DeleteSound(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Sounds.find(name) != _Sounds.end()) {
             _Sounds.erase(name);
         }
     }
 
-    void Resources::DeleteTexture(const std::string &name_) {
+    void ResourceManager::DeleteTexture(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Textures.find(name) != _Textures.end()) {
             _Textures.erase(name);
         }
     }
 
-    Graphics::Font *Resources::GetFont(const std::string &name_) {
+    Graphics::Font *ResourceManager::GetFont(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Fonts.find(name) != _Fonts.end())
             return _Fonts[name].get();
         return nullptr;
     }
 
-    Audio::Music *Resources::GetMusic(const std::string &name_) {
+    Audio::Music *ResourceManager::GetMusic(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Music.find(name) != _Music.end())
             return _Music[name].get();
         return nullptr;
     }
 
-    Audio::Sound *Resources::GetSound(const std::string &name_) {
+    Audio::Sound *ResourceManager::GetSound(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Sounds.find(name) != _Sounds.end())
             return _Sounds[name].get();
         return nullptr;
     }
 
-    Graphics::Texture2D *Resources::GetTexture(const std::string &name_) {
+    Graphics::Texture2D *ResourceManager::GetTexture(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (_Textures.find(name) != _Textures.end())
             return _Textures[name].get();
         return nullptr;
     }
 
-    void Resources::LoadResources() {
+    void ResourceManager::LoadResources() {
         // File extension definitions
         std::vector<std::string> fntExts = {"ttf", "otf"};
         std::vector<std::string> musExts = {"ogg", "flac", "mp3"};//, "xm", "mod"};
@@ -133,7 +133,7 @@ namespace NerdThings::Ngine::Filesystem {
         }
     }
 
-    bool Resources::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
+    bool ResourceManager::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
         // Fix base size
         if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
 
@@ -154,7 +154,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool Resources::LoadMusic(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::LoadMusic(const Path &inPath_, const std::string &name_) {
         // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
@@ -172,7 +172,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool Resources::LoadSound(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::LoadSound(const Path &inPath_, const std::string &name_) {
         // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
@@ -190,7 +190,7 @@ namespace NerdThings::Ngine::Filesystem {
         return false;
     }
 
-    bool Resources::LoadTexture(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::LoadTexture(const Path &inPath_, const std::string &name_) {
         // TODO: READD TEXTURE HERE!!!!!
 //        // Get the name
 //        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");

@@ -9,21 +9,21 @@
 *
 **********************************************************************************************/
 
-#ifndef QUADSOBJECT_H
-#define QUADSOBJECT_H
+#ifndef QUADRENDERABLE_H
+#define QUADRENDERABLE_H
 
 #include "../../Ngine.h"
 
 #include "../../Matrix.h"
 #include "../Texture2D.h"
-#include "RenderObject.h"
+#include "Renderable.h"
 
 namespace NerdThings::Ngine::Graphics::Rewrite {
     /**
      * A Quad(s) Object.
      * Renders a quad/quads with an attached texture.
      */
-    class NEAPI QuadsObject : public RenderObject {
+    class NEAPI QuadRenderable : public Renderable {
     protected:
         /**
          * The attached texture.
@@ -45,12 +45,12 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
          */
         Matrix _ModelView = Matrix::Identity;
     public:
-        QuadsObject() = default;
+        QuadRenderable() = default;
         /**
          * Create a new quads object
          */
-        QuadsObject(const std::vector<VertexData> &_vertices);
-        ~QuadsObject() = default;
+        QuadRenderable(const std::vector<VertexData> &_vertices);
+        ~QuadRenderable() = default;
 
         /**
          * Get the quads texture.
@@ -79,4 +79,4 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
     };
 }
 
-#endif //QUADSOBJECT_H
+#endif //QUADRENDERABLE_H

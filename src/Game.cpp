@@ -16,7 +16,7 @@
 #include "Input/Gamepad.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
-#include "Filesystem/Resources.h"
+#include "Filesystem/ResourceManager.h"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 #include "Graphics/OpenGL/OpenGL.h"
@@ -282,7 +282,7 @@ namespace NerdThings::Ngine {
         _RenderTarget = nullptr;
 
         // Delete loaded resources
-        Filesystem::Resources::DeleteAll();
+        Filesystem::ResourceManager::DeleteAll();
 
         // Close audio
         ConsoleMessage("Closing audio device.", "NOTICE", "Window");

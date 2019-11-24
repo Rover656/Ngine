@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef RESOURCES_H
-#define RESOURCES_H
+#ifndef RESOURCEMANAGER_H
+#define RESOURCEMANAGER_H
 
 #include "../Ngine.h"
 
@@ -63,7 +63,7 @@ namespace NerdThings::Ngine::Filesystem {
      * Resource management.
      * This will control the loading, unloading and overall lifetime of loadable assets.
      */
-    class NEAPI Resources {
+    class NEAPI ResourceManager {
         /**
          * All named fonts.
          */
@@ -204,4 +204,4 @@ namespace NerdThings::Ngine::Filesystem {
     };
 }
 
-#endif //RESOURCES_H
+#endif //RESOURCEMANAGER_H

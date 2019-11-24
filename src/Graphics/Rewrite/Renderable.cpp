@@ -9,22 +9,22 @@
 *
 **********************************************************************************************/
 
-#include "RenderObject.h"
+#include "Renderable.h"
 
 namespace NerdThings::Ngine::Graphics::Rewrite {
-    RenderObject::Type Rewrite::RenderObject::GetType() const {
+    Renderable::Type Rewrite::Renderable::GetType() const {
         return _Type;
     }
 
-    float Rewrite::RenderObject::GetZIndex() const {
+    float Rewrite::Renderable::GetZIndex() const {
         return _ZIndex;
     }
 
-    void Rewrite::RenderObject::SetZIndex(float zindex_) {
+    void Rewrite::Renderable::SetZIndex(float zindex_) {
         _ZIndex = zindex_;
     }
 
-    ShaderProgram *RenderObject::GetShaderProgram() {
+    ShaderProgram *Renderable::GetShaderProgram() {
         return _ShaderProgram;
     }
 }

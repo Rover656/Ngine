@@ -14,73 +14,13 @@
 #include "OpenGLDefines.h"
 
 namespace NerdThings::Ngine::Graphics::Rewrite {
-    void Renderer::__CreateBuffers() {
-        // Create quad indices
-        for (auto i = 0; i < MAX_VBO_SIZE / 4; i++) {
-            _QuadIndices[i * 6 + 0] = (GLushort) (i * 4 + 0);
-            _QuadIndices[i * 6 + 1] = (GLushort) (i * 4 + 1);
-            _QuadIndices[i * 6 + 2] = (GLushort) (i * 4 + 3);
-            _QuadIndices[i * 6 + 4] = (GLushort) (i * 4 + 2);
-            _QuadIndices[i * 6 + 3] = (GLushort) (i * 4 + 1);
-            _QuadIndices[i * 6 + 5] = (GLushort) (i * 4 + 3);
-        }
-
-        // Create quad VAO
-        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            glGenVertexArrays(1, &_QuadVAO);
-            glBindVertexArray(_QuadVAO);
-        }
-
-        // Create quad VBO's
-        glGenBuffers(2, &_QuadBuffersVBO[0]);
-
-        // Enable attrib arrays
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-
-        // Array buffer
-        glBindBuffer(GL_ARRAY_BUFFER, _QuadBuffersVBO[0]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(_Vertices[0]) * MAX_VBO_SIZE, _Vertices, GL_DYNAMIC_DRAW);
-
-        // Vertices
-        glVertexAttribPointer(0,
-                              3,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              sizeof(VertexData),
-                              (GLvoid *) offsetof(VertexData, Position));
-
-        // Colors
-        glVertexAttribPointer(1,
-                              4,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              sizeof(VertexData),
-                              (GLvoid *) offsetof(VertexData, Color));
-
-        // Tex coords
-        glVertexAttribPointer(2,
-                              2,
-                              GL_FLOAT,
-                              GL_FALSE,
-                              sizeof(VertexData),
-                              (GLvoid *) offsetof(VertexData, TexCoords));
-
-        // Bind index buffer
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _QuadBuffersVBO[1]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_QuadIndices[0]) * MAX_INDEX_VBO_SIZE, _QuadIndices,
-                     GL_STATIC_DRAW);
-
-        // Unbind VAO then unbind buffers
-        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            glBindVertexArray(0);
-        }
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    void Renderer::_enableGLCapabilities() {
+        // Enable blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void Renderer::__CreateDefaultShader() {
+    void Renderer::_createDefaultShader(){
         // Vertex source
         std::string vertexShaderSrc =
 #if defined(GRAPHICS_OPENGL21)
@@ -139,354 +79,354 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                 "}\n";
 
         // Create shader
-        _DefaultShader = new Shader(vertexShaderSrc, fragmentShaderSrc);
-        auto compiled = _DefaultShader->Compile();
+        auto shader = new Shader(vertexShaderSrc, fragmentShaderSrc);
+        auto compiled = shader->Compile();
 
         if (!compiled) {
-            delete _DefaultShader;
+            delete shader;
             throw std::runtime_error("Default shader failed to compile!");
         }
 
         // Create shader program
-        _DefaultShaderProgram = new ShaderProgram(_DefaultShader);
-        auto linked = _DefaultShaderProgram->Link();
+        m_defaultShaderProgram = new ShaderProgram(shader);
+        auto linked = m_defaultShaderProgram->Link();
+        delete shader;
+
+        if (!linked) {
+            delete m_defaultShaderProgram;
+            m_defaultShaderProgram = nullptr;
+            throw std::runtime_error("Default shader program failed to link!");
+        }
 
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
-        _DefaultTexture = new Texture2D(_GraphicsDevice, pixels, 1, 1);
-
-
-
-
-        // TEST
-        glGenQueries(2, queryID);
+        m_whiteTexture = new Texture2D(m_graphicsDevice, pixels, 1, 1);
     }
 
-    void Renderer::__SortQueue() {
-        std::sort(_Queue[BUCKET_Z_NEGATIVE].begin(), _Queue[BUCKET_Z_NEGATIVE].end(), __SortPredicate);
-        std::sort(_Queue[BUCKET_Z_POSITIVE].begin(), _Queue[BUCKET_Z_POSITIVE].end(), __SortPredicate);
-    }
-
-    bool Renderer::__SortPredicate(Renderer::RenderBatchItem a_, Renderer::RenderBatchItem b_) {
-        return a_.Z < b_.Z;
-    }
-
-    void Renderer::__ProcessQueue() {
-        __ProcessBucket(BUCKET_Z_NEGATIVE);
-        __ProcessBucket(BUCKET_Z_NEUTRAL);
-        __ProcessBucket(BUCKET_Z_POSITIVE);
-    }
-
-    void Renderer::__ProcessBucket(RenderBucket bucket_) {
-        if (!_Queue[bucket_].empty()) {
-            if (_Enable2DDepthTest) {
-                glEnable(GL_DEPTH_TEST);
-                glDepthMask(true);
-            } else {
-                glEnable(GL_DEPTH_TEST);
-                glDepthMask(false);
-            }
-
-            for (auto obj : _Queue[bucket_]) {
-                __ProcessBatch(obj);
-            }
-
-            Flush();
-        }
-    }
-
-    void Renderer::__ProcessBatch(Renderer::RenderBatchItem i_) {
-        // Pre-render checks.
-        if (_VertexCount + i_.Size > MAX_VBO_SIZE || _CurrentMode != i_.Mode) {
-            // Check that the item being rendered is not too big.
-            if (i_.Size > MAX_VBO_SIZE) {
-                throw std::runtime_error("Too many vertices in one object.");
-            }
-
-            // Render all of the old mode
-            Flush();
-
-            // Change mode now the last mode is rendered.
-            _CurrentMode = i_.Mode;
+    void Renderer::_createQuadBuffers() {
+        // Create VAO (if supported)
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+            glGenVertexArrays(1, &m_quadVAO);
+            glBindVertexArray(m_quadVAO);
         }
 
-        // Get data
-        const VertexData *vertexData = i_.VDat;
+        // Enable vertex attrib arrays
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
-        // Add vertices
-        for (auto i = 0; i < i_.Size; i++) {
-            _Vertices[i + _VertexCount] = vertexData[i];
-            _Vertices[i + _VertexCount].Position = vertexData[i].Position.Transform(i_.ModMat);
+        // Create quad vertex buffer
+        glGenBuffers(1, &m_quadVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
+
+        // Write null data
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
+
+        // Configure vertex attrib arrays
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
+
+        // Create quad index buffer
+        glGenBuffers(1, &m_quadIBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIBO);
+
+        // Default index data
+        GLuint indices[QUAD_IBO_SIZE];
+        for (auto i = 0; i < VBO_SIZE / 4; i++) {
+            indices[i * 6 + 0] = i * 4 + 0;
+            indices[i * 6 + 1] = i * 4 + 1;
+            indices[i * 6 + 2] = i * 4 + 3;
+            indices[i * 6 + 4] = i * 4 + 2;
+            indices[i * 6 + 3] = i * 4 + 1;
+            indices[i * 6 + 5] = i * 4 + 3;
         }
-        _VertexCount += i_.Size;
 
-        // Add to the items batch.
-        if (!_CurrentBatchItems.empty()) {
-            auto lastI = _CurrentBatchItems.size() - 1;
-            auto b = _CurrentBatchItems.back();
+        // Send default data
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * QUAD_IBO_SIZE, indices, GL_STATIC_DRAW);
 
-            if (b.Texture == i_.Texture
-                && b.Shader == i_.Shader
-                && b.Z == i_.Z) {
-                _CurrentBatchItems[lastI].Size += i_.Size;
-            } else _CurrentBatchItems.push_back(i_);
-        } else _CurrentBatchItems.push_back(i_);
+        // Unbind VAO (if enabled)
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+            glBindVertexArray(0);
+        }
+
+        // Unbind buffers
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void Renderer::__DrawBatchedQuads() {
-        // Upload to VBO
-        if (_GraphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            // Bind VAO
-            glBindVertexArray(_QuadVAO);
+    void Renderer::_deleteQuadBuffers() {
+        // Unbind VAO (if enabled)
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO))
+            glBindVertexArray(0);
 
-            // Set VBO data
-            glBindBuffer(GL_ARRAY_BUFFER, _QuadBuffersVBO[0]);
+        // Unbind buffers
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-#ifdef glMapBuffer
-            glBufferData(GL_ARRAY_BUFFER, sizeof(_Vertices[0]) * _VertexCount, nullptr, GL_DYNAMIC_DRAW);
-            void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-            memcpy(buf, _Vertices, sizeof(_Vertices[0]) * _VertexCount);
-            glUnmapBuffer(GL_ARRAY_BUFFER);
+        // Delete VAO
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO))
+            glDeleteVertexArrays(1, &m_quadVAO);
+
+        // Delete VBO
+        glDeleteBuffers(1, &m_quadVBO);
+
+        // Delete IBO
+        glDeleteBuffers(1, &m_quadIBO);
+
+        // Set all to 0
+        m_quadVAO = 0;
+        m_quadVBO = 0;
+        m_quadIBO = 0;
+    }
+
+    void Renderer::_updateQuadBuffers() {
+        // Bind buffer
+        glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
+
+        // Miscellaneous ways of sending data to the buffer.
+#if defined(glMapBuffer)
+        // Orphan data
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
+
+        // Replace the vertices that have changed.
+        // This will not update any more vertices than necessary.
+        void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        memcpy(buf, m_quadVertices, sizeof(VertexData) * m_quadVerticesCount);
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+#elif defined(glBufferSubData)
+        // Copy the required data into the vertex array.
+        glBufferSubData(GL_ARRAY_BUFFER, 0, m_quadVerticesCount, m_quadVertices);
 #else
-            glBufferData(GL_ARRAY_BUFFER, sizeof(_Vertices[0]) * _VertexCount, _Vertices, GL_DYNAMIC_DRAW);
+        // Copy all of the data into the vertex array.
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, m_quadVertices, GL_STREAM_DRAW);
 #endif
 
-            // Unbind
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // Unbind
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    void Renderer::_bindQuadBuffers() {
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+            // Bind VAO.
+            glBindVertexArray(m_quadVAO);
         } else {
-            // Enable attrib arrays
+            // Enable vertex attrib arrays
             glEnableVertexAttribArray(0);
             glEnableVertexAttribArray(1);
             glEnableVertexAttribArray(2);
 
-            // Bind buffer
-            glBindBuffer(GL_ARRAY_BUFFER, _QuadBuffersVBO[0]);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(_Vertices[0]) * _VertexCount, _Vertices, GL_DYNAMIC_DRAW);
+            // Bind quad VBO
+            glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 
-            // Vertices
-            glVertexAttribPointer(0,
-                                  3,
-                                  GL_FLOAT,
-                                  GL_FALSE,
-                                  sizeof(VertexData),
-                                  (GLvoid *) offsetof(VertexData, Position));
-
-            // Colors
-            glVertexAttribPointer(1,
-                                  4,
-                                  GL_FLOAT,
-                                  GL_FALSE,
-                                  sizeof(VertexData),
-                                  (GLvoid *) offsetof(VertexData, Color));
-
-            // Tex coords
-            glVertexAttribPointer(2,
-                                  2,
-                                  GL_FLOAT,
-                                  GL_FALSE,
-                                  sizeof(VertexData),
-                                  (GLvoid *) offsetof(VertexData, TexCoords));
+            // Configure vertex attrib arrays
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
         }
 
-        // Bind indices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _QuadBuffersVBO[1]);
+        // Bind IBO.
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_quadIBO);
+    }
 
-        // Get MVP matrix (technically just projection as model view is already accounted for.)
-        auto MVP = _GraphicsDevice->GetProjectionMatrix();
+    void Renderer::_unbindQuadBuffers() {
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+            // Unbind VAO.
+            glBindVertexArray(0);
+        } else {
+            // Unbind VBO.
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        }
 
-        // Draw vertices in the batch
-        Texture2D *lastTex = nullptr;
-        Texture2D *curTex = nullptr;
-        ShaderProgram *lastProg = nullptr;
+        // Unbind IBO.
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    void Renderer::_renderQuadBuffers() {
+        // Upload vertex data
+        _updateQuadBuffers();
+
+        // Bind buffers
+        _bindQuadBuffers();
+
+        // Get projection matrix
+        auto projection = m_graphicsDevice->GetProjectionMatrix();
+
+        // Loop variables
         ShaderProgram *curProg = nullptr;
+        ShaderProgram *actualCurProg = nullptr;
+        Texture2D *curTex = nullptr;
+        Texture2D *actualCurTex = nullptr;
         int fromIndex = 0;
 
-        for (auto quad : _CurrentBatchItems) {
-            // Skip empty quads
-            if (quad.Size == 0) continue;
+        for (const auto &quad : m_quads) {
+            // Bind a shader program if required
+            if (actualCurProg != quad.Obj->GetShaderProgram() || curProg == nullptr) {
+                actualCurProg = quad.Obj->GetShaderProgram();
+                if (actualCurProg != nullptr)
+                    curProg = actualCurProg;
+                else curProg = m_defaultShaderProgram;
 
-            // Apply shader
-            auto sp = quad.Shader;
-            if (sp != lastProg || curProg == nullptr) {
-                // Set current program
-                if (sp == nullptr) {
-                    curProg = _DefaultShaderProgram;
-                } else {
-                    curProg = sp;
-                }
+                // Use program
+                glUseProgram(curProg->ID);
 
-                // Set last program
-                lastProg = sp;
+                // Set the MVP matrix. It is just the projection as model view is already applied in vertices
+                glUniformMatrix4fv(curProg->GetUniformLocation("NGU_MATRIX_MVP"), 1, GL_FALSE, projection.ToFloatArray().data());
 
-                // Use the program
-                curProg->Use();
-
-                // Set texture unit
+                // Set the texture sampler
                 glUniform1i(curProg->GetUniformLocation("NGU_TEXTURE"), 0);
-
-                // Set MVP
-                glUniformMatrix4fv(curProg->GetUniformLocation("NGU_MATRIX_MVP"), 1, false, MVP.ToFloatArray().data());
             }
 
-            // Apply texture
-            if (quad.Texture != lastTex || curTex == nullptr) {
-                // Save last texture
-                lastTex = quad.Texture;
+            // Bind a texture if required
+            if (actualCurTex != quad.Obj->GetTexture() || curTex == nullptr) {
+                actualCurTex = quad.Obj->GetTexture();
+                if (actualCurTex != nullptr)
+                    curTex = actualCurTex;
+                else curTex = m_whiteTexture;
 
-                // Set current texture
-                curTex = lastTex == nullptr ? _DefaultTexture : lastTex;
-                glActiveTexture(GL_TEXTURE0);
+                // Bind texture
                 glBindTexture(GL_TEXTURE_2D, curTex->_ID);
             }
 
-            // Query start time
-            glQueryCounter(queryID[0], GL_TIMESTAMP);
+            // Draw quads
+            glDrawElements(GL_TRIANGLES, quad.Count * 6, GL_UNSIGNED_INT, (GLvoid*) fromIndex);
 
-            // Draw quad
-            glDrawElements(GL_TRIANGLES, quad.Size / 4 * 6, GL_UNSIGNED_SHORT,
-                           (GLvoid *) (fromIndex * sizeof(_QuadIndices[0])));
+            // Increase the from index
+            fromIndex += quad.Count * 6;
+        }
 
-            // Query end time
-            glQueryCounter(queryID[1], GL_TIMESTAMP);
+        // Unbind buffers
+        _unbindQuadBuffers();
+    }
 
-            // Wait until results are available.
-            GLint stopTimerAvailable = 0;
-            while (!stopTimerAvailable) {
-                glGetQueryObjectiv(queryID[1],
-                                   GL_QUERY_RESULT_AVAILABLE,
-                                   &stopTimerAvailable);
+    void Renderer::_sortBucket(Renderer::RenderBucket bucket_) {
+        std::sort(m_renderQueue[bucket_].begin(), m_renderQueue[bucket_].end(), _sortPredicate);
+    }
+
+    bool Renderer::_sortPredicate(Renderable *a_, Renderable *b_) {
+        return a_->GetZIndex() < b_->GetZIndex();
+    }
+
+    void Renderer::_processQueue() {
+        // Sort the Z negative and positive buckets.
+        _sortBucket(BUCKET_Z_NEGATIVE);
+        _sortBucket(BUCKET_Z_POSITIVE);
+
+        // Render the buckets.
+        _processBucket(BUCKET_Z_NEGATIVE);
+        _processBucket(BUCKET_Z_NEUTRAL);
+        _processBucket(BUCKET_Z_POSITIVE);
+    }
+
+    void Renderer::_processBucket(Renderer::RenderBucket bucket_) {
+        // Check if the queue has something to render
+        if (!m_renderQueue[bucket_].empty()) {
+            // Render each renderable
+            for (const auto &renderable : m_renderQueue[bucket_]) {
+                _processRenderable(renderable);
             }
 
-            glGetQueryObjectui64v(queryID[0], GL_QUERY_RESULT, &startTime);
-            glGetQueryObjectui64v(queryID[1], GL_QUERY_RESULT, &stopTime);
-
-            printf("Time spent on the GPU: %f ms\n", (stopTime - startTime) / 1000000.0);
-
-            // Increment index
-            fromIndex += quad.Size / 4 * 6;
+            // Push to framebuffer.
+            _flush();
         }
     }
 
-    void Renderer::__AddToQueue(Renderer::RenderBatchItem i_) {
-        // Add to the relevant bucket.
-        RenderBucket b;
+    void Renderer::_processRenderable(Renderable *renderable_) {
+        switch (renderable_->GetType()) {
+            case Renderable::OBJECT_QUAD: {
+                // Get quad
+                auto quad = (QuadRenderable *) renderable_;
 
-        if (i_.Z < 0) {
-            b = BUCKET_Z_NEGATIVE;
-        } else if (i_.Z > 0) {
-            b = BUCKET_Z_POSITIVE;
-        } else {
-            b = BUCKET_Z_NEUTRAL;
+                // Check we have space
+                if (m_quadVerticesCount + quad->GetQuadCount() * 4 > VBO_SIZE) {
+                    if (quad->GetQuadCount() * 4 > VBO_SIZE) throw std::runtime_error("The quad contains too many vertices.");
+                    _flush();
+                }
+
+                // Add vertices
+                auto verts = quad->GetVertices();
+                auto mview = quad->GetModelView();
+                for (auto i = 0; i < quad->GetQuadCount() * 4; i++) {
+                    m_quadVertices[m_quadVerticesCount + i] = verts[i];
+                    m_quadVertices[m_quadVerticesCount + i].Position = verts[i].Position.Transform(mview);
+                }
+                m_quadVerticesCount += quad->GetQuadCount() * 4;
+
+                // Look for similar batch.
+                if (!m_quads.empty()) {
+                    auto last = m_quads.size() - 1;
+                    auto back = m_quads.back();
+
+                    if (back.Obj->GetZIndex() == quad->GetZIndex()
+                        && back.Obj->GetShaderProgram() == quad->GetShaderProgram()
+                        && back.Obj->GetTexture() == quad->GetTexture()) {
+                        m_quads[last].Count += quad->GetQuadCount();
+                        break;
+                    }
+                }
+
+                // Add to batch.
+                m_quads.push_back({quad->GetQuadCount(), quad});
+            } break;
         }
+    }
 
-        _Queue[b].push_back(i_);
+    void Renderer::_flush() {
+        // Render the quad buffers.
+        _renderQuadBuffers();
+
+        // Clear the queues for the next render.
+        m_renderQueue[BUCKET_Z_NEGATIVE].clear();
+        m_renderQueue[BUCKET_Z_NEUTRAL].clear();
+        m_renderQueue[BUCKET_Z_POSITIVE].clear();
+        m_quadVerticesCount = 0;
+        m_quads.clear();
     }
 
     Renderer::Renderer(GraphicsDevice *graphicsDevice_)
-            : _GraphicsDevice(graphicsDevice_) {
-        // Set the default clear color
-        SetClearColor(Color::Black);
+            : m_graphicsDevice(graphicsDevice_) {
+        // Check graphics device.
+        if (m_graphicsDevice == nullptr)
+            throw std::runtime_error("Graphics device cannot be null!");
 
-        // Initialize the 3 render buckets
-        _Queue.resize(3);
+        // Create default shader.
+        _createDefaultShader();
 
-        // Create buffers
-        __CreateBuffers();
-
-        // Create shader
-        __CreateDefaultShader();
-
-        // Enable blending
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // Create quad buffers.
+        _createQuadBuffers();
     }
 
     Renderer::~Renderer() {
-        delete _DefaultShaderProgram;
-        delete _DefaultShader;
-        delete _DefaultTexture;
+        // Delete quad buffers.
+        _deleteQuadBuffers();
+
+        // Delete resources.
+        delete m_whiteTexture;
+        delete m_defaultShaderProgram;
     }
 
-    void Renderer::Clear() {
-        // Enable depth writing
-        glDepthMask(true);
-
-        // Clear
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Disable depth writing
-        glDepthMask(false);
-    }
-
-    void Renderer::SetClearColor(const Color &clearColor_) {
-        glClearColor(clearColor_.R,
-                     clearColor_.G,
-                     clearColor_.B,
-                     clearColor_.A);
+    void Renderer::Add(Renderable *obj_) {
+        // Add to the queue.
+        if (obj_->GetZIndex() < 0) m_renderQueue[BUCKET_Z_NEGATIVE].push_back(obj_);
+        else if (obj_->GetZIndex() > 0) m_renderQueue[BUCKET_Z_POSITIVE].push_back(obj_);
+        else m_renderQueue[BUCKET_Z_NEUTRAL].push_back(obj_);
     }
 
     void Renderer::Render() {
-        // Starting
-        _Rendering = true;
+        // Enable OpenGL Capabilities
+        _enableGLCapabilities();
 
-        // Sort buckets
-        __SortQueue();
-
-        // Process queue
-        __ProcessQueue();
-
-        // Clean
-        Clean();
-
-        // Finished
-        _Rendering = false;
+        // Process the queue.
+        _processQueue();
     }
 
-    void Renderer::Clean() {
-        _Queue[BUCKET_Z_NEGATIVE].clear();
-        _Queue[BUCKET_Z_NEUTRAL].clear();
-        _Queue[BUCKET_Z_POSITIVE].clear();
+    void Renderer::Clear() {
+        // Clear color and depth buffers.
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void Renderer::Flush() {
-        // Render with the current mode
-        switch (_CurrentMode) {
-            case MODE_QUADS:
-                __DrawBatchedQuads();
-                break;
-            case MODE_TRIANGLES:
-                break;
-        }
-
-        // Clear the batch.
-        _VertexCount = 0;
-        _CurrentBatchItems.clear();
-    }
-
-    void Renderer::AddRenderObject(RenderObject *obj_) {
-        // Check
-        if (_Rendering) throw std::runtime_error("Cannot add object while rendering.");
-
-        switch (obj_->GetType()) {
-            case RenderObject::OBJECT_QUAD: {
-                auto quad = (QuadsObject *) obj_;
-                __AddToQueue({quad->GetQuadCount() * 4, quad->GetModelView(), quad->GetVertices(), quad->GetTexture(),
-                              quad->GetShaderProgram(), quad->GetZIndex(), MODE_QUADS});
-            } break;
-            case RenderObject::OBJECT_PRIMITIVE:
-                break;
-            case RenderObject::OBJECT_TRIANGLE:
-                break;
-            default: throw std::runtime_error("Invalid object provided to renderer.");
-        }
-    }
-
-    bool Renderer::GetDepthTest2D() {
-        return _Enable2DDepthTest;
-    }
-
-    void Renderer::SetDepthTest2D(bool depthTest_) {
-        if (_Rendering) throw std::runtime_error("Cannot add object while rendering.");
-        _Enable2DDepthTest = depthTest_;
+    void Renderer::SetClearColor(Color color_) {
+        // Set the clear color.
+        glClearColor(color_.R, color_.G, color_.B, color_.A);
     }
 }
