@@ -304,6 +304,8 @@ public:
         _Obj = Rewrite::QuadRenderable(vdat);
         _Obj.SetTexture(_Resources->GetTexture("test_tiles"));
 
+        auto h = Windows::ApplicationModel::Package::Current->DisplayName;
+
         return;
 
         // Load arial as default font

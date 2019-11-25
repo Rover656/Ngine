@@ -163,6 +163,11 @@ namespace NerdThings::Ngine {
          */
         int m_preFullscreenSizeHeight = 0;
 
+        /**
+         * The window title.
+         */
+        std::string m_windowTitle = "";
+
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
          * Whether or not a native console is allocated
@@ -294,8 +299,8 @@ namespace NerdThings::Ngine {
         /**
          * Get the window title.
          *
-         * @warning This does not work yet.
-         * @todo Get this working.
+         * @note Only works on Desktop and UWP.
+         * @return The window title (if available.)
          */
         std::string GetTitle();
 

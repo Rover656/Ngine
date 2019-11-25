@@ -107,6 +107,10 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         // Create window
         m_GLFWWindow = glfwCreateWindow(config_.InitialWidth, config_.InitialHeight, config_.Title.c_str(), nullptr, nullptr);
+
+        // Save title
+        m_windowTitle = config_.Title;
+
         if (!m_GLFWWindow) {
             glfwTerminate();
             throw std::runtime_error("Failed to create game window.");
@@ -335,6 +339,15 @@ namespace NerdThings::Ngine {
         eglQuerySurface(m_display, m_surface, EGL_WIDTH, &m_currentWidth);
         eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &m_currentHeight);
 #endif
+
+#if defined(PLATFORM_UWP)
+        // Get window title (UWP)
+        auto pName = Windows::ApplicationModel::Package::Current->DisplayName;
+        std::wstring tmp(pName->Begin());
+        std::string name(tmp.begin(), tmp.end());
+        m_windowTitle = name;
+#endif
+
         Logger::Notice("Window", "Successfully created window.");
 
         // Initialized
@@ -466,17 +479,13 @@ namespace NerdThings::Ngine {
     }
 
     std::string Window::GetTitle() {
-#if defined(PLATFORM_DESKTOP)
-#elif defined(PLATFORM_UWP)
-        auto h = Windows::ApplicationModel::Package::Current->DisplayName;
-        // TODO: Turn this into a string.
-#endif
-        return "";
+        return m_windowTitle;
     }
 
     void Window::SetTitle(const std::string& title_) {
 #if defined(PLATFORM_DESKTOP)
         glfwSetWindowTitle(m_GLFWWindow, title_.c_str());
+        m_windowTitle = title_;
 #endif
     }
 

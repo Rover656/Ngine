@@ -15,6 +15,11 @@
 #include "Ngine.h"
 
 namespace NerdThings::Ngine {
+    /**
+     * Log writer class.
+     *
+     * One day this might even write to a file :O
+     */
     class NEAPI Logger {
         template <typename ...Args>
         static std::string _getFormattedString(std::string format_, Args...args) {
