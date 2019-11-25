@@ -145,6 +145,28 @@ namespace NerdThings::Ngine::Graphics {
         return m_projectionMatrix;
     }
 
+    Matrix GraphicsDevice::GetModelViewMatrix() const {
+        // TODO: Model matrix stack.
+        return Matrix::Identity;
+    }
+
+    void GraphicsDevice::SetupFramebuffer() {
+        // Get viewport width and height.
+        int w,h;
+        if (false) {
+            // TODO: Render target support.
+        } else {
+            w = m_attachedWindow->GetWidth();
+            h = m_attachedWindow->GetHeight();
+        }
+
+        // Set viewport
+        glViewport(0, 0, w, h);
+
+        // Create new matrix
+        m_projectionMatrix = Matrix::Orthographic(0, (float)w, (float)h, 0, -1, 1);
+    }
+
     bool GraphicsDevice::GetGLSupportFlag(GraphicsDevice::OpenGLFeature feature_) {
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         return m_GLSupportFlags[feature_];

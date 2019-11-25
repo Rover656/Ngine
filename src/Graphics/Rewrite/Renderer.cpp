@@ -13,6 +13,8 @@
 
 #include "OpenGLDefines.h"
 
+// BIG TODO: Make the batch support multiple render targets (So that render targets will work properly).
+
 namespace NerdThings::Ngine::Graphics::Rewrite {
     void Renderer::_enableGLCapabilities() {
         // Enable blending
@@ -345,10 +347,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
                 // Add vertices
                 auto verts = quad->GetVertices();
-                auto mview = quad->GetModelView();
+                Matrix modelView = quad->GetModelView();
+                // modelView = modelView * m_graphicsDevice->GetModelViewMatrix(); TODO: This won't actually work as the model matrix could change by this point -.-
                 for (auto i = 0; i < quad->GetQuadCount() * 4; i++) {
                     m_quadVertices[m_quadVerticesCount + i] = verts[i];
-                    m_quadVertices[m_quadVerticesCount + i].Position = verts[i].Position.Transform(mview);
+                    m_quadVertices[m_quadVerticesCount + i].Position = verts[i].Position.Transform(modelView);
                 }
                 m_quadVerticesCount += quad->GetQuadCount() * 4;
 
@@ -413,6 +416,9 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
     }
 
     void Renderer::Render() {
+        // Configure the framebuffer for rendering
+        m_graphicsDevice->SetupFramebuffer();
+
         // Enable OpenGL Capabilities
         _enableGLCapabilities();
 

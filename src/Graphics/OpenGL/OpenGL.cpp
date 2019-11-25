@@ -418,8 +418,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         }
         ConsoleMessage("Loaded internal shader.", "NOTICE", "OpenGL");
 
-        // Init now (TEMP) TODO REMOVE THIS
-        auto a = _DefaultShaderProgram;
+        // Init now
         _DefaultShaderProgram->Use();
     }
 

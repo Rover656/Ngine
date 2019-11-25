@@ -22,6 +22,7 @@ namespace NerdThings::Ngine::Graphics {
     /**
      * The graphics device.
      * Manages the OpenGL Context and it's features.
+     * Once feature complete this will replace `GraphicsManager`.
      *
      * @note This is very WIP. Only features that are required will be implemented until the new `Renderer` works.
      */
@@ -62,7 +63,7 @@ namespace NerdThings::Ngine::Graphics {
             GL_COMP_PVRT,
 
             /**
-             * ASTC texture compression support
+             * ASTC texture compression support.
              */
             GL_COMP_ASTC,
 
@@ -77,12 +78,12 @@ namespace NerdThings::Ngine::Graphics {
             GL_TEX_FLOAT,
 
             /**
-             * Clamp mirror wrap mode support,
+             * Clamp mirror wrap mode support.
              */
             GL_TEX_MIRROR_CLAMP,
 
             /**
-             * NPOT Texture support
+             * NPOT Texture support.
              */
             GL_TEX_NPOT,
 
@@ -138,6 +139,14 @@ namespace NerdThings::Ngine::Graphics {
          * @return The current projection matrix.
          */
         Matrix GetProjectionMatrix() const;
+
+        /**
+         * Get the current model view matrix.
+         *
+         * @note This is basically just for camera support.
+         * @return The current model view matrix.
+         */
+        Matrix GetModelViewMatrix() const;
 
         /**
          * Setup the framebuffer.

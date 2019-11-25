@@ -263,11 +263,14 @@ public:
     }
 
     void Draw() {
+        // Clear display
         _Renderer->Clear();
 
+        // Queue 1000 quads
         for (auto i = 0; i < 1000; i++)
             _Renderer->Add(&_Obj);
 
+        // Render the quads
         _Renderer->Render();
     }
 
@@ -287,12 +290,13 @@ public:
         // Set screen clear color
         _Renderer->SetClearColor(Color::Blue);
 
-        // Create vertex data for our quad
+        // Create vertex data for our quad (from bottom left)
         std::vector<Rewrite::VertexData> vdat;
-        vdat.push_back({{-0.5f, -0.5f, 0}, Color::Green, {0, 1}});
-        vdat.push_back({{0.5f, -0.5f, 0}, Color::Red, {1, 1}});
-        vdat.push_back({{0.5f, 0.5f, 0}, Color::Yellow, {1, 0}});
-        vdat.push_back({{-0.5f, 0.5f, 0}, Color::Blue, {0, 0}});
+        float size = 500;
+        vdat.push_back({{0, size, 0}, Color::Green, {0, 1}});
+        vdat.push_back({{size, size, 0}, Color::Red, {1, 1}});
+        vdat.push_back({{size, 0, 0}, Color::Yellow, {1, 0}});
+        vdat.push_back({{0, 0, 0}, Color::Blue, {0, 0}});
 
         // Create our quad
         _Obj = Rewrite::QuadRenderable(vdat);

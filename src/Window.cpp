@@ -118,7 +118,7 @@ namespace NerdThings::Ngine {
         EGLint samples = 0;
         EGLint sampleBuffer = 0;
 
-        if (Config.MSAA_4X) {
+        if (config_.MSAA_4X) {
 #if !defined(PLATFORM_UWP) // Seems to crash UWP, so don't
             samples = 4;
             sampleBuffer = 1;
@@ -572,7 +572,7 @@ namespace NerdThings::Ngine {
         glfwGetWindowSize((GLFWwindow *)m_GLFWWindow, &m_currentWidth, &m_currentHeight);
 #elif defined(PLATFORM_UWP)
         // Poll window events
-        if (Visible())
+        if (IsVisible())
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
         else
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);

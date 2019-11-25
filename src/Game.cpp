@@ -11,8 +11,6 @@
 
 #include "Game.h"
 
-#include <utility>
-
 #include "Audio/AudioDevice.h"
 #include "Graphics/GraphicsManager.h"
 #include "Input/Gamepad.h"
