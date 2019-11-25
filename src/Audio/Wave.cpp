@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::Audio {
     }
 
     bool Wave::IsValid() const {
-        return Data != nullptr; // TODO: Any more checks??
+        return Channels > 0 && Data != nullptr;
     }
 
     Wave *Wave::LoadWave(const Filesystem::Path &path_) {

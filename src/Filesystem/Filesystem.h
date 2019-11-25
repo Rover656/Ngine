@@ -194,9 +194,8 @@ namespace NerdThings::Ngine::Filesystem {
          * Whether the path is valid or not.
          *
          * @return Whether or not the path is valid.
-         * @todo Rename to IsValid to conform with other classes.
          */
-        bool Valid() const;
+        bool IsValid() const;
 
         /*
          * Combine to paths
@@ -477,10 +476,9 @@ namespace NerdThings::Ngine::Filesystem {
         FILE *GetFileHandle() const;
 
         /**
-         * Get the size of the file.
+         * Get the size of the file in bytes.
          *
-         * @return The size of the file.
-         * @todo Confirm that this is in bytes.
+         * @return The size of the file in bytes.
          */
         int GetSize() const;
 

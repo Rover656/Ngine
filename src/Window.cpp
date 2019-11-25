@@ -38,6 +38,7 @@
 #include "Input/Gamepad.h"
 #include "Input/Mouse.h"
 #include "Input/Keyboard.h"
+#include "Logger.h"
 
 namespace NerdThings::Ngine {
     Window *Window::m_currentWindow = nullptr;
@@ -66,10 +67,9 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
         if (!glfwInit()) {
-            ConsoleMessage("Failed to init GLFW.", "ERROR", "Window");
-            throw std::runtime_error("[Window::Init] Failed to init GLFW.");
+            Logger::Fail("Window", "Failed to init GLFW.");
         }
-        ConsoleMessage("Initialised GLFW.", "NOTICE", "Window");
+        Logger::Notice("Window", "Initialized GLFW.");
 
         // Set defaults
         glfwDefaultWindowHints();
@@ -335,7 +335,7 @@ namespace NerdThings::Ngine {
         eglQuerySurface(m_display, m_surface, EGL_WIDTH, &m_currentWidth);
         eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &m_currentHeight);
 #endif
-        ConsoleMessage("Successfully created window.", "NOTICE", "Window");
+        Logger::Notice("Window", "Successfully created window.");
 
         // Initialized
         m_initialized = true;
@@ -516,7 +516,7 @@ namespace NerdThings::Ngine {
 
             // Mark as open
             m_consoleAllocated = true;
-            ConsoleMessage("Allocated a console to the game window. Output logs forwarded.", "NOTICE", "Window");
+            Logger::Notice("Window", "Allocated a console to the game window. Output logs forwarded.");
         } else if (!flag_ && m_consoleAllocated) {
             // Close our buffers
             m_consoleIn.close();
@@ -537,7 +537,7 @@ namespace NerdThings::Ngine {
 
             // Mark as deallocated
             m_consoleAllocated = false;
-            ConsoleMessage("Deallocated the console from the game window. Output logs restored.", "NOTICE", "Window");
+            Logger::Notice("Window", "Deallocated the console from the game window. Output logs restored.");
         }
 #endif
     }
@@ -609,7 +609,11 @@ namespace NerdThings::Ngine {
             m_display = EGL_NO_DISPLAY;
         }
 #endif
-        ConsoleMessage("Closed window.", "NOTICE", "Window");
+        // Ensure the console is deallocated.
+        SetEnableNativeConsole(false);
+
+        // Inform of closure
+        Logger::Notice("Window", "Closed window.");
 
         // Unset width and height as the window is closed
         m_currentWidth = 0;

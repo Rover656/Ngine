@@ -408,7 +408,7 @@ namespace NerdThings::Ngine::Filesystem {
         return Path(pathA_, pathB_);
     }
 
-    bool Path::Valid() const {
+    bool Path::IsValid() const {
         return m_hasProperValue;
     }
 
@@ -556,7 +556,6 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     char Path::_getJoinChar() {
-        // TODO: See if there are any more variations
 #if defined(_WIN32)
         return '\\';
 #else
@@ -613,7 +612,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     File::File(const Path &path_) : FilesystemObject(path_) {
         // Check path is valid
-        if (!path_.Valid()) throw std::runtime_error("File must be given a valid path.");
+        if (!path_.IsValid()) throw std::runtime_error("File must be given a valid path.");
 
         // Create an empty handler
         m_internalHandle = std::make_shared<InternalFileHandler>();
@@ -710,7 +709,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     bool File::Open(FileOpenMode mode_, bool binary_) {
         // Check validity of path
-        if (!m_objectPath.Valid()) throw std::runtime_error("This file's path is invalid");
+        if (!m_objectPath.IsValid()) throw std::runtime_error("This file's path is invalid");
 
         // Open with selected mode
         switch(mode_) {
@@ -889,7 +888,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     Directory::Directory(const Path &path_) : FilesystemObject(path_) {
         // Check for valid path
-        if (!path_.Valid()) throw std::runtime_error("Directory must be given a valid path.");
+        if (!path_.IsValid()) throw std::runtime_error("Directory must be given a valid path.");
     }
 
     bool Directory::Create() {

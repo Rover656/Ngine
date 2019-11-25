@@ -13,6 +13,7 @@
 
 #include "BaseEntity.h"
 #include "Game.h"
+#include "Logger.h"
 
 namespace NerdThings::Ngine {
     // Private Methods
@@ -40,8 +41,7 @@ namespace NerdThings::Ngine {
             : _ParentGame(parentGame_) {
         // Check game
         if (parentGame_ == nullptr) {
-            ConsoleMessage("A scene has been fed null for the parent game.", "FATAL", "SCENE");
-            throw std::runtime_error("Cannot have a null game.");
+            Logger::Fail("Scene", "Scene cannot have a null parent game.");
         }
 
         // Physics setup
@@ -54,7 +54,7 @@ namespace NerdThings::Ngine {
     // Destructor
 
     Scene::~Scene() {
-        ConsoleMessage("Deleting Scene.", "NOTICE", "SCENE");
+        Logger::Notice("Scene", "Deleting scene.");
 
         // Delete physics world
         if (_PhysicsWorld != nullptr) delete _PhysicsWorld;

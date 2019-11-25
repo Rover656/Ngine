@@ -25,7 +25,7 @@ namespace NerdThings::Ngine {
 
     void Component::Draw() { }
 
-    Scene *Component::GetParentScene() const {
+    Scene *Component::GetScene() const {
         return _ParentEntity->GetParentScene();
     }
 

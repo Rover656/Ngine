@@ -51,9 +51,9 @@ namespace NerdThings::Ngine::Components {
 
         // Render the tileset
         if (m_useCullArea) {
-            m_tileset->Draw(par->GetPosition(), GetParentScene()->GetCullAreaPosition(), GetParentScene()->GetCullAreaEndPosition());
+            m_tileset->Draw(par->GetPosition(), GetScene()->GetCullAreaPosition(), GetScene()->GetCullAreaEndPosition());
         } else {
-            m_tileset->Draw(par->GetPosition(), GetParentScene()->GetViewportPosition(), GetParentScene()->GetViewportEndPosition());
+            m_tileset->Draw(par->GetPosition(), GetScene()->GetViewportPosition(), GetScene()->GetViewportEndPosition());
         }
     }
 }

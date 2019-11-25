@@ -24,6 +24,8 @@
 #include <Game.h>
 #include <Window.h>
 
+#include <Logger.h>
+
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
 using namespace NGINE_NS::Components;

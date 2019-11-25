@@ -68,7 +68,9 @@ namespace NerdThings::Ngine {
          *
          * @return The parent entity's parent scene.
          */
-        Scene *GetParentScene() const;
+        Scene *GetScene() const;
+
+        // TODO: GetGame()
 
         /**
          * Whether or not the component has a parent.

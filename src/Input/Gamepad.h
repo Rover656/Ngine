@@ -152,8 +152,6 @@ namespace NerdThings::Ngine::Input {
 
     /**
      * Gamepad numbers.
-     *
-     * @todo Stop using this.
      */
     enum GamepadNumber {
         /**

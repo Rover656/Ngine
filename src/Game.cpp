@@ -17,6 +17,7 @@
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Filesystem/ResourceManager.h"
+#include "Logger.h"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 
@@ -102,26 +103,26 @@ namespace NerdThings::Ngine {
     void Game::Run() {
         // Create window
         m_gameWindow = new Window(m_gameWindowCreationConfig);
-        ConsoleMessage("Created game window.", "NOTICE", "Game");
+        Logger::Notice("Game", "Created game window.");
 
         // Create graphics device.
         m_graphicsDevice = new Graphics::GraphicsDevice(m_gameWindow);
-        ConsoleMessage("Created graphics device.", "NOTICE", "Game");
+        Logger::Notice("Game", "Created graphics device.");
 
         // Init Input
         Input::Gamepad::Init();
         Input::Mouse::Init();
         Input::Keyboard::Init();
-        ConsoleMessage("Input APIs have been initialized.", "NOTICE", "Game");
+        Logger::Notice("Game", "Input APIs have been initialized.");
 
         // Init audio
-        ConsoleMessage("Attempting to initialize audio device.", "NOTICE", "Game");
+        Logger::Notice("Game", "Attempting to initialize audio device.");
         Audio::AudioDevice::Initialize();
 
         // Check if the device was created
         if (Audio::AudioDevice::IsReady())
-            ConsoleMessage("Audio device initialized successfully..", "NOTICE", "Game");
-        else ConsoleMessage("Failed to create audio device. Audio APIs will be unavailable.", "WARN", "Game");
+            Logger::Notice("Game", "Audio device initialized successfully.");
+        else Logger::Warn("Game", "Failed to create audio device. Audio APIs will be unavailable.");
 
         // Create render target
         if (Config.MaintainResolution) {
@@ -147,7 +148,7 @@ namespace NerdThings::Ngine {
             if (Config.FPS != lastFPS) {
                 lastFPS = Config.FPS;
                 timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
-                ConsoleMessage("Timestep updated to match FPS.", "NOTICE", "Game");
+                Logger::Notice("Game", "Timestep updated to match FPS.");
             }
 
             if (!m_gameWindow->IsVisible() && !Config.RunWhileHidden) {
@@ -292,16 +293,18 @@ namespace NerdThings::Ngine {
         OnCleanup();
 
         // Close audio
-        ConsoleMessage("Closing audio device.", "NOTICE", "Window");
         Audio::AudioDevice::Close();
+        Logger::Notice("Game", "Closed audio device.");
 
         // Delete graphics device
         delete m_graphicsDevice;
         m_graphicsDevice = nullptr;
+        Logger::Notice("Game", "Deleted graphics device.");
 
         // Close window
         delete m_gameWindow;
         m_gameWindow = nullptr;
+        Logger::Notice("Game", "Deleted game window.");
     }
 
     void Game::SetFPS(int FPS_) {
@@ -326,6 +329,6 @@ namespace NerdThings::Ngine {
         if (m_currentScene != nullptr)
             m_currentScene->OnLoad({this});
 
-        ConsoleMessage("A new scene has been loaded.", "NOTICE", "Game");
+        Logger::Notice("Game", "A new scene has been loaded.");
     }
 }
