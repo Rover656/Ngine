@@ -257,7 +257,7 @@ namespace NerdThings::Ngine {
          * Set whether or not VSync is enabled
          *
          * @warning Makes this window's context current.
-         * @param flag_
+         * @param flag_ Whether or not V-Sync should be enabled.
          */
         void SetVSyncEnabled(bool flag_);
 

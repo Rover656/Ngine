@@ -23,7 +23,7 @@
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL33)
-#include "../../../third-party/glad/include/glad/glad.h" // Relative path so this works in other projects.
+#include "../../../third-party/glad/include/glad/glad.h"
 #elif defined(GRAPHICS_OPENGLES2)
 #define GL_KHR_debug 0
 #define GL_GLEXT_PROTOTYPES 1 // UWP???

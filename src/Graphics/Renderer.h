@@ -28,6 +28,185 @@ namespace NerdThings::Ngine::Graphics {
      * @todo Review this entire module. Until this is reviewed, no documentation will be written.
      */
     class NEAPI Renderer {
+#ifdef USE_EXPERIMENTAL_RENDERER
+    public:
+        static const unsigned int VBO_SIZE = 65536;
+        static const unsigned int QUAD_IBO_SIZE = VBO_SIZE * 6 / 4;
+    private:
+        struct BatchItem {
+            unsigned int Count;
+            Renderable *Obj;
+        };
+
+        enum RenderBucket {
+            BUCKET_Z_NEGATIVE = 0,
+            BUCKET_Z_NEUTRAL,
+            BUCKET_Z_POSITIVE
+        };
+
+        /**
+         * The graphics device.
+         */
+        GraphicsDevice *m_graphicsDevice;
+
+        /**
+         * The quad batch vertex array.
+         */
+        GLuint m_quadVAO;
+
+        /**
+         * The quad batch vertex buffer.
+         */
+        GLuint m_quadVBO;
+
+        /**
+         * The quad batch index buffer.
+         */
+        GLuint m_quadIBO;
+
+        /**
+         * Quad vertex data.
+         */
+        VertexData m_quadVertices[VBO_SIZE];
+
+        /**
+         * The number of vertices used in the vertex data.
+         */
+        unsigned int m_quadVerticesCount = 0;
+
+        /**
+         * The current quad batch.
+         * This will be optimised (i.e. duplicates that are easy to find are removed).
+         */
+        std::vector<BatchItem> m_quads;
+
+        /**
+         * The default shader program.
+         */
+        ShaderProgram *m_defaultShaderProgram;
+
+        /**
+         * 1x1 white texture.
+         */
+        Texture2D *m_whiteTexture;
+
+        /**
+         * The render queues.
+         */
+        std::vector<BatchItem> m_renderQueue[BUCKET_Z_POSITIVE + 1];
+
+        /**
+         * Enable OpenGL capabilities.
+         */
+        void _enableGLCapabilities();
+
+        /**
+         * Create the default shader
+         */
+        void _createDefaultShader();
+
+        /**
+         * Create the quad buffers
+         */
+        void _createQuadBuffers();
+
+        /**
+         * Delete the quad buffers.
+         */
+        void _deleteQuadBuffers();
+
+        /**
+         * Push data to the quad buffers
+         */
+        void _updateQuadBuffers();
+
+        /**
+         * Bind the quad buffers
+         */
+        void _bindQuadBuffers();
+
+        /**
+         * Unbind the quad buffers
+         */
+        void _unbindQuadBuffers();
+
+        /**
+         * Render the quad buffers
+         */
+        void _renderQuadBuffers();
+
+        /**
+         * Sort a bucket.
+         *
+         * @param bucket_ Bucket to sort.
+         */
+        void _sortBucket(RenderBucket bucket_);
+
+        /**
+         * Sort predicate.
+         *
+         * @param a_ The first.
+         * @param b_ The second.
+         * @return Bleh.
+         */
+        static bool _sortPredicate(BatchItem a_, BatchItem b_);
+
+        /**
+         * Render the queue.
+         */
+        void _processQueue();
+
+        /**
+         * Render the given bucket.
+         *
+         * @param bucket_ The bucket to render.
+         */
+        void _processBucket(RenderBucket bucket_);
+
+        /**
+         * Process a batch item.
+         *
+         * @param item_ The batch item to process.
+         */
+        void _processItem(BatchItem item_);
+
+        /**
+         * Flush the buffers
+         */
+        void _flush();
+    public:
+        /**
+         * Create a renderer.
+         *
+         * @param graphicsDevice_ The current graphics device.
+         */
+        Renderer(GraphicsDevice *graphicsDevice_);
+        ~Renderer();
+
+        /**
+         * Add a renderable to the batch.
+         */
+        void Add(Renderable *obj_);
+
+        // TODO: Some of the "immediate mode" methods we used to have.
+
+        /**
+         * Render the current batch.
+         */
+        void Render();
+
+        /**
+         * Clear the framebuffer.
+         */
+        void Clear();
+
+        /**
+         * Set the clear color.
+         *
+         * @param color_ The color to clear with.
+         */
+        void SetClearColor(Color color_);
+#else
         // Internal OpenGL Methods
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 
@@ -276,6 +455,7 @@ namespace NerdThings::Ngine::Graphics {
          * End a drawing loop.
          */
         static void EndDrawing();
+#endif
     };
 }
 

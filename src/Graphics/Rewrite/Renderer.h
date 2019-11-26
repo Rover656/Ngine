@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef RRENDERER_H
+#define RRENDERER_H
 
 #include "../../Ngine.h"
 
@@ -207,4 +207,4 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
     };
 }
 
-#endif //RENDERER_H
+#endif //RRENDERER_H
