@@ -11,6 +11,8 @@
 
 #include "QuadRenderable.h"
 
+#ifdef USE_EXPERIMENTAL_RENDERER
+
 namespace NerdThings::Ngine::Graphics::Rendering {
     QuadRenderable::QuadRenderable(const std::vector<VertexData> &_vertices) : _Vertices(_vertices) {
         if (_vertices.size() % 4 != 0) throw std::runtime_error("Incorrect vertex count");
@@ -43,3 +45,5 @@ namespace NerdThings::Ngine::Graphics::Rendering {
         return _ModelView;
     }
 }
+
+#endif

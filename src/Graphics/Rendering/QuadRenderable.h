@@ -14,6 +14,8 @@
 
 #include "../../Ngine.h"
 
+#ifdef USE_EXPERIMENTAL_RENDERER
+
 #include "../../Matrix.h"
 #include "../Texture2D.h"
 #include "Renderable.h"
@@ -78,5 +80,7 @@ namespace NerdThings::Ngine::Graphics::Rendering {
         Matrix GetModelView() const;
     };
 }
+
+#endif
 
 #endif //QUADRENDERABLE_H

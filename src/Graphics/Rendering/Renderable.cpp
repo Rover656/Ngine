@@ -11,6 +11,8 @@
 
 #include "Renderable.h"
 
+#ifdef USE_EXPERIMENTAL_RENDERER
+
 namespace NerdThings::Ngine::Graphics::Rendering {
     Renderable::Type Renderable::GetType() const {
         return _Type;
@@ -28,3 +30,5 @@ namespace NerdThings::Ngine::Graphics::Rendering {
         return _ShaderProgram;
     }
 }
+
+#endif

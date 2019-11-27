@@ -58,8 +58,4 @@ bool NEAPI b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB);
 // TODO: Remove this in favour of `Logger`
 void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
 
-// TODO: Remove and add to cmake
-// ENABLE EXPERIMENTAL RENDERER
-#define USE_EXPERIMENTAL_RENDERER
-
 #endif // NGINE_H

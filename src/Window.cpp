@@ -356,6 +356,11 @@ namespace NerdThings::Ngine {
         // Make this window current
         MakeCurrent();
 
+#ifndef USE_EXPERIMENTAL_RENDERER
+        // Init OpenGL
+        Graphics::OpenGL::GL::Init();
+#endif
+
         // Apply any after-creation config
         _applyConfig(config_);
     }
@@ -593,6 +598,11 @@ namespace NerdThings::Ngine {
     }
 
     void Window::Close() {
+#ifndef USE_EXPERIMENTAL_RENDERER
+        // Cleanup OpenGL
+        Graphics::OpenGL::GL::Cleanup();
+#endif
+
 #if defined(PLATFORM_DESKTOP)
         // Destroy window
         glfwDestroyWindow((GLFWwindow*)m_GLFWWindow);

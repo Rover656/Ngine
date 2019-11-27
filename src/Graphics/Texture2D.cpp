@@ -20,6 +20,7 @@
 #include "GraphicsDevice.h"
 
 namespace NerdThings::Ngine::Graphics {
+#ifdef USE_EXPERIMENTAL_RENDERER
     void Texture2D::__CreateTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -148,6 +149,7 @@ namespace NerdThings::Ngine::Graphics {
 
         return dataSize;
     }
+#endif
 
     Texture2D::Texture2D() {
         Unload();

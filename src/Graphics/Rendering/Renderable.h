@@ -14,6 +14,8 @@
 
 #include "../../Ngine.h"
 
+#ifdef USE_EXPERIMENTAL_RENDERER
+
 #include "../../Vector2.h"
 #include "../../Vector3.h"
 #include "../Color.h"
@@ -98,5 +100,7 @@ namespace NerdThings::Ngine::Graphics::Rendering {
         ShaderProgram *GetShaderProgram();
     };
 }
+
+#endif
 
 #endif //RENDERABLE_H

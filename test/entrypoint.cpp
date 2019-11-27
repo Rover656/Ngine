@@ -248,11 +248,10 @@ public:
 class TestGame : public Game {
     TestScene *_Scene;
 
+#ifdef USE_EXPERIMENTAL_RENDERER
     Renderer *_Renderer;
-
     Graphics::Rendering::QuadRenderable _Obj;
-
-    Texture2D *_Tex;
+#endif
 
     ResourceManager *_Resources;
 public:
@@ -265,6 +264,7 @@ public:
     }
 
     void Draw() {
+#ifdef USE_EXPERIMENTAL_RENDERER
         // Clear display
         _Renderer->Clear();
 
@@ -274,6 +274,7 @@ public:
 
         // Render the quads
         _Renderer->Render();
+#endif
     }
 
     void Init() {
@@ -285,7 +286,7 @@ public:
 
         // Load all content
         _Resources->LoadResources();
-
+#ifdef USE_EXPERIMENTAL_RENDERER
         // Create renderer
         _Renderer = new Renderer(GetGraphicsDevice());
 
@@ -303,9 +304,7 @@ public:
         // Create our quad
         _Obj = Rendering::QuadRenderable(vdat);
         _Obj.SetTexture(_Resources->GetTexture("test_tiles"));
-
-        return;
-
+#else
         // Load arial as default font
         Font::SetDefaultFont(_Resources->GetFont("Upheaval"));
 
@@ -314,12 +313,18 @@ public:
 
         // Set scene
         SetScene(_Scene);
+#endif
     }
 
     void Cleanup() {
         _Resources->DeleteAll();
         delete _Resources;
         _Resources = nullptr;
+
+#ifdef USE_EXPERIMENTAL_RENDERER
+        delete _Renderer;
+        _Renderer = nullptr;
+#endif
     }
 };
 
