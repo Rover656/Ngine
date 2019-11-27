@@ -11,10 +11,10 @@
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 
-#ifndef OPENGLDEFINES_H
-#define OPENGLDEFINES_H
+#ifndef NGINE_OPENGL
+#define NGINE_OPENGL
 
-#include "../../Ngine.h"
+#include "../Ngine.h"
 
 // OpenGL 2.1 works similarly to 3.3
 #if defined(GRAPHICS_OPENGL21)
@@ -101,6 +101,6 @@ static PFNGLBINDVERTEXARRAYOESPROC glBindVertexArray;
 static PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArrays;
 #endif
 
-#endif //OPENGLDEFINES_H
+#endif // NGINE_OPENGL
 
 #endif

@@ -47,7 +47,9 @@ namespace NerdThings::Ngine::Physics::Shapes {
         auto pos = GetPosition();
         pos *= ppm_;
         pos += pos_;
+#ifndef USE_EXPERIMENTAL_RENDERER
         Graphics::Renderer::DrawCircleLines(pos, GetRadius() * ppm_, Graphics::Color::Red);
+#endif
     }
 
     Vector2 CircleShape::GetPosition() const {

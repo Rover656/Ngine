@@ -25,6 +25,7 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::Draw() {
         DrawStyles();
 
+#ifndef USE_EXPERIMENTAL_RENDERER
         Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
         Graphics::Renderer::Clear(Graphics::Color::Transparent);
         DrawChildren();
@@ -47,6 +48,7 @@ namespace NerdThings::Ngine::UI {
                                                static_cast<float>(_RenderTarget->Height) * -1
                                        },
                                        Graphics::Color::White);
+#endif
     }
 
     float UIPanel::GetOffsetAbove(std::string &name_) {

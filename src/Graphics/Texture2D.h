@@ -18,13 +18,13 @@
 #include "OpenGL/Texture.h"
 #endif
 
-#include"../Filesystem/Filesystem.h"
+#include "../Filesystem/Filesystem.h"
 #include "../Resource.h"
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
     class GraphicsDevice;
-    namespace Rewrite{class Renderer;};
+    class Renderer;
     /**
      * Texture filter mode.
      */
@@ -92,7 +92,7 @@ namespace NerdThings::Ngine::Graphics {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
         // Friend renderer
-        friend class Rewrite::Renderer;
+        friend class Renderer;
 
         /**
          * OpenGL Texture ID

@@ -11,7 +11,7 @@
 
 #include "QuadRenderable.h"
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+namespace NerdThings::Ngine::Graphics::Rendering {
     QuadRenderable::QuadRenderable(const std::vector<VertexData> &_vertices) : _Vertices(_vertices) {
         if (_vertices.size() % 4 != 0) throw std::runtime_error("Incorrect vertex count");
         _Type = OBJECT_QUAD;

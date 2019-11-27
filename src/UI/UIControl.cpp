@@ -70,6 +70,7 @@ namespace NerdThings::Ngine::UI {
 
         // Draw geometry
         if (style.DrawDefaults) {
+#ifndef USE_EXPERIMENTAL_RENDERER
             // Background
             if (style.BackgroundTexture != nullptr && style.BackgroundTexture->IsValid())
                 Graphics::Renderer::DrawTexture(style.GetBackgroundTexture(),
@@ -89,6 +90,7 @@ namespace NerdThings::Ngine::UI {
                 Graphics::Renderer::DrawRectangleLines(controlBorderRect, style.BorderColor,
                                                       static_cast<int>(style.BorderThickness));
             }
+#endif
         }
     }
 

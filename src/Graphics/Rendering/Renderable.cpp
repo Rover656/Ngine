@@ -11,16 +11,16 @@
 
 #include "Renderable.h"
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
-    Renderable::Type Rewrite::Renderable::GetType() const {
+namespace NerdThings::Ngine::Graphics::Rendering {
+    Renderable::Type Renderable::GetType() const {
         return _Type;
     }
 
-    float Rewrite::Renderable::GetZIndex() const {
+    float Renderable::GetZIndex() const {
         return _ZIndex;
     }
 
-    void Rewrite::Renderable::SetZIndex(float zindex_) {
+    void Renderable::SetZIndex(float zindex_) {
         _ZIndex = zindex_;
     }
 

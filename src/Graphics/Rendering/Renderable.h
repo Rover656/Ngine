@@ -17,9 +17,9 @@
 #include "../../Vector2.h"
 #include "../../Vector3.h"
 #include "../Color.h"
-#include "ShaderProgram.h"
+#include "../ShaderProgram.h"
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+namespace NerdThings::Ngine::Graphics::Rendering {
     class Renderer;
 
     /**

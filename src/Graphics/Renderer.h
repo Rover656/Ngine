@@ -18,15 +18,31 @@
 #include "../Vector2.h"
 #include "Color.h"
 #include "Font.h"
+
+#ifdef USE_EXPERIMENTAL_RENDERER
+#include "Rendering/Renderable.h"
+#include "GraphicsDevice.h"
+#include "Shader.h"
+#include "ShaderProgram.h"
+#endif
+
 #include "Texture2D.h"
 
 namespace NerdThings::Ngine::Graphics {
+#ifdef USE_EXPERIMENTAL_RENDERER
+    /**
+     * The rewritten Ngine renderer.
+     * This properly implements all required features for much easier batching and depth sorting.
+     * @note This will probably not be completed by the end of the year. This must be enabled with the USE_EXPERIMENTAL_RENDERER flag.
+     */
+#else
     /**
      * Rendering class. Provides all drawing functions.
      * There is no concept of depth. First drawn is furthest behind.
      *
-     * @todo Review this entire module. Until this is reviewed, no documentation will be written.
+     * @warning This API will be replaced once the new Ngine renderer is ready. Enable it by defining USE_EXPERIMENTAL_RENDERER.
      */
+#endif
     class NEAPI Renderer {
 #ifdef USE_EXPERIMENTAL_RENDERER
     public:
@@ -35,7 +51,7 @@ namespace NerdThings::Ngine::Graphics {
     private:
         struct BatchItem {
             unsigned int Count;
-            Renderable *Obj;
+            Rendering::Renderable *Obj;
         };
 
         enum RenderBucket {
@@ -52,22 +68,22 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The quad batch vertex array.
          */
-        GLuint m_quadVAO;
+        unsigned int m_quadVAO;
 
         /**
          * The quad batch vertex buffer.
          */
-        GLuint m_quadVBO;
+        unsigned int m_quadVBO;
 
         /**
          * The quad batch index buffer.
          */
-        GLuint m_quadIBO;
+        unsigned int m_quadIBO;
 
         /**
          * Quad vertex data.
          */
-        VertexData m_quadVertices[VBO_SIZE];
+        Rendering::VertexData m_quadVertices[VBO_SIZE];
 
         /**
          * The number of vertices used in the vertex data.
@@ -180,13 +196,13 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @param graphicsDevice_ The current graphics device.
          */
-        Renderer(GraphicsDevice *graphicsDevice_);
+        explicit Renderer(GraphicsDevice *graphicsDevice_);
         ~Renderer();
 
         /**
          * Add a renderable to the batch.
          */
-        void Add(Renderable *obj_);
+        void Add(Rendering::Renderable *obj_);
 
         // TODO: Some of the "immediate mode" methods we used to have.
 

@@ -11,7 +11,7 @@
 
 #include "GraphicsDevice.h"
 
-#include "Rewrite/OpenGLDefines.h"
+#include "OpenGL.h"
 
 namespace NerdThings::Ngine::Graphics {
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {

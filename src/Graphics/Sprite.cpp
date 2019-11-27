@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Sprite::Draw(Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
         if (_Textures.empty()) return;
-
+#ifndef USE_EXPERIMENTAL_RENDERER
         Renderer::DrawTexture(GetCurrentTexture(),
                               Rectangle(
                                  position_,
@@ -69,6 +69,7 @@ namespace NerdThings::Ngine::Graphics {
                               Color::White,
                               origin_,
                               rotation_);
+#endif
     }
 
     void Sprite::Update() {

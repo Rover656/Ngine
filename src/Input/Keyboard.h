@@ -162,7 +162,7 @@ namespace NerdThings::Ngine::Input {
     /**
      * Keyboard input provider.
      *
-     * @todo Rewrite to have support for keymods.
+     * @todo Rendering to have support for keymods.
      * @todo Allow resetting the state of keys (to prevent any actions until it is released, overriding down).
      */
     class NEAPI Keyboard {

@@ -26,6 +26,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Canvas::Draw(Vector2 pos_) {
+#ifndef USE_EXPERIMENTAL_RENDERER
         Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
                                        {
                                                pos_.X,
@@ -40,13 +41,16 @@ namespace NerdThings::Ngine::Graphics {
                                                static_cast<float>(_RenderTarget->Height) * -1
                                        },
                                        Graphics::Color::White);
+#endif
     }
 
     void Canvas::ReDraw() {
+#ifndef USE_EXPERIMENTAL_RENDERER
         Graphics::GraphicsManager::PushTarget(_RenderTarget);
         Graphics::Renderer::Clear(Color::Transparent);
         RenderTargetRedraw();
         Graphics::GraphicsManager::PopTarget();
+#endif
     }
 
     unsigned int Canvas::GetWidth() {

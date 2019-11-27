@@ -12,9 +12,11 @@
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
 
-#include "../../Ngine.h"
+#include "../Ngine.h"
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+#ifdef USE_EXPERIMENTAL_RENDERER
+
+namespace NerdThings::Ngine::Graphics {
     class Shader;
 
     /**
@@ -75,5 +77,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         bool IsValid();
     };
 }
+
+#endif
 
 #endif //SHADERPROGRAM_H

@@ -65,7 +65,9 @@ namespace NerdThings::Ngine::Physics::Shapes {
             v1 = v1.Rotate(c, angle_);
             v2 = v2.Rotate(c, angle_);
 
+#ifndef USE_EXPERIMENTAL_RENDERER
             Graphics::Renderer::DrawLine(v1, v2, Graphics::Color::Red);
+#endif
         }
     }
 

@@ -11,11 +11,14 @@
 
 #include "Renderer.h"
 
-#include "OpenGLDefines.h"
+#ifdef USE_EXPERIMENTAL_RENDERER
+
+#include "OpenGL.h"
+#include "Rendering/QuadRenderable.h"
 
 // BIG TODO: Make the batch support multiple render targets (So that render targets will work properly).
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+namespace NerdThings::Ngine::Graphics {
     void Renderer::_enableGLCapabilities() {
         // Enable blending
         glEnable(GL_BLEND);
@@ -31,7 +34,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                 "#version 100\n"
 #endif
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "attribute vec3 NG_VertexPos;\n"
+        "attribute vec3 NG_VertexPos;\n"
                 "attribute vec2 NG_VertexTexCoord;\n"
                 "attribute vec4 NG_VertexColor;\n"
                 "varying vec2 fragTexCoord;\n"
@@ -43,7 +46,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
                 "in vec4 NG_VertexColor;\n"
                 "out vec2 fragTexCoord;\n"
                 "out vec4 fragColor;\n"
-#endif
+                #endif
                 "uniform mat4 NGU_MATRIX_MVP;\n"
                 "void main()\n"
                 "{\n"
@@ -57,27 +60,27 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 #if defined(GRAPHICS_OPENGL21)
                 "#version 120\n"
 #elif defined(GRAPHICS_OPENGLES2)
-                "#version 100\n"
+        "#version 100\n"
                 "precision mediump float;\n"
 #endif
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "varying vec2 fragTexCoord;\n"
+        "varying vec2 fragTexCoord;\n"
                 "varying vec4 fragColor;\n"
 #else
                 "#version 330\n"
                 "in vec2 fragTexCoord;\n"
                 "in vec4 fragColor;\n"
                 "out vec4 finalColor;\n"
-#endif
+                #endif
                 "uniform sampler2D NGU_TEXTURE;\n"
                 "void main()\n"
                 "{\n"
                 "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
+                #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "    gl_FragColor = texelColor*fragColor;\n"
-#elif defined(GRAPHICS_OPENGL33)
+                #elif defined(GRAPHICS_OPENGL33)
                 "    finalColor = texelColor*fragColor;\n"
-#endif
+                #endif
                 "}\n";
 
         // Create shader
@@ -122,12 +125,12 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 
         // Write null data
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Rendering::VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
 
         // Configure vertex attrib arrays
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Rendering::VertexData), (GLvoid*) offsetof(Rendering::VertexData, Position));
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Rendering::VertexData), (GLvoid*) offsetof(Rendering::VertexData, Color));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Rendering::VertexData), (GLvoid*) offsetof(Rendering::VertexData, TexCoords));
 
         // Create quad index buffer
         glGenBuffers(1, &m_quadIBO);
@@ -189,12 +192,12 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         // Miscellaneous ways of sending data to the buffer.
 #if defined(glMapBuffer)
         // Orphan data
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Rendering::VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
 
         // Replace the vertices that have changed.
         // This will not update any more vertices than necessary.
         void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        memcpy(buf, m_quadVertices, sizeof(VertexData) * m_quadVerticesCount);
+        memcpy(buf, m_quadVertices, sizeof(Rendering::VertexData) * m_quadVerticesCount);
         glUnmapBuffer(GL_ARRAY_BUFFER);
 #elif defined(glBufferSubData)
         // Copy the required data into the vertex array.
@@ -222,9 +225,9 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             glBindBuffer(GL_ARRAY_BUFFER, m_quadVBO);
 
             // Configure vertex attrib arrays
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Rendering::VertexData), (GLvoid*) offsetof(Rendering::VertexData, Position));
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Rendering::VertexData), (GLvoid*) offsetof(Rendering::VertexData, Color));
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Rendering::VertexData), (GLvoid*) offsetof(Rendering::VertexData, TexCoords));
         }
 
         // Bind IBO.
@@ -263,8 +266,10 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
         for (const auto &quad : m_quads) {
             // Bind a shader program if required
-            if (actualCurProg != quad.Obj->GetShaderProgram() || curProg == nullptr) {
-                actualCurProg = quad.Obj->GetShaderProgram();
+            auto q = (Rendering::QuadRenderable *)quad.Obj;
+
+            if (actualCurProg != q->GetShaderProgram() || curProg == nullptr) {
+                actualCurProg = q->GetShaderProgram();
                 if (actualCurProg != nullptr)
                     curProg = actualCurProg;
                 else curProg = m_defaultShaderProgram;
@@ -280,8 +285,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
             }
 
             // Bind a texture if required
-            if (actualCurTex != quad.Obj->GetTexture() || curTex == nullptr) {
-                actualCurTex = quad.Obj->GetTexture();
+            if (actualCurTex != q->GetTexture() || curTex == nullptr) {
+                actualCurTex = q->GetTexture();
                 if (actualCurTex != nullptr)
                     curTex = actualCurTex;
                 else curTex = m_whiteTexture;
@@ -305,8 +310,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         std::sort(m_renderQueue[bucket_].begin(), m_renderQueue[bucket_].end(), _sortPredicate);
     }
 
-    bool Renderer::_sortPredicate(Renderable *a_, Renderable *b_) {
-        return a_->GetZIndex() < b_->GetZIndex();
+    bool Renderer::_sortPredicate(BatchItem a_, BatchItem b_) {
+        return a_.Obj->GetZIndex() < b_.Obj->GetZIndex();
     }
 
     void Renderer::_processQueue() {
@@ -324,8 +329,8 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         // Check if the queue has something to render
         if (!m_renderQueue[bucket_].empty()) {
             // Render each renderable
-            for (const auto &renderable : m_renderQueue[bucket_]) {
-                _processRenderable(renderable);
+            for (const auto &item : m_renderQueue[bucket_]) {
+                _processItem(item);
             }
 
             // Push to framebuffer.
@@ -333,11 +338,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         }
     }
 
-    void Renderer::_processRenderable(Renderable *renderable_) {
-        switch (renderable_->GetType()) {
-            case Renderable::OBJECT_QUAD: {
+    void Renderer::_processItem(BatchItem item_) {
+        switch (item_.Obj->GetType()) {
+            case Rendering::Renderable::OBJECT_QUAD: {
                 // Get quad
-                auto quad = (QuadRenderable *) renderable_;
+                auto quad = (Rendering::QuadRenderable *) item_.Obj;
 
                 // Check we have space
                 if (m_quadVerticesCount + quad->GetQuadCount() * 4 > VBO_SIZE) {
@@ -362,7 +367,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 
                     if (back.Obj->GetZIndex() == quad->GetZIndex()
                         && back.Obj->GetShaderProgram() == quad->GetShaderProgram()
-                        && back.Obj->GetTexture() == quad->GetTexture()) {
+                        && ((Rendering::QuadRenderable *)back.Obj)->GetTexture() == quad->GetTexture()) {
                         m_quads[last].Count += quad->GetQuadCount();
                         break;
                     }
@@ -408,11 +413,11 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         delete m_defaultShaderProgram;
     }
 
-    void Renderer::Add(Renderable *obj_) {
+    void Renderer::Add(Rendering::Renderable *obj_) {
         // Add to the queue.
-        if (obj_->GetZIndex() < 0) m_renderQueue[BUCKET_Z_NEGATIVE].push_back(obj_);
-        else if (obj_->GetZIndex() > 0) m_renderQueue[BUCKET_Z_POSITIVE].push_back(obj_);
-        else m_renderQueue[BUCKET_Z_NEUTRAL].push_back(obj_);
+        if (obj_->GetZIndex() < 0) m_renderQueue[BUCKET_Z_NEGATIVE].push_back({1, obj_});
+        else if (obj_->GetZIndex() > 0) m_renderQueue[BUCKET_Z_POSITIVE].push_back({1, obj_});
+        else m_renderQueue[BUCKET_Z_NEUTRAL].push_back({1, obj_});
     }
 
     void Renderer::Render() {
@@ -436,3 +441,5 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         glClearColor(color_.R, color_.G, color_.B, color_.A);
     }
 }
+
+#endif

@@ -44,7 +44,9 @@ namespace NerdThings::Ngine::Graphics {
         Rectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
 
         // Draw
+#ifndef USE_EXPERIMENTAL_RENDERER
         Renderer::DrawTexture(_Texture, sourceRectangle, position_, _TileWidth * scale_, _TileHeight * scale_, Color::White, origin_, rotation_);
+#endif
     }
 
     float Tileset::GetTileHeight() const {

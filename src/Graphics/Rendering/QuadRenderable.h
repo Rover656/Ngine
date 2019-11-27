@@ -18,7 +18,7 @@
 #include "../Texture2D.h"
 #include "Renderable.h"
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+namespace NerdThings::Ngine::Graphics::Rendering {
     /**
      * A Quad(s) Object.
      * Renders a quad/quads with an attached texture.

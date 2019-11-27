@@ -12,11 +12,13 @@
 #ifndef NEW_SHADER_H
 #define NEW_SHADER_H
 
-#include "../../Ngine.h"
+#include "../Ngine.h"
 
-#include "../../Resource.h"
+#ifdef USE_EXPERIMENTAL_RENDERER
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+#include "../Resource.h"
+
+namespace NerdThings::Ngine::Graphics {
     class ShaderProgram;
 
     class NEAPI Shader : public IResource {
@@ -74,5 +76,7 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
         void Unload() override;
     };
 }
+
+#endif
 
 #endif //NEW_SHADER_H

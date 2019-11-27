@@ -13,9 +13,7 @@
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
-
-#include "Rewrite/OpenGLDefines.h"
-
+#include "OpenGL.h"
 #endif
 #endif
 

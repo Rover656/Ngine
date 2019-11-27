@@ -7,9 +7,9 @@
 #include <Filesystem/ResourceManager.h>
 #include <Graphics/OpenGL/OpenGL.h> // For cheeky hookin
 
-#include <Graphics/Rewrite/Renderer.h>
-
+#include <Graphics/Rendering/QuadRenderable.h>
 #include <Graphics/Renderer.h>
+
 #include <Graphics/TilesetRenderer.h>
 #include <Input/Keyboard.h>
 #include <Physics/Shapes/CircleShape.h>
@@ -248,9 +248,9 @@ public:
 class TestGame : public Game {
     TestScene *_Scene;
 
-    Rewrite::Renderer *_Renderer;
+    Renderer *_Renderer;
 
-    Rewrite::QuadRenderable _Obj;
+    Graphics::Rendering::QuadRenderable _Obj;
 
     Texture2D *_Tex;
 
@@ -287,13 +287,13 @@ public:
         _Resources->LoadResources();
 
         // Create renderer
-        _Renderer = new Rewrite::Renderer(GetGraphicsDevice());
+        _Renderer = new Renderer(GetGraphicsDevice());
 
         // Set screen clear color
         _Renderer->SetClearColor(Color::Blue);
 
         // Create vertex data for our quad (from bottom left)
-        std::vector<Rewrite::VertexData> vdat;
+        std::vector<Rendering::VertexData> vdat;
         float size = 500;
         vdat.push_back({{0, size, 0}, Color::Green, {0, 1}});
         vdat.push_back({{size, size, 0}, Color::Red, {1, 1}});
@@ -301,7 +301,7 @@ public:
         vdat.push_back({{0, 0, 0}, Color::Blue, {0, 0}});
 
         // Create our quad
-        _Obj = Rewrite::QuadRenderable(vdat);
+        _Obj = Rendering::QuadRenderable(vdat);
         _Obj.SetTexture(_Resources->GetTexture("test_tiles"));
 
         return;

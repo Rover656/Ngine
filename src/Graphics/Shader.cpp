@@ -11,13 +11,15 @@
 
 #include "Shader.h"
 
+#ifdef USE_EXPERIMENTAL_RENDERER
+
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "OpenGLDefines.h"
+#include "OpenGL.h"
 #endif
 
 // TODO: Logger messages
 
-namespace NerdThings::Ngine::Graphics::Rewrite {
+namespace NerdThings::Ngine::Graphics {
     bool Shader::__Compile(unsigned int id_) {
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         // Compile
@@ -81,3 +83,5 @@ namespace NerdThings::Ngine::Graphics::Rewrite {
 #endif
     }
 }
+
+#endif
