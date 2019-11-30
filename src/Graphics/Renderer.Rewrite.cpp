@@ -204,7 +204,7 @@ namespace NerdThings::Ngine::Graphics {
         glBufferSubData(GL_ARRAY_BUFFER, 0, m_quadVerticesCount, m_quadVertices);
 #else
         // Copy all of the data into the vertex array.
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, m_quadVertices, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Rendering::VertexData) * VBO_SIZE, m_quadVertices, GL_STREAM_DRAW);
 #endif
 
         // Unbind
@@ -292,7 +292,7 @@ namespace NerdThings::Ngine::Graphics {
                 else curTex = m_whiteTexture;
 
                 // Bind texture
-                glBindTexture(GL_TEXTURE_2D, curTex->_ID);
+                glBindTexture(GL_TEXTURE_2D, curTex->m_ID);
             }
 
             // Draw quads

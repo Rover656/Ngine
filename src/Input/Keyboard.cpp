@@ -21,24 +21,16 @@
 #include "../Window.h"
 
 namespace NerdThings::Ngine::Input {
-    // Private Fields
-
-    bool Keyboard::_CurrentKeyState[KEY_MAX + 1];
-    Key Keyboard::_ExitKey = KEY_NONE;
-    bool Keyboard::_PreviousKeyState[KEY_MAX + 1];
-    Key Keyboard::_LatestKeyPress = KEY_NONE;
-    bool Keyboard::_NextKeyState[KEY_MAX + 1];
-
-    // Private Methods
-
 #if defined(PLATFORM_DESKTOP)
 
-    void Keyboard::GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_) {
-        _NextKeyState[key_] = (action_ != GLFW_RELEASE);
-        _LatestKeyPress = (Key)key_;
+    void Keyboard::_GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_) {
+        auto kbd = ((Window *)glfwGetWindowUserPointer(window_))->GetKeyboard();
+        kbd->m_nextKeyState[key_] = (action_ != GLFW_RELEASE);
+        kbd->m_latestKeyPress = (Key)key_;
     }
 
 #elif defined(PLATFORM_UWP)
+    Keyboard *Keyboard::m_UWPKeyboard = nullptr;
 
     Key Keyboard::KeyFromVirtualKey(int key_) {
         Key actualKey = KEY_NONE;
@@ -114,52 +106,56 @@ namespace NerdThings::Ngine::Input {
 
     void Keyboard::UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
         Key key = KeyFromVirtualKey((int)args->VirtualKey);
-        _NextKeyState[key] = true;
+        m_UWPKeyboard->m_nextKeyState[key] = true;
     }
 
     void Keyboard::UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
     {
         Key key = KeyFromVirtualKey((int)args->VirtualKey);
-        _NextKeyState[key] = false;
+        m_UWPKeyboard->m_nextKeyState[key] = false;
     }
-
 #endif
 
-    // Public Fields
-
-    Event<KeyEventArgs> Keyboard::KeyPressed;
-    Event<KeyEventArgs> Keyboard::KeyReleased;
-
-    // Public Methods
-
-    Key Keyboard::GetLatestKeypress() {
-        return _LatestKeyPress;
-    }
-
-    void Keyboard::Init() {
+    Keyboard::Keyboard(Window *window_) {
 #if defined(PLATFORM_DESKTOP)
         // Register events
-//        glfwSetKeyCallback((GLFWwindow *)Window::m_GLFWWindow, Keyboard::GLFWKeyCallback);
+        glfwSetKeyCallback(window_->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
+        // Save this. UWP can only have one window.
+        m_UWPKeyboard = this;
+
         // UWP events
         auto window = CoreWindow::GetForCurrentThread();
-
         window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&UWPKeyDown);
         window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&UWPKeyUp);
 #endif
+
+        // Set key states to default to prevent bugs
+        for (auto i = 0; i <= KEY_MAX; i++) {
+            m_currentKeyState[i] = m_previousKeyState[i] = m_nextKeyState[i] = false;
+        }
+    }
+
+    Keyboard *Keyboard::GetCurrent() {
+        auto w = Window::GetCurrent();
+        return w == nullptr ? nullptr : w->GetKeyboard();
+    }
+
+    Key Keyboard::GetLatestKeypress() {
+        return m_latestKeyPress;
     }
 
     bool Keyboard::IsKeyDown(const Key key_) {
         if (key_ == KEY_NONE) return false;
-        return _CurrentKeyState[key_];
+        return m_currentKeyState[key_];
     }
 
     bool Keyboard::IsKeyPressed(const Key key_) {
-        return _CurrentKeyState[key_] != _PreviousKeyState[key_] && _CurrentKeyState[key_];
+        return m_currentKeyState[key_] != m_previousKeyState[key_] && m_currentKeyState[key_];
     }
 
     bool Keyboard::IsKeyReleased(const Key key_) {
-        return _CurrentKeyState[key_] != _PreviousKeyState[key_] && !_CurrentKeyState[key_];
+        return m_currentKeyState[key_] != m_previousKeyState[key_] && !m_currentKeyState[key_];
     }
 
     bool Keyboard::IsKeyUp(const Key key_) {
@@ -170,8 +166,8 @@ namespace NerdThings::Ngine::Input {
     void Keyboard::PollInputs() {
         // Move current to last and next into current
         for (auto i = 0; i <= KEY_MAX; i++) {
-            _PreviousKeyState[i] = _CurrentKeyState[i];
-            _CurrentKeyState[i] = _NextKeyState[i];
+            m_previousKeyState[i] = m_currentKeyState[i];
+            m_currentKeyState[i] = m_nextKeyState[i];
         }
 
         // Fire events
@@ -186,17 +182,6 @@ namespace NerdThings::Ngine::Input {
     }
 
     void Keyboard::SetExitKey(const Key key_) {
-        _ExitKey = key_;
-    }
-
-    bool Keyboard::ShouldClose() {
-        // Exit key
-        if (_ExitKey != KEY_NONE) {
-            if (IsKeyDown(_ExitKey)) {
-                return true;
-            }
-        }
-
-        return false;
+        m_exitKey = key_;
     }
 }

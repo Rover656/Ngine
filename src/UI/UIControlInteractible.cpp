@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::UI {
         auto rect = style.GetBorderRect(GetLogicRectangle());
 
         // Get mouse position
-        auto mPos = Input::Mouse::GetMousePosition();
+        auto mPos = Input::Mouse::GetCurrent()->GetMousePosition();
 
         // Check the mouse is within our parent too, if not we cant be clicked
         auto par = GetParent<UIControl>();
@@ -35,12 +35,12 @@ namespace NerdThings::Ngine::UI {
 
         if (rect.Contains(mPos)) {
             // The mouse is over the button
-            if (Input::Mouse::IsButtonPressed(Input::MOUSE_BUTTON_LEFT)) {
+            if (Input::Mouse::GetCurrent()->IsButtonPressed(Input::MOUSE_BUTTON_LEFT)) {
                 // Clicked
                 OnClick({this});
 
                 // Deregister click so double events dont happen
-                Input::Mouse::CancelButton(Input::MOUSE_BUTTON_LEFT);
+                Input::Mouse::GetCurrent()->CancelButton(Input::MOUSE_BUTTON_LEFT);
             } else if (!_Hovered) {
                 // Hovered
                 OnHover({this});

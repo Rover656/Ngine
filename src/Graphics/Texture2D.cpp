@@ -21,45 +21,45 @@
 
 namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
-    void Texture2D::__CreateTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
+    void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // Check format support
         if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_DXT))
-            && ((_Format == COMPRESSED_DXT1_RGB)
-                || (_Format == COMPRESSED_DXT1_RGBA)
-                || (_Format == COMPRESSED_DXT3_RGBA)
-                || (_Format == COMPRESSED_DXT5_RGBA))) {
+            && ((m_format == COMPRESSED_DXT1_RGB)
+                || (m_format == COMPRESSED_DXT1_RGBA)
+                || (m_format == COMPRESSED_DXT3_RGBA)
+                || (m_format == COMPRESSED_DXT5_RGBA))) {
             throw std::runtime_error("DXT compressed texture format not supported");
         }
 
         if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ETC1))
-            && (_Format == COMPRESSED_ETC1_RGB)) {
+            && (m_format == COMPRESSED_ETC1_RGB)) {
             throw std::runtime_error("ETC1 compressed texture format not supported");
         }
 
         if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ETC2)) &&
-            ((_Format == COMPRESSED_ETC2_RGB) || (_Format == COMPRESSED_ETC2_EAC_RGBA))) {
+            ((m_format == COMPRESSED_ETC2_RGB) || (m_format == COMPRESSED_ETC2_EAC_RGBA))) {
             throw std::runtime_error("ETC2 compressed texture format not supported");
         }
 
         if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_PVRT)) &&
-            ((_Format == COMPRESSED_PVRT_RGB) || (_Format == COMPRESSED_PVRT_RGBA))) {
+            ((m_format == COMPRESSED_PVRT_RGB) || (m_format == COMPRESSED_PVRT_RGBA))) {
             throw std::runtime_error("PVRT compressed texture format not supported");
         }
 
         if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ASTC)) &&
-            ((_Format == COMPRESSED_ASTC_4x4_RGBA) || (_Format == COMPRESSED_ASTC_8x8_RGBA))) {
+            ((m_format == COMPRESSED_ASTC_4x4_RGBA) || (m_format == COMPRESSED_ASTC_8x8_RGBA))) {
             throw std::runtime_error("ASTC compressed texture format not supported");
         }
 
         // Create texture
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glGenTextures(1, &_ID);
+        glGenTextures(1, &m_ID);
 
         // Bind
-        glBindTexture(GL_TEXTURE_2D, _ID);
+        glBindTexture(GL_TEXTURE_2D, m_ID);
 
         // Generate mipmaps
         int mipWidth = Width;
@@ -67,22 +67,22 @@ namespace NerdThings::Ngine::Graphics {
         int mipOffset = 0;
 
         unsigned int glInternalFormat, glFormat, glType;
-        graphicsDevice_->GetGLTextureFormats(_Format, &glInternalFormat, &glFormat, &glType);
+        graphicsDevice_->GetGLTextureFormats(m_format, &glInternalFormat, &glFormat, &glType);
 
-        for (int i = 0; i < _MipmapCount; i++) {
-            unsigned int mipSize = __CalculatePixelDataSize();
+        for (int i = 0; i < m_mipmapCount; i++) {
+            unsigned int mipSize = _calculatePixelDataSize();
 
             if (glInternalFormat != -1) {
-                if (_Format < COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *)data_ + mipOffset);
+                if (m_format < COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *)data_ + mipOffset);
                 else glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize, (unsigned char *)data_ + mipOffset);
 
 #if defined(GRAPHICS_OPENGL33)
-                if (_Format == UNCOMPRESSED_GRAYSCALE)
+                if (m_format == UNCOMPRESSED_GRAYSCALE)
                 {
                     GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ONE };
                     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
                 }
-                else if (_Format == UNCOMPRESSED_GRAY_ALPHA)
+                else if (m_format == UNCOMPRESSED_GRAY_ALPHA)
                 {
 #if defined(GRAPHICS_OPENGL21)
                     GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ALPHA };
@@ -108,10 +108,10 @@ namespace NerdThings::Ngine::Graphics {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
-    int Texture2D::__CalculatePixelDataSize() {
+    int Texture2D::_calculatePixelDataSize() {
         auto bpp = 0;
 
-        switch (_Format)
+        switch (m_format)
         {
             case UNCOMPRESSED_GRAYSCALE: bpp = 8; break;
             case UNCOMPRESSED_GRAY_ALPHA:
@@ -143,8 +143,8 @@ namespace NerdThings::Ngine::Graphics {
         // if texture is smaller, minimum dataSize is 8 or 16
         if ((Width < 4) && (Height < 4))
         {
-            if ((_Format >= COMPRESSED_DXT1_RGB) && (_Format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
-            else if ((_Format >= COMPRESSED_DXT3_RGBA) && (_Format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
+            if ((m_format >= COMPRESSED_DXT1_RGB) && (m_format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
+            else if ((m_format >= COMPRESSED_DXT3_RGBA) && (m_format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
         }
 
         return dataSize;
@@ -168,10 +168,12 @@ namespace NerdThings::Ngine::Graphics {
         Height = height_;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
-        _MipmapCount = mipmapCount_;
-        _Format = format_;
+        // Set fields
+        m_mipmapCount = mipmapCount_;
+        m_format = format_;
 
-        __CreateTexture(graphicsDevice_, data_);
+        // Make our texture
+        _createTexture(graphicsDevice_, data_);
 #else
         // Get format
         OpenGL::GLPixelFormat frmt = OpenGL::UNCOMPRESSED_GRAYSCALE;
@@ -197,8 +199,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     int Texture2D::GetMipmapCount() const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        return m_mipmapCount;
+#else
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
         return InternalTexture->MipmapCount;
 #endif
 #endif
@@ -279,7 +283,7 @@ namespace NerdThings::Ngine::Graphics {
 
     bool Texture2D::IsValid() const {
 #ifdef USE_EXPERIMENTAL_RENDERER
-        return _ID != 0 && Width > 0 && Height > 0;
+        return m_ID != 0 && Width > 0 && Height > 0;
 #else
         if (InternalTexture != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
@@ -296,8 +300,8 @@ namespace NerdThings::Ngine::Graphics {
         Height = 0;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
-        glDeleteTextures(1, &_ID);
-        _ID = 0;
+        glDeleteTextures(1, &m_ID);
+        m_ID = 0;
 #else
         InternalTexture = nullptr;
 #endif
@@ -307,8 +311,10 @@ namespace NerdThings::Ngine::Graphics {
     // Operators
 
     bool Texture2D::operator==(const Texture2D &tex_) const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        return m_ID == tex_.m_ID;
+#else
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
         return InternalTexture->ID == tex_.InternalTexture->ID;
 #endif
 #endif
@@ -316,8 +322,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Texture2D::operator!=(const Texture2D &tex_) const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        return m_ID != tex_.m_ID;
+#else
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
         return InternalTexture->ID != tex_.InternalTexture->ID;
 #endif
 #endif

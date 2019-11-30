@@ -53,19 +53,19 @@ public:
             velocity = par->GetPhysicsWorld()->GetGravityPixels();
         }
 
-        if (Keyboard::IsKeyDown(KEY_W)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_W)) {
             velocity.Y -= MoveSpeed;
         }
 
-        if (Keyboard::IsKeyDown(KEY_S)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_S)) {
             velocity.Y += MoveSpeed;
         }
 
-        if (Keyboard::IsKeyDown(KEY_A)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_A)) {
             velocity.X -= MoveSpeed;
         }
 
-        if (Keyboard::IsKeyDown(KEY_D)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_D)) {
             velocity.X += MoveSpeed;
         }
 
@@ -77,15 +77,15 @@ public:
 
         // Test
 
-        if (Keyboard::IsKeyDown(KEY_LEFT)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_LEFT)) {
             par->SetRotation(par->GetRotation() - 5);
         }
 
-        if (Keyboard::IsKeyDown(KEY_RIGHT)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_RIGHT)) {
             par->SetRotation(par->GetRotation() + 5);
         }
 
-        if (Keyboard::IsKeyDown(KEY_ZERO)) {
+        if (Keyboard::GetCurrent()->IsKeyDown(KEY_ZERO)) {
             par->SetRotation(0);
         }
     }
@@ -239,7 +239,7 @@ public:
     void Update() {
         //widg.Update();
 
-//        if (Keyboard::IsKeyPressed(KEY_F11)) {
+//        if (Keyboard::GetCurrent()->IsKeyPressed(KEY_F11)) {
 //            GetGameGame()->GetGameWindow()->ToggleFullscreen();
 //        }
     }
@@ -279,7 +279,7 @@ public:
 
     void Init() {
         // Set exit key
-        Keyboard::SetExitKey(KEY_ESCAPE);
+        Keyboard::GetCurrent()->SetExitKey(KEY_ESCAPE);
 
         // Create resource manager
         _Resources = new ResourceManager(GetGraphicsDevice());

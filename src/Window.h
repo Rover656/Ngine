@@ -33,6 +33,11 @@ typedef void *EGLContext;
 #include "EventHandler.h"
 
 namespace NerdThings::Ngine {
+    namespace Input {
+        class Mouse;
+        class Keyboard;
+    }
+
     /**
      * Window configuration.
      * Details exactly how the window will be created.
@@ -96,6 +101,9 @@ namespace NerdThings::Ngine {
      * Ngine window management wrapper.
      */
     class NEAPI Window {
+        friend class Input::Mouse;
+        friend class Input::Keyboard;
+
         /**
          * The current window.
          */
@@ -107,6 +115,11 @@ namespace NerdThings::Ngine {
          */
         GLFWwindow *m_GLFWWindow;
 #elif defined(PLATFORM_UWP)
+        /**
+         * UWP Window count.
+         */
+        static int m_UWPWindowCount;
+
         /**
          * EGL Context
          */
@@ -122,6 +135,16 @@ namespace NerdThings::Ngine {
          */
         EGLSurface m_surface;
 #endif
+
+        /**
+         * The mouse input manager for this window.
+         */
+        Input::Mouse *m_mouseInput = nullptr;
+
+        /**
+         * The keyboard input manager for this window.
+         */
+        Input::Keyboard *m_keyboardInput = nullptr;
 
         /**
          * Current window width.
@@ -230,6 +253,16 @@ namespace NerdThings::Ngine {
          * @return The currently active window.
          */
         static Window *GetCurrent();
+
+        /**
+         * Get the mouse input handler.
+         */
+        Input::Mouse *GetMouse();
+
+        /**
+         * Get the keyboard input handler.
+         */
+        Input::Keyboard *GetKeyboard();
 
         /**
          * Get window width.

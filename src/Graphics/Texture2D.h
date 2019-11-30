@@ -97,29 +97,29 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * OpenGL Texture ID
          */
-        unsigned int _ID = 0;
+        unsigned int m_ID = 0;
 
         /**
          * The number of mipmaps.
          */
-        unsigned int _MipmapCount = 0;
+        unsigned int m_mipmapCount = 0;
 
         /**
          * The pixel format.
          */
-        PixelFormat _Format = UNCOMPRESSED_R8G8B8A8;
+        PixelFormat m_format = UNCOMPRESSED_R8G8B8A8;
 
         /**
          * Create the texture on the GPU
          *
          * @param data_ The pixel data.
          */
-        void __CreateTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_);
+        void _createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_);
 
         /**
          * Calculate the size of my pixel data.
          */
-        int __CalculatePixelDataSize();
+        int _calculatePixelDataSize();
 #endif
 #endif
     public:

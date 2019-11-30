@@ -109,11 +109,9 @@ namespace NerdThings::Ngine {
         m_graphicsDevice = new Graphics::GraphicsDevice(m_gameWindow);
         Logger::Notice("Game", "Created graphics device.");
 
-        // Init Input
+        // Init Gamepad
         Input::Gamepad::Init();
-        Input::Mouse::Init();
-        Input::Keyboard::Init();
-        Logger::Notice("Game", "Input APIs have been initialized.");
+        Logger::Notice("Game", "Gamepad API has been initialized.");
 
         // Init audio
         Logger::Notice("Game", "Attempting to initialize audio device.");
@@ -142,8 +140,12 @@ namespace NerdThings::Ngine {
         auto lastFPS = Config.FPS;
         auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
 
-        // This checks the game is still running, the window is still running and the exit key is not pushed
-        while (!m_gameWindow->ShouldClose() && !Input::Keyboard::ShouldClose()) {
+        // Get input managers
+        const auto mouse = m_gameWindow->GetMouse();
+        const auto keyboard = m_gameWindow->GetKeyboard();
+
+        // This checks the game should still run
+        while (!m_gameWindow->ShouldClose()) {
             // Update timestep if FPS has changed
             if (Config.FPS != lastFPS) {
                 lastFPS = Config.FPS;
@@ -200,8 +202,8 @@ namespace NerdThings::Ngine {
 
             // Setup mouse translation
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                Input::Mouse::SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
-                Input::Mouse::SetOffset(-offsetX, -offsetY);
+                mouse->SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+                mouse->SetOffset(-offsetX, -offsetY);
             }
 
             // If we are lagging more than 5 seconds, don't count any further
@@ -210,8 +212,8 @@ namespace NerdThings::Ngine {
             // Poll inputs if window is visible and if we're going to update this frame
             if (m_gameWindow->IsFocussed() && m_gameWindow->IsVisible() && lag >= timeStep) {
                 Input::Gamepad::PollInputs();
-                Input::Mouse::PollInputs();
-                Input::Keyboard::PollInputs();
+                mouse->PollInputs();
+                keyboard->PollInputs();
             }
 
             // Run required updates
@@ -268,8 +270,8 @@ namespace NerdThings::Ngine {
 
             // Reset mouse
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                Input::Mouse::SetScale(1, 1);
-                Input::Mouse::SetOffset(0, 0);
+                mouse->SetScale(1, 1);
+                mouse->SetOffset(0, 0);
             }
 
             // Poll events

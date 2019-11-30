@@ -43,6 +43,10 @@
 namespace NerdThings::Ngine {
     Window *Window::m_currentWindow = nullptr;
 
+#if defined(PLATFORM_UWP)
+    int Window::m_UWPWindowCount = 0;
+#endif
+
     void Window::_applyConfig(const WindowConfig &config_) {
         if (!m_initialized) return;
 
@@ -63,6 +67,10 @@ namespace NerdThings::Ngine {
     }
 
     Window::Window(const WindowConfig &config_) {
+#if defined(PLATFORM_UWP)
+        if (m_UWPWindowCount > 0) throw std::runtime_error("Cannot open more than one window on UWP.");
+        m_UWPWindowCount++;
+#endif
         // Init
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
@@ -110,6 +118,9 @@ namespace NerdThings::Ngine {
 
         // Save title
         m_windowTitle = config_.Title;
+
+        // Save this as a user pointer
+        glfwSetWindowUserPointer(m_GLFWWindow, this);
 
         if (!m_GLFWWindow) {
             glfwTerminate();
@@ -361,6 +372,11 @@ namespace NerdThings::Ngine {
         Graphics::OpenGL::GL::Init();
 #endif
 
+        // Create Input APIs
+        m_mouseInput = new Input::Mouse(this);
+        m_keyboardInput = new Input::Keyboard(this);
+        Logger::Notice("Window", "Successfully opened keyboard and mouse APIs.");
+
         // Apply any after-creation config
         _applyConfig(config_);
     }
@@ -388,6 +404,14 @@ namespace NerdThings::Ngine {
 
     Window *Window::GetCurrent() {
         return m_currentWindow;
+    }
+
+    Input::Mouse *Window::GetMouse() {
+        return m_mouseInput;
+    }
+
+    Input::Keyboard *Window::GetKeyboard() {
+        return m_keyboardInput;
     }
 
     int Window::GetWidth() {
@@ -598,6 +622,10 @@ namespace NerdThings::Ngine {
     }
 
     void Window::Close() {
+        // Destroy input APIs
+        delete m_mouseInput;
+        delete m_keyboardInput;
+
 #ifndef USE_EXPERIMENTAL_RENDERER
         // Cleanup OpenGL
         Graphics::OpenGL::GL::Cleanup();
@@ -641,13 +669,14 @@ namespace NerdThings::Ngine {
     }
 
     bool Window::ShouldClose() {
+        auto windowWantsClose = false;
 #if defined(PLATFORM_DESKTOP)
-        return glfwWindowShouldClose((GLFWwindow *)m_GLFWWindow);
+        windowWantsClose = glfwWindowShouldClose((GLFWwindow *)m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
         // UWP handles game closure differently. Do not close at any time due to window.
-        return false;
+        windowWantsClose = false;
 #endif
-        return true;
+        return windowWantsClose || m_keyboardInput->IsKeyDown(m_keyboardInput->m_exitKey);
     }
 
     void Window::SwapBuffers() {
