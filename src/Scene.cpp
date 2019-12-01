@@ -185,7 +185,7 @@ namespace NerdThings::Ngine {
             return _ParentGame->Config.TargetHeight / scale;
         } else {
             // Window size
-            return _ParentGame->GetGameWindow()->GetWidth() / scale;
+            return _ParentGame->GetGameWindow()->GetHeight() / scale;
         }
     }
 

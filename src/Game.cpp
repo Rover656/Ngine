@@ -187,7 +187,7 @@ namespace NerdThings::Ngine {
                 m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
             }
 
-            if (Config.MaintainResolution && m_renderTarget == nullptr)
+            if (Config.MaintainResolution && m_renderTarget != nullptr)
                 m_renderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
 
             // Get the time since the last frame

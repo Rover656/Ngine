@@ -95,6 +95,8 @@ class PlayerEntity : public BaseEntity {
 public:
     PlayerEntity(ResourceManager *resources_, Scene *parentScene_, Vector2 position_)
             : BaseEntity(parentScene_, position_) {
+        SubscribeToUpdate();
+
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_DYNAMIC;
         bi.Position = position_;
@@ -112,6 +114,16 @@ public:
 
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
         AddComponent("Camera", new CameraComponent(this, 1, {1280/2.0f, 768/2.0f}))->Activate();
+    }
+
+    void Update() override {
+        BaseEntity::Update();
+        auto cam = GetComponent<CameraComponent>("Camera");
+        auto scene = GetParentScene();
+
+        auto w = scene->GetViewportWidth();
+        auto h = scene->GetViewportHeight();
+        cam->SetOrigin({w / 2.0f, h / 2.0f});
     }
 };
 
@@ -182,8 +194,6 @@ public:
 
 class TestScene : public Scene {
 public:
-    Camera cam;
-
     //TestWidget widg;
 
     TilesetRenderer *testTiles;
@@ -233,7 +243,7 @@ public:
     }
 
     void DrawCam() {
-        ///Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
+        //Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
     }
 
     void Update() {
@@ -337,7 +347,9 @@ NGINE_GAME_ENTRY {
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
-    //gameConfig.MaintainResolution = true; // DISABLE FOR EXPERIMENT
+#ifndef USE_EXPERIMENTAL_RENDERER
+    gameConfig.MaintainResolution = true;
+#endif
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;
