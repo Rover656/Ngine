@@ -266,7 +266,7 @@ namespace NerdThings::Ngine::Audio {
 
         ma_result result = ma_pcm_converter_init(&dspConfig, &buffer->DSP);
         if (result != MA_SUCCESS) {
-            Logger::Warn("AudioDevice", "Failed to create data conversion pipeline.");
+            Logger::Error("AudioDevice", "Failed to create data conversion pipeline.");
             free(buffer->Buffer);
             delete buffer;
             return nullptr;
@@ -313,7 +313,7 @@ namespace NerdThings::Ngine::Audio {
         if (stream.Buffer != nullptr) {
             stream.Buffer->Looping = true; // Always loop streams
             Logger::Notice("AudioDevice", "Audio stream loaded successfully.");
-        } else Logger::Warn("AudioDevice", "Failed to create audio buffer.");
+        } else Logger::Error("AudioDevice", "Failed to create audio buffer.");
 
         return stream;
     }
