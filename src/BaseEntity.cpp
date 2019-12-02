@@ -52,7 +52,7 @@ namespace NerdThings::Ngine {
 
         // Remove from parent (if not already)
         if (m_parentEntity != nullptr || m_parentScene != nullptr)
-            GetParentContainer()->RemoveChild(this);
+            GetContainer()->RemoveChild(this);
     }
 
     bool BaseEntity::CheckForCulling(Rectangle cullArea_) {
@@ -61,7 +61,7 @@ namespace NerdThings::Ngine {
 
     void BaseEntity::Destroy() {
         // Remove from our parent
-        GetParentContainer()->RemoveChild(this);
+        GetContainer()->RemoveChild(this);
     }
 
     void BaseEntity::Draw() {
@@ -94,16 +94,12 @@ namespace NerdThings::Ngine {
         return m_depth;
     }
 
-    EntityContainer *BaseEntity::GetParentContainer() const {
+    EntityContainer *BaseEntity::GetContainer() const {
         if (m_parentEntity != nullptr)
             return static_cast<EntityContainer *>(m_parentEntity);
         else if (m_parentScene != nullptr)
             return static_cast<EntityContainer *>(m_parentScene);
         return nullptr;
-    }
-
-    BaseEntity *BaseEntity::GetParentEntity() const {
-        return m_parentEntity;
     }
 
     Scene *BaseEntity::GetScene() const {

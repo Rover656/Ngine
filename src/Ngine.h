@@ -56,6 +56,9 @@ bool NEAPI b2TestOverlap(const b2Shape* shapeA, const b2Shape* shapeB);
 //----------------------------------------------------------------------------------
 
 // TODO: Remove this in favour of `Logger`
-void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
+/**
+ * @deprecated Please use Logger instead.
+ */
+[[deprecated("Please use Logger instead.")]] void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
 
 #endif // NGINE_H

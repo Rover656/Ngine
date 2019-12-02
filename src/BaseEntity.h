@@ -28,8 +28,6 @@ namespace NerdThings::Ngine {
      * Event arguments for when an entity changes position and/or rotation.
      */
     struct EntityTransformChangedEventArgs : EventArgs {
-        // Public Fields
-
         /**
          * The new entity position
          */
@@ -153,7 +151,6 @@ namespace NerdThings::Ngine {
          * @param canCull_ Whether or not this can be culled.
          */
         BaseEntity(Scene *parentScene_, Vector2 position_, int depth_ = 0, bool canCull_ = false);
-
         virtual ~BaseEntity();
 
         /**
@@ -207,7 +204,7 @@ namespace NerdThings::Ngine {
          *
          * @tparam ComponentType The component type to be returned.
          */
-        template <typename ComponentType>
+        template <typename ComponentType = Component>
         ComponentType *GetComponent(const std::string &name_) {
             // Try to find the component
             if (HasComponent(name_)) {
@@ -244,25 +241,17 @@ namespace NerdThings::Ngine {
          *
          * @return The parent container.
          */
-        EntityContainer *GetParentContainer() const;
+        EntityContainer *GetContainer() const;
 
         /**
-         * Get the parent entity
+         * Get the parent entity.
          *
+         * @tparam EntityType The type to cast the parent to (Default: BaseEntity)
          * @return The parent entity, null if none.
          */
-        BaseEntity *GetParentEntity() const;
-
-        /**
-         * Get the parent entity as.
-         * If there is no parent or the parent is not of this type it returns null.
-         *
-         * @tparam EntityType The type to cast the parent to.
-         * @return The parent entity casted to the provided type.
-         */
-        template <typename EntityType>
-        EntityType *GetParentEntityAs() const {
-            return dynamic_cast<EntityType*>(m_parentEntity);
+        template <typename EntityType = BaseEntity>
+        BaseEntity *GetParentEntity() const {
+            return dynamic_cast<EntityType *>(m_parentEntity); // TODO: Choose between dynamic or straight cast
         }
 
         /**
