@@ -17,7 +17,7 @@
 #include "../Graphics/Sprite.h"
 #include "../Component.h"
 #include "../BaseEntity.h"
-#include "../EventHandler.h"
+#include "../Events.h"
 
 namespace NerdThings::Ngine::Components {
     /**

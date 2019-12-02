@@ -16,38 +16,34 @@
 #include "Logger.h"
 
 namespace NerdThings::Ngine {
-    // Private Methods
+    void Scene::_addEntity(BaseEntity *ent_) {
+        // When an entity is added, mark as active
+        m_entityActivities.insert({ent_, true});
+    }
 
-    // The following two functions do nothing
-    // This method is here for adding an entity parent
-    void Scene::ProcessChildRemoved(BaseEntity *ent_) {
-        for (auto vec : _EntityDepths) {
+    void Scene::_removeEntity(BaseEntity *ent_) {
+        for (auto vec : m_entityDepths) {
             for (auto ent : vec.second) {
                 if (ent == ent_) {
-                    _EntityDepths[vec.first].erase(std::remove(_EntityDepths[vec.first].begin(), _EntityDepths[vec.first].end(), ent_), _EntityDepths[vec.first].end());
+                    m_entityDepths[vec.first].erase(std::remove(m_entityDepths[vec.first].begin(), m_entityDepths[vec.first].end(), ent_), m_entityDepths[vec.first].end());
                 }
             }
         }
     }
 
-    void Scene::ProcessChildAdded(BaseEntity *ent_) {
-        // When an entity is added, mark as active
-        _EntityActivities.insert({ent_, true});
-    }
-
     // Public Constructor(s)
 
     Scene::Scene(Game *parentGame_, bool physicsEnabled_, Vector2 grav, float ppm)
-            : _ParentGame(parentGame_) {
+            : m_parentGame(parentGame_), EntityContainer(EntityContainer::SCENE) {
         // Check game
         if (parentGame_ == nullptr) {
             Logger::Fail("Scene", "Scene cannot have a null parent game.");
         }
 
         // Physics setup
-        _PhysicsEnabled = physicsEnabled_;
-        if (_PhysicsEnabled) {
-            _PhysicsWorld = new Physics::PhysicsWorld(grav, ppm);
+        m_physicsEnabled = physicsEnabled_;
+        if (m_physicsEnabled) {
+            m_physicsWorld = new Physics::PhysicsWorld(grav, ppm);
         }
     }
 
@@ -57,11 +53,11 @@ namespace NerdThings::Ngine {
         Logger::Notice("Scene", "Deleting scene.");
 
         // Delete physics world
-        if (_PhysicsWorld != nullptr) delete _PhysicsWorld;
+        if (m_physicsWorld != nullptr) delete m_physicsWorld;
 
         // Clear vectors
-        _EntityActivities.clear();
-        _EntityDepths.clear();
+        m_entityActivities.clear();
+        m_entityDepths.clear();
     }
 
     // Public Methods
@@ -71,34 +67,34 @@ namespace NerdThings::Ngine {
         OnDraw();
 
         // Draw with camera
-        if (_ActiveCamera != nullptr)
-            _ActiveCamera->BeginCamera();
+        if (m_activeCamera != nullptr)
+            m_activeCamera->BeginCamera();
 
         OnDrawCamera();
 
         // Draw entities with camera
-        for (auto pair : _EntityDepths) {
+        for (auto pair : m_entityDepths) {
             auto vec = pair.second;
             for (auto ent : vec) {
                 if (ent != nullptr) {
-                    if (_EntityActivities[ent] && ent->DrawWithCamera)
+                    if (m_entityActivities[ent] && ent->DrawWithCamera)
                         ent->Draw();
                 }
             }
         }
 
-        if (_ActiveCamera != nullptr)
-            _ActiveCamera->EndCamera();
+        if (m_activeCamera != nullptr)
+            m_activeCamera->EndCamera();
 
         // Draw entities
-        for (auto pair : _EntityDepths) {
+        for (auto pair : m_entityDepths) {
             auto vec = pair.second;
             for (auto ent : vec) {
                 if (ent != nullptr) {
-                    if (_EntityActivities.find(ent) == _EntityActivities.end())
-                        _EntityActivities.insert({ent, true});
+                    if (m_entityActivities.find(ent) == m_entityActivities.end())
+                        m_entityActivities.insert({ent, true});
 
-                    if (_EntityActivities[ent] && !ent->DrawWithCamera)
+                    if (m_entityActivities[ent] && !ent->DrawWithCamera)
                         ent->Draw();
                 }
             }
@@ -106,7 +102,7 @@ namespace NerdThings::Ngine {
     }
 
     Graphics::Camera *Scene::GetActiveCamera() const {
-        return _ActiveCamera;
+        return m_activeCamera;
     }
 
     Rectangle Scene::GetCullArea() const {
@@ -115,18 +111,18 @@ namespace NerdThings::Ngine {
 
     Vector2 Scene::GetCullAreaEndPosition() const {
         auto pos = GetCullAreaPosition();
-        pos.X += _CullAreaWidth;
-        pos.Y += _CullAreaHeight;
+        pos.X += m_cullAreaWidth;
+        pos.Y += m_cullAreaHeight;
         return pos;
     }
 
     float Scene::GetCullAreaHeight() const {
         float scale = 1;
-        if (_ActiveCamera != nullptr) {
-            scale = _ActiveCamera->Zoom;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
         }
 
-        return _CullAreaHeight / scale;
+        return m_cullAreaHeight / scale;
     }
 
     Vector2 Scene::GetCullAreaPosition() const {
@@ -137,7 +133,7 @@ namespace NerdThings::Ngine {
         pos.X += GetViewportWidth() / 2.0f;
         pos.Y += GetViewportHeight() / 2.0f;
 
-        if (_CullAreaCenterInViewport) {
+        if (m_cullAreaCenterInViewport) {
             // Offset from cull area size
             pos.X -= GetCullAreaWidth() / 2.0f;
             pos.Y -= GetCullAreaHeight() / 2.0f;
@@ -148,19 +144,19 @@ namespace NerdThings::Ngine {
 
     float Scene::GetCullAreaWidth() const {
         float scale = 1;
-        if (_ActiveCamera != nullptr) {
-            scale = _ActiveCamera->Zoom;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
         }
 
-        return _CullAreaWidth / scale;
+        return m_cullAreaWidth / scale;
     }
 
-    Game *Scene::GetGameGame() {
-        return _ParentGame;
+    Game *Scene::GetGame() {
+        return m_parentGame;
     }
 
     Physics::PhysicsWorld *Scene::GetPhysicsWorld() {
-        return _PhysicsWorld;
+        return m_physicsWorld;
     }
 
     Rectangle Scene::GetViewport() const {
@@ -176,23 +172,23 @@ namespace NerdThings::Ngine {
 
     float Scene::GetViewportHeight() const {
         float scale = 1;
-        if (_ActiveCamera != nullptr) {
-            scale = _ActiveCamera->Zoom;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
         }
 
-        if (_ParentGame->Config.MaintainResolution) {
+        if (m_parentGame->Config.MaintainResolution) {
             // Virtual size
-            return _ParentGame->Config.TargetHeight / scale;
+            return m_parentGame->Config.TargetHeight / scale;
         } else {
             // Window size
-            return _ParentGame->GetGameWindow()->GetHeight() / scale;
+            return m_parentGame->GetGameWindow()->GetHeight() / scale;
         }
     }
 
     Vector2 Scene::GetViewportPosition() const {
-        if (_ActiveCamera != nullptr) {
+        if (m_activeCamera != nullptr) {
             // Top left coordinate of camera is screen 0,0
-            auto pos = _ActiveCamera->ScreenToWorld({0, 0});
+            auto pos = m_activeCamera->ScreenToWorld({0, 0});
             return pos;
         }
         return {0, 0};
@@ -200,71 +196,71 @@ namespace NerdThings::Ngine {
 
     float Scene::GetViewportWidth() const {
         float scale = 1;
-        if (_ActiveCamera != nullptr) {
-            scale = _ActiveCamera->Zoom;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
         }
 
-        if (_ParentGame->Config.MaintainResolution) {
+        if (m_parentGame->Config.MaintainResolution) {
             // Virtual size
-            return _ParentGame->Config.TargetWidth / scale;
+            return m_parentGame->Config.TargetWidth / scale;
         } else {
             // Window size
-            return _ParentGame->GetGameWindow()->GetWidth() / scale;
+            return m_parentGame->GetGameWindow()->GetWidth() / scale;
         }
     }
 
     void Scene::InternalSetEntityDepth(int depth_, BaseEntity *ent_) {
-        if (_EntityDepths.find(depth_) == _EntityDepths.end())
-            _EntityDepths.insert({depth_, {}});
-        _EntityDepths[depth_].push_back(ent_);
+        if (m_entityDepths.find(depth_) == m_entityDepths.end())
+            m_entityDepths.insert({depth_, {}});
+        m_entityDepths[depth_].push_back(ent_);
     }
 
     void Scene::InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_) {
         if (oldDepth_ == newDepth_)
             return; // Short circuit if depth's are the same because we don't want to remove and re-add
-        _EntityDepths[oldDepth_].erase(
-                std::remove(_EntityDepths[oldDepth_].begin(), _EntityDepths[oldDepth_].end(), ent_),
-                _EntityDepths[oldDepth_].end());
+        m_entityDepths[oldDepth_].erase(
+                std::remove(m_entityDepths[oldDepth_].begin(), m_entityDepths[oldDepth_].end(), ent_),
+                m_entityDepths[oldDepth_].end());
 
-        if (_EntityDepths.find(newDepth_) == _EntityDepths.end())
-            _EntityDepths.insert({newDepth_, {}});
-        _EntityDepths[newDepth_].push_back(ent_);
+        if (m_entityDepths.find(newDepth_) == m_entityDepths.end())
+            m_entityDepths.insert({newDepth_, {}});
+        m_entityDepths[newDepth_].push_back(ent_);
     }
 
     bool Scene::IsPaused() {
-        return _Paused;
+        return m_paused;
     }
 
     void Scene::Pause() {
-        _Paused = true;
+        m_paused = true;
     }
 
     void Scene::Resume() {
-        _Paused = false;
+        m_paused = false;
     }
 
     void Scene::SetActiveCamera(Graphics::Camera *camera_) {
-        _ActiveCamera = camera_;
+        m_activeCamera = camera_;
     }
 
     void Scene::SetCullArea(float width_, float height_, bool centerInViewport_) {
-        _CullAreaWidth = width_;
-        _CullAreaHeight = height_;
-        _CullAreaCenterInViewport = centerInViewport_;
+        m_cullAreaWidth = width_;
+        m_cullAreaHeight = height_;
+        m_cullAreaCenterInViewport = centerInViewport_;
     }
 
     void Scene::Update() {
-        if (_Paused) {
+        if (m_paused) {
             OnPersistentUpdate();
             return;
         }
 
-        auto fps = _ParentGame->GetTargetFPS();
+        auto fps = m_parentGame->GetTargetFPS();
 
-        _UpdateCounter++;
+        m_updateCounter++;
 
         // Every quarter second
-        if (_UpdateCounter % fps / 4 == 0) {
+        if (m_updateCounter % fps / 4 == 0) {
             // Check culling
 
             for (auto ent : GetChildren()) {
@@ -272,24 +268,24 @@ namespace NerdThings::Ngine {
                     // Check if we can cull
                     if (ent->GetCanCull()) {
                         auto area = GetCullArea();
-                        if (_EntityActivities.find(ent) == _EntityActivities.end())
-                            _EntityActivities.insert({ent, true});
-                        _EntityActivities[ent] = !ent->CheckForCulling(area);
+                        if (m_entityActivities.find(ent) == m_entityActivities.end())
+                            m_entityActivities.insert({ent, true});
+                        m_entityActivities[ent] = !ent->CheckForCulling(area);
                     }
                 }
             }
         }
 
-        if (_UpdateCounter > fps)
-            _UpdateCounter -= fps;
+        if (m_updateCounter > fps)
+            m_updateCounter -= fps;
 
         // Invoke updates
         OnUpdate();
         OnPersistentUpdate();
 
         // Physics
-        if (_PhysicsWorld != nullptr) {
-            _PhysicsWorld->Step(1.0f/_ParentGame->GetTargetFPS(), 6, 2); // TODO: Proper values
+        if (m_physicsWorld != nullptr) {
+            m_physicsWorld->Step(1.0f / m_parentGame->GetTargetFPS(), 6, 2); // TODO: Proper values
         }
     }
 }

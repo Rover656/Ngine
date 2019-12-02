@@ -26,16 +26,20 @@ namespace NerdThings::Ngine {
     void Component::Draw() { }
 
     Scene *Component::GetScene() const {
-        return _ParentEntity->GetParentScene();
+        return m_parentEntity->GetScene();
+    }
+
+    Game *Component::GetGame() const {
+        return m_parentEntity->GetGame();
     }
 
     bool Component::HasParent() const {
-        return _ParentEntity != nullptr;
+        return m_parentEntity != nullptr;
     }
 
     void Component::SubscribeToDraw() {
         if (HasParent()) {
-            _OnDrawRef = _ParentEntity->OnDraw += new ClassMethodEventHandler<Component>(this, &Component::Draw);
+            m_onDrawRef = m_parentEntity->OnDraw += new ClassMethodEventHandler<Component>(this, &Component::Draw);
         }
     }
 
@@ -43,18 +47,18 @@ namespace NerdThings::Ngine {
         if (HasParent()) {
             // Check the entity subscribed to update
             // If not, subscribe
-            if (_ParentEntity->SubscribeToUpdate()) {
-                _OnUpdateRef = _ParentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::Update);
+            if (m_parentEntity->SubscribeToUpdate()) {
+                m_onUpdateRef = m_parentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::Update);
             }
         }
     }
 
     void Component::UnsubscribeFromDraw() {
-        _OnDrawRef.Detach();
+        m_onDrawRef.Detach();
     }
 
     void Component::UnsubscribeFromUpdate() {
-        _OnUpdateRef.Detach();
+        m_onUpdateRef.Detach();
     }
 
     void Component::Update() { }
@@ -62,7 +66,7 @@ namespace NerdThings::Ngine {
     // Protected Constructor(s)
 
     Component::Component(BaseEntity *parent_)
-            : _ParentEntity(parent_) {
+            : m_parentEntity(parent_) {
         // Check our parent is valid
         if (parent_ == nullptr) {
             throw std::runtime_error("A valid parent must be attached to this component.");

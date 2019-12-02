@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef EVENTHANDLER_H
-#define EVENTHANDLER_H
+#ifndef EVENTS_H
+#define EVENTS_H
 
 #include "Ngine.h"
 
@@ -283,4 +283,4 @@ namespace NerdThings::Ngine {
     };
 }
 
-#endif //EVENTHANDLER_H
+#endif //EVENTS_H

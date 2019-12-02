@@ -14,7 +14,7 @@
 
 #include "Ngine.h"
 
-#include "EventHandler.h"
+#include "Events.h"
 #include "Scene.h"
 
 namespace NerdThings::Ngine {
@@ -27,17 +27,17 @@ namespace NerdThings::Ngine {
         /**
          * Entity OnDraw reference.
          */
-        EventAttachment<> _OnDrawRef;
+        EventAttachment<> m_onDrawRef;
 
         /**
          * Entity OnUpdate reference.
          */
-        EventAttachment<> _OnUpdateRef;
+        EventAttachment<> m_onUpdateRef;
 
         /**
          * The parent entity.
          */
-        BaseEntity *_ParentEntity = nullptr;
+        BaseEntity *m_parentEntity = nullptr;
     public:
         /**
          * On detached from an entity.
@@ -58,7 +58,7 @@ namespace NerdThings::Ngine {
          */
         template <typename EntityType = BaseEntity>
         EntityType *GetParent() const {
-            return dynamic_cast<EntityType*>(_ParentEntity);
+            return dynamic_cast<EntityType*>(m_parentEntity);
         }
 
         // TODO: Functions like this also need templates.
@@ -70,7 +70,12 @@ namespace NerdThings::Ngine {
          */
         Scene *GetScene() const;
 
-        // TODO: GetGame()
+        /**
+         * Get the parent game.
+         *
+         * @return The game that we are a part of.
+         */
+        Game *GetGame() const;
 
         /**
          * Whether or not the component has a parent.

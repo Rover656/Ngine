@@ -30,7 +30,7 @@ typedef void *EGLContext;
 #include <iostream>
 
 #include "Graphics/Image.h"
-#include "EventHandler.h"
+#include "Events.h"
 
 namespace NerdThings::Ngine {
     namespace Input {

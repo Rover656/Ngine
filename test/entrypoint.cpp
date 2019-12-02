@@ -101,7 +101,7 @@ public:
         bi.Type = PhysicsBody::BODY_DYNAMIC;
         bi.Position = position_;
         bi.FixedRotation = true;
-        auto body = GetParentScene()->GetPhysicsWorld()->CreateBody(bi);
+        auto body = GetScene()->GetPhysicsWorld()->CreateBody(bi);
         auto shape = CircleShape(1);
         body->CreateFixture(&shape, 1);
         //auto shapeb = PolygonShape::CreateAsBox(16, 16);
@@ -119,7 +119,7 @@ public:
     void Update() override {
         BaseEntity::Update();
         auto cam = GetComponent<CameraComponent>("Camera");
-        auto scene = GetParentScene();
+        auto scene = GetScene();
 
         auto w = scene->GetViewportWidth();
         auto h = scene->GetViewportHeight();
@@ -133,7 +133,7 @@ public:
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_STATIC;
         bi.Position = position_;
-        auto body = GetParentScene()->GetPhysicsWorld()->CreateBody(bi);
+        auto body = GetScene()->GetPhysicsWorld()->CreateBody(bi);
         auto box = PolygonShape::CreateAsBox(5, 5);
         body->CreateFixture(&box, 0);
         SetPhysicsBody(body);
@@ -250,7 +250,7 @@ public:
         //widg.Update();
 
 //        if (Keyboard::GetCurrent()->IsKeyPressed(KEY_F11)) {
-//            GetGameGame()->GetGameWindow()->ToggleFullscreen();
+//            GetGame()->GetGameWindow()->ToggleFullscreen();
 //        }
     }
 };

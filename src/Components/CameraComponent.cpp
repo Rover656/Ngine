@@ -39,7 +39,7 @@ namespace NerdThings::Ngine::Components {
     }
 
     void CameraComponent::Activate() {
-        GetParent<BaseEntity>()->GetParentScene()->SetActiveCamera(&m_camera);
+        GetScene()->SetActiveCamera(&m_camera);
     }
 
     Vector2 CameraComponent::GetOrigin() {

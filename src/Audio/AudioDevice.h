@@ -15,7 +15,7 @@
 #include "../Ngine.h"
 
 #include "../../third-party/miniaudio/miniaudio.h"
-#include "../EventHandler.h"
+#include "../Events.h"
 #include "AudioBuffer.h"
 #include "Music.h"
 #include "Sound.h"

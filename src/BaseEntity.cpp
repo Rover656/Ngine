@@ -14,55 +14,52 @@
 #include "Component.h"
 
 namespace NerdThings::Ngine {
-    // Private Methods
-
-    void BaseEntity::ProcessChildRemoved(BaseEntity *ent_) {
-        ent_->_ParentEntity = nullptr;
-    }
-
-    void BaseEntity::ProcessChildAdded(BaseEntity *ent_) {
-        ent_->_ParentEntity = this;
-    }
-
-    // Public Constructor(s)
-
-    BaseEntity::BaseEntity(Scene *parentScene_, const Vector2 position_, int depth_, bool canCull_)
-        : _CanCull(canCull_), _Depth(depth_), _ParentScene(parentScene_), _Position(position_) {
-        if (parentScene_ == nullptr)
-            throw std::runtime_error("Cannot give an entity a null parent scene.");
-
-        // Set initial depth
-        _ParentScene->InternalSetEntityDepth(_Depth, this);
-    }
-
-    // Destructor
-
-    BaseEntity::~BaseEntity() {
+    void BaseEntity::_doDestroy() {
         // Destroy physics body
-        if (_PhysicsBody != nullptr) _PhysicsBody->Destroy();
+        if (m_physicsBody != nullptr) m_physicsBody->Destroy();
 
-        // Unbind all events
-        UnsubscribeFromUpdate();
-    }
-
-    // Public Methods
-
-    bool BaseEntity::CheckForCulling(Rectangle cullArea_) {
-        return !cullArea_.Contains(GetPosition());
-    }
-
-    void BaseEntity::Destroy() {
         // Detach all events
         OnDraw.Clear();
         OnTransformChanged.Clear();
         OnUpdate.Clear();
 
         // Detach components
-        _Components.clear();
+        m_components.clear();
 
         // Unsubscribe from update
         UnsubscribeFromUpdate();
 
+        // Make our parents are null
+        m_parentEntity = nullptr;
+        m_parentScene = nullptr;
+    }
+
+    BaseEntity::BaseEntity(Scene *parentScene_, const Vector2 position_, int depth_, bool canCull_)
+            : m_canCull(canCull_), m_depth(depth_), m_parentScene(parentScene_), m_position(position_),
+              EntityContainer(EntityContainer::ENTITY) {
+        if (parentScene_ == nullptr)
+            throw std::runtime_error("Cannot give an entity a null parent scene.");
+
+        // Set initial depth
+        m_parentScene->InternalSetEntityDepth(m_depth, this);
+    }
+
+    // Destructor
+
+    BaseEntity::~BaseEntity() {
+        // Destroy everything (being thorough).
+        _doDestroy();
+
+        // Remove from parent (if not already)
+        if (m_parentEntity != nullptr || m_parentScene != nullptr)
+            GetParentContainer()->RemoveChild(this);
+    }
+
+    bool BaseEntity::CheckForCulling(Rectangle cullArea_) {
+        return !cullArea_.Contains(GetPosition());
+    }
+
+    void BaseEntity::Destroy() {
         // Remove from our parent
         GetParentContainer()->RemoveChild(this);
     }
@@ -72,21 +69,21 @@ namespace NerdThings::Ngine {
         OnDraw();
 
         // Debug draw
-        if (_PhysicsBody != nullptr) {
-            if (_PhysicsBody->GetWorld()->DebugDraw) {
-                _PhysicsBody->DebugDraw();
+        if (m_physicsBody != nullptr) {
+            if (m_physicsBody->GetWorld()->DebugDraw) {
+                m_physicsBody->DebugDraw();
             }
         }
     }
 
     bool BaseEntity::GetCanCull() {
-        return _CanCull;
+        return m_canCull;
     }
 
     std::vector<Component *> BaseEntity::GetComponents() {
-        std::vector<Component*> vec;
+        std::vector<Component *> vec;
 
-        for (auto & _Component : _Components) {
+        for (auto &_Component : m_components) {
             vec.push_back(_Component.second.get());
         }
 
@@ -94,67 +91,71 @@ namespace NerdThings::Ngine {
     }
 
     int BaseEntity::GetDepth() const {
-        return _Depth;
+        return m_depth;
     }
 
     EntityContainer *BaseEntity::GetParentContainer() const {
-        if (_ParentEntity != nullptr)
-            return static_cast<EntityContainer *>(_ParentEntity);
-        else if (_ParentScene != nullptr)
-            return static_cast<EntityContainer *>(_ParentScene);
+        if (m_parentEntity != nullptr)
+            return static_cast<EntityContainer *>(m_parentEntity);
+        else if (m_parentScene != nullptr)
+            return static_cast<EntityContainer *>(m_parentScene);
         return nullptr;
     }
 
     BaseEntity *BaseEntity::GetParentEntity() const {
-        return _ParentEntity;
+        return m_parentEntity;
     }
 
-    Scene *BaseEntity::GetParentScene() const {
-        return _ParentScene;
+    Scene *BaseEntity::GetScene() const {
+        return m_parentScene;
+    }
+
+    Game *BaseEntity::GetGame() const {
+        return m_parentScene->GetGame();
     }
 
     bool BaseEntity::GetDoPersistentUpdates() {
-        return _PersistentUpdates;
+        return m_persistentUpdates;
     }
 
     Vector2 BaseEntity::GetPosition() const {
-        if (_PhysicsBody == nullptr) {
-            return _Position;
+        if (m_physicsBody == nullptr) {
+            return m_position;
         } else {
-            return _PhysicsBody->GetPosition();
+            return m_physicsBody->GetPosition();
         }
     }
 
     Physics::PhysicsBody *BaseEntity::GetPhysicsBody() const {
-        return _PhysicsBody;
+        return m_physicsBody;
     }
 
     Physics::PhysicsWorld *BaseEntity::GetPhysicsWorld() const {
-        return _PhysicsBody->GetWorld();
+        return m_physicsBody->GetWorld();
     }
 
     float BaseEntity::GetRotation() const {
-        if (_PhysicsBody == nullptr) {
-            return _Rotation;
+        if (m_physicsBody == nullptr) {
+            return m_rotation;
         } else {
-            return _PhysicsBody->GetRotation();
+            return m_physicsBody->GetRotation();
         }
     }
 
     bool BaseEntity::HasComponent(const std::string &name_) {
-        return _Components.find(name_) != _Components.end();
+        return m_components.find(name_) != m_components.end();
     }
 
     bool BaseEntity::IsPhysicsEntity() {
-        return _PhysicsBody != nullptr;
+        return m_physicsBody != nullptr;
     }
 
     void BaseEntity::MoveBy(const Vector2 moveBy_) {
-        if (_PhysicsBody == nullptr) {
-            _Position += moveBy_;
+        if (m_physicsBody == nullptr) {
+            m_position += moveBy_;
         } else {
-            auto p = _PhysicsBody->GetPosition();
-            _PhysicsBody->SetPosition(p + moveBy_);
+            auto p = m_physicsBody->GetPosition();
+            m_physicsBody->SetPosition(p + moveBy_);
         }
 
         // Fire event
@@ -166,7 +167,7 @@ namespace NerdThings::Ngine {
 
         if (comp != nullptr) {
             // Remove component from map
-            _Components.erase(name_);
+            m_components.erase(name_);
 
             return true;
         }
@@ -176,25 +177,25 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetCanCull(bool canCull_) {
-        _CanCull = canCull_;
+        m_canCull = canCull_;
     }
 
     void BaseEntity::SetDepth(int depth_) {
-        _ParentScene->InternalUpdateEntityDepth(_Depth, depth_, this);
-        _Depth = depth_;
+        m_parentScene->InternalUpdateEntityDepth(m_depth, depth_, this);
+        m_depth = depth_;
     }
 
     void BaseEntity::SetDoPersistentUpdates(bool persistentUpdates_) {
-        if (_OnUpdateRef.IsAttached())
+        if (m_onUpdateRef.IsAttached())
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
-        _PersistentUpdates = persistentUpdates_;
+        m_persistentUpdates = persistentUpdates_;
     }
 
     void BaseEntity::SetPosition(const Vector2 position_) {
-        if (_PhysicsBody == nullptr) {
-            _Position = position_;
+        if (m_physicsBody == nullptr) {
+            m_position = position_;
         } else {
-            _PhysicsBody->SetPosition(position_);
+            m_physicsBody->SetPosition(position_);
         }
 
         // Fire event
@@ -202,12 +203,12 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetRotation(float rotation_) {
-        if (_PhysicsBody == nullptr) {
+        if (m_physicsBody == nullptr) {
             // Set our rotation
-            _Rotation = rotation_;
+            m_rotation = rotation_;
         } else {
             // Set the body rotation
-            _PhysicsBody->SetRotation(rotation_);
+            m_physicsBody->SetRotation(rotation_);
         }
 
         // Fire event
@@ -215,17 +216,21 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetPhysicsBody(Physics::PhysicsBody *body_) {
-        auto physicsWorld = GetParentScene()->GetPhysicsWorld();
+        auto physicsWorld = GetScene()->GetPhysicsWorld();
         if (physicsWorld == nullptr) throw std::runtime_error("Cannot make a physics entity in non-physics scene.");
-        if (_PhysicsBody != nullptr) _PhysicsBody->Destroy(); // Destroy current fixture;
-        _PhysicsBody = body_;
+        if (m_physicsBody != nullptr) m_physicsBody->Destroy(); // Destroy current fixture;
+        m_physicsBody = body_;
     }
 
     bool BaseEntity::SubscribeToUpdate() {
-        if (_ParentScene != nullptr) {
-            if (!_OnUpdateRef.IsAttached()) {
-                if (_PersistentUpdates) _OnUpdateRef = _ParentScene->OnPersistentUpdate += new ClassMethodEventHandler<BaseEntity>(this, &BaseEntity::Update);
-                else _OnUpdateRef = _ParentScene->OnUpdate += new ClassMethodEventHandler<BaseEntity>(this, &BaseEntity::Update);
+        if (m_parentScene != nullptr) {
+            if (!m_onUpdateRef.IsAttached()) {
+                if (m_persistentUpdates)
+                    m_onUpdateRef = m_parentScene->OnPersistentUpdate += new ClassMethodEventHandler<BaseEntity>(this,
+                                                                                                                 &BaseEntity::Update);
+                else
+                    m_onUpdateRef = m_parentScene->OnUpdate += new ClassMethodEventHandler<BaseEntity>(this,
+                                                                                                       &BaseEntity::Update);
                 return true;
             } else {
                 // We still have an event, soooo...
@@ -236,14 +241,14 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::UnsubscribeFromUpdate() {
-        _OnUpdateRef.Detach();
+        m_onUpdateRef.Detach();
     }
 
     void BaseEntity::Update() {
         // Trigger update
         OnUpdate();
 
-        if (_PhysicsBody != nullptr) {
+        if (m_physicsBody != nullptr) {
             // As we are a physics entity, fire this each frame
             OnTransformChanged({GetPosition(), GetRotation()});
         }

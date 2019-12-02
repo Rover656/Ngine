@@ -14,17 +14,14 @@
 #include "BaseEntity.h"
 
 namespace NerdThings::Ngine {
-    // Destructor
+    EntityContainer::EntityContainer(EntityContainer::ContainerType type_) : m_type(type_) {}
 
     EntityContainer::~EntityContainer() {
-        // Clear
-        _Entities.clear();
-    }
+        // Delete entities
+        for (auto ent : m_entities) delete ent.second;
 
-    // Public Methods
-
-    bool EntityContainer::HasChild(const std::string &name_) {
-        return _Entities.find(name_) != _Entities.end();
+        // Clear entities.
+        m_entities.clear();
     }
 
     bool EntityContainer::RemoveChild(const std::string &name_) {
@@ -32,28 +29,25 @@ namespace NerdThings::Ngine {
         const auto ent = GetChild<BaseEntity>(name_);
 
         if (ent != nullptr) {
-            // Unsubscribe from updates
-            ent->UnsubscribeFromUpdate();
-
-            // Remove parent
-            ProcessChildRemoved(ent);
+            // Destroy the entity
+            ent->_doDestroy();
 
             // Remove entity from map
-            _Entities.erase(name_);
+            m_entities.erase(name_);
 
+            // Delete entity from memory
+            delete ent;
             return true;
         }
 
-        // We don't have this entity
         return false;
     }
 
     bool EntityContainer::RemoveChild(BaseEntity *entity_) {
         // Search for the entity
-        for (const auto& ent : _Entities) {
-            if (ent.second.get() == entity_) {
-                return RemoveChild(ent.first);;
-            }
+        for (const auto &ent : m_entities) {
+            if (ent.second == entity_)
+                return RemoveChild(ent.first);
         }
 
         // We don't have this entity

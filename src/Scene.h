@@ -18,7 +18,7 @@
 #include "Rectangle.h"
 #include "Graphics/Camera.h"
 #include "EntityContainer.h"
-#include "EventHandler.h"
+#include "Events.h"
 
 namespace NerdThings::Ngine {
     class Game;
@@ -44,64 +44,67 @@ namespace NerdThings::Ngine {
      * This also contains the active camera, cull areas and manages the overall lifecycle.
      */
     class NEAPI Scene : public EntityContainer {
+        // EntityContainer needs private access
+        friend class EntityContainer;
+
         /**
          * Currently active camera which controls the viewport
          */
-        Graphics::Camera *_ActiveCamera = nullptr;
+        Graphics::Camera *m_activeCamera = nullptr;
 
         /**
          * The culling area width
          */
-        float _CullAreaWidth;
+        float m_cullAreaWidth;
 
         /**
          * The culling area height
          */
-        float _CullAreaHeight;
+        float m_cullAreaHeight;
 
         /**
          * Whether or not to center the cull area in the viewport.
          */
-        bool _CullAreaCenterInViewport = true;
+        bool m_cullAreaCenterInViewport = true;
 
         /**
          * Whether or not an entity is active
          */
-        std::unordered_map<BaseEntity *, bool> _EntityActivities;
+        std::unordered_map<BaseEntity *, bool> m_entityActivities;
 
         /**
          * Depth key list containing entities.
          * This is used for drawing.
          */
-        std::map<int, std::vector<BaseEntity *>> _EntityDepths;
+        std::map<int, std::vector<BaseEntity *>> m_entityDepths;
 
         /**
          * The parent game.
          */
-        Game* _ParentGame = nullptr;
+        Game* m_parentGame = nullptr;
 
         /**
          * Whether or not the scene is paused.
          */
-        bool _Paused = false;
+        bool m_paused = false;
 
         /**
          * Whether or not physics is enabled.
          */
-        bool _PhysicsEnabled = false;
+        bool m_physicsEnabled = false;
 
         /**
          * The physics world, if enabled.
          */
-        Physics::PhysicsWorld *_PhysicsWorld;
+        Physics::PhysicsWorld *m_physicsWorld;
 
         /**
          * The update counter.
          */
-        int _UpdateCounter = 0;
+        int m_updateCounter = 0;
 
-        void ProcessChildAdded(BaseEntity *ent_) override;
-        void ProcessChildRemoved(BaseEntity *ent_) override;
+        void _addEntity(BaseEntity *ent_);
+        void _removeEntity(BaseEntity *ent_);
     public:
         /**
          * On draw event.
@@ -196,7 +199,7 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent game.
          */
-        Game *GetGameGame();
+        Game *GetGame();
 
         /**
          * Get the current physics world.

@@ -40,8 +40,6 @@ namespace NerdThings::Ngine {
          */
         float EntityRotation;
 
-        // Public Constructor(s)
-
         /**
          * Create a new entity transform event argument.
          *
@@ -56,78 +54,75 @@ namespace NerdThings::Ngine {
      * An entity within a scene.
      */
     class NEAPI BaseEntity : public EntityContainer {
-        // Private fields
+        // Make the EntityContainer a friend so parenting can be done
+        friend class EntityContainer;
 
         /**
          * Whether or not this entity can be culled
          */
-        bool _CanCull = false;
+        bool m_canCull = false;
 
         /**
          * The list of all components.
          * All components are given a name for easy identification.
          */
-        std::map<std::string, std::unique_ptr<Component>> _Components;
+        std::map<std::string, std::unique_ptr<Component>> m_components;
 
         /**
          * Depth layer
          */
-        int _Depth;
+        int m_depth;
 
         /**
          * On update event reference
          */
-        EventAttachment<> _OnUpdateRef;
+        EventAttachment<> m_onUpdateRef;
 
         /**
          * The entity origin
          */
-        Vector2 _Origin;
+        Vector2 m_origin;
 
         /**
          * The parent entity
          */
-        BaseEntity *_ParentEntity = nullptr;
+        BaseEntity *m_parentEntity = nullptr;
 
         /**
          * Parent Scene
          */
-        Scene *_ParentScene = nullptr;
+        Scene *m_parentScene = nullptr;
 
         /**
          * Whether or not we update when paused
          */
-        bool _PersistentUpdates = false;
+        bool m_persistentUpdates = false;
 
         /**
          * The entity position
          */
-        Vector2 _Position = Vector2::Zero;
+        Vector2 m_position = Vector2::Zero;
 
         /**
          * The entity rotation (in radians)
          */
-        float _Rotation = 0;
+        float m_rotation = 0;
 
         /**
          * The current physics body.
          */
-        Physics::PhysicsBody *_PhysicsBody = nullptr;
+        Physics::PhysicsBody *m_physicsBody = nullptr;
 
         /**
          * The entity scale (Used for rendering and physics)
          */
-        float _Scale = 1;
+        float m_scale = 1;
 
-        // Private Methods
-
-        // TODO: Remove this requirement
-        void ProcessChildRemoved(BaseEntity *ent_) override;
-
-        void ProcessChildAdded(BaseEntity *ent_) override;
+        /**
+         * Destroy this entity.
+         */
+        void _doDestroy();
     public:
-        // Public Fields
-
         /**
          * Whether or not this entity is drawn with the camera
          */
@@ -148,8 +143,6 @@ namespace NerdThings::Ngine {
          */
         Event<> OnUpdate;
 
-        // Public Constructor(s)
-
         // TODO: Add physics body creation to constructor
         /**
          * Create a new entity.
@@ -161,11 +154,7 @@ namespace NerdThings::Ngine {
          */
         BaseEntity(Scene *parentScene_, Vector2 position_, int depth_ = 0, bool canCull_ = false);
 
-        // Destructor
-
         virtual ~BaseEntity();
-
-        // Public Methods
 
         /**
          * Add a component to the entity.
@@ -185,7 +174,7 @@ namespace NerdThings::Ngine {
             auto comp = dynamic_cast<Component*>(component_);
 
             if (comp != nullptr) {
-                _Components.insert({name_, std::unique_ptr<Component>(comp)});
+                m_components.insert({name_, std::unique_ptr<Component>(comp)});
                 return component_;
             }
 
@@ -222,7 +211,7 @@ namespace NerdThings::Ngine {
         ComponentType *GetComponent(const std::string &name_) {
             // Try to find the component
             if (HasComponent(name_)) {
-                return dynamic_cast<ComponentType*>(_Components.at(name_).get()); // Will return null if its the wrong type
+                return dynamic_cast<ComponentType*>(m_components.at(name_).get()); // Will return null if its the wrong type
             }
 
             return nullptr;
@@ -273,7 +262,7 @@ namespace NerdThings::Ngine {
          */
         template <typename EntityType>
         EntityType *GetParentEntityAs() const {
-            return dynamic_cast<EntityType*>(_ParentEntity);
+            return dynamic_cast<EntityType*>(m_parentEntity);
         }
 
         /**
@@ -281,7 +270,14 @@ namespace NerdThings::Ngine {
          *
          * @return The parent scene.
          */
-        Scene *GetParentScene() const;
+        Scene *GetScene() const;
+
+        /**
+         * Get the parent game.
+         *
+         * @return The parent game.
+         */
+        Game *GetGame() const;
 
         /**
          * Test if we update when the scene is paused.

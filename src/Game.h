@@ -18,7 +18,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderTarget.h"
 #include "Filesystem/ResourceManager.h"
-#include "EventHandler.h"
+#include "Events.h"
 #include "Scene.h"
 #include "Window.h"
 #include "Vector2.h"
