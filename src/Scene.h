@@ -14,13 +14,14 @@
 
 #include "Ngine.h"
 
-#include "Physics/PhysicsWorld.h"
-#include "Rectangle.h"
 #include "Graphics/Camera.h"
+#include "Physics/PhysicsWorld.h"
 #include "EntityContainer.h"
 #include "Events.h"
+#include "Rectangle.h"
 
 namespace NerdThings::Ngine {
+    // Forward declare
     class Game;
 
     /**
@@ -46,6 +47,7 @@ namespace NerdThings::Ngine {
     class NEAPI Scene : public EntityContainer {
         // EntityContainer needs private access
         friend class EntityContainer;
+        friend class BaseEntity;
 
         /**
          * Currently active camera which controls the viewport
@@ -68,13 +70,17 @@ namespace NerdThings::Ngine {
         bool m_cullAreaCenterInViewport = true;
 
         /**
-         * Whether or not an entity is active
+         * Whether or not an entity is active.
+         *
+         * @todo Make this a part of `EntityContainer`?
          */
         std::unordered_map<BaseEntity *, bool> m_entityActivities;
 
         /**
          * Depth key list containing entities.
          * This is used for drawing.
+         *
+         * @todo Make this a part of `EntityContainer`?
          */
         std::map<int, std::vector<BaseEntity *>> m_entityDepths;
 
@@ -103,8 +109,27 @@ namespace NerdThings::Ngine {
          */
         int m_updateCounter = 0;
 
+        /**
+         * Add an entity for tracking.
+         *
+         * @param ent_ The entity to track.
+         */
         void _addEntity(BaseEntity *ent_);
+
+        /**
+         * Remove an entity from tracking.
+         *
+         * @param ent_ Entity to stop tracking.
+         */
         void _removeEntity(BaseEntity *ent_);
+
+        /**
+         * Track an entity depth value update.
+         *
+         * @param newDepth_ The entitiy's new depth.
+         * @param ent_ The entity.
+         */
+        void _updateEntityDepth(int newDepth_, BaseEntity *ent_);
     public:
         /**
          * On draw event.
@@ -117,9 +142,9 @@ namespace NerdThings::Ngine {
         Event<> OnDrawCamera;
 
         /**
-         * On scene load.
+         * On update event.
          */
-        Event<SceneLoadEventArgs> OnLoad;
+        Event<> OnUpdate;
 
         /**
          * On persistent update event.
@@ -128,14 +153,14 @@ namespace NerdThings::Ngine {
         Event<> OnPersistentUpdate;
 
         /**
+         * On scene load.
+         */
+        Event<SceneLoadEventArgs> OnLoad;
+
+        /**
          * On scene unload.
          */
         Event<SceneLoadEventArgs> OnUnLoad;
-
-        /**
-         * On update event.
-         */
-        Event<> OnUpdate;
 
         /**
          * Create a new Scene.
@@ -149,17 +174,18 @@ namespace NerdThings::Ngine {
         virtual ~Scene();
 
         /**
-         * Draw the scene.
-         * Called by the Game.
-         */
-        void Draw();
-
-        /**
          * Get the currently active camera.
          *
          * @return A pointer to the currently active camera
          */
         Graphics::Camera *GetActiveCamera() const;
+
+        /**
+         * Set the currently active camera.
+         *
+         * @param camera_ The new camera.
+         */
+        void SetActiveCamera(Graphics::Camera *camera_);
 
         /**
          * Get the culling area.
@@ -169,11 +195,25 @@ namespace NerdThings::Ngine {
         Rectangle GetCullArea() const;
 
         /**
+         * Get the top-left coordinate of the cull area. (Same as viewport).
+         *
+         * @return The top-left coordinate of the cull area.
+         */
+        Vector2 GetCullAreaPosition() const;
+
+        /**
          * Get the bottom-right coordinate of the cull area.
          *
          * @return The bottom-right coordinate of the cull area.
          */
         Vector2 GetCullAreaEndPosition() const;
+
+        /**
+         * Get cull area width.
+         *
+         * @return The width of the cull area.
+         */
+        float GetCullAreaWidth() const;
 
         /**
          * Get cull area height.
@@ -183,18 +223,48 @@ namespace NerdThings::Ngine {
         float GetCullAreaHeight() const;
 
         /**
-         * Get the top-left coordinate of the cull area. (Same as viewport).
+         * Set the entity culling area.
          *
-         * @return The top-left coordinate of the cull area.
+         * @param width_ The cull area width.
+         * @param height_ The cull area height.
+         * @param centerInViewport_ Whether or not to center the cull area in the viewport.
          */
-        Vector2 GetCullAreaPosition() const;
+        void SetCullArea(float width_, float height_, bool centerInViewport_);
 
         /**
-         * Get cull area width.
+         * Get the current viewport.
          *
-         * @return The width of the cull area.
+         * @return The current viewport taking into account the camera.
          */
-        float GetCullAreaWidth() const;
+        Rectangle GetViewport() const;
+
+        /**
+         * Get the current viewport position.
+         *
+         * @return The top left coordinate of the viewport.
+         */
+        Vector2 GetViewportPosition() const;
+
+        /**
+         * Get the bottom right coordinate of the viewport.
+         *
+         * @return The bottom right coordinate of the viewport.
+         */
+        Vector2 GetViewportEndPosition() const;
+
+        /**
+         * Get the width of the current viewport.
+         *
+         * @return The width of the viewport.
+         */
+        float GetViewportWidth() const;
+
+        /**
+         * Get the height of the current viewport.
+         *
+         * @return The height of the viewport.
+         */
+        float GetViewportHeight() const;
 
         /**
          * Get the parent game.
@@ -216,69 +286,6 @@ namespace NerdThings::Ngine {
         const Physics::PhysicsWorld *GetPhysicsWorld() const;
 
         /**
-         * Get the current viewport.
-         *
-         * @return The current viewport taking into account the camera.
-         */
-        Rectangle GetViewport() const;
-
-        /**
-         * Get the bottom right coordinate of the viewport.
-         *
-         * @return The bottom right coordinate of the viewport.
-         */
-        Vector2 GetViewportEndPosition() const;
-
-        /**
-         * Get the height of the current viewport.
-         *
-         * @return The height of the viewport.
-         */
-        float GetViewportHeight() const;
-
-        /**
-         * Get the current viewport position.
-         *
-         * @return The top left coordinate of the viewport.
-         */
-        Vector2 GetViewportPosition() const;
-
-        /**
-         * Get the width of the current viewport.
-         *
-         * @return The width of the viewport.
-         */
-        float GetViewportWidth() const;
-
-        /**
-         * Set the entity depth in the scene (internally used).
-         *
-         * @note This is for internal use only.
-         * @todo Handle this in a new renderer.
-         * @param depth_ The new depth.
-         * @param ent_ The entity.
-         */
-        void InternalSetEntityDepth(int depth_, BaseEntity *ent_);
-
-        /**
-         * Update the entity depth in the scene.
-         *
-         * @note This is for internal use only.
-         * @todo Handle this in a new renderer.
-         * @param oldDepth_ The old depth.
-         * @param newDepth_ The new depth.
-         * @param ent_ Entity that has changed.
-         */
-        void InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_);
-
-        /**
-         * Is the scene paused.
-         *
-         * @return Whether or not the scene is paused.
-         */
-        bool IsPaused();
-
-        /***
          * Pause the scene.
          */
         void Pause();
@@ -289,23 +296,23 @@ namespace NerdThings::Ngine {
         void Resume();
 
         /**
-         * Set the currently active camera.
+         * Is the scene paused.
          *
-         * @param camera_ The new camera.
+         * @return Whether or not the scene is paused.
          */
-        void SetActiveCamera(Graphics::Camera *camera_);
+        bool IsPaused();
 
         /**
-         * Set the entity culling area.
+         * Draw the scene.
          *
-         * @param width_ The cull area width.
-         * @param height_ The cull area height.
-         * @param centerInViewport_ Whether or not to center the cull area in the viewport.
+         * @warning Should only be called by the game.
          */
-        void SetCullArea(float width_, float height_, bool centerInViewport_);
+        void Draw();
 
         /**
-         * Update the scene
+         * Update the scene.
+         *
+         * @warning Should only be called by the game.
          */
         void Update();
     };

@@ -249,9 +249,11 @@ public:
     void Update() {
         //widg.Update();
 
-//        if (Keyboard::GetCurrent()->IsKeyPressed(KEY_F11)) {
-//            GetGame()->GetGameWindow()->ToggleFullscreen();
-//        }
+#ifndef USE_EXPERIMENTAL_RENDERER
+        if (Keyboard::GetCurrent()->IsKeyPressed(KEY_F11)) {
+            GetGame()->GetGameWindow()->ToggleFullscreen();
+        }
+#endif
     }
 };
 

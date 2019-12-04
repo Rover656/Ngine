@@ -54,6 +54,7 @@ namespace NerdThings::Ngine {
     class NEAPI BaseEntity : public EntityContainer {
         // Make the EntityContainer a friend so parenting can be done
         friend class EntityContainer;
+        friend class Scene;
 
         /**
          * Whether or not this entity can be culled
@@ -67,7 +68,7 @@ namespace NerdThings::Ngine {
         std::map<std::string, std::unique_ptr<Component>> m_components;
 
         /**
-         * Depth layer
+         * Depth index.
          */
         int m_depth;
 
@@ -141,6 +142,8 @@ namespace NerdThings::Ngine {
          */
         Event<> OnUpdate;
 
+        // TODO: Sort
+
         // TODO: Add physics body creation to constructor
         /**
          * Create a new entity.
@@ -150,7 +153,7 @@ namespace NerdThings::Ngine {
          * @param depth_ The depth to be rendered at
          * @param canCull_ Whether or not this can be culled.
          */
-        BaseEntity(Scene *parentScene_, Vector2 position_, int depth_ = 0, bool canCull_ = false);
+        BaseEntity(Vector2 position_, int depth_ = 0, bool canCull_ = false);
         virtual ~BaseEntity();
 
         /**

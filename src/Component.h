@@ -45,10 +45,6 @@ namespace NerdThings::Ngine {
         Event<> OnDetached;
 
         virtual ~Component();
-        /**
-         * Component draw event.
-         */
-        virtual void Draw();
 
         /**
          * Get the parent entity as a type
@@ -60,6 +56,13 @@ namespace NerdThings::Ngine {
         EntityType *GetParent() const {
             return dynamic_cast<EntityType*>(m_parentEntity);
         }
+
+        /**
+         * Whether or not the component has a parent.
+         *
+         * @return Whether or not this component is parented by an entity.
+         */
+        bool HasParent() const;
 
         // TODO: Functions like this also need templates.
 
@@ -78,11 +81,9 @@ namespace NerdThings::Ngine {
         Game *GetGame() const;
 
         /**
-         * Whether or not the component has a parent.
-         *
-         * @return Whether or not this component is parented by an entity.
+         * Unsubscribe from the entity's draw event.
          */
-        bool HasParent() const;
+        void UnsubscribeFromDraw();
 
         /**
          * Subscribe to the entity's draw event.
@@ -95,14 +96,14 @@ namespace NerdThings::Ngine {
         void SubscribeToUpdate();
 
         /**
-         * Unsubscribe from the entity's draw event.
-         */
-        void UnsubscribeFromDraw();
-
-        /**
          * Unsubscribe from the entity's update event.
          */
         void UnsubscribeFromUpdate();
+
+        /**
+         * Component draw event.
+         */
+        virtual void Draw();
 
         /**
          * Component update logic

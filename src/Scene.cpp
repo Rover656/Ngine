@@ -19,6 +19,11 @@ namespace NerdThings::Ngine {
     void Scene::_addEntity(BaseEntity *ent_) {
         // When an entity is added, mark as active
         m_entityActivities.insert({ent_, true});
+
+        // Add entity and mark it's depth
+        if (m_entityDepths.find(ent_->m_depth) == m_entityDepths.end())
+            m_entityDepths.insert({ent_->m_depth, {}});
+        m_entityDepths[ent_->m_depth].push_back(ent_);
     }
 
     void Scene::_removeEntity(BaseEntity *ent_) {
@@ -31,7 +36,17 @@ namespace NerdThings::Ngine {
         }
     }
 
-    // Public Constructor(s)
+    void Scene::_updateEntityDepth(int newDepth_, BaseEntity *ent_) {
+        if (ent_->m_depth == newDepth_)
+            return; // Short circuit if depth's are the same because we don't want to remove and re-add
+        m_entityDepths[ent_->m_depth].erase(
+                std::remove(m_entityDepths[ent_->m_depth].begin(), m_entityDepths[ent_->m_depth].end(), ent_),
+                m_entityDepths[ent_->m_depth].end());
+
+        if (m_entityDepths.find(newDepth_) == m_entityDepths.end())
+            m_entityDepths.insert({newDepth_, {}});
+        m_entityDepths[newDepth_].push_back(ent_);
+    }
 
     Scene::Scene(Game *parentGame_, bool physicsEnabled_, Vector2 grav, float ppm)
             : m_parentGame(parentGame_), EntityContainer(EntityContainer::SCENE) {
@@ -47,20 +62,150 @@ namespace NerdThings::Ngine {
         }
     }
 
-    // Destructor
-
     Scene::~Scene() {
         Logger::Notice("Scene", "Deleting scene.");
 
         // Delete physics world
-        if (m_physicsWorld != nullptr) delete m_physicsWorld;
+        delete m_physicsWorld;
 
         // Clear vectors
         m_entityActivities.clear();
         m_entityDepths.clear();
     }
 
-    // Public Methods
+    Graphics::Camera *Scene::GetActiveCamera() const {
+        return m_activeCamera;
+    }
+
+    void Scene::SetActiveCamera(Graphics::Camera *camera_) {
+        m_activeCamera = camera_;
+    }
+
+    Rectangle Scene::GetCullArea() const {
+        return {GetCullAreaPosition(), GetCullAreaWidth(), GetCullAreaHeight()};
+    }
+
+    Vector2 Scene::GetCullAreaPosition() const {
+        // Get viewport position
+        auto pos = GetViewportPosition();
+
+        // Get center of viewport
+        pos.X += GetViewportWidth() / 2.0f;
+        pos.Y += GetViewportHeight() / 2.0f;
+
+        if (m_cullAreaCenterInViewport) {
+            // Offset from cull area size
+            pos.X -= GetCullAreaWidth() / 2.0f;
+            pos.Y -= GetCullAreaHeight() / 2.0f;
+        }
+
+        return pos;
+    }
+
+    Vector2 Scene::GetCullAreaEndPosition() const {
+        auto pos = GetCullAreaPosition();
+        pos.X += m_cullAreaWidth;
+        pos.Y += m_cullAreaHeight;
+        return pos;
+    }
+
+    float Scene::GetCullAreaWidth() const {
+        float scale = 1;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
+        }
+
+        return m_cullAreaWidth / scale;
+    }
+
+    float Scene::GetCullAreaHeight() const {
+        float scale = 1;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
+        }
+
+        return m_cullAreaHeight / scale;
+    }
+
+    void Scene::SetCullArea(float width_, float height_, bool centerInViewport_) {
+        m_cullAreaWidth = width_;
+        m_cullAreaHeight = height_;
+        m_cullAreaCenterInViewport = centerInViewport_;
+    }
+
+    Rectangle Scene::GetViewport() const {
+        return {GetViewportPosition(), GetViewportWidth(), GetViewportHeight()};
+    }
+
+    Vector2 Scene::GetViewportPosition() const {
+        if (m_activeCamera != nullptr) {
+            // Top left coordinate of camera is screen 0,0
+            auto pos = m_activeCamera->ScreenToWorld({0, 0});
+            return pos;
+        }
+        return {0, 0};
+    }
+
+    Vector2 Scene::GetViewportEndPosition() const {
+        auto pos = GetViewportPosition();
+        pos.X += GetViewportWidth();
+        pos.Y += GetViewportHeight();
+        return pos;
+    }
+
+    float Scene::GetViewportWidth() const {
+        float scale = 1;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
+        }
+
+        if (m_parentGame->Config.MaintainResolution) {
+            // Virtual size
+            return m_parentGame->Config.TargetWidth / scale;
+        } else {
+            // Window size
+            return m_parentGame->GetGameWindow()->GetWidth() / scale;
+        }
+    }
+
+    float Scene::GetViewportHeight() const {
+        float scale = 1;
+        if (m_activeCamera != nullptr) {
+            scale = m_activeCamera->Zoom;
+        }
+
+        if (m_parentGame->Config.MaintainResolution) {
+            // Virtual size
+            return m_parentGame->Config.TargetHeight / scale;
+        } else {
+            // Window size
+            return m_parentGame->GetGameWindow()->GetHeight() / scale;
+        }
+    }
+
+    Game *Scene::GetGame() {
+        return m_parentGame;
+    }
+
+    Physics::PhysicsWorld *Scene::GetPhysicsWorld() {
+        return m_physicsWorld;
+    }
+
+    const Physics::PhysicsWorld *Scene::GetPhysicsWorld() const {
+        return m_physicsWorld;
+    }
+
+    void Scene::Pause() {
+        m_paused = true;
+    }
+
+    void Scene::Resume() {
+        m_paused = false;
+    }
+
+    bool Scene::IsPaused() {
+        return m_paused;
+    }
 
     void Scene::Draw() {
         // Invoke draw calls
@@ -99,154 +244,6 @@ namespace NerdThings::Ngine {
                 }
             }
         }
-    }
-
-    Graphics::Camera *Scene::GetActiveCamera() const {
-        return m_activeCamera;
-    }
-
-    Rectangle Scene::GetCullArea() const {
-        return {GetCullAreaPosition(), GetCullAreaWidth(), GetCullAreaHeight()};
-    }
-
-    Vector2 Scene::GetCullAreaEndPosition() const {
-        auto pos = GetCullAreaPosition();
-        pos.X += m_cullAreaWidth;
-        pos.Y += m_cullAreaHeight;
-        return pos;
-    }
-
-    float Scene::GetCullAreaHeight() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        return m_cullAreaHeight / scale;
-    }
-
-    Vector2 Scene::GetCullAreaPosition() const {
-        // Get viewport position
-        auto pos = GetViewportPosition();
-
-        // Get center of viewport
-        pos.X += GetViewportWidth() / 2.0f;
-        pos.Y += GetViewportHeight() / 2.0f;
-
-        if (m_cullAreaCenterInViewport) {
-            // Offset from cull area size
-            pos.X -= GetCullAreaWidth() / 2.0f;
-            pos.Y -= GetCullAreaHeight() / 2.0f;
-        }
-
-        return pos;
-    }
-
-    float Scene::GetCullAreaWidth() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        return m_cullAreaWidth / scale;
-    }
-
-    Game *Scene::GetGame() {
-        return m_parentGame;
-    }
-
-    Physics::PhysicsWorld *Scene::GetPhysicsWorld() {
-        return m_physicsWorld;
-    }
-
-    Rectangle Scene::GetViewport() const {
-        return {GetViewportPosition(), GetViewportWidth(), GetViewportHeight()};
-    }
-
-    Vector2 Scene::GetViewportEndPosition() const {
-        auto pos = GetViewportPosition();
-        pos.X += GetViewportWidth();
-        pos.Y += GetViewportHeight();
-        return pos;
-    }
-
-    float Scene::GetViewportHeight() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        if (m_parentGame->Config.MaintainResolution) {
-            // Virtual size
-            return m_parentGame->Config.TargetHeight / scale;
-        } else {
-            // Window size
-            return m_parentGame->GetGameWindow()->GetHeight() / scale;
-        }
-    }
-
-    Vector2 Scene::GetViewportPosition() const {
-        if (m_activeCamera != nullptr) {
-            // Top left coordinate of camera is screen 0,0
-            auto pos = m_activeCamera->ScreenToWorld({0, 0});
-            return pos;
-        }
-        return {0, 0};
-    }
-
-    float Scene::GetViewportWidth() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        if (m_parentGame->Config.MaintainResolution) {
-            // Virtual size
-            return m_parentGame->Config.TargetWidth / scale;
-        } else {
-            // Window size
-            return m_parentGame->GetGameWindow()->GetWidth() / scale;
-        }
-    }
-
-    void Scene::InternalSetEntityDepth(int depth_, BaseEntity *ent_) {
-        if (m_entityDepths.find(depth_) == m_entityDepths.end())
-            m_entityDepths.insert({depth_, {}});
-        m_entityDepths[depth_].push_back(ent_);
-    }
-
-    void Scene::InternalUpdateEntityDepth(int oldDepth_, int newDepth_, BaseEntity *ent_) {
-        if (oldDepth_ == newDepth_)
-            return; // Short circuit if depth's are the same because we don't want to remove and re-add
-        m_entityDepths[oldDepth_].erase(
-                std::remove(m_entityDepths[oldDepth_].begin(), m_entityDepths[oldDepth_].end(), ent_),
-                m_entityDepths[oldDepth_].end());
-
-        if (m_entityDepths.find(newDepth_) == m_entityDepths.end())
-            m_entityDepths.insert({newDepth_, {}});
-        m_entityDepths[newDepth_].push_back(ent_);
-    }
-
-    bool Scene::IsPaused() {
-        return m_paused;
-    }
-
-    void Scene::Pause() {
-        m_paused = true;
-    }
-
-    void Scene::Resume() {
-        m_paused = false;
-    }
-
-    void Scene::SetActiveCamera(Graphics::Camera *camera_) {
-        m_activeCamera = camera_;
-    }
-
-    void Scene::SetCullArea(float width_, float height_, bool centerInViewport_) {
-        m_cullAreaWidth = width_;
-        m_cullAreaHeight = height_;
-        m_cullAreaCenterInViewport = centerInViewport_;
     }
 
     void Scene::Update() {

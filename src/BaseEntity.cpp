@@ -34,15 +34,9 @@ namespace NerdThings::Ngine {
         m_parentScene = nullptr;
     }
 
-    BaseEntity::BaseEntity(Scene *parentScene_, const Vector2 position_, int depth_, bool canCull_)
-            : m_canCull(canCull_), m_depth(depth_), m_parentScene(parentScene_), m_position(position_),
-              EntityContainer(EntityContainer::ENTITY) {
-        if (parentScene_ == nullptr)
-            throw std::runtime_error("Cannot give an entity a null parent scene.");
-
-        // Set initial depth
-        m_parentScene->InternalSetEntityDepth(m_depth, this);
-    }
+    BaseEntity::BaseEntity(const Vector2 position_, int depth_, bool canCull_)
+            : m_canCull(canCull_), m_depth(depth_), m_position(position_),
+              EntityContainer(EntityContainer::ENTITY) {}
 
     // Destructor
 
@@ -177,7 +171,7 @@ namespace NerdThings::Ngine {
     }
 
     void BaseEntity::SetDepth(int depth_) {
-        m_parentScene->InternalUpdateEntityDepth(m_depth, depth_, this);
+        m_parentScene->_updateEntityDepth(depth_, this);
         m_depth = depth_;
     }
 
