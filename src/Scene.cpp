@@ -11,12 +11,12 @@
 
 #include "Scene.h"
 
-#include "BaseEntity.h"
+#include "Entity.h"
 #include "Game.h"
 #include "Logger.h"
 
 namespace NerdThings::Ngine {
-    void Scene::_addEntity(BaseEntity *ent_) {
+    void Scene::_addEntity(Entity *ent_) {
         // When an entity is added, mark as active
         m_entityActivities.insert({ent_, true});
 
@@ -24,9 +24,12 @@ namespace NerdThings::Ngine {
         if (m_entityDepths.find(ent_->m_depth) == m_entityDepths.end())
             m_entityDepths.insert({ent_->m_depth, {}});
         m_entityDepths[ent_->m_depth].push_back(ent_);
+
+        // Fire scene add event
+        ent_->OnInit();
     }
 
-    void Scene::_removeEntity(BaseEntity *ent_) {
+    void Scene::_removeEntity(Entity *ent_) {
         for (auto vec : m_entityDepths) {
             for (auto ent : vec.second) {
                 if (ent == ent_) {
@@ -36,7 +39,7 @@ namespace NerdThings::Ngine {
         }
     }
 
-    void Scene::_updateEntityDepth(int newDepth_, BaseEntity *ent_) {
+    void Scene::_updateEntityDepth(int newDepth_, Entity *ent_) {
         if (ent_->m_depth == newDepth_)
             return; // Short circuit if depth's are the same because we don't want to remove and re-add
         m_entityDepths[ent_->m_depth].erase(

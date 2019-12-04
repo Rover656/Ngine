@@ -15,7 +15,7 @@
 #include "../Ngine.h"
 
 #include "../Graphics/TilesetRenderer.h"
-#include "../BaseEntity.h"
+#include "../Entity.h"
 #include "../Component.h"
 
 namespace NerdThings::Ngine::Components {
@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Components {
          * @param parent_ The entity we are attaching to.
          * @param tileset_ The tileset renderer we will be using.
          */
-        TilesetComponent(BaseEntity *parent_, Graphics::TilesetRenderer *tileset_);
+        TilesetComponent(Entity *parent_, Graphics::TilesetRenderer *tileset_);
         virtual ~TilesetComponent();
 
         /**

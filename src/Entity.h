@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef BASEENTITY_H
-#define BASEENTITY_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
 // Include ngine
 #include "Ngine.h"
@@ -51,7 +51,7 @@ namespace NerdThings::Ngine {
     /**
      * An entity within a scene.
      */
-    class NEAPI BaseEntity : public EntityContainer {
+    class NEAPI Entity : public EntityContainer {
         // Make the EntityContainer a friend so parenting can be done
         friend class EntityContainer;
         friend class Scene;
@@ -85,7 +85,7 @@ namespace NerdThings::Ngine {
         /**
          * The parent entity
          */
-        BaseEntity *m_parentEntity = nullptr;
+        Entity *m_parentEntity = nullptr;
 
         /**
          * Parent Scene
@@ -128,14 +128,25 @@ namespace NerdThings::Ngine {
         bool DrawWithCamera = true;
 
         /**
-         * On draw event
+         * Fires when added to a scene.
+         * Entity can be initialized once this is fired, much like Game.
          */
-        Event<> OnDraw;
+        Event<> OnInit;
+
+        /**
+         * Fires when destroyed.
+         */
+        Event<> OnDestroy;
 
         /**
          * On position changed event
          */
         Event<EntityTransformChangedEventArgs> OnTransformChanged;
+
+        /**
+         * On draw event
+         */
+        Event<> OnDraw;
 
         /**
          * On update event
@@ -153,8 +164,8 @@ namespace NerdThings::Ngine {
          * @param depth_ The depth to be rendered at
          * @param canCull_ Whether or not this can be culled.
          */
-        BaseEntity(Vector2 position_, int depth_ = 0, bool canCull_ = false);
-        virtual ~BaseEntity();
+        Entity(Vector2 position_, int depth_ = 0, bool canCull_ = false);
+        virtual ~Entity();
 
         /**
          * Add a component to the entity.
@@ -249,11 +260,11 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent entity.
          *
-         * @tparam EntityType The type to cast the parent to (Default: BaseEntity)
+         * @tparam EntityType The type to cast the parent to (Default: Entity)
          * @return The parent entity, null if none.
          */
-        template <typename EntityType = BaseEntity>
-        BaseEntity *GetParentEntity() const {
+        template <typename EntityType = Entity>
+        Entity *GetParentEntity() const {
             return dynamic_cast<EntityType *>(m_parentEntity); // TODO: Choose between dynamic or straight cast
         }
 
@@ -399,4 +410,4 @@ namespace NerdThings::Ngine {
     };
 }
 
-#endif //BASEENTITY_H
+#endif //ENTITY_H

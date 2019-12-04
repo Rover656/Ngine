@@ -12,7 +12,7 @@
 #include "TilesetComponent.h"
 
 namespace NerdThings::Ngine::Components {
-    TilesetComponent::TilesetComponent(BaseEntity *parent_, Graphics::TilesetRenderer *tileset_)
+    TilesetComponent::TilesetComponent(Entity *parent_, Graphics::TilesetRenderer *tileset_)
             : Component(parent_), m_tileset(tileset_) {
         // Prepare for drawing the renderer.
         SubscribeToDraw();

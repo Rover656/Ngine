@@ -329,7 +329,7 @@ namespace NerdThings::Ngine {
         m_currentScene = scene_;
 
         if (m_currentScene != nullptr)
-            m_currentScene->OnLoad({this});
+            m_currentScene->OnInit({this});
 
         Logger::Notice("Game", "A new scene has been loaded.");
     }

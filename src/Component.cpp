@@ -11,7 +11,7 @@
 
 #include "Component.h"
 
-#include "BaseEntity.h"
+#include "Entity.h"
 
 namespace NerdThings::Ngine {
     // Destructor
@@ -65,7 +65,7 @@ namespace NerdThings::Ngine {
 
     // Protected Constructor(s)
 
-    Component::Component(BaseEntity *parent_)
+    Component::Component(Entity *parent_)
             : m_parentEntity(parent_) {
         // Check our parent is valid
         if (parent_ == nullptr) {

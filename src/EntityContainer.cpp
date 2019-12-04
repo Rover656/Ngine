@@ -11,7 +11,7 @@
 
 #include "EntityContainer.h"
 
-#include "BaseEntity.h"
+#include "Entity.h"
 
 namespace NerdThings::Ngine {
     EntityContainer::EntityContainer(EntityContainer::ContainerType type_) : m_type(type_) {}
@@ -26,7 +26,7 @@ namespace NerdThings::Ngine {
 
     bool EntityContainer::RemoveChild(const std::string &name_) {
         // Get the entity
-        const auto ent = GetChild<BaseEntity>(name_);
+        const auto ent = GetChild<Entity>(name_);
 
         if (ent != nullptr) {
             // Destroy the entity
@@ -43,7 +43,7 @@ namespace NerdThings::Ngine {
         return false;
     }
 
-    bool EntityContainer::RemoveChild(BaseEntity *entity_) {
+    bool EntityContainer::RemoveChild(Entity *entity_) {
         // Search for the entity
         for (const auto &ent : m_entities) {
             if (ent.second == entity_)

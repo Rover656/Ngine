@@ -15,8 +15,8 @@
 #include "Ngine.h"
 
 namespace NerdThings::Ngine {
-    // We do this forward declaration instead of include because BaseEntity uses this.
-    class BaseEntity;
+    // We do this forward declaration instead of include because Entity uses this.
+    class Entity;
 
     /**
      * This is a wrapper class which helps with having child entities.
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine {
          * All of the entities in the scene.
          * Every entity has a name.
          */
-        std::map<std::string, BaseEntity *> m_entities;
+        std::map<std::string, Entity *> m_entities;
     protected:
         /**
          * Initialize the entity container.
@@ -60,23 +60,23 @@ namespace NerdThings::Ngine {
          * Add an unnamed entity.
          *
          * @note The entity's lifecycle is now managed by this container.
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
          * @param entity_ The entity to add.
          * @return An std::pair with first being name and second the entity
          */
-        template <class EntityType = BaseEntity>
+        template <class EntityType = Entity>
         std::pair<std::string, EntityType *> AddChild(EntityType *entity_) {
-            // Cast to BaseEntity to ensure this is a valid type
-            auto ent = dynamic_cast<BaseEntity*>(entity_);
+            // Cast to Entity to ensure this is a valid type
+            auto ent = dynamic_cast<Entity*>(entity_);
 
             if (ent != nullptr) {
                 std::string name = "Unique" + std::to_string(m_counter);
-                m_entities.insert({name, std::unique_ptr<BaseEntity>(ent)});
+                m_entities.insert({name, std::unique_ptr<Entity>(ent)});
                 m_counter++;
 
                 // Setup entity
                 if (m_type == ENTITY) {
-                    auto meEnt = (BaseEntity*) this;
+                    auto meEnt = (Entity*) this;
                     ent->m_parentEntity = meEnt;
                     ent->m_parentScene = meEnt->m_parentScene;
                 } else {
@@ -96,26 +96,26 @@ namespace NerdThings::Ngine {
          * Add an entity.
          *
          * @note The entity's lifecycle is now managed by this container.
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
          * @param name_ The name of the entity.
          * @param entity_ The entity to add.
          * @return The entity, for chaining commands.
          */
-        template <class EntityType = BaseEntity>
+        template <class EntityType = Entity>
         EntityType *AddChild(std::string name_, EntityType *entity_) {
             // Check the name is not taken
             if (HasChild(name_))
                 return nullptr;
 
-            // Cast to BaseEntity to ensure this is a valid type
-            auto ent = dynamic_cast<BaseEntity*>(entity_);
+            // Cast to Entity to ensure this is a valid type
+            auto ent = dynamic_cast<Entity*>(entity_);
 
             if (ent != nullptr) {
                 m_entities.insert({name_, ent});
 
                 // Setup entity
                 if (m_type == ENTITY) {
-                    auto meEnt = (BaseEntity*) this;
+                    auto meEnt = (Entity*) this;
                     ent->m_parentEntity = meEnt;
                     ent->m_parentScene = meEnt->m_parentScene;
                 } else {
@@ -145,16 +145,16 @@ namespace NerdThings::Ngine {
          * @param entity_ The entity to be removed.
          * @return Whether the entity was removed or not.
          */
-        bool RemoveChild(BaseEntity *entity_);
+        bool RemoveChild(Entity *entity_);
 
         /**
          * Get an entity by name.
          *
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
          * @param name_ The name of the entity to get.
          * @return The entity, or null if not found.
          */
-        template <class EntityType = BaseEntity>
+        template <class EntityType = Entity>
         EntityType *GetChild(const std::string &name_) {
             // Try to find the entity
             if (HasChild(name_)) {
@@ -167,10 +167,10 @@ namespace NerdThings::Ngine {
         /**
          * Count all of the entities by type
          *
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
          * @return The number of children who match the selected type.
          */
-        template <class EntityType = BaseEntity>
+        template <class EntityType = Entity>
         int CountChildren() {
             int c = 0;
             for (auto e : GetEntities()) {
@@ -182,10 +182,10 @@ namespace NerdThings::Ngine {
         /**
          * Get all of the entities of type.
          *
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::BaseEntity.
+         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
          * @return A vector with all of the entities of the provided type.
          */
-        template <class EntityType = BaseEntity>
+        template <class EntityType = Entity>
         std::vector<EntityType*> GetChildren() {
             std::vector<EntityType*> ents;
             for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
@@ -202,7 +202,7 @@ namespace NerdThings::Ngine {
          * @param name_ The entity to test for.
          * @return Whether the entity exists or not.
          */
-        template<class EntityType = BaseEntity>
+        template<class EntityType = Entity>
         bool HasChild(const std::string &name_) {
             auto exists = m_entities.find(name_) != m_entities.end();
             if (!exists) return false;

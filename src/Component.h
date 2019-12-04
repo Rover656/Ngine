@@ -18,7 +18,7 @@
 #include "Scene.h"
 
 namespace NerdThings::Ngine {
-    class BaseEntity;
+    class Entity;
 
     /**
      * A component is an object that is attached to an entity and manipulates its behaviour.
@@ -37,7 +37,7 @@ namespace NerdThings::Ngine {
         /**
          * The parent entity.
          */
-        BaseEntity *m_parentEntity = nullptr;
+        Entity *m_parentEntity = nullptr;
     public:
         /**
          * On detached from an entity.
@@ -52,7 +52,7 @@ namespace NerdThings::Ngine {
          * @tparam The type to get the entity as.
          * @return The entity casted to the provided type.
          */
-        template <typename EntityType = BaseEntity>
+        template <typename EntityType = Entity>
         EntityType *GetParent() const {
             return dynamic_cast<EntityType*>(m_parentEntity);
         }
@@ -116,7 +116,7 @@ namespace NerdThings::Ngine {
          *
          * @param The parent entity.
          */
-        Component(BaseEntity *parent_);
+        Component(Entity *parent_);
     };
 }
 

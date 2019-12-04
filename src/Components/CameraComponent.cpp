@@ -12,7 +12,7 @@
 #include "CameraComponent.h"
 
 #include "../Graphics/Camera.h"
-#include "../BaseEntity.h"
+#include "../Entity.h"
 
 namespace NerdThings::Ngine::Components {
     void CameraComponent::_updateCamera(EntityTransformChangedEventArgs e) {
@@ -24,10 +24,10 @@ namespace NerdThings::Ngine::Components {
         m_transformChangeEvent.Detach();
     }
 
-    CameraComponent::CameraComponent(BaseEntity *parent_, const float zoom_, const Vector2 origin_,
+    CameraComponent::CameraComponent(Entity *parent_, const float zoom_, const Vector2 origin_,
                                      const float rotation_)
         : Component(parent_) {
-        auto par = GetParent<BaseEntity>();
+        auto par = GetParent < Entity > ();
 
         // Setup camera
         m_camera = Graphics::Camera(par->GetPosition(), rotation_, zoom_, origin_);;

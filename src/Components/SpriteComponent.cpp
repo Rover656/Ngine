@@ -12,7 +12,7 @@
 #include "SpriteComponent.h"
 
 namespace NerdThings::Ngine::Components {
-    SpriteComponent::SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_)
+    SpriteComponent::SpriteComponent(Entity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_)
             : Component(parent_), m_origin(origin_), m_sprite(sprite_) {
         SubscribeToDraw();
         SubscribeToUpdate();
@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Components {
 
     void SpriteComponent::Draw() {
         Component::Draw();
-        const auto par = GetParent<BaseEntity>();
+        const auto par = GetParent<Entity>();
         m_sprite.Draw(par->GetPosition(), 1, par->GetRotation(), m_origin);
     }
 

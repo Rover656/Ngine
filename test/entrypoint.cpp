@@ -19,7 +19,7 @@
 //#include <UI/Controls/Label.h>
 //#include <UI/Controls/VerticalPanel.h>
 //#include <UI/UIWidget.h>
-#include <BaseEntity.h>
+#include <Entity.h>
 #include <Component.h>
 #include <Game.h>
 #include <Window.h>
@@ -41,12 +41,12 @@ class KeyboardMovementComponent2D : public Component {
 public:
     float MoveSpeed = 32;
 
-    KeyboardMovementComponent2D(BaseEntity *parent_) : Component(parent_) {
+    KeyboardMovementComponent2D(Entity *parent_) : Component(parent_) {
         SubscribeToUpdate();
     }
 
     void Update() override {
-        auto par = GetParent<BaseEntity>();
+        auto par = GetParent < Entity > ();
         Vector2 velocity;
 
         if (par->IsPhysicsEntity()) {
@@ -91,15 +91,20 @@ public:
     }
 };
 
-class PlayerEntity : public BaseEntity {
+class PlayerEntity : public Entity {
+    ResourceManager *m_resourceManager;
 public:
-    PlayerEntity(ResourceManager *resources_, Scene *parentScene_, Vector2 position_)
-            : BaseEntity(parentScene_, position_) {
+    PlayerEntity(ResourceManager *resources_, Vector2 position_)
+            : Entity(position_), m_resourceManager(resources_) {
+        OnInit += new ClassMethodEventHandler<PlayerEntity>(this, &PlayerEntity::Init);
+    }
+
+    void Init() {
         SubscribeToUpdate();
 
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_DYNAMIC;
-        bi.Position = position_;
+        bi.Position = GetPosition();
         bi.FixedRotation = true;
         auto body = GetScene()->GetPhysicsWorld()->CreateBody(bi);
         auto shape = CircleShape(1);
@@ -109,7 +114,7 @@ public:
         body->SetAngularVelocity(5);
         SetPhysicsBody(body);
 
-        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(resources_->GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(m_resourceManager->GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         s->SetOrigin({16, 16});
 
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
@@ -117,7 +122,7 @@ public:
     }
 
     void Update() override {
-        BaseEntity::Update();
+        Entity::Update();
         auto cam = GetComponent<CameraComponent>("Camera");
         auto scene = GetScene();
 
@@ -127,12 +132,16 @@ public:
     }
 };
 
-class Floor : public BaseEntity {
+class Floor : public Entity {
 public:
-    Floor(Scene *parentScene_, Vector2 position_) : BaseEntity(parentScene_, position_) {
+    Floor(Vector2 position_) : Entity(position_) {
+        OnInit += new ClassMethodEventHandler<Floor>(this, &Floor::Init);
+    }
+
+    void Init() {
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_STATIC;
-        bi.Position = position_;
+        bi.Position = GetPosition();
         auto body = GetScene()->GetPhysicsWorld()->CreateBody(bi);
         auto box = PolygonShape::CreateAsBox(5, 5);
         body->CreateFixture(&box, 0);
@@ -197,22 +206,34 @@ public:
     //TestWidget widg;
 
     TilesetRenderer *testTiles;
-
     ResourceManager *_Resources;
 
     TestScene(ResourceManager *resources_, Game* game) : Scene(game, true, {0, 0}, 16), _Resources(resources_) {//, widg(Vector2(120, 120)) {
-        AddChild("Player", new PlayerEntity(_Resources, this, {100, 100}));
-        AddChild("Floor", new Floor(this, {100, 500}));
+        OnInit += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::Init);
+        OnUnLoad += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::UnInit);
+    }
 
-        GetPhysicsWorld()->DebugDraw = true;
-
-        OnLoad += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::OnLoaded);
+    void Init(SceneLoadEventArgs e) {
+        // Bind events
         OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::Draw);
         OnUpdate += new ClassMethodEventHandler<TestScene>(this, &TestScene::Update);
         OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::DrawCam);
 
+        // Add entities
+        AddChild("Player", new PlayerEntity(_Resources, {100, 100}));
+        AddChild("Floor", new Floor({100, 500}));
+
+        // Configure physics
+        GetPhysicsWorld()->DebugDraw = true;
+
+        // Setup cull area
         SetCullArea(1280 - 50, 768 - 50, true);
 
+        // Audio tests
+        // ResourceManager::GetMusic("test_music")->Play();
+        AudioDevice::SetMasterVolume(0.25);
+
+        // Tileset tests
         std::vector<int> tileData;
         for (auto i = 0; i < 50; i++) {
             tileData.push_back(1);
@@ -225,13 +246,14 @@ public:
         testTiles->SetTileAt({5, 5}, 13);
     }
 
-    ~TestScene() {
-        delete testTiles;
-    }
+    void UnInit(SceneLoadEventArgs e) {
+        // Clear events
+        OnDrawCamera.Clear();
+        OnUpdate.Clear();
+        OnDrawCamera.Clear();
 
-    void OnLoaded(SceneLoadEventArgs e) {
-        //ResourceManager::GetMusic("test_music")->Play();
-        AudioDevice::SetMasterVolume(0.25);
+        // Delete tilesets
+        delete testTiles;
     }
 
     int rot = 0;

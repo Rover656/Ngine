@@ -15,7 +15,7 @@
 #include "../Ngine.h"
 
 #include "../UI/UIWidget.h"
-#include "../BaseEntity.h"
+#include "../Entity.h"
 #include "../Component.h"
 
 // Not being documented as this is broken and outdated.
@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Components {
 
         // Public Constructor(s)
 
-        UIWidgetComponent(BaseEntity *parent_, const UI::UIWidget& widget_)
+        UIWidgetComponent(Entity *parent_, const UI::UIWidget& widget_)
                 : Component(parent_), _Widget(widget_) {
             SubscribeToDraw();
             SubscribeToUpdate();

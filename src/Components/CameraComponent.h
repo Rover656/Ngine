@@ -15,7 +15,7 @@
 #include "../Ngine.h"
 
 #include "../Graphics/Camera.h"
-#include "../BaseEntity.h"
+#include "../Entity.h"
 #include "../Component.h"
 #include "../Vector2.h"
 
@@ -47,7 +47,7 @@ namespace NerdThings::Ngine::Components {
          * @param origin_ The camera origin. (defines camera center).
          * @param rotation_ The camera rotation in degrees.
          */
-        CameraComponent(BaseEntity *parent_, float zoom_, Vector2 origin_ = Vector2::Zero,
+        CameraComponent(Entity *parent_, float zoom_, Vector2 origin_ = Vector2::Zero,
                         float rotation_ = 0);
         virtual ~CameraComponent();
 

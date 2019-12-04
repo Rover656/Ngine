@@ -16,7 +16,7 @@
 
 #include "../Graphics/Sprite.h"
 #include "../Component.h"
-#include "../BaseEntity.h"
+#include "../Entity.h"
 #include "../Events.h"
 
 namespace NerdThings::Ngine::Components {
@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Components {
          * @param sprite_ The sprite to render with.
          * @param origin_ The sprite render origin.
          */
-        SpriteComponent(BaseEntity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
+        SpriteComponent(Entity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
 
         /**
          * Get the sprite render origin.

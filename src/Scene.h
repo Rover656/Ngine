@@ -9,8 +9,8 @@
 *
 **********************************************************************************************/
 
-#ifndef BASESCENE_H
-#define BASESCENE_H
+#ifndef SCENE_H
+#define SCENE_H
 
 #include "Ngine.h"
 
@@ -47,7 +47,7 @@ namespace NerdThings::Ngine {
     class NEAPI Scene : public EntityContainer {
         // EntityContainer needs private access
         friend class EntityContainer;
-        friend class BaseEntity;
+        friend class Entity;
 
         /**
          * Currently active camera which controls the viewport
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine {
          *
          * @todo Make this a part of `EntityContainer`?
          */
-        std::unordered_map<BaseEntity *, bool> m_entityActivities;
+        std::unordered_map<Entity *, bool> m_entityActivities;
 
         /**
          * Depth key list containing entities.
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine {
          *
          * @todo Make this a part of `EntityContainer`?
          */
-        std::map<int, std::vector<BaseEntity *>> m_entityDepths;
+        std::map<int, std::vector<Entity *>> m_entityDepths;
 
         /**
          * The parent game.
@@ -114,14 +114,14 @@ namespace NerdThings::Ngine {
          *
          * @param ent_ The entity to track.
          */
-        void _addEntity(BaseEntity *ent_);
+        void _addEntity(Entity *ent_);
 
         /**
          * Remove an entity from tracking.
          *
          * @param ent_ Entity to stop tracking.
          */
-        void _removeEntity(BaseEntity *ent_);
+        void _removeEntity(Entity *ent_);
 
         /**
          * Track an entity depth value update.
@@ -129,8 +129,20 @@ namespace NerdThings::Ngine {
          * @param newDepth_ The entitiy's new depth.
          * @param ent_ The entity.
          */
-        void _updateEntityDepth(int newDepth_, BaseEntity *ent_);
+        void _updateEntityDepth(int newDepth_, Entity *ent_);
     public:
+        /**
+         * Fired when the game loads the scene.
+         * All scene setup should be done here.
+         */
+        Event<SceneLoadEventArgs> OnInit;
+
+        /**
+         * Fired when the game unloads the scene.
+         * All scene cleanup should be done here.
+         */
+        Event<SceneLoadEventArgs> OnUnLoad;
+
         /**
          * On draw event.
          */
@@ -151,16 +163,6 @@ namespace NerdThings::Ngine {
          * This means updates will run through pauses.
          */
         Event<> OnPersistentUpdate;
-
-        /**
-         * On scene load.
-         */
-        Event<SceneLoadEventArgs> OnLoad;
-
-        /**
-         * On scene unload.
-         */
-        Event<SceneLoadEventArgs> OnUnLoad;
 
         /**
          * Create a new Scene.
@@ -318,4 +320,4 @@ namespace NerdThings::Ngine {
     };
 }
 
-#endif //BASESCENE_H
+#endif // SCENE_H
