@@ -33,7 +33,9 @@ namespace NerdThings::Ngine {
         for (auto vec : m_entityDepths) {
             for (auto ent : vec.second) {
                 if (ent == ent_) {
-                    m_entityDepths[vec.first].erase(std::remove(m_entityDepths[vec.first].begin(), m_entityDepths[vec.first].end(), ent_), m_entityDepths[vec.first].end());
+                    m_entityDepths[vec.first].erase(
+                            std::remove(m_entityDepths[vec.first].begin(), m_entityDepths[vec.first].end(), ent_),
+                            m_entityDepths[vec.first].end());
                 }
             }
         }
@@ -51,18 +53,18 @@ namespace NerdThings::Ngine {
         m_entityDepths[newDepth_].push_back(ent_);
     }
 
-    Scene::Scene(Game *parentGame_, bool physicsEnabled_, Vector2 grav, float ppm)
+    Scene::Scene(Game *parentGame_)
             : m_parentGame(parentGame_), EntityContainer(EntityContainer::SCENE) {
         // Check game
-        if (parentGame_ == nullptr) {
+        if (parentGame_ == nullptr)
             Logger::Fail("Scene", "Scene cannot have a null parent game.");
-        }
+    }
 
+    Scene::Scene(Game *parentGame_, Vector2 grav_, float ppm_)
+            : Scene(parentGame_) {
         // Physics setup
-        m_physicsEnabled = physicsEnabled_;
-        if (m_physicsEnabled) {
-            m_physicsWorld = new Physics::PhysicsWorld(grav, ppm);
-        }
+        m_physicsEnabled = true;
+        m_physicsWorld = new Physics::PhysicsWorld(grav_, ppm_);
     }
 
     Scene::~Scene() {

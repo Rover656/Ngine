@@ -141,7 +141,7 @@ namespace NerdThings::Ngine {
          * Fired when the game unloads the scene.
          * All scene cleanup should be done here.
          */
-        Event<SceneLoadEventArgs> OnUnLoad;
+        Event<SceneLoadEventArgs> OnUnload;
 
         /**
          * On draw event.
@@ -165,14 +165,22 @@ namespace NerdThings::Ngine {
         Event<> OnPersistentUpdate;
 
         /**
-         * Create a new Scene.
+         * Create a standard scene.
+         *
+         * @param parentGame_ The current game.
+         */
+        explicit Scene(Game *parentGame_);
+
+        /**
+         * Create a new Scene for physics use.
          *
          * @param parentGame_ The current game.
          * @param physicsEnabled_ Whether or not the game has physics enabled.
          * @param grav_ The physics gravity vector.
          * @param ppm_ The physics pixel to meter ratio.
          */
-        Scene(Game* parentGame_, bool physicsEnabled_ = false, Vector2 grav_ = Vector2::Zero, float ppm_ = 1);
+        Scene(Game* parentGame_, Vector2 grav_, float ppm_ = 1);
+
         virtual ~Scene();
 
         /**

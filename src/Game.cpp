@@ -324,7 +324,7 @@ namespace NerdThings::Ngine {
 
     void Game::SetScene(Scene *scene_) {
         if (m_currentScene != nullptr)
-            m_currentScene->OnUnLoad({this});
+            m_currentScene->OnUnload({this});
 
         m_currentScene = scene_;
 

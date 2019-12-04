@@ -210,7 +210,7 @@ public:
 
     TestScene(ResourceManager *resources_, Game* game) : Scene(game, true, {0, 0}, 16), _Resources(resources_) {//, widg(Vector2(120, 120)) {
         OnInit += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::Init);
-        OnUnLoad += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::UnInit);
+        OnUnload += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::UnInit);
     }
 
     void Init(SceneLoadEventArgs e) {
