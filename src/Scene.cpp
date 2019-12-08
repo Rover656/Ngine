@@ -268,7 +268,7 @@ namespace NerdThings::Ngine {
             for (auto ent : GetChildren()) {
                 if (ent != nullptr) {
                     // Check if we can cull
-                    if (ent->GetCanCull()) {
+                    if (ent->CanCull()) {
                         auto area = GetCullArea();
                         if (m_entityActivities.find(ent) == m_entityActivities.end())
                             m_entityActivities.insert({ent, true});

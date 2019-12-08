@@ -66,22 +66,22 @@ namespace NerdThings::Ngine {
          */
         template <class EntityType = Entity>
         std::pair<std::string, EntityType *> AddChild(EntityType *entity_) {
-            // Cast to Entity to ensure this is a valid type
-            auto ent = dynamic_cast<Entity*>(entity_);
+            // Get as base type
+            auto ent = (Entity *) entity_;
 
             if (ent != nullptr) {
                 std::string name = "Unique" + std::to_string(m_counter);
-                m_entities.insert({name, std::unique_ptr<Entity>(ent)});
+                m_entities.insert({name, ent});
                 m_counter++;
 
                 // Setup entity
                 if (m_type == ENTITY) {
                     auto meEnt = (Entity*) this;
                     ent->m_parentEntity = meEnt;
-                    ent->m_parentScene = meEnt->m_parentScene;
+                    ent->_addToScene(meEnt->m_parentScene);
                 } else {
-                    auto meScene = (Scene*)this;
-                    ent->m_parentScene = meScene;
+                    auto meScene = (Scene*) this;
+                    ent->_addToScene(meScene);
                 }
 
                 ent->m_parentScene->_addEntity(ent);
@@ -107,8 +107,8 @@ namespace NerdThings::Ngine {
             if (HasChild(name_))
                 return nullptr;
 
-            // Cast to Entity to ensure this is a valid type
-            auto ent = dynamic_cast<Entity*>(entity_);
+            // Get as base type
+            auto ent = (Entity *) entity_;
 
             if (ent != nullptr) {
                 m_entities.insert({name_, ent});
@@ -117,13 +117,11 @@ namespace NerdThings::Ngine {
                 if (m_type == ENTITY) {
                     auto meEnt = (Entity*) this;
                     ent->m_parentEntity = meEnt;
-                    ent->m_parentScene = meEnt->m_parentScene;
+                    ent->_addToScene(meEnt->m_parentScene);
                 } else {
-                    auto meScene = (Scene*)this;
-                    ent->m_parentScene = meScene;
+                    auto meScene = (Scene*) this;
+                    ent->_addToScene(meScene);
                 }
-
-                ent->m_parentScene->_addEntity(ent);
 
                 return entity_;
             }
@@ -135,17 +133,19 @@ namespace NerdThings::Ngine {
          * Remove an entity by name.
          *
          * @param name_ The name of the entity to remove.
+         * @param Whether or not to delete the entity from memory.
          * @return Whether the entity was removed or not.
          */
-        bool RemoveChild(const std::string &name_);
+        bool RemoveChild(const std::string &name_, bool delete_ = true);
 
         /**
          * Remove entity by pointer.
          *
          * @param entity_ The entity to be removed.
+         * @param Whether or not to delete the entity from memory.
          * @return Whether the entity was removed or not.
          */
-        bool RemoveChild(Entity *entity_);
+        bool RemoveChild(Entity *entity_, bool delete_ = true);
 
         /**
          * Get an entity by name.
@@ -158,7 +158,7 @@ namespace NerdThings::Ngine {
         EntityType *GetChild(const std::string &name_) {
             // Try to find the entity
             if (HasChild(name_)) {
-                return dynamic_cast<EntityType*>(m_entities.at(name_)); // Will return null if its the wrong type
+                return (EntityType *) m_entities.at(name_);
             }
 
             return nullptr;
@@ -174,6 +174,8 @@ namespace NerdThings::Ngine {
         int CountChildren() {
             int c = 0;
             for (auto e : GetEntities()) {
+                // Dynamic cast so that we count only the correct children.
+                // TODO: Way to identify entity types without dynamically casting. (Reflection maybe?)
                 if (dynamic_cast<EntityType*>(e) != nullptr) c++;
             }
             return c;
@@ -190,6 +192,8 @@ namespace NerdThings::Ngine {
             std::vector<EntityType*> ents;
             for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
                 auto ent = it->second;
+
+                // Dynamic cast to check again TODO find a different way.
                 auto casted = dynamic_cast<EntityType*>(ent);
                 if (casted != nullptr) ents.push_back(ent);
             }
@@ -206,6 +210,8 @@ namespace NerdThings::Ngine {
         bool HasChild(const std::string &name_) {
             auto exists = m_entities.find(name_) != m_entities.end();
             if (!exists) return false;
+
+            // Dynamic cast to check type.
             return dynamic_cast<EntityType *>(m_entities[name_]) != nullptr;
         }
     };

@@ -208,7 +208,7 @@ public:
     TilesetRenderer *testTiles;
     ResourceManager *_Resources;
 
-    TestScene(ResourceManager *resources_, Game* game) : Scene(game, true, {0, 0}, 16), _Resources(resources_) {//, widg(Vector2(120, 120)) {
+    TestScene(ResourceManager *resources_, Game* game) : Scene(game, {0, 0}, 16), _Resources(resources_) {//, widg(Vector2(120, 120)) {
         OnInit += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::Init);
         OnUnload += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::UnInit);
     }

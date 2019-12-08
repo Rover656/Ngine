@@ -151,16 +151,16 @@ namespace NerdThings::Ngine::Filesystem {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
         // Create music
-        auto mus = Audio::Music::LoadMusic(inPath_);
-
-        // Check if it is valid
-        if (mus->IsValid()) {
-            m_music.insert({name, std::unique_ptr<Audio::Music>(mus) });
-            return true;
-        }
-
-        // Delete, it didnt work
-        delete mus;
+//        auto mus = new Audio::Music(inPath_);
+//
+//        // Check if it is valid
+//        if (mus->IsValid()) {
+//            m_music.insert({name, std::unique_ptr<Audio::Music>(mus) });
+//            return true;
+//        }
+//
+//        // Delete, it didnt work
+//        delete mus;
         return false;
     }
 
@@ -168,17 +168,17 @@ namespace NerdThings::Ngine::Filesystem {
         // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
-        // Create sound
-        auto snd = Audio::Sound::LoadSound(inPath_);
-
-        // Check if it is valid
-        if (snd->IsValid()) {
-            m_sounds.insert({name, std::unique_ptr<Audio::Sound>(snd) });
-            return true;
-        }
-
-        // Delete, it didnt work
-        delete snd;
+//        // Create sound
+//        auto snd = new Audio::Sound(inPath_);
+//
+//        // Check if it is valid
+//        if (snd->IsValid()) {
+//            m_sounds.insert({name, std::unique_ptr<Audio::Sound>(snd) });
+//            return true;
+//        }
+//
+//        // Delete, it didnt work
+//        delete snd;
         return false;
     }
 

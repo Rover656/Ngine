@@ -65,12 +65,12 @@ namespace NerdThings::Ngine {
          * The list of all components.
          * All components are given a name for easy identification.
          */
-        std::map<std::string, std::unique_ptr<Component>> m_components;
+        std::map<std::string, Component *> m_components;
 
         /**
          * Depth index.
          */
-        int m_depth;
+        int m_depth = 0;
 
         /**
          * On update event reference
@@ -78,17 +78,12 @@ namespace NerdThings::Ngine {
         EventAttachment<> m_onUpdateRef;
 
         /**
-         * The entity origin
-         */
-        Vector2 m_origin;
-
-        /**
-         * The parent entity
+         * The parent entity.
          */
         Entity *m_parentEntity = nullptr;
 
         /**
-         * Parent Scene
+         * Parent Scene.
          */
         Scene *m_parentScene = nullptr;
 
@@ -113,9 +108,14 @@ namespace NerdThings::Ngine {
         Physics::PhysicsBody *m_physicsBody = nullptr;
 
         /**
-         * The entity scale (Used for rendering and physics)
+         * Add to a new scene.
          */
-        float m_scale = 1;
+        void _addToScene(Scene *scene_);
+
+        /**
+         * Remove from our current scene.
+         */
+        void _removeFromScene();
 
         /**
          * Destroy this entity.
@@ -134,7 +134,7 @@ namespace NerdThings::Ngine {
         Event<> OnInit;
 
         /**
-         * Fires when destroyed.
+         * Fires when the entity is destroyed.
          */
         Event<> OnDestroy;
 
@@ -144,18 +144,17 @@ namespace NerdThings::Ngine {
         Event<EntityTransformChangedEventArgs> OnTransformChanged;
 
         /**
-         * On draw event
+         * Fired when the entity draws.
+         * This should be used by components.
          */
         Event<> OnDraw;
 
         /**
-         * On update event
+         * Fired when the entity updates.
+         * This should be used by components.
          */
         Event<> OnUpdate;
 
-        // TODO: Sort
-
-        // TODO: Add physics body creation to constructor
         /**
          * Create a new entity.
          *
@@ -168,40 +167,6 @@ namespace NerdThings::Ngine {
         virtual ~Entity();
 
         /**
-         * Add a component to the entity.
-         *
-         * @tparam The component type. This must be a class derrived from NerdThings::Ngine::Component
-         * @param name_ The name of the component.
-         * @param component_ The component.
-         * @return The component, so you may chain events.
-         */
-        template <typename ComponentType>
-        ComponentType *AddComponent(const std::string &name_, ComponentType *component_) {
-            // Check the name is not taken
-            if (HasComponent(name_))
-                return nullptr;
-
-            // Cast to component to ensure this is valid
-            auto comp = dynamic_cast<Component*>(component_);
-
-            if (comp != nullptr) {
-                m_components.insert({name_, std::unique_ptr<Component>(comp)});
-                return component_;
-            }
-
-            return nullptr;
-        }
-
-        /**
-         * This is used to determine if this entity should be culled.
-         * This can be overridden for customisation.
-         *
-         * @param cullArea_ The scene cullarea.
-         * @return Whether or not this entity should be culled.
-         */
-        virtual bool CheckForCulling(Rectangle cullArea_);
-
-        /**
          * Remove from our parent and delete ourselves.
          *
          * @warning No more calls must be made to the entity following this.
@@ -209,9 +174,52 @@ namespace NerdThings::Ngine {
         void Destroy();
 
         /**
-         * Draw code for the entity
+         * Add a component to the entity.
+         *
+         * @tparam ComponentType The component type. This must be a class derived from `NerdThings::Ngine::Component`
+         * @param name_ The name of the component.
+         * @param component_ The component.
+         * @return The component, so you may chain calls.
          */
-        virtual void Draw();
+        template <typename ComponentType = Component>
+        ComponentType *AddComponent(const std::string &name_, ComponentType *component_) {
+            // Check the name is not taken
+            if (HasComponent(name_))
+                return nullptr;
+
+            // Make sure the component isn't null
+            if (component_ == nullptr)
+                return nullptr;
+
+            // Add to components list.
+            m_components.insert({name_, (Component *) component_});
+
+            // Send it back for call chaining.
+            return component_;
+        }
+
+        /**
+         * Removes the component from the entity.
+         *
+         * @param name_ The name of the component to remove.
+         * @return Whether or not the component was removed.
+         */
+        bool RemoveComponent(const std::string &name_);
+
+        /**
+         * Get all components.
+         *
+         * @return An vector containing all components.
+         */
+        std::vector<Component*> GetComponents();
+
+        /**
+         * Test if a component exists by a name.
+         *
+         * @param name_ The name of the component to check for.
+         * @return Whether or not the component exists.
+         */
+        bool HasComponent(const std::string &name_) const;
 
         /**
          * Get a component by name.
@@ -222,7 +230,7 @@ namespace NerdThings::Ngine {
         ComponentType *GetComponent(const std::string &name_) {
             // Try to find the component
             if (HasComponent(name_)) {
-                return dynamic_cast<ComponentType*>(m_components.at(name_).get()); // Will return null if its the wrong type
+                return (ComponentType *) m_components.at(name_);
             }
 
             return nullptr;
@@ -233,21 +241,23 @@ namespace NerdThings::Ngine {
          *
          * @return Whether or not this entity can be culled.
          */
-        bool GetCanCull();
+        bool CanCull() const;
 
         /**
-         * Get all components.
+         * Set whether or not this entity can be culled
          *
-         * @return An vector containing all components.
+         * @param canCull_ Whether or not the entity can be culled.
          */
-        std::vector<Component*> GetComponents();
+        void SetCanCull(bool canCull_);
 
         /**
-         * Get the entity depth.
+         * This is used to determine if this entity should be culled.
+         * This can be overridden for more accurate results.
          *
-         * @return The depth of the entity.
+         * @param cullArea_ The scene cull area.
+         * @return Whether or not this entity should be culled.
          */
-        int GetDepth() const;
+        virtual bool CheckForCulling(Rectangle cullArea_);
 
         /**
          * Get our parent container.
@@ -265,7 +275,7 @@ namespace NerdThings::Ngine {
          */
         template <typename EntityType = Entity>
         Entity *GetParentEntity() const {
-            return dynamic_cast<EntityType *>(m_parentEntity); // TODO: Choose between dynamic or straight cast
+            return (EntityType *)(m_parentEntity);
         }
 
         /**
@@ -283,11 +293,18 @@ namespace NerdThings::Ngine {
         Game *GetGame() const;
 
         /**
-         * Test if we update when the scene is paused.
+         * Get the entity depth.
          *
-         * @return Whether or not we will update even when the scene is paused.
+         * @return The depth of the entity.
          */
-        bool GetDoPersistentUpdates();
+        int GetDepth() const;
+
+        /**
+         * Set the entity depth
+         *
+         * @param depth_ The depth to set the entity to.
+         */
+        void SetDepth(int depth_);
 
         /**
          * Get the entity position
@@ -297,40 +314,11 @@ namespace NerdThings::Ngine {
         Vector2 GetPosition() const;
 
         /**
-         * Get the attached physics body.
+         * Set entity position
          *
-         * @return The physics body. If none, null.
+         * @param position_ The position to move to.
          */
-        Physics::PhysicsBody *GetPhysicsBody() const;
-
-        /**
-         * Get the world our body is a member of.
-         *
-         * @return The world the physics body is attached to, if any.
-         */
-        Physics::PhysicsWorld *GetPhysicsWorld() const;
-
-        /**
-         * Get the entity rotation
-         *
-         * @return The entity rotation, in degrees.
-         */
-        float GetRotation() const;
-
-        /**
-         * Test if a component exists by a name.
-         *
-         * @param name_ The name of the component to check for.
-         * @return Whether or not the component exists.
-         */
-        bool HasComponent(const std::string &name_);
-
-        /**
-         * Determine if this entity is affected by physics.
-         *
-         * @return Whether or not this entity has a physics body attached.
-         */
-        bool IsPhysicsEntity();
+        void SetPosition(Vector2 position_);
 
         /**
          * Move an entity by a vector.
@@ -341,40 +329,11 @@ namespace NerdThings::Ngine {
         void MoveBy(Vector2 moveBy_);
 
         /**
-         * Removes the entity from the component.
+         * Get the entity rotation
          *
-         * @param name_ The name of the component to remove.
-         * @return Whether or not the component was removed.
+         * @return The entity rotation, in degrees.
          */
-        bool RemoveComponent(const std::string &name_);
-
-        /**
-         * Set whether or not this entity can be culled
-         *
-         * @param canCull_ Whether or not the entity can be culled.
-         */
-        void SetCanCull(bool canCull_);
-
-        /**
-         * Set the entity depth
-         *
-         * @param depth_ The depth to set the entity to.
-         */
-        void SetDepth(int depth_);
-
-        /**
-         * Set whether or not we update when the scene is paused
-         *
-         * @param persistentUpdates_ Whether or not the entity can update during pauses.
-         */
-        void SetDoPersistentUpdates(bool persistentUpdates_);
-
-        /**
-         * Set entity position
-         *
-         * @param position_ The position to move to.
-         */
-        void SetPosition(Vector2 position_);
+        float GetRotation() const;
 
         /**
          * Set entity rotation.
@@ -384,24 +343,88 @@ namespace NerdThings::Ngine {
         void SetRotation(float rotation_);
 
         /**
+         * Determine if this entity is affected by physics.
+         *
+         * @return Whether or not this entity has a physics body attached.
+         */
+        bool IsPhysicsEntity() const;
+
+        /**
+         * Get the attached physics body.
+         *
+         * @return The physics body. If none, null.
+         */
+        Physics::PhysicsBody *GetPhysicsBody();
+
+        /**
+         * Get the attached physics body.
+         *
+         * @return The physics body. If none, null.
+         */
+        const Physics::PhysicsBody *GetPhysicsBody() const;
+
+        /**
          * Set the entity physics body.
          *
+         * @warning You cannot add a body until the entity has been added to a `Scene`.
          * @param body_ The body to add to this entity.
          * @note The lifecycle of the body will now be managed by this entity, even if another body is set.
          */
         void SetPhysicsBody(Physics::PhysicsBody *body_);
 
         /**
+         * Get the world our body is a member of.
+         *
+         * @return The world the physics body is attached to, if any.
+         */
+        Physics::PhysicsWorld *GetPhysicsWorld();
+
+        /**
+         * Get the world our body is a member of.
+         *
+         * @return The world the physics body is attached to, if any.
+         */
+        const Physics::PhysicsWorld *GetPhysicsWorld() const;
+
+        /**
+         * Test if we update when the scene is paused.
+         *
+         * @return Whether or not we will update even when the scene is paused.
+         */
+        bool GetDoPersistentUpdates() const;
+
+        /**
+         * Set whether or not we update when the `Scene` is paused
+         *
+         * @note This will unsubscribe and resubscribe if the events are already bound.
+         * @param persistentUpdates_ Whether or not the entity can update during pauses.
+         */
+        void SetDoPersistentUpdates(bool persistentUpdates_);
+
+        /**
          * Subscribe to update events in the scene.
          *
-         * @return Whether or not updates were subscribed to.
+         * @warning If the entity changes parent this will need to be called again.
+         * @return Whether or the entity now listens to updates.
          */
         bool SubscribeToUpdate();
+
+        /**
+         * Determine if the entity is subscribed to the `Scene` update events.
+         *
+         * @return Whether or not the entity is subscribed to `Scene` updates.
+         */
+        bool SubscribedToUpdate() const;
 
         /**
          * Unsubscribe from update events in the scene.
          */
         void UnsubscribeFromUpdate();
+
+        /**
+         * Draw code for the entity
+         */
+        virtual void Draw();
 
         /**
          * Update the entity.

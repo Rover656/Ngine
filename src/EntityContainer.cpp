@@ -24,33 +24,32 @@ namespace NerdThings::Ngine {
         m_entities.clear();
     }
 
-    bool EntityContainer::RemoveChild(const std::string &name_) {
+    bool EntityContainer::RemoveChild(const std::string &name_, bool delete_) {
         // Get the entity
         const auto ent = GetChild<Entity>(name_);
 
         if (ent != nullptr) {
             // Destroy the entity
-            ent->_doDestroy();
+            ent->_removeFromScene();
 
             // Remove entity from map
             m_entities.erase(name_);
 
             // Delete entity from memory
-            delete ent;
+            if (delete_) delete ent;
             return true;
         }
 
         return false;
     }
 
-    bool EntityContainer::RemoveChild(Entity *entity_) {
+    bool EntityContainer::RemoveChild(Entity *entity_, bool delete_) {
         // Search for the entity
         for (const auto &ent : m_entities) {
             if (ent.second == entity_)
-                return RemoveChild(ent.first);
+                return RemoveChild(ent.first, delete_);
         }
 
-        // We don't have this entity
         return false;
     }
 }

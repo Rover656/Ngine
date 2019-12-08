@@ -45,7 +45,6 @@ namespace NerdThings::Ngine {
      * This also contains the active camera, cull areas and manages the overall lifecycle.
      */
     class NEAPI Scene : public EntityContainer {
-        // EntityContainer needs private access
         friend class EntityContainer;
         friend class Entity;
 
@@ -55,12 +54,12 @@ namespace NerdThings::Ngine {
         Graphics::Camera *m_activeCamera = nullptr;
 
         /**
-         * The culling area width
+         * The culling area width.
          */
         float m_cullAreaWidth;
 
         /**
-         * The culling area height
+         * The culling area height.
          */
         float m_cullAreaHeight;
 
@@ -71,16 +70,12 @@ namespace NerdThings::Ngine {
 
         /**
          * Whether or not an entity is active.
-         *
-         * @todo Make this a part of `EntityContainer`?
          */
         std::unordered_map<Entity *, bool> m_entityActivities;
 
         /**
          * Depth key list containing entities.
          * This is used for drawing.
-         *
-         * @todo Make this a part of `EntityContainer`?
          */
         std::map<int, std::vector<Entity *>> m_entityDepths;
 

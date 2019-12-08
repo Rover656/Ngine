@@ -14,8 +14,6 @@
 #include "../Logger.h"
 
 namespace NerdThings::Ngine::Audio {
-    // Private Fields
-
     std::vector<Music *> AudioDevice::m_activeMusic;
 
     ma_mutex AudioDevice::m_audioLock;
@@ -25,8 +23,6 @@ namespace NerdThings::Ngine::Audio {
     ma_device AudioDevice::m_device;
     bool AudioDevice::m_initialized = false;
     float AudioDevice::m_masterVolume = 1.0f;
-
-    // Private Methods
 
     ma_uint32 AudioDevice::_audioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount,
                                                void *pUserData) {
@@ -209,8 +205,6 @@ namespace NerdThings::Ngine::Audio {
         }
         ma_mutex_unlock(&m_audioLock);
     }
-
-    // Public Methods
 
     void AudioDevice::CloseAudioBuffer(AudioBuffer *buffer_) {
         if (!m_initialized) return;

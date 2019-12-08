@@ -14,47 +14,42 @@
 #include "Entity.h"
 
 namespace NerdThings::Ngine {
-    // Destructor
-
     Component::~Component() {
+        // Fire OnDestroy
+        OnDestroy();
+
+        // Detach events
         UnsubscribeFromDraw();
         UnsubscribeFromUpdate();
     }
 
-    // Public Methods
-
-    void Component::Draw() { }
-
-    Scene *Component::GetScene() const {
-        return m_parentEntity->GetScene();
-    }
+    void Component::Draw() {}
 
     Game *Component::GetGame() const {
         return m_parentEntity->GetGame();
     }
 
-    bool Component::HasParent() const {
-        return m_parentEntity != nullptr;
-    }
-
     void Component::SubscribeToDraw() {
-        if (HasParent()) {
-            m_onDrawRef = m_parentEntity->OnDraw += new ClassMethodEventHandler<Component>(this, &Component::Draw);
-        }
+        m_onDrawRef = m_parentEntity->OnDraw += new ClassMethodEventHandler<Component>(this, &Component::Draw);
     }
 
-    void Component::SubscribeToUpdate() {
-        if (HasParent()) {
-            // Check the entity subscribed to update
-            // If not, subscribe
-            if (m_parentEntity->SubscribeToUpdate()) {
-                m_onUpdateRef = m_parentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::Update);
-            }
-        }
+    bool Component::SubscribedToDraw() const {
+        return m_onDrawRef.IsAttached();
     }
 
     void Component::UnsubscribeFromDraw() {
         m_onDrawRef.Detach();
+    }
+
+    void Component::SubscribeToUpdate() {
+        // Ensure the entity is subscribed to updates.
+        if (m_parentEntity->SubscribeToUpdate()) {
+            m_onUpdateRef = m_parentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::Update);
+        }
+    }
+
+    bool Component::SubscribedToUpdate() const {
+        return m_onUpdateRef.IsAttached();
     }
 
     void Component::UnsubscribeFromUpdate() {
@@ -62,8 +57,6 @@ namespace NerdThings::Ngine {
     }
 
     void Component::Update() { }
-
-    // Protected Constructor(s)
 
     Component::Component(Entity *parent_)
             : m_parentEntity(parent_) {
