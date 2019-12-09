@@ -20,14 +20,14 @@
 namespace NerdThings::Ngine::Graphics {
     Sprite::Sprite(Texture2D *texture_) {
         // Add texture
-        _Textures.push_back(texture_);
+        m_textures.push_back(texture_);
 
         // Set draw dimensions
         DrawHeight = texture_->Height;
         DrawWidth = texture_->Width;
 
         // Mark as spritesheet
-        _SpriteSheet = true;
+        m_spriteSheet = true;
     }
 
     Sprite::Sprite(Texture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
@@ -35,30 +35,30 @@ namespace NerdThings::Ngine::Graphics {
         : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
           ImageSpeed(imageSpeed_) {
         // Add texture
-        _Textures.push_back(texture_);
+        m_textures.push_back(texture_);
 
         // Set frame
         CurrentFrame = startingFrame;
 
         // Mark as spritesheet
-        _SpriteSheet = true;
+        m_spriteSheet = true;
     }
 
     Sprite::Sprite(const std::vector<Texture2D*> &textures_, float imageSpeed_, int startingFrame_) {
         // Set textures
         for (auto tex : textures_) {
-            _Textures.push_back(tex);
+            m_textures.push_back(tex);
         }
 
         // Set frame
         CurrentFrame = startingFrame_;
 
         // Mark as not spritesheet
-        _SpriteSheet = false;
+        m_spriteSheet = false;
     }
 
     void Sprite::Draw(Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
-        if (_Textures.empty()) return;
+        if (m_textures.empty()) return;
 #ifndef USE_EXPERIMENTAL_RENDERER
         Renderer::DrawTexture(GetCurrentTexture(),
                               Rectangle(
@@ -75,23 +75,23 @@ namespace NerdThings::Ngine::Graphics {
     void Sprite::Update() {
         if (IsAnimated()) {
             // Increment timer
-            _AnimationTimer++;
+            m_animationTimer++;
 
-            while (_AnimationTimer > 0 && fmod(_AnimationTimer, ImageSpeed) == 0) {
+            while (m_animationTimer > 0 && fmod(m_animationTimer, ImageSpeed) == 0) {
                 // Reset timer
-                _AnimationTimer = 0;
+                m_animationTimer = 0;
 
                 // Increase frame
                 CurrentFrame++;
 
                 // Reset if out of range
-                if (_SpriteSheet) {
+                if (m_spriteSheet) {
                     auto count = (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
 
                     if (CurrentFrame > count - 1)
                         CurrentFrame = 0;
                 } else {
-                    if (CurrentFrame > _Textures.size() - 1)
+                    if (CurrentFrame > m_textures.size() - 1)
                         CurrentFrame = 0;
                 }
             }
@@ -99,18 +99,18 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Sprite::IsAnimated() {
-        if (_SpriteSheet) {
+        if (m_spriteSheet) {
             if (GetCurrentTexture()->IsValid())
                 return FrameHeight != GetCurrentTexture()->Height || FrameWidth != GetCurrentTexture()->Width;
             else
                 return false;
         } else {
-            return _Textures.size() > 1;
+            return m_textures.size() > 1;
         }
     }
 
     int Sprite::FrameX() {
-        if (!_SpriteSheet || _Textures.empty())
+        if (!m_spriteSheet || m_textures.empty())
             return 0;
 
         auto x = 0;
@@ -124,7 +124,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     int Sprite::FrameY() {
-        if (!_SpriteSheet || _Textures.empty())
+        if (!m_spriteSheet || m_textures.empty())
             return 0;
 
         auto x = 0;
@@ -141,32 +141,32 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     Texture2D *Sprite::GetCurrentTexture() {
-        if (_Textures.empty())
+        if (m_textures.empty())
             return nullptr;
 
-        if (_SpriteSheet) {
-            return _Textures[0];
+        if (m_spriteSheet) {
+            return m_textures[0];
         }
 
-        return _Textures[CurrentFrame];
+        return m_textures[CurrentFrame];
     }
 
     void Sprite::SetTexture(Texture2D *texture_) {
-        _Textures.clear();
-        _Textures.push_back(texture_);
+        m_textures.clear();
+        m_textures.push_back(texture_);
     }
 
     void Sprite::SetTextures(const std::vector<Texture2D *> &textures_) {
-        _Textures.clear();
+        m_textures.clear();
 
         for (auto t : textures_) {
             // Look for existing shared pointer first.
-            _Textures.push_back(t);
+            m_textures.push_back(t);
         }
     }
 
     Rectangle Sprite::GetSourceRectangle() {
-        if (_SpriteSheet)
+        if (m_spriteSheet)
             return {
                 static_cast<float>(FrameX()),
                 static_cast<float>(FrameY()),
@@ -183,10 +183,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Sprite::operator==(const Sprite &b) {
-        return _Textures == b._Textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth && FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;
+        return m_textures == b.m_textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth && FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;
     }
 
     bool Sprite::operator!=(const Sprite &b) {
-        return _Textures != b._Textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth || FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || ImageSpeed != b.ImageSpeed;
+        return m_textures != b.m_textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth || FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || ImageSpeed != b.ImageSpeed;
     }
 }

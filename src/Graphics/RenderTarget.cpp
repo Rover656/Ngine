@@ -26,22 +26,22 @@ namespace NerdThings::Ngine::Graphics {
 #endif
 
         // Create texture
-        _Texture = new Texture2D();
-        _Texture->Width = Width;
-        _Texture->Height = Height;
+        m_texture = new Texture2D();
+        m_texture->Width = Width;
+        m_texture->Height = Height;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifndef USE_EXPERIMENTAL_RENDERER
-        _Texture->InternalTexture = InternalFramebuffer->RenderTexture;
+        m_texture->InternalTexture = InternalFramebuffer->RenderTexture;
 #endif
 #endif
     }
 
     RenderTarget::~RenderTarget() {
-        delete _Texture;
+        delete m_texture;
     }
 
     Texture2D *RenderTarget::GetTexture() {
-        return _Texture;
+        return m_texture;
     }
 
     bool RenderTarget::IsValid() const {

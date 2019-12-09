@@ -26,31 +26,27 @@ namespace NerdThings::Ngine::Graphics {
      * @todo Wait for Tileset to be finished before documenting.
      */
     class NEAPI TilesetRenderer {
-        // Private Fields
-
         /*
          * Render area height in tile units
          */
-        int _Height;
+        int m_height;
 
         /*
          * The tile data
          */
-        std::vector<int> _Tiles;
+        std::vector<int> m_tiles;
 
         /*
          * The tileset
          */
-        Tileset _Tileset;
+        Tileset m_tileset;
 
         /*
          * Render area width in tile units
          */
-        int _Width;
+        int m_width;
 
     public:
-        // Public Constructor(s)
-
         /*
          * Create a tileset.
          * Width and height is in tile space.

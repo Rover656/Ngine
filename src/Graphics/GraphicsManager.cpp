@@ -18,11 +18,11 @@
 #endif
 
 namespace NerdThings::Ngine::Graphics {
-    std::vector<RenderTarget *> GraphicsManager::_RenderTargetStack;
-    unsigned int GraphicsManager::_CurrentHeight = 0;
-    unsigned int GraphicsManager::_CurrentWidth = 0;
+    std::vector<RenderTarget *> GraphicsManager::m_renderTargetStack;
+    unsigned int GraphicsManager::m_currentHeight = 0;
+    unsigned int GraphicsManager::m_currentWidth = 0;
 
-    void GraphicsManager::UseRenderTarget(RenderTarget *target_) {
+    void GraphicsManager::_useRenderTarget(RenderTarget *target_) {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
 #endif
@@ -34,13 +34,13 @@ namespace NerdThings::Ngine::Graphics {
         target_->InternalFramebuffer->Bind();
 
         // Setup framebuffer
-        _CurrentWidth = target_->Width;
-        _CurrentHeight = target_->Height;
+        m_currentWidth = target_->Width;
+        m_currentHeight = target_->Height;
         SetupFramebuffer();
 #endif
     }
 
-    void GraphicsManager::EndRenderTarget() {
+    void GraphicsManager::_endRenderTarget() {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
 #endif
@@ -52,37 +52,37 @@ namespace NerdThings::Ngine::Graphics {
         OpenGL::GLFramebuffer::Unbind();
 
         // Setup framebuffer
-        _CurrentWidth = Window::GetCurrent()->GetWidth();
-        _CurrentHeight = Window::GetCurrent()->GetHeight();
+        m_currentWidth = Window::GetCurrent()->GetWidth();
+        m_currentHeight = Window::GetCurrent()->GetHeight();
         SetupFramebuffer();
 #endif
     }
 
     unsigned int GraphicsManager::GetCurrentWidth() {
-        return _CurrentWidth;
+        return m_currentWidth;
     }
 
     unsigned int GraphicsManager::GetCurrentHeight() {
-        return _CurrentHeight;
+        return m_currentHeight;
     }
 
     void GraphicsManager::SetupFramebuffer() {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
 #endif
-        if (_RenderTargetStack.empty()) {
+        if (m_renderTargetStack.empty()) {
             // We are rendering straight to the window, update width and height
-            _CurrentWidth = Window::GetCurrent()->GetWidth();
-            _CurrentHeight = Window::GetCurrent()->GetHeight();
+            m_currentWidth = Window::GetCurrent()->GetWidth();
+            m_currentHeight = Window::GetCurrent()->GetHeight();
         }
 
         // Set viewport
-        OpenGL::GL::Viewport(0, 0, _CurrentWidth, _CurrentHeight);
+        OpenGL::GL::Viewport(0, 0, m_currentWidth, m_currentHeight);
 
         // Start new matrix with orthographic applied
         OpenGL::GL::MatrixMode(OpenGL::MATRIX_PROJECTION);
         OpenGL::GL::LoadIdentity();
-        OpenGL::GL::Ortho(0, (float)_CurrentWidth, (float)_CurrentHeight, 0, -1, 1);
+        OpenGL::GL::Ortho(0, (float)m_currentWidth, (float)m_currentHeight, 0, -1, 1);
     }
 
     void GraphicsManager::PushTarget(RenderTarget *target_) {
@@ -90,30 +90,30 @@ namespace NerdThings::Ngine::Graphics {
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
 #endif
         // Stop using current target
-        if (!_RenderTargetStack.empty())
-            EndRenderTarget();
+        if (!m_renderTargetStack.empty())
+            _endRenderTarget();
 
         // Add to target stack
-        _RenderTargetStack.emplace_back(target_);
+        m_renderTargetStack.emplace_back(target_);
 
         // Use the target
-        UseRenderTarget(target_);
+        _useRenderTarget(target_);
     }
 
     void GraphicsManager::PopTarget() {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
 #endif
-        if (!_RenderTargetStack.empty()) {
+        if (!m_renderTargetStack.empty()) {
             // Remove target
-            _RenderTargetStack.pop_back();
+            m_renderTargetStack.pop_back();
 
             // Stop Render Target
-            EndRenderTarget();
+            _endRenderTarget();
 
             // Start using another if it is available
-            if (!_RenderTargetStack.empty()) {
-                UseRenderTarget(_RenderTargetStack.back());
+            if (!m_renderTargetStack.empty()) {
+                _useRenderTarget(m_renderTargetStack.back());
             }
         }
     }
@@ -122,16 +122,16 @@ namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
 #endif
-        const auto oldPos = std::find(_RenderTargetStack.begin(), _RenderTargetStack.end(), old_) - _RenderTargetStack.
+        const auto oldPos = std::find(m_renderTargetStack.begin(), m_renderTargetStack.end(), old_) - m_renderTargetStack.
             begin();
 
         // If this is the currently active target, replace it too
-        if (oldPos == _RenderTargetStack.size() - 1) {
-            EndRenderTarget();
-            UseRenderTarget(new_);
+        if (oldPos == m_renderTargetStack.size() - 1) {
+            _endRenderTarget();
+            _useRenderTarget(new_);
         }
 
         // Send to stack
-        _RenderTargetStack[oldPos] = new_;
+        m_renderTargetStack[oldPos] = new_;
     }
 }

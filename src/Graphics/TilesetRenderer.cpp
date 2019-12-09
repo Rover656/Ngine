@@ -17,26 +17,26 @@ namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     TilesetRenderer::TilesetRenderer(const Tileset &tileset_, int width_, int height_)
-            : _Tileset(tileset_), _Width(width_), _Height(height_),
-              _Tiles(width_ * height_) {
+            : m_tileset(tileset_), m_width(width_), m_height(height_),
+              m_tiles(width_ * height_) {
     }
 
     TilesetRenderer::TilesetRenderer(const Tileset &tileset_, int width_, int height_, std::vector<int> tiles_)
-            : _Tileset(tileset_), _Width(width_), _Height(height_) {
+            : m_tileset(tileset_), m_width(width_), m_height(height_) {
         if (tiles_.size() != width_ * height_) {
             throw std::runtime_error("Tile data does not match dimensions.");
         }
-        _Tiles = tiles_;
+        m_tiles = tiles_;
     }
 
     // Public Methods
 
     void TilesetRenderer::Draw(Vector2 pos_, float scale_, float rotation_, Vector2 origin_) {
-        auto tileWidth = _Tileset.GetTileWidth();
-        auto tileHeight = _Tileset.GetTileHeight();
+        auto tileWidth = m_tileset.GetTileWidth();
+        auto tileHeight = m_tileset.GetTileHeight();
 
-        for (auto x = 0; x < _Width; x++) {
-            for (auto y = 0; y < _Height; y++) {
+        for (auto x = 0; x < m_width; x++) {
+            for (auto y = 0; y < m_height; y++) {
                 // Get tile position
                 Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
 
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Graphics {
                 Vector2 tileOrigin = {-pos.X, -pos.Y};
 
                 // Cheaty: Putting the wrong values in each argument for this to work
-                _Tileset.DrawTile(tilePos, GetTileAt({(float)x, (float)y}), scale_, rotation_, tileOrigin);
+                m_tileset.DrawTile(tilePos, GetTileAt({(float)x, (float)y}), scale_, rotation_, tileOrigin);
             }
         }
     }
@@ -54,12 +54,12 @@ namespace NerdThings::Ngine::Graphics {
         // TODO: How do we rotate this stuff??
 
         // Get tile sizes
-        auto tileWidth = _Tileset.GetTileWidth();
-        auto tileHeight = _Tileset.GetTileHeight();
+        auto tileWidth = m_tileset.GetTileWidth();
+        auto tileHeight = m_tileset.GetTileHeight();
 
         // Tileset size
-        auto tilesetWidth = _Width * scale_;
-        auto tilesetHeight = _Height * scale_;
+        auto tilesetWidth = m_width * scale_;
+        auto tilesetHeight = m_height * scale_;
 
         // Correct coordinates
         if (renderFrom_.X < pos_.X) renderFrom_.X = pos_.X;
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = tYFrom; y < tYTo; y++) {
                 // Get tile position
                 Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
-                _Tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}), scale_);
+                m_tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}), scale_);
             }
         }
     }
@@ -114,9 +114,9 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = sY; y <= eY; y++) {
                 if (GetTileAt({(float) x, (float) y}) == tile_) {
                     // Get polygon with world coordinates
-                    auto poly = Rectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
-                                                 y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
-                                          _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
+                    auto poly = Rectangle(x * m_tileset.GetTileWidth() + tilesetPosition_.X,
+                                          y * m_tileset.GetTileWidth() + tilesetPosition_.Y,
+                                          m_tileset.GetTileWidth(), m_tileset.GetTileHeight()).ToPolygonPtr();
                     shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
                 }
             }
@@ -136,8 +136,8 @@ namespace NerdThings::Ngine::Graphics {
         int eY = range_.Y + range_.Height;
 
         // Validate
-        auto w = GetWidth() / _Tileset.GetTileWidth();
-        auto h = GetHeight() / _Tileset.GetTileHeight();
+        auto w = GetWidth() / m_tileset.GetTileWidth();
+        auto h = GetHeight() / m_tileset.GetTileHeight();
 
         if (sX < 0) sX = 0;
         if (sY < 0) sY = 0;
@@ -153,9 +153,9 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = sY; y <= eY; y++) {
                 if (std::find(tiles_.begin(), tiles_.end(), GetTileAt({(float) x, (float) y})) != tiles_.end()) {
                     // Get polygon with world coordinates
-                    auto poly = Rectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
-                                                 y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
-                                          _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
+                    auto poly = Rectangle(x * m_tileset.GetTileWidth() + tilesetPosition_.X,
+                                          y * m_tileset.GetTileWidth() + tilesetPosition_.Y,
+                                          m_tileset.GetTileWidth(), m_tileset.GetTileHeight()).ToPolygonPtr();
                     shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
                 }
             }
@@ -174,8 +174,8 @@ namespace NerdThings::Ngine::Graphics {
         int eY = range_.Y + range_.Height;
 
         // Validate
-        auto w = GetWidth() / _Tileset.GetTileWidth();
-        auto h = GetHeight() / _Tileset.GetTileHeight();
+        auto w = GetWidth() / m_tileset.GetTileWidth();
+        auto h = GetHeight() / m_tileset.GetTileHeight();
 
         if (sX < 0) sX = 0;
         if (sY < 0) sY = 0;
@@ -192,9 +192,9 @@ namespace NerdThings::Ngine::Graphics {
                 auto t = GetTileAt({(float) x, (float) y});
                 if (t >= min_ && t <= max_) {
                     // Get polygon with world coordinates
-                    auto poly = Rectangle(x * _Tileset.GetTileWidth() + tilesetPosition_.X,
-                                                 y * _Tileset.GetTileWidth() + tilesetPosition_.Y,
-                                          _Tileset.GetTileWidth(), _Tileset.GetTileHeight()).ToPolygonPtr();
+                    auto poly = Rectangle(x * m_tileset.GetTileWidth() + tilesetPosition_.X,
+                                          y * m_tileset.GetTileWidth() + tilesetPosition_.Y,
+                                          m_tileset.GetTileWidth(), m_tileset.GetTileHeight()).ToPolygonPtr();
                     shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
                 }
             }
@@ -204,7 +204,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     int TilesetRenderer::GetHeight() {
-        return _Height;
+        return m_height;
     }
 
     int TilesetRenderer::GetTileAt(Vector2 pos_) {
@@ -213,15 +213,15 @@ namespace NerdThings::Ngine::Graphics {
 
         auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
 
-        return _Tiles[i];
+        return m_tiles[i];
     }
 
     Tileset *TilesetRenderer::GetTileset() {
-        return &_Tileset;
+        return &m_tileset;
     }
 
     int TilesetRenderer::GetWidth() {
-        return _Width;
+        return m_width;
     }
 
     void TilesetRenderer::SetTileAt(Vector2 pos_, int tile_) {
@@ -230,13 +230,13 @@ namespace NerdThings::Ngine::Graphics {
 
         auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
 
-        _Tiles[i] = tile_;
+        m_tiles[i] = tile_;
     }
 
     void TilesetRenderer::SetTileData(std::vector<int> data_) {
         if (data_.size() != GetWidth() * GetHeight()) {
             throw std::runtime_error("Tile data does not match dimensions.");
         }
-        _Tiles = data_;
+        m_tiles = data_;
     }
 }

@@ -25,40 +25,24 @@ namespace NerdThings::Ngine::Graphics {
      * @todo Document after finishing API.
      */
     struct NEAPI Tileset {
-        // Public Fields
-
-        /*
-         * The tileset texture
+        /**
+         * The tileset texture.
          */
-        Texture2D *_Texture;
+        Texture2D *Texture;
 
-        /*
-         * Tile width
+        /**
+         * Tile width.
          */
-        float _TileHeight;
+        float TileHeight;
 
-        /*
-         * Tile height
+        /**
+         * Tile height.
          */
-        float _TileWidth;
-
-        // Public Constructor(s)
+        float TileWidth;
 
         Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_);
 
-        // Public Methods
-
         void DrawTile(Vector2 position_, int tile_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Get the tile height
-         */
-        float GetTileHeight() const;
-
-        /*
-         * Get the tile width
-         */
-        float GetTileWidth() const;
     };
 }
 

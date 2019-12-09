@@ -24,29 +24,29 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The render target stack.
          */
-        static std::vector<RenderTarget *> _RenderTargetStack;
+        static std::vector<RenderTarget *> m_renderTargetStack;
 
         /**
          * The current viewport width.
          */
-        static unsigned int _CurrentWidth;
+        static unsigned int m_currentWidth;
 
         /**
          * The current viewport height.
          */
-        static unsigned int _CurrentHeight;
+        static unsigned int m_currentHeight;
 
         /**
          * Configure the framebuffer for use with the render target.
          *
          * @param target_ Target to configure for.
          */
-        static void UseRenderTarget(RenderTarget *target_);
+        static void _useRenderTarget(RenderTarget *target_);
 
         /**
          * Reset the framebuffer to defaults.
          */
-        static void EndRenderTarget();
+        static void _endRenderTarget();
     public:
         /**
          * Gets the current framebuffer width.

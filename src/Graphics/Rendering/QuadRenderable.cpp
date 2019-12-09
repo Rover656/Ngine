@@ -22,11 +22,11 @@ namespace NerdThings::Ngine::Graphics::Rendering {
     }
 
     Texture2D *QuadRenderable::GetTexture() const {
-        return _Texture;
+        return Texture;
     }
 
     void QuadRenderable::SetTexture(Texture2D *tex_) {
-        _Texture = tex_;
+        Texture = tex_;
     }
 
     const VertexData *QuadRenderable::GetVertices() const {

@@ -20,22 +20,23 @@
 namespace NerdThings::Ngine::Graphics {
     /**
      * A canvas is a render target that is only redrawn when needed.
+     * @deprecated This will be removed before Ngine V1.0 RC 1. Manage a render target yourself instead.
      */
     class NEAPI Canvas {
         /**
          * Canvas width
          */
-        unsigned int _Width;
+        unsigned int m_width;
 
         /**
          * Canvas height
          */
-        unsigned int _Height;
+        unsigned int m_height;
 
         /**
          * The render target
          */
-        RenderTarget *_RenderTarget;
+        RenderTarget *m_renderTarget;
 
     public:
         /**

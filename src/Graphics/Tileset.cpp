@@ -18,7 +18,7 @@ namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)
 
     Tileset::Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_)
-            : _Texture(texture_), _TileWidth(tileWidth_), _TileHeight(tileHeight_) {}
+            : Texture(texture_), TileWidth(tileWidth_), TileHeight(tileHeight_) {}
 
     // Public Methods
 
@@ -33,27 +33,19 @@ namespace NerdThings::Ngine::Graphics {
         auto x = 0.0f;
         auto y = 0.0f;
         for (auto i = 0; i < tile_; i++) {
-            x += _TileWidth;
-            if (x >= (float)_Texture->Width) {
+            x += TileWidth;
+            if (x >= (float)Texture->Width) {
                 x = 0;
-                y += _TileHeight;
+                y += TileHeight;
             }
         }
 
         // Get source rectangle
-        Rectangle sourceRectangle = {x, y, _TileWidth, _TileHeight};
+        Rectangle sourceRectangle = {x, y, TileWidth, TileHeight};
 
         // Draw
 #ifndef USE_EXPERIMENTAL_RENDERER
-        Renderer::DrawTexture(_Texture, sourceRectangle, position_, _TileWidth * scale_, _TileHeight * scale_, Color::White, origin_, rotation_);
+        Renderer::DrawTexture(Texture, sourceRectangle, position_, TileWidth * scale_, TileHeight * scale_, Color::White, origin_, rotation_);
 #endif
-    }
-
-    float Tileset::GetTileHeight() const {
-        return _TileHeight;
-    }
-
-    float Tileset::GetTileWidth() const {
-        return _TileWidth;
     }
 }

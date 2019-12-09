@@ -19,9 +19,24 @@ namespace NerdThings::Ngine::Graphics {
      * A 32-bit packed color.
      */
     struct NEAPI Color {
+        /**
+         * The red component.
+         */
         float R;
+
+        /**
+         * The green component.
+         */
         float G;
+
+        /**
+         * The blue component.
+         */
         float B;
+
+        /**
+         * The alpha (transparency) component.
+         */
         float A;
 
         /**

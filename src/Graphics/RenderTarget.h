@@ -27,10 +27,10 @@ namespace NerdThings::Ngine::Graphics {
      */
     struct NEAPI RenderTarget : public IResource {
     private:
-        /*
+        /**
          * The texture that the render target renders to.
          */
-        Texture2D *_Texture;
+        Texture2D *m_texture;
     public:
         /**
          * Render target width.

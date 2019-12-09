@@ -14,7 +14,7 @@
 #include <stb_image.h>
 
 namespace NerdThings::Ngine::Graphics {
-    void Image::__Create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
+    void Image::_create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
         // Bits per pixel
         int bpp = 0;
         if (format_ == UNCOMPRESSED_GRAYSCALE) bpp = 1;
@@ -68,7 +68,7 @@ namespace NerdThings::Ngine::Graphics {
             auto data = stbi_load_from_file(file.GetFileHandle(), &width, &height, &bpp, 4);
 
             // Load image
-            __Create(data, width, height, UNCOMPRESSED_R8G8B8A8);
+            _create(data, width, height, UNCOMPRESSED_R8G8B8A8);
 
             // Close file
             stbi_image_free(data);
@@ -77,7 +77,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     Image::Image(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
-        __Create(pixelData_, width_, height_, format_);
+        _create(pixelData_, width_, height_, format_);
     }
 
     bool Image::IsValid() const {

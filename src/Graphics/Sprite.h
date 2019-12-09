@@ -26,17 +26,17 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The animation timer
          */
-        float _AnimationTimer = 0;
+        float m_animationTimer = 0;
 
         /**
          * The textures associated with the sprite.
          */
-        std::vector<Texture2D *> _Textures;
+        std::vector<Texture2D *> m_textures;
 
         /**
          * Whether or not this is a spritesheet.
          */
-        bool _SpriteSheet = true;
+        bool m_spriteSheet = true;
     public:
         /**
          * The current animation frame.

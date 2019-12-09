@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param height_
          * @param format_
          */
-        void __Create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
+        void _create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
     public:
         /**
          * Image width.

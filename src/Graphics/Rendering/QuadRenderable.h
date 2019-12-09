@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics::Rendering {
         /**
          * The attached texture.
          */
-        Texture2D *_Texture = nullptr;
+        Texture2D *Texture = nullptr;
 
         /**
          * Quad vertex array.
