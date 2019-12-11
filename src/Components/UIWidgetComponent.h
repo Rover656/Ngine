@@ -18,53 +18,52 @@
 #include "../Entity.h"
 #include "../Component.h"
 
-// Not being documented as this is broken and outdated.
+// Not being documented as this is outdated.
 // UI engine will be replaced, then this will be fixed.
 
 namespace NerdThings::Ngine::Components {
     class UIWidgetComponent : public Component {
-        // Private Fields
-
         /*
          * On position changed
          */
-        EventHandleRef<EntityTransformChangedEventArgs> _OnTransformChangeRef;
+        EventAttachment<EntityTransformChangedEventArgs> m_onTransformChangeRef;
 
         /*
          * The UI widget we are attached to.
          */
-        UI::UIWidget _Widget;
+        UI::UIWidget m_widget;
     public:
 
         // Public Constructor(s)
 
         UIWidgetComponent(Entity *parent_, const UI::UIWidget& widget_)
-                : Component(parent_), _Widget(widget_) {
+                : Component(parent_), m_widget(widget_) {
             SubscribeToDraw();
             SubscribeToUpdate();
 
-            _OnTransformChangeRef = GetParent<BaseEntity>()->OnTransformChanged.Bind(
-                    this, &UIWidgetComponent::UpdatePosition);
+            m_onTransformChangeRef = GetEntity()->OnTransformChanged +=
+                    new ClassMethodEventHandler<UIWidgetComponent, EntityTransformChangedEventArgs>
+                            (this, &UIWidgetComponent::UpdatePosition);
         }
 
         // Destructor
 
         ~UIWidgetComponent() {
-            _OnTransformChangeRef.UnBind();
+            m_onTransformChangeRef.Detach();
         }
 
         // Public Methods
 
-        void Draw(EventArgs &e) override {
-            _Widget.Draw();
+        void Draw() override {
+            m_widget.Draw();
         }
 
-        void Update(EventArgs &e) override {
-            _Widget.Update();
+        void Update() override {
+            m_widget.Update();
         }
 
-        void UpdatePosition(EntityTransformChangedEventArgs &e) {
-            _Widget.SetPosition(e.EntityPosition);
+        void UpdatePosition(EntityTransformChangedEventArgs e) {
+            m_widget.SetPosition(e.EntityPosition);
         }
     };
 }

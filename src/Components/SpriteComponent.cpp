@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Components {
 
     void SpriteComponent::Draw() {
         Component::Draw();
-        const auto par = GetParent<Entity>();
+        const auto par = GetEntity<Entity > ();
         m_sprite.Draw(par->GetPosition(), 1, par->GetRotation(), m_origin);
     }
 

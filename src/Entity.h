@@ -270,7 +270,7 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent entity.
          *
-         * @tparam EntityType The type to cast the parent to (Default: Entity)
+         * @tparam EntityType The type to cast the parent to (Default: `Entity`)
          * @return The parent entity, null if none.
          */
         template <typename EntityType = Entity>
@@ -281,9 +281,13 @@ namespace NerdThings::Ngine {
         /**
          * Get the parent scene.
          *
+         * @tparam SceneType The type we want the scene as.
          * @return The parent scene.
          */
-        Scene *GetScene() const;
+        template <class SceneType = Scene>
+        SceneType *GetScene() const {
+            return (SceneType *) m_parentScene;
+        }
 
         /**
          * Get the parent game.

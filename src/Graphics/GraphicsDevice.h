@@ -19,6 +19,8 @@
 #include "Image.h"
 
 namespace NerdThings::Ngine::Graphics {
+    struct RenderTarget;
+
     /**
      * The graphics device.
      * Manages the OpenGL Context and it's features.
@@ -132,6 +134,13 @@ namespace NerdThings::Ngine::Graphics {
          * Get the window attached to this device.
          */
         Window *GetWindow();
+
+        /**
+         * Get the current render target.
+         *
+         * @return The current render target or null if rendering straight to window.
+         */
+        RenderTarget *GetCurrentTarget();
 
         /**
          * Get the current projection matrix.

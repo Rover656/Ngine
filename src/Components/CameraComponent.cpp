@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Components {
     CameraComponent::CameraComponent(Entity *parent_, const float zoom_, const Vector2 origin_,
                                      const float rotation_)
         : Component(parent_) {
-        auto par = GetParent < Entity > ();
+        auto par = GetEntity < Entity > ();
 
         // Setup camera
         m_camera = Graphics::Camera(par->GetPosition(), rotation_, zoom_, origin_);;

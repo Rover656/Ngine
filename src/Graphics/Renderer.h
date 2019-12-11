@@ -48,68 +48,63 @@ namespace NerdThings::Ngine::Graphics {
     public:
         static const unsigned int VBO_SIZE = 65536;
         static const unsigned int QUAD_IBO_SIZE = VBO_SIZE * 6 / 4;
+
+        enum PrimitiveType {
+            PRIMITIVE_TRIANGLES = 0,
+            PRIMITIVE_QUADS
+        };
     private:
         struct BatchItem {
-            unsigned int Count;
-            Rendering::Renderable *Obj;
+            int Depth;
+            PrimitiveType PrimitiveType;
+            std::vector<Rendering::VertexData> Vertices;
+            ShaderProgram *Shader;
+            Texture2D *Texture;
+            Matrix CurrentModelMatrix;
         };
 
-        enum RenderBucket {
-            BUCKET_Z_NEGATIVE = 0,
-            BUCKET_Z_NEUTRAL,
-            BUCKET_Z_POSITIVE
+        enum BatchBucket {
+            Z_POS = 0,
+            Z_NEU,
+            Z_NEG
         };
 
         /**
          * The graphics device.
          */
-        GraphicsDevice *m_graphicsDevice;
-
-        /**
-         * The quad batch vertex array.
-         */
-        unsigned int m_quadVAO;
-
-        /**
-         * The quad batch vertex buffer.
-         */
-        unsigned int m_quadVBO;
-
-        /**
-         * The quad batch index buffer.
-         */
-        unsigned int m_quadIBO;
-
-        /**
-         * Quad vertex data.
-         */
-        Rendering::VertexData m_quadVertices[VBO_SIZE];
-
-        /**
-         * The number of vertices used in the vertex data.
-         */
-        unsigned int m_quadVerticesCount = 0;
-
-        /**
-         * The current quad batch.
-         * This will be optimised (i.e. duplicates that are easy to find are removed).
-         */
-        std::vector<BatchItem> m_quads;
+        GraphicsDevice *m_graphicsDevice = nullptr;
 
         /**
          * The default shader program.
          */
-        ShaderProgram *m_defaultShaderProgram;
+        ShaderProgram *m_defaultShaderProgram = nullptr;
 
         /**
          * 1x1 white texture.
          */
-        Texture2D *m_whiteTexture;
+        Texture2D *m_whiteTexture = nullptr;
 
         /**
-         * The render queues.
+         * Flag to fix threading problems.
          */
-        std::vector<BatchItem> m_renderQueue[BUCKET_Z_POSITIVE + 1];
+        bool m_rendering = false;
+
+        /**
+         * Whether or not we are creating a batch.
+         */
+        bool m_midBatch = false;
+
+        BatchItem m_currentBatch;
+
+        /**
+         * The current batch's target for error checking.
+         */
+        RenderTarget *m_currentBatchTarget = nullptr;
+
+        /**
+         * Batches (one per target).
+         */
+        std::map<RenderTarget *, std::vector<std::vector<BatchItem>>> m_batches;
 
         /**
          * Enable OpenGL capabilities.
@@ -120,71 +115,6 @@ namespace NerdThings::Ngine::Graphics {
          * Create the default shader
          */
         void _createDefaultShader();
-
-        /**
-         * Create the quad buffers
-         */
-        void _createQuadBuffers();
-
-        /**
-         * Delete the quad buffers.
-         */
-        void _deleteQuadBuffers();
-
-        /**
-         * Push data to the quad buffers
-         */
-        void _updateQuadBuffers();
-
-        /**
-         * Bind the quad buffers
-         */
-        void _bindQuadBuffers();
-
-        /**
-         * Unbind the quad buffers
-         */
-        void _unbindQuadBuffers();
-
-        /**
-         * Render the quad buffers
-         */
-        void _renderQuadBuffers();
-
-        /**
-         * Sort a bucket.
-         *
-         * @param bucket_ Bucket to sort.
-         */
-        void _sortBucket(RenderBucket bucket_);
-
-        /**
-         * Sort predicate.
-         *
-         * @param a_ The first.
-         * @param b_ The second.
-         * @return Bleh.
-         */
-        static bool _sortPredicate(BatchItem a_, BatchItem b_);
-
-        /**
-         * Render the queue.
-         */
-        void _processQueue();
-
-        /**
-         * Render the given bucket.
-         *
-         * @param bucket_ The bucket to render.
-         */
-        void _processBucket(RenderBucket bucket_);
-
-        /**
-         * Process a batch item.
-         *
-         * @param item_ The batch item to process.
-         */
-        void _processItem(BatchItem item_);
 
         /**
          * Flush the buffers
@@ -200,11 +130,16 @@ namespace NerdThings::Ngine::Graphics {
         ~Renderer();
 
         /**
-         * Add a renderable to the batch.
+         * Begin adding some vertices to the current framebuffer batch.
          */
-        void Add(Rendering::Renderable *obj_);
+        void Begin(PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, int depth_ = 0, ShaderProgram *shader_ = nullptr);
 
-        // TODO: Some of the "immediate mode" methods we used to have.
+        void Vertex(Vector2 pos_, Vector2 texCoord_, Color color_);
+
+        /**
+         * End this batch.
+         */
+        void End();
 
         /**
          * Render the current batch.

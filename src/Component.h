@@ -55,7 +55,7 @@ namespace NerdThings::Ngine {
          * @return The entity casted to the provided type.
          */
         template <typename EntityType = Entity>
-        EntityType *GetParent() const {
+        EntityType *GetEntity() const {
             return (EntityType *) m_parentEntity;
         }
 

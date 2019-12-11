@@ -136,10 +136,6 @@ namespace NerdThings::Ngine {
         return nullptr;
     }
 
-    Scene *Entity::GetScene() const {
-        return m_parentScene;
-    }
-
     Game *Entity::GetGame() const {
         if (m_parentScene == nullptr) return nullptr;
         return m_parentScene->GetGame();

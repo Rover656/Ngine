@@ -141,6 +141,10 @@ namespace NerdThings::Ngine::Graphics {
         return m_attachedWindow;
     }
 
+    RenderTarget *GraphicsDevice::GetCurrentTarget() {
+        return nullptr;
+    }
+
     Matrix GraphicsDevice::GetProjectionMatrix() const {
         return m_projectionMatrix;
     }

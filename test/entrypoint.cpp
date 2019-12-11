@@ -46,7 +46,7 @@ public:
     }
 
     void Update() override {
-        auto par = GetParent < Entity > ();
+        auto par = GetEntity < Entity > ();
         Vector2 velocity;
 
         if (par->IsPhysicsEntity()) {
@@ -302,9 +302,15 @@ public:
         // Clear display
         _Renderer->Clear();
 
-        // Queue 1000 quads
-        for (auto i = 0; i < 1000; i++)
-            _Renderer->Add(&_Obj);
+//        // Queue 1000 quads
+//        for (auto i = 0; i < 1000; i++)
+//            _Renderer->Add(&_Obj);
+
+        _Renderer->Begin(Renderer::PRIMITIVE_TRIANGLES);
+        _Renderer->Vertex({0, 0}, {}, Color::White);
+        _Renderer->Vertex({1, 0}, {}, Color::White);
+        _Renderer->Vertex({1, 1}, {}, Color::White);
+        _Renderer->End();
 
         // Render the quads
         _Renderer->Render();

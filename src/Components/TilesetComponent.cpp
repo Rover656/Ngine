@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Components {
         if (m_tileset != nullptr) return;
 
         // Get our parent
-        auto par = GetParent();
+        auto par = GetEntity();
 
         // TODO: Scale field
 

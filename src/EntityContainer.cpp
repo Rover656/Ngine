@@ -18,7 +18,7 @@ namespace NerdThings::Ngine {
 
     EntityContainer::~EntityContainer() {
         // Delete entities
-        for (auto ent : m_entities) delete ent.second;
+        for (const auto& ent : m_entities) delete ent.second;
 
         // Clear entities.
         m_entities.clear();
