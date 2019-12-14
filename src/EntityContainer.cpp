@@ -14,6 +14,17 @@
 #include "Entity.h"
 
 namespace NerdThings::Ngine {
+    void EntityContainer::_addEntity(Entity *entity_) {
+        if (m_type == ENTITY) {
+            auto meEnt = (Entity*) this;
+            entity_->m_parentEntity = meEnt;
+            entity_->_addToScene(meEnt->m_parentScene);
+        } else {
+            auto meScene = (Scene*) this;
+            entity_->_addToScene(meScene);
+        }
+    }
+
     EntityContainer::EntityContainer(EntityContainer::ContainerType type_) : m_type(type_) {}
 
     EntityContainer::~EntityContainer() {

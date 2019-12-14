@@ -168,7 +168,7 @@ namespace NerdThings::Ngine::Input {
      */
     class NEAPI Keyboard {
         // Make window a friend so it can use our constructor
-        friend class Window;
+        friend class Ngine::Window;
 
         /**
          * Last frame's key state

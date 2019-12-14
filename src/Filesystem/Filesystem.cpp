@@ -109,7 +109,7 @@ namespace NerdThings::Ngine::Filesystem {
         return std::string(getenv("APPDATA"));
 #elif defined(__linux__)
         // Home local share
-        return __GetHome() + ".local/share";
+        return _getHome() + ".local/share";
 #elif defined(__APPLE__)
         // Application Support
         return __GetHome() + "/Library/Application Support"

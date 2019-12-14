@@ -46,6 +46,8 @@ namespace NerdThings::Ngine {
          * Every entity has a name.
          */
         std::map<std::string, Entity *> m_entities;
+
+        void _addEntity(Entity *entity_);
     protected:
         /**
          * Initialize the entity container.
@@ -75,16 +77,7 @@ namespace NerdThings::Ngine {
                 m_counter++;
 
                 // Setup entity
-                if (m_type == ENTITY) {
-                    auto meEnt = (Entity*) this;
-                    ent->m_parentEntity = meEnt;
-                    ent->_addToScene(meEnt->m_parentScene);
-                } else {
-                    auto meScene = (Scene*) this;
-                    ent->_addToScene(meScene);
-                }
-
-                ent->m_parentScene->_addEntity(ent);
+                _addEntity(ent);
 
                 return std::make_pair(name, entity_);
             }
@@ -114,14 +107,7 @@ namespace NerdThings::Ngine {
                 m_entities.insert({name_, ent});
 
                 // Setup entity
-                if (m_type == ENTITY) {
-                    auto meEnt = (Entity*) this;
-                    ent->m_parentEntity = meEnt;
-                    ent->_addToScene(meEnt->m_parentScene);
-                } else {
-                    auto meScene = (Scene*) this;
-                    ent->_addToScene(meScene);
-                }
+                _addEntity(ent);
 
                 return entity_;
             }
@@ -173,7 +159,7 @@ namespace NerdThings::Ngine {
         template <class EntityType = Entity>
         int CountChildren() {
             int c = 0;
-            for (auto e : GetEntities()) {
+            for (auto e : GetChildren()) {
                 // Dynamic cast so that we count only the correct children.
                 // TODO: Way to identify entity types without dynamically casting. (Reflection maybe?)
                 if (dynamic_cast<EntityType*>(e) != nullptr) c++;
