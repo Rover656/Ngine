@@ -55,6 +55,12 @@ namespace NerdThings::Ngine::Input {
         glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow, Mouse::GLFWMouseButtonCallback);
         glfwSetScrollCallback(m_attachedWindow->m_GLFWWindow, Mouse::GLFWScrollCallback);
 #elif defined(PLATFORM_UWP)
+        if (m_UWPMouse != nullptr)
+            throw std::runtime_error("On UWP only one mouse can be created.");
+
+        // Save
+        m_UWPMouse = this;
+
         // Register UWP callbacks
         auto window = CoreWindow::GetForCurrentThread();
         window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&UWPPointerWheelChanged);
@@ -80,10 +86,12 @@ namespace NerdThings::Ngine::Input {
 
 #elif defined(PLATFORM_UWP)
 
+    Mouse *Mouse::m_UWPMouse = nullptr;
+
     void Mouse::UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
         if (args->CurrentPoint->Properties->IsHorizontalMouseWheel)
-            m_nextMouseState.MouseWheelXDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
-        else m_nextMouseState.MouseWheelYDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
+            m_UWPMouse->m_nextMouseState.MouseWheelXDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
+        else m_UWPMouse->m_nextMouseState.MouseWheelYDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
     }
 
     void Mouse::UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
@@ -92,9 +100,9 @@ namespace NerdThings::Ngine::Input {
         if (ptrPoint->PointerDevice->PointerDeviceType == Windows::Devices::Input::PointerDeviceType::Mouse) {
             auto ptrPointProps = ptrPoint->Properties;
 
-            m_nextMouseState.ButtonsDown[MOUSE_BUTTON_LEFT] = ptrPointProps->IsLeftButtonPressed;
-            m_nextMouseState.ButtonsDown[MOUSE_BUTTON_MIDDLE] = ptrPointProps->IsMiddleButtonPressed;
-            m_nextMouseState.ButtonsDown[MOUSE_BUTTON_RIGHT] = ptrPointProps->IsRightButtonPressed;
+            m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_LEFT] = ptrPointProps->IsLeftButtonPressed;
+            m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_MIDDLE] = ptrPointProps->IsMiddleButtonPressed;
+            m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_RIGHT] = ptrPointProps->IsRightButtonPressed;
         }
     }
 

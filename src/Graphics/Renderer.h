@@ -117,6 +117,15 @@ namespace NerdThings::Ngine::Graphics {
         void _createDefaultShader();
 
         /**
+         * Sort batch items.
+         *
+         * @param a_ The first item.
+         * @param b_ The second item.
+         * @return Whether A should be before B.
+         */
+        bool _sortPredicate(BatchItem *a_, BatchItem *b_);
+
+        /**
          * Flush the buffers
          */
         void _flush();

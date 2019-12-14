@@ -32,7 +32,7 @@ namespace NerdThings::Ngine::Graphics {
                 "#version 100\n"
 #endif
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-        "attribute vec3 NG_VertexPos;\n"
+                "attribute vec3 NG_VertexPos;\n"
                 "attribute vec2 NG_VertexTexCoord;\n"
                 "attribute vec4 NG_VertexColor;\n"
                 "varying vec2 fragTexCoord;\n"
@@ -44,7 +44,7 @@ namespace NerdThings::Ngine::Graphics {
                 "in vec4 NG_VertexColor;\n"
                 "out vec2 fragTexCoord;\n"
                 "out vec4 fragColor;\n"
-                #endif
+#endif
                 "uniform mat4 NGU_MATRIX_MVP;\n"
                 "void main()\n"
                 "{\n"
@@ -58,27 +58,27 @@ namespace NerdThings::Ngine::Graphics {
 #if defined(GRAPHICS_OPENGL21)
                 "#version 120\n"
 #elif defined(GRAPHICS_OPENGLES2)
-        "#version 100\n"
+                "#version 100\n"
                 "precision mediump float;\n"
 #endif
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-        "varying vec2 fragTexCoord;\n"
+                "varying vec2 fragTexCoord;\n"
                 "varying vec4 fragColor;\n"
 #else
                 "#version 330\n"
                 "in vec2 fragTexCoord;\n"
                 "in vec4 fragColor;\n"
                 "out vec4 finalColor;\n"
-                #endif
+#endif
                 "uniform sampler2D NGU_TEXTURE;\n"
                 "void main()\n"
                 "{\n"
                 "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
-                #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
+#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
                 "    gl_FragColor = texelColor*fragColor;\n"
-                #elif defined(GRAPHICS_OPENGL33)
+#elif defined(GRAPHICS_OPENGL33)
                 "    finalColor = texelColor*fragColor;\n"
-                #endif
+#endif
                 "}\n";
 
         // Create shader
@@ -106,6 +106,18 @@ namespace NerdThings::Ngine::Graphics {
         m_whiteTexture = new Texture2D(m_graphicsDevice, pixels, 1, 1);
     }
 
+    bool Renderer::_sortPredicate(Renderer::BatchItem *a_, Renderer::BatchItem *b_) {
+        // Sorting by primitive type
+        if (a_->PrimitiveType < b_->PrimitiveType) return true;
+        if (b_->PrimitiveType < a_->PrimitiveType) return false;
+
+        // Sort by depth
+        if (a_->Depth < b_->Depth) return true;
+
+        // Welp, no
+        return false;
+    }
+
     void Renderer::_flush() {}
 
     Renderer::Renderer(GraphicsDevice *graphicsDevice_)
@@ -125,6 +137,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, int depth_, ShaderProgram *shader_) {
+        // Stop rendering.
+        if (m_rendering)
+            throw std::runtime_error("Cannot start a new batch while rendering.");
+
         // Check we aren't midway
         if (m_midBatch)
             throw std::runtime_error("Cannot begin a second batch before finishing the last one.");
@@ -170,14 +186,21 @@ namespace NerdThings::Ngine::Graphics {
             m_batches[m_currentBatchTarget][Z_NEG].push_back(m_currentBatch);
         else if (m_currentBatch.Depth > 0)
             m_batches[m_currentBatchTarget][Z_POS].push_back(m_currentBatch);
-        else
-            m_batches[m_currentBatchTarget][Z_NEU].push_back(m_currentBatch);
+        else m_batches[m_currentBatchTarget][Z_NEU].push_back(m_currentBatch);
 
         // No longer batching.
         m_midBatch = false;
     }
 
     void Renderer::Render() {
+        // Check we aren't already rendering
+        if (m_rendering)
+            throw std::runtime_error("Another thread is already rendering. Renderer should only be used on the main thread anyway.");
+
+        // Make sure we're not mid batch.
+        if (m_midBatch)
+            throw std::runtime_error("Must end the current batch before rendering.");
+
         // Rendering now!
         m_rendering = true;
 

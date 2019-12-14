@@ -10,7 +10,10 @@
 **********************************************************************************************/
 
 #include "GameApp.h"
+
 #if defined(PLATFORM_UWP)
+
+#include <ppltasks.h>
 
 #include "../Audio/AudioDevice.h"
 
@@ -37,7 +40,7 @@ namespace NerdThings::Ngine::UWP {
 
     GameApp::GameApp() {
         // Store the game
-        _Game = UWPGameBootstrapper::CurrentGame;
+        m_game = UWPGameBootstrapper::CurrentGame;
     }
 
     // Public Methods
@@ -45,16 +48,17 @@ namespace NerdThings::Ngine::UWP {
     void GameApp::Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
         // Register application events
         CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(this, &GameApp::OnSuspended);
+        CoreApplication::Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &NerdThings::Ngine::UWP::GameApp::OnResuming);
+        applicationView->Activated += ref new Windows::Foundation::TypedEventHandler<Windows::ApplicationModel::Core::CoreApplicationView ^, Windows::ApplicationModel::Activation::IActivatedEventArgs ^>(this, &NerdThings::Ngine::UWP::GameApp::OnActivated);
     }
 
     void GameApp::Load(Platform::String^ entryPoint) {}
 
     void GameApp::Run() {
-        // Activate window
-        CoreWindow::GetForCurrentThread()->Activate();
-
         // Run the game.
-        _Game->Run();
+        while (m_game->m_running) {
+            m_game->_runFrame();
+        }
     }
 
     void GameApp::SetWindow(Windows::UI::Core::CoreWindow^ window) {
@@ -65,15 +69,38 @@ namespace NerdThings::Ngine::UWP {
 
     void GameApp::Uninitialize() { }
 
-    // Protected Methods
+    void GameApp::OnActivated(Windows::ApplicationModel::Core::CoreApplicationView ^sender, Windows::ApplicationModel::Activation::IActivatedEventArgs ^args) {
+        // Init game.
+        m_game->_init();
+
+        // Mark as running
+        m_game->m_running = true;
+
+        // Activate window
+        CoreWindow::GetForCurrentThread()->Activate();
+    }
 
     void GameApp::OnBackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^args) {
         args->Handled = true;
     }
 
     void GameApp::OnSuspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args) {
-        // Do nothing, it works fine... right?
+        // Get the deferral
+        auto deferral = args->SuspendingOperation->GetDeferral();
+
+        // Suspend the game.
+        concurrency::create_task([this, deferral]() {
+            m_game->OnSuspend();
+            m_game->m_running = false;
+            deferral->Complete();
+        });
     }
+
+    void NerdThings::Ngine::UWP::GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
+        m_game->OnResume();
+        m_game->m_running = true;
+    }
+
 
     ////////
     // GameApplicationSource
@@ -89,4 +116,5 @@ namespace NerdThings::Ngine::UWP {
         return _App;
     }
 }
+
 #endif

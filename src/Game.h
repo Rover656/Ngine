@@ -24,6 +24,12 @@
 #include "Vector2.h"
 
 namespace NerdThings::Ngine {
+#if defined(PLATFORM_UWP)
+    namespace UWP {
+        ref class GameApp;
+    }
+#endif
+
     /**
      * Game configuration structure.
      * This details exactly how the game should be configured.
@@ -61,6 +67,9 @@ namespace NerdThings::Ngine {
      * The game contains every scene in your game.
      */
     class NEAPI Game {
+#if defined(PLATFORM_UWP)
+        friend ref class UWP::GameApp;
+#endif
         /**
          * The game window.
          */
@@ -92,36 +101,70 @@ namespace NerdThings::Ngine {
         bool m_running = false;
 
         /**
-         * Render a frame
+         * The game update timestep.
          */
-        void _doDraw();
+        std::chrono::milliseconds m_timestep;
 
         /**
-         * Run a game update
+         * The time that the game was started.
          */
-        void _doUpdate();
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_started;
 
+        /**
+         * Lag. Used to run game updates.
+         */
+        std::chrono::nanoseconds m_lag;
+
+        /**
+         * Initialize the game ready to process frames.
+         */
+        void _init();
+
+        /**
+         * Run a single game frame.
+         */
+        void _runFrame();
+
+        /**
+         * Cleanup the game.
+         */
+        void _cleanup();
     public:
         /**
-         * Background clear color
+         * Background clear color.
          */
         Graphics::Color ClearColor = Graphics::Color::Black;
 
         /**
-         * Game config
+         * Game config.
          */
         GameConfig Config;
 
         /**
-         * On init event
+         * On init event.
          */
         Event<> OnInit;
 
         /**
          * On cleanup event.
-         * This must delete all game resources.
+         *
+         * @note This should delete all game resources.
          */
         Event<> OnCleanup;
+
+        /**
+         * On resume event.
+         * 
+         * @note This event should be used to load game data after suspension (i.e. being maximized).
+         */
+        Event<> OnResume;
+
+        /**
+         * On suspension event.
+         * 
+         * @note This event should be used to save game data. It may mean either the game is closing *or* the game is suspending (For example when the game is minimized).
+         */
+        Event<> OnSuspend;
 
         /**
          * On update event
@@ -182,6 +225,11 @@ namespace NerdThings::Ngine {
         int GetTargetFPS() const;
 
         /**
+         * Start the game loop.
+         */
+        void Run();
+
+        /**
          * Is the game running
          *
          * @return Whether or not the game is running.
@@ -192,11 +240,6 @@ namespace NerdThings::Ngine {
          * Quit the game
          */
         void Quit();
-
-        /**
-         * Start the game loop.
-         */
-        void Run();
 
         /**
          * Set the target FPS.

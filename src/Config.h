@@ -78,7 +78,7 @@
 #include <Windows.h>
 #endif
 
-//#define USE_EXPERIMENTAL_RENDERER
+// #define USE_EXPERIMENTAL_RENDERER
 
 //----------------------------------------------------------------------------------
 // Namespace Documentation

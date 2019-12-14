@@ -294,7 +294,12 @@ public:
         // Hook events
         OnInit += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
         OnDraw += new ClassMethodEventHandler<TestGame>(this, &TestGame::Draw);
+        OnSuspend += new ClassMethodEventHandler<TestGame>(this, &TestGame::Save);
         OnCleanup += new ClassMethodEventHandler<TestGame>(this, &TestGame::Cleanup);
+    }
+
+    void Save() {
+        Logger::Notice("TestGame", "The game would have saved here.");
     }
 
     void Draw() {
@@ -389,7 +394,7 @@ NGINE_GAME_ENTRY {
     windowConfig.InitialHeight = 1080/2;
     windowConfig.Title = "Test Game";
     windowConfig.Icon = &icon;
-    windowConfig.NativeDebugConsole = true;
+    //windowConfig.NativeDebugConsole = true;
 
     // Create game
     auto game = TestGame(windowConfig, gameConfig);

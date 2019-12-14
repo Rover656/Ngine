@@ -121,6 +121,10 @@ namespace NerdThings::Ngine::Input {
         // Register events
         glfwSetKeyCallback(window_->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
+        // Throw error.
+        if (m_UWPKeyboard != nullptr)
+            throw std::runtime_error("On UWP only one keyboard can be created.");
+
         // Save this. UWP can only have one window.
         m_UWPKeyboard = this;
 

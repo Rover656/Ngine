@@ -61,12 +61,7 @@ namespace NerdThings::Ngine::UWP {
         /**
          * The game we are running
          */
-        Game *_Game = nullptr;
-
-        /**
-         * Whether or not the game should be restarted
-         */
-        bool _ShouldRestart = false;
+        Game *m_game = nullptr;
     public:
         /**
          * Create a new game app.
@@ -99,6 +94,8 @@ namespace NerdThings::Ngine::UWP {
         virtual void Uninitialize();
 
     protected:
+        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView ^sender, Windows::ApplicationModel::Activation::IActivatedEventArgs ^args);
+
         /**
          * OnBackRequested event handler.
          */
@@ -108,6 +105,7 @@ namespace NerdThings::Ngine::UWP {
          * OnSuspended event handler.
          */
         void OnSuspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args);
+        void OnResuming(Platform::Object ^sender, Platform::Object ^args);       
     };
 
     /**

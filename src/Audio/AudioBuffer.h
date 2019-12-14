@@ -108,8 +108,6 @@ namespace NerdThings::Ngine::Audio {
          */
         float Volume;
 
-        // Public Methods
-
         /**
          * Is buffer playing.
          *

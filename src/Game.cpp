@@ -30,77 +30,7 @@
 #endif
 
 namespace NerdThings::Ngine {
-    void Game::_doDraw() {
-#ifdef USE_EXPERIMENTAL_RENDERER
-#else
-        // Prep for drawing
-        Graphics::Renderer::BeginDrawing();
-
-        // If using, start using target
-        if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-            // Clear the main framebuffer (for black bars)
-            Graphics::Renderer::Clear(Graphics::Color::Black);
-
-            // Enable our main framebuffer
-            Graphics::GraphicsManager::PushTarget(m_renderTarget.get());
-        }
-
-        // Clear with the correct background colour
-        Graphics::Renderer::Clear(ClearColor);
-
-        // Render scene
-        if (m_currentScene != nullptr) {
-            m_currentScene->Draw();
-        }
-#endif
-        // OnDraw event
-        OnDraw();
-    }
-
-    void Game::_doUpdate() {
-        // Run update events
-        OnUpdate();
-
-        if (m_currentScene != nullptr) {
-            m_currentScene->Update();
-        }
-
-        // AudioDevice update
-        Audio::AudioDevice::Update();
-    }
-
-    Game::Game(WindowConfig windowConfig_, const GameConfig &config_)
-            : m_gameWindowCreationConfig(std::move(windowConfig_)), Config(config_) {}
-
-    Window *Game::GetGameWindow() const {
-        return m_gameWindow;
-    }
-
-    Graphics::GraphicsDevice *Game::GetGraphicsDevice() {
-        return m_graphicsDevice;
-    }
-
-    Vector2 Game::GetDefaultWindowDimensions() const {
-        return {(float) m_gameWindow->GetWidth(), (float) m_gameWindow->GetHeight()};
-    }
-
-    Vector2 Game::GetDimensions() const {
-        return {(float) Config.TargetWidth, (float) Config.TargetHeight};
-    }
-
-    int Game::GetTargetFPS() const {
-        return Config.FPS;
-    }
-
-    bool Game::IsRunning() {
-        return m_running;
-    }
-
-    void Game::Quit() {
-        m_running = false;
-    }
-
-    void Game::Run() {
+    void Game::_init() {
         // Create window
         m_gameWindow = new Window(m_gameWindowCreationConfig);
         Logger::Notice("Game", "Created game window.");
@@ -131,165 +61,187 @@ namespace NerdThings::Ngine {
         // Invoke OnRun
         OnInit();
 
-        // Start game
-        m_running = true;
-
         // Timing
-        std::chrono::nanoseconds lag(0);
-        auto started = std::chrono::high_resolution_clock::now();
-        auto lastFPS = Config.FPS;
-        auto timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
+        m_lag = std::chrono::nanoseconds(0);
+        m_started = std::chrono::high_resolution_clock::now();
+        m_timestep = std::chrono::milliseconds(int(1000.0f / float(Config.FPS)));
+    }
+
+    void Game::_runFrame() {
+        if (!m_gameWindow->IsVisible() && !Config.RunWhileHidden) {
+            // Poll window events
+            m_gameWindow->PollEvents();
+
+            // If told to quit, quit
+            if (!m_running) return;
+
+            // Do nothing this frame.
+            std::this_thread::sleep_for(m_timestep);
+            return;
+        }
+
+        // Make our window current.
+        m_gameWindow->MakeCurrent();
+
+        // Window/Game Size variables
+        const auto w = static_cast<float>(m_gameWindow->GetWidth());
+        const auto h = static_cast<float>(m_gameWindow->GetHeight());
+        const auto iw = static_cast<float>(Config.TargetWidth);
+        const auto ih = static_cast<float>(Config.TargetHeight);
+        const auto scale = std::min(w / iw, h / ih);
+        const auto offsetX = (w - iw * scale) * 0.5f;
+        const auto offsetY = (h - ih * scale) * 0.5f;
+
+        if (Config.MaintainResolution && m_renderTarget == nullptr) {
+            m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+        }
+        else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
+                                               (m_renderTarget->Width != Config.TargetWidth ||
+                                                m_renderTarget->Height != Config.TargetHeight))) {
+            m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+        }
+
+        if (Config.MaintainResolution && m_renderTarget != nullptr)
+            m_renderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
+
+        // Get the time since the last frame
+        auto deltaTime = std::chrono::high_resolution_clock::now() - m_started;
+        m_started = std::chrono::high_resolution_clock::now();
+
+        // Increment lag
+        m_lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
+
+        // Get the time that we begin (for timing)
+        auto frameBegin = std::chrono::high_resolution_clock::now();
 
         // Get input managers
         const auto mouse = m_gameWindow->GetMouse();
         const auto keyboard = m_gameWindow->GetKeyboard();
 
-        // This checks the game should still run
-        while (!m_gameWindow->ShouldClose()) {
-            // Update timestep if FPS has changed
-            if (Config.FPS != lastFPS) {
-                lastFPS = Config.FPS;
-                timeStep = std::chrono::milliseconds(int(1000.0f / float(lastFPS)));
-                Logger::Notice("Game", "Timestep updated to match FPS.");
+        // Setup mouse translation
+        if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+            mouse->SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+            mouse->SetOffset(-offsetX, -offsetY);
+        }
+
+        // If we are lagging more than 5 seconds, don't count any further
+        if (m_lag.count() >= 5e+9) m_lag = std::chrono::nanoseconds(0);
+
+        // Poll inputs if window is visible and if we're going to update this frame
+        if (m_gameWindow->IsFocussed() && m_gameWindow->IsVisible() && m_lag >= m_timestep) {
+            Input::Gamepad::PollInputs();
+            mouse->PollInputs();
+            keyboard->PollInputs();
+        }
+
+        // Run required updates
+        while (m_lag >= m_timestep) {
+            // Run a single update
+            m_lag -= m_timestep;
+
+            // Run an update
+            OnUpdate();
+
+            // Update the current scene.
+            if (m_currentScene != nullptr) {
+                m_currentScene->Update();
             }
 
-            if (!m_gameWindow->IsVisible() && !Config.RunWhileHidden) {
-                // Poll window events
-                m_gameWindow->PollEvents();
+            // AudioDevice update
+            Audio::AudioDevice::Update();
 
-                // If told to quit, quit
-                if (!m_running) break;
+            // If we need to quit, don't run any more frames
+            if (!m_running) return;
+        }
 
-                // Do nothing this frame.
-                std::this_thread::sleep_for(timeStep);
-                continue;
-            }
+        // If we need to quit, don't render
+        if (!m_running) return;
 
-            // Make our window current.
-            m_gameWindow->MakeCurrent();
-
-            // Window/Game Size variables
-            const auto w = static_cast<float>(m_gameWindow->GetWidth());
-            const auto h = static_cast<float>(m_gameWindow->GetHeight());
-            const auto iw = static_cast<float>(Config.TargetWidth);
-            const auto ih = static_cast<float>(Config.TargetHeight);
-            const auto scale = std::min(w / iw, h / ih);
-            const auto offsetX = (w - iw * scale) * 0.5f;
-            const auto offsetY = (h - ih * scale) * 0.5f;
-
-            if (Config.MaintainResolution && m_renderTarget == nullptr) {
-                m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
-                m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
-            } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
-                                                     (m_renderTarget->Width != Config.TargetWidth ||
-                                                      m_renderTarget->Height != Config.TargetHeight))) {
-                m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
-                m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
-            }
-
-            if (Config.MaintainResolution && m_renderTarget != nullptr)
-                m_renderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
-
-            // Get the time since the last frame
-            auto deltaTime = std::chrono::high_resolution_clock::now() - started;
-            started = std::chrono::high_resolution_clock::now();
-
-            // Increment lag
-            lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
-
-            // Get the time that we begin (for timing)
-            auto frameBegin = std::chrono::high_resolution_clock::now();
-
-            // Setup mouse translation
-            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                mouse->SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
-                mouse->SetOffset(-offsetX, -offsetY);
-            }
-
-            // If we are lagging more than 5 seconds, don't count any further
-            if (lag.count() >= 5e+9) lag = std::chrono::nanoseconds(0);
-
-            // Poll inputs if window is visible and if we're going to update this frame
-            if (m_gameWindow->IsFocussed() && m_gameWindow->IsVisible() && lag >= timeStep) {
-                Input::Gamepad::PollInputs();
-                mouse->PollInputs();
-                keyboard->PollInputs();
-            }
-
-            // Run required updates
-            while (lag >= timeStep) {
-                // Run a single update
-                lag -= timeStep;
-                _doUpdate();
-
-                // If we need to quit, don't run any more frames
-                if (!m_running) break;
-            }
-
-            // If we need to quit, don't render
-            if (!m_running) break;
-
-            // Only render if visible
-            if (m_gameWindow->IsVisible()) {
-                // Draw
-                _doDraw();
-
-                // TODO: Deal with all the const variables so this can live in _doDraw()
-
-                // If using a target, draw target
-                if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+        // Only render if visible
+        if (m_gameWindow->IsVisible()) {
 #ifdef USE_EXPERIMENTAL_RENDERER
 #else
-                    Graphics::GraphicsManager::PopTarget();
+            // Prep for drawing
+            Graphics::Renderer::BeginDrawing();
+
+            // If using, start using target
+            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+                // Clear the main framebuffer (for black bars)
+                Graphics::Renderer::Clear(Graphics::Color::Black);
+
+                // Enable our main framebuffer
+                Graphics::GraphicsManager::PushTarget(m_renderTarget.get());
+            }
+
+            // Clear with the correct background colour
+            Graphics::Renderer::Clear(ClearColor);
+
+            // Render scene
+            if (m_currentScene != nullptr) {
+                m_currentScene->Draw();
+            }
+#endif
+            // OnDraw event
+            OnDraw();
+
+            // If using a target, draw target
+            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+#ifdef USE_EXPERIMENTAL_RENDERER
+#else
+                Graphics::GraphicsManager::PopTarget();
                     Graphics::Renderer::DrawTexture(m_renderTarget->GetTexture(),
-                                                    {
-                                                            (w - iw * scale) * 0.5f,
-                                                            (h - ih * scale) * 0.5f,
-                                                            iw * scale,
-                                                            ih * scale
-                                                    },
+                        {
+                                (w - iw * scale) * 0.5f,
+                                (h - ih * scale) * 0.5f,
+                                iw * scale,
+                                ih * scale
+                        },
                                                     {
                                                             0,
                                                             0,
                                                             static_cast<float>(m_renderTarget->Width),
                                                             static_cast<float>(m_renderTarget->Height) * -1
                                                     },
-                                                    Graphics::Color::White);
+                        Graphics::Color::White);
 #endif
-                }
+            }
 
-                // Finish drawing
+            // Finish drawing
 #ifdef USE_EXPERIMENTAL_RENDERER
 #else
-                Graphics::Renderer::EndDrawing();
+            Graphics::Renderer::EndDrawing();
 #endif
 
-                // Swap buffers
-                m_gameWindow->SwapBuffers();
-            }
-
-            // Reset mouse
-            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                mouse->SetScale(1, 1);
-                mouse->SetOffset(0, 0);
-            }
-
-            // Poll events
-            m_gameWindow->PollEvents();
-
-            // Wait for remaining frame time if we were too quick
-            auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
-            auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
-
-            if (frameTimeMS < timeStep) {
-                std::this_thread::sleep_for(timeStep - frameTimeMS);
-            }
-
-            if (!m_running) break;
+            // Swap buffers
+            m_gameWindow->SwapBuffers();
         }
 
+        // Reset mouse
+        if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+            mouse->SetScale(1, 1);
+            mouse->SetOffset(0, 0);
+        }
+
+        // Poll events
+        m_gameWindow->PollEvents();
+
+        // Wait for remaining frame time if we were too quick
+        auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
+        auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
+
+        if (frameTimeMS < m_timestep) {
+            std::this_thread::sleep_for(m_timestep - frameTimeMS);
+        }
+    }
+
+    void Game::_cleanup() {
         // Delete render target now so that it doesnt try after GL is gone.
         m_renderTarget = nullptr;
+
+        // Call the suspend event.
+        OnSuspend();
 
         // Call the cleanup event
         OnCleanup();
@@ -307,6 +259,60 @@ namespace NerdThings::Ngine {
         delete m_gameWindow;
         m_gameWindow = nullptr;
         Logger::Notice("Game", "Deleted game window.");
+    }
+
+    Game::Game(WindowConfig windowConfig_, const GameConfig &config_)
+            : m_gameWindowCreationConfig(std::move(windowConfig_)), Config(config_) {}
+
+    Window *Game::GetGameWindow() const {
+        return m_gameWindow;
+    }
+
+    Graphics::GraphicsDevice *Game::GetGraphicsDevice() {
+        return m_graphicsDevice;
+    }
+
+    Vector2 Game::GetDefaultWindowDimensions() const {
+        return {(float) m_gameWindow->GetWidth(), (float) m_gameWindow->GetHeight()};
+    }
+
+    Vector2 Game::GetDimensions() const {
+        return {(float) Config.TargetWidth, (float) Config.TargetHeight};
+    }
+
+    int Game::GetTargetFPS() const {
+        return Config.FPS;
+    }
+
+    void Game::Run() {
+        // Init game.
+        _init();
+
+        // Mark as running
+        m_running = true;
+
+        // This checks the game should still run
+        while (!m_gameWindow->ShouldClose() && IsRunning()) {
+            // Update timestep if FPS has changed
+            if (m_timestep.count() != int(1000.0f / (float)Config.FPS)) {
+                m_timestep = std::chrono::milliseconds(int(1000.0f / (float)Config.FPS));
+                Logger::Notice("Game", "Timestep updated to match FPS.");
+            }
+
+            // Run game frame
+            _runFrame();
+        }
+
+        // Clean up
+        _cleanup();
+    }
+
+    bool Game::IsRunning() {
+        return m_running;
+    }
+
+    void Game::Quit() {
+        m_running = false;
     }
 
     void Game::SetFPS(int FPS_) {
