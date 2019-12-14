@@ -285,6 +285,7 @@ namespace NerdThings::Ngine {
     }
 
     void Game::Run() {
+#if !defined(PLATFORM_UWP)
         // Init game.
         _init();
 
@@ -305,6 +306,9 @@ namespace NerdThings::Ngine {
 
         // Clean up
         _cleanup();
+#else
+        throw std::runtime_error("For the UWP platform, the Run() method must not be used! Use UWP::GameApp instead.");
+#endif
     }
 
     bool Game::IsRunning() {

@@ -56,9 +56,12 @@ namespace NerdThings::Ngine::UWP {
 
     void GameApp::Run() {
         // Run the game.
-        while (m_game->m_running) {
+        while (m_game->m_running && !m_game->m_gameWindow->ShouldClose()) {
             m_game->_runFrame();
         }
+
+        // If we reach this point, we're done.
+        m_game->m_running = false;
     }
 
     void GameApp::SetWindow(Windows::UI::Core::CoreWindow^ window) {

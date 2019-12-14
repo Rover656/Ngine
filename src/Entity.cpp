@@ -252,11 +252,11 @@ namespace NerdThings::Ngine {
         if (m_parentScene != nullptr) {
             if (!m_onUpdateRef.IsAttached()) {
                 if (m_persistentUpdates)
-                    m_onUpdateRef = m_parentScene->OnPersistentUpdate += new ClassMethodEventHandler<Entity>(this,
-                                                                                                             &Entity::Update);
+                    m_onUpdateRef = m_parentScene->OnPersistentUpdate
+                            += new ClassMethodEventHandler<Entity>(this, &Entity::Update);
                 else
-                    m_onUpdateRef = m_parentScene->OnUpdate += new ClassMethodEventHandler<Entity>(this,
-                                                                                                   &Entity::Update);
+                    m_onUpdateRef = m_parentScene->OnUpdate
+                            += new ClassMethodEventHandler<Entity>(this, &Entity::Update);
                 return true;
             } else {
                 // The event already exists, so return true anyway to avoid errors.

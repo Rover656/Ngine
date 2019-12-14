@@ -672,9 +672,6 @@ namespace NerdThings::Ngine {
         auto windowWantsClose = false;
 #if defined(PLATFORM_DESKTOP)
         windowWantsClose = glfwWindowShouldClose((GLFWwindow *)m_GLFWWindow);
-#elif defined(PLATFORM_UWP)
-        // UWP handles game closure differently. Do not close at any time due to window.
-        windowWantsClose = false;
 #endif
         return windowWantsClose || m_keyboardInput->IsKeyDown(m_keyboardInput->m_exitKey);
     }
