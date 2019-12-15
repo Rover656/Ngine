@@ -200,9 +200,9 @@ namespace NerdThings::Ngine::Input {
         static void _GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_);
 #elif defined(PLATFORM_UWP)
         static Keyboard * m_UWPKeyboard;
-        static Key KeyFromVirtualKey(int key_);
-        static void UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
-        static void UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
+        static Key _keyFromVirtualKey(int key_);
+        static void _UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
+        static void _UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
 #endif
 
         /**

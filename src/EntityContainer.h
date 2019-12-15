@@ -47,6 +47,9 @@ namespace NerdThings::Ngine {
          */
         std::map<std::string, Entity *> m_entities;
 
+        /**
+         * Register entity in its parent.
+         */
         void _addEntity(Entity *entity_);
     protected:
         /**

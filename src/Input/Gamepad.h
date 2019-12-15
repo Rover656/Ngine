@@ -182,28 +182,28 @@ namespace NerdThings::Ngine::Input {
         /**
          * The current axis values.
          */
-        static float _CurrentAxisValue[][GAMEPAD_AXIS_RIGHT_TRIGGER+1];
+        static float m_currentAxisValue[][GAMEPAD_AXIS_RIGHT_TRIGGER + 1];
 
         /**
          * Current button states.
          */
-        static bool _CurrentButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB+1];
+        static bool m_currentButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
 
         /**
          * Previous button states.
          */
-        static bool _PreviousButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB+1];
+        static bool m_previousButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
 
         /**
          * Gamepad readiness.
          */
-        static bool _Ready[];
+        static bool m_ready[];
 
 #if defined(PLATFORM_UWP)
         /**
          * UWP Gamepad list.
          */
-        static Windows::Gaming::Input::Gamepad ^ _UWPGamepads[];
+        static Windows::Gaming::Input::Gamepad ^ m_UWPGamepads[];
 #endif
 
         /**
@@ -212,7 +212,7 @@ namespace NerdThings::Ngine::Input {
          * @param axis_ Native axis name.
          * @return Axis enum.
          */
-        static GamepadAxis GetAxis(int axis_);
+        static GamepadAxis _getAxis(int axis_);
 
         /**
          * Get a button from a native name.
@@ -220,11 +220,11 @@ namespace NerdThings::Ngine::Input {
          * @param button_ Native button name.
          * @return Button enum.
          */
-        static GamepadButton GetButton(int button_);
+        static GamepadButton _getButton(int button_);
 
 #if defined(PLATFORM_UWP)
-        static void UWPGamepadAdded(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
-        static void UWPGamepadRemoved(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
+        static void _UWPGamepadAdded(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
+        static void _UWPGamepadRemoved(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
 #endif
     public:
         /**

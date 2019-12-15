@@ -23,14 +23,9 @@ namespace NerdThings::Ngine::Physics {
      */
     struct NEAPI Circle : public ICollisionShape {
     private:
-        // Private Methods
-
-        bool IsCompatible(ICollisionShape *shape_) override;
-
-        bool RunCollisionCheck(ICollisionShape *shape_) override;
+        bool _isCompatible(ICollisionShape *shape_) override;
+        bool _runCollisionCheck(ICollisionShape *shape_) override;
     public:
-        // Public Fields
-
         /*
          * Circle center
          */
@@ -40,8 +35,6 @@ namespace NerdThings::Ngine::Physics {
          * Circle radius
          */
         float Radius;
-
-        // Public Constructor(s)
 
         /*
          * Create a circle
@@ -54,8 +47,6 @@ namespace NerdThings::Ngine::Physics {
          */
         Circle(const Vector2 center_, const float radius_)
             : Center(center_), Radius(radius_) {}
-
-        // Public Methods
 
 #ifdef INCLUDE_BOX2D
         b2CircleShape ToB2Shape();

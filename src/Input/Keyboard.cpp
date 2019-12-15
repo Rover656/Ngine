@@ -32,7 +32,7 @@ namespace NerdThings::Ngine::Input {
 #elif defined(PLATFORM_UWP)
     Keyboard *Keyboard::m_UWPKeyboard = nullptr;
 
-    Key Keyboard::KeyFromVirtualKey(int key_) {
+    Key Keyboard::_keyFromVirtualKey(int key_) {
         Key actualKey = KEY_NONE;
         switch (key_)
         {
@@ -104,14 +104,14 @@ namespace NerdThings::Ngine::Input {
         return actualKey;
     }
 
-    void Keyboard::UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
-        Key key = KeyFromVirtualKey((int)args->VirtualKey);
+    void Keyboard::_UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
+        Key key = _keyFromVirtualKey((int)args->VirtualKey);
         m_UWPKeyboard->m_nextKeyState[key] = true;
     }
 
-    void Keyboard::UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
+    void Keyboard::_UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
     {
-        Key key = KeyFromVirtualKey((int)args->VirtualKey);
+        Key key = _keyFromVirtualKey((int)args->VirtualKey);
         m_UWPKeyboard->m_nextKeyState[key] = false;
     }
 #endif
@@ -130,8 +130,8 @@ namespace NerdThings::Ngine::Input {
 
         // UWP events
         auto window = CoreWindow::GetForCurrentThread();
-        window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&UWPKeyDown);
-        window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&UWPKeyUp);
+        window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyDown);
+        window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyUp);
 #endif
 
         // Set key states to default to prevent bugs

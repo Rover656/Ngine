@@ -36,7 +36,7 @@ namespace NerdThings::Ngine {
         /**
          * Write output to console.
          *
-         * @todo Write to file.
+         * @todo Write to log file if enabled.
          */
         static void _write(std::string severity_, std::string moduleName_, std::string msg_) {
             std::cout << "[" << severity_ << "] (" << moduleName_ << "): " << msg_ << std::endl;

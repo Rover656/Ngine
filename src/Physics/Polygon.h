@@ -27,9 +27,9 @@ namespace NerdThings::Ngine::Physics {
     private:
         // Private Methods
 
-        bool IsCompatible(ICollisionShape *shape_) override;
+        bool _isCompatible(ICollisionShape *shape_) override;
 
-        bool RunCollisionCheck(ICollisionShape *shape_) override;
+        bool _runCollisionCheck(ICollisionShape *shape_) override;
 
     public:
         // Public Fields

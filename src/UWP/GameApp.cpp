@@ -112,11 +112,11 @@ namespace NerdThings::Ngine::UWP {
     // Public Constructor
 
     GameApplicationSource::GameApplicationSource(GameApp ^app_) {
-        _App = app_;
+        m_app = app_;
     }
 
     Windows::ApplicationModel::Core::IFrameworkView^ GameApplicationSource::CreateView() {
-        return _App;
+        return m_app;
     }
 }
 

@@ -115,7 +115,7 @@ namespace NerdThings::Ngine::UWP {
         /**
          * The game app.
          */
-        GameApp ^_App;
+        GameApp ^m_app;
     public:
         /**
          * Create the application source.

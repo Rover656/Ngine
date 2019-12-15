@@ -23,14 +23,9 @@ namespace NerdThings::Ngine::Physics {
      */
     struct NEAPI BoundingBox : public ICollisionShape {
     private:
-        // Private Methods
-
-        bool IsCompatible(ICollisionShape *shape_) override;
-
-        bool RunCollisionCheck(ICollisionShape *shape_) override;
+        bool _isCompatible(ICollisionShape *shape_) override;
+        bool _runCollisionCheck(ICollisionShape *shape_) override;
     public:
-        // Public Fields
-
         /*
          * Maximum coordinate
          */
@@ -41,15 +36,11 @@ namespace NerdThings::Ngine::Physics {
          */
         Vector2 Min;
 
-        // Public Constructor(s)
-
         /*
          * Create a default bounding box
          */
         BoundingBox()
             : Max({}), Min({}) {}
-
-        // Public Methods
 
 #ifdef INCLUDE_BOX2D
         b2PolygonShape ToB2Shape();

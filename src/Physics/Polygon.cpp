@@ -17,7 +17,7 @@
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
-    bool Polygon::IsCompatible(ICollisionShape *shape_) {
+    bool Polygon::_isCompatible(ICollisionShape *shape_) {
         const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
         const auto circle = dynamic_cast<Circle*>(shape_);
         const auto polygon = dynamic_cast<Polygon*>(shape_);
@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Physics {
         return false;
     }
 
-    bool Polygon::RunCollisionCheck(ICollisionShape *shape_) {
+    bool Polygon::_runCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
         const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);

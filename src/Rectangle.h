@@ -23,8 +23,6 @@ namespace NerdThings::Ngine {
      * A rectangle
      */
     struct NEAPI Rectangle {
-        // Public Fields
-
         /*
          * Rectangle X position
          */
@@ -45,8 +43,6 @@ namespace NerdThings::Ngine {
          */
         float Height;
 
-        // Public Constructor(s)
-
         Rectangle()
             : X(0), Y(0), Width(0), Height(0) {}
 
@@ -58,21 +54,6 @@ namespace NerdThings::Ngine {
 
         Rectangle(Vector2 position_, Vector2 size_)
             : X(position_.X), Y(position_.Y), Width(size_.X), Height(size_.Y) {}
-
-        // Public Methods
-        #ifdef INCLUDE_RAYLIB
-
-        /*
-         * Convert to Raylib Rectangle
-         */
-        Rectangle ToRaylibRect() const;
-
-        /*
-         * Convert from Raylib rectangle
-         */
-        static Rectangle FromRaylibRect(const Rectangle &rect_);
-
-        #endif
 
         /*
          * Whether or not the rectangle contains the point

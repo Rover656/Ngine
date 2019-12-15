@@ -19,16 +19,16 @@
 #include "../Window.h"
 
 namespace NerdThings::Ngine::Input {
-    float Gamepad::_CurrentAxisValue[4][GAMEPAD_AXIS_RIGHT_TRIGGER+1];
-    bool Gamepad::_CurrentButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB+1];
-    bool Gamepad::_PreviousButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB+1];
-    bool Gamepad::_Ready[4];
+    float Gamepad::m_currentAxisValue[4][GAMEPAD_AXIS_RIGHT_TRIGGER + 1];
+    bool Gamepad::m_currentButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
+    bool Gamepad::m_previousButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
+    bool Gamepad::m_ready[4];
 
 #if defined(PLATFORM_UWP)
-    Windows::Gaming::Input::Gamepad ^Gamepad::_UWPGamepads[4] = {nullptr, nullptr, nullptr, nullptr};
+    Windows::Gaming::Input::Gamepad ^Gamepad::m_UWPGamepads[4] = {nullptr, nullptr, nullptr, nullptr};
 #endif
 
-    GamepadAxis Gamepad::GetAxis(int axis_) {
+    GamepadAxis Gamepad::_getAxis(int axis_) {
         GamepadAxis axis = GAMEPAD_AXIS_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
         switch (axis_) {
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Input {
         return axis;
     }
 
-    GamepadButton Gamepad::GetButton(int button_) {
+    GamepadButton Gamepad::_getButton(int button_) {
         GamepadButton btn = GAMEPAD_BUTTON_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
         switch (button_) {
@@ -77,22 +77,22 @@ namespace NerdThings::Ngine::Input {
     }
 
 #if defined(PLATFORM_UWP)
-    void Gamepad::UWPGamepadAdded(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args) {
+    void Gamepad::_UWPGamepadAdded(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args) {
         for (auto i = 0; i < 4; i++) {
-            if (_UWPGamepads[i] == nullptr) {
-                _UWPGamepads[i] = args;
-                _Ready[i] = true;
+            if (m_UWPGamepads[i] == nullptr) {
+                m_UWPGamepads[i] = args;
+                m_ready[i] = true;
                 break;
             }
         }
     }
 
 
-    void Gamepad::UWPGamepadRemoved(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args) {
+    void Gamepad::_UWPGamepadRemoved(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args) {
         for (auto i = 0; i < 4; i++) {
-            if (_UWPGamepads[i] == args) {
-                _UWPGamepads[i] = nullptr;
-                _Ready[i] = false;
+            if (m_UWPGamepads[i] == args) {
+                m_UWPGamepads[i] = nullptr;
+                m_ready[i] = false;
                 break;
             }
         }
@@ -101,106 +101,106 @@ namespace NerdThings::Ngine::Input {
 
     void Gamepad::Init() {
 #if defined(PLATFORM_UWP)
-        Windows::Gaming::Input::Gamepad::GamepadAdded += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&UWPGamepadAdded);
-        Windows::Gaming::Input::Gamepad::GamepadRemoved += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&UWPGamepadRemoved);
+        Windows::Gaming::Input::Gamepad::GamepadAdded += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&_UWPGamepadAdded);
+        Windows::Gaming::Input::Gamepad::GamepadRemoved += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&_UWPGamepadRemoved);
 #endif
     }
 
     float Gamepad::GetAxisValue(GamepadNumber pad_, const GamepadAxis axis_) {
-        return _CurrentAxisValue[pad_][axis_];
+        return m_currentAxisValue[pad_][axis_];
     }
 
     bool Gamepad::IsAvailable(GamepadNumber pad_) {
-        return _Ready[pad_];
+        return m_ready[pad_];
     }
 
     bool Gamepad::IsButtonDown(GamepadNumber pad_, const GamepadButton button_) {
-        return _CurrentButtonState[pad_][button_];
+        return m_currentButtonState[pad_][button_];
     }
 
     bool Gamepad::IsButtonPressed(GamepadNumber pad_, const GamepadButton button_) {
-        return _CurrentButtonState[pad_][button_] != _PreviousButtonState[pad_][button_] && _CurrentButtonState[pad_][button_];
+        return m_currentButtonState[pad_][button_] != m_previousButtonState[pad_][button_] && m_currentButtonState[pad_][button_];
     }
 
     bool Gamepad::IsButtonReleased(GamepadNumber pad_, const GamepadButton button_) {
-        return _CurrentButtonState[pad_][button_] != _PreviousButtonState[pad_][button_] && !_CurrentButtonState[pad_][button_];
+        return m_currentButtonState[pad_][button_] != m_previousButtonState[pad_][button_] && !m_currentButtonState[pad_][button_];
     }
 
     void Gamepad::PollInputs() {
 #if defined(PLATFORM_DESKTOP)
         // Check for ready controllers
         for (auto i = 0; i < 4; i++) {
-            _Ready[i] = glfwJoystickPresent(i) == GLFW_TRUE;
+            m_ready[i] = glfwJoystickPresent(i) == GLFW_TRUE;
         }
 
         // Check for inputs
         for (auto i = 0; i < 4; i++) {
             if (IsAvailable((GamepadNumber) i)) {
-                for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) _PreviousButtonState[i][j] = _CurrentButtonState[i][j];
+                for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) m_previousButtonState[i][j] = m_currentButtonState[i][j];
 
                 GLFWgamepadstate state;
                 glfwGetGamepadState(i, &state);
                 auto buttons = state.buttons;
 
                 for (auto j = 0; (buttons != nullptr) && (j <= GLFW_GAMEPAD_BUTTON_DPAD_LEFT) && (j <= GAMEPAD_BUTTON_RIGHT_THUMB); j++) {
-                    GamepadButton b = GetButton(j);
+                    GamepadButton b = _getButton(j);
 
-                    _CurrentButtonState[i][b] = buttons[j] == GLFW_PRESS;
+                    m_currentButtonState[i][b] = buttons[j] == GLFW_PRESS;
                 }
 
                 // Get axis values
                 auto axes = state.axes;
 
                 for (auto j = 0; (axes != nullptr) && (j <= GLFW_GAMEPAD_AXIS_LAST) && (j <= GAMEPAD_AXIS_RIGHT_TRIGGER); j++){
-                    GamepadAxis a = GetAxis(j);
+                    GamepadAxis a = _getAxis(j);
 
-                    _CurrentAxisValue[i][a] = axes[j];
+                    m_currentAxisValue[i][a] = axes[j];
                 }
 
                 // Register buttons for pressure triggers
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_2] = _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] > 0.1;
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_2] = _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.1;
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] > 0.1;
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.1;
             }
         }
 #elif defined(PLATFORM_UWP)
         // Get gamepad states
         for (auto i = 0; i < 4; i++) {
             if (IsAvailable((GamepadNumber)i)) {
-                auto gamepad = _UWPGamepads[i];
+                auto gamepad = m_UWPGamepads[i];
                 auto reading = gamepad->GetCurrentReading();
 
-                for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) _PreviousButtonState[i][j] = _CurrentButtonState[i][j];
+                for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) m_previousButtonState[i][j] = m_currentButtonState[i][j];
 
                 // Get buttons
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_DOWN] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::A) == Windows::Gaming::Input::GamepadButtons::A);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::B) == Windows::Gaming::Input::GamepadButtons::B);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::X) == Windows::Gaming::Input::GamepadButtons::X);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_UP] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Y) == Windows::Gaming::Input::GamepadButtons::Y);
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_DOWN] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::A) == Windows::Gaming::Input::GamepadButtons::A);
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::B) == Windows::Gaming::Input::GamepadButtons::B);
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::X) == Windows::Gaming::Input::GamepadButtons::X);
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_UP] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Y) == Windows::Gaming::Input::GamepadButtons::Y);
 
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::LeftShoulder) == Windows::Gaming::Input::GamepadButtons::LeftShoulder);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::RightShoulder) == Windows::Gaming::Input::GamepadButtons::RightShoulder);
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::LeftShoulder) == Windows::Gaming::Input::GamepadButtons::LeftShoulder);
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::RightShoulder) == Windows::Gaming::Input::GamepadButtons::RightShoulder);
 
-                _CurrentButtonState[i][GAMEPAD_BUTTON_MIDDLE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::View) == Windows::Gaming::Input::GamepadButtons::View);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_MIDDLE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Menu) == Windows::Gaming::Input::GamepadButtons::Menu);
+                m_currentButtonState[i][GAMEPAD_BUTTON_MIDDLE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::View) == Windows::Gaming::Input::GamepadButtons::View);
+                m_currentButtonState[i][GAMEPAD_BUTTON_MIDDLE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Menu) == Windows::Gaming::Input::GamepadButtons::Menu);
 
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_UP] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadUp) == Windows::Gaming::Input::GamepadButtons::DPadUp);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadRight) == Windows::Gaming::Input::GamepadButtons::DPadRight);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_DOWN] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadDown) == Windows::Gaming::Input::GamepadButtons::DPadDown);
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadLeft) == Windows::Gaming::Input::GamepadButtons::DPadLeft);
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_UP] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadUp) == Windows::Gaming::Input::GamepadButtons::DPadUp);
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadRight) == Windows::Gaming::Input::GamepadButtons::DPadRight);
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_DOWN] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadDown) == Windows::Gaming::Input::GamepadButtons::DPadDown);
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadLeft) == Windows::Gaming::Input::GamepadButtons::DPadLeft);
 
-                _CurrentButtonState[i][GAMEPAD_BUTTON_MIDDLE] = false; // Not supported
+                m_currentButtonState[i][GAMEPAD_BUTTON_MIDDLE] = false; // Not supported
 
                 // Get axis
-                _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_X] = (float)reading.LeftThumbstickX;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_Y] = (float)-reading.LeftThumbstickY;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_X] = (float)reading.RightThumbstickX;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_Y] = (float)-reading.RightThumbstickY;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] = (float)reading.LeftTrigger;
-                _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] = (float)reading.RightTrigger;
+                m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_X] = (float)reading.LeftThumbstickX;
+                m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_Y] = (float)-reading.LeftThumbstickY;
+                m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_X] = (float)reading.RightThumbstickX;
+                m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_Y] = (float)-reading.RightThumbstickY;
+                m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] = (float)reading.LeftTrigger;
+                m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] = (float)reading.RightTrigger;
 
                 // Register buttons for pressure triggers
-                _CurrentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_2] = _CurrentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] > 0.1;
-                _CurrentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_2] = _CurrentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.1;
+                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] > 0.1;
+                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.1;
             }
         }
 #endif

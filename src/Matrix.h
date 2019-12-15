@@ -23,16 +23,12 @@ namespace NerdThings::Ngine {
      * A 4x4 Matrix.
      */
     struct NEAPI Matrix {
-        // Public Fields
-
         float M0, M4, M8, M12;
         float M1, M5, M9, M13;
         float M2, M6, M10, M14;
         float M3, M7, M11, M15;
 
         static const Matrix Identity;
-
-        // Public Methods
 
         float Determinant() const;
 
@@ -61,8 +57,6 @@ namespace NerdThings::Ngine {
         Matrix Invert() const;
 
         Matrix Normalize() const;
-
-        // Operators
 
         friend Matrix operator+(const Matrix left_, const Matrix right_) {
             auto result = Identity;

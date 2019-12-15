@@ -203,7 +203,7 @@ namespace NerdThings::Ngine {
         /**
          * All the attached handlers
          */
-        std::vector<AbstractEventHandler<ArgTypes...> *> _Handlers;
+        std::vector<AbstractEventHandler<ArgTypes...> *> m_handlers;
     public:
         /**
          * Attach the event handler
@@ -213,7 +213,7 @@ namespace NerdThings::Ngine {
          */
         EventAttachment<ArgTypes...> Attach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Add
-            _Handlers.push_back(handler_);
+            m_handlers.push_back(handler_);
 
             // Return attachment information
             return {this, handler_};
@@ -223,7 +223,7 @@ namespace NerdThings::Ngine {
          * Clear the entire event.
          */
         void Clear() {
-            for (auto handler : _Handlers) {
+            for (auto handler : m_handlers) {
                 Detach(handler);
             }
         }
@@ -235,12 +235,12 @@ namespace NerdThings::Ngine {
          */
         void Detach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Find in handler array
-            auto iterator = std::find(_Handlers.begin(), _Handlers.end(), handler_);
-            if (iterator == _Handlers.end())
+            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler_);
+            if (iterator == m_handlers.end())
                 throw std::runtime_error("This event handler is not attached to this event.");
 
             // Remove from handlers vector
-            _Handlers.erase(std::remove(_Handlers.begin(), _Handlers.end(), handler_), _Handlers.end());
+            m_handlers.erase(std::remove(m_handlers.begin(), m_handlers.end(), handler_), m_handlers.end());
 
             // Delete handler
             delete handler_;
@@ -252,7 +252,7 @@ namespace NerdThings::Ngine {
          * @param args The arguments to pass to the handlers.
          */
         void Invoke(ArgTypes... args) {
-            for (auto handler : _Handlers) {
+            for (auto handler : m_handlers) {
                 handler->Invoke(args...);
             }
         }
@@ -264,8 +264,8 @@ namespace NerdThings::Ngine {
          * @return If the handler is attached.
          */
         bool IsAttached(AbstractEventHandler<ArgTypes...> *handler_) const {
-            auto iterator = std::find(_Handlers.begin(), _Handlers.end(), handler_);
-            return iterator != _Handlers.end();
+            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler_);
+            return iterator != m_handlers.end();
         }
 
         void operator()(ArgTypes... args) {

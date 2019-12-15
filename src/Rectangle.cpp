@@ -12,20 +12,6 @@
 #include "Rectangle.h"
 
 namespace NerdThings::Ngine {
-    // Public Methods
-
-    #ifdef INCLUDE_RAYLIB
-
-    Rectangle Rectangle::ToRaylibRect() const {
-        return {X, Y, Width, Height};
-    }
-
-    Rectangle Rectangle::FromRaylibRect(const Rectangle &rect_) {
-        return {rect_.x, rect_.y, rect_.width, rect_.height};
-    }
-
-    #endif
-
     bool Rectangle::Contains(Vector2 point_) const {
         return X <= point_.X
             && point_.X < X + Width

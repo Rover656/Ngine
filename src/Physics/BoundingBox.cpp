@@ -14,7 +14,7 @@
 namespace NerdThings::Ngine::Physics {
     // Private Methods
 
-    bool BoundingBox::IsCompatible(ICollisionShape *shape_) {
+    bool BoundingBox::_isCompatible(ICollisionShape *shape_) {
         const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
 
         // Bounding Box 2D against Bounding Box 2D
@@ -26,7 +26,7 @@ namespace NerdThings::Ngine::Physics {
         return false;
     }
 
-    bool BoundingBox::RunCollisionCheck(ICollisionShape *shape_) {
+    bool BoundingBox::_runCollisionCheck(ICollisionShape *shape_) {
         auto collided = false;
 
         auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);

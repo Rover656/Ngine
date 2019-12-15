@@ -52,8 +52,8 @@ namespace NerdThings::Ngine::Input {
     Mouse::Mouse(Window *window_) : m_attachedWindow(window_) {
 #if defined(PLATFORM_DESKTOP)
         // Register glfw callbacks
-        glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow, Mouse::GLFWMouseButtonCallback);
-        glfwSetScrollCallback(m_attachedWindow->m_GLFWWindow, Mouse::GLFWScrollCallback);
+        glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow, Mouse::_GLFWMouseButtonCallback);
+        glfwSetScrollCallback(m_attachedWindow->m_GLFWWindow, Mouse::_GLFWScrollCallback);
 #elif defined(PLATFORM_UWP)
         if (m_UWPMouse != nullptr)
             throw std::runtime_error("On UWP only one mouse can be created.");
@@ -63,22 +63,22 @@ namespace NerdThings::Ngine::Input {
 
         // Register UWP callbacks
         auto window = CoreWindow::GetForCurrentThread();
-        window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&UWPPointerWheelChanged);
-        window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&UWPPointerButtonEvent);
-        window->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&UWPPointerButtonEvent);
+        window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerWheelChanged);
+        window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
+        window->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
 #endif
     }
 
 #if defined(PLATFORM_DESKTOP)
 
-    void Mouse::GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_) {
+    void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_) {
         if (button_ <= MOUSE_BUTTON_RIGHT) { // GLFW supports more than our 3 buttons
             auto mouse = ((Window *)glfwGetWindowUserPointer(window_))->GetMouse();
             mouse->m_nextMouseState.ButtonsDown[button_] = (action_ == GLFW_PRESS);
         }
     }
 
-    void Mouse::GLFWScrollCallback(GLFWwindow *window_, double x_, double y_) {
+    void Mouse::_GLFWScrollCallback(GLFWwindow *window_, double x_, double y_) {
         auto mouse = ((Window *)glfwGetWindowUserPointer(window_))->GetMouse();
         mouse->m_nextMouseState.MouseWheelXDelta = static_cast<int>(x_);
         mouse->m_nextMouseState.MouseWheelYDelta = static_cast<int>(y_);
@@ -88,13 +88,13 @@ namespace NerdThings::Ngine::Input {
 
     Mouse *Mouse::m_UWPMouse = nullptr;
 
-    void Mouse::UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
+    void Mouse::_UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
         if (args->CurrentPoint->Properties->IsHorizontalMouseWheel)
             m_UWPMouse->m_nextMouseState.MouseWheelXDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
         else m_UWPMouse->m_nextMouseState.MouseWheelYDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
     }
 
-    void Mouse::UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
+    void Mouse::_UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
         auto ptrPoint = args->CurrentPoint;
 
         if (ptrPoint->PointerDevice->PointerDeviceType == Windows::Devices::Input::PointerDeviceType::Mouse) {

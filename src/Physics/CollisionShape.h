@@ -25,12 +25,12 @@ namespace NerdThings::Ngine::Physics {
         /*
          * Is a shape able to collide with this type of shape
          */
-        virtual bool IsCompatible(ICollisionShape *shape_) = 0;
+        virtual bool _isCompatible(ICollisionShape *shape_) = 0;
 
         /*
          * Run a collision check
          */
-        virtual bool RunCollisionCheck(ICollisionShape *shape_) = 0;
+        virtual bool _runCollisionCheck(ICollisionShape *shape_) = 0;
 
     public:
         // Destructor
@@ -43,11 +43,11 @@ namespace NerdThings::Ngine::Physics {
          * Check collision against another collision shape.
          */
         bool CheckCollision(ICollisionShape *shape_) {
-            if (IsCompatible(shape_)) {
-                return RunCollisionCheck(shape_);
+            if (_isCompatible(shape_)) {
+                return _runCollisionCheck(shape_);
             }
-            if (shape_->IsCompatible(this)) {
-                return shape_->RunCollisionCheck(this);
+            if (shape_->_isCompatible(this)) {
+                return shape_->_runCollisionCheck(this);
             }
             throw std::runtime_error("Two shapes are unable to collide with each other!");
         }
