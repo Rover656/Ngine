@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Rectangle.h"
+#include "Rectangle.hpp"
 
 namespace NerdThings::Ngine {
     bool Rectangle::Contains(Vector2 point_) const {

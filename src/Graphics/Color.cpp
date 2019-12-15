@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Color.h"
+#include "Color.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Color::Color() : R(1), G(1), B(1), A(1) {}

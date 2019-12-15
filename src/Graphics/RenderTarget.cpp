@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "RenderTarget.h"
+#include "RenderTarget.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     RenderTarget::RenderTarget() {}

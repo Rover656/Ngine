@@ -12,11 +12,11 @@
 #ifndef UISTYLE_H
 #define UISTYLE_H
 
-#include "../Ngine.h"
+#include "../Config.hpp"
 
-#include "../Graphics/Color.h"
-#include "../Graphics/Texture2D.h"
-#include "../Rectangle.h"
+#include "../Graphics/Color.hpp"
+#include "../Graphics/Texture2D.hpp"
+#include "../Rectangle.hpp"
 
 namespace NerdThings::Ngine::UI {
     /*

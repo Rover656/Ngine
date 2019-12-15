@@ -9,10 +9,11 @@
 *
 **********************************************************************************************/
 
-#include "Canvas.h"
+#include "Canvas.hpp"
 
-#include "Renderer.h"
-#include "GraphicsManager.h"
+#include "../Logger.hpp"
+#include "Renderer.hpp"
+#include "GraphicsManager.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Canvas::Canvas(unsigned int width_, unsigned int height_)
@@ -21,7 +22,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     Canvas::~Canvas() {
-        ConsoleMessage("Deleting canvas.", "NOTICE", "CANVAS");
+        Logger::Notice("Canvas", "Deleting canvas.");
         delete m_renderTarget;
     }
 
@@ -62,7 +63,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {
-        ConsoleMessage("Resizing canvas.", "NOTICE", "CANVAS");
+        Logger::Notice("Canvas", "Resizing canvas.");
         delete m_renderTarget;
         m_width = width_;
         m_height = height_;

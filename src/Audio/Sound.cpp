@@ -9,11 +9,11 @@
 *
 **********************************************************************************************/
 
-#include "Sound.h"
+#include "Sound.hpp"
 
 #include <miniaudio.h>
 
-#include "AudioDevice.h"
+#include "AudioDevice.hpp"
 
 namespace NerdThings::Ngine::Audio {
     // Destructor

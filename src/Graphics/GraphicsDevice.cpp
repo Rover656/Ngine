@@ -9,9 +9,10 @@
 *
 **********************************************************************************************/
 
-#include "GraphicsDevice.h"
+#include "GraphicsDevice.hpp"
 
-#include "OpenGL.h"
+#include "../Logger.hpp"
+#include "OpenGL.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {
@@ -23,10 +24,10 @@ namespace NerdThings::Ngine::Graphics {
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
             // Terminate GLFW
             glfwTerminate();
-            ConsoleMessage("Failed to init GLAD.", "FATAL", "GraphicsDevice");
+            Logger::Fail("GraphicsDevice", "Failed to init GLAD.");
             throw std::runtime_error("Failed to init GLAD.");
         }
-        ConsoleMessage("Successfully initialised GLAD.", "NOTICE", "GraphicsDevice");
+        Logger::Notice("GraphicsDevice", "Successfully initialized GLAD.");
 #endif
 
         // Make window current while we configure OpenGL
@@ -35,7 +36,7 @@ namespace NerdThings::Ngine::Graphics {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Send OpenGL Version to console
         const char *ver = (const char *) glGetString(GL_VERSION);
-        ConsoleMessage("OpenGL Version: " + std::string(ver), "NOTICE", "GraphicsDevice");
+        Logger::Notice("GraphicsDevice", "OpenGL Version: %s", ver);
 
         // Init support flags
         for (auto i = 0; i <= GL_VAO; i++) m_GLSupportFlags[i] = false;
@@ -131,7 +132,7 @@ namespace NerdThings::Ngine::Graphics {
                 m_GLSupportFlags[GL_TEX_MIRROR_CLAMP] = true;
         }
 #endif
-        ConsoleMessage("Successfully loaded extensions.", "NOTICE", "GraphicsDevice");
+        Logger::Notice("GraphicsDevice", "Successfully loaded extensions.");
 
         // Load default matrices
         m_projectionMatrix = Matrix::Identity;

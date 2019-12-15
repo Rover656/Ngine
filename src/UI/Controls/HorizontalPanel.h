@@ -12,7 +12,7 @@
 #ifndef HORIZONTALPANEL_H
 #define HORIZONTALPANEL_H
 
-#include "../../Ngine.h"
+#include "../../Config.hpp"
 
 #include "../UIPanel.h"
 

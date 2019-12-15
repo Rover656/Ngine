@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Shader.h"
+#include "Shader.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 

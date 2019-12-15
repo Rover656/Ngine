@@ -12,9 +12,9 @@
 #ifndef UIWIDGET_H
 #define UIWIDGET_H
 
-#include "../Ngine.h"
+#include "../Config.hpp"
 
-#include "../Vector2.h"
+#include "../Math.hpp"
 #include "UIPanel.h"
 
 namespace NerdThings::Ngine::UI {

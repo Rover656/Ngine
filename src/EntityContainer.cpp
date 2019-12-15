@@ -9,9 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "EntityContainer.h"
+#include "EntityContainer.hpp"
 
-#include "Entity.h"
+#include "Entity.hpp"
 
 namespace NerdThings::Ngine {
     void EntityContainer::_addEntity(Entity *entity_) {

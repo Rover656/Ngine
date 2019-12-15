@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "AudioStream.h"
+#include "AudioStream.hpp"
 
 namespace NerdThings::Ngine::Audio {
     void AudioStream::UpdateStream(const void *data_, int samplesCount_) {

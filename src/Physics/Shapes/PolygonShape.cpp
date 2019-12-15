@@ -9,9 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "PolygonShape.h"
+#include "PolygonShape.hpp"
 
-#include "../../Graphics/Renderer.h"
+#include "../../Graphics/Renderer.hpp"
 
 #include <Box2D/Collision/Shapes/b2PolygonShape.h>
 

@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "TilesetRenderer.h"
+#include "TilesetRenderer.hpp"
 
 #include <cmath>
 

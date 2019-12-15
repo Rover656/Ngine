@@ -10,10 +10,10 @@
 **********************************************************************************************/
 
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-#include "OpenGL/OpenGL.h"
+#include "OpenGL/OpenGL.hpp"
 #endif
 
-#include "Camera.h"
+#include "Camera.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Methods

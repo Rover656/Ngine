@@ -12,7 +12,7 @@
 #ifndef UICONTROLSIZED_H
 #define UICONTROLSIZED_H
 
-#include "../Ngine.h"
+#include "../Config.hpp"
 
 #include "UIControl.h"
 

@@ -9,17 +9,16 @@
 *
 **********************************************************************************************/
 
-#include "Renderer.h"
+#include "Renderer.hpp"
 
 #ifndef USE_EXPERIMENTAL_RENDERER
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-
-#include "OpenGL/OpenGL.h"
-
+#include "OpenGL/OpenGL.hpp"
 #endif
 
-#include "GraphicsManager.h"
+#include "../Logger.hpp"
+#include "GraphicsManager.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     // OpenGL Implementation
@@ -689,7 +688,7 @@ namespace NerdThings::Ngine::Graphics {
 
             OpenGL::GL::StopUsingTexture();
         } else {
-            ConsoleMessage("Attempted to draw invalid texture.", "WARN", "Renderer.OpenGL");
+            Logger::Warn("Renderer.OpenGL", "Attempted to draw invalid texture.");
         }
     }
 

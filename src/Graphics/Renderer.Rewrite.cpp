@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Renderer.h"
+#include "Renderer.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 

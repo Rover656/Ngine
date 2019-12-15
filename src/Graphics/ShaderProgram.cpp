@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "ShaderProgram.h"
+#include "ShaderProgram.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 

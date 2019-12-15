@@ -9,59 +9,10 @@
 *
 **********************************************************************************************/
 
-#include "Circle.h"
+#include "Circle.hpp"
 
-#include "BoundingBox.h"
+#include "BoundingBox.hpp"
 
 namespace NerdThings::Ngine::Physics {
-    // Private Methods
 
-    bool Circle::_isCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
-        const auto circle = dynamic_cast<Circle*>(shape_);
-
-        // Circle against Circle
-        if (circle != nullptr)
-            return true;
-
-        // Bounding Box 2D against Circle
-        if (boundingBox2D != nullptr)
-            return true;
-
-        return false;
-    }
-
-    bool Circle::_runCollisionCheck(ICollisionShape *shape_) {
-        auto collided = false;
-
-        auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
-        const auto circle = dynamic_cast<Circle*>(shape_);
-
-        // Circle against Circle
-
-        auto myCircle = ToB2Shape();
-        if (circle != nullptr) {
-            auto theirCircle = circle->ToB2Shape();
-            collided = b2TestOverlap(&myCircle, &theirCircle);
-        }
-
-        // Bounding Box 2D against Circle
-        if (boundingBox2D != nullptr) {
-            auto theirAABB = boundingBox2D->ToB2Shape();
-            collided = b2TestOverlap(&myCircle, &theirAABB);
-        }
-
-        return collided;
-    }
-
-    // Public Methods
-
-#ifdef INCLUDE_BOX2D
-    b2CircleShape Circle::ToB2Shape() {
-        b2CircleShape shape;
-        shape.m_p.Set(Center.X, Center.Y);
-        shape.m_radius = Radius;
-        return shape;
-    }
-#endif
 }

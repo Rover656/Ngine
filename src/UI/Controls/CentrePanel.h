@@ -13,7 +13,7 @@
 #ifndef CENTREPANEL_H
 #define CENTREPANEL_H
 
-#include "../../Ngine.h"
+#include "../../Config.hpp"
 
 #include "../UIPanel.h"
 

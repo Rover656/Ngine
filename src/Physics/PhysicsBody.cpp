@@ -9,9 +9,11 @@
 *
 **********************************************************************************************/
 
-#include "PhysicsBody.h"
+#include "PhysicsBody.hpp"
 
-#include "PhysicsWorld.h"
+#include <Box2D/Box2D.h>
+
+#include "PhysicsWorld.hpp"
 
 namespace NerdThings::Ngine::Physics {
     // Public Constructor

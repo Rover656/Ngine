@@ -9,13 +9,13 @@
 *
 **********************************************************************************************/
 
-#include "Music.h"
+#include "Music.hpp"
 
 #include <dr_mp3.h>
 #include <dr_flac.h>
 #include <stb_vorbis.h>
 
-#include "AudioDevice.h"
+#include "AudioDevice.hpp"
 
 namespace NerdThings::Ngine::Audio {
     // Destructor

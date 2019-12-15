@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Filesystem.h"
+#include "Filesystem.hpp"
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -38,6 +38,8 @@
 #endif
 
 #include <sstream>
+
+#include "../Logger.hpp"
 
 namespace NerdThings::Ngine::Filesystem {
     ////////
@@ -681,7 +683,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     FILE *File::GetFileHandle() const {
         if (!IsOpen()) {
-            ConsoleMessage("Cannot get handle of file that is not open.", "WARN", "File");
+            Logger::Warn("File", "Cannot get handle of file that is not open.");
             return nullptr;
         }
 
@@ -690,7 +692,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     int File::GetSize() const {
         if (!IsOpen()) {
-            ConsoleMessage("Cannot determine size of file that is not open.", "WARN", "File");
+            Logger::Warn("File", "Cannot determine size of file that is not open.");
             return 0;
         }
 
@@ -752,7 +754,7 @@ namespace NerdThings::Ngine::Filesystem {
                 m_internalOpenMode = mode_;
                 break;
             default:
-                ConsoleMessage("File mode not supported.", "WARN", "File");
+                Logger::Warn("File", "File mode not supported.");
 
                 // Set mode
                 m_internalOpenMode = MODE_NONE;

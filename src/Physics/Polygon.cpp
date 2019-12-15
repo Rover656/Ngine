@@ -9,68 +9,22 @@
 *
 **********************************************************************************************/
 
-#include "Polygon.h"
+#include "Polygon.hpp"
 
-#include "BoundingBox.h"
-#include "Circle.h"
+#include "BoundingBox.hpp"
+#include "Circle.hpp"
 
 namespace NerdThings::Ngine::Physics {
-    // Private Methods
-
-    bool Polygon::_isCompatible(ICollisionShape *shape_) {
-        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
-        const auto circle = dynamic_cast<Circle*>(shape_);
-        const auto polygon = dynamic_cast<Polygon*>(shape_);
-
-        if (boundingBox2D != nullptr)
-            return true;
-        if (circle != nullptr)
-            return true;
-        if (polygon != nullptr)
-            return true;
-        return false;
-    }
-
-    bool Polygon::_runCollisionCheck(ICollisionShape *shape_) {
-        auto collided = false;
-
-        const auto boundingBox2D = dynamic_cast<BoundingBox*>(shape_);
-        const auto circle = dynamic_cast<Circle*>(shape_);
-        const auto polygon = dynamic_cast<Polygon*>(shape_);
-
-        auto myPoly = ToB2Shape();
-
-        if (boundingBox2D != nullptr) {
-            auto theirAABB = boundingBox2D->ToB2Shape();
-            collided = b2TestOverlap(&myPoly, &theirAABB);
-        } else if (circle != nullptr) {
-            auto theirCircle = circle->ToB2Shape();
-            collided = b2TestOverlap(&myPoly, &theirCircle);
-        } else if (polygon != nullptr) {
-            auto theirPoly = polygon->ToB2Shape();
-            collided = b2TestOverlap(&myPoly, &theirPoly);
-        }
-
-        return collided;
-    }
-
-    // Public Methods
-
-#ifdef INCLUDE_BOX2D
-    b2PolygonShape Polygon::ToB2Shape() {
-        b2PolygonShape tmpShape;
-        b2Vec2 vertices[b2_maxPolygonVertices];
-        for (unsigned int i = 0; i < VertexCount; i++) vertices[i] = {Vertices[i].X, Vertices[i].Y};
-        tmpShape.Set(vertices, VertexCount);
-        return tmpShape;
-    }
-#endif
-
-    void Polygon::GenerateNormals() {
-        // Create c2 poly
-        auto tmpPoly = ToB2Shape();
-
-        // Bring in normals
-        for (auto i = 0; i < VertexCount; i++) Normals[i] = {tmpPoly.m_normals[i].x, tmpPoly.m_normals[i].y};
+    void Polygon::SetAsBox(float hx, float hy) {
+        Count = 4;
+        Vertices[0] = {-hx, -hy};
+        Vertices[1] = {hx, -hy};
+        Vertices[2] = {hx, hy};
+        Vertices[3] = {-hx, hy};
+        Normals[0] = {0, -1};
+        Normals[1] = {1, 0};
+        Normals[2] = {0, 1};
+        Normals[3] = {-1, 0};
+        Centroid = {0, 0};
     }
 }

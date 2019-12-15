@@ -10,7 +10,7 @@
 **********************************************************************************************/
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "Shader.h"
+#include "Shader.hpp"
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)

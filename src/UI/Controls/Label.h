@@ -12,9 +12,9 @@
 #ifndef LABEL_H
 #define LABEL_H
 
-#include "../../Ngine.h"
+#include "../../Config.hpp"
 
-#include "../../Graphics/Renderer.h"
+#include "../../Graphics/Renderer.hpp"
 #include "../UIControlSized.h"
 #include "../UIPanel.h"
 

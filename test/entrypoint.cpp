@@ -1,30 +1,12 @@
-#include <Ngine.h>
+#include <Ngine.hpp>
 
-#include <Audio/AudioDevice.h>
-#include <Audio/Wave.h>
-#include <Components/CameraComponent.h>
-#include <Components/SpriteComponent.h>
-#include <Filesystem/ResourceManager.h>
-#include <Graphics/OpenGL/OpenGL.h> // For cheeky hookin
-
-#include <Graphics/Rendering/QuadRenderable.h>
-#include <Graphics/Renderer.h>
-
-#include <Graphics/TilesetRenderer.h>
-#include <Input/Keyboard.h>
-#include <Physics/Shapes/CircleShape.h>
-#include <Physics/Shapes/PolygonShape.h>
+#include <Physics/Shapes/CircleShape.hpp>
+#include <Physics/Shapes/PolygonShape.hpp>
 //#include <UI/Controls/BasicButton.h>
 //#include <UI/Controls/Image.h>
 //#include <UI/Controls/Label.h>
 //#include <UI/Controls/VerticalPanel.h>
 //#include <UI/UIWidget.h>
-#include <Entity.h>
-#include <Component.h>
-#include <Game.h>
-#include <Window.h>
-
-#include <Logger.h>
 
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
@@ -377,8 +359,6 @@ public:
 #endif
     }
 };
-
-#include <NgineEntry.h> // Entrypoint stuff
 
 NGINE_GAME_ENTRY {
     // Load icon (must remain in scope until NGINE_RUN_GAME happens)

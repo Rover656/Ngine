@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "QuadRenderable.h"
+#include "QuadRenderable.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 

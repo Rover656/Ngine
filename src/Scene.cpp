@@ -9,11 +9,11 @@
 *
 **********************************************************************************************/
 
-#include "Scene.h"
+#include "Scene.hpp"
 
-#include "Entity.h"
-#include "Game.h"
-#include "Logger.h"
+#include "Entity.hpp"
+#include "Game.hpp"
+#include "Logger.hpp"
 
 namespace NerdThings::Ngine {
     void Scene::_addEntity(Entity *ent_) {

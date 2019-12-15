@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Keyboard.h"
+#include "Keyboard.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
@@ -17,8 +17,8 @@
 #include "../UWP/GameApp.h"
 #endif
 
-#include "../Game.h"
-#include "../Window.h"
+#include "../Game.hpp"
+#include "../Window.hpp"
 
 namespace NerdThings::Ngine::Input {
 #if defined(PLATFORM_DESKTOP)

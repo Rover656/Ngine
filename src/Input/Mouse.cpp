@@ -9,13 +9,13 @@
 *
 **********************************************************************************************/
 
-#include "Mouse.h"
+#include "Mouse.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
 #endif
 
-#include "../Window.h"
+#include "../Window.hpp"
 
 namespace NerdThings::Ngine::Input {
     Vector2 Mouse::_internalGetMousePosition() {

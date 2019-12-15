@@ -9,9 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "AudioDevice.h"
+#include "AudioDevice.hpp"
 
-#include "../Logger.h"
+#include "../Logger.hpp"
 
 namespace NerdThings::Ngine::Audio {
     std::vector<Music *> AudioDevice::m_activeMusic;

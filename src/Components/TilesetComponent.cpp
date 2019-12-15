@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "TilesetComponent.h"
+#include "TilesetComponent.hpp"
 
 namespace NerdThings::Ngine::Components {
     TilesetComponent::TilesetComponent(Entity *parent_, Graphics::TilesetRenderer *tileset_)

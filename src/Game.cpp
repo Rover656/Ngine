@@ -9,19 +9,19 @@
 *
 **********************************************************************************************/
 
-#include "Game.h"
+#include "Game.hpp"
 
-#include "Audio/AudioDevice.h"
-#include "Graphics/GraphicsManager.h"
-#include "Input/Gamepad.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
-#include "Filesystem/ResourceManager.h"
-#include "Logger.h"
+#include "Audio/AudioDevice.hpp"
+#include "Graphics/GraphicsManager.hpp"
+#include "Input/Gamepad.hpp"
+#include "Input/Keyboard.hpp"
+#include "Input/Mouse.hpp"
+#include "Filesystem/ResourceManager.hpp"
+#include "Logger.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
 
-#include "Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.hpp"
 
 #endif
 

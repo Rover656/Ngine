@@ -11,7 +11,7 @@
 
 #include "UIControlInteractible.h"
 
-#include "../Input/Mouse.h"
+#include "../Input/Mouse.hpp"
 
 namespace NerdThings::Ngine::UI {
     // Public Methods

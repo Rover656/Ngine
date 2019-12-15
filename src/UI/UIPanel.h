@@ -12,11 +12,11 @@
 #ifndef UIPANEL_H
 #define UIPANEL_H
 
-#include "../Ngine.h"
+#include "../Config.hpp"
 
-#include "../Graphics/RenderTarget.h"
-#include "../Graphics/GraphicsManager.h"
-#include "../Vector2.h"
+#include "../Graphics/RenderTarget.hpp"
+#include "../Graphics/GraphicsManager.hpp"
+#include "../Math.hpp"
 #include "UIControl.h"
 #include "UIControlSized.h"
 

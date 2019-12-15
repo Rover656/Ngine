@@ -9,7 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "PhysicsShape.h"
+#include "PhysicsShape.hpp"
+
+#include <Box2D/Box2D.h>
 
 namespace NerdThings::Ngine::Physics::Shapes {
     // Protected Constructors
@@ -41,11 +43,12 @@ namespace NerdThings::Ngine::Physics::Shapes {
 
     // Public Methods
 
-    BoundingBox PhysicsShape::ComputeAABB(const PhysicsTransform &xf, int childIndex) {
+    BoundingBox PhysicsShape::ComputeAABB(const Transform &xf, int childIndex) {
         // Convert transform
         b2Transform transform;
         transform.p = {xf.Position.X, xf.Position.Y};
-        transform.q = b2Rot(DegToRad(xf.Angle));
+        transform.q.s = xf.Rotation.Sine;
+        transform.q.c = xf.Rotation.Cos;
 
         // Get AABB
         b2AABB aabb;
@@ -74,11 +77,12 @@ namespace NerdThings::Ngine::Physics::Shapes {
         _Shape->m_radius = radius_;
     }
 
-    bool PhysicsShape::TestPoint(const PhysicsTransform &xf, const Vector2 &p) {
+    bool PhysicsShape::TestPoint(const Transform &xf, const Vector2 &p) {
         // Convert transform
         b2Transform transform;
         transform.p = {xf.Position.X, xf.Position.Y};
-        transform.q = b2Rot(DegToRad(xf.Angle));
+        transform.q.s = xf.Rotation.Sine;
+        transform.q.c = xf.Rotation.Cos;
 
         return _Shape->TestPoint(transform, {p.X, p.Y});
     }

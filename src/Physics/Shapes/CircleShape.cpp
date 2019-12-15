@@ -9,9 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "CircleShape.h"
+#include "CircleShape.hpp"
 
-#include "../../Graphics/Renderer.h"
+#include "../../Graphics/Renderer.hpp"
 
 #include <Box2D/Collision/Shapes/b2CircleShape.h>
 

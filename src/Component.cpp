@@ -9,9 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "Component.h"
+#include "Component.hpp"
 
-#include "Entity.h"
+#include "Entity.hpp"
 
 namespace NerdThings::Ngine {
     Component::~Component() {

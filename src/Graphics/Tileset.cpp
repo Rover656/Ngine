@@ -9,10 +9,10 @@
 *
 **********************************************************************************************/
 
-#include "Tileset.h"
+#include "Tileset.hpp"
 
-#include "../Rectangle.h"
-#include "Renderer.h"
+#include "../Rectangle.hpp"
+#include "Renderer.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     // Public Constructor(s)

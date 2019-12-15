@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Texture2D.h"
+#include "Texture2D.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
@@ -17,7 +17,8 @@
 #endif
 #endif
 
-#include "GraphicsDevice.h"
+#include "../Logger.hpp"
+#include "GraphicsDevice.hpp"
 
 namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
@@ -159,8 +160,7 @@ namespace NerdThings::Ngine::Graphics {
                          unsigned height_, PixelFormat format_, int mipmapCount_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
-            ConsoleMessage("Texture was given invalid dimensions of " + std::to_string(width_) + ", " +
-                           std::to_string(height_) + ".", "ERROR", "Texture2D");
+            Logger::Error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width_, height_);
             return;
         }
 

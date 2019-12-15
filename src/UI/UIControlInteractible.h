@@ -12,9 +12,9 @@
 #ifndef UICONTROLINTERACTIBLE_H
 #define UICONTROLINTERACTIBLE_H
 
-#include "../Ngine.h"
+#include "../Config.hpp"
 
-#include "../Events.h"
+#include "../Events.hpp"
 #include "UIControl.h"
 
 namespace NerdThings::Ngine::UI {

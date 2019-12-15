@@ -10,7 +10,7 @@
 **********************************************************************************************/
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "VertexArray.h"
+#include "VertexArray.hpp"
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
@@ -29,7 +29,7 @@
 #include <angle_windowsstore.h>
 #endif
 
-#include "OpenGL.h"
+#include "OpenGL.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     ////////

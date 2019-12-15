@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "ResourceManager.h"
+#include "ResourceManager.hpp"
 
 #include <regex>
 #include <sstream>

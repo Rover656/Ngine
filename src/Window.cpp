@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "Window.h"
+#include "Window.hpp"
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL33)
@@ -33,12 +33,12 @@
 
 #include <stdexcept>
 
-#include "Audio/AudioDevice.h"
-#include "Graphics/OpenGL/OpenGL.h"
-#include "Input/Gamepad.h"
-#include "Input/Mouse.h"
-#include "Input/Keyboard.h"
-#include "Logger.h"
+#include "Audio/AudioDevice.hpp"
+#include "Graphics/OpenGL/OpenGL.hpp"
+#include "Input/Gamepad.hpp"
+#include "Input/Mouse.hpp"
+#include "Input/Keyboard.hpp"
+#include "Logger.hpp"
 
 namespace NerdThings::Ngine {
     Window *Window::m_currentWindow = nullptr;

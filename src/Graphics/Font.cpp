@@ -9,21 +9,24 @@
 *
 **********************************************************************************************/
 
-#include "Font.h"
+#include "Font.hpp"
 
 #include <numeric>
 #include <utility>
 #include <stb_truetype.h>
 
-#include "../Rectangle.h"
-#include "../Vector2.h"
+#include "../Math.hpp"
+#include "../Logger.hpp"
+#include "../Rectangle.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Font *Font::DefaultFont;
 
     Font::Font() {}
+
     Font::~Font() {
-        ConsoleMessage("Unloading and deleting font.", "NOTICE", "FONT");
+        Logger::Notice("Font", "Unloading and deleting font.");
+        Unload();
     }
 
     Font *Font::GetDefaultFont() {

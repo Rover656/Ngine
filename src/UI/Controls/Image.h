@@ -12,9 +12,9 @@
 #ifndef IMAGECONTROL_H
 #define IMAGECONTROL_H
 
-#include "../../Ngine.h"
+#include "../../Config.hpp"
 
-#include "../../Graphics/Sprite.h"
+#include "../../Graphics/Sprite.hpp"
 #include "../UIControlSized.h"
 
 namespace NerdThings::Ngine::UI::Controls {

@@ -9,9 +9,9 @@
 *
 **********************************************************************************************/
 
-#include "Entity.h"
+#include "Entity.hpp"
 
-#include "Component.h"
+#include "Component.hpp"
 
 namespace NerdThings::Ngine {
     void Entity::_addToScene(Scene *scene_) {

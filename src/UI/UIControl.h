@@ -12,9 +12,9 @@
 #ifndef UICONTROL_H
 #define UICONTROL_H
 
-#include "../Ngine.h"
+#include "../Config.hpp"
 
-#include "../Vector2.h"
+#include "../Math.hpp"
 #include "UIStyle.h"
 
 namespace NerdThings::Ngine::UI {

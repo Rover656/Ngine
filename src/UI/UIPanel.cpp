@@ -11,7 +11,7 @@
 
 #include "UIPanel.h"
 
-#include "../Graphics/Renderer.h"
+#include "../Graphics/Renderer.hpp"
 #include "UIWidget.h"
 
 namespace NerdThings::Ngine::UI {

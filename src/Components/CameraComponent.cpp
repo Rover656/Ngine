@@ -9,10 +9,10 @@
 *
 **********************************************************************************************/
 
-#include "CameraComponent.h"
+#include "CameraComponent.hpp"
 
-#include "../Graphics/Camera.h"
-#include "../Entity.h"
+#include "../Graphics/Camera.hpp"
+#include "../Entity.hpp"
 
 namespace NerdThings::Ngine::Components {
     void CameraComponent::_updateCamera(EntityTransformChangedEventArgs e) {

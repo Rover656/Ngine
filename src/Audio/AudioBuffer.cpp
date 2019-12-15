@@ -9,7 +9,7 @@
 *
 **********************************************************************************************/
 
-#include "AudioBuffer.h"
+#include "AudioBuffer.hpp"
 
 namespace NerdThings::Ngine::Audio {
     // Public Methods
