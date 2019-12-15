@@ -75,13 +75,31 @@ namespace NerdThings::Ngine {
             // If told to quit, quit
             if (!m_running) return;
 
+            // Suspend if we haven't
+            if (!m_suspended) {
+                OnSuspend();
+                m_suspended = true;
+            }
+
             // Do nothing this frame.
             std::this_thread::sleep_for(m_timestep);
             return;
         }
 
+        // Update timestep if FPS has changed
+        if (m_timestep.count() != int(1000.0f / (float)Config.FPS)) {
+            m_timestep = std::chrono::milliseconds(int(1000.0f / (float)Config.FPS));
+            Logger::Notice("Game", "Timestep updated to match FPS.");
+        }
+
         // Make our window current.
         m_gameWindow->MakeCurrent();
+
+        // Resume if we had suspended
+        if (m_suspended) {
+            OnResume();
+            m_suspended = false;
+        }
 
         // Window/Game Size variables
         const auto w = static_cast<float>(m_gameWindow->GetWidth());
@@ -294,12 +312,6 @@ namespace NerdThings::Ngine {
 
         // This checks the game should still run
         while (!m_gameWindow->ShouldClose() && IsRunning()) {
-            // Update timestep if FPS has changed
-            if (m_timestep.count() != int(1000.0f / (float)Config.FPS)) {
-                m_timestep = std::chrono::milliseconds(int(1000.0f / (float)Config.FPS));
-                Logger::Notice("Game", "Timestep updated to match FPS.");
-            }
-
             // Run game frame
             _runFrame();
         }

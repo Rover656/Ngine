@@ -116,6 +116,11 @@ namespace NerdThings::Ngine {
         std::chrono::nanoseconds m_lag;
 
         /**
+         * Whether or not the game has been suspended for being invisible.
+         */
+        bool m_suspended = false;
+
+        /**
          * Initialize the game ready to process frames.
          */
         void _init();

@@ -295,11 +295,16 @@ public:
         OnInit += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
         OnDraw += new ClassMethodEventHandler<TestGame>(this, &TestGame::Draw);
         OnSuspend += new ClassMethodEventHandler<TestGame>(this, &TestGame::Save);
+        OnResume += new ClassMethodEventHandler<TestGame>(this, &TestGame::Load);
         OnCleanup += new ClassMethodEventHandler<TestGame>(this, &TestGame::Cleanup);
     }
 
     void Save() {
         Logger::Notice("TestGame", "The game would have saved here.");
+    }
+
+    void Load() {
+        Logger::Notice("TestGame", "The game would have loaded here.");
     }
 
     void Draw() {
@@ -382,6 +387,7 @@ NGINE_GAME_ENTRY {
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
+    gameConfig.RunWhileHidden = false; // For testing suspension.
 #ifndef USE_EXPERIMENTAL_RENDERER
     gameConfig.MaintainResolution = true;
 #endif
