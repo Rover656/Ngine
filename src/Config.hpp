@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - A (mainly) 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -84,18 +84,6 @@
     #error "Unsupported platform"
 #endif
 
-// ---------------------------------------------------------------------------------
-// Temp, will be removed once fully replaced
-// ---------------------------------------------------------------------------------
+//#define USE_EXPERIMENTAL_RENDERER // TEMP: UWP
 
-// TODO: Remove this in favour of `Logger`
-/**
- * @deprecated Please use Logger instead.
- */
-#if !defined(PLATFORM_UWP) // Breaks UWP.
-[[deprecated("Please use Logger instead.")]]
-#endif
-void NEAPI ConsoleMessage(std::string message, std::string severity = "NOTICE", std::string module = "NGINE");
-
-// #define USE_EXPERIMENTAL_RENDERER
 #endif //CONFIG_HPP

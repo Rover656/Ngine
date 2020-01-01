@@ -1,21 +1,21 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
 
-#ifndef CENTREPANEL_H
-#define CENTREPANEL_H
+#ifndef CENTREPANEL_HPP
+#define CENTREPANEL_HPP
 
 #include "../../Config.hpp"
 
-#include "../UIPanel.h"
+#include "UI/UIPanel.hpp"
 
 namespace NerdThings::Ngine::UI::Controls {
     /*
@@ -61,4 +61,4 @@ namespace NerdThings::Ngine::UI::Controls {
     };
 }
 
-#endif // CENTREPANEL_H
+#endif //CENTREPANEL_HPP

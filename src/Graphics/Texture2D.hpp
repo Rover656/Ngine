@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -19,12 +19,16 @@
 #endif
 
 #include "../Filesystem/Filesystem.hpp"
+#include "../Math.hpp"
+#include "../Rectangle.hpp"
 #include "../Resource.hpp"
+#include "Color.hpp"
 #include "Image.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     class GraphicsDevice;
     class Renderer;
+
     /**
      * Texture filter mode.
      */
@@ -213,6 +217,27 @@ namespace NerdThings::Ngine::Graphics {
          * Unload the texture.
          */
         void Unload() override;
+
+        /**
+         * Draw the texture.
+         *
+         * @param pos_ The position to draw at.
+         * @param col_ The color modifier.
+         * @param scale_ The scale modifier.
+         * @param origin_ The origin (for rotation).
+         * @param rotation_ Rotation (from origin).
+         */
+        void Draw(Vector2 pos_, Color col_ = Color::White, float scale_ = 1, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+
+        /**
+         * Draw the texture.
+         *
+         * @param destRect_ The destination rectangle.
+         * @param srcRect_ The source rectangle.
+         * @param origin_ The origin (for rotation).
+         * @param rotation_ Rotation (from origin).
+         */
+        void Draw(Rectangle destRect_, Rectangle srcRect_, Color col_ = Color::White, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
 
         bool operator==(const Texture2D &tex_) const;
         bool operator!=(const Texture2D &tex_) const;

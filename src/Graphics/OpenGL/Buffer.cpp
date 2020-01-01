@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -29,19 +29,21 @@
 #include <angle_windowsstore.h>
 #endif
 
+#include "../../Logger.hpp"
+
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLBuffer::GLBuffer(GLBufferType type_, GLBufferUsage usage_) : _Type(type_), _Usage(usage_) {
         // Generate buffer
         glGenBuffers(1, &ID);
 
         // Logging
-        ConsoleMessage("Created new buffer with ID " + std::to_string(ID) + ".", "NOTICE", "GLBuffer");
+        Logger::Notice("GLBuffer", "Created new buffer with ID, %i.", ID);
     }
 
     GLBuffer::~GLBuffer() {
         // Delete buffer
         glDeleteBuffers(1, &ID);
-        ConsoleMessage("Deleted buffer with ID " + std::to_string(ID) + ".", "NOTICE", "GLBuffer");
+        Logger::Notice("GLBuffer", "Deleted buffer with ID %i.", ID);
 
         // Set ID to 0
         ID = 0;

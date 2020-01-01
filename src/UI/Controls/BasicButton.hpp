@@ -1,23 +1,23 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
-#ifndef BASICBUTTON_H
-#define BASICBUTTON_H
+#ifndef BASICBUTTON_HPP
+#define BASICBUTTON_HPP
 
 #include "../../Config.hpp"
 
-#include "../UIControlInteractible.h"
-#include "../UIControlSized.h"
-#include "Label.h"
-#include "CentrePanel.h"
+#include "UI/UIControlInteractible.hpp"
+#include "UI/UIControlSized.hpp"
+#include "Label.hpp"
+#include "CentrePanel.hpp"
 
 namespace NerdThings::Ngine::UI::Controls {
     /*
@@ -102,4 +102,4 @@ namespace NerdThings::Ngine::UI::Controls {
     };
 }
 
-#endif // BASICBUTTON_H
+#endif //BASICBUTTON_HPP

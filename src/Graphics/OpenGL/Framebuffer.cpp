@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -29,6 +29,8 @@
 #include <angle_windowsstore.h>
 #endif
 
+#include "../../Logger.hpp"
+
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLFramebuffer::GLFramebuffer(int width_, int height_, bool useDepth_, GLPixelFormat format_) {
         // Check inputs
@@ -44,7 +46,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Verify, stopping here to save wasting of more time
         if (RenderTexture->ID <= 0) {
             // Message about failure
-            ConsoleMessage("Framebuffer failed to create a texture attachment.", "WARN", "GLFramebuffer");
+            Logger::Error("GLFramebuffer", "Framebuffer failed to create a texture attachment.");
 
             // Delete
             RenderTexture = nullptr;
@@ -76,7 +78,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
             // Message about failure
-            ConsoleMessage("Failed to create framebuffer.", "WARN", "GLFramebuffer");
+            Logger::Error("GLFramebuffer", "Failed to create framebuffer.");
 
             // Unbind framebuffer
             Unbind();
@@ -96,7 +98,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             // Finished
             return;
         }
-        ConsoleMessage("Successfully created framebuffer with ID " + std::to_string(ID) + ".", "NOTICE", "GLFramebuffer");
+        Logger::Notice("GLFramebuffer", "Successfully created framebuffer with ID %i.", ID);
 
         // Unbind framebuffer
         Unbind();

@@ -252,6 +252,15 @@ function(ngine_add_game)
     # Get content dir name
     get_filename_component(CONTENT_DIR_NAME ${GAME_CONTENT_DIR} NAME)
 
+    ### Feature Flags
+
+    # Experimental renderer
+    if (${FEATURE_EXPERIMENTAL_RENDERER})
+        target_compile_definitions(${GAME_TARGET_NAME} PRIVATE USE_EXPERIMENTAL_RENDERER=1)
+    endif()
+
+    ### End Feature Flags
+
     # Include content
     if (${PLATFORM} MATCHES "Desktop")
         add_custom_command(TARGET ${GAME_TARGET_NAME} PRE_BUILD

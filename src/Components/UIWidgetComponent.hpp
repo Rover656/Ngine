@@ -14,7 +14,7 @@
 
 #include "../Config.hpp"
 
-#include "../UI/UIWidget.h"
+#include "UI/UIWidget.hpp"
 #include "../Entity.hpp"
 #include "../Component.hpp"
 
@@ -63,7 +63,7 @@ namespace NerdThings::Ngine::Components {
         }
 
         void UpdatePosition(EntityTransformChangedEventArgs e) {
-            m_widget.SetPosition(e.EntityPosition);
+            m_widget.SetPosition(e.EntityTransformation.Position);
         }
     };
 }

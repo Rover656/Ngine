@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -83,7 +83,7 @@ namespace NerdThings::Ngine {
         /**
          * The graphics device for our window.
          */
-        Graphics::GraphicsDevice *m_graphicsDevice;
+        Graphics::GraphicsDevice *m_graphicsDevice = nullptr;
 
         /**
          * The currently loaded scene
@@ -119,6 +119,11 @@ namespace NerdThings::Ngine {
          * Whether or not the game has been suspended for being invisible.
          */
         bool m_suspended = false;
+
+        /**
+         * The resource manager.
+         */
+        Filesystem::ResourceManager *m_resourceManager = nullptr;
 
         /**
          * Initialize the game ready to process frames.
@@ -274,6 +279,13 @@ namespace NerdThings::Ngine {
          * @param scene_ The scene to use now.
          */
         void SetScene(Scene *scene_);
+
+        /**
+         * Get the game resource manager.
+         *
+         * @return The game resource manager.
+         */
+        Filesystem::ResourceManager *GetResourceManager() const;
     };
 }
 

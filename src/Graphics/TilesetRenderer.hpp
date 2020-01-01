@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Graphics {
      */
     class NEAPI TilesetRenderer {
         /*
-         * Render area height in tile units
+         * RenderBatched area height in tile units
          */
         int m_height;
 
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Graphics {
         Tileset m_tileset;
 
         /*
-         * Render area width in tile units
+         * RenderBatched area width in tile units
          */
         int m_width;
 
@@ -81,20 +81,20 @@ namespace NerdThings::Ngine::Graphics {
          * Get collision shapes for a tile in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<Physics::Shape *> GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<Physics::Shape *> GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * min_ <= tile <= max_.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::ICollisionShape *> GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<Physics::Shape *> GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get render area height in tile units

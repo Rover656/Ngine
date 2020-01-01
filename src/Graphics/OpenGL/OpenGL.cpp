@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -38,6 +38,8 @@
 #endif
 
 #include <cstring>
+
+#include "../../Logger.hpp"
 
 // Fix missing definitions (Straight from rlgl)
 #ifndef GL_SHADING_LANGUAGE_VERSION
@@ -399,13 +401,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Load shaders
         auto vertexShader = std::make_shared<GLShader>(vertexShaderSrc, SHADER_VERTEX);
         if (vertexShader->IsDirty()) {
-            ConsoleMessage("Failed to compile internal vertex shader.", "FATAL", "OpenGL");
+            Logger::Fail("OpenGL", "Failed to compile internal vertex shader.");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
 
         auto fragmentShader = std::make_shared<GLShader>(fragmentShaderSrc, SHADER_FRAGMENT);
         if (vertexShader->IsDirty()) {
-            ConsoleMessage("Failed to compile internal fragment shader.", "FATAL", "OpenGL");
+            Logger::Fail("OpenGL", "Failed to compile internal fragment shader.");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
 
@@ -413,10 +415,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         _DefaultShaderProgram = std::make_shared<GLShaderProgram>(fragmentShader, vertexShader);
 
         if (_DefaultShaderProgram->IsDirty() || !_DefaultShaderProgram->IsLinked()) {
-            ConsoleMessage("Failed to link internal shader.", "FATAL", "OpenGL");
+            Logger::Fail("OpenGL", "Failed to link internal shader.");
             throw std::runtime_error("ERROR, INTERNAL SHADER FAILED TO COMPILE!");
         }
-        ConsoleMessage("Loaded internal shader.", "NOTICE", "OpenGL");
+        Logger::Notice("OpenGL", "Successfully loaded internal shader.");
 
         // Init now
         _DefaultShaderProgram->Use();
@@ -718,10 +720,10 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Init glad for the first time
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
             glfwTerminate();
-            ConsoleMessage("Failed to init GLAD.", "FATAL", "OpenGL");
+            Logger::Fail("OpenGL", "Failed to init GLAD.");
             throw std::runtime_error("Failed to init GLAD.");
         }
-        ConsoleMessage("Successfully initialised GLAD.", "NOTICE", "OpenGL");
+        Logger::Notice("OpenGL", "Successfully initialised GLAD.");
 #endif
 
         // Load extensions
@@ -818,7 +820,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             if (strcmp(extList[i], (const char *) "GL_EXT_texture_mirror_clamp") == 0) TexMirrorClampSupported = true;
         }
 #endif
-        ConsoleMessage("Successfully loaded extensions.", "NOTICE", "OpenGL");
+        Logger::Notice("OpenGL", "Successfully loaded extensions.");
 
         // Load shader
         LoadDefaultShader();
@@ -850,7 +852,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         ClearColor(Graphics::Color(0, 0, 0, 1));
         Clear();
 
-        ConsoleMessage("Finished initializing OpenGL API.", "NOTICE", "OpenGL");
+        Logger::Notice("OpenGL", "Finished initializing OpenGL API.");
     }
 
     // Other OpenGL Methods

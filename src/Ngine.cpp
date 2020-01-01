@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -44,10 +44,3 @@
 // WAV FORMAT
 #define DR_WAV_IMPLEMENTATION
 #include <dr_wav.h>
-
-// ConsoleMessage
-void ConsoleMessage(std::string message, std::string severity, std::string module) {
-    {
-        std::cout << "[" + module + "] " + severity + ": " + message << std::endl;
-    }
-}

@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -13,12 +13,13 @@
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
-#include "OpenGL.h"
+#include "OpenGL.hpp"
 #endif
 #endif
 
 #include "../Logger.hpp"
 #include "GraphicsDevice.hpp"
+#include "Renderer.hpp"
 
 namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
@@ -298,6 +299,7 @@ namespace NerdThings::Ngine::Graphics {
         // Delete texture data
         Width = 0;
         Height = 0;
+
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
         glDeleteTextures(1, &m_ID);
@@ -308,7 +310,21 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    // Operators
+    void Texture2D::Draw(Vector2 pos_, Color col_, float scale_, Vector2 origin_, Angle rotation_) {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        throw std::runtime_error("Not implemented.");
+#else
+        Renderer::DrawTexture(this, pos_, col_, scale_, origin_, rotation_.GetDegrees());
+#endif
+    }
+
+    void Texture2D::Draw(Rectangle destRect_, Rectangle srcRect_, Color col_, Vector2 origin_, Angle rotation_) {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        throw std::runtime_error("Not implemented.");
+#else
+        Renderer::DrawTexture(this, destRect_, srcRect_, col_, origin_, rotation_.GetDegrees());
+#endif
+    }
 
     bool Texture2D::operator==(const Texture2D &tex_) const {
 #ifdef USE_EXPERIMENTAL_RENDERER

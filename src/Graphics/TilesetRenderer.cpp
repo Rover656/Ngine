@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -87,9 +87,9 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    std::vector<Physics::ICollisionShape *>
+    std::vector<Physics::Shape *>
     TilesetRenderer::GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_) {
-        std::vector<Physics::ICollisionShape *> shapes;
+        std::vector<Physics::Shape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -117,7 +117,7 @@ namespace NerdThings::Ngine::Graphics {
                     auto poly = Rectangle(x * m_tileset.TileWidth + tilesetPosition_.X,
                                           y * m_tileset.TileWidth + tilesetPosition_.Y,
                                           m_tileset.TileWidth, m_tileset.TileHeight).ToPolygonPtr();
-                    shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
+                    shapes.push_back(dynamic_cast<Physics::Shape *>(poly));
                 }
             }
         }
@@ -125,10 +125,10 @@ namespace NerdThings::Ngine::Graphics {
         return shapes;
     }
 
-    std::vector<Physics::ICollisionShape *>
+    std::vector<Physics::Shape *>
     TilesetRenderer::GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_,
                                            Vector2 tilesetPosition_) {
-        std::vector<Physics::ICollisionShape *> shapes;
+        std::vector<Physics::Shape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -156,7 +156,7 @@ namespace NerdThings::Ngine::Graphics {
                     auto poly = Rectangle(x * m_tileset.TileWidth + tilesetPosition_.X,
                                           y * m_tileset.TileWidth + tilesetPosition_.Y,
                                           m_tileset.TileWidth, m_tileset.TileHeight).ToPolygonPtr();
-                    shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
+                    shapes.push_back(dynamic_cast<Physics::Shape *>(poly));
                 }
             }
         }
@@ -164,9 +164,9 @@ namespace NerdThings::Ngine::Graphics {
         return shapes;
     }
 
-    std::vector<Physics::ICollisionShape *>
+    std::vector<Physics::Shape *>
     TilesetRenderer::GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_) {
-        std::vector<Physics::ICollisionShape *> shapes;
+        std::vector<Physics::Shape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -195,7 +195,7 @@ namespace NerdThings::Ngine::Graphics {
                     auto poly = Rectangle(x * m_tileset.TileWidth + tilesetPosition_.X,
                                           y * m_tileset.TileWidth + tilesetPosition_.Y,
                                           m_tileset.TileWidth, m_tileset.TileHeight).ToPolygonPtr();
-                    shapes.push_back(dynamic_cast<Physics::ICollisionShape *>(poly));
+                    shapes.push_back(dynamic_cast<Physics::Shape *>(poly));
                 }
             }
         }

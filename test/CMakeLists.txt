@@ -1,6 +1,6 @@
 # Fetch source files
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
-file(GLOB_RECURSE HEADER_FILES "*.h")
+file(GLOB_RECURSE HEADER_FILES "*.h" "*.hpp")
 
 # Include Ngine cmake functions
 include(Ngine)

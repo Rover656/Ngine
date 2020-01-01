@@ -31,7 +31,7 @@ public:
         auto par = GetEntity < Entity > ();
         Vector2 velocity;
 
-        if (par->IsPhysicsEntity()) {
+        if (par->IsPhysicsEnabled()) {
             velocity = par->GetPhysicsWorld()->GetGravityPixels();
         }
 
@@ -51,8 +51,8 @@ public:
             velocity.X += MoveSpeed;
         }
 
-        if (par->IsPhysicsEntity()) {
-            par->GetPhysicsBody()->SetLinearVelocityPixels(velocity);
+        if (par->IsPhysicsEnabled()) {
+            par->GetPhysicsBody()->SetLinearVelocity(velocity);
         } else {
             par->MoveBy(velocity);
         }
@@ -64,6 +64,8 @@ public:
         }
 
         if (Keyboard::GetCurrent()->IsKeyDown(KEY_RIGHT)) {
+            auto rot = par->GetRotation() + 5;
+            auto rotDeg = rot.GetDegrees();
             par->SetRotation(par->GetRotation() + 5);
         }
 
@@ -74,29 +76,38 @@ public:
 };
 
 class PlayerEntity : public Entity {
-    ResourceManager *m_resourceManager;
 public:
-    PlayerEntity(ResourceManager *resources_, Vector2 position_)
-            : Entity(position_), m_resourceManager(resources_) {
+    PlayerEntity(Vector2 position_)
+            : Entity(position_, 0, 0, false, true) {
         OnInit += new ClassMethodEventHandler<PlayerEntity>(this, &PlayerEntity::Init);
     }
 
     void Init() {
+        // Subscribe to updates.
         SubscribeToUpdate();
 
+        // Get physics body
+        auto body = GetPhysicsBody();
+
+        // Set initial info
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_DYNAMIC;
         bi.Position = GetPosition();
         bi.FixedRotation = true;
-        auto body = GetScene()->GetPhysicsWorld()->CreateBody(bi);
-        auto shape = CircleShape(1);
+        body->Set(bi);
+
+        // Add fixtures (WIP)
+        //auto shape = CircleShape(1);
+        auto shape = PolygonShape();
+        shape.SetAsBox(16 / 16, 16 / 16);
         body->CreateFixture(&shape, 1);
         //auto shapeb = PolygonShape::CreateAsBox(16, 16);
         //body->CreateFixture(&shapeb, 1);
-        body->SetAngularVelocity(5);
-        SetPhysicsBody(body);
 
-        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(m_resourceManager->GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
+        // Apply test velocity
+        //body->SetAngularVelocity(5);
+
+        auto s = AddComponent("Sprite", new SpriteComponent(this, Sprite(GetResourceManager()->GetTexture("test_spritesheet"), 16, 16, 32, 32, 30, 0)));
         s->SetOrigin({16, 16});
 
         AddComponent("Movement", new KeyboardMovementComponent2D(this));
@@ -116,18 +127,23 @@ public:
 
 class Floor : public Entity {
 public:
-    Floor(Vector2 position_) : Entity(position_) {
+    Floor(Vector2 position_) : Entity(position_, 0, 0, false, true) {
         OnInit += new ClassMethodEventHandler<Floor>(this, &Floor::Init);
     }
 
     void Init() {
+        // Get physics body
+        auto body = GetPhysicsBody();
+
+        // Set initial body info
         PhysicsBody::BodyInfo bi;
         bi.Type = PhysicsBody::BODY_STATIC;
         bi.Position = GetPosition();
-        auto body = GetScene()->GetPhysicsWorld()->CreateBody(bi);
+        body->Set(bi);
+
+        // Add fixture
         auto box = PolygonShape::CreateAsBox(5, 5);
         body->CreateFixture(&box, 0);
-        SetPhysicsBody(body);
     }
 };
 
@@ -188,9 +204,8 @@ public:
     //TestWidget widg;
 
     TilesetRenderer *testTiles;
-    ResourceManager *_Resources;
 
-    TestScene(ResourceManager *resources_, Game* game) : Scene(game, {0, 0}, 16), _Resources(resources_) {//, widg(Vector2(120, 120)) {
+    TestScene(Game* game) : Scene(game, {0, 0}, 16) {//, widg(Vector2(120, 120)) {
         OnInit += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::Init);
         OnUnload += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::UnInit);
     }
@@ -202,7 +217,7 @@ public:
         OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::DrawCam);
 
         // Add entities
-        AddChild("Player", new PlayerEntity(_Resources, {100, 100}));
+        AddChild("Player", new PlayerEntity({100, 100}));
         AddChild("Floor", new Floor({100, 500}));
 
         // Configure physics
@@ -217,6 +232,7 @@ public:
 
         // Tileset tests
         std::vector<int> tileData;
+        tileData.reserve(100);
         for (auto i = 0; i < 50; i++) {
             tileData.push_back(1);
         }
@@ -224,7 +240,7 @@ public:
             tileData.push_back(2);
         }
 
-        testTiles = new TilesetRenderer(Tileset(_Resources->GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
+        testTiles = new TilesetRenderer(Tileset(GetResourceManager()->GetTexture("test_tiles"), 32, 32), 10, 10, tileData);
         testTiles->SetTileAt({5, 5}, 13);
     }
 
@@ -262,14 +278,12 @@ public:
 };
 
 class TestGame : public Game {
-    TestScene *_Scene;
+    TestScene *m_scene;
 
 #ifdef USE_EXPERIMENTAL_RENDERER
     Renderer *_Renderer;
     Graphics::Rendering::QuadRenderable _Obj;
 #endif
-
-    ResourceManager *_Resources;
 public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
@@ -294,18 +308,30 @@ public:
         // Clear display
         _Renderer->Clear();
 
-//        // Queue 1000 quads
-//        for (auto i = 0; i < 1000; i++)
-//            _Renderer->Add(&_Obj);
-
+        // RenderBatched a triangle.
         _Renderer->Begin(Renderer::PRIMITIVE_TRIANGLES);
-        _Renderer->Vertex({0, 0}, {}, Color::White);
-        _Renderer->Vertex({1, 0}, {}, Color::White);
-        _Renderer->Vertex({1, 1}, {}, Color::White);
+        _Renderer->Vertex({0, 0}, {}, Color::Red);
+        _Renderer->Vertex({100, 0}, {}, Color::Red);
+        _Renderer->Vertex({100, 100}, {}, Color::Red);
         _Renderer->End();
 
+        // RenderBatched a quad.
+        auto t = GetResourceManager()->GetTexture("test_spritesheet");
+        for (auto i = 0; i < 2000; i++) {
+            _Renderer->Begin(Renderer::PRIMITIVE_QUADS, t);
+            _Renderer->Vertex({125, 125}, {0, 0}, Color::Blue);
+            _Renderer->Vertex({125 + 50, 125}, {1, 0}, Color::Blue);
+            _Renderer->Vertex({125 + 50, 125 + 50}, {1, 1}, Color::Blue);
+            _Renderer->Vertex({125, 125 + 50}, {0, 1}, Color::Blue);
+            _Renderer->End();
+        }
+
         // Render the quads
-        _Renderer->Render();
+        _Renderer->RenderBatched();
+#else
+        auto t = GetResourceManager()->GetTexture("test_spritesheet");
+        for (auto i = 0; i < 2000; i++)
+            t->Draw({125, 125, 50, 50}, {0, 0, 64, 64}, Color::Blue);
 #endif
     }
 
@@ -313,17 +339,15 @@ public:
         // Set exit key
         Keyboard::GetCurrent()->SetExitKey(KEY_ESCAPE);
 
-        // Create resource manager
-        _Resources = new ResourceManager(GetGraphicsDevice());
-
-        // Load all content
-        _Resources->LoadResources();
+        // Load all content (using default resource manager config).
+        auto resMan = GetResourceManager();
+        resMan->LoadResources();
 #ifdef USE_EXPERIMENTAL_RENDERER
         // Create renderer
         _Renderer = new Renderer(GetGraphicsDevice());
 
         // Set screen clear color
-        _Renderer->SetClearColor(Color::Blue);
+        _Renderer->SetClearColor(Color::Orange);
 
         // Create vertex data for our quad (from bottom left)
         std::vector<Rendering::VertexData> vdat;
@@ -335,24 +359,20 @@ public:
 
         // Create our quad
         _Obj = Rendering::QuadRenderable(vdat);
-        _Obj.SetTexture(_Resources->GetTexture("test_tiles"));
+        _Obj.SetTexture(resMan->GetTexture("test_tiles"));
 #else
         // Load arial as default font
-        Font::SetDefaultFont(_Resources->GetFont("Upheaval"));
+        Font::SetDefaultFont(resMan->GetFont("Upheaval"));
 
         // Create scene
-        _Scene = new TestScene(_Resources, this);
+        m_scene = new TestScene(this);
 
         // Set scene
-        SetScene(_Scene);
+//        SetScene(m_scene);
 #endif
     }
 
     void Cleanup() {
-        _Resources->DeleteAll();
-        delete _Resources;
-        _Resources = nullptr;
-
 #ifdef USE_EXPERIMENTAL_RENDERER
         delete _Renderer;
         _Renderer = nullptr;
@@ -369,7 +389,7 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
 #ifndef USE_EXPERIMENTAL_RENDERER
-    gameConfig.MaintainResolution = true;
+    //gameConfig.MaintainResolution = true;
 #endif
 
     WindowConfig windowConfig;

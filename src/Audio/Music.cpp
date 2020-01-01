@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -15,6 +15,7 @@
 #include <dr_flac.h>
 #include <stb_vorbis.h>
 
+#include "../Logger.hpp"
 #include "AudioDevice.hpp"
 
 namespace NerdThings::Ngine::Audio {
@@ -95,6 +96,7 @@ namespace NerdThings::Ngine::Audio {
         }
 
         if (!loaded) {
+            // Free music
             switch(music->CTXType) {
                 case AUDIO_MP3: {
                     drmp3_uninit((drmp3 *) music->CTXData);
@@ -109,15 +111,13 @@ namespace NerdThings::Ngine::Audio {
                     drflac_free((drflac *)music->CTXData);
                 } break;
             }
-
             music->CTXData = nullptr;
-
-            ConsoleMessage("Could not load music file.", "WARN", "Music");
-
             delete music;
+
+            Logger::Warn("Music", "Could not load music file.");
             return nullptr;
         } else {
-            ConsoleMessage("Successfully loaded music file.", "NOTICE", "Music");
+            Logger::Notice("Music", "Successfully loaded music file.");
             return music;
         }
     }
@@ -189,7 +189,7 @@ namespace NerdThings::Ngine::Audio {
         }
 
         CTXData = nullptr;
-        ConsoleMessage("Unloaded music stream.", "NOTICE", "Music");
+        Logger::Notice("Music", "Unloaded music stream.");
     }
 
     void Music::Update() {

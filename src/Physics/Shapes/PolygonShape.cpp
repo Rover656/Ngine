@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -13,7 +13,7 @@
 
 #include "../../Graphics/Renderer.hpp"
 
-#include <Box2D/Collision/Shapes/b2PolygonShape.h>
+#include <Box2D/Box2D.h>
 
 namespace NerdThings::Ngine::Physics::Shapes {
     // Public Constructors
@@ -62,8 +62,8 @@ namespace NerdThings::Ngine::Physics::Shapes {
             v2 += pos_;
 
             // Apply rotation
-            v1 = v1.Rotate(c, angle_);
-            v2 = v2.Rotate(c, angle_);
+            v1 = v1.Transform(c, angle_);
+            v2 = v2.Transform(c, angle_);
 
 #ifndef USE_EXPERIMENTAL_RENDERER
             Graphics::Renderer::DrawLine(v1, v2, Graphics::Color::Red);

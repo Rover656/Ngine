@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -14,10 +14,10 @@
 #ifdef USE_EXPERIMENTAL_RENDERER
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "OpenGL.h"
+#include "OpenGL.hpp"
 #endif
 
-#include "Shader.h"
+#include "Shader.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     ShaderProgram::ShaderProgram() {

@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -15,6 +15,8 @@
 #include <dr_mp3.h>
 #include <dr_wav.h>
 #include <stb_vorbis.h>
+
+#include "../Logger.hpp"
 
 namespace NerdThings::Ngine::Audio {
     Wave::~Wave() {
@@ -36,7 +38,7 @@ namespace NerdThings::Ngine::Audio {
             wav->__LoadOGG(path_);
         } else if (path_.GetFileExtension() == "flac") {
             wav->__LoadFLAC(path_);
-        } else ConsoleMessage("File format not supported.", "ERR", "Wave");
+        } else Logger::Error("Wave", "File format not supported.");
 
         return wav;
     }
@@ -44,7 +46,7 @@ namespace NerdThings::Ngine::Audio {
     void Wave::Unload() {
         free(Data);
         Data = nullptr;
-        ConsoleMessage("Unloaded wav data from RAM.", "NOTICE", "Wave");
+        Logger::Notice("Wave", "Unloaded wav data from RAM.");
     }
 
     void Wave::__LoadFLAC(const Filesystem::Path &path_) {
@@ -55,10 +57,10 @@ namespace NerdThings::Ngine::Audio {
         SampleCount = (unsigned int) totalSampleCount;
         SampleSize = 16;
 
-        if (Channels > 2) ConsoleMessage("Too many FLAC channels!", "ERR", "Wave");
+        if (Channels > 2) Logger::Warn("Wave", "Too many FLAC channels!");
 
-        if (Data == nullptr) ConsoleMessage("Failed to load FLAC data.", "ERR", "Wave");
-        else ConsoleMessage("Loaded FLAC file successfully!", "NOTICE", "Wave");
+        if (Data == nullptr) Logger::Error("Wave", "Failed to load FLAC data.");
+        else Logger::Notice("Wave", "Loaded FLAC file successfully!");
     }
 
     void Wave::__LoadMP3(const Filesystem::Path &path_) {
@@ -73,32 +75,29 @@ namespace NerdThings::Ngine::Audio {
         SampleSize = 32;
 
         // Only support up to 2 channels
-        if (Channels > 2) ConsoleMessage("Too many MP3 channels!", "ERR", "Wave");
+        if (Channels > 2) Logger::Error("Wave", "Too many MP3 channels!");
 
-        if (Data == nullptr) ConsoleMessage("Failed to load MP3 data.", "ERR", "Wave");
-        else ConsoleMessage("Loaded MP3 file successfully!", "NOTICE", "Wave");
+        if (Data == nullptr) Logger::Error("Wave", "Failed to load MP3 data.");
+        else Logger::Notice("Wave", "Loaded MP3 file successfully!");
     }
 
     void Wave::__LoadOGG(const Filesystem::Path &path_) {
         // Load ogg file
         stb_vorbis *oggFile = stb_vorbis_open_filename(path_.GetString().c_str(), nullptr, nullptr);
 
-        if (oggFile == nullptr) ConsoleMessage("OGG file could not be opened.", "WARN", "Wave");
+        if (oggFile == nullptr) Logger::Warn("Wave", "OGG file could not be opened.");
         else {
             stb_vorbis_info info = stb_vorbis_get_info(oggFile);
-
             SampleRate = info.sample_rate;
             SampleSize = 16;
             Channels = info.channels;
             SampleCount = (unsigned int)stb_vorbis_stream_length_in_samples(oggFile)*info.channels;
-
             Data = (short *)malloc(SampleCount*Channels*sizeof(short));
 
             int numSamplesOgg = stb_vorbis_get_samples_short_interleaved(oggFile, info.channels, (short *)Data, SampleCount*Channels);
-
-            ConsoleMessage("OGG File loaded successfully!", "NOTICE", "Wave");
-
             stb_vorbis_close(oggFile);
+
+            Logger::Notice("Wave", "OGG File loaded successfully!");
         }
     }
 
@@ -111,9 +110,9 @@ namespace NerdThings::Ngine::Audio {
         SampleSize = 32;
 
         // Only support up to 2 channels
-        if (Channels > 2) ConsoleMessage("Too many WAV channels!", "ERR", "Wave");
+        if (Channels > 2) Logger::Error("Wave", "Too many WAV channels!");
 
-        if (Data == nullptr) ConsoleMessage("Failed to load WAV data.", "ERR", "Wave");
-        else ConsoleMessage("Loaded WAV file successfully!", "NOTICE", "Wave");
+        if (Data == nullptr) Logger::Error("Wave", "Failed to load WAV data.");
+        else Logger::Notice("Wave", "Loaded WAV file successfully!");
     }
 }

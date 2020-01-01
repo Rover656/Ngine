@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -34,18 +34,27 @@ namespace NerdThings::Ngine::Graphics {
         auto y = 0.0f;
         for (auto i = 0; i < tile_; i++) {
             x += TileWidth;
-            if (x >= (float)Texture->Width) {
+            if (x >= (float) Texture->Width) {
                 x = 0;
                 y += TileHeight;
             }
         }
 
-        // Get source rectangle
-        Rectangle sourceRectangle = {x, y, TileWidth, TileHeight};
-
         // Draw
-#ifndef USE_EXPERIMENTAL_RENDERER
-        Renderer::DrawTexture(Texture, sourceRectangle, position_, TileWidth * scale_, TileHeight * scale_, Color::White, origin_, rotation_);
-#endif
+        Texture->Draw(
+                {
+                        position_,
+                        TileWidth * scale_,
+                        TileHeight * scale_
+                },
+                {
+                        x,
+                        y,
+                        TileWidth,
+                        TileHeight
+                },
+                Color::White,
+                origin_,
+                rotation_);
     }
 }

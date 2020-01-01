@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -26,7 +26,7 @@
 #endif
 
 #if defined(PLATFORM_UWP)
-#include "UWP/GameApp.h"
+#include "UWP/GameApp.hpp"
 #endif
 
 namespace NerdThings::Ngine {
@@ -53,21 +53,29 @@ namespace NerdThings::Ngine {
         else Logger::Warn("Game", "Failed to create audio device. Audio APIs will be unavailable.");
 
         // Create render target
+        // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
             m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
+        // Create resource manager
+        Logger::Notice("Game", "Creating the game resource manager.");
+        m_resourceManager = new Filesystem::ResourceManager(m_graphicsDevice);
+
+        // DEV: If anything new is added to the Game class, its initialization should occur here (Before OnInit())
+
         // Invoke OnRun
         OnInit();
 
-        // Timing
+        // Init Timing
         m_lag = std::chrono::nanoseconds(0);
         m_started = std::chrono::high_resolution_clock::now();
         m_timestep = std::chrono::milliseconds(int(1000.0f / float(Config.FPS)));
     }
 
     void Game::_runFrame() {
+        // Check if we are/should be suspended
         if (!m_gameWindow->IsVisible() && !Config.RunWhileHidden) {
             // Poll window events
             m_gameWindow->PollEvents();
@@ -87,12 +95,12 @@ namespace NerdThings::Ngine {
         }
 
         // Update timestep if FPS has changed
-        if (m_timestep.count() != int(1000.0f / (float)Config.FPS)) {
-            m_timestep = std::chrono::milliseconds(int(1000.0f / (float)Config.FPS));
+        if (m_timestep.count() != int(1000.0f / (float) Config.FPS)) {
+            m_timestep = std::chrono::milliseconds(int(1000.0f / (float) Config.FPS));
             Logger::Notice("Game", "Timestep updated to match FPS.");
         }
 
-        // Make our window current.
+        // Make our window current (incase of anything going weird or the game having more than 1 window).
         m_gameWindow->MakeCurrent();
 
         // Resume if we had suspended
@@ -113,10 +121,9 @@ namespace NerdThings::Ngine {
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
             m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
-        }
-        else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
-                                               (m_renderTarget->Width != Config.TargetWidth ||
-                                                m_renderTarget->Height != Config.TargetHeight))) {
+        } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
+                                                 (m_renderTarget->Width != Config.TargetWidth ||
+                                                  m_renderTarget->Height != Config.TargetHeight))) {
             m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
@@ -196,7 +203,7 @@ namespace NerdThings::Ngine {
             // Clear with the correct background colour
             Graphics::Renderer::Clear(ClearColor);
 
-            // Render scene
+            // RenderBatched scene
             if (m_currentScene != nullptr) {
                 m_currentScene->Draw();
             }
@@ -209,20 +216,20 @@ namespace NerdThings::Ngine {
 #ifdef USE_EXPERIMENTAL_RENDERER
 #else
                 Graphics::GraphicsManager::PopTarget();
-                    Graphics::Renderer::DrawTexture(m_renderTarget->GetTexture(),
-                        {
-                                (w - iw * scale) * 0.5f,
-                                (h - ih * scale) * 0.5f,
-                                iw * scale,
-                                ih * scale
-                        },
-                                                    {
-                                                            0,
-                                                            0,
-                                                            static_cast<float>(m_renderTarget->Width),
-                                                            static_cast<float>(m_renderTarget->Height) * -1
-                                                    },
-                        Graphics::Color::White);
+                Graphics::Renderer::DrawTexture(m_renderTarget->GetTexture(),
+                                                {
+                                                        (w - iw * scale) * 0.5f,
+                                                        (h - ih * scale) * 0.5f,
+                                                        iw * scale,
+                                                        ih * scale
+                                                },
+                                                {
+                                                        0,
+                                                        0,
+                                                        static_cast<float>(m_renderTarget->Width),
+                                                        static_cast<float>(m_renderTarget->Height) * -1
+                                                },
+                                                Graphics::Color::White);
 #endif
             }
 
@@ -264,6 +271,9 @@ namespace NerdThings::Ngine {
         // Call the cleanup event
         OnCleanup();
 
+        // Delete resource manager
+        delete m_resourceManager;
+
         // Close audio
         Audio::AudioDevice::Close();
         Logger::Notice("Game", "Closed audio device.");
@@ -303,7 +313,9 @@ namespace NerdThings::Ngine {
     }
 
     void Game::Run() {
-#if !defined(PLATFORM_UWP)
+#if defined(PLATFORM_UWP)
+        throw std::runtime_error("For the UWP platform, the Run() method must not be used! Use UWP::GameApp instead.");
+#else
         // Init game.
         _init();
 
@@ -318,8 +330,6 @@ namespace NerdThings::Ngine {
 
         // Clean up
         _cleanup();
-#else
-        throw std::runtime_error("For the UWP platform, the Run() method must not be used! Use UWP::GameApp instead.");
 #endif
     }
 
@@ -354,5 +364,9 @@ namespace NerdThings::Ngine {
             m_currentScene->OnInit({this});
 
         Logger::Notice("Game", "A new scene has been loaded.");
+    }
+
+    Filesystem::ResourceManager *Game::GetResourceManager() const {
+        return m_resourceManager;
     }
 }

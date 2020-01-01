@@ -1,24 +1,26 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
-// Include ngine
 #include "Config.hpp"
 
+#include "Filesystem/ResourceManager.hpp"
 #include "Physics/PhysicsBody.hpp"
 #include "EntityContainer.hpp"
 #include "Math.hpp"
 #include "Scene.hpp"
+
+// TODO: Proper way to handle rotation from a components point of view. Need to have entity centers and ways to rotate both with the entity and independently.
 
 namespace NerdThings::Ngine {
     // Forward declare
@@ -29,23 +31,17 @@ namespace NerdThings::Ngine {
      */
     struct EntityTransformChangedEventArgs : EventArgs {
         /**
-         * The new entity position
+         * The new entity transformation.
          */
-        Vector2 EntityPosition;
-
-        /**
-         * The new rotation
-         */
-        float EntityRotation;
+        Transform2D EntityTransformation;
 
         /**
          * Create a new entity transform event argument.
          *
-         * @param pos_ The new entity position.
-         * @param rot_ The new entity rotation.
+         * @param transform_ The new entity transform.
          */
-        EntityTransformChangedEventArgs(Vector2 pos_, float rot_)
-                : EntityPosition(pos_), EntityRotation(rot_) {}
+        EntityTransformChangedEventArgs(Transform2D transform_)
+                : EntityTransformation(transform_) {}
     };
 
     /**
@@ -55,6 +51,11 @@ namespace NerdThings::Ngine {
         // Make the EntityContainer a friend so parenting can be done
         friend class EntityContainer;
         friend class Scene;
+
+        /**
+         * This entity's transformation.
+         */
+        Transform2D m_transform;
 
         /**
          * Whether or not this entity can be culled
@@ -93,14 +94,9 @@ namespace NerdThings::Ngine {
         bool m_persistentUpdates = false;
 
         /**
-         * The entity position
+         * Whether or not the entity has physics enabled.
          */
-        Vector2 m_position = Vector2::Zero;
-
-        /**
-         * The entity rotation (in radians)
-         */
-        float m_rotation = 0;
+        bool m_physicsEnabled = false;
 
         /**
          * The current physics body.
@@ -159,11 +155,13 @@ namespace NerdThings::Ngine {
          * Create a new entity.
          *
          * @param parentScene_ The parent scene.
-         * @param position_ The initial position
+         * @param position_ The initial position.
+         * @param rotation_ Initial rotation.
          * @param depth_ The depth to be rendered at
          * @param canCull_ Whether or not this can be culled.
+         * @param physicsEnabled_ Whether or not physics should be enabled for this entity.
          */
-        Entity(Vector2 position_, int depth_ = 0, bool canCull_ = false);
+        Entity(Vector2 position_, float rotation_ = 0, int depth_ = 0, bool canCull_ = false, bool physicsEnabled_ = false);
         virtual ~Entity();
 
         /**
@@ -297,6 +295,13 @@ namespace NerdThings::Ngine {
         Game *GetGame() const;
 
         /**
+         * Get the game resource manager.
+         *
+         * @return The game resource manager.
+         */
+        Filesystem::ResourceManager *GetResourceManager() const;
+
+        /**
          * Get the entity depth.
          *
          * @return The depth of the entity.
@@ -309,6 +314,20 @@ namespace NerdThings::Ngine {
          * @param depth_ The depth to set the entity to.
          */
         void SetDepth(int depth_);
+
+        // MAJOR TODO: Add system for entity origin when not attached to physics body.
+
+        /**
+         * Get the entity transform (position and rotation).
+         *
+         * @return The entity transform.
+         */
+        Transform2D GetTransform() const;
+
+        /**
+         * Set the entity transform (position and rotation).
+         */
+        void SetTransform(const Transform2D &transform_);
 
         /**
          * Get the entity position
@@ -327,8 +346,8 @@ namespace NerdThings::Ngine {
         /**
          * Move an entity by a vector.
          *
+         * @warning Use of this in a physics enabled entity is not recommended, add a velocity instead.
          * @param moveBy_ The number of pixels to move in each direction.
-         * @warning If this is a physics entity, use the physics body to apply a velocity instead.
          */
         void MoveBy(Vector2 moveBy_);
 
@@ -337,21 +356,23 @@ namespace NerdThings::Ngine {
          *
          * @return The entity rotation, in degrees.
          */
-        float GetRotation() const;
+        Angle GetRotation() const;
 
         /**
          * Set entity rotation.
          *
          * @param rotation_ The rotation, in degrees, to set our entity to.
          */
-        void SetRotation(float rotation_);
+        void SetRotation(Angle rotation_);
 
         /**
          * Determine if this entity is affected by physics.
+         * This is determined by the physicsEnabled_ parameter in the entity constructor.
          *
+         * @note Once an entity is created, this property *can not* be changed.
          * @return Whether or not this entity has a physics body attached.
          */
-        bool IsPhysicsEntity() const;
+        bool IsPhysicsEnabled() const;
 
         /**
          * Get the attached physics body.
@@ -366,15 +387,6 @@ namespace NerdThings::Ngine {
          * @return The physics body. If none, null.
          */
         const Physics::PhysicsBody *GetPhysicsBody() const;
-
-        /**
-         * Set the entity physics body.
-         *
-         * @warning You cannot add a body until the entity has been added to a `Scene`.
-         * @param body_ The body to add to this entity.
-         * @note The lifecycle of the body will now be managed by this entity, even if another body is set.
-         */
-        void SetPhysicsBody(Physics::PhysicsBody *body_);
 
         /**
          * Get the world our body is a member of.

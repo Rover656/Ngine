@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -21,6 +21,16 @@ namespace NerdThings::Ngine {
         // Set the parent scene
         m_parentScene = scene_;
 
+        // TODO: Check scene is physics enabled too!!!
+        // Create physics body if physics is enabled
+        if (m_physicsEnabled) {
+            // Create body
+            m_physicsBody = new Physics::PhysicsBody(m_parentScene->GetPhysicsWorld());
+
+            // Send initial position and rotation to body (TODO: body center system too!)
+            m_physicsBody->SetTransform(m_transform);
+        }
+
         // Add to scene
         m_parentScene->_addEntity(this);
     }
@@ -28,6 +38,13 @@ namespace NerdThings::Ngine {
     void Entity::_removeFromScene() {
         // Unbind update event
         UnsubscribeFromUpdate();
+
+        // Delete physics body
+        if (m_physicsEnabled) {
+            // Delete body
+            delete m_physicsBody;
+            m_physicsBody = nullptr;
+        }
 
         // Remove from scene (and therefore unset entity parent too)
         m_parentEntity = nullptr;
@@ -39,7 +56,7 @@ namespace NerdThings::Ngine {
         OnDestroy();
 
         // Delete components
-        for (const auto& c : m_components)
+        for (const auto &c : m_components)
             delete c.second;
         m_components.clear();
 
@@ -59,8 +76,10 @@ namespace NerdThings::Ngine {
         m_parentScene = nullptr;
     }
 
-    Entity::Entity(const Vector2 position_, int depth_, bool canCull_)
-            : m_canCull(canCull_), m_depth(depth_), m_position(position_),
+    // TODO: Remove position and rotation from this constructor???
+    Entity::Entity(const Vector2 position_, float rotation_, int depth_, bool canCull_, bool physicsEnabled_)
+            : m_canCull(canCull_), m_depth(depth_), m_transform(position_, rotation_),
+              m_physicsEnabled(physicsEnabled_),
               EntityContainer(EntityContainer::ENTITY) {}
 
     Entity::~Entity() {
@@ -141,6 +160,11 @@ namespace NerdThings::Ngine {
         return m_parentScene->GetGame();
     }
 
+    Filesystem::ResourceManager *Entity::GetResourceManager() const {
+        if (m_parentScene == nullptr) return nullptr;
+        return m_parentScene->GetResourceManager();
+    }
+
     int Entity::GetDepth() const {
         return m_depth;
     }
@@ -151,59 +175,76 @@ namespace NerdThings::Ngine {
         m_depth = depth_;
     }
 
-    Vector2 Entity::GetPosition() const {
-        if (m_physicsBody == nullptr) {
-            return m_position;
+    Transform2D Entity::GetTransform() const {
+        if (m_physicsEnabled) {
+            return m_physicsBody->GetTransform();
         } else {
+            return m_transform;
+        }
+    }
+
+    void Entity::SetTransform(const Transform2D &transform_) {
+        if (m_physicsEnabled) {
+            m_physicsBody->SetTransform(transform_);
+        } else {
+            m_transform = transform_;
+        }
+    }
+
+    Vector2 Entity::GetPosition() const {
+        if (m_physicsEnabled) {
             return m_physicsBody->GetPosition();
+        } else {
+            return m_transform.Position;
         }
     }
 
     void Entity::SetPosition(const Vector2 position_) {
-        if (m_physicsBody == nullptr) {
-            m_position = position_;
-        } else {
+        if (m_physicsEnabled) {
             m_physicsBody->SetPosition(position_);
+        } else {
+            m_transform.Position = position_;
         }
 
         // Fire event
-        OnTransformChanged({GetPosition(), GetRotation()});
+        OnTransformChanged(GetTransform());
     }
 
     void Entity::MoveBy(const Vector2 moveBy_) {
-        if (m_physicsBody == nullptr) {
-            m_position += moveBy_;
-        } else {
+        if (m_physicsEnabled) {
+            // Not recommended, read warning in docs.
             auto p = m_physicsBody->GetPosition();
             m_physicsBody->SetPosition(p + moveBy_);
+        } else {
+            m_transform.Position += moveBy_;
         }
 
         // Fire event
-        OnTransformChanged({GetPosition(), GetRotation()});
+        OnTransformChanged(GetTransform());
     }
 
-    float Entity::GetRotation() const {
+    Angle Entity::GetRotation() const {
         if (m_physicsBody == nullptr) {
-            return m_rotation;
+            return m_transform.Rotation;
         } else {
-            return m_physicsBody->GetRotation();
+            return m_physicsBody->GetTransform().Rotation;
         }
     }
 
-    void Entity::SetRotation(float rotation_) {
+    void Entity::SetRotation(Angle rotation_) {
         if (m_physicsBody == nullptr) {
             // Set our rotation
-            m_rotation = rotation_;
+            m_transform.Rotation = rotation_;
         } else {
             // Set the body rotation
             m_physicsBody->SetRotation(rotation_);
         }
 
         // Fire event
-        OnTransformChanged({GetPosition(), GetRotation()});
+        OnTransformChanged(GetTransform());
     }
 
-    bool Entity::IsPhysicsEntity() const {
+    bool Entity::IsPhysicsEnabled() const {
         return m_physicsBody != nullptr;
     }
 
@@ -213,19 +254,6 @@ namespace NerdThings::Ngine {
 
     const Physics::PhysicsBody *Entity::GetPhysicsBody() const {
         return m_physicsBody;
-    }
-
-    void Entity::SetPhysicsBody(Physics::PhysicsBody *body_) {
-        // Check we have a scene
-        if (m_parentScene == nullptr)
-            throw std::runtime_error("Cannot set a physics body until the Entity is added to a Scene.");
-
-        // Remove current body
-        if (m_physicsBody != nullptr)
-            m_physicsBody->Destroy();
-
-        // Set our body
-        m_physicsBody = body_;
     }
 
     Physics::PhysicsWorld *Entity::GetPhysicsWorld() {
@@ -294,7 +322,7 @@ namespace NerdThings::Ngine {
 
         if (m_physicsBody != nullptr) {
             // As we are a physics entity, fire this each frame
-            OnTransformChanged({GetPosition(), GetRotation()});
+            OnTransformChanged(GetTransform());
         }
     }
 }

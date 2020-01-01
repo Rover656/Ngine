@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -33,12 +33,12 @@ namespace NerdThings::Ngine::Graphics {
         Texture2D *m_texture;
     public:
         /**
-         * Render target width.
+         * RenderBatched target width.
          */
         unsigned int Width = 0;
 
         /**
-         * Render target height.
+         * RenderBatched target height.
          */
         unsigned int Height = 0;
 
@@ -57,8 +57,8 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * Create a render target.
          *
-         * @param width_ Render target width.
-         * @param height_ Render target height.
+         * @param width_ RenderBatched target width.
+         * @param height_ RenderBatched target height.
          */
         RenderTarget(unsigned int width_, unsigned int height_);
         ~RenderTarget();

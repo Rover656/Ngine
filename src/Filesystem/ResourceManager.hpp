@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -93,6 +93,7 @@ namespace NerdThings::Ngine::Filesystem {
         /**
          * Create a new resource manager.
          *
+         * @warning The `Game` class provides a resource manager. Using more than one resource manager could get confusing in your implementation.
          * @param graphicsDevice_ The graphics device for graphics resources.
          */
         ResourceManager(Graphics::GraphicsDevice *graphicsDevice_);

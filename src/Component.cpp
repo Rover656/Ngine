@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -27,6 +27,10 @@ namespace NerdThings::Ngine {
 
     Game *Component::GetGame() const {
         return m_parentEntity->GetGame();
+    }
+
+    Filesystem::ResourceManager *Component::GetResourceManager() const {
+        return m_parentEntity->GetResourceManager();
     }
 
     void Component::SubscribeToDraw() {

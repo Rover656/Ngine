@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -24,10 +24,10 @@ namespace NerdThings::Ngine {
         origin_ += {X, Y};
 
         // Get rectangle coords rotated
-        const auto tl = Vector2(X, Y).Rotate(origin_, rotation_);
-        const auto tr = Vector2(X + Width, Y).Rotate(origin_, rotation_);
-        const auto bl = Vector2(X, Y + Height).Rotate(origin_, rotation_);
-        const auto br = Vector2(X + Width, Y + Height).Rotate(origin_, rotation_);
+        const auto tl = Vector2(X, Y).Transform(origin_, rotation_);
+        const auto tr = Vector2(X + Width, Y).Transform(origin_, rotation_);
+        const auto bl = Vector2(X, Y + Height).Transform(origin_, rotation_);
+        const auto br = Vector2(X + Width, Y + Height).Transform(origin_, rotation_);
 
         // Find min and max
         auto minX = std::min(tl.X, std::min(tr.X, std::min(bl.X, br.X)));
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine {
         // Make polygon
         std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
-            vertex = vertex.Rotate(origin_, rotation_);
+            vertex = vertex.Transform(origin_, rotation_);
         }
         return Physics::Polygon(vertices);
     }
@@ -69,7 +69,7 @@ namespace NerdThings::Ngine {
         // Make polygon
         std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
-            vertex = vertex.Rotate(origin_, rotation_);
+            vertex = vertex.Transform(origin_, rotation_);
         }
         return new Physics::Polygon(vertices);
     }

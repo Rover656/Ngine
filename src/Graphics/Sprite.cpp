@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -32,8 +32,8 @@ namespace NerdThings::Ngine::Graphics {
 
     Sprite::Sprite(Texture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                    float imageSpeed_, int startingFrame)
-        : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
-          ImageSpeed(imageSpeed_) {
+            : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
+              ImageSpeed(imageSpeed_) {
         // Add texture
         m_textures.push_back(texture_);
 
@@ -44,7 +44,7 @@ namespace NerdThings::Ngine::Graphics {
         m_spriteSheet = true;
     }
 
-    Sprite::Sprite(const std::vector<Texture2D*> &textures_, float imageSpeed_, int startingFrame_) {
+    Sprite::Sprite(const std::vector<Texture2D *> &textures_, float imageSpeed_, int startingFrame_) {
         // Set textures
         for (auto tex : textures_) {
             m_textures.push_back(tex);
@@ -58,18 +58,19 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Sprite::Draw(Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
-        if (m_textures.empty()) return;
-#ifndef USE_EXPERIMENTAL_RENDERER
-        Renderer::DrawTexture(GetCurrentTexture(),
-                              Rectangle(
-                                 position_,
-                                 static_cast<float>(DrawWidth * scale_),
-                                 static_cast<float>(DrawHeight * scale_)),
-                              GetSourceRectangle(),
-                              Color::White,
-                              origin_,
-                              rotation_);
-#endif
+        if (m_textures.empty())
+            return;
+
+        GetCurrentTexture()->Draw(
+                {
+                        position_,
+                        static_cast<float>(DrawWidth * scale_),
+                        static_cast<float>(DrawHeight * scale_)
+                },
+                GetSourceRectangle(),
+                Color::White,
+                origin_,
+                rotation_);
     }
 
     void Sprite::Update() {
@@ -86,7 +87,8 @@ namespace NerdThings::Ngine::Graphics {
 
                 // Reset if out of range
                 if (m_spriteSheet) {
-                    auto count = (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
+                    auto count =
+                            (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
 
                     if (CurrentFrame > count - 1)
                         CurrentFrame = 0;
@@ -168,25 +170,27 @@ namespace NerdThings::Ngine::Graphics {
     Rectangle Sprite::GetSourceRectangle() {
         if (m_spriteSheet)
             return {
-                static_cast<float>(FrameX()),
-                static_cast<float>(FrameY()),
-                static_cast<float>(FrameWidth),
-                static_cast<float>(FrameHeight)
+                    static_cast<float>(FrameX()),
+                    static_cast<float>(FrameY()),
+                    static_cast<float>(FrameWidth),
+                    static_cast<float>(FrameHeight)
             };
         else
             return {
-                0,
-                0,
-                static_cast<float>(GetCurrentTexture()->Width),
-                static_cast<float>(GetCurrentTexture()->Height)
+                    0,
+                    0,
+                    static_cast<float>(GetCurrentTexture()->Width),
+                    static_cast<float>(GetCurrentTexture()->Height)
             };
     }
 
     bool Sprite::operator==(const Sprite &b) {
-        return m_textures == b.m_textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth && FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;
+        return m_textures == b.m_textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth &&
+               FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;
     }
 
     bool Sprite::operator!=(const Sprite &b) {
-        return m_textures != b.m_textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth || FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || ImageSpeed != b.ImageSpeed;
+        return m_textures != b.m_textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth ||
+               FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || ImageSpeed != b.ImageSpeed;
     }
 }

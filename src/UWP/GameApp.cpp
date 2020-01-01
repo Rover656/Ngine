@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -14,8 +14,6 @@
 #if defined(PLATFORM_UWP)
 
 #include <ppltasks.h>
-
-#include "../Audio/AudioDevice.h"
 
 namespace NerdThings::Ngine::UWP {
     ////////
@@ -70,7 +68,10 @@ namespace NerdThings::Ngine::UWP {
         navigation->BackRequested += ref new Windows::Foundation::EventHandler<Windows::UI::Core::BackRequestedEventArgs ^>(this, &GameApp::OnBackRequested);
     }
 
-    void GameApp::Uninitialize() { }
+    void GameApp::Uninitialize() {
+        // If this is ever reached (Which I doubt very much) clean
+        m_game->_cleanup();
+    }
 
     void GameApp::OnActivated(Windows::ApplicationModel::Core::CoreApplicationView ^sender, Windows::ApplicationModel::Activation::IActivatedEventArgs ^args) {
         // Init game.

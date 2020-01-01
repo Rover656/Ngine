@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -33,6 +33,7 @@
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT       0x84FE
 #endif
 
+#include "../../Logger.hpp"
 #include "OpenGL.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
@@ -42,7 +43,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                          GLPixelFormat format_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
-            ConsoleMessage("Texture was given invalid dimensions of " + std::to_string(width_) + ", " + std::to_string(height_) + ".", "ERROR", "GLTexture");
+            Logger::Error("GLTexture", "Texture was given invalid dimensions of %i, %i.", width_, height_);
             return;
         }
 
@@ -82,7 +83,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Create texture
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glGenTextures(1, &ID);
-        ConsoleMessage("Texture with ID " + std::to_string(ID) + " is being created with width and height: " + std::to_string(width_) + ", " + std::to_string(height_), "NOTICE", "GLTexture");
+        Logger::Notice("GLTexture", "Texture with ID %i is being created with width and height: %i, $i", ID, width_, height_);
 
         // Bind
         Bind();
@@ -201,7 +202,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             case TEXPARAM_WRAP_S:
             case TEXPARAM_WRAP_T:
                 if (value_ == WRAP_MIRROR_CLAMP && !GL::TexMirrorClampSupported)
-                    ConsoleMessage("Clamp mirror mode not supported.", "WARN", "GLTexture");
+                    Logger::Warn("GLTexture", "Clamp mirror mode not supported.");
                 else
                     glTexParameteri(GL_TEXTURE_2D, param_, value_);
                 break;
@@ -213,10 +214,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             case TEXPARAM_ANISOTROPIC_FILTER:
                 if (value_ <= GL::MaxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, (float)value_);
                 else if (GL::MaxAnisotropicLevel > 0.0f) {
-                    ConsoleMessage("Filter level was higher than max, setting to max.", "WARN", "GLTexture");
+                    Logger::Warn("GLTexture", "Filter level was higher than max, setting to max.");
                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GL::MaxAnisotropicLevel);
-                } else
-                    ConsoleMessage("Anisotropic filtering is not supported", "WARN", "GLTexture");
+                } else Logger::Warn("GLTexture", "Anisotropic filtering is not supported.");
                 break;
             default: break;
         }

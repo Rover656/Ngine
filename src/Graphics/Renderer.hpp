@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -20,10 +20,10 @@
 #include "Font.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
-#include "Rendering/Renderable.h"
-#include "GraphicsDevice.h"
-#include "Shader.h"
-#include "ShaderProgram.h"
+#include "Rendering/Renderable.hpp"
+#include "GraphicsDevice.hpp"
+#include "Shader.hpp"
+#include "ShaderProgram.hpp"
 #endif
 
 #include "Texture2D.hpp"
@@ -33,7 +33,7 @@ namespace NerdThings::Ngine::Graphics {
     /**
      * The rewritten Ngine renderer.
      * This properly implements all required features for much easier batching and depth sorting.
-     * @note This will probably not be completed by the end of the year. This must be enabled with the USE_EXPERIMENTAL_RENDERER flag.
+     * @note This will probably not be completed by the end of the year. This must be enabled with the CMake FEATURE_EXPERIMENTAL_RENDERER flag.
      */
 #else
     /**
@@ -46,6 +46,10 @@ namespace NerdThings::Ngine::Graphics {
     class NEAPI Renderer {
 #ifdef USE_EXPERIMENTAL_RENDERER
     public:
+        /**
+         * The size of the internal VBOs.
+         * The maximum number of vertices each batch.
+         */
         static const unsigned int VBO_SIZE = 65536;
         static const unsigned int QUAD_IBO_SIZE = VBO_SIZE * 6 / 4;
 
@@ -55,12 +59,12 @@ namespace NerdThings::Ngine::Graphics {
         };
     private:
         struct BatchItem {
-            int Depth;
-            PrimitiveType PrimitiveType;
+            int Depth = 0;
+            PrimitiveType PrimitiveType = PRIMITIVE_TRIANGLES;
             std::vector<Rendering::VertexData> Vertices;
-            ShaderProgram *Shader;
-            Texture2D *Texture;
-            Matrix CurrentModelMatrix;
+            int VertexCount = 0;
+            ShaderProgram *Shader = nullptr;
+            Texture2D *Texture = nullptr;
         };
 
         enum BatchBucket {
@@ -94,6 +98,9 @@ namespace NerdThings::Ngine::Graphics {
          */
         bool m_midBatch = false;
 
+        /**
+         * The current batch item.
+         */
         BatchItem m_currentBatch;
 
         /**
@@ -106,6 +113,33 @@ namespace NerdThings::Ngine::Graphics {
          */
         std::map<RenderTarget *, std::vector<std::vector<BatchItem>>> m_batches;
 
+        unsigned int m_triangleVAO;
+
+        unsigned int m_triangleVBO;
+
+        unsigned int m_quadVAO;
+
+        unsigned int m_quadVBO;
+
+        unsigned int m_quadIBO;
+
+        /**
+         * The current primitive type being rendered.
+         */
+        PrimitiveType m_currentPrimitiveType = PRIMITIVE_TRIANGLES;
+
+        /**
+         * This contains a list of all the vertices to be pushed to the framebuffer.
+         */
+        Rendering::VertexData m_vertices[VBO_SIZE];
+
+        int m_vertexCount = 0;
+
+        /**
+         * This contains a list of items that are ready to be pushed to the framebuffer.
+         */
+        std::vector<BatchItem> m_processedItems;
+
         /**
          * Enable OpenGL capabilities.
          */
@@ -117,13 +151,39 @@ namespace NerdThings::Ngine::Graphics {
         void _createDefaultShader();
 
         /**
+         * Create the buffers needed for rendering.
+         */
+        void _createBuffers();
+
+        void _deleteBuffers();
+
+        void _bindTriangleBuffers();
+
+        void _bindQuadBuffers();
+
+        void _writeBuffer(unsigned int vbo_);
+
+        void _unbindBuffers();
+
+        /**
          * Sort batch items.
          *
          * @param a_ The first item.
          * @param b_ The second item.
          * @return Whether A should be before B.
          */
-        bool _sortPredicate(BatchItem *a_, BatchItem *b_);
+        static bool _sortPredicate(const BatchItem &a_, const BatchItem &b_);
+
+        /**
+         * RenderBatched the batch for the given target.
+         *
+         * @param target_ The target to render for.
+         */
+        void _render(RenderTarget *target_);
+
+        void _renderBucket(RenderTarget *target_, BatchBucket bucket_);
+
+        void _processBatchItem(const BatchItem &item_);
 
         /**
          * Flush the buffers
@@ -151,9 +211,9 @@ namespace NerdThings::Ngine::Graphics {
         void End();
 
         /**
-         * Render the current batch.
+         * RenderBatched the current batch.
          */
-        void Render();
+        void RenderBatched();
 
         /**
          * Clear the framebuffer.

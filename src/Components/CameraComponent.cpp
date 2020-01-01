@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -17,7 +17,7 @@
 namespace NerdThings::Ngine::Components {
     void CameraComponent::_updateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
-        m_camera.Position = e.EntityPosition;
+        m_camera.Position = e.EntityTransformation.Position;
     }
 
     CameraComponent::~CameraComponent() {

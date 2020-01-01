@@ -17,6 +17,9 @@ option(BUILD_SHARED "Build as a shared library" OFF)
 enum_option(PLATFORM "Desktop;UWP" "Platform to build for.")
 enum_option(OPENGL_VERSION "3.3;2.1;ES2" "Preferred OpenGL Version.")
 
+# Feature flags
+option(FEATURE_EXPERIMENTAL_RENDERER "Enable the experimental renderer." OFF)
+
 # Force options
 if(${PLATFORM} MATCHES "UWP")
     message("Forcing OpenGL Version to ES2")

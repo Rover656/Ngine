@@ -1,15 +1,17 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
 #include "AudioStream.hpp"
+
+#include "../Logger.hpp"
 
 namespace NerdThings::Ngine::Audio {
     void AudioStream::UpdateStream(const void *data_, int samplesCount_) {
@@ -32,19 +34,21 @@ namespace NerdThings::Ngine::Audio {
                 if (subBufferSizeInFrames >= (ma_uint32)samplesCount_/Channels) {
                     ma_uint32 framesToWrite = subBufferSizeInFrames;
 
-                    if (framesToWrite > ((ma_uint32)samplesCount_/Channels)) framesToWrite = (ma_uint32)samplesCount_/Channels;
+                    if (framesToWrite > ((ma_uint32) samplesCount_ / Channels))
+                        framesToWrite = (ma_uint32) samplesCount_ / Channels;
 
-                    ma_uint32 bytesToWrite = framesToWrite*Channels*(SampleSize/8);
+                    ma_uint32 bytesToWrite = framesToWrite * Channels * (SampleSize / 8);
                     memcpy(subBuffer, data_, bytesToWrite);
 
                     // Any leftover, fill with zero
                     ma_uint32 leftoverFrameCount = subBufferSizeInFrames - framesToWrite;
 
-                    if (leftoverFrameCount > 0) memset(subBuffer + bytesToWrite, 0, leftoverFrameCount*Channels*(SampleSize/8));
+                    if (leftoverFrameCount > 0)
+                        memset(subBuffer + bytesToWrite, 0, leftoverFrameCount * Channels * (SampleSize / 8));
 
                     Buffer->IsSubBufferProcessed[subBufferToUpdate] = false;
-                } else ConsoleMessage("Attempting to write too many frames to buffer.", "ERR", "AudioStream");
-            } else ConsoleMessage("Audio buffer not available for updating.", "ERR", "AudioStream");
-        } else ConsoleMessage("No audio buffer.", "ERR", "AudioStream");
+                } else Logger::Error("AudioStream", "Attempting to write too many frames to buffer.");
+            } else Logger::Error("AudioStream", "Audio buffer not available for updating.");
+        } else Logger::Error("AudioStream", "No audio buffer.");
     }
 }

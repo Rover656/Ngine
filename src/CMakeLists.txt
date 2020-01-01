@@ -1,6 +1,6 @@
 # Fetch source files
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
-file(GLOB_RECURSE HEADER_FILES "*.h")
+file(GLOB_RECURSE HEADER_FILES "*.h" "*.hpp")
 
 # Include Ngine cmake lib
 include(Ngine)
@@ -54,6 +54,15 @@ __ngine_post_uwp_additions(${PROJECT_NAME})
 if (${BUILD_SHARED} AND NOT ${PLATFORM} MATCHES "UWP")
     target_compile_definitions(${PROJECT_NAME} PRIVATE NGINE_EXPORTS=1)
 endif()
+
+### Feature Flags
+
+# Experimental renderer
+if (${FEATURE_EXPERIMENTAL_RENDERER})
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_EXPERIMENTAL_RENDERER=1)
+endif()
+
+### End Feature Flags
 
 # Add library dependancies
 if (${PLATFORM} MATCHES "Desktop")

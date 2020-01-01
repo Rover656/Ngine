@@ -1,11 +1,11 @@
 /**********************************************************************************************
 *
-*   Ngine - The 2D game engine.
+*   Ngine - A 2D game engine.
 *
-*   Copyright (C) 2019 NerdThings
+*   Copyright (C) 2020 NerdThings.
 *
-*   LICENSE: Apache License 2.0
-*   View: https://github.com/NerdThings/Ngine/blob/master/LICENSE
+*   LICENSE: GNU LGPLv3
+*   View: In Ngine.hpp
 *
 **********************************************************************************************/
 
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
 
         // Public Methods
 
-        BoundingBox ComputeAABB(const Transform &xf, int childIndex = 0);
+        BoundingBox ComputeAABB(const Transform2D &xf, int childIndex = 0);
 
         // TODO: void ComputeMass()
 
@@ -103,7 +103,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
         /*
          * Test a point for containment in this shape.
          */
-        bool TestPoint(const Transform &xf, const Vector2 &p);
+        bool TestPoint(const Transform2D &xf, const Vector2 &p);
 
         // TODO: Raycasting
     };
