@@ -34,12 +34,16 @@ namespace NerdThings::Ngine::Graphics {
      * The rewritten Ngine renderer.
      * This properly implements all required features for much easier batching and depth sorting.
      * @note This will probably not be completed by the end of the year. This must be enabled with the CMake FEATURE_EXPERIMENTAL_RENDERER flag.
+     *
+     * @todo Provide methods for rendering custom VertexArrays.
+     * @todo Make this immediate mode, batching this is simply too slow.
      */
 #else
     /**
      * Rendering class. Provides all drawing functions.
      * There is no concept of depth. First drawn is furthest behind.
      *
+     * @todo Change this from a static class to an instance class so that the transition to the new renderer is easier later.
      * @warning This API will be replaced once the new Ngine renderer is ready. Enable it by defining USE_EXPERIMENTAL_RENDERER.
      */
 #endif
