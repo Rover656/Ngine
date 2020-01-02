@@ -83,7 +83,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Create texture
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glGenTextures(1, &ID);
-        Logger::Notice("GLTexture", "Texture with ID %i is being created with width and height: %i, $i", ID, width_, height_);
+        Logger::Notice("GLTexture", "Texture with ID %i is being created with width and height: %i, %i", ID, width_, height_);
 
         // Bind
         Bind();

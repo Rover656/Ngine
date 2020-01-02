@@ -54,8 +54,8 @@ namespace NerdThings::Ngine::Components {
 
         // Public Methods
 
-        void Draw() override {
-            m_widget.Draw();
+        void Draw(Graphics::Renderer *renderer_) override {
+            m_widget.Draw(renderer_);
         }
 
         void Update() override {

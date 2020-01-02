@@ -13,7 +13,9 @@
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
+
 #include "OpenGL.hpp"
+
 #endif
 #endif
 
@@ -23,6 +25,7 @@
 
 namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
+
     void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -75,21 +78,22 @@ namespace NerdThings::Ngine::Graphics {
             unsigned int mipSize = _calculatePixelDataSize();
 
             if (glInternalFormat != -1) {
-                if (m_format < COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *)data_ + mipOffset);
-                else glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize, (unsigned char *)data_ + mipOffset);
+                if (m_format < COMPRESSED_DXT1_RGB)
+                    glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType,
+                                 (unsigned char *) data_ + mipOffset);
+                else
+                    glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize,
+                                           (unsigned char *) data_ + mipOffset);
 
 #if defined(GRAPHICS_OPENGL33)
-                if (m_format == UNCOMPRESSED_GRAYSCALE)
-                {
-                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ONE };
+                if (m_format == UNCOMPRESSED_GRAYSCALE) {
+                    GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
                     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
-                }
-                else if (m_format == UNCOMPRESSED_GRAY_ALPHA)
-                {
+                } else if (m_format == UNCOMPRESSED_GRAY_ALPHA) {
 #if defined(GRAPHICS_OPENGL21)
                     GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ALPHA };
 #elif defined(GRAPHICS_OPENGL33)
-                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_GREEN };
+                    GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_GREEN};
 #endif
                     glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
                 }
@@ -113,44 +117,64 @@ namespace NerdThings::Ngine::Graphics {
     int Texture2D::_calculatePixelDataSize() {
         auto bpp = 0;
 
-        switch (m_format)
-        {
-            case UNCOMPRESSED_GRAYSCALE: bpp = 8; break;
+        switch (m_format) {
+            case UNCOMPRESSED_GRAYSCALE:
+                bpp = 8;
+                break;
             case UNCOMPRESSED_GRAY_ALPHA:
             case UNCOMPRESSED_R5G6B5:
             case UNCOMPRESSED_R5G5B5A1:
-            case UNCOMPRESSED_R4G4B4A4: bpp = 16; break;
-            case UNCOMPRESSED_R8G8B8A8: bpp = 32; break;
-            case UNCOMPRESSED_R8G8B8: bpp = 24; break;
-            case UNCOMPRESSED_R32: bpp = 32; break;
-            case UNCOMPRESSED_R32G32B32: bpp = 32*3; break;
-            case UNCOMPRESSED_R32G32B32A32: bpp = 32*4; break;
+            case UNCOMPRESSED_R4G4B4A4:
+                bpp = 16;
+                break;
+            case UNCOMPRESSED_R8G8B8A8:
+                bpp = 32;
+                break;
+            case UNCOMPRESSED_R8G8B8:
+                bpp = 24;
+                break;
+            case UNCOMPRESSED_R32:
+                bpp = 32;
+                break;
+            case UNCOMPRESSED_R32G32B32:
+                bpp = 32 * 3;
+                break;
+            case UNCOMPRESSED_R32G32B32A32:
+                bpp = 32 * 4;
+                break;
             case COMPRESSED_DXT1_RGB:
             case COMPRESSED_DXT1_RGBA:
             case COMPRESSED_ETC1_RGB:
             case COMPRESSED_ETC2_RGB:
             case COMPRESSED_PVRT_RGB:
-            case COMPRESSED_PVRT_RGBA: bpp = 4; break;
+            case COMPRESSED_PVRT_RGBA:
+                bpp = 4;
+                break;
             case COMPRESSED_DXT3_RGBA:
             case COMPRESSED_DXT5_RGBA:
             case COMPRESSED_ETC2_EAC_RGBA:
-            case COMPRESSED_ASTC_4x4_RGBA: bpp = 8; break;
-            case COMPRESSED_ASTC_8x8_RGBA: bpp = 2; break;
-            default: break;
+            case COMPRESSED_ASTC_4x4_RGBA:
+                bpp = 8;
+                break;
+            case COMPRESSED_ASTC_8x8_RGBA:
+                bpp = 2;
+                break;
+            default:
+                break;
         }
 
-        auto dataSize = Width*Height*bpp/8;  // Total data size in bytes
+        auto dataSize = Width * Height * bpp / 8;  // Total data size in bytes
 
         // Most compressed formats works on 4x4 blocks,
         // if texture is smaller, minimum dataSize is 8 or 16
-        if ((Width < 4) && (Height < 4))
-        {
+        if ((Width < 4) && (Height < 4)) {
             if ((m_format >= COMPRESSED_DXT1_RGB) && (m_format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
             else if ((m_format >= COMPRESSED_DXT3_RGBA) && (m_format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
         }
 
         return dataSize;
     }
+
 #endif
 
     Texture2D::Texture2D() {
@@ -310,19 +334,101 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    void Texture2D::Draw(Vector2 pos_, Color col_, float scale_, Vector2 origin_, Angle rotation_) {
-#ifdef USE_EXPERIMENTAL_RENDERER
-        throw std::runtime_error("Not implemented.");
-#else
-        Renderer::DrawTexture(this, pos_, col_, scale_, origin_, rotation_.GetDegrees());
-#endif
+    void Texture2D::Draw(Graphics::Renderer *renderer_, Vector2 pos_, Color col_, float scale_, Vector2 origin_,
+                         Angle rotation_) {
+        Draw(renderer_,
+             {
+                     0,
+                     0,
+                     (float) Width * scale_,
+                     (float) Height * scale_
+             },
+             {0,
+              0,
+              (float) Width,
+              (float) Height
+             },
+             col_,
+             origin_,
+             rotation_);
     }
 
-    void Texture2D::Draw(Rectangle destRect_, Rectangle srcRect_, Color col_, Vector2 origin_, Angle rotation_) {
+    void
+    Texture2D::Draw(Graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_, Vector2 origin_,
+                    Angle rotation_) {
 #ifdef USE_EXPERIMENTAL_RENDERER
-        throw std::runtime_error("Not implemented.");
+        // Fix parameters
+        bool flipX = false;
+        if (srcRect_.Width < 0) {
+            srcRect_.Width *= -1;
+            flipX = true;
+        }
+
+        if (srcRect_.Height < 0) {
+            srcRect_.Y -= srcRect_.Height;
+        }
+
+        // Build transform matrix
+        auto transform = Matrix::Translate({destRect_.X, destRect_.Y, 0})
+                         * Matrix::Rotate({0, 0, 1}, rotation_.GetDegrees())
+                         * Matrix::Translate({-origin_.X, -origin_.Y, 0});
+
+        // Push vertices
+        renderer_->Begin(Graphics::PRIMITIVE_QUADS, this, transform);
+        if (flipX) {
+            renderer_->Vertex(
+                    {0, 0},
+                    {
+                            (srcRect_.Width + srcRect_.X) / (float)Width,
+                            (srcRect_.Y) / (float)Height
+                    }, col_);
+            renderer_->Vertex(
+                    {0, destRect_.Height},
+                    {
+                            (srcRect_.Width + srcRect_.X) / (float)Width,
+                            (srcRect_.Height + srcRect_.Y) / (float)Height
+                    }, col_);
+            renderer_->Vertex(
+                    {destRect_.Width, destRect_.Height},
+                    {
+                            (srcRect_.X) / (float)Width,
+                            (srcRect_.Height + srcRect_.Y) / (float)Height
+                    }, col_);
+            renderer_->Vertex(
+                    {destRect_.Width, 0},
+                    {
+                            (srcRect_.X) / (float)Width,
+                            (srcRect_.Y) / (float)Height
+                    }, col_);
+        } else {
+            renderer_->Vertex(
+                    {0, 0},
+                    {
+                            (srcRect_.X) / (float)Width,
+                            (srcRect_.Y) / (float)Height
+                    }, col_);
+            renderer_->Vertex(
+                    {0, destRect_.Height},
+                    {
+                            (srcRect_.X) / (float)Width,
+                            (srcRect_.Height + srcRect_.Y) / (float)Height
+                    }, col_);
+            renderer_->Vertex(
+                    {destRect_.Width, destRect_.Height},
+                    {
+                            (srcRect_.Width + srcRect_.X) / (float)Width,
+                            (srcRect_.Height + srcRect_.Y) / (float)Height
+                    }, col_);
+            renderer_->Vertex(
+                    {destRect_.Width, 0},
+                    {
+                            (srcRect_.Width + srcRect_.X) / (float)Width,
+                            (srcRect_.Y) / (float)Height
+                    }, col_);
+        }
+        renderer_->End();
 #else
-        Renderer::DrawTexture(this, destRect_, srcRect_, col_, origin_, rotation_.GetDegrees());
+        renderer_->DrawTexture(this, destRect_, srcRect_, col_, origin_, rotation_.GetDegrees());
 #endif
     }
 

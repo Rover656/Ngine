@@ -40,7 +40,7 @@ namespace NerdThings::Ngine::Components {
         m_useCullArea = flag_;
     }
 
-    void TilesetComponent::Draw() {
+    void TilesetComponent::Draw(Graphics::Renderer *renderer_) {
         // Prevent any exceptions.
         if (m_tileset != nullptr) return;
 
@@ -51,9 +51,9 @@ namespace NerdThings::Ngine::Components {
 
         // Render the tileset
         if (m_useCullArea) {
-            m_tileset->Draw(par->GetPosition(), GetScene()->GetCullAreaPosition(), GetScene()->GetCullAreaEndPosition());
+            m_tileset->Draw(renderer_, par->GetPosition(), GetScene()->GetCullAreaPosition(), GetScene()->GetCullAreaEndPosition());
         } else {
-            m_tileset->Draw(par->GetPosition(), GetScene()->GetViewportPosition(), GetScene()->GetViewportEndPosition());
+            m_tileset->Draw(renderer_, par->GetPosition(), GetScene()->GetViewportPosition(), GetScene()->GetViewportEndPosition());
         }
     }
 }

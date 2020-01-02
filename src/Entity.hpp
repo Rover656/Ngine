@@ -143,7 +143,7 @@ namespace NerdThings::Ngine {
          * Fired when the entity draws.
          * This should be used by components.
          */
-        Event<> OnDraw;
+        Event<Graphics::Renderer *> OnDraw;
 
         /**
          * Fired when the entity updates.
@@ -438,9 +438,11 @@ namespace NerdThings::Ngine {
         void UnsubscribeFromUpdate();
 
         /**
-         * Draw code for the entity
+         * Draw code for the entity.
+         *
+         * @param renderer_ The game renderer.
          */
-        virtual void Draw();
+        virtual void Draw(Graphics::Renderer *renderer_);
 
         /**
          * Update the entity.

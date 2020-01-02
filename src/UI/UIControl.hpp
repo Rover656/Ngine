@@ -70,17 +70,17 @@ namespace NerdThings::Ngine::UI {
         /*
          * Draw the control
          */
-        virtual void Draw();
+        virtual void Draw(Graphics::Renderer *renderer_);
 
         /*
          * Draw the children
          */
-        void DrawChildren();
+        void DrawChildren(Graphics::Renderer *renderer_);
 
         /*
          * Draw the style instructions
          */
-        void DrawStyles();
+        void DrawStyles(Graphics::Renderer *renderer_);
 
         /*
          * Get child by name and type

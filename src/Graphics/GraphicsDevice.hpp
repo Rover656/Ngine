@@ -19,6 +19,7 @@
 #include "Image.hpp"
 
 namespace NerdThings::Ngine::Graphics {
+    class Renderer;
     struct RenderTarget;
 
     /**
@@ -29,6 +30,7 @@ namespace NerdThings::Ngine::Graphics {
      * @note This is very WIP. Only features that are required will be implemented until the new `Renderer` works.
      */
     class NEAPI GraphicsDevice {
+        friend class Renderer;
     public:
         /**
          * The maximum number of matrices permitted per stack.
@@ -101,6 +103,11 @@ namespace NerdThings::Ngine::Graphics {
         Window *m_attachedWindow;
 
         /**
+         * List of all attached renderers.
+         */
+        std::vector<Renderer *> m_attachedRenderers;
+
+        /**
          * The current projection matrix.
          */
         Matrix m_projectionMatrix;
@@ -141,6 +148,22 @@ namespace NerdThings::Ngine::Graphics {
          * @return The current render target or null if rendering straight to window.
          */
         RenderTarget *GetCurrentTarget();
+
+        /**
+         * Set the current render target.
+         *
+         * @warning Do not provide null, use `PopTarget` instead.
+         * @warning This will force all renderers to draw.
+         * @param target_ The new target.
+         */
+        void PushTarget(RenderTarget *target_);
+
+        /**
+         * Pop the current target off of the stack.
+         *
+         * @warning This will force all renderers to draw
+         */
+        void PopTarget();
 
         /**
          * Get the current projection matrix.

@@ -52,7 +52,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
          */
         static PolygonShape CreateAsBox(float hx, float hy);
 
-        void DebugDraw(float ppm_, Vector2 pos_, float angle_) const override;
+        void DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
 
         Vector2 GetCentroid() const;
 

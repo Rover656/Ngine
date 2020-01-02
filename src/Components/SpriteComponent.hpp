@@ -81,7 +81,7 @@ namespace NerdThings::Ngine::Components {
         /**
          * Draw the sprite (called by the engine).
          */
-        void Draw() override;
+        void Draw(Graphics::Renderer *renderer_) override;
 
         /**
          * Update the sprite (called by the engine).

@@ -53,14 +53,16 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @param pos_ The position to draw the canvas at.
          */
-        void Draw(Vector2 pos_);
+        void Draw(Graphics::Renderer *renderer_, Vector2 pos_);
 
         /**
          * Redraw the contents of the canvas.
          * This should be called once after creation at least.
          * This will call the protected method, RenderTargetRedraw.
+         *
+         * @warning Originally, this could be used in Update. That is no longer the case.
          */
-        void ReDraw();
+        void ReDraw(Graphics::Renderer *renderer_);
 
         /**
          * Get canvas width.
@@ -89,7 +91,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * This handles the rendering to the render target.
          */
-        virtual void RenderTargetRedraw() = 0;
+        virtual void RenderTargetRedraw(Graphics::Renderer *renderer_) = 0;
     };
 }
 

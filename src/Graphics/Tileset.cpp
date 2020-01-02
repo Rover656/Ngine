@@ -22,7 +22,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void Tileset::DrawTile(Vector2 position_, int tile_, float scale_, float rotation_, Vector2 origin_) {
+    void Tileset::DrawTile(Graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_, float rotation_, Vector2 origin_) {
         // Tile's start from 1 to allow 0 to mean nothing
         tile_ -= 1;
 
@@ -42,6 +42,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Draw
         Texture->Draw(
+                renderer_,
                 {
                         position_,
                         TileWidth * scale_,

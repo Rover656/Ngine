@@ -46,7 +46,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
         return std::move(s);
     }
 
-    void PolygonShape::DebugDraw(float ppm_, Vector2 pos_, float angle_) const {
+    void PolygonShape::DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const {
         auto vts = GetVertices();
         auto c = GetCentroid() + pos_;
         for (auto i = 0; i < vts.size(); i++) {
@@ -66,7 +66,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
             v2 = v2.Transform(c, angle_);
 
 #ifndef USE_EXPERIMENTAL_RENDERER
-            Graphics::Renderer::DrawLine(v1, v2, Graphics::Color::Red);
+            renderer_->DrawLine(v1, v2, Graphics::Color::Red);
 #endif
         }
     }

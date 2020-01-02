@@ -322,7 +322,7 @@ namespace NerdThings::Ngine::Physics {
         m_b2Body->SetSleepingAllowed(flag_);
     }
 
-    void PhysicsBody::DebugDraw() {
+    void PhysicsBody::DebugDraw(Graphics::Renderer *renderer_) {
         // Process fixtures
         auto next = m_b2Body->GetFixtureList();
         b2Fixture *current;
@@ -331,7 +331,7 @@ namespace NerdThings::Ngine::Physics {
             next = next->GetNext();
             if (current->GetUserData() != nullptr) {
                 auto fixture = (PhysicsFixture *) current->GetUserData();
-                fixture->GetShape()->DebugDraw(m_world->PixelsPerMeter, GetPosition(), GetRotation().GetDegrees());
+                fixture->GetShape()->DebugDraw(renderer_, m_world->PixelsPerMeter, GetPosition(), GetRotation().GetDegrees());
             }
         }
     }

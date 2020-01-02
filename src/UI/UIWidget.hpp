@@ -51,7 +51,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Draw the widget
          */
-        void Draw();
+        void Draw(Graphics::Renderer *renderer_);
 
         /*
          * Get the panel within the widget

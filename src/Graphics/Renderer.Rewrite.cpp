@@ -221,7 +221,7 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    void Renderer::_addVertices(Renderer::PrimitiveType type_, VertexData *vertices_, int count_) {
+    void Renderer::_addVertices(PrimitiveType type_, VertexData *vertices_, int count_) {
         // Check vertex array size
         if (count_ > VBO_SIZE)
             Logger::Fail("Renderer", "Vertex array is too big!");
@@ -316,10 +316,17 @@ namespace NerdThings::Ngine::Graphics {
         // Create buffers for rendering.
         _createBuffers();
 
+        // Add to graphics device
+        m_graphicsDevice->m_attachedRenderers.push_back(this);
+
         Logger::Notice("Renderer", "Finished creating renderer.");
     }
 
     Renderer::~Renderer() {
+        // Remove from graphics device
+        auto renderers = &m_graphicsDevice->m_attachedRenderers;
+        renderers->erase(std::remove(renderers->begin(), renderers->end(), this), renderers->end());
+
         // Delete buffers
         _deleteBuffers();
 
@@ -328,7 +335,7 @@ namespace NerdThings::Ngine::Graphics {
         delete m_defaultShaderProgram;
     }
 
-    void Renderer::Add(std::vector<VertexData> vertices_, Renderer::PrimitiveType primitiveType_, Texture2D *texture_,
+    void Renderer::Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_,
                        ShaderProgram *shader_) {
         // If the texture, shader and primitive type don't match, push a render.
         if (m_currentTexture != texture_
@@ -344,7 +351,7 @@ namespace NerdThings::Ngine::Graphics {
         _addVertices(primitiveType_, vertices_.data(), vertices_.size());
     }
 
-    void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
+    void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, const Matrix &transform_, ShaderProgram *shader_) {
         // Stop rendering.
         if (m_rendering)
             Logger::Fail("Renderer", "Cannot start a new batch while rendering.");
@@ -363,6 +370,7 @@ namespace NerdThings::Ngine::Graphics {
         m_currentTexture = texture_;
         m_currentShader = shader_;
         m_currentPrimitiveType = primitiveType_;
+        m_currentTransformMatrix = transform_;
     }
 
     void Renderer::Vertex(VertexData vertexData_) {
@@ -380,7 +388,7 @@ namespace NerdThings::Ngine::Graphics {
         if (m_vertexCount < VBO_SIZE) {
             // Build vertex data
             VertexData vDat;
-            vDat.Position = Vector3(pos_.X, pos_.Y, 0);
+            vDat.Position = Vector3(pos_.X, pos_.Y, 0).Transform(m_currentTransformMatrix);
             vDat.TexCoords = texCoord_;
             vDat.Color = color_;
 

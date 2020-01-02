@@ -76,7 +76,7 @@ namespace NerdThings::Ngine::Components {
         /**
          * Draw the tileset (called by engine).
          */
-        void Draw() override;
+        void Draw(Graphics::Renderer *renderer_) override;
     };
 }
 

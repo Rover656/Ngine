@@ -227,7 +227,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param origin_ The origin (for rotation).
          * @param rotation_ Rotation (from origin).
          */
-        void Draw(Vector2 pos_, Color col_ = Color::White, float scale_ = 1, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+        void Draw(Graphics::Renderer *renderer_, Vector2 pos_, Color col_ = Color::White, float scale_ = 1, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
 
         /**
          * Draw the texture.
@@ -237,7 +237,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param origin_ The origin (for rotation).
          * @param rotation_ Rotation (from origin).
          */
-        void Draw(Rectangle destRect_, Rectangle srcRect_, Color col_ = Color::White, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+        void Draw(Graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_ = Color::White, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
 
         bool operator==(const Texture2D &tex_) const;
         bool operator!=(const Texture2D &tex_) const;

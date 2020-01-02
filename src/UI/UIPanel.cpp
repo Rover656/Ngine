@@ -22,32 +22,33 @@ namespace NerdThings::Ngine::UI {
 
     // Public Methods
 
-    void UIPanel::Draw() {
-        DrawStyles();
+    void UIPanel::Draw(Graphics::Renderer *renderer_) {
+        DrawStyles(renderer_);
 
 #ifndef USE_EXPERIMENTAL_RENDERER
         Graphics::GraphicsManager::PushTarget(_RenderTarget.get());
-        Graphics::Renderer::Clear(Graphics::Color::Transparent);
-        DrawChildren();
+        renderer_->Clear(Graphics::Color::Transparent);
+        DrawChildren(renderer_);
         Graphics::GraphicsManager::PopTarget();
 
         auto rPos = GetRenderPosition();
 
         // Draw target
-        Graphics::Renderer::DrawTexture(_RenderTarget->GetTexture(),
-                                       {
-                                               rPos.X,
-                                               rPos.Y,
-                                               GetWidth(),
-                                               GetHeight()
-                                       },
-                                       {
-                                               0,
-                                               0,
-                                               static_cast<float>(_RenderTarget->Width),
-                                               static_cast<float>(_RenderTarget->Height) * -1
-                                       },
-                                       Graphics::Color::White);
+        _RenderTarget->GetTexture()->Draw(
+                renderer_,
+                {
+                        rPos.X,
+                        rPos.Y,
+                        GetWidth(),
+                        GetHeight()
+                },
+                {
+                        0,
+                        0,
+                        static_cast<float>(_RenderTarget->Width),
+                        static_cast<float>(_RenderTarget->Height) * -1
+                },
+                Graphics::Color::White);
 #endif
     }
 
@@ -80,13 +81,15 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::SetHeight(float height_) {
         UIControlSized::SetHeight(height_);
 
-        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(GetWidth()), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(GetWidth()),
+                                                                 static_cast<int>(height_));
     }
 
     void UIPanel::SetWidth(float width_) {
         UIControlSized::SetWidth(width_);
 
-        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(width_), static_cast<int>(GetHeight()));
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(width_),
+                                                                 static_cast<int>(GetHeight()));
     }
 
     void UIPanel::Update() {

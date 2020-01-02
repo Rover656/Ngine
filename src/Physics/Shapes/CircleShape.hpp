@@ -50,7 +50,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
 
         // Public Methods
 
-        void DebugDraw(float ppm_, Vector2 pos_, float angle_) const override;
+        void DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
 
         /*
          * Get circle position

@@ -26,9 +26,9 @@ namespace NerdThings::Ngine::Graphics {
         delete m_renderTarget;
     }
 
-    void Canvas::Draw(Vector2 pos_) {
-#ifndef USE_EXPERIMENTAL_RENDERER
-        Graphics::Renderer::DrawTexture(m_renderTarget->GetTexture(),
+    void Canvas::Draw(Graphics::Renderer *renderer_, Vector2 pos_) {
+        m_renderTarget->GetTexture()->Draw(
+                                        renderer_,
                                         {
                                                pos_.X,
                                                pos_.Y,
@@ -42,14 +42,13 @@ namespace NerdThings::Ngine::Graphics {
                                                static_cast<float>(m_renderTarget->Height) * -1
                                        },
                                         Graphics::Color::White);
-#endif
     }
 
-    void Canvas::ReDraw() {
+    void Canvas::ReDraw(Graphics::Renderer *renderer_) {
 #ifndef USE_EXPERIMENTAL_RENDERER
         Graphics::GraphicsManager::PushTarget(m_renderTarget);
-        Graphics::Renderer::Clear(Color::Transparent);
-        RenderTargetRedraw();
+        renderer_->Clear(Color::Transparent);
+        RenderTargetRedraw(renderer_);
         Graphics::GraphicsManager::PopTarget();
 #endif
     }
@@ -63,11 +62,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {
-        Logger::Notice("Canvas", "Resizing canvas.");
+        Logger::Notice("Canvas", "Resizing canvas. ReDraw is necessary.");
         delete m_renderTarget;
         m_width = width_;
         m_height = height_;
         m_renderTarget = new RenderTarget(m_width, m_height);
-        ReDraw();
     }
 }

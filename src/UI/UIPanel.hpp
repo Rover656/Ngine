@@ -89,7 +89,7 @@ namespace NerdThings::Ngine::UI {
         /*
          * Draw the panel
          */
-        void Draw() override;
+        void Draw(Graphics::Renderer *renderer_) override;
 
         /*
          * Focus the next element

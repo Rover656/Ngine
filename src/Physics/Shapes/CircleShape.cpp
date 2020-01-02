@@ -43,12 +43,12 @@ namespace NerdThings::Ngine::Physics::Shapes {
 
     // Public Methods
 
-    void CircleShape::DebugDraw(float ppm_, Vector2 pos_, float rotation_) const {
+    void CircleShape::DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float rotation_) const {
         auto pos = GetPosition();
         pos *= ppm_;
         pos += pos_;
 #ifndef USE_EXPERIMENTAL_RENDERER
-        Graphics::Renderer::DrawCircleLines(pos, GetRadius() * ppm_, Graphics::Color::Red);
+        renderer_->DrawCircleLines(pos, GetRadius() * ppm_, Graphics::Color::Red);
 #endif
     }
 

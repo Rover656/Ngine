@@ -115,7 +115,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param rotation_ Rotation of the sprite.
          * @param origin_ Origin of the sprite.
          */
-        void Draw(Vector2 position_, float scale_ = 1, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void Draw(Graphics::Renderer *renderer_, Vector2 position_, float scale_ = 1, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /**
          * Update the sprite timer.

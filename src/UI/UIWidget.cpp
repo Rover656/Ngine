@@ -20,11 +20,11 @@ namespace NerdThings::Ngine::UI {
 
     // Public Method(s)
 
-    void UIWidget::Draw() {
+    void UIWidget::Draw(Graphics::Renderer *renderer_) {
         if (_Panel == nullptr)
             throw std::runtime_error("Panel is null...");
         else
-            _Panel->Draw();
+            _Panel->Draw(renderer_);
     }
 
     Vector2 UIWidget::GetPosition() {

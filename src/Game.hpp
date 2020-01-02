@@ -86,6 +86,11 @@ namespace NerdThings::Ngine {
         Graphics::GraphicsDevice *m_graphicsDevice = nullptr;
 
         /**
+         * The game renderer.
+         */
+        Graphics::Renderer *m_renderer = nullptr;
+
+        /**
          * The currently loaded scene
          */
         Scene *m_currentScene = nullptr;
@@ -179,7 +184,7 @@ namespace NerdThings::Ngine {
         /**
          * On update event
          */
-        Event<> OnDraw;
+        Event<Graphics::Renderer *> OnDraw;
 
         /**
          * On update event

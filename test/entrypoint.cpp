@@ -212,9 +212,9 @@ public:
 
     void Init(SceneLoadEventArgs e) {
         // Bind events
-        OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::Draw);
+        OnDrawCamera += new ClassMethodEventHandler<TestScene, Graphics::Renderer *>(this, &TestScene::Draw);
         OnUpdate += new ClassMethodEventHandler<TestScene>(this, &TestScene::Update);
-        OnDrawCamera += new ClassMethodEventHandler<TestScene>(this, &TestScene::DrawCam);
+        OnDrawCamera += new ClassMethodEventHandler<TestScene, Graphics::Renderer *>(this, &TestScene::DrawCam);
 
         // Add entities
         AddChild("Player", new PlayerEntity({100, 100}));
@@ -256,13 +256,13 @@ public:
 
     int rot = 0;
 
-    void Draw() {
+    void Draw(Graphics::Renderer *renderer_) {
         ///Renderer::DrawTexture(ResourceManager::GetTexture("test_spritesheet"), {0, 0}, Color::White);
-        testTiles->Draw({0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
+        testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
         ///Renderer::DrawTexture(ResourceManager::GetTexture("test_spritesheet"), {0, 64}, Color::White);
     }
 
-    void DrawCam() {
+    void DrawCam(Graphics::Renderer *renderer_) {
         //Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
     }
 
@@ -279,19 +279,14 @@ public:
 
 class TestGame : public Game {
     TestScene *m_scene;
-
-#ifdef USE_EXPERIMENTAL_RENDERER
-    Renderer *_Renderer;
-#endif
 public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
         // Hook events
         OnInit += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
-        OnDraw += new ClassMethodEventHandler<TestGame>(this, &TestGame::Draw);
+        OnDraw += new ClassMethodEventHandler<TestGame, Graphics::Renderer *>(this, &TestGame::Draw);
         OnSuspend += new ClassMethodEventHandler<TestGame>(this, &TestGame::Save);
         OnResume += new ClassMethodEventHandler<TestGame>(this, &TestGame::Load);
-        OnCleanup += new ClassMethodEventHandler<TestGame>(this, &TestGame::Cleanup);
     }
 
     void Save() {
@@ -302,38 +297,23 @@ public:
         Logger::Notice("TestGame", "The game would have loaded here.");
     }
 
-    void Draw() {
+    void Draw(Graphics::Renderer *renderer_) {
 #ifdef USE_EXPERIMENTAL_RENDERER
         // Clear display
-        _Renderer->Clear();
+        renderer_->Clear();
 
-        // Render a triangle.
-        _Renderer->Begin(Renderer::PRIMITIVE_TRIANGLES);
-        _Renderer->Vertex({0, 0}, {}, Color::Red);
-        _Renderer->Vertex({100, 0}, {}, Color::Red);
-        _Renderer->Vertex({100, 100}, {}, Color::Red);
-        _Renderer->End();
-
-        // Render a quad.
-        Texture2D *t = nullptr;//GetResourceManager()->GetTexture("test_spritesheet");
-        for (auto i = 0; i < 2000; i++) {
-            _Renderer->Begin(Renderer::PRIMITIVE_QUADS, t);
-            _Renderer->Vertex({125, 125}, {0, 0}, Color::White);
-            _Renderer->Vertex({125 + 50, 125}, {1, 0}, Color::White);
-            _Renderer->Vertex({125 + 50, 125 + 50}, {1, 1}, Color::White);
-            _Renderer->Vertex({125, 125 + 50}, {0, 1}, Color::White);
-            _Renderer->End();
-        }
+        auto tex = GetResourceManager()->GetTexture("test_tiles");
+        tex->Draw(renderer_, {0, 0});
 
         // Render the quads
-        _Renderer->Render();
+        renderer_->Render();
 #else
-        Renderer::DrawTriangle({0, 0}, {100, 0}, {100, 100}, Color::Red);
-        auto t = GetResourceManager()->GetTexture("test_spritesheet");
-//        for (auto i = 0; i < 2000; i++)
-//            t->Draw({125, 125, 50, 50}, {0, 0, 64, 64}, Color::White);
+//        renderer_->DrawTriangle({0, 0}, {100, 0}, {100, 100}, Color::Red);
+        auto t = GetResourceManager()->GetTexture("test_tiles");
         for (auto i = 0; i < 2000; i++)
-            Renderer::DrawRectangle({125, 125}, {50, 50}, Color::White);
+            t->Draw(renderer_, {0, 0});
+//        for (auto i = 0; i < 2000; i++)
+//            renderer_->DrawRectangle({125, 125}, {50, 50}, Color::White);
 #endif
     }
 
@@ -344,13 +324,7 @@ public:
         // Load all content (using default resource manager config).
         auto resMan = GetResourceManager();
         resMan->LoadResources();
-#ifdef USE_EXPERIMENTAL_RENDERER
-        // Create renderer
-        _Renderer = new Renderer(GetGraphicsDevice());
-
-        // Set screen clear color
-        _Renderer->SetClearColor(Color::Black);
-#else
+#ifndef USE_EXPERIMENTAL_RENDERER
         // Load arial as default font
         Font::SetDefaultFont(resMan->GetFont("Upheaval"));
 
@@ -358,14 +332,7 @@ public:
         m_scene = new TestScene(this);
 
         // Set scene
-//        SetScene(m_scene);
-#endif
-    }
-
-    void Cleanup() {
-#ifdef USE_EXPERIMENTAL_RENDERER
-        delete _Renderer;
-        _Renderer = nullptr;
+        //SetScene(m_scene);
 #endif
     }
 };

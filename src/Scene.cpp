@@ -216,15 +216,15 @@ namespace NerdThings::Ngine {
         return m_paused;
     }
 
-    void Scene::Draw() {
+    void Scene::Draw(Graphics::Renderer *renderer_) {
         // Invoke draw calls
-        OnDraw();
+        OnDraw(renderer_);
 
         // Draw with camera
         if (m_activeCamera != nullptr)
             m_activeCamera->BeginCamera();
 
-        OnDrawCamera();
+        OnDrawCamera(renderer_);
 
         // Draw entities with camera
         for (auto pair : m_entityDepths) {
@@ -232,7 +232,7 @@ namespace NerdThings::Ngine {
             for (auto ent : vec) {
                 if (ent != nullptr) {
                     if (m_entityActivities[ent] && ent->DrawWithCamera)
-                        ent->Draw();
+                        ent->Draw(renderer_);
                 }
             }
         }
@@ -249,7 +249,7 @@ namespace NerdThings::Ngine {
                         m_entityActivities.insert({ent, true});
 
                     if (m_entityActivities[ent] && !ent->DrawWithCamera)
-                        ent->Draw();
+                        ent->Draw(renderer_);
                 }
             }
         }

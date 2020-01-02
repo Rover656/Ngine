@@ -34,7 +34,7 @@ namespace NerdThings::Ngine {
         /**
          * Entity OnDraw reference.
          */
-        EventAttachment<> m_onDrawRef;
+        EventAttachment<Graphics::Renderer *> m_onDrawRef;
 
         /**
          * Entity OnUpdate reference.
@@ -121,7 +121,7 @@ namespace NerdThings::Ngine {
         /**
          * Component draw code.
          */
-        virtual void Draw();
+        virtual void Draw(Graphics::Renderer *renderer_);
 
         /**
          * Component update code.

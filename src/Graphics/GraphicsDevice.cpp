@@ -13,6 +13,7 @@
 
 #include "../Logger.hpp"
 #include "OpenGL.hpp"
+#include "Renderer.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {
@@ -144,6 +145,22 @@ namespace NerdThings::Ngine::Graphics {
 
     RenderTarget *GraphicsDevice::GetCurrentTarget() {
         return nullptr;
+    }
+
+    void GraphicsDevice::PushTarget(RenderTarget *target_) {
+        // Force render before swapping target
+        for (auto renderer : m_attachedRenderers)
+            renderer->Render();
+
+        // TODO
+    }
+
+    void GraphicsDevice::PopTarget() {
+        // Force render before swapping target
+        for (auto renderer : m_attachedRenderers)
+            renderer->Render();
+
+        // TODO
     }
 
     Matrix GraphicsDevice::GetProjectionMatrix() const {

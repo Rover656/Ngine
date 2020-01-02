@@ -13,6 +13,8 @@
 
 #include "Entity.hpp"
 
+// TODO: SORT
+
 namespace NerdThings::Ngine {
     Component::~Component() {
         // Fire OnDestroy
@@ -23,7 +25,7 @@ namespace NerdThings::Ngine {
         UnsubscribeFromUpdate();
     }
 
-    void Component::Draw() {}
+    void Component::Draw(Graphics::Renderer *renderer_) {}
 
     Game *Component::GetGame() const {
         return m_parentEntity->GetGame();
@@ -34,7 +36,7 @@ namespace NerdThings::Ngine {
     }
 
     void Component::SubscribeToDraw() {
-        m_onDrawRef = m_parentEntity->OnDraw += new ClassMethodEventHandler<Component>(this, &Component::Draw);
+        m_onDrawRef = m_parentEntity->OnDraw += new ClassMethodEventHandler<Component, Graphics::Renderer *>(this, &Component::Draw);
     }
 
     bool Component::SubscribedToDraw() const {

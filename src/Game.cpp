@@ -39,6 +39,10 @@ namespace NerdThings::Ngine {
         m_graphicsDevice = new Graphics::GraphicsDevice(m_gameWindow);
         Logger::Notice("Game", "Created graphics device.");
 
+        // Create renderer.
+        m_renderer = new Graphics::Renderer(m_graphicsDevice);
+        Logger::Notice("Game", "Created renderer.");
+
         // Init Gamepad
         Input::Gamepad::Init();
         Logger::Notice("Game", "Gamepad API has been initialized.");
@@ -189,34 +193,34 @@ namespace NerdThings::Ngine {
 #ifdef USE_EXPERIMENTAL_RENDERER
 #else
             // Prep for drawing
-            Graphics::Renderer::BeginDrawing();
+            m_renderer->BeginDrawing();
 
             // If using, start using target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
                 // Clear the main framebuffer (for black bars)
-                Graphics::Renderer::Clear(Graphics::Color::Black);
+                m_renderer->Clear(Graphics::Color::Black);
 
                 // Enable our main framebuffer
                 Graphics::GraphicsManager::PushTarget(m_renderTarget.get());
             }
 
             // Clear with the correct background colour
-            Graphics::Renderer::Clear(ClearColor);
+            m_renderer->Clear(ClearColor);
 
             // Render scene
             if (m_currentScene != nullptr) {
-                m_currentScene->Draw();
+                m_currentScene->Draw(m_renderer);
             }
 #endif
             // OnDraw event
-            OnDraw();
+            OnDraw(m_renderer);
 
             // If using a target, draw target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
 #ifdef USE_EXPERIMENTAL_RENDERER
 #else
                 Graphics::GraphicsManager::PopTarget();
-                Graphics::Renderer::DrawTexture(m_renderTarget->GetTexture(),
+                m_renderer->DrawTexture(m_renderTarget->GetTexture(),
                                                 {
                                                         (w - iw * scale) * 0.5f,
                                                         (h - ih * scale) * 0.5f,
@@ -236,7 +240,7 @@ namespace NerdThings::Ngine {
             // Finish drawing
 #ifdef USE_EXPERIMENTAL_RENDERER
 #else
-            Graphics::Renderer::EndDrawing();
+            m_renderer->EndDrawing();
 #endif
 
             // Swap buffers
@@ -277,6 +281,11 @@ namespace NerdThings::Ngine {
         // Close audio
         Audio::AudioDevice::Close();
         Logger::Notice("Game", "Closed audio device.");
+
+        // Delete renderer
+        delete m_renderer;
+        m_renderer = nullptr;
+        Logger::Notice("Game", "Deleted renderer.");
 
         // Delete graphics device
         delete m_graphicsDevice;

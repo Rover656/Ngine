@@ -39,10 +39,10 @@ namespace NerdThings::Ngine::Components {
             m_sprite = sprite_;
     }
 
-    void SpriteComponent::Draw() {
-        Component::Draw();
+    void SpriteComponent::Draw(Graphics::Renderer *renderer_) {
+        Component::Draw(renderer_);
         const auto par = GetEntity<Entity > ();
-        m_sprite.Draw(par->GetPosition(), 1, par->GetRotation().GetDegrees(), m_origin);
+        m_sprite.Draw(renderer_, par->GetPosition(), 1, par->GetRotation().GetDegrees(), m_origin);
     }
 
     void SpriteComponent::Update() {

@@ -67,7 +67,7 @@ namespace NerdThings::Ngine::Graphics {
          * Draw the tileset.
          * Origin is in tile coordinates.
          */
-        void Draw(Vector2 pos_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void Draw(Graphics::Renderer *renderer_, Vector2 pos_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw the tileset. Does not currently support rotation.
@@ -75,7 +75,7 @@ namespace NerdThings::Ngine::Graphics {
          * renderFrom defines where to begin rendering. Normally the viewport position.
          * renderTo defines where to finish rendering. Normally the viewport position + dimensions.
          */
-        void Draw(Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_ = 1);
+        void Draw(Graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_ = 1);
 
         /*
          * Get collision shapes for a tile in a range.

@@ -14,6 +14,7 @@
 
 #include "../Config.hpp"
 
+#include "../Graphics/Renderer.hpp"
 #include "../Math.hpp"
 #include "PhysicsFixture.hpp"
 
@@ -457,8 +458,9 @@ namespace NerdThings::Ngine::Physics {
          * Draw debug geometry.
          *
          * @todo Rework the debug drawing system.
+         * @param renderer_ The game renderer.
          */
-        void DebugDraw();
+        void DebugDraw(Graphics::Renderer *renderer_);
 
         // TODO: Get fixtures, joints and contacts
     };

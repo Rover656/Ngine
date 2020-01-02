@@ -31,7 +31,7 @@ namespace NerdThings::Ngine::Graphics {
 
     // Public Methods
 
-    void TilesetRenderer::Draw(Vector2 pos_, float scale_, float rotation_, Vector2 origin_) {
+    void TilesetRenderer::Draw(Graphics::Renderer *renderer_, Vector2 pos_, float scale_, float rotation_, Vector2 origin_) {
         auto tileWidth = m_tileset.TileWidth;
         auto tileHeight = m_tileset.TileHeight;
 
@@ -45,12 +45,12 @@ namespace NerdThings::Ngine::Graphics {
                 Vector2 tileOrigin = {-pos.X, -pos.Y};
 
                 // Cheaty: Putting the wrong values in each argument for this to work
-                m_tileset.DrawTile(tilePos, GetTileAt({(float)x, (float)y}), scale_, rotation_, tileOrigin);
+                m_tileset.DrawTile(renderer_, tilePos, GetTileAt({(float)x, (float)y}), scale_, rotation_, tileOrigin);
             }
         }
     }
 
-    void TilesetRenderer::Draw(Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_) {
+    void TilesetRenderer::Draw(Graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_) {
         // TODO: How do we rotate this stuff??
 
         // Get tile sizes
@@ -82,7 +82,7 @@ namespace NerdThings::Ngine::Graphics {
             for (auto y = tYFrom; y < tYTo; y++) {
                 // Get tile position
                 Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
-                m_tileset.DrawTile(pos, GetTileAt({(float)x, (float)y}), scale_);
+                m_tileset.DrawTile(renderer_, pos, GetTileAt({(float)x, (float)y}), scale_);
             }
         }
     }

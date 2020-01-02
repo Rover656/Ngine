@@ -14,6 +14,7 @@
 
 #include "../../Config.hpp"
 
+#include "../../Graphics/Renderer.hpp"
 #include "../../Math.hpp"
 #include "../BoundingBox.hpp"
 
@@ -78,7 +79,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
 
         // TODO: void ComputeMass()
 
-        virtual void DebugDraw(float ppm_, Vector2 pos_, float angle_) const = 0;
+        virtual void DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const = 0;
 
         /*
          * Get the Box2D shape.

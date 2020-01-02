@@ -142,12 +142,12 @@ namespace NerdThings::Ngine {
         /**
          * On draw event.
          */
-        Event<> OnDraw;
+        Event<Graphics::Renderer *> OnDraw;
 
         /**
          * On draw with the camera.
          */
-        Event<> OnDrawCamera;
+        Event<Graphics::Renderer *> OnDrawCamera;
 
         /**
          * On update event.
@@ -319,8 +319,9 @@ namespace NerdThings::Ngine {
          * Draw the scene.
          *
          * @warning Should only be called by the game.
+         * @param renderer_ The game renderer.
          */
-        void Draw();
+        void Draw(Graphics::Renderer *renderer_);
 
         /**
          * Update the scene.

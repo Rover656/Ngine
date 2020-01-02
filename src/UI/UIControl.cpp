@@ -45,21 +45,20 @@ namespace NerdThings::Ngine::UI {
         control_->_Parent = this;
     }
 
-    void UIControl::Draw() {
-        DrawStyles();
-
-        DrawChildren();
+    void UIControl::Draw(Graphics::Renderer *renderer_) {
+        DrawStyles(renderer_);
+        DrawChildren(renderer_);
     }
 
-    void UIControl::DrawChildren() {
+    void UIControl::DrawChildren(Graphics::Renderer *renderer_) {
         // Draw children
 
         for (auto child : _ChildrenOrdered) {
-            child->Draw();
+            child->Draw(renderer_);
         }
     }
 
-    void UIControl::DrawStyles() {
+    void UIControl::DrawStyles(Graphics::Renderer *renderer_) {
         // Draw default styles
 
         auto style = GetStyle();
@@ -73,22 +72,23 @@ namespace NerdThings::Ngine::UI {
 #ifndef USE_EXPERIMENTAL_RENDERER
             // Background
             if (style.BackgroundTexture != nullptr && style.BackgroundTexture->IsValid())
-                Graphics::Renderer::DrawTexture(style.GetBackgroundTexture(),
-                                               controlBackgroundRect,
-                                               {
-                                                       0,
-                                                       0,
-                                                       static_cast<float>(style.BackgroundTexture->Width),
-                                                       static_cast<float>(style.BackgroundTexture->Height)
-                                               },
-                                               style.BackColor);
+                style.GetBackgroundTexture()->Draw(
+                        renderer_,
+                        controlBackgroundRect,
+                        {
+                                0,
+                                0,
+                                static_cast<float>(style.BackgroundTexture->Width),
+                                static_cast<float>(style.BackgroundTexture->Height)
+                        },
+                        style.BackColor);
             else
-                Graphics::Renderer::DrawRectangle(controlBackgroundRect, style.BackColor);
+                renderer_->DrawRectangle(controlBackgroundRect, style.BackColor);
 
             // Border
             if (style.BorderThickness > 0) {
-                Graphics::Renderer::DrawRectangleLines(controlBorderRect, style.BorderColor,
-                                                      static_cast<int>(style.BorderThickness));
+                renderer_->DrawRectangleLines(controlBorderRect, style.BorderColor,
+                                                       static_cast<int>(style.BorderThickness));
             }
 #endif
         }
@@ -154,7 +154,8 @@ namespace NerdThings::Ngine::UI {
             throw std::runtime_error("Cannot remove a child that does not exist.");
         auto child = _Children[name];
         child->_Parent = nullptr;
-        _ChildrenOrdered.erase(std::remove(_ChildrenOrdered.begin(), _ChildrenOrdered.end(), child), _ChildrenOrdered.end());
+        _ChildrenOrdered.erase(std::remove(_ChildrenOrdered.begin(), _ChildrenOrdered.end(), child),
+                               _ChildrenOrdered.end());
         _Children.erase(name);
     }
 

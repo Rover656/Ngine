@@ -304,14 +304,14 @@ namespace NerdThings::Ngine {
         m_onUpdateRef.Detach();
     }
 
-    void Entity::Draw() {
+    void Entity::Draw(Graphics::Renderer *renderer_) {
         // Trigger draw
-        OnDraw();
+        OnDraw(renderer_);
 
         // Debug draw
         if (m_physicsBody != nullptr) {
             if (m_physicsBody->GetWorld()->DebugDraw) {
-                m_physicsBody->DebugDraw();
+                m_physicsBody->DebugDraw(renderer_);
             }
         }
     }

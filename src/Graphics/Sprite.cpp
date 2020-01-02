@@ -57,11 +57,12 @@ namespace NerdThings::Ngine::Graphics {
         m_spriteSheet = false;
     }
 
-    void Sprite::Draw(Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
+    void Sprite::Draw(Graphics::Renderer *renderer_, Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
         if (m_textures.empty())
             return;
 
         GetCurrentTexture()->Draw(
+                renderer_,
                 {
                         position_,
                         static_cast<float>(DrawWidth * scale_),
