@@ -188,6 +188,19 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
+    void Renderer::_unbindBuffers() {
+        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+            // Unbind VAO.
+            glBindVertexArray(0);
+        } else {
+            // Unbind VBO.
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        }
+
+        // Unbind IBO.
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
     void Renderer::_writeBuffer() {
         // Bind buffer
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -206,19 +219,6 @@ namespace NerdThings::Ngine::Graphics {
 #else
         glBufferData(GL_ARRAY_BUFFER, sizeof(Rendering::VertexData) * VBO_SIZE, m_vertices, GL_STREAM_DRAW);
 #endif
-    }
-
-    void Renderer::_unbindBuffers() {
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            // Unbind VAO.
-            glBindVertexArray(0);
-        } else {
-            // Unbind VBO.
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
-
-        // Unbind IBO.
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void Renderer::_addVertices(Renderer::PrimitiveType type_, VertexData *vertices_, int count_) {

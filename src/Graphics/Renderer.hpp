@@ -43,9 +43,6 @@ namespace NerdThings::Ngine::Graphics {
      * The rewritten Ngine renderer.
      * This properly implements all required features for much easier batching and depth sorting.
      * @note This will probably not be completed by the end of the year. This must be enabled with the CMake FEATURE_EXPERIMENTAL_RENDERER flag.
-     *
-     * @todo Provide methods for rendering custom VertexArrays.
-     * @todo Make this immediate mode, batching this is simply too slow.
      */
 #else
     /**
@@ -155,14 +152,34 @@ namespace NerdThings::Ngine::Graphics {
          */
         void _createBuffers();
 
+        /**
+         * Delete the rendering buffers.
+         */
         void _deleteBuffers();
 
+        /**
+         * Bind the rendering buffers.
+         */
         void _bindBuffers();
 
-        void _writeBuffer();
-
+        /**
+         * Unbind the buffers
+         */
         void _unbindBuffers();
 
+        /**
+         * Write the vertices to the buffer.
+         */
+        void _writeBuffer();
+
+        /**
+         * Add a vertex array to the buffer.
+         *
+         * @note This converts any primitive type to triangles.
+         * @param type_ The primitive type.
+         * @param vertices_ The vertex array.
+         * @param count_ The size of the array.
+         */
         void _addVertices(PrimitiveType type_, VertexData *vertices_, int count_);
 
         /**
@@ -214,7 +231,7 @@ namespace NerdThings::Ngine::Graphics {
         void Vertex(const Vector2 &pos_, const Vector2 &texCoord_, const Color &color_);
 
         /**
-         * End this batch.
+         * End the current batch.
          */
         void End();
 
