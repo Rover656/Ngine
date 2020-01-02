@@ -20,7 +20,6 @@
 #include "Font.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
-#include "Rendering/Renderable.hpp"
 #include "GraphicsDevice.hpp"
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
@@ -29,6 +28,16 @@
 #include "Texture2D.hpp"
 
 namespace NerdThings::Ngine::Graphics {
+    /**
+     * Vertex data.
+     * `Vector3` for Position, `Vector2` for tex coords and `Color` for color.
+     */
+    struct VertexData {
+        Vector3 Position;
+        Color Color;
+        Vector2 TexCoords;
+    };
+
 #ifdef USE_EXPERIMENTAL_RENDERER
     /**
      * The rewritten Ngine renderer.
@@ -54,29 +63,23 @@ namespace NerdThings::Ngine::Graphics {
          * The size of the internal VBOs.
          * The maximum number of vertices each batch.
          */
-        static const unsigned int VBO_SIZE = 65536;
+        static const unsigned int VBO_SIZE = 65536/2;
         static const unsigned int QUAD_IBO_SIZE = VBO_SIZE * 6 / 4;
 
         enum PrimitiveType {
+            /**
+             * Render the vertices as triangles.
+             *
+             * @warning Not recommended as Ngine uses quads for rendering. Using this will break batching. Use sparingly.
+             */
             PRIMITIVE_TRIANGLES = 0,
+
+            /**
+             * Render the vertices as quads.
+             */
             PRIMITIVE_QUADS
         };
     private:
-        struct BatchItem {
-            int Depth = 0;
-            PrimitiveType PrimitiveType = PRIMITIVE_TRIANGLES;
-            std::vector<Rendering::VertexData> Vertices;
-            int VertexCount = 0;
-            ShaderProgram *Shader = nullptr;
-            Texture2D *Texture = nullptr;
-        };
-
-        enum BatchBucket {
-            Z_POS = 0,
-            Z_NEU,
-            Z_NEG
-        };
-
         /**
          * The graphics device.
          */
@@ -98,51 +101,44 @@ namespace NerdThings::Ngine::Graphics {
         bool m_rendering = false;
 
         /**
-         * Whether or not we are creating a batch.
+         * Whether or not we are adding to the vertex array.
          */
         bool m_midBatch = false;
 
-        /**
-         * The current batch item.
-         */
-        BatchItem m_currentBatch;
+        unsigned int m_VAO;
+
+        unsigned int m_VBO;
 
         /**
-         * The current batch's target for error checking.
+         * This contains a list of all the vertices to be pushed to the framebuffer.
          */
-        RenderTarget *m_currentBatchTarget = nullptr;
+        VertexData m_vertices[VBO_SIZE];
 
         /**
-         * Batches (one per target).
+         * The number of vertices to be rendered from the array
          */
-        std::map<RenderTarget *, std::vector<std::vector<BatchItem>>> m_batches;
+        int m_vertexCount = 0;
 
-        unsigned int m_triangleVAO;
+        /**
+         * The currently applied shader program.
+         *
+         * @todo Replace with ShaderProgramState when added.
+         */
+        ShaderProgram *m_currentShader;
 
-        unsigned int m_triangleVBO;
-
-        unsigned int m_quadVAO;
-
-        unsigned int m_quadVBO;
-
-        unsigned int m_quadIBO;
+        /**
+         * The currently applied texture.
+         */
+        Texture2D *m_currentTexture;
 
         /**
          * The current primitive type being rendered.
          */
         PrimitiveType m_currentPrimitiveType = PRIMITIVE_TRIANGLES;
 
-        /**
-         * This contains a list of all the vertices to be pushed to the framebuffer.
-         */
-        Rendering::VertexData m_vertices[VBO_SIZE];
+        VertexData m_tempVertexData[VBO_SIZE];
 
-        int m_vertexCount = 0;
-
-        /**
-         * This contains a list of items that are ready to be pushed to the framebuffer.
-         */
-        std::vector<BatchItem> m_processedItems;
+        int m_tempVertexDataCount = 0;
 
         /**
          * Enable OpenGL capabilities.
@@ -161,38 +157,18 @@ namespace NerdThings::Ngine::Graphics {
 
         void _deleteBuffers();
 
-        void _bindTriangleBuffers();
+        void _bindBuffers();
 
-        void _bindQuadBuffers();
-
-        void _writeBuffer(unsigned int vbo_);
+        void _writeBuffer();
 
         void _unbindBuffers();
 
-        /**
-         * Sort batch items.
-         *
-         * @param a_ The first item.
-         * @param b_ The second item.
-         * @return Whether A should be before B.
-         */
-        static bool _sortPredicate(const BatchItem &a_, const BatchItem &b_);
+        void _addVertices(PrimitiveType type_, VertexData *vertices_, int count_);
 
         /**
-         * RenderBatched the batch for the given target.
-         *
-         * @param target_ The target to render for.
+         * Render the batch to the display.
          */
-        void _render(RenderTarget *target_);
-
-        void _renderBucket(RenderTarget *target_, BatchBucket bucket_);
-
-        void _processBatchItem(const BatchItem &item_);
-
-        /**
-         * Flush the buffers
-         */
-        void _flush();
+        void _renderBatch();
     public:
         /**
          * Create a renderer.
@@ -203,11 +179,39 @@ namespace NerdThings::Ngine::Graphics {
         ~Renderer();
 
         /**
-         * Begin adding some vertices to the current framebuffer batch.
+         * Add a vertex array to the renderer batch.
+         *
+         * @param vertices_ The vertex array to add.
+         * @param primitiveType_ The primitive type.
+         * @param texture_ The texture to render with.
+         * @param shader_ The shader to render with.
          */
-        void Begin(PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, int depth_ = 0, ShaderProgram *shader_ = nullptr);
+        void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
 
-        void Vertex(Vector2 pos_, Vector2 texCoord_, Color color_);
+        /**
+         * Begin adding some vertices to the current framebuffer batch.
+         *
+         * @param primitiveType_ The primitive type.
+         * @param texture_ The texture to render with.
+         * @param shader_ The shader to render with.
+         */
+        void Begin(PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
+
+        /**
+         * Push some vertex data to the batch.
+         *
+         * @param vertexData_ The data to push.
+         */
+        void Vertex(VertexData vertexData_);
+
+        /**
+         * Create a new vertex and push it to the batch.
+         *
+         * @param pos_ Vertex position.
+         * @param texCoord_ Vertex texture coord.
+         * @param color_ Vertex color.
+         */
+        void Vertex(const Vector2 &pos_, const Vector2 &texCoord_, const Color &color_);
 
         /**
          * End this batch.
@@ -215,9 +219,9 @@ namespace NerdThings::Ngine::Graphics {
         void End();
 
         /**
-         * RenderBatched the current batch.
+         * Render the current batch.
          */
-        void RenderBatched();
+        void Render();
 
         /**
          * Clear the framebuffer.

@@ -25,7 +25,7 @@ namespace NerdThings::Ngine::Components {
      */
     class SpriteComponent : public Component {
         /**
-         * RenderBatched origin.
+         * Render origin.
          */
         Vector2 m_origin;
 

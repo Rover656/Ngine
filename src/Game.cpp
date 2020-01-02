@@ -203,7 +203,7 @@ namespace NerdThings::Ngine {
             // Clear with the correct background colour
             Graphics::Renderer::Clear(ClearColor);
 
-            // RenderBatched scene
+            // Render scene
             if (m_currentScene != nullptr) {
                 m_currentScene->Draw();
             }

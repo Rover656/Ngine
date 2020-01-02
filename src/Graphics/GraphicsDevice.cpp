@@ -159,7 +159,7 @@ namespace NerdThings::Ngine::Graphics {
         // Get viewport width and height.
         int w,h;
         if (false) {
-            // TODO: RenderBatched target support.
+            // TODO: Render target support.
         } else {
             w = m_attachedWindow->GetWidth();
             h = m_attachedWindow->GetHeight();

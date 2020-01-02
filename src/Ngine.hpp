@@ -156,8 +156,6 @@
 #include "Components/UIWidgetComponent.hpp"
 #include "Filesystem/Filesystem.hpp"
 #include "Filesystem/ResourceManager.hpp"
-#include "Graphics/Rendering/QuadRenderable.hpp"
-#include "Graphics/Rendering/Renderable.hpp"
 #include "Graphics/Camera.hpp"
 #include "Graphics/Canvas.hpp"
 #include "Graphics/Color.hpp"

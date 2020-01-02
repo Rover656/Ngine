@@ -49,7 +49,7 @@ namespace NerdThings::Ngine::Components {
 
         // TODO: Scale field
 
-        // RenderBatched the tileset
+        // Render the tileset
         if (m_useCullArea) {
             m_tileset->Draw(par->GetPosition(), GetScene()->GetCullAreaPosition(), GetScene()->GetCullAreaEndPosition());
         } else {

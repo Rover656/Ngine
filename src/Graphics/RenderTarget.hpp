@@ -33,12 +33,12 @@ namespace NerdThings::Ngine::Graphics {
         Texture2D *m_texture;
     public:
         /**
-         * RenderBatched target width.
+         * Render target width.
          */
         unsigned int Width = 0;
 
         /**
-         * RenderBatched target height.
+         * Render target height.
          */
         unsigned int Height = 0;
 
@@ -57,8 +57,8 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * Create a render target.
          *
-         * @param width_ RenderBatched target width.
-         * @param height_ RenderBatched target height.
+         * @param width_ Render target width.
+         * @param height_ Render target height.
          */
         RenderTarget(unsigned int width_, unsigned int height_);
         ~RenderTarget();

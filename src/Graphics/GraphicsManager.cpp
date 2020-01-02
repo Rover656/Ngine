@@ -108,7 +108,7 @@ namespace NerdThings::Ngine::Graphics {
             // Remove target
             m_renderTargetStack.pop_back();
 
-            // Stop RenderBatched Target
+            // Stop Render Target
             _endRenderTarget();
 
             // Start using another if it is available

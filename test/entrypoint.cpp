@@ -282,7 +282,6 @@ class TestGame : public Game {
 
 #ifdef USE_EXPERIMENTAL_RENDERER
     Renderer *_Renderer;
-    Graphics::Rendering::QuadRenderable _Obj;
 #endif
 public:
 
@@ -308,30 +307,33 @@ public:
         // Clear display
         _Renderer->Clear();
 
-        // RenderBatched a triangle.
+        // Render a triangle.
         _Renderer->Begin(Renderer::PRIMITIVE_TRIANGLES);
         _Renderer->Vertex({0, 0}, {}, Color::Red);
         _Renderer->Vertex({100, 0}, {}, Color::Red);
         _Renderer->Vertex({100, 100}, {}, Color::Red);
         _Renderer->End();
 
-        // RenderBatched a quad.
-        auto t = GetResourceManager()->GetTexture("test_spritesheet");
+        // Render a quad.
+        Texture2D *t = nullptr;//GetResourceManager()->GetTexture("test_spritesheet");
         for (auto i = 0; i < 2000; i++) {
             _Renderer->Begin(Renderer::PRIMITIVE_QUADS, t);
-            _Renderer->Vertex({125, 125}, {0, 0}, Color::Blue);
-            _Renderer->Vertex({125 + 50, 125}, {1, 0}, Color::Blue);
-            _Renderer->Vertex({125 + 50, 125 + 50}, {1, 1}, Color::Blue);
-            _Renderer->Vertex({125, 125 + 50}, {0, 1}, Color::Blue);
+            _Renderer->Vertex({125, 125}, {0, 0}, Color::White);
+            _Renderer->Vertex({125 + 50, 125}, {1, 0}, Color::White);
+            _Renderer->Vertex({125 + 50, 125 + 50}, {1, 1}, Color::White);
+            _Renderer->Vertex({125, 125 + 50}, {0, 1}, Color::White);
             _Renderer->End();
         }
 
         // Render the quads
-        _Renderer->RenderBatched();
+        _Renderer->Render();
 #else
+        Renderer::DrawTriangle({0, 0}, {100, 0}, {100, 100}, Color::Red);
         auto t = GetResourceManager()->GetTexture("test_spritesheet");
+//        for (auto i = 0; i < 2000; i++)
+//            t->Draw({125, 125, 50, 50}, {0, 0, 64, 64}, Color::White);
         for (auto i = 0; i < 2000; i++)
-            t->Draw({125, 125, 50, 50}, {0, 0, 64, 64}, Color::Blue);
+            Renderer::DrawRectangle({125, 125}, {50, 50}, Color::White);
 #endif
     }
 
@@ -347,19 +349,7 @@ public:
         _Renderer = new Renderer(GetGraphicsDevice());
 
         // Set screen clear color
-        _Renderer->SetClearColor(Color::Orange);
-
-        // Create vertex data for our quad (from bottom left)
-        std::vector<Rendering::VertexData> vdat;
-        float size = 500;
-        vdat.push_back({{0, size, 0}, Color::Green, {0, 1}});
-        vdat.push_back({{size, size, 0}, Color::Red, {1, 1}});
-        vdat.push_back({{size, 0, 0}, Color::Yellow, {1, 0}});
-        vdat.push_back({{0, 0, 0}, Color::Blue, {0, 0}});
-
-        // Create our quad
-        _Obj = Rendering::QuadRenderable(vdat);
-        _Obj.SetTexture(resMan->GetTexture("test_tiles"));
+        _Renderer->SetClearColor(Color::Black);
 #else
         // Load arial as default font
         Font::SetDefaultFont(resMan->GetFont("Upheaval"));
@@ -394,7 +384,7 @@ NGINE_GAME_ENTRY {
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;
-    windowConfig.MSAA_4X = true;
+    //windowConfig.MSAA_4X = true;
     windowConfig.VSync = false;
     windowConfig.InitialWidth = 1920/2;
     windowConfig.InitialHeight = 1080/2;

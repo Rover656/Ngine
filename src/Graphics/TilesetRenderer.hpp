@@ -27,7 +27,7 @@ namespace NerdThings::Ngine::Graphics {
      */
     class NEAPI TilesetRenderer {
         /*
-         * RenderBatched area height in tile units
+         * Render area height in tile units
          */
         int m_height;
 
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Graphics {
         Tileset m_tileset;
 
         /*
-         * RenderBatched area width in tile units
+         * Render area width in tile units
          */
         int m_width;
 
