@@ -32,6 +32,26 @@
 
 namespace NerdThings::Ngine::Graphics {
     /**
+     * The text alignment
+     *
+     * @todo Need to use enum classes more...
+     */
+    enum class TextAlignment {
+        Left,
+        Center,
+        Right
+    };
+
+    /**
+     * Text wrapping mode.
+     */
+    enum class TextWrap {
+        None,
+        BreakLine,
+        BreakWord
+    };
+
+    /**
      * Character information.
      */
     struct NEAPI CharInfo {
@@ -69,10 +89,10 @@ namespace NerdThings::Ngine::Graphics {
          * Create an empty character info structure.
          */
         CharInfo()
-            : Character(0),
-              OffsetX(0),
-              OffsetY(0),
-              AdvanceX(0) {}
+                : Character(0),
+                  OffsetX(0),
+                  OffsetY(0),
+                  AdvanceX(0) {}
     };
 
     /**
@@ -108,6 +128,7 @@ namespace NerdThings::Ngine::Graphics {
          * Create an empty font.
          */
         Font();
+
         virtual ~Font();
 
         /**
@@ -155,7 +176,8 @@ namespace NerdThings::Ngine::Graphics {
          * @param fontChars_ The list of characters to add into the atlas. Leave empty for standard alpha-numeric characters
          * @return The loaded font.
          */
-        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
+        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_, int baseSize_ = 36,
+                                 std::vector<int> fontChars_ = std::vector<int>());
 
         /**
          * Measure the dimensions of a string (on one line).
@@ -172,8 +194,50 @@ namespace NerdThings::Ngine::Graphics {
          * Unload the font.
          */
         void Unload() override;
+
+        //// NEW -- The Rendering API for the new Renderer :)
+
+        /**
+         * Draw a string with this font at the given position.
+         *
+         * @param renderer_ The renderer.
+         * @param string_ The string to render.
+         * @param position_ The position to render at.
+         * @param fontSize_ The font size to use.
+         * @param spacing_ Letter spacing.
+         */
+        void DrawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
+                        float spacing_, const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
+
+        /**
+         * Draw a string within given bounds with options for alignment and wrapping.
+         */
+        void DrawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
+                        float spacing_, TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None,
+                        const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
+
+        /**
+         * Measure the size of a string if it was rendered without constraints.
+         */
+        Vector2 NEW_MeasureString(const std::string &string_, float fontSize_, float spacing_);
+
+        /**
+         * Measure the size of a string if it was rendered with a maximum width.
+         */
+        Vector2
+        NEW_MeasureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
+                                     TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None);
+
+        /**
+         * Measure the size of a string if it was rendered with a maximum height.
+         */
+        Vector2
+        NEW_MeasureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
+                                     TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None);
+
     private:
         void _generateAtlas(GraphicsDevice *graphicsDevice_);
+
         void _loadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_);
     };
 }
