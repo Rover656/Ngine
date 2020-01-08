@@ -150,22 +150,27 @@ namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
         // Push matrix (for rotation)
         renderer_->PushMatrix();
+        renderer_->Translate({v1_.X, v1_.Y, 0});
         renderer_->Rotate(rotation_, {0, 0, 1});
         renderer_->Translate({-origin_.X, -origin_.Y, 0});
+
+        Vector2 a = {0, 0};
+        auto b = v2_ - v1_;
+        auto c = v3_ - v1_;
 
         if (outline_) {
             // Render with lines
             renderer_->Begin(PRIMITIVE_QUADS);
-            _drawLine(renderer_, v1_, v2_, color_, lineThickness_);
-            _drawLine(renderer_, v2_, v3_, color_, lineThickness_);
-            _drawLine(renderer_, v3_, v1_, color_, lineThickness_);
+            _drawLine(renderer_, a, b, color_, lineThickness_);
+            _drawLine(renderer_, b, c, color_, lineThickness_);
+            _drawLine(renderer_, c, a, color_, lineThickness_);
             renderer_->End();
         } else {
             // Render it.
             renderer_->Begin(PRIMITIVE_TRIANGLES);
-            renderer_->Vertex(v1_, {}, color_);
-            renderer_->Vertex(v2_, {}, color_);
-            renderer_->Vertex(v3_, {}, color_);
+            renderer_->Vertex(a, {}, color_);
+            renderer_->Vertex(b, {}, color_);
+            renderer_->Vertex(c, {}, color_);
             renderer_->End();
         }
 

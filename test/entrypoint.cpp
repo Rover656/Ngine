@@ -257,12 +257,14 @@ public:
     int rot = 0;
 
     void Draw(Graphics::Renderer *renderer_) {
-        //testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
+        // testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
 
-        ShapeRenderer::DrawCircle(renderer_, {50, 50}, 50, Color::Red, true, 1);
-        //ShapeRenderer::DrawLine(renderer_, {10, 10}, {100, 100}, Color::Green, 5);
+        // ShapeRenderer::DrawCircle(renderer_, {50, 50}, 50, Color::Red, true, 1);
+        // ShapeRenderer::DrawLine(renderer_, {10, 10}, {100, 100}, Color::Green, 5);
         // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color::Red, 15, {});
         // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color(0.0f, 1.0f, 0.0f, 0.5f), 15, {}, true, 15);
+        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
+        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color(1.0f, 0.0f, 1.0f, 0.5f), 0, {}, true, 5);
     }
 
     void DrawCam(Graphics::Renderer *renderer_) {
