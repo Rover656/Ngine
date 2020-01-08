@@ -36,7 +36,12 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The render target
          */
-        RenderTarget *m_renderTarget;
+        RenderTarget *m_renderTarget = nullptr;
+
+        /**
+         * The graphics device.
+         */
+        GraphicsDevice *m_graphicsDevice = nullptr;
 
     public:
         /**
@@ -45,7 +50,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param width_ The canvas width.
          * @param height_ The canvas height.
          */
-        Canvas(unsigned int width_, unsigned int height_);
+        Canvas(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_);
         virtual ~Canvas();
 
         /**

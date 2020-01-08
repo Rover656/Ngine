@@ -502,7 +502,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     }
 
     void GL::Rotate(float angle_, Vector3 axis_) {
-        auto rotation = Matrix::Rotate(axis_, angle_);
+        auto rotation = Matrix::Rotate(angle_, axis_);
         *_CurrentMatrix = rotation * (*_CurrentMatrix);
     }
 

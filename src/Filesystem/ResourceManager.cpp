@@ -125,24 +125,23 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     bool ResourceManager::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
-        // TODO: Fix font
-//        // Fix base size
-//        if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
-//
-//        // Get the name
-//        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-//
-//        // Create font
-//        auto fnt = Graphics::Font::LoadTTFFont(inPath_, baseSize_);
-//
-//        // Check if it is valid
-//        if (fnt->IsValid()) {
-//            m_fonts.insert({name, std::unique_ptr<Graphics::Font>(fnt) });
-//            return true;
-//        }
-//
-//        // Delete, it didnt work
-//        delete fnt;
+        // Fix base size
+        if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
+
+        // Get the name
+        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+
+        // Create font
+        auto fnt = Graphics::Font::LoadTTFFont(m_graphicsDevice, inPath_, baseSize_);
+
+        // Check if it is valid
+        if (fnt->IsValid()) {
+            m_fonts.insert({name, std::unique_ptr<Graphics::Font>(fnt) });
+            return true;
+        }
+
+        // Delete, it didnt work
+        delete fnt;
         return false;
     }
 

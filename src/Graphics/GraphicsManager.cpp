@@ -25,7 +25,7 @@ namespace NerdThings::Ngine::Graphics {
     void GraphicsManager::_useRenderTarget(RenderTarget *target_) {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
-#endif
+#else
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Force draw
         OpenGL::GL::Draw();
@@ -38,12 +38,13 @@ namespace NerdThings::Ngine::Graphics {
         m_currentHeight = target_->Height;
         SetupFramebuffer();
 #endif
+#endif
     }
 
     void GraphicsManager::_endRenderTarget() {
 #ifdef USE_EXPERIMENTAL_RENDERER
         throw std::runtime_error("GraphicsManager is no longer available. Use GraphicsDevice instead.");
-#endif
+#else
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Force draw
         OpenGL::GL::Draw();
@@ -55,6 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         m_currentWidth = Window::GetCurrent()->GetWidth();
         m_currentHeight = Window::GetCurrent()->GetHeight();
         SetupFramebuffer();
+#endif
 #endif
     }
 

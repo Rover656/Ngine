@@ -16,9 +16,10 @@
 #include "GraphicsManager.hpp"
 
 namespace NerdThings::Ngine::Graphics {
-    Canvas::Canvas(unsigned int width_, unsigned int height_)
+    Canvas::Canvas(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)
             : m_width(width_), m_height(height_) {
-        m_renderTarget = new RenderTarget(m_width, m_height);
+        m_renderTarget = new RenderTarget(graphicsDevice_, m_width, m_height);
+        m_graphicsDevice = graphicsDevice_;
     }
 
     Canvas::~Canvas() {
@@ -66,6 +67,6 @@ namespace NerdThings::Ngine::Graphics {
         delete m_renderTarget;
         m_width = width_;
         m_height = height_;
-        m_renderTarget = new RenderTarget(m_width, m_height);
+        m_renderTarget = new RenderTarget(m_graphicsDevice, m_width, m_height);
     }
 }

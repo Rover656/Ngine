@@ -28,6 +28,7 @@
 namespace NerdThings::Ngine::Graphics {
     class GraphicsDevice;
     class Renderer;
+    class RenderTarget;
 
     /**
      * Texture filter mode.
@@ -97,6 +98,7 @@ namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
         // Friend renderer
         friend class Renderer;
+        friend class RenderTarget;
 
         /**
          * OpenGL Texture ID
@@ -112,6 +114,11 @@ namespace NerdThings::Ngine::Graphics {
          * The pixel format.
          */
         PixelFormat m_format = UNCOMPRESSED_R8G8B8A8;
+
+        /**
+         * The graphics device used to create this
+         */
+        GraphicsDevice *m_graphicsDevice = nullptr;
 
         /**
          * Create the texture on the GPU

@@ -15,6 +15,7 @@
 #include "../Config.hpp"
 
 #include "../Math.hpp"
+#include "GraphicsDevice.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     /**
@@ -58,14 +59,14 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @note Internally, this starts using the translation matrix for this camera.
          */
-        void BeginCamera() const;
+        void BeginCamera(GraphicsDevice *graphicsDevice_) const;
 
         /**
          * Finish using the camera (internal).
          *
          * @note Internally, this pops the translation matrix for this camera.
          */
-        void EndCamera() const;
+        void EndCamera(GraphicsDevice *graphicsDevice_) const;
 
         /**
          * Convert a screen/window position to a world position.

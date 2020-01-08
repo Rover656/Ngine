@@ -18,22 +18,31 @@
 namespace NerdThings::Ngine::Graphics {
     // Public Methods
 
-    void Camera::BeginCamera() const {
+    void Camera::BeginCamera(GraphicsDevice *graphicsDevice_) const {
         // Force draw and load
+#ifdef USE_EXPERIMENTAL_RENDERER
+        graphicsDevice_->LoadModelViewIdentity();
+        graphicsDevice_->MultModelView(GetTranslationMatrix());
+#else
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
         OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
         OpenGL::GL::LoadIdentity();
         OpenGL::GL::MultMatrix(GetTranslationMatrix());
 #endif
+#endif
     }
 
-    void Camera::EndCamera() const {
+    void Camera::EndCamera(GraphicsDevice *graphicsDevice_) const {
         // Force draw and reload
+#ifdef USE_EXPERIMENTAL_RENDERER
+        graphicsDevice_->LoadModelViewIdentity();
+#else
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         OpenGL::GL::Draw();
         OpenGL::GL::MatrixMode(OpenGL::MATRIX_MODELVIEW);
         OpenGL::GL::LoadIdentity();
+#endif
 #endif
     }
 

@@ -212,7 +212,7 @@ public:
 
     void Init(SceneLoadEventArgs e) {
         // Bind events
-        OnDrawCamera += new ClassMethodEventHandler<TestScene, Graphics::Renderer *>(this, &TestScene::Draw);
+        OnDraw += new ClassMethodEventHandler<TestScene, Graphics::Renderer *>(this, &TestScene::Draw);
         OnUpdate += new ClassMethodEventHandler<TestScene>(this, &TestScene::Update);
         OnDrawCamera += new ClassMethodEventHandler<TestScene, Graphics::Renderer *>(this, &TestScene::DrawCam);
 
@@ -257,9 +257,12 @@ public:
     int rot = 0;
 
     void Draw(Graphics::Renderer *renderer_) {
-        ///Renderer::DrawTexture(ResourceManager::GetTexture("test_spritesheet"), {0, 0}, Color::White);
-        testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
-        ///Renderer::DrawTexture(ResourceManager::GetTexture("test_spritesheet"), {0, 64}, Color::White);
+        //testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
+
+        ShapeRenderer::DrawCircle(renderer_, {50, 50}, 50, Color::Red, true, 1);
+        //ShapeRenderer::DrawLine(renderer_, {10, 10}, {100, 100}, Color::Green, 5);
+        // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color::Red, 15, {});
+        // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color(0.0f, 1.0f, 0.0f, 0.5f), 15, {}, true, 15);
     }
 
     void DrawCam(Graphics::Renderer *renderer_) {
@@ -269,11 +272,9 @@ public:
     void Update() {
         //widg.Update();
 
-#ifndef USE_EXPERIMENTAL_RENDERER
         if (Keyboard::GetCurrent()->IsKeyPressed(KEY_F11)) {
             GetGame()->GetGameWindow()->ToggleFullscreen();
         }
-#endif
     }
 };
 
@@ -299,19 +300,13 @@ public:
 
     void Draw(Graphics::Renderer *renderer_) {
 #ifdef USE_EXPERIMENTAL_RENDERER
-        // Clear display
-        renderer_->Clear();
-
-        auto tex = GetResourceManager()->GetTexture("test_tiles");
-        tex->Draw(renderer_, {0, 0});
-
-        // Render the quads
-        renderer_->Render();
+//        auto tex = GetResourceManager()->GetTexture("test_tiles");
+//        tex->Draw(renderer_, {0, 0});
 #else
 //        renderer_->DrawTriangle({0, 0}, {100, 0}, {100, 100}, Color::Red);
-        auto t = GetResourceManager()->GetTexture("test_tiles");
-        for (auto i = 0; i < 2000; i++)
-            t->Draw(renderer_, {0, 0});
+//        auto t = GetResourceManager()->GetTexture("test_tiles");
+//        for (auto i = 0; i < 2000; i++)
+//            t->Draw(renderer_, {0, 0});
 //        for (auto i = 0; i < 2000; i++)
 //            renderer_->DrawRectangle({125, 125}, {50, 50}, Color::White);
 #endif
@@ -324,7 +319,7 @@ public:
         // Load all content (using default resource manager config).
         auto resMan = GetResourceManager();
         resMan->LoadResources();
-#ifndef USE_EXPERIMENTAL_RENDERER
+
         // Load arial as default font
         Font::SetDefaultFont(resMan->GetFont("Upheaval"));
 
@@ -332,8 +327,7 @@ public:
         m_scene = new TestScene(this);
 
         // Set scene
-        //SetScene(m_scene);
-#endif
+        SetScene(m_scene);
     }
 };
 
@@ -348,6 +342,7 @@ NGINE_GAME_ENTRY {
 #ifndef USE_EXPERIMENTAL_RENDERER
     //gameConfig.MaintainResolution = true;
 #endif
+    gameConfig.MaintainResolution = true;
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

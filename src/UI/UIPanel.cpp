@@ -81,14 +81,16 @@ namespace NerdThings::Ngine::UI {
     void UIPanel::SetHeight(float height_) {
         UIControlSized::SetHeight(height_);
 
-        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(GetWidth()),
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(m_graphicsDevice,
+                                                                 static_cast<int>(GetWidth()),
                                                                  static_cast<int>(height_));
     }
 
     void UIPanel::SetWidth(float width_) {
         UIControlSized::SetWidth(width_);
 
-        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(width_),
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(m_graphicsDevice,
+                                                                 static_cast<int>(width_),
                                                                  static_cast<int>(GetHeight()));
     }
 
@@ -104,6 +106,6 @@ namespace NerdThings::Ngine::UI {
         _ChildrenConfig = 3; // Allow multiple children
 
         // Create render target
-        _RenderTarget = std::make_shared<Graphics::RenderTarget>(static_cast<int>(width_), static_cast<int>(height_));
+        _RenderTarget = std::make_shared<Graphics::RenderTarget>(m_graphicsDevice, static_cast<int>(width_), static_cast<int>(height_));
     }
 }

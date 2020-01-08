@@ -11,33 +11,99 @@
 
 #include "RenderTarget.hpp"
 
-namespace NerdThings::Ngine::Graphics {
-    RenderTarget::RenderTarget() {}
+#include "../Logger.hpp"
 
-    RenderTarget::RenderTarget(unsigned int width_, unsigned int height_) : RenderTarget() {
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#include "OpenGL.hpp"
+#endif
+
+namespace NerdThings::Ngine::Graphics {
+    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
         Width = width_;
         Height = height_;
 
-        // Create framebuffer
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
+#ifdef USE_EXPERIMENTAL_RENDERER
+        // Create color attachment
+        m_texture = new Texture2D(graphicsDevice_, nullptr, width_, height_, UNCOMPRESSED_R8G8B8A8, 1);
+
+        // Verify texture
+        if (!m_texture->IsValid()) {
+            Logger::Error("RenderTarget", "Failed to create color attachment for render target.");
+
+            // Delete texture
+            delete m_texture;
+            m_texture = nullptr;
+
+            // Unset dimensions
+            Width = 0;
+            Height = 0;
+            return;
+        }
+
+        // Unbind texture
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        // Depth buffer
+        glGenRenderbuffers(1, &m_depthBufferID);
+        glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferID);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width_, height_);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        // Create FBO
+        glGenFramebuffers(1, &m_ID);
+
+        // Bind
+        glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+
+        // Set depth and color attachment
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferID);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->m_ID, 0);
+
+        // Check framebuffer status
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            Logger::Error("RenderTarget", "Failed to create framebuffer.");
+
+            // Unbind
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // Unset dimensions
+            Width = 0;
+            Height = 0;
+
+            // Delete texture
+            delete m_texture;
+            m_texture = nullptr;
+
+            // Delete depth buffer
+            glDeleteRenderbuffers(1, &m_depthBufferID);
+            m_depthBufferID = 0;
+
+            // Delete framebuffer
+            glDeleteFramebuffers(1, &m_ID);
+            m_ID = 0;
+            return;
+        }
+
+        Logger::Notice("RenderTarget", "Successfully created framebuffer with ID %i", m_ID);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#else
+        // Create framebuffer
         InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
-#endif
-#endif
 
         // Create texture
         m_texture = new Texture2D();
         m_texture->Width = Width;
         m_texture->Height = Height;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
         m_texture->InternalTexture = InternalFramebuffer->RenderTexture;
 #endif
 #endif
     }
 
     RenderTarget::~RenderTarget() {
-        delete m_texture;
+        // Delete self
+        Unload();
     }
 
     Texture2D *RenderTarget::GetTexture() {
@@ -45,33 +111,64 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool RenderTarget::IsValid() const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        if (m_ID > 0)
+            return true;
+#else
         if (InternalFramebuffer != nullptr)
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             if (InternalFramebuffer->ID > 0)
+#endif
 #endif
                 return true;
         return false;
     }
 
     void RenderTarget::Unload() {
-        // Unload framebuffer
+        Width = 0;
         Height = 0;
+#ifdef USE_EXPERIMENTAL_RENDERER
+        // Delete texture
+        delete m_texture;
+        m_texture = nullptr;
+
+        // Delete depth buffer
+        if (m_depthBufferID > 0) {
+            glDeleteRenderbuffers(1, &m_depthBufferID);
+            m_depthBufferID = 0;
+        }
+
+        // Delete framebuffer
+        if (m_ID > 0) {
+            glDeleteFramebuffers(1, &m_ID);
+            m_ID = 0;
+        }
+#else
+        // Unload framebuffer
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         InternalFramebuffer = nullptr;
 #endif
-        Width = 0;
+#endif
     }
 
     bool RenderTarget::operator==(const RenderTarget &b) const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        return m_ID == b.m_ID;
+#else
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         return InternalFramebuffer->ID == b.InternalFramebuffer->ID;
+#endif
 #endif
         return false;
     }
 
     bool RenderTarget::operator!=(const RenderTarget &b) const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        return m_ID != b.m_ID;
+#else
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         return InternalFramebuffer->ID != b.InternalFramebuffer->ID;
+#endif
 #endif
         return true;
     }

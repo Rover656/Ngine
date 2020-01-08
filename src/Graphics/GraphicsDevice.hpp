@@ -32,10 +32,12 @@ namespace NerdThings::Ngine::Graphics {
     class NEAPI GraphicsDevice {
         friend class Renderer;
     public:
+        static const int MAX_TARGETS = 32;
+
         /**
          * The maximum number of matrices permitted per stack.
          */
-        static const int MATRIX_STACK_SIZE = 32;
+        static const int MAX_MATRICES = 32;
 
         /**
          * OpenGL Feature flags
@@ -112,6 +114,20 @@ namespace NerdThings::Ngine::Graphics {
          */
         Matrix m_projectionMatrix;
 
+        /**
+         * The render target stack.
+         */
+        RenderTarget *m_targetStack[MAX_TARGETS];
+
+        /**
+         * The render target stack counter.
+         */
+        int m_targetCounter = 0;
+
+        Matrix m_modelViewStack[MAX_MATRICES];
+
+        int m_modelViewCounter = 0;
+
         // OpenGL Features
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         /**
@@ -179,6 +195,14 @@ namespace NerdThings::Ngine::Graphics {
          * @return The current model view matrix.
          */
         Matrix GetModelViewMatrix() const;
+
+        void PushModelViewMatrix();
+
+        void PopModelViewMatrix();
+
+        void LoadModelViewIdentity();
+
+        void MultModelView(const Matrix &matrix_);
 
         /**
          * Setup the framebuffer.

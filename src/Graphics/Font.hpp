@@ -146,7 +146,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param fontChars_ The list of characters to add into the atlas. Leave empty for standard alpha-numeric characters
          * @return The loaded font.
          */
-        static Font *LoadTTFFont(const Filesystem::Path &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
+        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_, int baseSize_ = 36, std::vector<int> fontChars_ = std::vector<int>());
 
         /**
          * Measure the dimensions of a string (on one line).
@@ -164,8 +164,8 @@ namespace NerdThings::Ngine::Graphics {
          */
         void Unload() override;
     private:
-        void __GenerateAtlas();
-        void __LoadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_);
+        void _generateAtlas(GraphicsDevice *graphicsDevice_);
+        void _loadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_);
     };
 }
 

@@ -167,6 +167,7 @@
 #include "Graphics/RenderTarget.hpp"
 #include "Graphics/Shader.hpp"
 #include "Graphics/ShaderProgram.hpp"
+#include "Graphics/ShapeRenderer.hpp"
 #include "Graphics/Sprite.hpp"
 #include "Graphics/Texture2D.hpp"
 #include "Graphics/Tileset.hpp"

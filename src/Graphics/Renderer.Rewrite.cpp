@@ -217,7 +217,7 @@ namespace NerdThings::Ngine::Graphics {
 #elif defined(glBufferSubData)
         glBufferSubData(GL_ARRAY_BUFFER, 0, m_vertexCount, m_vertices);
 #else
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Rendering::VertexData) * VBO_SIZE, m_vertices, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, m_vertices, GL_STREAM_DRAW);
 #endif
     }
 
@@ -226,12 +226,16 @@ namespace NerdThings::Ngine::Graphics {
         if (count_ > VBO_SIZE)
             Logger::Fail("Renderer", "Vertex array is too big!");
 
+        auto trueCount = count_;
+
         // Add vertices to vertex array
         if (type_ == PRIMITIVE_QUADS) {
+            // Check we have the correct number of vertices
+            if (count_ % 4 != 0)
+                Logger::Fail("Renderer", "Quads instruction given wrong number of vertices.");
+
             // Convert from quads to triangles
             for (auto i = 0; i < count_ / 4; i++) {
-                m_vertices[m_vertexCount + i] = vertices_[i];
-
                 m_vertices[m_vertexCount + i * 6 + 0] = vertices_[i * 4 + 0];
                 m_vertices[m_vertexCount + i * 6 + 1] = vertices_[i * 4 + 1];
                 m_vertices[m_vertexCount + i * 6 + 2] = vertices_[i * 4 + 3];
@@ -240,15 +244,34 @@ namespace NerdThings::Ngine::Graphics {
                 m_vertices[m_vertexCount + i * 6 + 5] = vertices_[i * 4 + 3];
             }
 
-            // Increase count
-            m_vertexCount += count_ / 4 * 6;
+            // Set true count
+            trueCount = count_ / 4 * 6;
+        } else if (type_ == PRIMITIVE_TRIANGLE_FAN) {
+            // Convert from triangle fan to triangles
+            auto a = vertices_[0];
+
+            // Set count to 0
+            trueCount = 0;
+
+            // Write vertices to buffer
+            for (auto i = 0; i + 2 < count_; i++) {
+                m_vertices[m_vertexCount + i * 3 + 0] = a;
+                m_vertices[m_vertexCount + i * 3 + 1] = vertices_[i + 1];
+                m_vertices[m_vertexCount + i * 3 + 2] = vertices_[i + 2];
+                trueCount += 3;
+            }
         } else {
             for (auto i = 0; i < count_; i++) {
                 m_vertices[m_vertexCount + i] = vertices_[i];
             }
+        }
 
-            // Increase count
-            m_vertexCount += count_;
+        // Increase count
+        m_vertexCount += trueCount;
+
+        // Translate all of the positions by the model view matrix
+        for (auto i = m_vertexCount - trueCount; i < m_vertexCount; i++) {
+            m_vertices[i].Position = m_vertices[i].Position.Transform(m_graphicsDevice->GetModelViewMatrix());
         }
 
         // Draw if at max vertex count
@@ -262,7 +285,7 @@ namespace NerdThings::Ngine::Graphics {
         if (m_vertexCount == 0) return;
 
         // Get projection.
-        auto MVP = m_graphicsDevice->GetModelViewMatrix() * m_graphicsDevice->GetProjectionMatrix();
+        auto MVP = m_graphicsDevice->GetProjectionMatrix();
 
         // Upload data
         _writeBuffer();
@@ -319,6 +342,10 @@ namespace NerdThings::Ngine::Graphics {
         // Add to graphics device
         m_graphicsDevice->m_attachedRenderers.push_back(this);
 
+        // The default matrix
+        m_matrixStackCounter = 0;
+        m_matrixStack[0] = Matrix::Identity;
+
         Logger::Notice("Renderer", "Finished creating renderer.");
     }
 
@@ -351,7 +378,7 @@ namespace NerdThings::Ngine::Graphics {
         _addVertices(primitiveType_, vertices_.data(), vertices_.size());
     }
 
-    void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, const Matrix &transform_, ShaderProgram *shader_) {
+    void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
         // Stop rendering.
         if (m_rendering)
             Logger::Fail("Renderer", "Cannot start a new batch while rendering.");
@@ -370,7 +397,6 @@ namespace NerdThings::Ngine::Graphics {
         m_currentTexture = texture_;
         m_currentShader = shader_;
         m_currentPrimitiveType = primitiveType_;
-        m_currentTransformMatrix = transform_;
     }
 
     void Renderer::Vertex(VertexData vertexData_) {
@@ -388,7 +414,7 @@ namespace NerdThings::Ngine::Graphics {
         if (m_vertexCount < VBO_SIZE) {
             // Build vertex data
             VertexData vDat;
-            vDat.Position = Vector3(pos_.X, pos_.Y, 0).Transform(m_currentTransformMatrix);
+            vDat.Position = Vector3(pos_.X, pos_.Y, 0).Transform(m_matrixStack[m_matrixStackCounter]);
             vDat.TexCoords = texCoord_;
             vDat.Color = color_;
 
@@ -446,6 +472,44 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::SetClearColor(Color color_) {
         // Set the clear color.
         glClearColor(color_.R, color_.G, color_.B, color_.A);
+    }
+
+    void Renderer::PushMatrix() {
+        // Check limits
+        if (m_matrixStackCounter + 1 >= MATRIX_STACK_SIZE)
+            Logger::Fail("Renderer", "Matrix stack overflow.");
+
+        // Increase stack counter and write current matrix to it.
+        m_matrixStackCounter++;
+        m_matrixStack[m_matrixStackCounter] = m_matrixStack[m_matrixStackCounter - 1];
+    }
+
+    void Renderer::PopMatrix() {
+        if (m_matrixStackCounter > 0) m_matrixStackCounter--;
+    }
+
+    void Renderer::SetMatrix(const Matrix &mat_) {
+        m_matrixStack[m_matrixStackCounter] = mat_;
+    }
+
+    void Renderer::LoadIdentity() {
+        SetMatrix(Matrix::Identity);
+    }
+
+    void Renderer::MultMatrix(const Matrix &mat_) {
+        m_matrixStack[m_matrixStackCounter] = mat_ * m_matrixStack[m_matrixStackCounter];
+    }
+
+    void Renderer::Translate(const Vector3 &translation_) {
+        MultMatrix(Matrix::Translate(translation_));
+    }
+
+    void Renderer::Rotate(const Angle &rotation_, const Vector3 &axis_) {
+        MultMatrix(Matrix::Rotate(rotation_, axis_));
+    }
+
+    void Renderer::Scale(const Vector3 &scale_) {
+        MultMatrix(Matrix::Scale(scale_.X, scale_.Y, scale_.Z));
     }
 }
 

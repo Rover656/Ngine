@@ -47,7 +47,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
         // Convert transform
         b2Transform transform;
         transform.p = {xf.Position.X, xf.Position.Y};
-        transform.q.s = xf.Rotation.Sine;
+        transform.q.s = xf.Rotation.Sin;
         transform.q.c = xf.Rotation.Cos;
 
         // Get AABB
@@ -81,7 +81,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
         // Convert transform
         b2Transform transform;
         transform.p = {xf.Position.X, xf.Position.Y};
-        transform.q.s = xf.Rotation.Sine;
+        transform.q.s = xf.Rotation.Sin;
         transform.q.c = xf.Rotation.Cos;
 
         return _Shape->TestPoint(transform, {p.X, p.Y});

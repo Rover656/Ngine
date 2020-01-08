@@ -59,7 +59,7 @@ namespace NerdThings::Ngine {
         // Create render target
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
-            m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTarget(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
@@ -123,12 +123,12 @@ namespace NerdThings::Ngine {
         const auto offsetY = (h - ih * scale) * 0.5f;
 
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
-            m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTarget(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
-            m_renderTarget = std::make_shared<Graphics::RenderTarget>(Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTarget(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
@@ -191,6 +191,19 @@ namespace NerdThings::Ngine {
         // Only render if visible
         if (m_gameWindow->IsVisible()) {
 #ifdef USE_EXPERIMENTAL_RENDERER
+            // If using, start render target
+            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+                // Clear the main framebuffer (for black bars)
+                m_renderer->SetClearColor(Graphics::Color::Black);
+                m_renderer->Clear();
+
+                // Enable our render target
+                m_graphicsDevice->PushTarget(m_renderTarget);
+            }
+
+            // Clear with clear color
+            m_renderer->SetClearColor(ClearColor);
+            m_renderer->Clear();
 #else
             // Prep for drawing
             m_renderer->BeginDrawing();
@@ -201,44 +214,47 @@ namespace NerdThings::Ngine {
                 m_renderer->Clear(Graphics::Color::Black);
 
                 // Enable our main framebuffer
-                Graphics::GraphicsManager::PushTarget(m_renderTarget.get());
+                Graphics::GraphicsManager::PushTarget(m_renderTarget);
             }
 
             // Clear with the correct background colour
             m_renderer->Clear(ClearColor);
-
+#endif
             // Render scene
             if (m_currentScene != nullptr) {
                 m_currentScene->Draw(m_renderer);
             }
-#endif
+
             // OnDraw event
             OnDraw(m_renderer);
 
             // If using a target, draw target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
 #ifdef USE_EXPERIMENTAL_RENDERER
+                m_graphicsDevice->PopTarget();
 #else
                 Graphics::GraphicsManager::PopTarget();
-                m_renderer->DrawTexture(m_renderTarget->GetTexture(),
-                                                {
-                                                        (w - iw * scale) * 0.5f,
-                                                        (h - ih * scale) * 0.5f,
-                                                        iw * scale,
-                                                        ih * scale
-                                                },
-                                                {
-                                                        0,
-                                                        0,
-                                                        static_cast<float>(m_renderTarget->Width),
-                                                        static_cast<float>(m_renderTarget->Height) * -1
-                                                },
-                                                Graphics::Color::White);
 #endif
+                m_renderTarget->GetTexture()->Draw(
+                        m_renderer,
+                        {
+                                (w - iw * scale) * 0.5f,
+                                (h - ih * scale) * 0.5f,
+                                iw * scale,
+                                ih * scale
+                        },
+                        {
+                                0,
+                                0,
+                                static_cast<float>(m_renderTarget->Width),
+                                static_cast<float>(m_renderTarget->Height) * -1
+                        },
+                        Graphics::Color::White);
             }
 
             // Finish drawing
 #ifdef USE_EXPERIMENTAL_RENDERER
+            m_renderer->Render();
 #else
             m_renderer->EndDrawing();
 #endif
@@ -281,6 +297,10 @@ namespace NerdThings::Ngine {
         // Close audio
         Audio::AudioDevice::Close();
         Logger::Notice("Game", "Closed audio device.");
+
+        // Delete render target
+        delete m_renderTarget;
+        m_renderTarget = nullptr;
 
         // Delete renderer
         delete m_renderer;

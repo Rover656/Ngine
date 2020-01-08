@@ -69,8 +69,8 @@ namespace NerdThings::Ngine {
         ret.Y -= origin_.Y;
 
         // Rotate
-        float xnew = ret.X * angle_.Cos - ret.Y * angle_.Sine;
-        float ynew = ret.X * angle_.Sine + ret.Y * angle_.Cos;
+        float xnew = ret.X * angle_.Cos - ret.Y * angle_.Sin;
+        float ynew = ret.X * angle_.Sin + ret.Y * angle_.Cos;
 
         // Translate back
         ret.X = xnew + origin_.X;
@@ -260,7 +260,7 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    Matrix Matrix::Rotate(const Vector3 axis_, const float angle_) {
+    Matrix Matrix::Rotate(const Angle &rotation_, const Vector3 &axis_) {
         Matrix result = {0};
 
         auto x = axis_.X, y = axis_.Y, z = axis_.Z;
@@ -274,23 +274,21 @@ namespace NerdThings::Ngine {
             z *= length;
         }
 
-        const auto sinres = sinf(DegToRad(angle_));
-        const auto cosres = cosf(DegToRad(angle_));
-        const auto t = 1.0f - cosres;
+        const auto t = 1.0f - rotation_.Cos;
 
-        result.M0 = x * x * t + cosres;
-        result.M1 = y * x * t + z * sinres;
-        result.M2 = z * x * t - y * sinres;
+        result.M0 = x * x * t + rotation_.Cos;
+        result.M1 = y * x * t + z * rotation_.Sin;
+        result.M2 = z * x * t - y * rotation_.Sin;
         result.M3 = 0.0f;
 
-        result.M4 = x * y * t - z * sinres;
-        result.M5 = y * y * t + cosres;
-        result.M6 = z * y * t + x * sinres;
+        result.M4 = x * y * t - z * rotation_.Sin;
+        result.M5 = y * y * t + rotation_.Cos;
+        result.M6 = z * y * t + x * rotation_.Sin;
         result.M7 = 0.0f;
 
-        result.M8 = x * z * t + y * sinres;
-        result.M9 = y * z * t - x * sinres;
-        result.M10 = z * z * t + cosres;
+        result.M8 = x * z * t + y * rotation_.Sin;
+        result.M9 = y * z * t - x * rotation_.Sin;
+        result.M10 = z * z * t + rotation_.Cos;
         result.M11 = 0.0f;
 
         result.M12 = 0.0f;
@@ -301,44 +299,35 @@ namespace NerdThings::Ngine {
         return result;
     }
 
-    Matrix Matrix::RotateX(const float angle_) {
+    Matrix Matrix::RotateX(const Angle &rotation_) {
         auto result = Identity;
 
-        const auto cosres = cosf(DegToRad(angle_));
-        const auto sinres = sinf(DegToRad(angle_));
-
-        result.M5 = cosres;
-        result.M6 = -sinres;
-        result.M9 = sinres;
-        result.M10 = cosres;
+        result.M5 = rotation_.Cos;
+        result.M6 = -rotation_.Sin;
+        result.M9 = rotation_.Sin;
+        result.M10 = rotation_.Cos;
 
         return result;
     }
 
-    Matrix Matrix::RotateY(const float angle_) {
+    Matrix Matrix::RotateY(const Angle &rotation_) {
         auto result = Identity;
 
-        const auto cosres = cosf(DegToRad(angle_));
-        const auto sinres = sinf(DegToRad(angle_));
-
-        result.M0 = cosres;
-        result.M2 = sinres;
-        result.M8 = -sinres;
-        result.M10 = cosres;
+        result.M0 = rotation_.Cos;
+        result.M2 = rotation_.Sin;
+        result.M8 = -rotation_.Sin;
+        result.M10 = rotation_.Cos;
 
         return result;
     }
 
-    Matrix Matrix::RotateZ(const float angle_) {
+    Matrix Matrix::RotateZ(const Angle &rotation_) {
         auto result = Identity;
 
-        const auto cosres = cosf(DegToRad(angle_));
-        const auto sinres = sinf(DegToRad(angle_));
-
-        result.M0 = cosres;
-        result.M1 = -sinres;
-        result.M4 = sinres;
-        result.M5 = cosres;
+        result.M0 = rotation_.Cos;
+        result.M1 = -rotation_.Sin;
+        result.M4 = rotation_.Sin;
+        result.M5 = rotation_.Cos;
 
         return result;
     }
@@ -492,21 +481,21 @@ namespace NerdThings::Ngine {
     Angle::Angle() {}
 
     Angle::Angle(float theta_) {
-        Sine = sinf(DegToRad(theta_));
+        Sin = sinf(DegToRad(theta_));
         Cos = cosf(DegToRad(theta_));
     }
 
     Angle::Angle(float sine_, float cos_)
-            : Sine(sine_), Cos(cos_) {}
+            : Sin(sine_), Cos(cos_) {}
 
     Angle &Angle::operator=(float theta_) {
-        Sine = sinf(DegToRad(theta_));
+        Sin = sinf(DegToRad(theta_));
         Cos = cosf(DegToRad(theta_));
         return *this;
     }
 
     float Angle::GetDegrees() const {
-        return RadToDeg(atan2f(Sine, Cos));
+        return RadToDeg(atan2f(Sin, Cos));
     }
 
     Angle operator+(Angle angle_, float theta_) {

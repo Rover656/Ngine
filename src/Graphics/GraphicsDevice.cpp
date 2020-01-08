@@ -14,6 +14,7 @@
 #include "../Logger.hpp"
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
+#include "RenderTarget.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {
@@ -144,23 +145,43 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     RenderTarget *GraphicsDevice::GetCurrentTarget() {
+        if (m_targetCounter > 0)
+            return m_targetStack[m_targetCounter - 1];
         return nullptr;
     }
 
     void GraphicsDevice::PushTarget(RenderTarget *target_) {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        // Check the stack has space
+        if (m_targetCounter >= MAX_TARGETS)
+            Logger::Fail("GraphicsDevice", "Render target stack overflow.");
+
         // Force render before swapping target
         for (auto renderer : m_attachedRenderers)
             renderer->Render();
 
-        // TODO
+        // Add to stack
+        m_targetStack[m_targetCounter] = target_;
+        m_targetCounter++;
+
+        // Bind
+        glBindFramebuffer(GL_FRAMEBUFFER, target_->m_ID);
+#else
+        Logger::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
+#endif
     }
 
     void GraphicsDevice::PopTarget() {
+#ifdef USE_EXPERIMENTAL_RENDERER
         // Force render before swapping target
         for (auto renderer : m_attachedRenderers)
             renderer->Render();
 
-        // TODO
+        // If target counter greater than 0, decrease
+        if (m_targetCounter > 0) m_targetCounter--;
+#else
+        Logger::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
+#endif
     }
 
     Matrix GraphicsDevice::GetProjectionMatrix() const {
@@ -168,15 +189,47 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     Matrix GraphicsDevice::GetModelViewMatrix() const {
-        // TODO: Model matrix stack.
+        if (m_modelViewCounter > 0)
+            return m_modelViewStack[m_modelViewCounter - 1];
         return Matrix::Identity;
     }
 
+    void GraphicsDevice::PushModelViewMatrix() {
+        if (m_modelViewCounter >= MAX_MATRICES)
+            Logger::Fail("GraphicsDevice", "ModelView Matrix stack overflow.");
+
+        // Add to stack
+        m_modelViewStack[m_modelViewCounter] = GetModelViewMatrix();
+        m_modelViewCounter++;
+    }
+
+    void GraphicsDevice::PopModelViewMatrix() {
+        // If target counter greater than 0, decrease
+        if (m_modelViewCounter > 0) m_modelViewCounter--;
+    }
+
+    void GraphicsDevice::LoadModelViewIdentity() {
+        if (m_modelViewCounter == 0) PushModelViewMatrix();
+        m_modelViewStack[m_modelViewCounter - 1] = Matrix::Identity;
+    }
+
+    void GraphicsDevice::MultModelView(const Matrix &matrix_) {
+        if (m_modelViewCounter == 0) PushModelViewMatrix();
+        m_modelViewStack[m_modelViewCounter - 1] = m_modelViewStack[m_modelViewCounter - 1] * matrix_;
+    }
+
     void GraphicsDevice::SetupFramebuffer() {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        // Bind the next framebuffer
+        if (m_targetCounter > 0)
+            glBindFramebuffer(GL_FRAMEBUFFER, m_targetStack[m_targetCounter - 1]->m_ID);
+        else glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
         // Get viewport width and height.
-        int w,h;
-        if (false) {
-            // TODO: Render target support.
+        int w, h;
+        if (m_targetCounter > 0 && m_targetStack[m_targetCounter - 1] != nullptr) {
+            w = m_targetStack[m_targetCounter - 1]->Width;
+            h = m_targetStack[m_targetCounter - 1]->Height;
         } else {
             w = m_attachedWindow->GetWidth();
             h = m_attachedWindow->GetHeight();
@@ -187,6 +240,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Create new matrix
         m_projectionMatrix = Matrix::Orthographic(0, (float)w, (float)h, 0, -1, 1);
+#endif
     }
 
     bool GraphicsDevice::GetGLSupportFlag(GraphicsDevice::OpenGLFeature feature_) {

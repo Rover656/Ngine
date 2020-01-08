@@ -48,6 +48,14 @@ namespace NerdThings::Ngine::Graphics {
         PRIMITIVE_TRIANGLES = 0,
 
         /**
+         * Draw a fan of triangles.
+         * The first vertex is used as the first vertex of every triangle.
+         * A triangle is formed for each *adjacent* vertex pair.
+         * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
+         */
+        PRIMITIVE_TRIANGLE_FAN,
+
+        /**
          * Render the vertices as quads.
          */
         PRIMITIVE_QUADS
@@ -76,6 +84,11 @@ namespace NerdThings::Ngine::Graphics {
          * The maximum number of vertices each batch.
          */
         static const unsigned int VBO_SIZE = 32768;
+
+        /**
+         * The maximum number of matrices on the stack.
+         */
+        static const unsigned int MATRIX_STACK_SIZE = 32;
     private:
         /**
          * The graphics device.
@@ -102,17 +115,23 @@ namespace NerdThings::Ngine::Graphics {
          */
         bool m_midBatch = false;
 
+        /**
+         * The VAO used for rendering.
+         */
         unsigned int m_VAO;
 
+        /**
+         * The VBO used to store vertex data.
+         */
         unsigned int m_VBO;
 
         /**
-         * This contains a list of all the vertices to be pushed to the framebuffer.
+         * This contains a list of all the vertices to be pushed into the VBO.
          */
         VertexData m_vertices[VBO_SIZE];
 
         /**
-         * The number of vertices to be rendered from the array
+         * The number of vertices to be pushed from the array
          */
         int m_vertexCount = 0;
 
@@ -133,10 +152,9 @@ namespace NerdThings::Ngine::Graphics {
          */
         PrimitiveType m_currentPrimitiveType = PRIMITIVE_TRIANGLES;
 
-        /**
-         * A transform matrix for immediate mode vertices.
-         */
-        Matrix m_currentTransformMatrix = Matrix::Identity;
+        Matrix m_matrixStack[MATRIX_STACK_SIZE];
+
+        int m_matrixStackCounter = 0;
 
         /**
          * The temporary vertex data from immediate mode calls.
@@ -223,7 +241,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void Begin(PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, const Matrix &transform_ = Matrix::Identity, ShaderProgram *shader_ = nullptr);
+        void Begin(PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
 
         /**
          * Push some vertex data to the batch.
@@ -262,6 +280,64 @@ namespace NerdThings::Ngine::Graphics {
          * @param color_ The color to clear with.
          */
         void SetClearColor(Color color_);
+
+        /**
+         * Push a matrix onto the stack (with the current matrix's value).
+         *
+         * @note This is extremely handy for moving vertices around. This **only** supports the immediate mode (Begin, Vertex, End) workflow at the moment.
+         */
+        void PushMatrix();
+
+        /**
+         * Pop a matrix from the stack.
+         *
+         * @warning Will throw if called when there's nothing to pop.
+         */
+        void PopMatrix();
+
+        /**
+         * Set the value of the current Matrix.
+         *
+         * @warning Remember to push first, this could destroy critical existing data. General rule of thumb: Push if you modify something.
+         * @param mat_ The new value for the matrix.
+         */
+        void SetMatrix(const Matrix &mat_);
+
+        /**
+         * Load the identity matrix to the current matrix.
+         *
+         * @see `SetMatrix`
+         */
+        void LoadIdentity();
+
+        /**
+         * Multiply the given matrix by the current one.
+         *
+         * @note Formula is as follows: Current Matrix = Matrix Provided * Current Matrix
+         */
+        void MultMatrix(const Matrix &mat_);
+
+        /**
+         * Multiply the current matrix with a translation matrix.
+         *
+         * @param translation_ The translation to apply.
+         */
+        void Translate(const Vector3 &translation_);
+
+        /**
+         * Multiply the current matrix with a rotation matrix.
+         *
+         * @param rotation_ Rotation to apply
+         * @param axis_ Axis in which to apply rotation.
+         */
+        void Rotate(const Angle &rotation_, const Vector3 &axis_);
+
+        /**
+         * Multiply the current matrix with a scale matrix.
+         *
+         * @param scale_ The scale to apply.
+         */
+        void Scale(const Vector3 &scale_);
 #else
         // Internal OpenGL Methods
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
@@ -269,8 +345,10 @@ namespace NerdThings::Ngine::Graphics {
         void __DrawLine(Vector2 a_, Vector2 b_, Color c_, float thick_);
 
 #endif
+
+        GraphicsDevice *m_graphicsDevice = nullptr;
     public:
-        Renderer(GraphicsDevice *graphicsDevice_) {}
+        Renderer(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {}
         ~Renderer() = default;
 
         /*
@@ -513,6 +591,15 @@ namespace NerdThings::Ngine::Graphics {
          */
         void EndDrawing();
 #endif
+
+        /**
+         * Get the graphics device used by the renderer.
+         *
+         * @return The graphics device.
+         */
+        GraphicsDevice *GetGraphicsDevice() {
+            return m_graphicsDevice;
+        }
     };
 }
 

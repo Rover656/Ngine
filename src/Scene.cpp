@@ -222,7 +222,7 @@ namespace NerdThings::Ngine {
 
         // Draw with camera
         if (m_activeCamera != nullptr)
-            m_activeCamera->BeginCamera();
+            m_activeCamera->BeginCamera(renderer_->GetGraphicsDevice());
 
         OnDrawCamera(renderer_);
 
@@ -238,7 +238,7 @@ namespace NerdThings::Ngine {
         }
 
         if (m_activeCamera != nullptr)
-            m_activeCamera->EndCamera();
+            m_activeCamera->EndCamera(renderer_->GetGraphicsDevice());
 
         // Draw entities
         for (auto pair : m_entityDepths) {

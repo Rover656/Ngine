@@ -140,7 +140,7 @@ namespace NerdThings::Ngine {
         float MagnitudeSquared() const;
 
         /**
-         * Transform using a matrix.
+         * Translate using a matrix.
          *
          * @param matrix_ Matrix to transform with.
          * @return Transformed vector.
@@ -148,7 +148,7 @@ namespace NerdThings::Ngine {
         Vector2 Transform(Matrix matrix_) const;
 
         /**
-         * Transform this vector by an angle.
+         * Translate this vector by an angle.
          *
          * @param angle_ The angle to rotate by.
          */
@@ -302,7 +302,7 @@ namespace NerdThings::Ngine {
         // TODO: New transformation functions.
 
         /**
-         * Transform using a matrix.
+         * Translate using a matrix.
          *
          * @param matrix_ Matrix to transform with.
          * @return Transformed vector.
@@ -415,13 +415,13 @@ namespace NerdThings::Ngine {
 
         static Matrix Orthographic(float left_, float right_, float bottom_, float top_, float near_, float far_);
 
-        static Matrix Rotate(Vector3 axis_, float angle_);
+        static Matrix Rotate(const Angle &rotation_, const Vector3 &axis_);
 
-        static Matrix RotateX(float angle_);
+        static Matrix RotateX(const Angle &rotation_);
 
-        static Matrix RotateY(float angle_);
+        static Matrix RotateY(const Angle &rotation_);
 
-        static Matrix RotateZ(float angle_);
+        static Matrix RotateZ(const Angle &rotation_);
 
         static Matrix Scale(float x, float y, float z);
 
@@ -556,7 +556,7 @@ namespace NerdThings::Ngine {
         /**
          * The sine of the angle.
          */
-        float Sine = 0;
+        float Sin = 0;
 
         /**
          * The cosine of the angle.

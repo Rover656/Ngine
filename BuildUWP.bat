@@ -2,9 +2,11 @@
 
 SETLOCAL EnableDelayedExpansion
 
-for /f "usebackq tokens=*" %%i in (`redist\vswhere.exe -version 15.0 -property installationPath`) do (
-    set InstallDir=%%i
-)
+//for /f "usebackq tokens=*" %%i in (`redist\vswhere.exe -version 15.0 -property installationPath`) do (
+//   set InstallDir=%%i
+//)
+
+set InstallDir=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community
 
 if exist "!InstallDir!\VC\Auxiliary\Build\vcvars64.bat" (
   call "!InstallDir!\VC\Auxiliary\Build\vcvars64.bat"

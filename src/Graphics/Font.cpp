@@ -50,7 +50,7 @@ namespace NerdThings::Ngine::Graphics {
         return Texture->IsValid();
     }
 
-    Font *Font::LoadTTFFont(const Filesystem::Path &path_, int baseSize_, std::vector<int> fontChars_) {
+    Font *Font::LoadTTFFont(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_, int baseSize_, std::vector<int> fontChars_) {
         // Check size
         if (baseSize_ < 1) throw std::runtime_error("Invalid base size.");
 
@@ -61,11 +61,11 @@ namespace NerdThings::Ngine::Graphics {
         font->BaseSize = baseSize_;
 
         // Load font info
-        font->__LoadFontInfo(path_, std::move(fontChars_));
+        font->_loadFontInfo(path_, std::move(fontChars_));
 
         if (!font->Characters.empty()) {
             // Generate font atals
-            font->__GenerateAtlas();
+            font->_generateAtlas(graphicsDevice_);
 
             // Unload individual character images
             for (auto i = 0; i < font->CharacterCount; i++) {
@@ -134,7 +134,7 @@ namespace NerdThings::Ngine::Graphics {
         Characters.clear();
     }
 
-    void Font::__GenerateAtlas() {
+    void Font::_generateAtlas(GraphicsDevice *graphicsDevice_) {
         // Generate atlas texture.
         auto atlas = std::make_shared<Image>();
 
@@ -217,14 +217,13 @@ namespace NerdThings::Ngine::Graphics {
         atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
 
         // Create texture
-        //TODO: READD TEXTURE HERE!!!!
-        //Texture = std::make_shared<Texture2D>(atlas.get());
+        Texture = std::make_shared<Texture2D>(graphicsDevice_, atlas.get());
 
         // Delete atlas
         atlas->Unload();
     }
 
-    void Font::__LoadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_) {
+    void Font::_loadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_) {
         // Characters
         std::vector<CharInfo> characters;
 

@@ -27,6 +27,9 @@ namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
 
     void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
+        // Save graphics device
+        m_graphicsDevice = graphicsDevice_;
+
         // Unbind any bound textures
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -235,9 +238,54 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Texture2D::SetTextureFilter(const TextureFilterMode filterMode_) const {
+#ifdef USE_EXPERIMENTAL_RENDERER
+        glBindTexture(GL_TEXTURE_2D, m_ID);
+        auto maxAnisotropicLevel = m_graphicsDevice->GetGLMaxAnisotropicLevel();
+#endif
+
         switch (filterMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
+#ifdef USE_EXPERIMENTAL_RENDERER
+            case FILTER_POINT:
+                if (m_mipmapCount > 1) {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                } else {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                }
+                break;
+            case FILTER_BILINEAR:
+                if (m_mipmapCount > 1) {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                } else {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                }
+                break;
+            case FILTER_TRILINEAR:
+                if (m_mipmapCount > 1) {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                } else {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                }
+                break;
+            case FILTER_ANISOTROPIC_4X:
+                if (4 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 4);
+                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
+                break;
+            case FILTER_ANISOTROPIC_8X:
+                if (8 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
+                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
+                break;
+            case FILTER_ANISOTROPIC_16X:
+                if (16 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
+                break;
+#else
             case FILTER_POINT:
                 if (InternalTexture->MipmapCount > 1) {
                     InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_MIP_NEAREST);
@@ -284,7 +332,27 @@ namespace NerdThings::Ngine::Graphics {
     void Texture2D::SetTextureWrap(const TextureWrapMode wrapMode_) const {
         switch (wrapMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
+#ifdef USE_EXPERIMENTAL_RENDERER
+            case WRAP_REPEAT:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                break;
+            case WRAP_CLAMP:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                break;
+            case WRAP_MIRROR_REPEAT:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+                break;
+            case WRAP_MIRROR_CLAMP:
+                // GL_MIRROR_CLAMP_EXT = 0x8742
+                if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_TEX_MIRROR_CLAMP)) {
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 0x8742);
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 0x8742);
+                } else Logger::Warn("GLTexture", "Clamp mirror mode not supported.");
+                break;
+#else
             case WRAP_REPEAT:
                 InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_REPEAT);
                 InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_REPEAT);
@@ -368,13 +436,14 @@ namespace NerdThings::Ngine::Graphics {
             srcRect_.Y -= srcRect_.Height;
         }
 
-        // Build transform matrix
-        auto transform = Matrix::Translate({destRect_.X, destRect_.Y, 0})
-                         * Matrix::Rotate({0, 0, 1}, rotation_.GetDegrees())
-                         * Matrix::Translate({-origin_.X, -origin_.Y, 0});
+        // Push transformation matrix
+        renderer_->PushMatrix();
+        renderer_->Translate({destRect_.X, destRect_.Y, 0});
+        renderer_->Rotate(rotation_, {0, 0, 1});
+        renderer_->Translate({-origin_.X, -origin_.Y, 0});
 
         // Push vertices
-        renderer_->Begin(Graphics::PRIMITIVE_QUADS, this, transform);
+        renderer_->Begin(Graphics::PRIMITIVE_QUADS, this);
         if (flipX) {
             renderer_->Vertex(
                     {0, 0},
@@ -427,6 +496,9 @@ namespace NerdThings::Ngine::Graphics {
                     }, col_);
         }
         renderer_->End();
+
+        // Pop matrix
+        renderer_->PopMatrix();
 #else
         renderer_->DrawTexture(this, destRect_, srcRect_, col_, origin_, rotation_.GetDegrees());
 #endif

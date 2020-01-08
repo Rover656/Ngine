@@ -78,7 +78,13 @@ namespace NerdThings::Ngine::UI {
          * The panel render target
          */
         std::shared_ptr<Graphics::RenderTarget> _RenderTarget;
+
+        Graphics::GraphicsDevice *m_graphicsDevice = nullptr;
     public:
+
+        UIPanel(Graphics::GraphicsDevice *graphicsDevice_) : UIControl() {
+            m_graphicsDevice = graphicsDevice_;
+        }
 
         // Destructor
 
