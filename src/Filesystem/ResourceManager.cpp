@@ -20,6 +20,13 @@ namespace NerdThings::Ngine::Filesystem {
     }
 
     void ResourceManager::DeleteAll() {
+        // Delete all
+        for (const auto& fnt : m_fonts) delete fnt.second;
+        for (const auto& mus : m_music) delete mus.second;
+        for (const auto& snd : m_sounds) delete snd.second;
+        for (const auto& tex : m_textures) delete tex.second;
+
+        // Clear
         m_fonts.clear();
         m_music.clear();
         m_sounds.clear();
@@ -29,6 +36,7 @@ namespace NerdThings::Ngine::Filesystem {
     void ResourceManager::DeleteFont(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_fonts.find(name) != m_fonts.end()) {
+            delete m_fonts[name];
             m_fonts.erase(name);
         }
     }
@@ -36,6 +44,7 @@ namespace NerdThings::Ngine::Filesystem {
     void ResourceManager::DeleteMusic(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_music.find(name) != m_music.end()) {
+            delete m_music[name];
             m_music.erase(name);
         }
     }
@@ -43,6 +52,7 @@ namespace NerdThings::Ngine::Filesystem {
     void ResourceManager::DeleteSound(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_sounds.find(name) != m_sounds.end()) {
+            delete m_sounds[name];
             m_sounds.erase(name);
         }
     }
@@ -50,6 +60,7 @@ namespace NerdThings::Ngine::Filesystem {
     void ResourceManager::DeleteTexture(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_textures.find(name) != m_textures.end()) {
+            delete m_textures[name];
             m_textures.erase(name);
         }
     }
@@ -57,28 +68,28 @@ namespace NerdThings::Ngine::Filesystem {
     Graphics::Font *ResourceManager::GetFont(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_fonts.find(name) != m_fonts.end())
-            return m_fonts[name].get();
+            return m_fonts[name];
         return nullptr;
     }
 
     Audio::Music *ResourceManager::GetMusic(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_music.find(name) != m_music.end())
-            return m_music[name].get();
+            return m_music[name];
         return nullptr;
     }
 
     Audio::Sound *ResourceManager::GetSound(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_sounds.find(name) != m_sounds.end())
-            return m_sounds[name].get();
+            return m_sounds[name];
         return nullptr;
     }
 
     Graphics::Texture2D *ResourceManager::GetTexture(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_textures.find(name) != m_textures.end())
-            return m_textures[name].get();
+            return m_textures[name];
         return nullptr;
     }
 
@@ -136,7 +147,7 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Check if it is valid
         if (fnt->IsValid()) {
-            m_fonts.insert({name, std::unique_ptr<Graphics::Font>(fnt) });
+            m_fonts.insert({name, fnt});
             return true;
         }
 
@@ -154,7 +165,7 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Check if it is valid
         if (mus->IsValid()) {
-            m_music.insert({name, std::unique_ptr<Audio::Music>(mus) });
+            m_music.insert({name, mus});
             return true;
         }
 
@@ -172,7 +183,7 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Check if it is valid
         if (snd->IsValid()) {
-            m_sounds.insert({name, std::unique_ptr<Audio::Sound>(snd) });
+            m_sounds.insert({name, snd});
             return true;
         }
 
@@ -190,7 +201,7 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Check if it is valid.
         if (tex->IsValid()) {
-            m_textures.insert({ name, std::unique_ptr<Graphics::Texture2D>(tex) });
+            m_textures.insert({ name, tex});
             return true;
         }
 
