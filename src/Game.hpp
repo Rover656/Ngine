@@ -130,6 +130,11 @@ namespace NerdThings::Ngine {
         std::chrono::nanoseconds m_lag;
 
         /**
+         * The update thread.
+         */
+        std::thread m_updateThread;
+
+        /**
          * Whether or not the game has been suspended for being invisible.
          */
         bool m_suspended = false;
@@ -150,9 +155,24 @@ namespace NerdThings::Ngine {
         void _runFrame();
 
         /**
+         * Draw/handle window events.
+         */
+        void _runDraw();
+
+        /**
+         * Game update logic.
+         */
+        void _runUpdate();
+
+        /**
          * Cleanup the game.
          */
         void _cleanup();
+
+        /**
+         * The update thread.
+         */
+        void _updateThread();
     public:
         /**
          * Background clear color.
@@ -219,6 +239,16 @@ namespace NerdThings::Ngine {
          * @return The game window.
          */
         Window *GetGameWindow() const;
+
+        /**
+         * Get this game's mouse handler.
+         */
+        Input::Mouse *GetMouse() const;
+
+        /**
+         * Get this game's keyboard handler.
+         */
+        Input::Keyboard *GetKeyboard() const;
 
         /**
          * Get the graphics device.

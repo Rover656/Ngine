@@ -29,9 +29,11 @@
 #include "Font.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
+
 #include "GraphicsDevice.hpp"
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
+
 #endif
 
 #include "Texture2D.hpp"
@@ -42,7 +44,7 @@ namespace NerdThings::Ngine::Graphics {
      * `Vector3` for Position, `Vector2` for tex coords and `Color` for color.
      */
     struct VertexData {
-        Vector3 Position;
+        Vector2 Position;
         Color Color;
         Vector2 TexCoords;
     };
@@ -50,11 +52,11 @@ namespace NerdThings::Ngine::Graphics {
     /**
      * Primitive type for graphics rendering.
      */
-    enum PrimitiveType {
+    enum class PrimitiveType {
         /**
          * Render the vertices as triangles.
          */
-        PRIMITIVE_TRIANGLES = 0,
+                Triangles = 0,
 
         /**
          * Draw a fan of triangles.
@@ -62,12 +64,12 @@ namespace NerdThings::Ngine::Graphics {
          * A triangle is formed for each *adjacent* vertex pair.
          * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
          */
-        PRIMITIVE_TRIANGLE_FAN,
+                TriangleFan,
 
         /**
          * Render the vertices as quads.
          */
-        PRIMITIVE_QUADS
+                Quads
     };
 
 #ifdef USE_EXPERIMENTAL_RENDERER
@@ -85,14 +87,14 @@ namespace NerdThings::Ngine::Graphics {
      * @warning This API will be replaced once the new Ngine renderer is ready. Enable it by defining USE_EXPERIMENTAL_RENDERER.
      */
 #endif
+
     class NEAPI Renderer {
 #ifdef USE_EXPERIMENTAL_RENDERER
     public:
         /**
-         * The size of the internal VBOs.
-         * The maximum number of vertices each batch.
+         * The maximum size of elements per buffer allowed.
          */
-        static const unsigned int VBO_SIZE = 32768;
+        static const unsigned int MAX_BUFFER_SIZE = 65535;
 
         /**
          * The maximum number of matrices on the stack.
@@ -134,15 +136,21 @@ namespace NerdThings::Ngine::Graphics {
          */
         unsigned int m_VBO;
 
+        unsigned int m_IBO;
+
         /**
          * This contains a list of all the vertices to be pushed into the VBO.
          */
-        VertexData m_vertices[VBO_SIZE];
+        VertexData m_vertices[MAX_BUFFER_SIZE];
 
         /**
          * The number of vertices to be pushed from the array
          */
         int m_vertexCount = 0;
+
+        unsigned short m_indices[MAX_BUFFER_SIZE];
+
+        int m_indexCount = 0;
 
         /**
          * The currently applied shader program.
@@ -159,7 +167,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The current primitive type being rendered.
          */
-        PrimitiveType m_currentPrimitiveType = PRIMITIVE_TRIANGLES;
+        PrimitiveType m_currentPrimitiveType = PrimitiveType::Triangles;
 
         Matrix m_matrixStack[MATRIX_STACK_SIZE];
 
@@ -168,7 +176,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The temporary vertex data from immediate mode calls.
          */
-        VertexData m_tempVertexData[VBO_SIZE];
+        VertexData m_tempVertexData[MAX_BUFFER_SIZE];
 
         /**
          * The number of vertices from immediate mode calls.
@@ -206,9 +214,10 @@ namespace NerdThings::Ngine::Graphics {
         void _unbindBuffers();
 
         /**
-         * Write the vertices to the buffer.
+         * Write the data to a buffer.
+         * Buffer max size may be reset to `MAX_BUFFER_SIZE`.
          */
-        void _writeBuffer();
+        void _writeBuffer(unsigned int buffer_, unsigned int bufferType_, void *data_, int size_, int count_);
 
         /**
          * Add a vertex array to the buffer.
@@ -221,9 +230,19 @@ namespace NerdThings::Ngine::Graphics {
         void _addVertices(PrimitiveType type_, VertexData *vertices_, int count_);
 
         /**
+         * Add a set of indexed vertices.
+         *
+         * @warning Only supports Triangles at the moment.
+         * @todo Implement index conversion.
+         */
+        void _addIndexedVertices(PrimitiveType type_, VertexData *vertices_, int vCount_, unsigned short *indices_,
+                                 int iCount_);
+
+        /**
          * Render the batch to the display.
          */
         void _renderBatch();
+
     public:
         /**
          * Create a renderer.
@@ -231,6 +250,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param graphicsDevice_ The current graphics device.
          */
         explicit Renderer(GraphicsDevice *graphicsDevice_);
+
         ~Renderer();
 
         /**
@@ -241,7 +261,20 @@ namespace NerdThings::Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
+        void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr,
+                 ShaderProgram *shader_ = nullptr);
+
+        /**
+         * Add indexed vertices to the renderer batch.
+         *
+         * @param vertices_ The vertex array.
+         * @param indices_ The index array.
+         * @param primitiveType_ The primitive type.
+         * @param texture_ The texture to render with.
+         * @param shader_ The shader to render with.
+         */
+        void AddIndexed(std::vector<VertexData> vertices_, std::vector<unsigned short> indices_,
+                        PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
 
         /**
          * Begin adding some vertices to the current framebuffer batch.
@@ -347,6 +380,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param scale_ The scale to apply.
          */
         void Scale(const Vector3 &scale_);
+
 #else
         // Internal OpenGL Methods
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)

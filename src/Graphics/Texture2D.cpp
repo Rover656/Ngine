@@ -452,7 +452,7 @@ namespace NerdThings::Ngine::Graphics {
         renderer_->Translate({-origin_.X, -origin_.Y, 0});
 
         // Push vertices
-        renderer_->Begin(Graphics::PRIMITIVE_QUADS, this);
+        renderer_->Begin(PrimitiveType::Quads, this);
         if (flipX) {
             renderer_->Vertex(
                     {0, 0},

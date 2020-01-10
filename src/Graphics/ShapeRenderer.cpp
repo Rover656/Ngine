@@ -60,7 +60,7 @@ namespace NerdThings::Ngine::Graphics {
     void Graphics::ShapeRenderer::DrawLine(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Color color_,
                                            float thickness_) {
 #ifdef USE_EXPERIMENTAL_RENDERER
-        renderer_->Begin(PRIMITIVE_QUADS);
+        renderer_->Begin(PrimitiveType::Quads);
         _drawLine(renderer_, v1_, v2_, color_, thickness_);
         renderer_->End();
 #else
@@ -79,7 +79,7 @@ namespace NerdThings::Ngine::Graphics {
             float step = DegToRad(360.0f / LINES_PER_CIRCLE);
 
             // Render lines.
-            renderer_->Begin(PRIMITIVE_QUADS);
+            renderer_->Begin(PrimitiveType::Quads);
             for (auto i = 0; i < LINES_PER_CIRCLE; i++) {
                 _drawLine(renderer_,
                           {center_.X + sinf((float) i * step) * radius_, center_.Y + cosf((float) i * step) * radius_},
@@ -93,7 +93,7 @@ namespace NerdThings::Ngine::Graphics {
             float twoPi = 2.0f * PI;
 
             // Render using triangle fan primitive type (NEW!!!)
-            renderer_->Begin(PRIMITIVE_TRIANGLE_FAN);
+            renderer_->Begin(PrimitiveType::TriangleFan);
             renderer_->Vertex(center_, {0, 0}, color_);
             for (auto i = 0; i <= TRIANGLES_PER_CIRCLE; i++) {
                 renderer_->Vertex({
@@ -129,14 +129,14 @@ namespace NerdThings::Ngine::Graphics {
 
         if (outline_) {
             // Draw lines
-            renderer_->Begin(PRIMITIVE_QUADS);
+            renderer_->Begin(PrimitiveType::Quads);
             _drawLine(renderer_, {0, 0}, {rect_.Width, 0}, color_, lineThickness_);
             _drawLine(renderer_, {rect_.Width, 0}, {rect_.Width, rect_.Height}, color_, lineThickness_);
             _drawLine(renderer_, {rect_.Width, rect_.Height}, {0, rect_.Height}, color_, lineThickness_);
             _drawLine(renderer_, {0, rect_.Height}, {0, 0}, color_, lineThickness_);
             renderer_->End();
         } else {
-            renderer_->Begin(PRIMITIVE_QUADS);
+            renderer_->Begin(PrimitiveType::Quads);
             renderer_->Vertex({0, 0}, {0, 0}, color_);
             renderer_->Vertex({rect_.Width, 0}, {1, 0}, color_);
             renderer_->Vertex({rect_.Width, rect_.Height}, {1, 1}, color_);
@@ -169,14 +169,14 @@ namespace NerdThings::Ngine::Graphics {
 
         if (outline_) {
             // Render with lines
-            renderer_->Begin(PRIMITIVE_QUADS);
+            renderer_->Begin(PrimitiveType::Quads);
             _drawLine(renderer_, a, b, color_, lineThickness_);
             _drawLine(renderer_, b, c, color_, lineThickness_);
             _drawLine(renderer_, c, a, color_, lineThickness_);
             renderer_->End();
         } else {
             // Render it.
-            renderer_->Begin(PRIMITIVE_TRIANGLES);
+            renderer_->Begin(PrimitiveType::Triangles);
             renderer_->Vertex(a, {}, color_);
             renderer_->Vertex(b, {}, color_);
             renderer_->Vertex(c, {}, color_);

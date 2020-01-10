@@ -290,6 +290,14 @@ namespace NerdThings::Ngine {
         }
     }
 
+    void Game::_runDraw() {
+        // TODO
+    }
+
+    void Game::_runUpdate() {
+        // TODO
+    }
+
     void Game::_cleanup() {
         // Delete render target now so that it doesnt try after GL is gone.
         m_renderTarget = nullptr;
@@ -327,11 +335,23 @@ namespace NerdThings::Ngine {
         Logger::Notice("Game", "Deleted game window.");
     }
 
+    void Game::_updateThread() {
+        while (m_running) _runUpdate();
+    }
+
     Game::Game(WindowConfig windowConfig_, const GameConfig &config_)
             : m_gameWindowCreationConfig(std::move(windowConfig_)), Config(config_) {}
 
     Window *Game::GetGameWindow() const {
         return m_gameWindow;
+    }
+
+    Input::Mouse *Game::GetMouse() const {
+        return m_gameWindow ? m_gameWindow->GetMouse() : nullptr;
+    }
+
+    Input::Keyboard *Game::GetKeyboard() const {
+        return m_gameWindow ? m_gameWindow->GetKeyboard() : nullptr;
     }
 
     Graphics::GraphicsDevice *Game::GetGraphicsDevice() {

@@ -48,7 +48,7 @@ namespace NerdThings::Ngine::Graphics {
                 "varying vec4 fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
                 "#version 330\n"
-                "in vec3 NG_VertexPos;\n"
+                "in vec2 NG_VertexPos;\n"
                 "in vec2 NG_VertexTexCoord;\n"
                 "in vec4 NG_VertexColor;\n"
                 "out vec2 fragTexCoord;\n"
@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Graphics {
                 "{\n"
                 "    fragTexCoord = NG_VertexTexCoord;\n"
                 "    fragColor = NG_VertexColor;\n"
-                "    gl_Position = NGU_MATRIX_MVP*vec4(NG_VertexPos, 1.0);\n"
+                "    gl_Position = NGU_MATRIX_MVP*vec4(NG_VertexPos, 0.0, 1.0);\n"
                 "}\n";
 
         // Fragment source
@@ -139,12 +139,19 @@ namespace NerdThings::Ngine::Graphics {
         Logger::Notice("Renderer", "Created VBO with ID %i.", m_VBO);
 
         // Write null data
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
 
         // Configure vertex attrib arrays
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
         glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
+
+        // Create IBO
+        glGenBuffers(1, &m_IBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
+
+        // Write null data
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
 
         // Unbind VAO (if enabled)
         if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO))
@@ -152,6 +159,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Unbind buffers
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     void Renderer::_deleteBuffers() {
@@ -161,6 +169,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Unbind buffers
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         // Delete VAOs
         if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
@@ -171,10 +180,12 @@ namespace NerdThings::Ngine::Graphics {
         // Delete VBO
         Logger::Notice("Renderer", "Deleting VBO.");
         glDeleteBuffers(1, &m_VBO);
+        glDeleteBuffers(1, &m_IBO);
 
         // Set all to 0
         m_VAO = 0;
         m_VBO = 0;
+        m_IBO = 0;
     }
 
     void Renderer::_bindBuffers() {
@@ -187,11 +198,12 @@ namespace NerdThings::Ngine::Graphics {
             glEnableVertexAttribArray(1);
             glEnableVertexAttribArray(2);
 
-            // Bind triangle VBO
+            // Bind buffers
             glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 
             // Configure vertex attrib arrays
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
         }
@@ -204,100 +216,142 @@ namespace NerdThings::Ngine::Graphics {
         } else {
             // Unbind VBO.
             glBindBuffer(GL_ARRAY_BUFFER, 0);
-        }
 
-        // Unbind IBO.
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            // Unbind IBO.
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
     }
 
-    void Renderer::_writeBuffer() {
+    void Renderer::_writeBuffer(unsigned int buffer_, unsigned int bufferType_, void *data_, int size_, int count_) {
         // Bind buffer
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        glBindBuffer(bufferType_, buffer_);
 
         // Send data to buffer
 #if defined(glMapBuffer)
         // Orphan data
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, nullptr, GL_STREAM_DRAW);
+        glBufferData(bufferType_, size_ * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
 
         // Replace changed vertex data
-        void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        memcpy(buf, m_vertices, sizeof(VertexData) * m_vertexCount);
-        glUnmapBuffer(GL_ARRAY_BUFFER);
+        void *buf = glMapBuffer(bufferType_, GL_WRITE_ONLY);
+        memcpy(buf, data_, size_ * count_);
+        glUnmapBuffer(bufferType_);
 #elif defined(glBufferSubData)
-        glBufferSubData(GL_ARRAY_BUFFER, 0, m_vertexCount, m_vertices);
+        glBufferSubData(bufferType_, 0, size_ * count_, data_);
 #else
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * VBO_SIZE, m_vertices, GL_STREAM_DRAW);
+        glBufferData(bufferType_, size_ * MAX_BUFFER_SIZE, data_, GL_STREAM_DRAW);
 #endif
     }
 
     void Renderer::_addVertices(PrimitiveType type_, VertexData *vertices_, int count_) {
         // Check vertex array size
-        if (count_ > VBO_SIZE)
+        if (count_ >= MAX_BUFFER_SIZE)
             Logger::Fail("Renderer", "Vertex array is too big!");
 
-        auto trueCount = count_;
+        // Draw if we'd meet buffer maximums
+        if (m_vertexCount + count_ >= MAX_BUFFER_SIZE) {
+            Render();
+        }
 
         // Add vertices to vertex array
-        if (type_ == PRIMITIVE_QUADS) {
+        if (type_ == PrimitiveType::Quads) {
             // Check we have the correct number of vertices
             if (count_ % 4 != 0)
                 Logger::Fail("Renderer", "Quads instruction given wrong number of vertices.");
 
-            // Convert from quads to triangles
-            for (auto i = 0; i < count_ / 4; i++) {
-                m_vertices[m_vertexCount + i * 6 + 0] = vertices_[i * 4 + 0];
-                m_vertices[m_vertexCount + i * 6 + 1] = vertices_[i * 4 + 1];
-                m_vertices[m_vertexCount + i * 6 + 2] = vertices_[i * 4 + 3];
-                m_vertices[m_vertexCount + i * 6 + 3] = vertices_[i * 4 + 1];
-                m_vertices[m_vertexCount + i * 6 + 4] = vertices_[i * 4 + 2];
-                m_vertices[m_vertexCount + i * 6 + 5] = vertices_[i * 4 + 3];
+            // Draw if we'd meet buffer maximums
+            if (m_indexCount + count_ / 4 * 6 >= MAX_BUFFER_SIZE) {
+                if (count_ / 4 * 6 >= MAX_BUFFER_SIZE)
+                    Logger::Fail("Renderer", "Too many indices would be created by this action.");
+                Render();
             }
 
-            // Set true count
-            trueCount = count_ / 4 * 6;
-        } else if (type_ == PRIMITIVE_TRIANGLE_FAN) {
+            // Convert from quads to triangles
+            for (auto i = 0; i < floor(count_ / 4); i++) {
+                m_indices[m_indexCount + i * 6 + 0] = m_vertexCount + i * 4 + 0;
+                m_indices[m_indexCount + i * 6 + 1] = m_vertexCount + i * 4 + 1;
+                m_indices[m_indexCount + i * 6 + 2] = m_vertexCount + i * 4 + 3;
+                m_indices[m_indexCount + i * 6 + 3] = m_vertexCount + i * 4 + 1;
+                m_indices[m_indexCount + i * 6 + 4] = m_vertexCount + i * 4 + 2;
+                m_indices[m_indexCount + i * 6 + 5] = m_vertexCount + i * 4 + 3;
+            }
+            m_indexCount += count_ / 4 * 6;
+        } else if (type_ == PrimitiveType::TriangleFan) {
             // Convert from triangle fan to triangles
             auto a = vertices_[0];
 
-            // Set count to 0
-            trueCount = 0;
+            // Draw if we'd meet buffer maximums
+            if (m_indexCount + (count_ - 1) * 3 >= MAX_BUFFER_SIZE) {
+                if ((count_ - 1) * 3 >= MAX_BUFFER_SIZE)
+                    Logger::Fail("Renderer", "Too many indices would be created by this action.");
+                Render();
+            }
 
             // Write vertices to buffer
             for (auto i = 0; i + 2 < count_; i++) {
-                m_vertices[m_vertexCount + i * 3 + 0] = a;
-                m_vertices[m_vertexCount + i * 3 + 1] = vertices_[i + 1];
-                m_vertices[m_vertexCount + i * 3 + 2] = vertices_[i + 2];
-                trueCount += 3;
+                m_indices[m_indexCount + i + 0] = m_vertexCount;
+                m_indices[m_indexCount + i + 1] = m_vertexCount + i + 1;
+                m_indices[m_indexCount + i + 2] = m_vertexCount + i + 2;
             }
+            m_indexCount += (count_ - 1) * 3;
         } else {
-            for (auto i = 0; i < count_; i++) {
-                m_vertices[m_vertexCount + i] = vertices_[i];
-            }
+            // Write standard indices
+            for (auto i = 0; i < count_; i++)
+                m_indices[m_indexCount + i] = m_vertexCount + i;
+            m_indexCount += count_;
         }
 
-        // Increase count
-        m_vertexCount += trueCount;
-
-        // Translate all of the positions by the model view matrix
-        for (auto i = m_vertexCount - trueCount; i < m_vertexCount; i++) {
-            m_vertices[i].Position = m_vertices[i].Position.Transform(m_graphicsDevice->GetModelViewMatrix());
+        // Write vertices to buffer
+        for (auto i = 0; i < count_; i++) {
+            m_vertices[m_vertexCount + i] = vertices_[i];
+            m_vertices[m_vertexCount + i].Position = m_vertices[m_vertexCount + i].Position.Transform(m_graphicsDevice->GetModelViewMatrix());
         }
+        m_vertexCount += count_;
 
         // Draw if at max vertex count
-        if (m_vertexCount == VBO_SIZE) {
+        if (m_vertexCount == MAX_BUFFER_SIZE || m_indexCount == MAX_BUFFER_SIZE) {
+            Render();
+        }
+    }
+
+    void
+    Renderer::_addIndexedVertices(PrimitiveType type_, VertexData *vertices_, int vCount_, unsigned short *indices_,
+                                  int iCount_) {
+        // TODO BEFORE MERGE: Add Quad and triangle fan conversion.
+        // Add vertices to vertex array
+        if (type_ == PrimitiveType::Quads) {
+            Logger::Fail("Renderer", "Quads to triangle indices not implemented.");
+        } else if (type_ == PrimitiveType::TriangleFan) {
+            Logger::Fail("Renderer", "Triangle fan to triangle indices not implemented.");
+        } else {
+            // Write standard indices
+            for (auto i = 0; i < iCount_; i++)
+                m_indices[m_indexCount + i] = m_vertexCount + indices_[i];
+            m_indexCount += iCount_;
+        }
+
+        // Write vertices to buffer
+        for (auto i = 0; i < vCount_; i++) {
+            m_vertices[m_vertexCount + i] = vertices_[i];
+            m_vertices[m_vertexCount + i].Position = m_vertices[m_vertexCount + i].Position.Transform(m_graphicsDevice->GetModelViewMatrix());
+        }
+        m_vertexCount += vCount_;
+
+        // Draw if at max vertex count
+        if (m_vertexCount == MAX_BUFFER_SIZE || m_indexCount == MAX_BUFFER_SIZE) {
             Render();
         }
     }
 
     void Renderer::_renderBatch() {
         // Dont bother if there's nothing
-        if (m_vertexCount == 0) return;
+        if (m_vertexCount == 0 || m_indexCount == 0) return;
 
         // Get projection.
         auto MVP = m_graphicsDevice->GetProjectionMatrix();
 
         // Upload data
-        _writeBuffer();
+        _writeBuffer(m_VBO, GL_ARRAY_BUFFER, m_vertices, sizeof(VertexData), m_vertexCount);
+        _writeBuffer(m_IBO, GL_ELEMENT_ARRAY_BUFFER, m_indices, sizeof(unsigned short), m_indexCount);
 
         // Bind the buffers
         _bindBuffers();
@@ -319,7 +373,7 @@ namespace NerdThings::Ngine::Graphics {
         glBindTexture(GL_TEXTURE_2D, tex->m_ID);
 
         // Draw
-        glDrawArrays(GL_TRIANGLES, 0, m_vertexCount);
+        glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_SHORT, 0);
 
         // Unbind buffers
         _unbindBuffers();
@@ -332,6 +386,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Clear data
         m_vertexCount = 0;
+        m_indexCount = 0;
     }
 
     Renderer::Renderer(GraphicsDevice *graphicsDevice_)
@@ -373,6 +428,21 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_,
                        ShaderProgram *shader_) {
+        // If the texture, shader don't match, push a render.
+        if (m_currentTexture != texture_
+            || m_currentShader != shader_)
+            Render();
+
+        // Set current shader, texture and primitive
+        m_currentTexture = texture_;
+        m_currentShader = shader_;
+
+        // Add
+        _addVertices(primitiveType_, vertices_.data(), vertices_.size());
+    }
+
+    void Renderer::AddIndexed(std::vector<VertexData> vertices_, std::vector<unsigned short> indices_,
+                              PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
         // If the texture, shader and primitive type don't match, push a render.
         if (m_currentTexture != texture_
             || m_currentShader != shader_)
@@ -381,10 +451,9 @@ namespace NerdThings::Ngine::Graphics {
         // Set current shader, texture and primitive
         m_currentTexture = texture_;
         m_currentShader = shader_;
-        m_currentPrimitiveType = primitiveType_;
 
         // Add
-        _addVertices(primitiveType_, vertices_.data(), vertices_.size());
+        _addIndexedVertices(primitiveType_, vertices_.data(), vertices_.size(), indices_.data(), indices_.size());
     }
 
     void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
@@ -420,10 +489,10 @@ namespace NerdThings::Ngine::Graphics {
         if (!m_midBatch)
             Logger::Fail("Renderer", "A batch must be started before adding to it.");
 
-        if (m_vertexCount < VBO_SIZE) {
+        if (m_vertexCount < MAX_BUFFER_SIZE) {
             // Build vertex data
             VertexData vDat;
-            vDat.Position = Vector3(pos_.X, pos_.Y, 0).Transform(m_matrixStack[m_matrixStackCounter]);
+            vDat.Position = pos_.Transform(m_matrixStack[m_matrixStackCounter]);
             vDat.TexCoords = texCoord_;
             vDat.Color = color_;
 
@@ -440,7 +509,7 @@ namespace NerdThings::Ngine::Graphics {
         m_tempVertexDataCount = 0;
 
         // Draw if at max vertex count
-        if (m_vertexCount == VBO_SIZE) {
+        if (m_vertexCount == MAX_BUFFER_SIZE) {
             Render();
         }
 

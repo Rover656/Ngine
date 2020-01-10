@@ -142,9 +142,6 @@
  * @namespace NerdThings::Ngine::Physics::Shapes
  * Physics shapes.
  *
- * @namespace NerdThings::Ngine::UI
- * Ngine UI module. This entire module is pending a rewrite.
- *
  * @namespace NerdThings::Ngine::UWP
  * This namespace contains UWP specific code.
  */
@@ -162,7 +159,6 @@
 #include "Components/CameraComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TilesetComponent.hpp"
-#include "Components/UIWidgetComponent.hpp"
 #include "Filesystem/Filesystem.hpp"
 #include "Filesystem/ResourceManager.hpp"
 #include "Graphics/Camera.hpp"

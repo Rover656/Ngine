@@ -2,11 +2,6 @@
 
 #include <Physics/Shapes/CircleShape.hpp>
 #include <Physics/Shapes/PolygonShape.hpp>
-//#include <UI/Controls/BasicButton.h>
-//#include <UI/Controls/Image.h>
-//#include <UI/Controls/Label.h>
-//#include <UI/Controls/VerticalPanel.h>
-//#include <UI/UIWidget.h>
 
 using namespace NGINE_NS;
 using namespace NGINE_NS::Audio;
@@ -16,8 +11,6 @@ using namespace NGINE_NS::Graphics;
 using namespace NGINE_NS::Input;
 using namespace NGINE_NS::Physics;
 using namespace NGINE_NS::Physics::Shapes;
-using namespace NGINE_NS::UI;
-//using namespace NGINE_NS::UI::Controls;
 
 class KeyboardMovementComponent2D : public Component {
 public:
@@ -147,58 +140,6 @@ public:
     }
 };
 
-//class TestWidget : public UIWidget {
-//public:
-//    TestWidget(Vector2 pos_) : UIWidget(pos_) {
-//        auto fnt = Font::GetDefaultFont();
-//        auto panelStyle = TUIStyle();
-//        panelStyle.BackColor = Color::White;
-//        panelStyle.BorderColor = Color::Gray;
-//        panelStyle.BorderThickness = 2;
-//        panelStyle.SetPadding(5, 0, 5, 0);
-//        SetPanel(new VerticalPanel(250.0f, 500.0f));
-//        GetPanel<VerticalPanel>()->HorizontalAlignment = ALIGN_CENTER;
-//        GetPanel()->SetStyle(panelStyle);
-//
-//        auto style = TUIStyle();
-//        style.BorderThickness = 2;
-//        style.BorderColor = Color::Blue;
-//        style.BackColor = Color::Green;
-//        style.Margin[2] = 5; // 5 bottom margin
-//        style.Margin[3] = 5; // 5 left margin
-//
-//        auto l = new Label("Hello World", Font::GetDefaultFont());
-//        style.ForeColor = Graphics::Color::Orange;
-//        l->SetFontSize(32);
-//        l->SetStyle(style);
-//        GetPanel()->AddChild("testLabel", l);
-//
-//        l = new Label("Hello world", Font::GetDefaultFont());
-//        style.ForeColor = Graphics::Color::Blue;
-//        l->SetFontSize(62);
-//        l->SetStyle(style);
-//        GetPanel()->AddChild("testLabel1", l);
-//
-//        auto bStyle = TUIStyle();
-//        bStyle.BackColor = Color::Blue;
-//
-//        auto btn = new BasicButton("Test", Font::GetDefaultFont(), 32, 200, 100);
-//        btn->OnClick += new FunctionEventHandler<UIControlEventArgs>(&TestWidget::Test);
-//        btn->SetStyle(bStyle);
-//        GetPanel()->AddChild("testButton", (UIControl *)btn);
-//
-////        auto imgStyle = TUIStyle();
-////        imgStyle.Margin[0] = 5;
-////        auto img = new Image(Sprite(ResourceManager::GetTexture("test_spritesheet"), 16, 16, 64, 64, 30, 0), 64, 64);
-////        img->SetStyle(imgStyle);
-////        //GetPanel()->AddChild("testImage", img);
-//    }
-//
-//    static void Test(UIControlEventArgs e) {
-//        ConsoleMessage("Button was clicked", "NOTICE", "TestGame Entrypoint");
-//    }
-//};
-
 class TestScene : public Scene {
 public:
     //TestWidget widg;
@@ -257,8 +198,6 @@ public:
     int rot = 0;
 
     void Draw(Graphics::Renderer *renderer_) {
-        // testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
-
         // ShapeRenderer::DrawCircle(renderer_, {50, 50}, 50, Color::Red, true, 1);
         // ShapeRenderer::DrawLine(renderer_, {10, 10}, {100, 100}, Color::Green, 5);
         // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color::Red, 15, {});
@@ -269,6 +208,8 @@ public:
 
     void DrawCam(Graphics::Renderer *renderer_) {
         //Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
+        ShapeRenderer::DrawRectangle(renderer_, GetCullArea(), Color::Green, 0, Vector2::Zero, true);
+        testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
     }
 
     void Update() {
@@ -301,17 +242,7 @@ public:
     }
 
     void Draw(Graphics::Renderer *renderer_) {
-#ifdef USE_EXPERIMENTAL_RENDERER
-//        auto tex = GetResourceManager()->GetTexture("test_tiles");
-//        tex->Draw(renderer_, {0, 0});
-#else
-//        renderer_->DrawTriangle({0, 0}, {100, 0}, {100, 100}, Color::Red);
-//        auto t = GetResourceManager()->GetTexture("test_tiles");
-//        for (auto i = 0; i < 2000; i++)
-//            t->Draw(renderer_, {0, 0});
-//        for (auto i = 0; i < 2000; i++)
-//            renderer_->DrawRectangle({125, 125}, {50, 50}, Color::White);
-#endif
+        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
     }
 
     void Init() {
@@ -341,9 +272,6 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
-#ifndef USE_EXPERIMENTAL_RENDERER
-    //gameConfig.MaintainResolution = true;
-#endif
     gameConfig.MaintainResolution = true;
 
     WindowConfig windowConfig;

@@ -32,13 +32,13 @@ namespace NerdThings::Ngine::Graphics {
      * Shader program which contains a shader and manages it.
      *
      * Predefined attributes:
-     *  * NG_VertexPos
-     *  * NG_VertexTexCoord
-     *  * NG_VertexColor
+     *  * vec2 - NG_VertexPos
+     *  * vec2 - NG_VertexTexCoord
+     *  * vec4 - NG_VertexColor
      *
      * Predefined uniforms:
-     *  * NGU_MATRIX_MVP
-     *  * NGU_TEXTURE
+     *  * mat4 - NGU_MATRIX_MVP
+     *  * sampler2D - NGU_TEXTURE
      */
     class NEAPI ShaderProgram {
     private:
