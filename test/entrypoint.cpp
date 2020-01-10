@@ -277,7 +277,7 @@ NGINE_GAME_ENTRY {
     WindowConfig windowConfig;
     windowConfig.Resizable = true;
     //windowConfig.MSAA_4X = true;
-    windowConfig.VSync = false;
+    //windowConfig.VSync = true;
     windowConfig.InitialWidth = 1920/2;
     windowConfig.InitialHeight = 1080/2;
     windowConfig.Title = "Test Game";

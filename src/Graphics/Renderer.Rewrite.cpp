@@ -41,7 +41,7 @@ namespace NerdThings::Ngine::Graphics {
                 "#version 100\n"
 #endif
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "attribute vec3 NG_VertexPos;\n"
+                "attribute vec2 NG_VertexPos;\n"
                 "attribute vec2 NG_VertexTexCoord;\n"
                 "attribute vec4 NG_VertexColor;\n"
                 "varying vec2 fragTexCoord;\n"
@@ -98,7 +98,6 @@ namespace NerdThings::Ngine::Graphics {
         if (!compiled) {
             delete shader;
             Logger::Fail("Renderer", "Failed to compile internal shader!");
-            throw std::runtime_error("Default shader failed to compile!");
         }
 
         // Create shader program
@@ -110,7 +109,6 @@ namespace NerdThings::Ngine::Graphics {
             delete m_defaultShaderProgram;
             m_defaultShaderProgram = nullptr;
             Logger::Fail("Renderer", "Failed to link internal shader program!");
-            throw std::runtime_error("Default shader program failed to link!");
         }
         Logger::Notice("Renderer", "Created internal shader.");
 
@@ -227,15 +225,16 @@ namespace NerdThings::Ngine::Graphics {
         glBindBuffer(bufferType_, buffer_);
 
         // Send data to buffer
-#if defined(glMapBuffer)
-        // Orphan data
-        glBufferData(bufferType_, size_ * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
-
-        // Replace changed vertex data
-        void *buf = glMapBuffer(bufferType_, GL_WRITE_ONLY);
-        memcpy(buf, data_, size_ * count_);
-        glUnmapBuffer(bufferType_);
-#elif defined(glBufferSubData)
+//#if defined(glMapBuffer)
+//        // Orphan data
+//        glBufferData(bufferType_, size_ * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
+//
+//        // Replace changed vertex data
+//        void *buf = glMapBuffer(bufferType_, GL_WRITE_ONLY);
+//        memcpy(buf, data_, size_ * count_);
+//        glUnmapBuffer(bufferType_);
+//#elif defined(glBufferSubData)
+#if defined(glBufferSubData)
         glBufferSubData(bufferType_, 0, size_ * count_, data_);
 #else
         glBufferData(bufferType_, size_ * MAX_BUFFER_SIZE, data_, GL_STREAM_DRAW);

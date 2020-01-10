@@ -56,7 +56,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * Render the vertices as triangles.
          */
-                Triangles = 0,
+        Triangles = 0,
 
         /**
          * Draw a fan of triangles.
@@ -64,12 +64,12 @@ namespace NerdThings::Ngine::Graphics {
          * A triangle is formed for each *adjacent* vertex pair.
          * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
          */
-                TriangleFan,
+        TriangleFan,
 
         /**
          * Render the vertices as quads.
          */
-                Quads
+        Quads
     };
 
 #ifdef USE_EXPERIMENTAL_RENDERER
@@ -217,7 +217,7 @@ namespace NerdThings::Ngine::Graphics {
          * Write the data to a buffer.
          * Buffer max size may be reset to `MAX_BUFFER_SIZE`.
          */
-        void _writeBuffer(unsigned int buffer_, unsigned int bufferType_, void *data_, int size_, int count_);
+        static void _writeBuffer(unsigned int buffer_, unsigned int bufferType_, void *data_, int size_, int count_);
 
         /**
          * Add a vertex array to the buffer.

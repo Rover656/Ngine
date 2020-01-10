@@ -44,12 +44,15 @@ namespace NerdThings::Ngine {
      * This details exactly how the game should be configured.
      */
     struct GameConfig {
-        // Public Fields
+        /**
+         * Number of times to update
+         */
+        int UpdatesPerSecond = 60;
 
         /**
-         * Number of times to draw every second
+         * The render cap (-1 for no cap).
          */
-        int FPS = 60;
+        int FPSCap = 60;
 
         /**
          * Target game height (virtual resolution).
@@ -165,14 +168,14 @@ namespace NerdThings::Ngine {
         void _runUpdate();
 
         /**
-         * Cleanup the game.
-         */
-        void _cleanup();
-
-        /**
          * The update thread.
          */
         void _updateThread();
+
+        /**
+         * Cleanup the game.
+         */
+        void _cleanup();
     public:
         /**
          * Background clear color.
