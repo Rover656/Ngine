@@ -77,6 +77,8 @@ namespace NerdThings::Ngine::Graphics {
      * The rewritten Ngine renderer.
      * This properly implements all required features for much easier batching and depth sorting.
      * @note This will probably not be completed by the end of the year. This must be enabled with the CMake FEATURE_EXPERIMENTAL_RENDERER flag.
+     *
+     * @todo Make the renderer platform agnostic so that its easier to switch graphics API
      */
 #else
     /**
@@ -136,6 +138,9 @@ namespace NerdThings::Ngine::Graphics {
          */
         unsigned int m_VBO;
 
+        /**
+         * The IBO used to store index data.
+         */
         unsigned int m_IBO;
 
         /**
@@ -148,8 +153,14 @@ namespace NerdThings::Ngine::Graphics {
          */
         int m_vertexCount = 0;
 
+        /**
+         * This contains all of the indices for being written to the buffer.
+         */
         unsigned short m_indices[MAX_BUFFER_SIZE];
 
+        /**
+         * The number of indices to be written.
+         */
         int m_indexCount = 0;
 
         /**
@@ -162,15 +173,21 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The currently applied texture.
          */
-        Texture2D *m_currentTexture;
+        unsigned int m_currentTexture;
 
         /**
          * The current primitive type being rendered.
          */
         PrimitiveType m_currentPrimitiveType = PrimitiveType::Triangles;
 
+        /**
+         * The matrix stack.
+         */
         Matrix m_matrixStack[MATRIX_STACK_SIZE];
 
+        /**
+         * The matrix stack counter.
+         */
         int m_matrixStackCounter = 0;
 
         /**
@@ -262,6 +279,17 @@ namespace NerdThings::Ngine::Graphics {
          * @param shader_ The shader to render with.
          */
         void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr,
+                 ShaderProgram *shader_ = nullptr);
+
+        /**
+         * Add a vertex array to the renderer batch.
+         *
+         * @param vertices_ The vertex array to add.
+         * @param primitiveType_ The primitive type.
+         * @param texture_ The texture to render with.
+         * @param shader_ The shader to render with.
+         */
+        void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, unsigned int texture_ = 0,
                  ShaderProgram *shader_ = nullptr);
 
         /**

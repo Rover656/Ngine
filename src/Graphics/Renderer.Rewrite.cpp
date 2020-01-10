@@ -357,7 +357,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Get shader and texture
         auto shader = m_currentShader != nullptr ? m_currentShader : m_defaultShaderProgram;
-        auto tex = m_currentTexture != nullptr ? m_currentTexture : m_whiteTexture;
+        auto tex = m_currentTexture != 0 ? m_currentTexture : m_whiteTexture->m_ID;
 
         // Use program
         glUseProgram(shader->ID);
@@ -369,10 +369,10 @@ namespace NerdThings::Ngine::Graphics {
         glUniform1i(shader->GetUniformLocation("NGU_TEXTURE"), 0);
 
         // Bind texture
-        glBindTexture(GL_TEXTURE_2D, tex->m_ID);
+        glBindTexture(GL_TEXTURE_2D, tex);
 
-        // Draw
-        glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_SHORT, 0);
+        // Draw all elements
+        glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_SHORT, nullptr);
 
         // Unbind buffers
         _unbindBuffers();
@@ -428,12 +428,12 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_,
                        ShaderProgram *shader_) {
         // If the texture, shader don't match, push a render.
-        if (m_currentTexture != texture_
+        if (m_currentTexture != texture_->m_ID
             || m_currentShader != shader_)
             Render();
 
         // Set current shader, texture and primitive
-        m_currentTexture = texture_;
+        m_currentTexture = texture_->m_ID;
         m_currentShader = shader_;
 
         // Add
@@ -443,12 +443,12 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::AddIndexed(std::vector<VertexData> vertices_, std::vector<unsigned short> indices_,
                               PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
         // If the texture, shader and primitive type don't match, push a render.
-        if (m_currentTexture != texture_
+        if (m_currentTexture != (texture_ != nullptr ? texture_->m_ID : 0)
             || m_currentShader != shader_)
             Render();
 
         // Set current shader, texture and primitive
-        m_currentTexture = texture_;
+        m_currentTexture = texture_ != nullptr ? texture_->m_ID : 0;
         m_currentShader = shader_;
 
         // Add
@@ -465,13 +465,13 @@ namespace NerdThings::Ngine::Graphics {
             Logger::Fail("Renderer", "Cannot begin a second batch before finishing the last one.");
 
         // If we are changing texture, primitive type or shader, draw
-        if (m_currentTexture != texture_
+        if (m_currentTexture != (texture_ != nullptr ? texture_->m_ID : 0)
             || m_currentShader != shader_)
             Render();
 
         // We are now running a batch
         m_midBatch = true;
-        m_currentTexture = texture_;
+        m_currentTexture = texture_ != nullptr ? texture_->m_ID : 0;
         m_currentShader = shader_;
         m_currentPrimitiveType = primitiveType_;
     }
