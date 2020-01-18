@@ -501,13 +501,7 @@ namespace NerdThings::Ngine {
         }
 #elif defined(PLATFORM_UWP)
         // Toggle fullscreen.
-        if (fullscreen_ && !m_isFullscreen) {
-            Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryEnterFullScreenMode();
-            m_isFullscreen = true;
-        } else if (!fullscreen_ && m_isFullscreen) {
-            Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->ExitFullScreenMode();
-            m_isFullscreen = false;
-        }
+        m_fullscreenSet = fullscreen_ ? 1 : 2;
 #endif
     }
 
@@ -632,6 +626,19 @@ namespace NerdThings::Ngine {
         // Query dimensions
         eglQuerySurface(m_display, m_surface, EGL_WIDTH, &m_currentWidth);
         eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &m_currentHeight);
+
+        // Toggle fullscreen if necessary
+        if (m_fullscreenSet != 0) {
+            if (m_fullscreenSet == 1 && !m_isFullscreen) {
+                Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryEnterFullScreenMode();
+                m_isFullscreen = true;
+            }
+            else if (m_fullscreenSet == 2 && m_isFullscreen) {
+                Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->ExitFullScreenMode();
+                m_isFullscreen = false;
+            }
+            m_fullscreenSet = 0;
+        }
 #endif
     }
 

@@ -153,6 +153,14 @@ namespace NerdThings::Ngine {
          * Whether or not the window is visible.
          */
         bool m_visible = false;
+
+        /**
+         * Fullscreen flag
+         * 0 - no change
+         * 1 - fullscreen
+         * 2 - exit fullscreen
+         */
+        char m_fullscreenSet = 0;
 #endif
 
         /**

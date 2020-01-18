@@ -21,6 +21,7 @@
 #include "PolygonShape.hpp"
 
 #include "../../Graphics/Renderer.hpp"
+#include "../../Graphics/ShapeRenderer.hpp"
 
 #include <Box2D/Box2D.h>
 
@@ -74,9 +75,7 @@ namespace NerdThings::Ngine::Physics::Shapes {
             v1 = v1.Transform(c, angle_);
             v2 = v2.Transform(c, angle_);
 
-#ifndef USE_EXPERIMENTAL_RENDERER
-            renderer_->DrawLine(v1, v2, Graphics::Color::Red);
-#endif
+            Graphics::ShapeRenderer::DrawLine(renderer_, v1, v2, Graphics::Color::Red);
         }
     }
 

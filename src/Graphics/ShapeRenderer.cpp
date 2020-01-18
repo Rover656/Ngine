@@ -95,10 +95,10 @@ namespace NerdThings::Ngine::Graphics {
             // Render using triangle fan primitive type (NEW!!!)
             renderer_->Begin(PrimitiveType::TriangleFan);
             renderer_->Vertex(center_, {0, 0}, color_);
-            for (auto i = 0; i <= TRIANGLES_PER_CIRCLE; i++) {
+            for (auto i = 1; i <= TRIANGLES_PER_CIRCLE + 1; i++) {
                 renderer_->Vertex({
                                           center_.X + (radius_ * cosf(i * twoPi / TRIANGLES_PER_CIRCLE)),
-                                          center_.X + (radius_ * sinf(i * twoPi / TRIANGLES_PER_CIRCLE))
+                                          center_.Y + (radius_ * sinf(i * twoPi / TRIANGLES_PER_CIRCLE))
                                   }, {0, 0}, color_);
             }
             renderer_->End();

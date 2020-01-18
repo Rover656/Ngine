@@ -21,6 +21,7 @@
 #include "CircleShape.hpp"
 
 #include "../../Graphics/Renderer.hpp"
+#include "../../Graphics/ShapeRenderer.hpp"
 
 #include <Box2D/Collision/Shapes/b2CircleShape.h>
 
@@ -56,9 +57,8 @@ namespace NerdThings::Ngine::Physics::Shapes {
         auto pos = GetPosition();
         pos *= ppm_;
         pos += pos_;
-#ifndef USE_EXPERIMENTAL_RENDERER
-        renderer_->DrawCircleLines(pos, GetRadius() * ppm_, Graphics::Color::Red);
-#endif
+
+        Graphics::ShapeRenderer::DrawCircle(renderer_, pos, GetRadius() * ppm_, Graphics::Color::Red, true);
     }
 
     Vector2 CircleShape::GetPosition() const {

@@ -275,10 +275,7 @@ namespace NerdThings::Ngine::Graphics {
             }
             m_indexCount += count_ / 4 * 6;
         } else if (type_ == PrimitiveType::TriangleFan) {
-            // Convert from triangle fan to triangles
-            auto a = vertices_[0];
-
-            // Draw if we'd meet buffer maximums
+            // Draw if we are full
             if (m_indexCount + (count_ - 1) * 3 >= MAX_BUFFER_SIZE) {
                 if ((count_ - 1) * 3 >= MAX_BUFFER_SIZE)
                     Console::Fail("Renderer", "Too many indices would be created by this action.");
@@ -287,12 +284,19 @@ namespace NerdThings::Ngine::Graphics {
 
             // Write vertices to buffer
             for (auto i = 0; i + 2 < count_; i++) {
-                m_indices[m_indexCount + i + 0] = m_vertexCount;
-                m_indices[m_indexCount + i + 1] = m_vertexCount + i + 1;
-                m_indices[m_indexCount + i + 2] = m_vertexCount + i + 2;
+                m_indices[m_indexCount + 0] = m_vertexCount;
+                m_indices[m_indexCount + 1] = m_vertexCount + i + 1;
+                m_indices[m_indexCount + 2] = m_vertexCount + i + 2;
+                m_indexCount += 3;
             }
-            m_indexCount += (count_ - 1) * 3;
         } else {
+            // Draw if we are full
+            if (m_indexCount + count_ >= MAX_BUFFER_SIZE) {
+                if (count_ >= MAX_BUFFER_SIZE)
+                    Console::Fail("Renderer", "Too many indices would be created by this action.");
+                Render();
+            }
+
             // Write standard indices
             for (auto i = 0; i < count_; i++)
                 m_indices[m_indexCount + i] = m_vertexCount + i;
