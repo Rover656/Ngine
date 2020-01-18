@@ -22,7 +22,7 @@
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "OpenGL.hpp"
 
 namespace NerdThings::Ngine::Graphics {
@@ -91,13 +91,13 @@ namespace NerdThings::Ngine::Graphics {
                 "}\n";
 
         // Create shader
-        Logger::Notice("Renderer", "Creating internal shader.");
+        Console::Notice("Renderer", "Creating internal shader.");
         auto shader = new Shader(vertexShaderSrc, fragmentShaderSrc);
         auto compiled = shader->Compile();
 
         if (!compiled) {
             delete shader;
-            Logger::Fail("Renderer", "Failed to compile internal shader!");
+            Console::Fail("Renderer", "Failed to compile internal shader!");
         }
 
         // Create shader program
@@ -108,14 +108,14 @@ namespace NerdThings::Ngine::Graphics {
         if (!linked) {
             delete m_defaultShaderProgram;
             m_defaultShaderProgram = nullptr;
-            Logger::Fail("Renderer", "Failed to link internal shader program!");
+            Console::Fail("Renderer", "Failed to link internal shader program!");
         }
-        Logger::Notice("Renderer", "Created internal shader.");
+        Console::Notice("Renderer", "Created internal shader.");
 
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
         m_whiteTexture = new Texture2D(m_graphicsDevice, pixels, 1, 1);
-        Logger::Notice("Renderer", "Created blank 1x1 texture.");
+        Console::Notice("Renderer", "Created blank 1x1 texture.");
     }
 
     void Renderer::_createBuffers() {
@@ -123,7 +123,7 @@ namespace NerdThings::Ngine::Graphics {
         if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
             glGenVertexArrays(1, &m_VAO);
             glBindVertexArray(m_VAO);
-            Logger::Notice("Renderer", "Created VAO with ID %i.", m_VAO);
+            Console::Notice("Renderer", "Created VAO with ID %i.", m_VAO);
         }
 
         // Enable vertex attrib arrays
@@ -134,7 +134,7 @@ namespace NerdThings::Ngine::Graphics {
         // Create vertex buffer
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        Logger::Notice("Renderer", "Created VBO with ID %i.", m_VBO);
+        Console::Notice("Renderer", "Created VBO with ID %i.", m_VBO);
 
         // Write null data
         glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
@@ -171,12 +171,12 @@ namespace NerdThings::Ngine::Graphics {
 
         // Delete VAOs
         if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            Logger::Notice("Renderer", "Deleting VAO.");
+            Console::Notice("Renderer", "Deleting VAO.");
             glDeleteVertexArrays(1, &m_VAO);
         }
 
         // Delete VBO
-        Logger::Notice("Renderer", "Deleting VBO.");
+        Console::Notice("Renderer", "Deleting VBO.");
         glDeleteBuffers(1, &m_VBO);
         glDeleteBuffers(1, &m_IBO);
 
@@ -244,7 +244,7 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::_addVertices(PrimitiveType type_, VertexData *vertices_, int count_) {
         // Check vertex array size
         if (count_ >= MAX_BUFFER_SIZE)
-            Logger::Fail("Renderer", "Vertex array is too big!");
+            Console::Fail("Renderer", "Vertex array is too big!");
 
         // Draw if we'd meet buffer maximums
         if (m_vertexCount + count_ >= MAX_BUFFER_SIZE) {
@@ -255,12 +255,12 @@ namespace NerdThings::Ngine::Graphics {
         if (type_ == PrimitiveType::Quads) {
             // Check we have the correct number of vertices
             if (count_ % 4 != 0)
-                Logger::Fail("Renderer", "Quads instruction given wrong number of vertices.");
+                Console::Fail("Renderer", "Quads instruction given wrong number of vertices.");
 
             // Draw if we'd meet buffer maximums
             if (m_indexCount + count_ / 4 * 6 >= MAX_BUFFER_SIZE) {
                 if (count_ / 4 * 6 >= MAX_BUFFER_SIZE)
-                    Logger::Fail("Renderer", "Too many indices would be created by this action.");
+                    Console::Fail("Renderer", "Too many indices would be created by this action.");
                 Render();
             }
 
@@ -281,7 +281,7 @@ namespace NerdThings::Ngine::Graphics {
             // Draw if we'd meet buffer maximums
             if (m_indexCount + (count_ - 1) * 3 >= MAX_BUFFER_SIZE) {
                 if ((count_ - 1) * 3 >= MAX_BUFFER_SIZE)
-                    Logger::Fail("Renderer", "Too many indices would be created by this action.");
+                    Console::Fail("Renderer", "Too many indices would be created by this action.");
                 Render();
             }
 
@@ -318,15 +318,24 @@ namespace NerdThings::Ngine::Graphics {
         // TODO BEFORE MERGE: Add Quad and triangle fan conversion.
         // Add vertices to vertex array
         if (type_ == PrimitiveType::Quads) {
-            Logger::Fail("Renderer", "Quads to triangle indices not implemented.");
+            Console::Fail("Renderer", "Quads to triangle indices not implemented.");
+            // TODO: Test
+            for (auto i = 0; i < (int)floorf((float)iCount_ / 4.0f); i++) {
+                m_indices[m_indexCount + i * 6 + 0] = m_vertexCount + indices_[i * 4 + 0];
+                m_indices[m_indexCount + i * 6 + 1] = m_vertexCount + indices_[i * 4 + 1];
+                m_indices[m_indexCount + i * 6 + 2] = m_vertexCount + indices_[i * 4 + 3];
+                m_indices[m_indexCount + i * 6 + 3] = m_vertexCount + indices_[i * 4 + 1];
+                m_indices[m_indexCount + i * 6 + 4] = m_vertexCount + indices_[i * 4 + 2];
+                m_indices[m_indexCount + i * 6 + 5] = m_vertexCount + indices_[i * 4 + 3];
+            }
         } else if (type_ == PrimitiveType::TriangleFan) {
-            Logger::Fail("Renderer", "Triangle fan to triangle indices not implemented.");
+            Console::Fail("Renderer", "Triangle fan to triangle indices not implemented.");
         } else {
             // Write standard indices
             for (auto i = 0; i < iCount_; i++)
                 m_indices[m_indexCount + i] = m_vertexCount + indices_[i];
-            m_indexCount += iCount_;
         }
+        m_indexCount += iCount_;
 
         // Write vertices to buffer
         for (auto i = 0; i < vCount_; i++) {
@@ -390,7 +399,7 @@ namespace NerdThings::Ngine::Graphics {
 
     Renderer::Renderer(GraphicsDevice *graphicsDevice_)
             : m_graphicsDevice(graphicsDevice_) {
-        Logger::Notice("Renderer", "Creating renderer...");
+        Console::Notice("Renderer", "Creating renderer...");
 
         // Check graphics device.
         if (m_graphicsDevice == nullptr)
@@ -409,7 +418,7 @@ namespace NerdThings::Ngine::Graphics {
         m_matrixStackCounter = 0;
         m_matrixStack[0] = Matrix::Identity;
 
-        Logger::Notice("Renderer", "Finished creating renderer.");
+        Console::Notice("Renderer", "Finished creating renderer.");
     }
 
     Renderer::~Renderer() {
@@ -458,11 +467,11 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::Begin(PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
         // Stop rendering.
         if (m_rendering)
-            Logger::Fail("Renderer", "Cannot start a new batch while rendering.");
+            Console::Fail("Renderer", "Cannot start a new batch while rendering.");
 
         // Check we aren't midway
         if (m_midBatch)
-            Logger::Fail("Renderer", "Cannot begin a second batch before finishing the last one.");
+            Console::Fail("Renderer", "Cannot begin a second batch before finishing the last one.");
 
         // If we are changing texture, primitive type or shader, draw
         if (m_currentTexture != (texture_ != nullptr ? texture_->m_ID : 0)
@@ -486,7 +495,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::Vertex(const Vector2 &pos_, const Vector2 &texCoord_, const Color &color_) {
         if (!m_midBatch)
-            Logger::Fail("Renderer", "A batch must be started before adding to it.");
+            Console::Fail("Renderer", "A batch must be started before adding to it.");
 
         if (m_vertexCount < MAX_BUFFER_SIZE) {
             // Build vertex data
@@ -496,12 +505,12 @@ namespace NerdThings::Ngine::Graphics {
             vDat.Color = color_;
 
             Vertex(vDat);
-        } else Logger::Fail("Renderer", "Buffer overflow.");
+        } else Console::Fail("Renderer", "Buffer overflow.");
     }
 
     void Renderer::End() {
         if (!m_midBatch)
-            Logger::Fail("Renderer", "Start a batch before finishing it.");
+            Console::Fail("Renderer", "Start a batch before finishing it.");
 
         // Add vertices to batch
         _addVertices(m_currentPrimitiveType, m_tempVertexData, m_tempVertexDataCount);
@@ -519,11 +528,11 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::Render() {
         // Check we aren't already rendering
         if (m_rendering)
-            Logger::Fail("Renderer", "Renderer is already rendering. Renderer should only be used on the main thread anyway.");
+            Console::Fail("Renderer", "Renderer is already rendering. Renderer should only be used on the main thread anyway.");
 
         // Make sure we're not mid batch.
         if (m_midBatch)
-            Logger::Fail("Renderer", "Must end the current batch before rendering.");
+            Console::Fail("Renderer", "Must end the current batch before rendering.");
 
         // Rendering now!
         m_rendering = true;
@@ -554,7 +563,7 @@ namespace NerdThings::Ngine::Graphics {
     void Renderer::PushMatrix() {
         // Check limits
         if (m_matrixStackCounter + 1 >= MATRIX_STACK_SIZE)
-            Logger::Fail("Renderer", "Matrix stack overflow.");
+            Console::Fail("Renderer", "Matrix stack overflow.");
 
         // Increase stack counter and write current matrix to it.
         m_matrixStackCounter++;

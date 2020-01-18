@@ -38,7 +38,7 @@
 #include <angle_windowsstore.h>
 #endif
 
-#include "../../Logger.hpp"
+#include "../../Console.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLBuffer::GLBuffer(GLBufferType type_, GLBufferUsage usage_) : _Type(type_), _Usage(usage_) {
@@ -46,13 +46,13 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         glGenBuffers(1, &ID);
 
         // Logging
-        Logger::Notice("GLBuffer", "Created new buffer with ID, %i.", ID);
+        Console::Notice("GLBuffer", "Created new buffer with ID, %i.", ID);
     }
 
     GLBuffer::~GLBuffer() {
         // Delete buffer
         glDeleteBuffers(1, &ID);
-        Logger::Notice("GLBuffer", "Deleted buffer with ID %i.", ID);
+        Console::Notice("GLBuffer", "Deleted buffer with ID %i.", ID);
 
         // Set ID to 0
         ID = 0;

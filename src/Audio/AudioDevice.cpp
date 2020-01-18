@@ -20,7 +20,7 @@
 
 #include "AudioDevice.hpp"
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 
 namespace NerdThings::Ngine::Audio {
     std::vector<Music *> AudioDevice::m_activeMusic;
@@ -42,7 +42,7 @@ namespace NerdThings::Ngine::Audio {
         auto currentSubBufferIndex = buffer->FrameCursorPos/subBufferSizeInFrames;
 
         if (currentSubBufferIndex > 1) {
-            Logger::Warn("AudioDevice", "Frame cursor position moved too far forward in audio stream.");
+            Console::Warn("AudioDevice", "Frame cursor position moved too far forward in audio stream.");
             return 0;
         }
 
@@ -106,7 +106,7 @@ namespace NerdThings::Ngine::Audio {
     }
 
     void AudioDevice::_logCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char *msg) {
-        Logger::Error("AudioDevice - miniaudio", std::string(msg));
+        Console::Error("AudioDevice - miniaudio", std::string(msg));
     }
 
     void AudioDevice::_mixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_,
@@ -138,7 +138,7 @@ namespace NerdThings::Ngine::Audio {
 
                 while(true) {
                     if (framesRead > frameCount) {
-                        Logger::Warn("AudioDevice", "Mixed too many frames from audio buffer.");
+                        Console::Warn("AudioDevice", "Mixed too many frames from audio buffer.");
                         break;
                     }
 
@@ -235,9 +235,9 @@ namespace NerdThings::Ngine::Audio {
             ma_device_uninit(&m_device);
             ma_context_uninit(&m_context);
 
-            Logger::Notice("AudioDevice", "Audio device closed successfully.");
+            Console::Notice("AudioDevice", "Audio device closed successfully.");
 
-        } else Logger::Warn("AudioDevice", "Could not close audio device as it is not open.");
+        } else Console::Warn("AudioDevice", "Could not close audio device as it is not open.");
     }
 
     AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
@@ -248,7 +248,7 @@ namespace NerdThings::Ngine::Audio {
         buffer->Buffer = calloc(bufferSizeInFrames_ * channels_ * ma_get_bytes_per_sample(format_), 1);
 
         if (buffer == nullptr || buffer->Buffer == nullptr) {
-            Logger::Error("AudioDevice", "Failed to allocate memory for audio buffer.");
+            Console::Error("AudioDevice", "Failed to allocate memory for audio buffer.");
             free(buffer->Buffer);
             delete buffer;
             return nullptr;
@@ -269,7 +269,7 @@ namespace NerdThings::Ngine::Audio {
 
         ma_result result = ma_pcm_converter_init(&dspConfig, &buffer->DSP);
         if (result != MA_SUCCESS) {
-            Logger::Error("AudioDevice", "Failed to create data conversion pipeline.");
+            Console::Error("AudioDevice", "Failed to create data conversion pipeline.");
             free(buffer->Buffer);
             delete buffer;
             return nullptr;
@@ -315,8 +315,8 @@ namespace NerdThings::Ngine::Audio {
         
         if (stream.Buffer != nullptr) {
             stream.Buffer->Looping = true; // Always loop streams
-            Logger::Notice("AudioDevice", "Audio stream loaded successfully.");
-        } else Logger::Error("AudioDevice", "Failed to create audio buffer.");
+            Console::Notice("AudioDevice", "Audio stream loaded successfully.");
+        } else Console::Error("AudioDevice", "Failed to create audio buffer.");
 
         return stream;
     }
@@ -331,7 +331,7 @@ namespace NerdThings::Ngine::Audio {
 
         ma_result result = ma_context_init(nullptr, 0, &contextConfig, &m_context);
         if (result != MA_SUCCESS) {
-            Logger::Error("AudioDevice", "Failed to initialize audio context.");
+            Console::Error("AudioDevice", "Failed to initialize audio context.");
             return;
         }
 
@@ -349,7 +349,7 @@ namespace NerdThings::Ngine::Audio {
 
         result = ma_device_init(&m_context, &config, &m_device);
         if (result != MA_SUCCESS) {
-            Logger::Error("AudioDevice", "Failed to initialize audio playback device.");
+            Console::Error("AudioDevice", "Failed to initialize audio playback device.");
             ma_context_uninit(&m_context);
             return;
         }
@@ -357,7 +357,7 @@ namespace NerdThings::Ngine::Audio {
         // Keep device running all the time.
         result = ma_device_start(&m_device);
         if (result != MA_SUCCESS) {
-            Logger::Error("AudioDevice", "Failed to start audio playback device.");
+            Console::Error("AudioDevice", "Failed to start audio playback device.");
             ma_device_uninit(&m_device);
             ma_context_uninit(&m_context);
             return;
@@ -366,15 +366,15 @@ namespace NerdThings::Ngine::Audio {
         // Thread mixer
         result = ma_mutex_init(&m_context, &m_audioLock);
         if (result != MA_SUCCESS) {
-            Logger::Error("AudioDevice", "Failed to create mutex for audio mixing.");
+            Console::Error("AudioDevice", "Failed to create mutex for audio mixing.");
             ma_device_uninit(&m_device);
             ma_context_uninit(&m_context);
             return;
         }
 
-        Logger::Notice("AudioDevice", "Audio device initialized successfully!");
-        Logger::Notice("AudioDevice", "Audio backend: miniaudio/%s", ma_get_backend_name(m_context.backend));
-        Logger::Notice("AudioDevice", "Audio format: %s -> %s", ma_get_format_name(m_device.playback.format), ma_get_format_name(m_device.playback.internalFormat));
+        Console::Notice("AudioDevice", "Audio device initialized successfully!");
+        Console::Notice("AudioDevice", "Audio backend: miniaudio/%s", ma_get_backend_name(m_context.backend));
+        Console::Notice("AudioDevice", "Audio format: %s -> %s", ma_get_format_name(m_device.playback.format), ma_get_format_name(m_device.playback.internalFormat));
 
         m_initialized = true;
     }

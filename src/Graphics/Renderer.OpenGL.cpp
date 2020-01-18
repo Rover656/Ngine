@@ -26,8 +26,8 @@
 #include "OpenGL/OpenGL.hpp"
 #endif
 
-#include "../Logger.hpp"
-#include "GraphicsManager.hpp"
+#include "../Console.hpp"
+#include "GraphicsDevice.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     // OpenGL Implementation
@@ -76,7 +76,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::BeginDrawing() {
         // Setup framebuffer
-        GraphicsManager::SetupFramebuffer();
+        m_graphicsDevice->SetupFramebuffer();
     }
 
     void Renderer::Clear(Color color_) {
@@ -697,7 +697,7 @@ namespace NerdThings::Ngine::Graphics {
 
             OpenGL::GL::StopUsingTexture();
         } else {
-            Logger::Warn("Renderer.OpenGL", "Attempted to draw invalid texture.");
+            Console::Warn("Renderer.OpenGL", "Attempted to draw invalid texture.");
         }
     }
 

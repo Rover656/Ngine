@@ -18,10 +18,14 @@
 *
 **********************************************************************************************/
 
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#ifndef CONSOLE_HPP
+#define CONSOLE_HPP
 
 #include "Config.hpp"
+
+#if defined(PLATFORM_UWP)
+#include <ppltasks.h>
+#endif
 
 namespace NerdThings::Ngine {
     /**
@@ -29,7 +33,7 @@ namespace NerdThings::Ngine {
      *
      * One day this might even write to a file :O
      */
-    class NEAPI Logger {
+    class NEAPI Console {
         template <typename ...Args>
         static std::string _getFormattedString(std::string format_, Args...args) {
             // Get the size
@@ -53,6 +57,19 @@ namespace NerdThings::Ngine {
          */
         static void _write(std::string severity_, std::string moduleName_, std::string msg_) {
             std::cout << "[" << severity_ << "] (" << moduleName_ << "): " << msg_ << std::endl;
+        }
+
+        static void _showPopup(const std::string &msg_, const std::string &title_) {
+            // TODO: Support more platforms or even make a universal API for message boxes.
+#if defined(_WIN32) && defined(PLATFORM_DESKTOP)
+            MessageBoxA(NULL, msg_.c_str(), title_.c_str(), MB_ICONERROR | MB_OK);
+#elif defined(PLATFORM_UWP)
+            // Create the message dialog and set its content
+            // std::wstring tmpMsg(msg_.begin(), msg_.end());
+            // std::wstring tmpTitle(title_.begin(), title_.end());
+            // auto msg = ref new Windows::UI::Popups::MessageDialog(ref new Platform::String(tmpMsg.c_str()), ref new Platform::String(tmpTitle.c_str()));
+            // TODO: Sync show
+#endif
         }
     public:
         /**
@@ -107,9 +124,11 @@ namespace NerdThings::Ngine {
         static void Fail(std::string moduleName_, std::string format_, Args... args) {
             auto msg = _getFormattedString(format_, args...);
             _write("FATAL", moduleName_, msg);
+            _showPopup(msg, "Fatal error occurred in \"" + moduleName_ + "\" module.");
             throw std::runtime_error(msg); // TODO: Exception type tparam?
+            exit(-1);
         }
     };
 }
 
-#endif //LOGGER_HPP
+#endif //CONSOLE_HPP

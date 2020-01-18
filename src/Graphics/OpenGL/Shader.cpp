@@ -38,7 +38,7 @@
 #include <angle_windowsstore.h>
 #endif
 
-#include "../../Logger.hpp"
+#include "../../Console.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     ////////
@@ -48,7 +48,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     GLShader::GLShader(std::string src, GLShaderType type_) : _Dirty(true), _Type(type_) {
         // Create shader
         ID = glCreateShader(_Type);
-        Logger::Notice("GLShader", "Created new shader with ID %i.", ID);
+        Console::Notice("GLShader", "Created new shader with ID %i.", ID);
 
         // Set source
         SetSource(std::move(src));
@@ -67,15 +67,15 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     bool GLShader::Compile() {
         // Compile shader
-        Logger::Notice("GLShader", "Attempting to compile shader with ID %i.", ID);
+        Console::Notice("GLShader", "Attempting to compile shader with ID %i.", ID);
         glCompileShader(ID);
 
         // Check compile status
         int success = GL_TRUE;
         glGetShaderiv(ID, GL_COMPILE_STATUS, &success);
 
-        if (success == GL_FALSE) Logger::Warn("GLShader", "Failed to compile shader.");
-        else Logger::Notice("GLShader", "Compiled shader successfully.");
+        if (success == GL_FALSE) Console::Warn("GLShader", "Failed to compile shader.");
+        else Console::Notice("GLShader", "Compiled shader successfully.");
 
         // Mark as clean if successful
         _Dirty = !success;
@@ -115,7 +115,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Create program
         ID = glCreateProgram();
-        Logger::Notice("GLShaderProgram", "Created a new shader program with ID %i.", ID);
+        Console::Notice("GLShaderProgram", "Created a new shader program with ID %i.", ID);
 
         // Set default attribs
         Attribs[ATTRIB_POSITION] = "vertexPosition";
@@ -125,7 +125,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Set default uniforms
         Uniforms[UNIFORM_MATRIX_MVP] = "mvp";
         Uniforms[UNIFORM_TEXTURE] = "texture";
-        Logger::Notice("GLShaderProgram", "Loaded default attribute and uniform names.");
+        Console::Notice("GLShaderProgram", "Loaded default attribute and uniform names.");
 
         // Perform link
         // We give the option to not if the above params need tweaks
@@ -146,7 +146,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     GLShaderProgram::~GLShaderProgram() {
         // Delete program
         glDeleteProgram(ID);
-        Logger::Notice("GLShaderProgram", "Deleting shader program with ID %i.", ID);
+        Console::Notice("GLShaderProgram", "Deleting shader program with ID %i.", ID);
 
         // Set ID to 0
         ID = 0;
@@ -159,7 +159,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
         // Attach shader
         glAttachShader(ID, shader_->ID);
-        Logger::Notice("GLShaderProgram", "Attached shader with ID %i to shader program with ID %i.", shader_->ID, ID);
+        Console::Notice("GLShaderProgram", "Attached shader with ID %i to shader program with ID %i.", shader_->ID, ID);
 
         // Mark as dirty
         _Dirty = true;
@@ -168,7 +168,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
     void GLShaderProgram::DetachShader(std::shared_ptr<GLShader> shader_) {
         // Detach shader
         glDetachShader(ID, shader_->ID);
-        Logger::Notice("GLShaderProgram", "Detached shader with ID %i from shader program with ID %i.", shader_->ID, ID);
+        Console::Notice("GLShaderProgram", "Detached shader with ID %i from shader program with ID %i.", shader_->ID, ID);
     }
 
     unsigned int GLShaderProgram::GetAttributeLocation(const std::string &name_) {
@@ -197,14 +197,14 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
 
     bool GLShaderProgram::Link() {
         // Link program
-        Logger::Notice("GLShaderProgram", "Attempting to link shader program with ID %i.", ID);
+        Console::Notice("GLShaderProgram", "Attempting to link shader program with ID %i.", ID);
         glLinkProgram(ID);
 
         // Check link success
         int linked = GL_TRUE;
         glGetProgramiv(ID, GL_LINK_STATUS, &linked);
-        if (linked == GL_FALSE) Logger::Warn("GLShaderProgram", "Failed to link shader program.");
-        else Logger::Notice("GLShaderProgram", "Linked shader program successfully.");
+        if (linked == GL_FALSE) Console::Warn("GLShaderProgram", "Failed to link shader program.");
+        else Console::Notice("GLShaderProgram", "Linked shader program successfully.");
 
         // Mark as linked
         _Linked = linked == GL_TRUE;
@@ -216,7 +216,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             Locations[LOCATION_VERTEX_COLOR] = GetAttributeLocation(Attribs[ATTRIB_COLOR]);
             Locations[LOCATION_MATRIX_MVP] = GetUniformLocation(Uniforms[UNIFORM_MATRIX_MVP]);
             Locations[LOCATION_TEXTURE] = GetUniformLocation(Uniforms[UNIFORM_TEXTURE]);
-            Logger::Notice("GLShaderProgram", "Collecting all locations.");
+            Console::Notice("GLShaderProgram", "Collecting all locations.");
         }
 
         return IsLinked();

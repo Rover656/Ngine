@@ -20,9 +20,9 @@
 
 #include "Canvas.hpp"
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "Renderer.hpp"
-#include "GraphicsManager.hpp"
+#include "GraphicsDevice.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Canvas::Canvas(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)
@@ -32,7 +32,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     Canvas::~Canvas() {
-        Logger::Notice("Canvas", "Deleting canvas.");
+        Console::Notice("Canvas", "Deleting canvas.");
         delete m_renderTarget;
     }
 
@@ -56,10 +56,10 @@ namespace NerdThings::Ngine::Graphics {
 
     void Canvas::ReDraw(Graphics::Renderer *renderer_) {
 #ifndef USE_EXPERIMENTAL_RENDERER
-        Graphics::GraphicsManager::PushTarget(m_renderTarget);
+        m_graphicsDevice->PushTarget(m_renderTarget);
         renderer_->Clear(Color::Transparent);
         RenderTargetRedraw(renderer_);
-        Graphics::GraphicsManager::PopTarget();
+        m_graphicsDevice->PopTarget();
 #endif
     }
 
@@ -72,7 +72,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Canvas::SetDimensions(unsigned int width_, unsigned int height_) {
-        Logger::Notice("Canvas", "Resizing canvas. ReDraw is necessary.");
+        Console::Notice("Canvas", "Resizing canvas. ReDraw is necessary.");
         delete m_renderTarget;
         m_width = width_;
         m_height = height_;

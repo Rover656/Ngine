@@ -48,7 +48,7 @@
 
 #include <sstream>
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 
 namespace NerdThings::Ngine::Filesystem {
     ////////
@@ -692,7 +692,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     FILE *File::GetFileHandle() const {
         if (!IsOpen()) {
-            Logger::Warn("File", "Cannot get handle of file that is not open.");
+            Console::Warn("File", "Cannot get handle of file that is not open.");
             return nullptr;
         }
 
@@ -701,7 +701,7 @@ namespace NerdThings::Ngine::Filesystem {
 
     int File::GetSize() const {
         if (!IsOpen()) {
-            Logger::Warn("File", "Cannot determine size of file that is not open.");
+            Console::Warn("File", "Cannot determine size of file that is not open.");
             return 0;
         }
 
@@ -763,7 +763,7 @@ namespace NerdThings::Ngine::Filesystem {
                 m_internalOpenMode = mode_;
                 break;
             default:
-                Logger::Warn("File", "File mode not supported.");
+                Console::Warn("File", "File mode not supported.");
 
                 // Set mode
                 m_internalOpenMode = MODE_NONE;

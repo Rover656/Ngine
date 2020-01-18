@@ -24,7 +24,7 @@
 #include <dr_flac.h>
 #include <stb_vorbis.h>
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "AudioDevice.hpp"
 
 namespace NerdThings::Ngine::Audio {
@@ -123,10 +123,10 @@ namespace NerdThings::Ngine::Audio {
             music->CTXData = nullptr;
             delete music;
 
-            Logger::Warn("Music", "Could not load music file.");
+            Console::Warn("Music", "Could not load music file.");
             return nullptr;
         } else {
-            Logger::Notice("Music", "Successfully loaded music file.");
+            Console::Notice("Music", "Successfully loaded music file.");
             return music;
         }
     }
@@ -198,7 +198,7 @@ namespace NerdThings::Ngine::Audio {
         }
 
         CTXData = nullptr;
-        Logger::Notice("Music", "Unloaded music stream.");
+        Console::Notice("Music", "Unloaded music stream.");
     }
 
     void Music::Update() {

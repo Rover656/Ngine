@@ -71,6 +71,11 @@ namespace NerdThings::Ngine::UWP {
          * The game we are running
          */
         Game *m_game = nullptr;
+
+        /**
+         * The main update thread.
+         */
+        std::thread m_updateThread;
     public:
         /**
          * Create a new game app.

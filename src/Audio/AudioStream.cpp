@@ -20,7 +20,7 @@
 
 #include "AudioStream.hpp"
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 
 namespace NerdThings::Ngine::Audio {
     void AudioStream::UpdateStream(const void *data_, int samplesCount_) {
@@ -56,8 +56,8 @@ namespace NerdThings::Ngine::Audio {
                         memset(subBuffer + bytesToWrite, 0, leftoverFrameCount * Channels * (SampleSize / 8));
 
                     Buffer->IsSubBufferProcessed[subBufferToUpdate] = false;
-                } else Logger::Error("AudioStream", "Attempting to write too many frames to buffer.");
-            } else Logger::Error("AudioStream", "Audio buffer not available for updating.");
-        } else Logger::Error("AudioStream", "No audio buffer.");
+                } else Console::Error("AudioStream", "Attempting to write too many frames to buffer.");
+            } else Console::Error("AudioStream", "Audio buffer not available for updating.");
+        } else Console::Error("AudioStream", "No audio buffer.");
     }
 }

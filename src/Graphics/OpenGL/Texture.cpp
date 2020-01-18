@@ -42,7 +42,7 @@
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT       0x84FE
 #endif
 
-#include "../../Logger.hpp"
+#include "../../Console.hpp"
 #include "OpenGL.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
@@ -52,7 +52,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
                          GLPixelFormat format_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
-            Logger::Error("GLTexture", "Texture was given invalid dimensions of %i, %i.", width_, height_);
+            Console::Error("GLTexture", "Texture was given invalid dimensions of %i, %i.", width_, height_);
             return;
         }
 
@@ -92,7 +92,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Create texture
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glGenTextures(1, &ID);
-        Logger::Notice("GLTexture", "Texture with ID %i is being created with width and height: %i, %i", ID, width_, height_);
+        Console::Notice("GLTexture", "Texture with ID %i is being created with width and height: %i, %i", ID, width_, height_);
 
         // Bind
         Bind();
@@ -211,7 +211,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             case TEXPARAM_WRAP_S:
             case TEXPARAM_WRAP_T:
                 if (value_ == WRAP_MIRROR_CLAMP && !GL::TexMirrorClampSupported)
-                    Logger::Warn("GLTexture", "Clamp mirror mode not supported.");
+                    Console::Warn("GLTexture", "Clamp mirror mode not supported.");
                 else
                     glTexParameteri(GL_TEXTURE_2D, param_, value_);
                 break;
@@ -223,9 +223,9 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             case TEXPARAM_ANISOTROPIC_FILTER:
                 if (value_ <= GL::MaxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, (float)value_);
                 else if (GL::MaxAnisotropicLevel > 0.0f) {
-                    Logger::Warn("GLTexture", "Filter level was higher than max, setting to max.");
+                    Console::Warn("GLTexture", "Filter level was higher than max, setting to max.");
                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, GL::MaxAnisotropicLevel);
-                } else Logger::Warn("GLTexture", "Anisotropic filtering is not supported.");
+                } else Console::Warn("GLTexture", "Anisotropic filtering is not supported.");
                 break;
             default: break;
         }

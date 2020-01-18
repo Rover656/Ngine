@@ -143,6 +143,16 @@ namespace NerdThings::Ngine {
          * EGL Surface
          */
         EGLSurface m_surface;
+
+        /**
+         * Whether or not the window is focussed.
+         */
+        bool m_focussed = false;
+
+        /**
+         * Whether or not the window is visible.
+         */
+        bool m_visible = false;
 #endif
 
         /**

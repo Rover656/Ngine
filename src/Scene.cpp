@@ -22,7 +22,7 @@
 
 #include "Entity.hpp"
 #include "Game.hpp"
-#include "Logger.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine {
     void Scene::_addEntity(Entity *ent_) {
@@ -66,7 +66,7 @@ namespace NerdThings::Ngine {
             : m_parentGame(parentGame_), EntityContainer(EntityContainer::SCENE) {
         // Check game
         if (parentGame_ == nullptr)
-            Logger::Fail("Scene", "Scene cannot have a null parent game.");
+            Console::Fail("Scene", "Scene cannot have a null parent game.");
     }
 
     Scene::Scene(Game *parentGame_, Vector2 grav_, float ppm_)
@@ -77,7 +77,7 @@ namespace NerdThings::Ngine {
     }
 
     Scene::~Scene() {
-        Logger::Notice("Scene", "Deleting scene.");
+        Console::Notice("Scene", "Deleting scene.");
 
         // Delete physics world
         delete m_physicsWorld;

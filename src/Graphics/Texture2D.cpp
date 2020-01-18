@@ -28,7 +28,7 @@
 #endif
 #endif
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "GraphicsDevice.hpp"
 #include "Renderer.hpp"
 
@@ -197,7 +197,7 @@ namespace NerdThings::Ngine::Graphics {
                          unsigned height_, PixelFormat format_, int mipmapCount_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
-            Logger::Error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width_, height_);
+            Console::Error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width_, height_);
             return;
         }
 
@@ -359,7 +359,7 @@ namespace NerdThings::Ngine::Graphics {
                 if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_TEX_MIRROR_CLAMP)) {
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 0x8742);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 0x8742);
-                } else Logger::Warn("GLTexture", "Clamp mirror mode not supported.");
+                } else Console::Warn("GLTexture", "Clamp mirror mode not supported.");
                 break;
 #else
             case WRAP_REPEAT:

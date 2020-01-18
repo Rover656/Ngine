@@ -20,7 +20,7 @@
 
 #include "GraphicsDevice.hpp"
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "OpenGL.hpp"
 #include "Renderer.hpp"
 #include "RenderTarget.hpp"
@@ -28,17 +28,17 @@
 namespace NerdThings::Ngine::Graphics {
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {
         // Check window
-        if (m_attachedWindow == nullptr) throw std::runtime_error("Window cannot be null.");
+        if (m_attachedWindow == nullptr) 
+            throw std::runtime_error("Window cannot be null.");
 
 #if defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGL33)
         // Init GLAD loader
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-            // Terminate GLFW
+            // Terminate, we can't load
             glfwTerminate();
-            Logger::Fail("GraphicsDevice", "Failed to init GLAD.");
-            throw std::runtime_error("Failed to init GLAD.");
+            Console::Fail("GraphicsDevice", "Failed to init GLAD.");
         }
-        Logger::Notice("GraphicsDevice", "Successfully initialized GLAD.");
+        Console::Notice("GraphicsDevice", "Successfully initialized GLAD.");
 #endif
 
         // Make window current while we configure OpenGL
@@ -47,7 +47,7 @@ namespace NerdThings::Ngine::Graphics {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Send OpenGL Version to console
         const char *ver = (const char *) glGetString(GL_VERSION);
-        Logger::Notice("GraphicsDevice", "OpenGL Version: %s", ver);
+        Console::Notice("GraphicsDevice", "OpenGL Version: %s", ver);
 
         // Init support flags
         for (auto i = 0; i <= GL_VAO; i++) m_GLSupportFlags[i] = false;
@@ -143,7 +143,7 @@ namespace NerdThings::Ngine::Graphics {
                 m_GLSupportFlags[GL_TEX_MIRROR_CLAMP] = true;
         }
 #endif
-        Logger::Notice("GraphicsDevice", "Successfully loaded extensions.");
+        Console::Notice("GraphicsDevice", "Successfully loaded extensions.");
 
         // Load default matrices
         m_projectionMatrix = Matrix::Identity;
@@ -163,7 +163,7 @@ namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
-            Logger::Fail("GraphicsDevice", "Render target stack overflow.");
+            Console::Fail("GraphicsDevice", "Render target stack overflow.");
 
         // Force render before swapping target
         for (auto renderer : m_attachedRenderers)
@@ -176,7 +176,7 @@ namespace NerdThings::Ngine::Graphics {
         // Bind
         glBindFramebuffer(GL_FRAMEBUFFER, target_->m_ID);
 #else
-        Logger::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
+        Console::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
 #endif
     }
 
@@ -189,7 +189,7 @@ namespace NerdThings::Ngine::Graphics {
         // If target counter greater than 0, decrease
         if (m_targetCounter > 0) m_targetCounter--;
 #else
-        Logger::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
+        Console::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
 #endif
     }
 
@@ -205,7 +205,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void GraphicsDevice::PushModelViewMatrix() {
         if (m_modelViewCounter >= MAX_MATRICES)
-            Logger::Fail("GraphicsDevice", "ModelView Matrix stack overflow.");
+            Console::Fail("GraphicsDevice", "ModelView Matrix stack overflow.");
 
         // Add to stack
         m_modelViewStack[m_modelViewCounter] = GetModelViewMatrix();

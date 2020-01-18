@@ -153,11 +153,6 @@ namespace NerdThings::Ngine {
         void _init();
 
         /**
-         * Run a single game frame.
-         */
-        void _runFrame();
-
-        /**
          * Draw/handle window events.
          */
         void _runDraw();

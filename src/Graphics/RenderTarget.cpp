@@ -20,7 +20,7 @@
 
 #include "RenderTarget.hpp"
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #include "OpenGL.hpp"
@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Verify texture
         if (!m_texture->IsValid()) {
-            Logger::Error("RenderTarget", "Failed to create color attachment for render target.");
+            Console::Error("RenderTarget", "Failed to create color attachment for render target.");
 
             // Delete texture
             delete m_texture;
@@ -72,7 +72,7 @@ namespace NerdThings::Ngine::Graphics {
         // Check framebuffer status
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
-            Logger::Error("RenderTarget", "Failed to create framebuffer.");
+            Console::Error("RenderTarget", "Failed to create framebuffer.");
 
             // Unbind
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -95,7 +95,7 @@ namespace NerdThings::Ngine::Graphics {
             return;
         }
 
-        Logger::Notice("RenderTarget", "Successfully created framebuffer with ID %i", m_ID);
+        Console::Notice("RenderTarget", "Successfully created framebuffer with ID %i", m_ID);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #else
         // Create framebuffer

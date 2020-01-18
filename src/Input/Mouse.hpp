@@ -183,9 +183,9 @@ namespace NerdThings::Ngine::Input {
         static void _GLFWScrollCallback(GLFWwindow *window_, double x_, double y_);
 #elif defined(PLATFORM_UWP)
         static Mouse *m_UWPMouse;
-        static void _UWPMouseMoved(Windows::Devices::Input::MouseDevice ^sender, Windows::Devices::Input::MouseEventArgs ^args);
         static void _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
         static void _UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
+        static void _UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
 #endif
 
         /**

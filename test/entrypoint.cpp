@@ -204,6 +204,7 @@ public:
         // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color(0.0f, 1.0f, 0.0f, 0.5f), 15, {}, true, 15);
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color(1.0f, 0.0f, 1.0f, 0.5f), 0, {}, true, 5);
+        // ShapeRenderer::DrawCircle(renderer_, Mouse::GetCurrent()->GetMousePosition(), 15, Color::Blue);
     }
 
     void DrawCam(Graphics::Renderer *renderer_) {
@@ -234,11 +235,11 @@ public:
     }
 
     void Save() {
-        Logger::Notice("TestGame", "The game would have saved here.");
+        Console::Notice("TestGame", "The game would have saved here.");
     }
 
     void Load() {
-        Logger::Notice("TestGame", "The game would have loaded here.");
+        Console::Notice("TestGame", "The game would have loaded here.");
     }
 
     void Draw(Graphics::Renderer *renderer_) {

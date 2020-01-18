@@ -187,7 +187,7 @@
 #include "EntityContainer.hpp"
 #include "Events.hpp"
 #include "Game.hpp"
-#include "Logger.hpp"
+#include "Console.hpp"
 #include "Math.hpp"
 #include "Rectangle.hpp"
 #include "Resource.hpp"

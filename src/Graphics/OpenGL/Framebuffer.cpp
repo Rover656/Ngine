@@ -38,7 +38,7 @@
 #include <angle_windowsstore.h>
 #endif
 
-#include "../../Logger.hpp"
+#include "../../Console.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLFramebuffer::GLFramebuffer(int width_, int height_, bool useDepth_, GLPixelFormat format_) {
@@ -55,7 +55,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         // Verify, stopping here to save wasting of more time
         if (RenderTexture->ID <= 0) {
             // Message about failure
-            Logger::Error("GLFramebuffer", "Framebuffer failed to create a texture attachment.");
+            Console::Error("GLFramebuffer", "Framebuffer failed to create a texture attachment.");
 
             // Delete
             RenderTexture = nullptr;
@@ -87,7 +87,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
             // Message about failure
-            Logger::Error("GLFramebuffer", "Failed to create framebuffer.");
+            Console::Error("GLFramebuffer", "Failed to create framebuffer.");
 
             // Unbind framebuffer
             Unbind();
@@ -107,7 +107,7 @@ namespace NerdThings::Ngine::Graphics::OpenGL {
             // Finished
             return;
         }
-        Logger::Notice("GLFramebuffer", "Successfully created framebuffer with ID %i.", ID);
+        Console::Notice("GLFramebuffer", "Successfully created framebuffer with ID %i.", ID);
 
         // Unbind framebuffer
         Unbind();

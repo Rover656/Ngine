@@ -47,7 +47,7 @@
 #include "Input/Gamepad.hpp"
 #include "Input/Mouse.hpp"
 #include "Input/Keyboard.hpp"
-#include "Logger.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine {
     Window *Window::m_currentWindow = nullptr;
@@ -77,16 +77,17 @@ namespace NerdThings::Ngine {
 
     Window::Window(const WindowConfig &config_) {
 #if defined(PLATFORM_UWP)
-        if (m_UWPWindowCount > 0) throw std::runtime_error("Cannot open more than one window on UWP.");
+        if (m_UWPWindowCount > 0)
+            throw std::runtime_error("Cannot open more than one window on UWP.");
         m_UWPWindowCount++;
 #endif
         // Init
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
         if (!glfwInit()) {
-            Logger::Fail("Window", "Failed to init GLFW.");
+            Console::Fail("Window", "Failed to init GLFW.");
         }
-        Logger::Notice("Window", "Initialized GLFW.");
+        Console::Notice("Window", "Initialized GLFW.");
 
         // Set defaults
         glfwDefaultWindowHints();
@@ -368,7 +369,7 @@ namespace NerdThings::Ngine {
         m_windowTitle = name;
 #endif
 
-        Logger::Notice("Window", "Successfully created window.");
+        Console::Notice("Window", "Successfully created window.");
 
         // Initialized
         m_initialized = true;
@@ -384,7 +385,7 @@ namespace NerdThings::Ngine {
         // Create Input APIs
         m_mouseInput = new Input::Mouse(this);
         m_keyboardInput = new Input::Keyboard(this);
-        Logger::Notice("Window", "Successfully opened keyboard and mouse APIs.");
+        Console::Notice("Window", "Successfully opened keyboard and mouse APIs.");
 
         // Apply any after-creation config
         _applyConfig(config_);
@@ -563,7 +564,7 @@ namespace NerdThings::Ngine {
 
             // Mark as open
             m_consoleAllocated = true;
-            Logger::Notice("Window", "Allocated a console to the game window. Output logs forwarded.");
+            Console::Notice("Window", "Allocated a console to the game window. Output logs forwarded.");
         } else if (!flag_ && m_consoleAllocated) {
             // Close our buffers
             m_consoleIn.close();
@@ -584,7 +585,7 @@ namespace NerdThings::Ngine {
 
             // Mark as deallocated
             m_consoleAllocated = false;
-            Logger::Notice("Window", "Deallocated the console from the game window. Output logs restored.");
+            Console::Notice("Window", "Deallocated the console from the game window. Output logs restored.");
         }
 #endif
     }
@@ -593,7 +594,7 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         return glfwGetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_FOCUSED) == GLFW_TRUE;
 #elif defined(PLATFORM_UWP)
-        return CoreWindow::GetForCurrentThread()->ActivationMode == CoreWindowActivationMode::ActivatedInForeground;
+        return m_focussed;
 #endif
 
         // Default to true
@@ -604,7 +605,7 @@ namespace NerdThings::Ngine {
 #if defined(PLATFORM_DESKTOP)
         return glfwGetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_ICONIFIED) == 0;
 #elif defined(PLATFORM_UWP)
-        return CoreWindow::GetForCurrentThread()->Visible == true;
+        return m_visible;
 #endif
         // Default case.
         return true;
@@ -623,6 +624,10 @@ namespace NerdThings::Ngine {
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
         else
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
+
+        // Test visibility and focus
+        m_focussed = CoreWindow::GetForCurrentThread()->ActivationMode == CoreWindowActivationMode::ActivatedInForeground;
+        m_visible = CoreWindow::GetForCurrentThread()->Visible == true;
 
         // Query dimensions
         eglQuerySurface(m_display, m_surface, EGL_WIDTH, &m_currentWidth);
@@ -669,7 +674,7 @@ namespace NerdThings::Ngine {
         SetEnableNativeConsole(false);
 
         // Inform of closure
-        Logger::Notice("Window", "Closed window.");
+        Console::Notice("Window", "Closed window.");
 
         // Unset width and height as the window is closed
         m_currentWidth = 0;

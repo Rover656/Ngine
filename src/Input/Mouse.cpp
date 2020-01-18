@@ -75,6 +75,7 @@ namespace NerdThings::Ngine::Input {
         window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerWheelChanged);
         window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
         window->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
+        window->PointerMoved += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerMovedEvent);
 #endif
     }
 
@@ -113,6 +114,11 @@ namespace NerdThings::Ngine::Input {
             m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_MIDDLE] = ptrPointProps->IsMiddleButtonPressed;
             m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_RIGHT] = ptrPointProps->IsRightButtonPressed;
         }
+    }
+
+    void Mouse::_UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
+        // Fetch the new position
+        m_UWPMouse->m_nextMouseState.Position = m_UWPMouse->_internalGetMousePosition();
     }
 
 #endif
@@ -184,7 +190,9 @@ namespace NerdThings::Ngine::Input {
         m_previousMouseState = m_currentMouseState;
 
         // Final fetch for the position before pushing it to the current stack
+#ifndef PLATFORM_UWP
         m_nextMouseState.Position = _internalGetMousePosition();
+#endif
 
         // Push new data to current state
         m_currentMouseState = m_nextMouseState;

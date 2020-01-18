@@ -64,7 +64,7 @@ namespace NerdThings::Ngine::UWP {
     void GameApp::Run() {
         // Run the game.
         while (m_game->m_running && !m_game->m_gameWindow->ShouldClose()) {
-            m_game->_runFrame();
+            m_game->_runDraw();
         }
 
         // If we reach this point, we're done.
@@ -89,6 +89,9 @@ namespace NerdThings::Ngine::UWP {
         // Mark as running
         m_game->m_running = true;
 
+        // Start update thread
+        m_updateThread = std::thread(&Game::_updateThread, m_game);
+
         // Activate window
         CoreWindow::GetForCurrentThread()->Activate();
     }
@@ -105,13 +108,18 @@ namespace NerdThings::Ngine::UWP {
         concurrency::create_task([this, deferral]() {
             m_game->OnSuspend();
             m_game->m_running = false;
+            m_updateThread.join();
             deferral->Complete();
         });
     }
 
     void NerdThings::Ngine::UWP::GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
+        // Resume game
         m_game->OnResume();
         m_game->m_running = true;
+
+        // Start update thread
+        m_updateThread = std::thread(&Game::_updateThread, m_game);
     }
 
 

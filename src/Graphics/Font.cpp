@@ -25,7 +25,7 @@
 #include <stb_truetype.h>
 
 #include "../Math.hpp"
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "../Rectangle.hpp"
 
 namespace NerdThings::Ngine::Graphics {
@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::Graphics {
     Font::Font() {}
 
     Font::~Font() {
-        Logger::Notice("Font", "Unloading and deleting font.");
+        Console::Notice("Font", "Unloading and deleting font.");
         Unload();
     }
 

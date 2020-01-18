@@ -22,7 +22,7 @@
 
 #include <miniaudio.h>
 
-#include "../Logger.hpp"
+#include "../Console.hpp"
 #include "AudioDevice.hpp"
 
 namespace NerdThings::Ngine::Audio {
@@ -61,13 +61,13 @@ namespace NerdThings::Ngine::Audio {
             ma_uint32 frameCountIn = wave_->SampleCount/wave_->Channels;
 
             ma_uint32 frameCount = (ma_uint32) ma_convert_frames(nullptr, DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, nullptr, formatIn, wave_->Channels, wave_->SampleRate, frameCountIn);
-            if (frameCount == 0) Logger::Warn("Sound", "Failed to get frame count for format conversion!");
+            if (frameCount == 0) Console::Warn("Sound", "Failed to get frame count for format conversion!");
 
             auto audioBuffer = AudioDevice::InitAudioBuffer(DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, frameCount, BUFFER_USAGE_STATIC);
-            if (audioBuffer == nullptr) Logger::Warn("Sound", "Failed to create audio buffer!");
+            if (audioBuffer == nullptr) Console::Warn("Sound", "Failed to create audio buffer!");
 
             frameCount = (ma_uint32) ma_convert_frames(audioBuffer->Buffer, audioBuffer->DSP.formatConverterIn.config.formatIn, audioBuffer->DSP.formatConverterIn.config.channels, audioBuffer->DSP.src.config.sampleRateIn, wave_->Data, formatIn, wave_->Channels, wave_->SampleRate, frameCountIn);
-            if (frameCount == 0) Logger::Warn("Sound", "Format conversion failed!");
+            if (frameCount == 0) Console::Warn("Sound", "Format conversion failed!");
 
             snd->SampleCount = frameCount*DEVICE_CHANNELS;
             snd->Stream.SampleRate = DEVICE_SAMPLE_RATE;
