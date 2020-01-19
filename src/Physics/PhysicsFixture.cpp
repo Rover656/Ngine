@@ -18,13 +18,13 @@
 *
 **********************************************************************************************/
 
-#include "PhysicsFixture.hpp"
+#include "Physics/PhysicsFixture.hpp"
+
+#include "Physics/Shapes/CircleShape.hpp"
+#include "Physics/Shapes/PolygonShape.hpp"
+#include "Physics/PhysicsWorld.hpp"
 
 #include <Box2D/Box2D.h>
-
-#include "Shapes/CircleShape.hpp"
-#include "Shapes/PolygonShape.hpp"
-#include "PhysicsWorld.hpp"
 
 namespace NerdThings::Ngine::Physics {
     // Public Constructor

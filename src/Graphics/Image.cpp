@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Image.hpp"
+#include "Graphics/Image.hpp"
 
 #include <stb_image.h>
 
@@ -70,7 +70,7 @@ namespace NerdThings::Ngine::Graphics {
             || ext == "psd") {
             // Open file
             auto file = Filesystem::File(path_);
-            file.Open(Filesystem::MODE_READ, true);
+            file.Open(Filesystem::FileOpenMode::Read, true);
 
             // Load data
             int width = 0, height = 0, bpp = 0;

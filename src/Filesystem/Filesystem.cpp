@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Filesystem.hpp"
+#include "Filesystem/Filesystem.hpp"
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -48,7 +48,7 @@
 
 #include <sstream>
 
-#include "../Console.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Filesystem {
     ////////
@@ -267,7 +267,7 @@ namespace NerdThings::Ngine::Filesystem {
         if (!basePath.IsAbsolute()) basePath = basePath.GetAbsolute();
 
         // Base must be a directory
-        if (basePath.GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("Base must be a directory.");
+        if (basePath.GetResourceType() != ResourceType::Directory) throw std::runtime_error("Base must be a directory.");
 
         // I must be absolute
         if (!IsAbsolute()) throw std::runtime_error("Path must be absolute.");
@@ -324,7 +324,7 @@ namespace NerdThings::Ngine::Filesystem {
         DWORD dwAttrib = GetFileAttributesA(GetString().c_str());
 
         if (dwAttrib != INVALID_FILE_ATTRIBUTES) {
-            return dwAttrib & FILE_ATTRIBUTE_DIRECTORY ? TYPE_DIRECTORY : TYPE_FILE;
+            return dwAttrib & FILE_ATTRIBUTE_DIRECTORY ? ResourceType::Directory : ResourceType::File;
         }
 #elif defined(__linux__) || defined(__APPLE__)
         // Get path info
@@ -336,7 +336,7 @@ namespace NerdThings::Ngine::Filesystem {
         else if (S_ISDIR(path_stat.st_mode))
             return TYPE_DIRECTORY;
 #endif
-        return TYPE_INVALID;
+        return ResourceType::Invalid;
     }
 
     std::string Path::GetString() const {
@@ -646,12 +646,12 @@ namespace NerdThings::Ngine::Filesystem {
         }
 
         // Set mode
-        m_internalOpenMode = MODE_NONE;
+        m_internalOpenMode = FileOpenMode::Closed;
     }
 
     File File::CreateNewFile(const Path &path_, bool leaveOpen_, bool binary_) {
         File f(path_);
-        f.Open(MODE_WRITE, binary_);
+        f.Open(FileOpenMode::Write, binary_);
         if (!leaveOpen_)
             f.Close();
         return f;
@@ -724,9 +724,9 @@ namespace NerdThings::Ngine::Filesystem {
 
         // Open with selected mode
         switch(mode_) {
-            case MODE_READ:
+            case FileOpenMode::Read:
                 // Check this is actually a file
-                if (m_objectPath.GetResourceType() != TYPE_FILE) throw std::runtime_error("This path does not point to a file.");
+                if (m_objectPath.GetResourceType() != ResourceType::File) throw std::runtime_error("This path does not point to a file.");
 
                 // Open binary file for read
                 m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "rb" : "r");
@@ -734,28 +734,28 @@ namespace NerdThings::Ngine::Filesystem {
                 // Set mode
                 m_internalOpenMode = mode_;
                 break;
-            case MODE_WRITE:
+            case FileOpenMode::Write:
                 // Open binary file for write
                 m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "wb" : "w");
 
                 // Set mode
                 m_internalOpenMode = mode_;
                 break;
-            case MODE_APPEND:
+            case FileOpenMode::Append:
                 // Open binary file for append
                 m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "ab" : "a");
 
                 // Set mode
                 m_internalOpenMode = mode_;
                 break;
-            case MODE_READ_WRITE:
+            case FileOpenMode::ReadWrite:
                 // Open binary file for read and write
                 m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "w+b" : "w+");
 
                 // Set mode
                 m_internalOpenMode = mode_;
                 break;
-            case MODE_READ_APPEND:
+            case FileOpenMode::ReadAppend:
                 // Open binary file for read and append
                 m_internalHandle->InternalHandle = fopen(m_objectPath.GetString().c_str(), binary_ ? "a+b" : "a+");
 
@@ -766,7 +766,7 @@ namespace NerdThings::Ngine::Filesystem {
                 Console::Warn("File", "File mode not supported.");
 
                 // Set mode
-                m_internalOpenMode = MODE_NONE;
+                m_internalOpenMode = FileOpenMode::Closed;
                 break;
         }
 
@@ -778,9 +778,9 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != MODE_READ
-            && m_internalOpenMode != MODE_READ_WRITE
-            && m_internalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != FileOpenMode::Read
+            && m_internalOpenMode != FileOpenMode::ReadWrite
+            && m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for reading.");
 
         // Determine file size if size is -1
@@ -818,9 +818,9 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != MODE_READ
-            && m_internalOpenMode != MODE_READ_WRITE
-            && m_internalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != FileOpenMode::Read
+            && m_internalOpenMode != FileOpenMode::ReadWrite
+            && m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for reading.");
 
         // Determine file size if size is -1
@@ -866,10 +866,10 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot write to a closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != MODE_WRITE
-            && m_internalOpenMode != MODE_APPEND
-            && m_internalOpenMode != MODE_READ_WRITE
-            && m_internalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != FileOpenMode::Write
+            && m_internalOpenMode != FileOpenMode::Append
+            && m_internalOpenMode != FileOpenMode::ReadWrite
+            && m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for writing.");
 
         // Write
@@ -881,10 +881,10 @@ namespace NerdThings::Ngine::Filesystem {
         if (!IsOpen()) throw std::runtime_error("Cannot write to closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != MODE_WRITE
-            && m_internalOpenMode != MODE_APPEND
-            && m_internalOpenMode != MODE_READ_WRITE
-            && m_internalOpenMode != MODE_READ_APPEND)
+        if (m_internalOpenMode != FileOpenMode::Write
+            && m_internalOpenMode != FileOpenMode::Append
+            && m_internalOpenMode != FileOpenMode::ReadWrite
+            && m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for writing.");
 
         // Write string
@@ -1144,6 +1144,6 @@ namespace NerdThings::Ngine::Filesystem {
         if (!Exists()) throw std::runtime_error("This directory does not exist.");
 
         // Check this is actually a directory
-        if (GetObjectPath().GetResourceType() != TYPE_DIRECTORY) throw std::runtime_error("This path does not point to a directory.");
+        if (GetObjectPath().GetResourceType() != ResourceType::Directory) throw std::runtime_error("This path does not point to a directory.");
     }
 }

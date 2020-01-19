@@ -18,9 +18,8 @@
 *
 **********************************************************************************************/
 
-#include "AudioStream.hpp"
-
-#include "../Console.hpp"
+#include "Audio/AudioStream.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Audio {
     void AudioStream::UpdateStream(const void *data_, int samplesCount_) {

@@ -159,7 +159,7 @@ namespace NerdThings::Ngine::Audio {
          * @param usage_ Buffer usage.
          * @return A new audio buffer.
          */
-        static AudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, int usage_);
+        static AudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, AudioBufferUsage usage_);
 
         /**
          * Init audio stream.

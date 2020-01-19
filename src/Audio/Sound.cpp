@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "Sound.hpp"
+#include "Audio/Sound.hpp"
 
 #include <miniaudio.h>
 
-#include "../Console.hpp"
-#include "AudioDevice.hpp"
+#include "Audio/AudioDevice.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Audio {
     // Destructor
@@ -63,7 +63,7 @@ namespace NerdThings::Ngine::Audio {
             ma_uint32 frameCount = (ma_uint32) ma_convert_frames(nullptr, DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, nullptr, formatIn, wave_->Channels, wave_->SampleRate, frameCountIn);
             if (frameCount == 0) Console::Warn("Sound", "Failed to get frame count for format conversion!");
 
-            auto audioBuffer = AudioDevice::InitAudioBuffer(DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, frameCount, BUFFER_USAGE_STATIC);
+            auto audioBuffer = AudioDevice::InitAudioBuffer(DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, frameCount, AudioBufferUsage::Static);
             if (audioBuffer == nullptr) Console::Warn("Sound", "Failed to create audio buffer!");
 
             frameCount = (ma_uint32) ma_convert_frames(audioBuffer->Buffer, audioBuffer->DSP.formatConverterIn.config.formatIn, audioBuffer->DSP.formatConverterIn.config.channels, audioBuffer->DSP.src.config.sampleRateIn, wave_->Data, formatIn, wave_->Channels, wave_->SampleRate, frameCountIn);

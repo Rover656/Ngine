@@ -19,7 +19,7 @@
 **********************************************************************************************/
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "Texture.hpp"
+#include "Graphics/OpenGL/Texture.hpp"
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
@@ -42,8 +42,8 @@
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT       0x84FE
 #endif
 
-#include "../../Console.hpp"
-#include "OpenGL.hpp"
+#include "Graphics/OpenGL/OpenGL.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLTexture::GLTexture() {}

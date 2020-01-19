@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "PhysicsShape.hpp"
+#include "Physics/Shapes/PhysicsShape.hpp"
 
 #include <Box2D/Box2D.h>
 

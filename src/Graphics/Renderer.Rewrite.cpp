@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "Renderer.hpp"
+#include "Graphics/Renderer.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 
-#include "../Console.hpp"
-#include "OpenGL.hpp"
+#include "Graphics/OpenGL.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     void Renderer::_enableGLCapabilities() {

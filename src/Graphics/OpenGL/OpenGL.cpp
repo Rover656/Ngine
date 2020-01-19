@@ -20,7 +20,7 @@
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
 
-#include "OpenGL.hpp"
+#include "Graphics/OpenGL/OpenGL.hpp"
 
 // OpenGL 2.1 works similarly to 3.3
 #if defined(GRAPHICS_OPENGL21)
@@ -48,7 +48,7 @@
 
 #include <cstring>
 
-#include "../../Console.hpp"
+#include "Console.hpp"
 
 // Fix missing definitions (Straight from rlgl)
 #ifndef GL_SHADING_LANGUAGE_VERSION

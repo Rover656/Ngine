@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "BoundingBox.hpp"
+#include "Physics/BoundingBox.hpp"
 
 namespace NerdThings::Ngine::Physics {
 

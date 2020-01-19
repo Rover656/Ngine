@@ -18,11 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Polygon.hpp"
+#include "Physics/Polygon.hpp"
 
 #include <Box2D/Box2D.h>
-
-#include <utility>
 
 namespace NerdThings::Ngine::Physics {
     b2PolygonShape Polygon::createPolygonShape(std::vector<Vector2> verts_) {

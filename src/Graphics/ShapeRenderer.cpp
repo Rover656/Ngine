@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "ShapeRenderer.hpp"
+#include "Graphics/ShapeRenderer.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     void ShapeRenderer::_drawLine(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Color color_, float thickness_) {

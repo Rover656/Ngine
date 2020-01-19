@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "TilesetRenderer.hpp"
+#include "Graphics/TilesetRenderer.hpp"
 
 #include <cmath>
 

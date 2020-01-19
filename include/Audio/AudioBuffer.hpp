@@ -29,24 +29,22 @@ namespace NerdThings::Ngine::Audio {
     /**
      * Audio buffer usage type
      */
-    enum AudioBufferUsage {
+    enum class AudioBufferUsage {
         /**
          * Static buffer.
          */
-        BUFFER_USAGE_STATIC = 0,
+        Static,
 
         /**
          * Streamed buffer
          */
-        BUFFER_USAGE_STREAM
+        Stream
     };
 
     /**
      * An audio data buffer.
      */
     struct NEAPI AudioBuffer {
-        // Public Fields
-
         /**
          * Data buffer.
          */
@@ -110,7 +108,7 @@ namespace NerdThings::Ngine::Audio {
         /**
          * Audio usage mode.
          */
-        int Usage;
+        AudioBufferUsage Usage;
 
         /**
          * Buffer volume.

@@ -18,12 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "RenderTarget.hpp"
-
-#include "../Console.hpp"
+#include "Graphics/RenderTarget.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#include "OpenGL.hpp"
+#include "Graphics/OpenGL.hpp"
 #endif
 
 namespace NerdThings::Ngine::Graphics {

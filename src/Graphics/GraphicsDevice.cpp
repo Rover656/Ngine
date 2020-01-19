@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "GraphicsDevice.hpp"
+#include "Graphics/GraphicsDevice.hpp"
 
-#include "../Console.hpp"
-#include "OpenGL.hpp"
-#include "Renderer.hpp"
-#include "RenderTarget.hpp"
+#include "Graphics/OpenGL.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Graphics/RenderTarget.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {

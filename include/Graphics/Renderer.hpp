@@ -79,6 +79,7 @@ namespace NerdThings::Ngine::Graphics {
      * @note This will probably not be completed by the end of the year. This must be enabled with the CMake FEATURE_EXPERIMENTAL_RENDERER flag.
      *
      * @todo Make the renderer platform agnostic so that its easier to switch graphics API
+     * @todo Add scissor/stencil tests
      */
 #else
     /**

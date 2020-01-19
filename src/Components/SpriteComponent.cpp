@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "SpriteComponent.hpp"
+#include "Components/SpriteComponent.hpp"
 
 namespace NerdThings::Ngine::Components {
     SpriteComponent::SpriteComponent(Entity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_)

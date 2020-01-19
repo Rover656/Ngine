@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "Canvas.hpp"
+#include "Graphics/Canvas.hpp"
 
-#include "../Console.hpp"
-#include "Renderer.hpp"
-#include "GraphicsDevice.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Graphics/GraphicsDevice.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Canvas::Canvas(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)

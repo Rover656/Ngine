@@ -18,10 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "CircleShape.hpp"
+#include "Physics/Shapes/CircleShape.hpp"
 
-#include "../../Graphics/Renderer.hpp"
-#include "../../Graphics/ShapeRenderer.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Graphics/ShapeRenderer.hpp"
 
 #include <Box2D/Collision/Shapes/b2CircleShape.h>
 

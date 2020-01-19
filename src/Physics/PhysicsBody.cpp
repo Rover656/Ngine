@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "PhysicsBody.hpp"
+#include "Physics/PhysicsBody.hpp"
+
+#include "Physics/PhysicsWorld.hpp"
 
 #include <Box2D/Box2D.h>
-
-#include "PhysicsWorld.hpp"
 
 namespace NerdThings::Ngine::Physics {
     PhysicsBody::PhysicsBody(b2Body *body_) {

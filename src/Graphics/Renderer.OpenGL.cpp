@@ -18,16 +18,16 @@
 *
 **********************************************************************************************/
 
-#include "Renderer.hpp"
+#include "Graphics/Renderer.hpp"
 
 #ifndef USE_EXPERIMENTAL_RENDERER
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "OpenGL/OpenGL.hpp"
+#include "Graphics/OpenGL/OpenGL.hpp"
 #endif
 
-#include "../Console.hpp"
-#include "GraphicsDevice.hpp"
+#include "Graphics/GraphicsDevice.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     // OpenGL Implementation

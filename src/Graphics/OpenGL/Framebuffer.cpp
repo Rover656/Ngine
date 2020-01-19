@@ -19,7 +19,7 @@
 **********************************************************************************************/
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "Framebuffer.hpp"
+#include "Graphics/OpenGL/Framebuffer.hpp"
 
 // Platform specifics
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
@@ -38,7 +38,7 @@
 #include <angle_windowsstore.h>
 #endif
 
-#include "../../Console.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics::OpenGL {
     GLFramebuffer::GLFramebuffer(int width_, int height_, bool useDepth_, GLPixelFormat format_) {

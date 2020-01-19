@@ -29,10 +29,10 @@ namespace NerdThings::Ngine::Filesystem {
     /**
      * Resource type.
      */
-    enum ResourceType {
-        TYPE_INVALID = 0,
-        TYPE_FILE = 1,
-        TYPE_DIRECTORY = 2
+    enum class ResourceType {
+        Invalid,
+        File,
+        Directory
     };
 
     /**
@@ -346,43 +346,43 @@ namespace NerdThings::Ngine::Filesystem {
     /**
      * The opening mode of a file
      */
-    enum FileOpenMode {
+    enum class FileOpenMode {
         /**
          * The file is not open.
          */
-        MODE_NONE = 0,
+        Closed = 0,
 
         /**
          * File open for reading.
          * C file access mode r.
          */
-        MODE_READ = 1,
+        Read = 1,
 
         /**
          * File open for writing.
          * Created if not exists.
          * C file access mode w.
          */
-        MODE_WRITE = 2,
+        Write = 2,
 
         /**
          * File open for appending data.
          * Created if not exists.
          * C file access mode a.
          */
-        MODE_APPEND = 3,
+        Append = 3,
 
         /**
          * File open for reading and writing.
          * C file access mode w+.
          */
-        MODE_READ_WRITE = 4,
+        ReadWrite = 4,
 
         /**
          * File open for reading and appending.
          * C file access mode a+.
          */
-        MODE_READ_APPEND = 5,
+        ReadAppend = 5,
     };
 
     /**
@@ -409,7 +409,7 @@ namespace NerdThings::Ngine::Filesystem {
         /**
          * Get the current open mode.
          */
-        FileOpenMode m_internalOpenMode = MODE_NONE;
+        FileOpenMode m_internalOpenMode = FileOpenMode::Closed;
     public:
         /**
          * Create an empty file reference.

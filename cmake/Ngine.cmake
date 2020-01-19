@@ -318,11 +318,8 @@ endfunction()
 
 # Link Ngine and schedule copying
 function(__ngine_link_ngine GAME_TARGET_NAME)
-    # Link Ngine
-    get_target_property(NGINE_SOURCE_DIR Ngine SOURCE_DIR)
-
     # Link
-    target_include_directories(${GAME_TARGET_NAME} PRIVATE ${NGINE_SOURCE_DIR})
+    target_include_directories(${GAME_TARGET_NAME} PRIVATE ${Ngine_SOURCE_DIR}/include)
     target_link_libraries(${GAME_TARGET_NAME} Ngine)
 
     # Copy shared lib

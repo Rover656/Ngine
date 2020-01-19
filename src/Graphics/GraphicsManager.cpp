@@ -18,12 +18,13 @@
 *
 **********************************************************************************************/
 
-#include "../Window.hpp"
-#include "GraphicsManager.hpp"
+#include "Graphics/GraphicsManager.hpp"
+
+#include "Window.hpp"
 
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-#include "OpenGL/Framebuffer.hpp"
-#include "OpenGL/OpenGL.hpp"
+#include "Graphics/OpenGL/Framebuffer.hpp"
+#include "Graphics/OpenGL/OpenGL.hpp"
 #endif
 
 namespace NerdThings::Ngine::Graphics {

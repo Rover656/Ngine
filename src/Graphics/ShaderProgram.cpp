@@ -18,15 +18,15 @@
 *
 **********************************************************************************************/
 
-#include "ShaderProgram.hpp"
+#include "Graphics/ShaderProgram.hpp"
 
 #ifdef USE_EXPERIMENTAL_RENDERER
 
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "OpenGL.hpp"
+#include "Graphics/OpenGL.hpp"
 #endif
 
-#include "Shader.hpp"
+#include "Graphics/Shader.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     ShaderProgram::ShaderProgram() {

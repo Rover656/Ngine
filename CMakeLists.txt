@@ -1,66 +1,80 @@
-cmake_minimum_required(VERSION 3.6)
+# Mark minimum cmake version
+cmake_minimum_required(VERSION 3.12)
+
+# Setup project
+project(Ngine
+        VERSION 1.0.0
+        DESCRIPTION "A 2D Game Engine")
+
+# Add a suffix
+set(PROJECT_VERSION_SUFFIX "dev")
+if (NOT ${PROJECT_VERSION_SUFFIX} STREQUAL "")
+    set(PROJECT_VERSION ${PROJECT_VERSION}-${PROJECT_VERSION_SUFFIX})
+    set(Ngine_VERSION ${PROJECT_VERSION})
+endif()
+
+# Include modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(EnumOption)
 
-# C++ 17
-set(CMAKE_CXX_STANDARD 17)
-
-# -fPIC
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-# Project details
-project("Ngine")
-
 # Options
 option(BUILD_TEST "Build the test program." ON)
-option(BUILD_SHARED "Build as a shared library" OFF)
-enum_option(PLATFORM "Desktop;UWP" "Platform to build for.")
-enum_option(OPENGL_VERSION "3.3;2.1;ES2" "Preferred OpenGL Version.")
+option(BUILD_DOCS "Build documentation" ON)
 
-# Feature flags
+option(BUILD_SHARED_LIBS "Build Ngine as a shared library. This will block building of a static library." OFF)
+
+enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
+enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.")
+
+# Setup project (if we are the main project)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    # C++17
+    set(CMAKE_CXX_STANDARD 17)
+
+    # -fPIC
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
+# Project details
+message(STATUS "Building Ngine V${PROJECT_VERSION}")
+
+### Feature Flags
+
 option(FEATURE_EXPERIMENTAL_RENDERER "Enable the experimental renderer." OFF)
 
-# Force options
-if(${PLATFORM} MATCHES "UWP")
-    message("Forcing OpenGL Version to ES2")
-    set(OPENGL_VERSION "ES2")
-elseif (${PLATFORM} MATCHES "Desktop")
-    if (${OPENGL_VERSION} MATCHES "ES2")
+### End Feature Flags
+
+# Option validation
+if(${PLATFORM} MATCHES "Desktop")
+
+elseif (${PLATFORM} MATCHES "UWP")
+    if (NOT ${RENDERER} MATCHES "ES2")
+        message(WARNING "UWP does not support OpenGL Version ${OPENGL_VERSION}")
+        set(RENDERER "GLES2")
+    endif()
+
+    if (${RENDERER} MATCHES "ES2")
         if (NOT MSVC)
             message("Cannot use OpenGL ES2 on non-windows.")
-            set(OPENGL_VERSION "3.3")
+            set(RENDERER "GL33")
         endif()
     endif()
 endif()
 
-message("Building for ${PLATFORM} with preferred OpenGL Version ${OPENGL_VERSION}.")
-
-# Option enforcement
-if (DEFINED BUILD_SHARED_LIBS)
-    if (${BUILD_SHARED_LIBS})
-        set(BUILD_SHARED ON CACHE INTERNAL "" FORCE)
-    endif()
-endif()
-
-# Output directories TODO: Revisit this structure
-#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-
-if (MSVC)
-    #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Release/lib")
-    #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Release/lib")
-    #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/Release/bin")
-
-    #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Debug/lib")
-    #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Debug/lib")
-    #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/Debug/bin")
-endif(MSVC)
+# Broadcast renderer
+message("Building for the \"${PLATFORM}\" platform with the \"${RENDERER}\" renderer.")
 
 # Add sub directories
 add_subdirectory(third-party)
 add_subdirectory(src)
 
-if (${BUILD_TEST})
-	add_subdirectory(test)
+# Extra subdirectories if building as main project
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    if (${BUILD_DOCS})
+        add_subdirectory(docs)
+    endif()
+
+    if (${BUILD_TEST})
+        add_subdirectory(test)
+    endif()
 endif()

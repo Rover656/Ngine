@@ -18,19 +18,19 @@
 *
 **********************************************************************************************/
 
-#include "Texture2D.hpp"
+#include "Graphics/Texture2D.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #ifdef USE_EXPERIMENTAL_RENDERER
 
-#include "OpenGL.hpp"
+#include "Graphics/OpenGL.hpp"
 
 #endif
 #endif
 
-#include "../Console.hpp"
-#include "GraphicsDevice.hpp"
-#include "Renderer.hpp"
+#include "Graphics/GraphicsDevice.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
 #ifdef USE_EXPERIMENTAL_RENDERER

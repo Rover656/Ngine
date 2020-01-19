@@ -34,7 +34,7 @@ namespace NerdThings::Ngine::Filesystem {
     /**
      * Content type for content directories
      */
-    enum ResourceDirectoryContentType {
+    enum ContentType {
         CONTENT_NONE = 0,
         CONTENT_TEXTURES = 1,
         CONTENT_SOUNDS = 2,

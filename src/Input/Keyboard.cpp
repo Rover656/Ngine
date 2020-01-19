@@ -18,16 +18,16 @@
 *
 **********************************************************************************************/
 
-#include "Keyboard.hpp"
+#include "Input/Keyboard.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
 #elif defined(PLATFORM_UWP)
-#include "../UWP/GameApp.hpp"
+#include "UWP/GameApp.hpp"
 #endif
 
-#include "../Game.hpp"
-#include "../Window.hpp"
+#include "Game.hpp"
+#include "Window.hpp"
 
 namespace NerdThings::Ngine::Input {
 #if defined(PLATFORM_DESKTOP)

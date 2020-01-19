@@ -18,14 +18,14 @@
 *
 **********************************************************************************************/
 
-#include "Music.hpp"
+#include "Audio/Music.hpp"
 
 #include <dr_mp3.h>
 #include <dr_flac.h>
 #include <stb_vorbis.h>
 
-#include "../Console.hpp"
-#include "AudioDevice.hpp"
+#include "Audio/AudioDevice.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Audio {
     // Destructor
@@ -68,7 +68,7 @@ namespace NerdThings::Ngine::Audio {
             int result = drmp3_init_file(ctxMp3, path_.GetString().c_str(), nullptr);
 
             if (result > 0) {
-                music->CTXType = AUDIO_MP3;
+                music->CTXType = MusicContextType::MP3;
 
                 music->Stream = AudioDevice::InitAudioStream(ctxMp3->sampleRate, 32, ctxMp3->channels);
                 music->SampleCount = drmp3_get_pcm_frame_count(ctxMp3) * ctxMp3->channels;
@@ -80,7 +80,7 @@ namespace NerdThings::Ngine::Audio {
             music->CTXData = stb_vorbis_open_filename(path_.GetString().c_str(), nullptr, nullptr);
 
             if (music->CTXData != nullptr) {
-                music->CTXType = AUDIO_OGG;
+                music->CTXType = MusicContextType::OGG;
                 stb_vorbis_info info = stb_vorbis_get_info((stb_vorbis *)music->CTXData);
                 auto ctxOgg = (stb_vorbis *)music->CTXData;
 
@@ -94,7 +94,7 @@ namespace NerdThings::Ngine::Audio {
             music->CTXData = drflac_open_file(path_.GetString().c_str());
 
             if (music->CTXData != nullptr) {
-                music->CTXType = AUDIO_FLAC;
+                music->CTXType = MusicContextType::FLAC;
                 auto ctxFlac = (drflac *)music->CTXData;
 
                 music->Stream = AudioDevice::InitAudioStream(ctxFlac->sampleRate, ctxFlac->bitsPerSample, ctxFlac->channels);
@@ -107,16 +107,16 @@ namespace NerdThings::Ngine::Audio {
         if (!loaded) {
             // Free music
             switch(music->CTXType) {
-                case AUDIO_MP3: {
+                case MusicContextType::MP3: {
                     drmp3_uninit((drmp3 *) music->CTXData);
                     free(music->CTXData);
                 } break;
 
-                case AUDIO_OGG: {
+                case MusicContextType::OGG: {
                     stb_vorbis_close((stb_vorbis *)music->CTXData);
                 } break;
 
-                case AUDIO_FLAC: {
+                case MusicContextType::FLAC: {
                     drflac_free((drflac *)music->CTXData);
                 } break;
             }
@@ -162,15 +162,15 @@ namespace NerdThings::Ngine::Audio {
         Stream.Buffer->Stop();
 
         switch(CTXType) {
-            case AUDIO_MP3: {
+            case MusicContextType::MP3: {
                 drmp3_seek_to_pcm_frame((drmp3 *) CTXData, 0);
             } break;
 
-            case AUDIO_OGG: {
+            case MusicContextType::OGG: {
                 stb_vorbis_seek_start((stb_vorbis *)CTXData);
             } break;
 
-            case AUDIO_FLAC: {
+            case MusicContextType::FLAC: {
                 drflac_seek_to_pcm_frame((drflac *)CTXData, 0);
             } break;
         }
@@ -183,16 +183,16 @@ namespace NerdThings::Ngine::Audio {
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
 
         switch(CTXType) {
-            case AUDIO_MP3: {
+            case MusicContextType::MP3: {
                 drmp3_uninit((drmp3 *) CTXData);
                 free(CTXData);
             } break;
 
-            case AUDIO_OGG: {
+            case MusicContextType::OGG: {
                 stb_vorbis_close((stb_vorbis *) CTXData);
             } break;
 
-            case AUDIO_FLAC: {
+            case MusicContextType::FLAC: {
                 drflac_free((drflac *) CTXData);
             } break;
         }
@@ -232,22 +232,22 @@ namespace NerdThings::Ngine::Audio {
             else samplesCount = sampleLeft;
 
             switch (CTXType) {
-                case AUDIO_MP3: {
+                case MusicContextType::MP3: {
                     drmp3_read_pcm_frames_f32((drmp3 *) CTXData, samplesCount / Stream.Channels, (float *) pcm);
                 } break;
 
-                case AUDIO_OGG: {
+                case MusicContextType::OGG: {
                     stb_vorbis_get_samples_short_interleaved((stb_vorbis *) CTXData, Stream.Channels, (short *)pcm, samplesCount);
                 } break;
 
-                case AUDIO_FLAC: {
+                case MusicContextType::FLAC: {
                     drflac_read_pcm_frames_s16((drflac *) CTXData, samplesCount, (short *)pcm);
                 } break;
             }
 
             Stream.UpdateStream(pcm, samplesCount);
 
-            if ((CTXType == MODULE_XM) || (CTXType == MODULE_MOD)) {
+            if ((CTXType == MusicContextType::XM) || (CTXType == MusicContextType::MOD)) {
                 if (samplesCount > 1) sampleLeft -= samplesCount / 2;
                 else sampleLeft -= samplesCount;
             } else sampleLeft -= samplesCount;

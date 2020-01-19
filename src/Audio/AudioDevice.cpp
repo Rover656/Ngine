@@ -18,9 +18,8 @@
 *
 **********************************************************************************************/
 
-#include "AudioDevice.hpp"
-
-#include "../Console.hpp"
+#include "Audio/AudioDevice.hpp"
+#include "Console.hpp"
 
 namespace NerdThings::Ngine::Audio {
     std::vector<Music *> AudioDevice::m_activeMusic;
@@ -56,7 +55,7 @@ namespace NerdThings::Ngine::Audio {
         // Fill every frame until we find a buffer marked as processed.
         ma_uint32 framesRead = 0;
         while(true) {
-            if (buffer->Usage == BUFFER_USAGE_STATIC) {
+            if (buffer->Usage == AudioBufferUsage::Static) {
                 if (framesRead >= frameCount) break;
             } else if (isSubBufferProcessed[currentSubBufferIndex]) break;
 
@@ -64,7 +63,7 @@ namespace NerdThings::Ngine::Audio {
             if (totalFramesRemaining == 0) break;
 
             ma_uint32 framesRemainingInOutputBuffer;
-            if (buffer->Usage == BUFFER_USAGE_STATIC) {
+            if (buffer->Usage == AudioBufferUsage::Stream) {
                 framesRemainingInOutputBuffer = buffer->BufferSizeInFrames - buffer->FrameCursorPos;
             } else {
                 ma_uint32 firstFrameIndexOfThisSubBuffer = subBufferSizeInFrames*currentSubBufferIndex;
@@ -99,7 +98,7 @@ namespace NerdThings::Ngine::Audio {
             memset((unsigned char *)pFramesOut + (framesRead*frameSizeInBytes), 0, totalFramesRemaining*frameSizeInBytes);
 
             // For static buffers, fill with silence for safety but dont report as read
-            if (buffer->Usage != BUFFER_USAGE_STATIC) framesRead += totalFramesRemaining;
+            if (buffer->Usage != AudioBufferUsage::Static) framesRead += totalFramesRemaining;
         }
 
         return framesRead;
@@ -241,7 +240,7 @@ namespace NerdThings::Ngine::Audio {
     }
 
     AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
-                                              ma_uint32 bufferSizeInFrames_, int usage_) {
+                                              ma_uint32 bufferSizeInFrames_, AudioBufferUsage usage_) {
         if (!m_initialized) return nullptr;
         auto *buffer = new AudioBuffer();
 
@@ -311,7 +310,7 @@ namespace NerdThings::Ngine::Audio {
 
         if (subBufferSize < periodSize) subBufferSize = periodSize;
 
-        stream.Buffer = InitAudioBuffer(formatIn, stream.Channels, stream.SampleRate, subBufferSize*2, BUFFER_USAGE_STREAM);
+        stream.Buffer = InitAudioBuffer(formatIn, stream.Channels, stream.SampleRate, subBufferSize*2, AudioBufferUsage::Stream);
         
         if (stream.Buffer != nullptr) {
             stream.Buffer->Looping = true; // Always loop streams

@@ -18,13 +18,13 @@
 *
 **********************************************************************************************/
 
-#include "Sprite.hpp"
+#include "Graphics/Sprite.hpp"
 
 #include <cmath>
 
-#include "Color.hpp"
-#include "../Rectangle.hpp"
-#include "Renderer.hpp"
+#include "Graphics/Color.hpp"
+#include "Graphics/Renderer.hpp"
+#include "Rectangle.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Sprite::Sprite(Texture2D *texture_) {

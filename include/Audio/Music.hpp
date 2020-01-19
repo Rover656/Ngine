@@ -31,35 +31,35 @@ namespace NerdThings::Ngine::Audio {
     /**
      * The music context type.
      */
-    enum MusicContextType {
+    enum class MusicContextType {
         /**
          * OGG Music context.
          */
-        AUDIO_OGG = 1,
+        OGG = 1,
 
         /**
          * FLAC Music context.
          */
-        AUDIO_FLAC,
+        FLAC,
 
         /**
          * MP3 Music context.
          */
-        AUDIO_MP3,
+        MP3,
 
         /**
          * XM Music context.
          *
          * @note Not implemented.
          */
-        MODULE_XM,
+        XM,
 
         /**
          * MOD Music context.
          *
          * @note Not implemented.
          */
-        MODULE_MOD
+        MOD
     };
 
     /**

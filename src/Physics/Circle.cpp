@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Circle.hpp"
+#include "Physics/Circle.hpp"
 
-#include "BoundingBox.hpp"
+#include "Physics/BoundingBox.hpp"
 
 namespace NerdThings::Ngine::Physics {
 

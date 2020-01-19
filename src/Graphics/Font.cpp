@@ -18,15 +18,15 @@
 *
 **********************************************************************************************/
 
-#include "Font.hpp"
+#include "Graphics/Font.hpp"
 
 #include <numeric>
 #include <utility>
 #include <stb_truetype.h>
 
-#include "../Math.hpp"
-#include "../Console.hpp"
-#include "../Rectangle.hpp"
+#include "Math.hpp"
+#include "Console.hpp"
+#include "Rectangle.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     Font *Font::DefaultFont;
@@ -240,7 +240,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Load font file
         auto fontFile = Filesystem::File(path_);
-        if (fontFile.Open(Filesystem::MODE_READ, true)) {
+        if (fontFile.Open(Filesystem::FileOpenMode::Read, true)) {
             // Get font data
             auto size = fontFile.GetSize();
 
