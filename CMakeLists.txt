@@ -21,7 +21,7 @@ include(EnumOption)
 option(BUILD_TEST "Build the test program." ON)
 option(BUILD_DOCS "Build documentation" ON)
 
-option(BUILD_SHARED_LIBS "Build Ngine as a shared library. This will block building of a static library." OFF)
+option(BUILD_SHARED_LIBS "Build Ngine as a shared library. Will build instead of shared." OFF)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
 enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.")

@@ -243,8 +243,17 @@ function(ngine_add_game)
         source_group("Assets" FILES ${GAME_RESOURCE_FILES})
     endif()
 
-    # Post UWP additions
-    __ngine_post_uwp_additions(${GAME_TARGET_NAME})
+    # UWP Specifics
+    if (${PLATFORM} MATCHES "UWP")
+        # Mark as WinRT Component
+        set_property(TARGET ${GAME_TARGET_NAME} PROPERTY VS_WINRT_COMPONENT TRUE)
+
+        # Link special libraries
+        target_link_libraries(${GAME_TARGET_NAME} WindowsApp)
+
+        # No warnings
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    endif()
 
     # Link Ngine
     __ngine_link_ngine(${GAME_TARGET_NAME})
@@ -297,22 +306,6 @@ function(ngine_add_game)
             set_property(SOURCE ${RESOURCE_FILE} PROPERTY VS_DEPLOYMENT_CONTENT 1)
             set_property(SOURCE ${RESOURCE_FILE} PROPERTY VS_DEPLOYMENT_LOCATION "Assets")
         endforeach()
-    endif()
-endfunction()
-
-### Internal Functions
-
-function(__ngine_post_uwp_additions GAME_TARGET_NAME)
-    # UWP Specifics
-    if (${PLATFORM} MATCHES "UWP")
-        # Mark as WinRT Component
-        set_property(TARGET ${GAME_TARGET_NAME} PROPERTY VS_WINRT_COMPONENT TRUE) # IDK if we really need this tho
-
-        # Link special libraries
-        target_link_libraries(${GAME_TARGET_NAME} WindowsApp)
-
-        # No warnings
-        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     endif()
 endfunction()
 
