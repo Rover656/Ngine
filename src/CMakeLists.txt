@@ -8,7 +8,7 @@ if (${PLATFORM} MATCHES "Desktop" AND MSVC AND ${BUILD_SHARED_LIBS})
     include(generate_product_version)
     generate_product_version(
             EXTRA_FILES
-            NAME ${PROJECT_NAME}
+            NAME Ngine
             VERSION_MAJOR ${Ngine_VERSION_MAJOR}
             VERSION_MINOR ${Ngine_VERSION_MINOR}
             VERSION_PATCH ${Ngine_VERSION_PATCH}
@@ -63,7 +63,7 @@ set(_NGINE_INCLUDE_DIRS
         "${Ngine_SOURCE_DIR}/third-party/stb"
         "${Ngine_SOURCE_DIR}/third-party/Box2D-cmake/Box2D"
         "${Ngine_SOURCE_DIR}/third-party/miniaudio")
-set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} tobanteGaming::Box2D)
+set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} Box2D-cmake)
 
 if (${BUILD_SHARED_LIBS})
     # Add library

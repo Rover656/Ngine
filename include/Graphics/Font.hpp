@@ -207,14 +207,16 @@ namespace NerdThings::Ngine::Graphics {
          * @param spacing_ Letter spacing.
          */
         void DrawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
-                        float spacing_, const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
+                        float spacing_, const Color &color_, const Angle &rotation_ = 0,
+                        const Vector2 &origin_ = Vector2::Zero);
 
         /**
          * Draw a string within given bounds with options for alignment and wrapping.
          */
         void DrawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
-                        float spacing_, TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None,
-                        const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
+                        float spacing_, const Color &color_, TextAlignment alignment_ = TextAlignment::Left,
+                        TextWrap wrap_ = TextWrap::None, const Angle &rotation_ = 0,
+                        const Vector2 &origin_ = Vector2::Zero);
 
         /**
          * Measure the size of a string if it was rendered without constraints.

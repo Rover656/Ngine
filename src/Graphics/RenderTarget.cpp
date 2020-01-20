@@ -24,6 +24,8 @@
 #include "Graphics/OpenGL.hpp"
 #endif
 
+#include "Console.hpp"
+
 namespace NerdThings::Ngine::Graphics {
     RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
         Width = width_;

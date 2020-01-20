@@ -212,6 +212,11 @@ public:
         //Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
         ShapeRenderer::DrawRectangle(renderer_, GetCullArea(), Color::Green, 0, Vector2::Zero, true);
         testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
+
+        auto fnt = Font::GetDefaultFont();
+        auto s = fnt->NEW_MeasureString("Hello World.", 32, 0);
+        ShapeRenderer::DrawRectangle(renderer_, {150, 150, s.X, s.Y}, Color::Green);
+        fnt->DrawString(renderer_, "Hello World.", {150, 150}, 32, 0, Color::Orange);
     }
 
     void Update() {

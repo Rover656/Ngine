@@ -10,7 +10,7 @@ project(NgineTest
         DESCRIPTION "A test program to see if the game engine performs given tasks. To be replaced with examples.")
 
 # Check config is ok
-ngine_check_config()
+ngine_check_config() # TODO remove
 
 # Get UWP resources
 if (${PLATFORM} MATCHES "UWP")
