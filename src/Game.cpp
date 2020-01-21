@@ -60,7 +60,7 @@ namespace NerdThings::Ngine {
         // Create render target
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
-            m_renderTarget = new Graphics::RenderTarget(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTexture(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
@@ -104,12 +104,12 @@ namespace NerdThings::Ngine {
 
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
-            m_renderTarget = new Graphics::RenderTarget(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTexture(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
-            m_renderTarget = new Graphics::RenderTarget(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTexture(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 

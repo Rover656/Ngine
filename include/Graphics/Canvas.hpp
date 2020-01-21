@@ -24,7 +24,7 @@
 #include "../Config.hpp"
 
 #include "../Math.hpp"
-#include "RenderTarget.hpp"
+#include "RenderTexture.hpp"
 
 namespace NerdThings::Ngine::Graphics {
     /**
@@ -45,7 +45,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The render target
          */
-        RenderTarget *m_renderTarget = nullptr;
+        RenderTexture *m_renderTarget = nullptr;
 
         /**
          * The graphics device.

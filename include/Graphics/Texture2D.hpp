@@ -33,7 +33,7 @@
 namespace NerdThings::Ngine::Graphics {
     class GraphicsDevice;
     class Renderer;
-    class RenderTarget;
+    class RenderTexture;
 
     /**
      * Texture filter mode.
@@ -101,7 +101,7 @@ namespace NerdThings::Ngine::Graphics {
     class NEAPI Texture2D : public IResource {
         // Friends
         friend class Renderer;
-        friend class RenderTarget;
+        friend class RenderTexture;
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         /**

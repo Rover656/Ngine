@@ -27,7 +27,7 @@
 namespace NerdThings::Ngine::Graphics {
     Canvas::Canvas(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)
             : m_width(width_), m_height(height_) {
-        m_renderTarget = new RenderTarget(graphicsDevice_, m_width, m_height);
+        m_renderTarget = new RenderTexture(graphicsDevice_, m_width, m_height);
         m_graphicsDevice = graphicsDevice_;
     }
 
@@ -75,6 +75,6 @@ namespace NerdThings::Ngine::Graphics {
         delete m_renderTarget;
         m_width = width_;
         m_height = height_;
-        m_renderTarget = new RenderTarget(m_graphicsDevice, m_width, m_height);
+        m_renderTarget = new RenderTexture(m_graphicsDevice, m_width, m_height);
     }
 }

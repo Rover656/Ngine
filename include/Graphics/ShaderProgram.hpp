@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
      * Shader program which contains a shader and manages it.
      *
      * Predefined attributes:
-     *  * vec2 - NG_VertexPos
+     *  * vec3 - NG_VertexPos
      *  * vec2 - NG_VertexTexCoord
      *  * vec4 - NG_VertexColor
      *

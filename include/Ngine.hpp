@@ -168,7 +168,7 @@
 #include "Graphics/GraphicsDevice.hpp"
 #include "Graphics/Image.hpp"
 #include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTarget.hpp"
+#include "Graphics/RenderTexture.hpp"
 #include "Graphics/Shader.hpp"
 #include "Graphics/ShaderProgram.hpp"
 #include "Graphics/ShapeRenderer.hpp"

@@ -22,7 +22,7 @@
 
 #include "Graphics/OpenGL.hpp"
 #include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTarget.hpp"
+#include "Graphics/RenderTexture.hpp"
 #include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
@@ -153,13 +153,13 @@ namespace NerdThings::Ngine::Graphics {
         return m_attachedWindow;
     }
 
-    RenderTarget *GraphicsDevice::GetCurrentTarget() {
+    RenderTexture *GraphicsDevice::GetCurrentTarget() {
         if (m_targetCounter > 0)
             return m_targetStack[m_targetCounter - 1];
         return nullptr;
     }
 
-    void GraphicsDevice::PushTarget(RenderTarget *target_) {
+    void GraphicsDevice::PushTarget(RenderTexture *target_) {
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
             Console::Fail("GraphicsDevice", "Render target stack overflow.");

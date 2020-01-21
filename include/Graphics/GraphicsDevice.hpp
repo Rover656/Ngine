@@ -29,7 +29,7 @@
 
 namespace NerdThings::Ngine::Graphics {
     class Renderer;
-    struct RenderTarget;
+    struct RenderTexture;
 
     /**
      * The graphics device.
@@ -126,7 +126,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The render target stack.
          */
-        RenderTarget *m_targetStack[MAX_TARGETS];
+        RenderTexture *m_targetStack[MAX_TARGETS];
 
         /**
          * The render target stack counter.
@@ -172,7 +172,7 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @return The current render target or null if rendering straight to window.
          */
-        RenderTarget *GetCurrentTarget();
+        RenderTexture *GetCurrentTarget();
 
         /**
          * Set the current render target.
@@ -181,7 +181,7 @@ namespace NerdThings::Ngine::Graphics {
          * @warning This will force all renderers to draw.
          * @param target_ The new target.
          */
-        void PushTarget(RenderTarget *target_);
+        void PushTarget(RenderTexture *target_);
 
         /**
          * Pop the current target off of the stack.

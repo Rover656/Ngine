@@ -38,7 +38,7 @@ namespace NerdThings::Ngine::Graphics {
      * `Vector3` for Position, `Vector2` for tex coords and `Color` for color.
      */
     struct VertexData {
-        Vector2 Position;
+        Vector3 Position;
         Color Color;
         Vector2 TexCoords;
     };
@@ -84,6 +84,24 @@ namespace NerdThings::Ngine::Graphics {
          * The maximum number of matrices on the stack.
          */
         static const unsigned int MATRIX_STACK_SIZE = 32;
+
+        /**
+         * A simple render task.
+         * This contains information about what is in the vertex array.
+         */
+        class NEAPI RenderTask {
+            unsigned int Texture;
+            ShaderProgram *Shader;
+            unsigned int VertexCount;
+            unsigned int IndexCount;
+        };
+
+        /**
+         * A renderqueue describes a sorted list of render tasks
+         */
+        class NEAPI RenderQueue {
+
+        };
     private:
         /**
          * The graphics device.

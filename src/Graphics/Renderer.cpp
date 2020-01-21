@@ -39,14 +39,14 @@ namespace NerdThings::Ngine::Graphics {
                 "#version 100\n"
 #endif
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "attribute vec2 NG_VertexPos;\n"
+                "attribute vec3 NG_VertexPos;\n"
                 "attribute vec2 NG_VertexTexCoord;\n"
                 "attribute vec4 NG_VertexColor;\n"
                 "varying vec2 fragTexCoord;\n"
                 "varying vec4 fragColor;\n"
 #elif defined(GRAPHICS_OPENGL33)
                 "#version 330\n"
-                "in vec2 NG_VertexPos;\n"
+                "in vec3 NG_VertexPos;\n"
                 "in vec2 NG_VertexTexCoord;\n"
                 "in vec4 NG_VertexColor;\n"
                 "out vec2 fragTexCoord;\n"
@@ -57,7 +57,7 @@ namespace NerdThings::Ngine::Graphics {
                 "{\n"
                 "    fragTexCoord = NG_VertexTexCoord;\n"
                 "    fragColor = NG_VertexColor;\n"
-                "    gl_Position = NGU_MATRIX_MVP*vec4(NG_VertexPos, 0.0, 1.0);\n"
+                "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
                 "}\n";
 
         // Fragment source
@@ -510,7 +510,7 @@ namespace NerdThings::Ngine::Graphics {
         if (m_vertexCount < MAX_BUFFER_SIZE) {
             // Build vertex data
             VertexData vDat;
-            vDat.Position = pos_.Transform(m_matrixStack[m_matrixStackCounter]);
+            vDat.Position = Vector3(pos_.X, pos_.Y, 0).Transform(m_matrixStack[m_matrixStackCounter]);
             vDat.TexCoords = texCoord_;
             vDat.Color = color_;
 

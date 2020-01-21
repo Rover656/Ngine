@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/RenderTarget.hpp"
+#include "Graphics/RenderTexture.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #include "Graphics/OpenGL.hpp"
@@ -27,7 +27,7 @@
 #include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
-    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
+    RenderTexture::RenderTexture(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
         Width = width_;
         Height = height_;
 
@@ -99,22 +99,22 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    RenderTarget::~RenderTarget() {
+    RenderTexture::~RenderTexture() {
         // Delete self
         Unload();
     }
 
-    Texture2D *RenderTarget::GetTexture() {
+    Texture2D *RenderTexture::GetTexture() {
         return m_texture;
     }
 
-    bool RenderTarget::IsValid() const {
+    bool RenderTexture::IsValid() const {
         if (m_ID > 0)
             return true;
         return false;
     }
 
-    void RenderTarget::Unload() {
+    void RenderTexture::Unload() {
         Width = 0;
         Height = 0;
         // Delete texture
@@ -134,11 +134,11 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    bool RenderTarget::operator==(const RenderTarget &b) const {
+    bool RenderTexture::operator==(const RenderTexture &b) const {
         return m_ID == b.m_ID;
     }
 
-    bool RenderTarget::operator!=(const RenderTarget &b) const {
+    bool RenderTexture::operator!=(const RenderTexture &b) const {
         return m_ID != b.m_ID;
     }
 }

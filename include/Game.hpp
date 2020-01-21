@@ -25,7 +25,7 @@
 
 #include "Graphics/Color.hpp"
 #include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTarget.hpp"
+#include "Graphics/RenderTexture.hpp"
 #include "Filesystem/ResourceManager.hpp"
 #include "Events.hpp"
 #include "Math.hpp"
@@ -110,7 +110,7 @@ namespace NerdThings::Ngine {
         /**
          * The render target used for enforcing resolution
          */
-        Graphics::RenderTarget *m_renderTarget = nullptr;
+        Graphics::RenderTexture *m_renderTarget = nullptr;
 
         /**
          * Is the game loop running

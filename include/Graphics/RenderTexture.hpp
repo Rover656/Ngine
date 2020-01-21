@@ -18,8 +18,8 @@
 *
 **********************************************************************************************/
 
-#ifndef RENDERTARGET_HPP
-#define RENDERTARGET_HPP
+#ifndef RENDERTEXTURE_HPP
+#define RENDERTEXTURE_HPP
 
 #include "../Config.hpp"
 
@@ -30,7 +30,7 @@ namespace NerdThings::Ngine::Graphics {
     /**
      * A 2D Texture in the GPU that can be rendered to.
      */
-    struct NEAPI RenderTarget : public IResource {
+    struct NEAPI RenderTexture : public IResource {
         friend class GraphicsDevice;
     private:
         /**
@@ -68,8 +68,8 @@ namespace NerdThings::Ngine::Graphics {
          * @param width_ Render target width.
          * @param height_ Render target height.
          */
-        RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_);
-        ~RenderTarget();
+        RenderTexture(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_);
+        ~RenderTexture();
 
         /**
          * Get rendered texture.
@@ -92,9 +92,9 @@ namespace NerdThings::Ngine::Graphics {
          */
         void Unload() override;
 
-        bool operator==(const RenderTarget &b) const;
-        bool operator!=(const RenderTarget &b) const;
+        bool operator==(const RenderTexture &b) const;
+        bool operator!=(const RenderTexture &b) const;
     };
 }
 
-#endif //RENDERTARGET_HPP
+#endif //RENDERTEXTURE_HPP
