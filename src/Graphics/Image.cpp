@@ -89,6 +89,10 @@ namespace NerdThings::Ngine::Graphics {
         _create(pixelData_, width_, height_, format_);
     }
 
+    Image::~Image() {
+        Unload();
+    }
+
     bool Image::IsValid() const {
         return Width > 0
                 && Height > 0

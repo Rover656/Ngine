@@ -52,6 +52,15 @@ namespace NerdThings::Ngine::Graphics {
     };
 
     /**
+     * Multiplier for the space between lines
+     */
+    enum class LineSpacing {
+        One,
+        OnePointFive,
+        Two
+    };
+
+    /**
      * Character information.
      */
     struct NEAPI CharInfo {
@@ -98,38 +107,39 @@ namespace NerdThings::Ngine::Graphics {
     /**
      * A font.
      */
-    struct NEAPI Font : public IResource {
+    class NEAPI Font : public IResource {
         /**
          * The default font.
          */
-        static Font *DefaultFont;
+        static Font *m_defaultFont;
 
         /**
          * Font texture.
          */
-        std::shared_ptr<Texture2D> Texture;
+        Texture2D *m_texture;
 
         /**
          * Base size (default char height).
          */
-        int BaseSize = 0;
+        int m_baseSize = 0;
 
         /**
          * Character count.
          */
-        int CharacterCount = 0;
+        int m_characterCount = 0;
 
         /**
          * Character data.
          */
-        std::vector<CharInfo> Characters;
+        std::vector<CharInfo> m_characters;
 
+    public:
         /**
          * Create an empty font.
          */
         Font();
 
-        virtual ~Font();
+        ~Font();
 
         /**
          * Get the default font.
@@ -180,22 +190,9 @@ namespace NerdThings::Ngine::Graphics {
                                  std::vector<int> fontChars_ = std::vector<int>());
 
         /**
-         * Measure the dimensions of a string (on one line).
-         *
-         * @param string_ The string to measure
-         * @param fontSize_ The size of the font.
-         * @param spacing_ Font spacing.
-         * @return The size of the string.
-         * @todo Make this support wrapping and rectangles etc.
-         */
-        Vector2 MeasureString(const std::string &string_, float fontSize_, float spacing_) const;
-
-        /**
          * Unload the font.
          */
         void Unload() override;
-
-        //// NEW -- The Rendering API for the new Renderer :)
 
         /**
          * Draw a string with this font at the given position.
@@ -207,35 +204,36 @@ namespace NerdThings::Ngine::Graphics {
          * @param spacing_ Letter spacing.
          */
         void DrawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
-                        float spacing_, const Color &color_, const Angle &rotation_ = 0,
-                        const Vector2 &origin_ = Vector2::Zero);
+                        float spacing_, const Color &color_, LineSpacing lineSpacing_ = LineSpacing::OnePointFive,
+                        const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
 
         /**
          * Draw a string within given bounds with options for alignment and wrapping.
          */
         void DrawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
-                        float spacing_, const Color &color_, TextAlignment alignment_ = TextAlignment::Left,
-                        TextWrap wrap_ = TextWrap::None, const Angle &rotation_ = 0,
-                        const Vector2 &origin_ = Vector2::Zero);
+                        float spacing_, const Color &color_, LineSpacing lineSpacing_ = LineSpacing::OnePointFive,
+                        TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None,
+                        const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
 
         /**
          * Measure the size of a string if it was rendered without constraints.
          */
-        Vector2 NEW_MeasureString(const std::string &string_, float fontSize_, float spacing_);
+        Vector2 MeasureString(const std::string &string_, float fontSize_, float spacing_,
+                              LineSpacing lineSpacing_ = LineSpacing::OnePointFive);
 
         /**
          * Measure the size of a string if it was rendered with a maximum width.
          */
-        Vector2
-        NEW_MeasureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
-                                     TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None);
+        Vector2 MeasureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
+                                         TextAlignment alignment_ = TextAlignment::Left,
+                                         TextWrap wrap_ = TextWrap::None);
 
         /**
          * Measure the size of a string if it was rendered with a maximum height.
          */
-        Vector2
-        NEW_MeasureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
-                                     TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None);
+        Vector2 MeasureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
+                                         TextAlignment alignment_ = TextAlignment::Left,
+                                         TextWrap wrap_ = TextWrap::None);
 
     private:
         void _generateAtlas(GraphicsDevice *graphicsDevice_);

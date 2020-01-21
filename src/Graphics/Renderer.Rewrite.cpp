@@ -242,9 +242,15 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Renderer::_addVertices(PrimitiveType type_, VertexData *vertices_, int count_) {
-        // Check vertex array size
-        if (count_ >= MAX_BUFFER_SIZE)
-            Console::Fail("Renderer", "Vertex array is too big!");
+        // Check if this will fill the buffers
+        if (!CheckSize(type_, count_)) {
+            Console::Fail("Renderer", "Indexed vertices will not fit in a buffer, please split your data.");
+        }
+
+        // Render if we will fill a buffer
+        if (m_vertexCount + count_ >= MAX_BUFFER_SIZE) {
+            Render();
+        }
 
         // Draw if we'd meet buffer maximums
         if (m_vertexCount + count_ >= MAX_BUFFER_SIZE) {
@@ -259,8 +265,6 @@ namespace NerdThings::Ngine::Graphics {
 
             // Draw if we'd meet buffer maximums
             if (m_indexCount + count_ / 4 * 6 >= MAX_BUFFER_SIZE) {
-                if (count_ / 4 * 6 >= MAX_BUFFER_SIZE)
-                    Console::Fail("Renderer", "Too many indices would be created by this action.");
                 Render();
             }
 
@@ -277,8 +281,6 @@ namespace NerdThings::Ngine::Graphics {
         } else if (type_ == PrimitiveType::TriangleFan) {
             // Draw if we are full
             if (m_indexCount + (count_ - 1) * 3 >= MAX_BUFFER_SIZE) {
-                if ((count_ - 1) * 3 >= MAX_BUFFER_SIZE)
-                    Console::Fail("Renderer", "Too many indices would be created by this action.");
                 Render();
             }
 
@@ -292,8 +294,6 @@ namespace NerdThings::Ngine::Graphics {
         } else {
             // Draw if we are full
             if (m_indexCount + count_ >= MAX_BUFFER_SIZE) {
-                if (count_ >= MAX_BUFFER_SIZE)
-                    Console::Fail("Renderer", "Too many indices would be created by this action.");
                 Render();
             }
 
@@ -319,6 +319,14 @@ namespace NerdThings::Ngine::Graphics {
     void
     Renderer::_addIndexedVertices(PrimitiveType type_, VertexData *vertices_, int vCount_, unsigned short *indices_,
                                   int iCount_) {
+        // Check if this will fill the buffers
+        if (m_vertexCount + vCount_ >= MAX_BUFFER_SIZE || m_indexCount + iCount_ >= MAX_BUFFER_SIZE) {
+            if (m_vertexCount >= MAX_BUFFER_SIZE || m_indexCount >= MAX_BUFFER_SIZE) {
+                Console::Fail("Renderer", "Indexed vertices will not fit in a buffer, please split your data.");
+            }
+            Render();
+        }
+
         // TODO BEFORE MERGE: Add Quad and triangle fan conversion.
         // Add vertices to vertex array
         if (type_ == PrimitiveType::Quads) {
@@ -600,6 +608,19 @@ namespace NerdThings::Ngine::Graphics {
 
     void Renderer::Scale(const Vector3 &scale_) {
         MultMatrix(Matrix::Scale(scale_.X, scale_.Y, scale_.Z));
+    }
+
+    bool Renderer::CheckSize(PrimitiveType type_, int count_) {
+        switch (type_) {
+            case PrimitiveType::Triangles:
+                return count_ * 3 < MAX_BUFFER_SIZE;
+            case PrimitiveType::TriangleFan:
+                return count_ * 3 < MAX_BUFFER_SIZE && (count_ - 1) * 3 < MAX_BUFFER_SIZE;
+            case PrimitiveType::Quads:
+                return count_ * 4 < MAX_BUFFER_SIZE && count_ * 6 < MAX_BUFFER_SIZE;
+                break;
+        }
+        return false;
     }
 }
 

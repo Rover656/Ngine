@@ -435,7 +435,7 @@ namespace NerdThings::Ngine::Graphics {
         int letter = 0;             // Current character
         int index = 0;              // Index position in sprite font
 
-        scaleFactor = fontSize_/font_->BaseSize;
+        scaleFactor = fontSize_/font_->m_baseSize;
 
         for (int i = 0; i < string_.length(); i += 1)
         {
@@ -454,7 +454,7 @@ namespace NerdThings::Ngine::Graphics {
             if (letter == '\n')
             {
                 // NOTE: Fixed line spacing of 1.5 lines
-                textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                textOffsetY += (int)((font_->m_baseSize + font_->m_baseSize/2)*scaleFactor);
                 textOffsetX = 0.0f;
             }
             else
@@ -462,15 +462,15 @@ namespace NerdThings::Ngine::Graphics {
                 if (letter != ' ')
                 {
                     DrawTexture(font_->GetTexture(),
-                                   { position_.X + textOffsetX + font_->Characters[index].OffsetX*scaleFactor,
-                                                position_.Y + textOffsetY + font_->Characters[index].OffsetY*scaleFactor,
-                                                font_->Characters[index].Rectangle.Width*scaleFactor,
-                                                font_->Characters[index].Rectangle.Height*scaleFactor },
-                                                font_->Characters[index].Rectangle, color_, { 0, 0 }, 0.0f);
+                                   { position_.X + textOffsetX + font_->m_characters[index].OffsetX*scaleFactor,
+                                                position_.Y + textOffsetY + font_->m_characters[index].OffsetY*scaleFactor,
+                                                font_->m_characters[index].Rectangle.Width*scaleFactor,
+                                                font_->m_characters[index].Rectangle.Height*scaleFactor },
+                                                font_->m_characters[index].Rectangle, color_, { 0, 0 }, 0.0f);
                 }
 
-                if (font_->Characters[index].AdvanceX == 0) textOffsetX += ((float)font_->Characters[index].Rectangle.Width*scaleFactor + spacing_);
-                else textOffsetX += ((float)font_->Characters[index].AdvanceX*scaleFactor + spacing_);
+                if (font_->m_characters[index].AdvanceX == 0) textOffsetX += ((float)font_->m_characters[index].Rectangle.Width*scaleFactor + spacing_);
+                else textOffsetX += ((float)font_->m_characters[index].AdvanceX*scaleFactor + spacing_);
             }
         }
     }
@@ -490,7 +490,7 @@ namespace NerdThings::Ngine::Graphics {
         int letter = 0;             // Current character
         int index = 0;              // Index position in sprite font
 
-        scaleFactor = fontSize_/font_->BaseSize;
+        scaleFactor = fontSize_/font_->m_baseSize;
         int startLine = -1;
         int endLine = -1;
         int lastk = -1;
@@ -504,9 +504,9 @@ namespace NerdThings::Ngine::Graphics {
             index = font_->GetGlyphIndex(letter);
 
             if (letter != '\n') {
-                glyphWidth = (font_->Characters[index].AdvanceX == 0)?
-                             (int)(font_->Characters[index].Rectangle.Width*scaleFactor + spacing_):
-                             (int)(font_->Characters[index].AdvanceX*scaleFactor + spacing_);
+                glyphWidth = (font_->m_characters[index].AdvanceX == 0)?
+                             (int)(font_->m_characters[index].Rectangle.Width*scaleFactor + spacing_):
+                             (int)(font_->m_characters[index].AdvanceX*scaleFactor + spacing_);
             }
 
             if (measureState) {
@@ -545,7 +545,7 @@ namespace NerdThings::Ngine::Graphics {
                 {
                     if (!wordWrap_)
                     {
-                        textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                        textOffsetY += (int)((font_->m_baseSize + font_->m_baseSize/2)*scaleFactor);
                         textOffsetX = 0;
                     }
                 }
@@ -553,17 +553,17 @@ namespace NerdThings::Ngine::Graphics {
                 {
                     if (!wordWrap_ && ((textOffsetX + glyphWidth + 1) >= rectangle_.Width))
                     {
-                        textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                        textOffsetY += (int)((font_->m_baseSize + font_->m_baseSize/2)*scaleFactor);
                         textOffsetX = 0;
                     }
 
-                    if ((textOffsetY + (int)(font_->BaseSize*scaleFactor)) > rectangle_.Height) break;
+                    if ((textOffsetY + (int)(font_->m_baseSize*scaleFactor)) > rectangle_.Height) break;
 
                     // Draw selected
                     bool isGlyphSelected = false;
                     if ((selectStart_ >= 0) && (k >= selectStart_) && (k < (selectStart_ + selectLength_)))
                     {
-                        Rectangle strec = {rectangle_.X + textOffsetX - 1, rectangle_.Y + textOffsetY, (float)glyphWidth, font_->BaseSize * scaleFactor };
+                        Rectangle strec = {rectangle_.X + textOffsetX - 1, rectangle_.Y + textOffsetY, (float)glyphWidth, font_->m_baseSize * scaleFactor };
                         DrawRectangle(strec, selectBack_);
                         isGlyphSelected = true;
                     }
@@ -571,18 +571,18 @@ namespace NerdThings::Ngine::Graphics {
                     // Draw glyph
                     if ((letter != ' ') && (letter != '\t'))
                     {
-                        DrawTexture(font_->Texture.get(), { rectangle_.X + textOffsetX + font_->Characters[index].OffsetX*scaleFactor,
-                                                            rectangle_.Y + textOffsetY + font_->Characters[index].OffsetY*scaleFactor,
-                                                            font_->Characters[index].Rectangle.Width*scaleFactor,
-                                                            font_->Characters[index].Rectangle.Height*scaleFactor },
-                                                            font_->Characters[index].Rectangle,
+                        DrawTexture(font_->m_texture.get(), { rectangle_.X + textOffsetX + font_->m_characters[index].OffsetX*scaleFactor,
+                                                            rectangle_.Y + textOffsetY + font_->m_characters[index].OffsetY*scaleFactor,
+                                                            font_->m_characters[index].Rectangle.Width*scaleFactor,
+                                                            font_->m_characters[index].Rectangle.Height*scaleFactor },
+                                                            font_->m_characters[index].Rectangle,
                                                             (!isGlyphSelected)? color_ : selectText_, { 0, 0 }, 0.0f);
                     }
                 }
 
                 if (wordWrap_ && (i == endLine))
                 {
-                    textOffsetY += (int)((font_->BaseSize + font_->BaseSize/2)*scaleFactor);
+                    textOffsetY += (int)((font_->m_baseSize + font_->m_baseSize/2)*scaleFactor);
                     textOffsetX = 0;
                     startLine = endLine;
                     endLine = -1;
@@ -628,7 +628,7 @@ namespace NerdThings::Ngine::Graphics {
                           Color color_,
                           Vector2 origin_, float rotation_) {
         // Check null
-        if (texture_ == nullptr) throw std::runtime_error("Texture is null.");
+        if (texture_ == nullptr) throw std::runtime_error("m_texture is null.");
 
         // Raylib implementation
         if (texture_->IsValid()) {

@@ -132,6 +132,8 @@ namespace NerdThings::Ngine::Graphics {
          */
         Image(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
 
+        ~Image();
+
         /**
          * Test whether or not the image is valid
          *

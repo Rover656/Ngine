@@ -410,6 +410,15 @@ namespace NerdThings::Ngine::Graphics {
          */
         void Scale(const Vector3 &scale_);
 
+        /**
+         * Check if count_ of type_ will fit inside of a buffer.
+         *
+         * @param type_ The primitive type.
+         * @param count_ The number of primitives.
+         * @return Whether or not a buffer can hold this primitive.
+         */
+        bool CheckSize(PrimitiveType type_, int count_);
+
 #else
         // Internal OpenGL Methods
 #if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)

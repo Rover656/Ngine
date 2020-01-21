@@ -213,10 +213,15 @@ public:
         ShapeRenderer::DrawRectangle(renderer_, GetCullArea(), Color::Green, 0, Vector2::Zero, true);
         testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
 
+        auto text = "Hello World.\nG'day";
+        auto spacing = 0;
+        auto fontSize = 32;
+        auto lSpacing = LineSpacing::OnePointFive;
+
         auto fnt = Font::GetDefaultFont();
-        auto s = fnt->NEW_MeasureString("Hello World.", 32, 0);
+        auto s = fnt->MeasureString(text, fontSize, spacing, lSpacing);
         ShapeRenderer::DrawRectangle(renderer_, {150, 150, s.X, s.Y}, Color::Green);
-        fnt->DrawString(renderer_, "Hello World.", {150, 150}, 32, 0, Color::Orange);
+        fnt->DrawString(renderer_, text, {150, 150}, fontSize, spacing, Color::Orange, lSpacing);
     }
 
     void Update() {
