@@ -23,8 +23,6 @@
 
 #include "../Config.hpp"
 
-#ifdef USE_EXPERIMENTAL_RENDERER
-
 #include "../Resource.hpp"
 
 namespace NerdThings::Ngine::Graphics {
@@ -85,7 +83,5 @@ namespace NerdThings::Ngine::Graphics {
         void Unload() override;
     };
 }
-
-#endif
 
 #endif //NEW_SHADER_H

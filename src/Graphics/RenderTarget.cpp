@@ -32,7 +32,6 @@ namespace NerdThings::Ngine::Graphics {
         Height = height_;
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Create color attachment
         m_texture = new Texture2D(graphicsDevice_, nullptr, width_, height_, UNCOMPRESSED_R8G8B8A8, 1);
 
@@ -97,16 +96,6 @@ namespace NerdThings::Ngine::Graphics {
 
         Console::Notice("RenderTarget", "Successfully created framebuffer with ID %i", m_ID);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#else
-        // Create framebuffer
-        InternalFramebuffer = std::make_shared<OpenGL::GLFramebuffer>(width_, height_);
-
-        // Create texture
-        m_texture = new Texture2D();
-        m_texture->Width = Width;
-        m_texture->Height = Height;
-        m_texture->InternalTexture = InternalFramebuffer->RenderTexture;
-#endif
 #endif
     }
 
@@ -120,23 +109,14 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool RenderTarget::IsValid() const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         if (m_ID > 0)
             return true;
-#else
-        if (InternalFramebuffer != nullptr)
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-            if (InternalFramebuffer->ID > 0)
-#endif
-#endif
-                return true;
         return false;
     }
 
     void RenderTarget::Unload() {
         Width = 0;
         Height = 0;
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Delete texture
         delete m_texture;
         m_texture = nullptr;
@@ -152,34 +132,13 @@ namespace NerdThings::Ngine::Graphics {
             glDeleteFramebuffers(1, &m_ID);
             m_ID = 0;
         }
-#else
-        // Unload framebuffer
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        InternalFramebuffer = nullptr;
-#endif
-#endif
     }
 
     bool RenderTarget::operator==(const RenderTarget &b) const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         return m_ID == b.m_ID;
-#else
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        return InternalFramebuffer->ID == b.InternalFramebuffer->ID;
-#endif
-#endif
-        return false;
     }
 
     bool RenderTarget::operator!=(const RenderTarget &b) const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         return m_ID != b.m_ID;
-#else
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-        return InternalFramebuffer->ID != b.InternalFramebuffer->ID;
-#endif
-#endif
-        return true;
     }
-
 }

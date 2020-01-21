@@ -40,7 +40,7 @@ message(STATUS "Building Ngine V${PROJECT_VERSION}")
 
 ### Feature Flags
 
-option(FEATURE_EXPERIMENTAL_RENDERER "Enable the experimental renderer." OFF)
+
 
 ### End Feature Flags
 

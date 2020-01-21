@@ -21,18 +21,10 @@
 #include "Game.hpp"
 
 #include "Audio/AudioDevice.hpp"
-#include "Graphics/GraphicsManager.hpp"
 #include "Input/Gamepad.hpp"
 #include "Input/Keyboard.hpp"
 #include "Input/Mouse.hpp"
-#include "Filesystem/ResourceManager.hpp"
 #include "Console.hpp"
-
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-
-#include "Graphics/OpenGL/OpenGL.hpp"
-
-#endif
 
 #if defined(PLATFORM_UWP)
 #include "UWP/GameApp.hpp"
@@ -136,7 +128,6 @@ namespace NerdThings::Ngine {
 
         // Only render if visible
         if (m_gameWindow->IsVisible()) {
-#ifdef USE_EXPERIMENTAL_RENDERER
             // If using, start render target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
                 // Clear the main framebuffer (for black bars)
@@ -150,22 +141,7 @@ namespace NerdThings::Ngine {
             // Clear with clear color
             m_renderer->SetClearColor(ClearColor);
             m_renderer->Clear();
-#else
-            // Prep for drawing
-            m_renderer->BeginDrawing();
 
-            // If using, start using target
-            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                // Clear the main framebuffer (for black bars)
-                m_renderer->Clear(Graphics::Color::Black);
-
-                // Enable our main framebuffer
-                Graphics::GraphicsManager::PushTarget(m_renderTarget);
-            }
-
-            // Clear with the correct background colour
-            m_renderer->Clear(ClearColor);
-#endif
             // Render scene
             if (m_currentScene != nullptr) {
                 m_currentScene->Draw(m_renderer);
@@ -176,11 +152,7 @@ namespace NerdThings::Ngine {
 
             // If using a target, draw target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-#ifdef USE_EXPERIMENTAL_RENDERER
                 m_graphicsDevice->PopTarget();
-#else
-                Graphics::GraphicsManager::PopTarget();
-#endif
                 m_renderTarget->GetTexture()->Draw(
                         m_renderer,
                         {
@@ -198,12 +170,8 @@ namespace NerdThings::Ngine {
                         Graphics::Color::White);
             }
 
-            // Finish drawing
-#ifdef USE_EXPERIMENTAL_RENDERER
+            // Render final buffers
             m_renderer->Render();
-#else
-            m_renderer->EndDrawing();
-#endif
 
             // Swap buffers
             m_gameWindow->SwapBuffers();

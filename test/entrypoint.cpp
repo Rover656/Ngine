@@ -217,11 +217,11 @@ public:
         auto spacing = 0;
         auto fontSize = 32;
         auto lSpacing = LineSpacing::OnePointFive;
-
+        auto rotation = 126;
         auto fnt = Font::GetDefaultFont();
         auto s = fnt->MeasureString(text, fontSize, spacing, lSpacing);
-        ShapeRenderer::DrawRectangle(renderer_, {150, 150, s.X, s.Y}, Color::Green);
-        fnt->DrawString(renderer_, text, {150, 150}, fontSize, spacing, Color::Orange, lSpacing);
+        ShapeRenderer::DrawRectangle(renderer_, {150, 150, s.X, s.Y}, Color::Green, rotation);
+        fnt->DrawString(renderer_, text, {150, 150}, fontSize, spacing, Color::Orange, lSpacing, rotation);
     }
 
     void Update() {

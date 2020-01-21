@@ -104,11 +104,9 @@ namespace NerdThings::Ngine::Graphics {
         m_characters.clear();
     }
 
-
     void Font::DrawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
                           float spacing_, const Color &color_, LineSpacing lineSpacing_, const Angle &rotation_,
                           const Vector2 &origin_) {
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Check if a single batch will fit:
         auto willFit = renderer_->CheckSize(PrimitiveType::Quads, string_.length());
         if (!willFit) // TODO: Automatically batch text for the developer
@@ -200,7 +198,6 @@ namespace NerdThings::Ngine::Graphics {
         // End renderer
         renderer_->End();
         renderer_->PopMatrix();
-#endif
     }
 
     void Font::DrawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,

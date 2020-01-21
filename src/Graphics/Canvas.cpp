@@ -55,12 +55,11 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void Canvas::ReDraw(Graphics::Renderer *renderer_) {
-#ifndef USE_EXPERIMENTAL_RENDERER
         m_graphicsDevice->PushTarget(m_renderTarget);
-        renderer_->Clear(Color::Transparent);
+        renderer_->SetClearColor(Color::Transparent);
+        renderer_->Clear();
         RenderTargetRedraw(renderer_);
         m_graphicsDevice->PopTarget();
-#endif
     }
 
     unsigned int Canvas::GetWidth() {

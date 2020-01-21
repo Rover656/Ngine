@@ -27,15 +27,9 @@
 #include "../Rectangle.hpp"
 #include "Color.hpp"
 #include "Font.hpp"
-
-#ifdef USE_EXPERIMENTAL_RENDERER
-
 #include "GraphicsDevice.hpp"
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
-
-#endif
-
 #include "Texture2D.hpp"
 
 namespace NerdThings::Ngine::Graphics {
@@ -72,27 +66,14 @@ namespace NerdThings::Ngine::Graphics {
         Quads
     };
 
-#ifdef USE_EXPERIMENTAL_RENDERER
     /**
-     * The rewritten Ngine renderer.
-     * This properly implements all required features for much easier batching and depth sorting.
-     * @note This will probably not be completed by the end of the year. This must be enabled with the CMake FEATURE_EXPERIMENTAL_RENDERER flag.
+     * The Ngine renderer.
      *
      * @todo Make the renderer platform agnostic so that its easier to switch graphics API
      * @todo Add scissor/stencil tests
      */
-#else
-    /**
-     * Rendering class. Provides all drawing functions.
-     * There is no concept of depth. First drawn is furthest behind.
-     *
-     * @todo Change this from a static class to an instance class so that the transition to the new renderer is easier later.
-     * @warning This API will be replaced once the new Ngine renderer is ready. Enable it by defining USE_EXPERIMENTAL_RENDERER.
-     */
-#endif
 
     class NEAPI Renderer {
-#ifdef USE_EXPERIMENTAL_RENDERER
     public:
         /**
          * The maximum size of elements per buffer allowed.
@@ -418,260 +399,6 @@ namespace NerdThings::Ngine::Graphics {
          * @return Whether or not a buffer can hold this primitive.
          */
         bool CheckSize(PrimitiveType type_, int count_);
-
-#else
-        // Internal OpenGL Methods
-#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-
-        void __DrawLine(Vector2 a_, Vector2 b_, Color c_, float thick_);
-
-#endif
-
-        GraphicsDevice *m_graphicsDevice = nullptr;
-    public:
-        Renderer(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {}
-        ~Renderer() = default;
-
-        /*
-         * Begin a drawing loop
-         */
-        void BeginDrawing();
-
-        /*
-         * Clear the screen with a color
-         */
-        void Clear(Color color_);
-
-        /*
-         * Draw a pixel
-         */
-        void DrawPixel(Vector2 position_, Color color_);
-
-        /*
-         * Draw line
-         */
-        void DrawLine(Vector2 startPos_, Vector2 endPos_, Color color_,
-                             float thickness_ = 1);
-
-        /*
-         * Draw a polygon outline from a point array
-         */
-        // TODO: Thickness for this too?
-        void DrawLineStrip(const std::vector<Vector2> &points_, Color color_, float lineThickness_ = 1);
-
-        /*
-         * Draw a color-filled circle
-         */
-        void DrawCircle(Vector2 center_, float radius_, Color color_);
-
-        /*
-         * Draw a circle outline
-         */
-        void DrawCircleLines(Vector2 center_, float radius_, Color color_, float lineThickness_ = 1);
-
-        /*
-         * Draw a sector of a circle
-         */
-        void DrawCircleSector(Vector2 center_, float radius_, float startAngle_, float endAngle_,
-                                     int segments_, Color color_);
-
-        /*
-         * Draw a circle sector outline
-         */
-        void DrawCircleSectorLines(Vector2 center_, float radius_, float startAngle_, float endAngle_,
-                                          int segments_, Color color_, float lineThickness_ = 1);
-
-//        /*
-//         * Draw a ring
-//         */
-//        void DrawRing(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
-//                             int endAngle_, int segments_, Color color_);
-//
-//        /*
-//         * Draw a ring outline
-//         */
-//        void DrawRingLines(Vector2 center_, float innerRadius_, float outerRadius_, int startAngle_,
-//                                  int endAngle_, int segments_, Color color_);
-
-        /*
-         * Draw a rectangle
-         */
-        void DrawRectangle(Vector2 position_, float width_, float height_, Color color_,
-                                  float rotation_ = 0, Vector2 origin_ = Vector2());
-
-        /*
-         * Draw a rectangle
-         */
-        void DrawRectangle(Vector2 position_, Vector2 size_, Color color_,
-                                  float rotation_ = 0, Vector2 origin_ = Vector2());
-
-        /*
-         * Draw a rectangle with additional parameters
-         */
-        void DrawRectangle(Rectangle rectangle_, Color color_, float rotation_ = 0,
-                                  Vector2 origin_ = Vector2());
-
-        /*
-         * Draw a vertical-gradient-filled rectangle
-         */
-        void DrawRectangleGradientV(Vector2 position_, float width_, float height_,
-                                           Color color1_, Color color2_, float rotation_ = 0,
-                                           Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a vertical-gradient-filled rectangle
-         */
-        void DrawRectangleGradientV(Vector2 position_, Vector2 size_, Color color1_,
-                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a vertical-gradient-filled rectangle
-         */
-        void DrawRectangleGradientV(Rectangle rectangle_, Color color1_,
-                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a horizonal-gradient-filled rectangle
-         */
-        void DrawRectangleGradientH(Vector2 position_, float width_, float height_,
-                                           Color color1_, Color color2_, float rotation_ = 0,
-                                           Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a horizonal-gradient-filled rectangle
-         */
-        void DrawRectangleGradientH(Vector2 position_, Vector2 size_, Color color1_,
-                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a horizonal-gradient-filled rectangle
-         */
-        void DrawRectangleGradientH(Rectangle rectangle_, Color color1_,
-                                           Color color2_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a rectangle with a color per vertex
-         */
-        void DrawRectangleGradientEx(Vector2 position_, float width_, float height_,
-                                            Color color1_, Color color2_, Color color3_,
-                                            Color color4_, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a rectangle with a color per vertex
-         */
-        void DrawRectangleGradientEx(Vector2 position_, Vector2 size_, Color color1_,
-                                            Color color2_, Color color3_, Color color4_, float rotation_ = 0,
-                                            Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw a rectangle with a color per vertex
-         */
-        void DrawRectangleGradientEx(Rectangle rectangle_, Color color1_,
-                                            Color color2_, Color color3_, Color color4_, float rotation_ = 0,
-                                            Vector2 origin_ = Vector2::Zero);
-
-        /*
-         * Draw rectangle outline
-         */
-        void DrawRectangleLines(Vector2 position_, float width_, float height_, Color color_,
-                                       int lineThickness_ = 1);
-
-        /*
-         * Draw rectangle outline
-         */
-        void DrawRectangleLines(Vector2 position_, Vector2 size_, Color color_,
-                                       int lineThickness_ = 1);
-
-        /*
-         * Draw rectangle outline
-         */
-        void DrawRectangleLines(Rectangle rectangle_, Color color_, int lineThickness_ = 1);
-
-        /*
-         * Draw text
-         */
-        void DrawText(Font *font_, const std::string &string_, Vector2 position_,
-                             float fontSize_, float spacing_, Color color_);
-
-        // TODO: Work on these next 2 methods
-
-        /*
-         * Draw text with rectangle constraint
-         */
-        void DrawTextRect(Font *font_, const std::string &string_,
-                                 Rectangle rectangle_, float fontSize_, float spacing_,
-                                 Color color_, bool wordWrap_ = true);
-
-        /*
-         * Draw text with rectangle constraint and select support
-         */
-        void DrawTextRectEx(Font *font_, const std::string &string_,
-                                   Rectangle rectangle_, float fontSize_, float spacing_,
-                                   Color color_, int selectStart_, int selectLength_,
-                                   Color selectText_, Color selectBack_, bool wordWrap_ = true);
-
-        /*
-         * Draw a texture
-         */
-        void DrawTexture(Texture2D *texture_, Vector2 position_, Color color_,
-                                float scale_ = 1, Vector2 origin_ = Vector2(), float rotation_ = 0);
-
-        /*
-         * Draw a texture with specified dimensions
-         */
-        void DrawTexture(Texture2D *texture_, Vector2 position_, float width_,
-                                float height_, Color color_, Vector2 origin_ = Vector2(),
-                                float rotation_ = 0);
-
-        /*
-         * Draw a part of a texture
-         */
-        void DrawTexture(Texture2D *texture_, Rectangle sourceRectangle_,
-                                Vector2 position_, Color color_,
-                                Vector2 origin_ = Vector2(), float rotation_ = 0);
-
-        /*
-         * Draw a part of a texture with specified dimensions
-         */
-        void DrawTexture(Texture2D *texture_, Rectangle sourceRectangle_,
-                                Vector2 position_, float width_, float height_, Color color_,
-                                Vector2 origin_ = Vector2(), float rotation_ = 0);
-
-        /*
-         * Draw a texture with pro parameters
-         */
-        void DrawTexture(Texture2D *texture_, Rectangle destRectangle_,
-                                Rectangle sourceRectangle_, Color color_,
-                                Vector2 origin_ = Vector2(), float rotation_ = 0);
-
-        /*
-         * Draw a triangle
-         */
-        void DrawTriangle(Vector2 v1_, Vector2 v2_, Vector2 v3_,
-                                 Color color_);
-
-        /*
-         * Draw a triangle outline
-         */
-        void DrawTriangleLines(Vector2 v1_, Vector2 v2_, Vector2 v3_,
-                                      Color color_, float lineThickness_ = 1);
-
-        /*
-         * Draw a triangle fan from a point array
-         */
-        void DrawTriangleFan(const std::vector<Vector2> &points_, Color color_);
-
-        /*
-         * Draw a polygon
-         */
-        void DrawPoly(Vector2 center_, int sides_, float radius_, float rotation_,
-                             Color color_);
-
-        /*
-         * End a drawing loop.
-         */
-        void EndDrawing();
-#endif
 
         /**
          * Get the graphics device used by the renderer.

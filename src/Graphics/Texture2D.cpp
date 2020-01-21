@@ -21,11 +21,7 @@
 #include "Graphics/Texture2D.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
-
 #include "Graphics/OpenGL.hpp"
-
-#endif
 #endif
 
 #include "Graphics/GraphicsDevice.hpp"
@@ -33,8 +29,6 @@
 #include "Console.hpp"
 
 namespace NerdThings::Ngine::Graphics {
-#ifdef USE_EXPERIMENTAL_RENDERER
-
     void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Save graphics device
         m_graphicsDevice = graphicsDevice_;
@@ -187,8 +181,6 @@ namespace NerdThings::Ngine::Graphics {
         return dataSize;
     }
 
-#endif
-
     Texture2D::Texture2D() {
         Unload();
     }
@@ -204,23 +196,12 @@ namespace NerdThings::Ngine::Graphics {
         Width = width_;
         Height = height_;
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Set fields
         m_mipmapCount = mipmapCount_;
         m_format = format_;
 
         // Make our texture
         _createTexture(graphicsDevice_, data_);
-#else
-        // Get format
-        OpenGL::GLPixelFormat frmt = OpenGL::UNCOMPRESSED_GRAYSCALE;
-        if (format_ == UNCOMPRESSED_GRAY_ALPHA) frmt = OpenGL::UNCOMPRESSED_GRAY_ALPHA;
-        else if (format_ == UNCOMPRESSED_R8G8B8) frmt = OpenGL::UNCOMPRESSED_R8G8B8;
-        else if (format_ == UNCOMPRESSED_R8G8B8A8) frmt = OpenGL::UNCOMPRESSED_R8G8B8A8;
-        else throw std::runtime_error("Incompatible format.");
-
-        InternalTexture = std::make_shared<OpenGL::GLTexture>(width_, height_, data_, mipmapCount_, frmt);
-#endif
 #endif
     }
 
@@ -236,25 +217,16 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     int Texture2D::GetMipmapCount() const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         return m_mipmapCount;
-#else
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        return InternalTexture->MipmapCount;
-#endif
-#endif
-        return 0;
     }
 
     void Texture2D::SetTextureFilter(const TextureFilterMode filterMode_) const {
-#ifdef USE_EXPERIMENTAL_RENDERER
+        // Bind
         glBindTexture(GL_TEXTURE_2D, m_ID);
         auto maxAnisotropicLevel = m_graphicsDevice->GetGLMaxAnisotropicLevel();
-#endif
 
         switch (filterMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
             case FILTER_POINT:
                 if (m_mipmapCount > 1) {
                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -294,44 +266,6 @@ namespace NerdThings::Ngine::Graphics {
                 if (16 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
                 else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
                 break;
-#else
-            case FILTER_POINT:
-                if (InternalTexture->MipmapCount > 1) {
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_MIP_NEAREST);
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_NEAREST);
-                } else {
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_NEAREST);
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_NEAREST);
-                }
-                break;
-            case FILTER_BILINEAR:
-                if (InternalTexture->MipmapCount > 1) {
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_LINEAR_MIP_NEAREST);
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_NEAREST);
-                } else {
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_LINEAR);
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_LINEAR);
-                }
-                break;
-            case FILTER_TRILINEAR:
-                if (InternalTexture->MipmapCount > 1) {
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_MIP_NEAREST);
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_LINEAR);
-                } else {
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MIN_FILTER, OpenGL::FILTER_FUNC_LINEAR);
-                    InternalTexture->SetParameter(OpenGL::TEXPARAM_MAG_FILTER, OpenGL::FILTER_FUNC_LINEAR);
-                }
-                break;
-            case FILTER_ANISOTROPIC_4X:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_ANISOTROPIC_FILTER, 4);
-                break;
-            case FILTER_ANISOTROPIC_8X:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_ANISOTROPIC_FILTER, 8);
-                break;
-            case FILTER_ANISOTROPIC_16X:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_ANISOTROPIC_FILTER, 16);
-                break;
-#endif
 #endif
             default:
                 break;
@@ -341,7 +275,6 @@ namespace NerdThings::Ngine::Graphics {
     void Texture2D::SetTextureWrap(const TextureWrapMode wrapMode_) const {
         switch (wrapMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
             case WRAP_REPEAT:
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -361,39 +294,12 @@ namespace NerdThings::Ngine::Graphics {
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 0x8742);
                 } else Console::Warn("GLTexture", "Clamp mirror mode not supported.");
                 break;
-#else
-            case WRAP_REPEAT:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_REPEAT);
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_REPEAT);
-                break;
-            case WRAP_CLAMP:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_CLAMP);
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_CLAMP);
-                break;
-            case WRAP_MIRROR_REPEAT:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_MIRROR_REPEAT);
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_MIRROR_REPEAT);
-                break;
-            case WRAP_MIRROR_CLAMP:
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_S, OpenGL::WRAP_MIRROR_CLAMP);
-                InternalTexture->SetParameter(OpenGL::TEXPARAM_WRAP_T, OpenGL::WRAP_MIRROR_CLAMP);
-                break;
-#endif
 #endif
         }
     }
 
     bool Texture2D::IsValid() const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         return m_ID != 0 && Width > 0 && Height > 0;
-#else
-        if (InternalTexture != nullptr)
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-            if (InternalTexture->ID > 0)
-                return true;
-#endif
-#endif
-        return false;
     }
 
     void Texture2D::Unload() {
@@ -402,12 +308,8 @@ namespace NerdThings::Ngine::Graphics {
         Height = 0;
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
         glDeleteTextures(1, &m_ID);
         m_ID = 0;
-#else
-        InternalTexture = nullptr;
-#endif
 #endif
     }
 
@@ -433,7 +335,6 @@ namespace NerdThings::Ngine::Graphics {
     void
     Texture2D::Draw(Graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_, Vector2 origin_,
                     Angle rotation_) {
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Fix parameters
         bool flipX = false;
         if (srcRect_.Width < 0) {
@@ -508,30 +409,13 @@ namespace NerdThings::Ngine::Graphics {
 
         // Pop matrix
         renderer_->PopMatrix();
-#else
-        renderer_->DrawTexture(this, destRect_, srcRect_, col_, origin_, rotation_.GetDegrees());
-#endif
     }
 
     bool Texture2D::operator==(const Texture2D &tex_) const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         return m_ID == tex_.m_ID;
-#else
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        return InternalTexture->ID == tex_.InternalTexture->ID;
-#endif
-#endif
-        return false;
     }
 
     bool Texture2D::operator!=(const Texture2D &tex_) const {
-#ifdef USE_EXPERIMENTAL_RENDERER
         return m_ID != tex_.m_ID;
-#else
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        return InternalTexture->ID != tex_.InternalTexture->ID;
-#endif
-#endif
-        return true;
     }
 }

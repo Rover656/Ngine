@@ -20,8 +20,6 @@
 
 #include "Graphics/Renderer.hpp"
 
-#ifdef USE_EXPERIMENTAL_RENDERER
-
 #include "Graphics/OpenGL.hpp"
 #include "Console.hpp"
 
@@ -623,5 +621,3 @@ namespace NerdThings::Ngine::Graphics {
         return false;
     }
 }
-
-#endif

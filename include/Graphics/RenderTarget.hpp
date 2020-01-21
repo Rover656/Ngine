@@ -26,10 +26,6 @@
 #include "../Resource.hpp"
 #include "Texture2D.hpp"
 
-#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
-#include "OpenGL/Framebuffer.hpp"
-#endif
-
 namespace NerdThings::Ngine::Graphics {
     /**
      * A 2D Texture in the GPU that can be rendered to.
@@ -42,7 +38,6 @@ namespace NerdThings::Ngine::Graphics {
          */
         Texture2D *m_texture;
 
-#ifdef USE_EXPERIMENTAL_RENDERER
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         /**
          * Render target ID (OpenGL)
@@ -56,7 +51,6 @@ namespace NerdThings::Ngine::Graphics {
          */
         unsigned int m_depthBufferID = 0;
 #endif
-#endif
     public:
         /**
          * Render target width.
@@ -68,15 +62,6 @@ namespace NerdThings::Ngine::Graphics {
          */
         unsigned int Height = 0;
 
-
-#ifndef USE_EXPERIMENTAL_RENDERER
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        /**
-         * Internal framebuffer on the GPU
-         */
-        std::shared_ptr<OpenGL::GLFramebuffer> InternalFramebuffer = nullptr;
-#endif
-#endif
         /**
          * Create a render target.
          *

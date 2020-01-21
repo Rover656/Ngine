@@ -78,7 +78,10 @@ endif ()
 
 # Depend on docs if enabled
 if (${BUILD_DOCS})
-    add_dependencies(Ngine Ngine_Docs)
+    find_package(Doxygen)
+    if (FOUND_DOXYGEN)
+        add_dependencies(Ngine Ngine_Docs)
+    endif ()
 endif ()
 
 # UWP Specifics
@@ -102,9 +105,7 @@ target_include_directories(Ngine PUBLIC ${_NGINE_INCLUDE_DIRS})
 
 ### Feature Flags
 
-if (${FEATURE_EXPERIMENTAL_RENDERER})
-    target_compile_definitions(Ngine PUBLIC USE_EXPERIMENTAL_RENDERER=1)
-endif ()
+
 
 ### End Feature Flags
 

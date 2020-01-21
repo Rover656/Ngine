@@ -23,10 +23,6 @@
 
 #include "../Config.hpp"
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#include "OpenGL/Texture.hpp"
-#endif
-
 #include "../Filesystem/Filesystem.hpp"
 #include "../Math.hpp"
 #include "../Rectangle.hpp"
@@ -103,12 +99,11 @@ namespace NerdThings::Ngine::Graphics {
      * A 2D Texture stored in the GPU memory.
      */
     class NEAPI Texture2D : public IResource {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifdef USE_EXPERIMENTAL_RENDERER
-        // Friend renderer
+        // Friends
         friend class Renderer;
         friend class RenderTarget;
 
+#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         /**
          * OpenGL Texture ID
          */
@@ -141,7 +136,6 @@ namespace NerdThings::Ngine::Graphics {
          */
         int _calculatePixelDataSize();
 #endif
-#endif
     public:
         /**
          * Texture width
@@ -152,15 +146,6 @@ namespace NerdThings::Ngine::Graphics {
          * Texture Height
          */
         unsigned int Height = 0;
-
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#ifndef USE_EXPERIMENTAL_RENDERER
-        /**
-         * Internal texture (OpenGL)
-         */
-        std::shared_ptr<OpenGL::GLTexture> InternalTexture = nullptr;
-#endif
-#endif
 
         /**
          * Create a null texture

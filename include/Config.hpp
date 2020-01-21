@@ -93,6 +93,4 @@
     #error "Unsupported platform"
 #endif
 
-//#define USE_EXPERIMENTAL_RENDERER // TEMP: UWP
-
 #endif //CONFIG_HPP

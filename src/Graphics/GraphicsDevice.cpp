@@ -160,7 +160,6 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void GraphicsDevice::PushTarget(RenderTarget *target_) {
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
             Console::Fail("GraphicsDevice", "Render target stack overflow.");
@@ -175,22 +174,15 @@ namespace NerdThings::Ngine::Graphics {
 
         // Bind
         glBindFramebuffer(GL_FRAMEBUFFER, target_->m_ID);
-#else
-        Console::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
-#endif
     }
 
     void GraphicsDevice::PopTarget() {
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Force render before swapping target
         for (auto renderer : m_attachedRenderers)
             renderer->Render();
 
         // If target counter greater than 0, decrease
         if (m_targetCounter > 0) m_targetCounter--;
-#else
-        Console::Fail("GraphicsDevice", "GraphicsDevice is currently only for the new renderer. Use GraphicsManager instead.");
-#endif
     }
 
     Matrix GraphicsDevice::GetProjectionMatrix() const {
@@ -228,7 +220,6 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void GraphicsDevice::SetupFramebuffer() {
-#ifdef USE_EXPERIMENTAL_RENDERER
         // Bind the next framebuffer
         if (m_targetCounter > 0)
             glBindFramebuffer(GL_FRAMEBUFFER, m_targetStack[m_targetCounter - 1]->m_ID);
@@ -249,7 +240,6 @@ namespace NerdThings::Ngine::Graphics {
 
         // Create new matrix
         m_projectionMatrix = Matrix::Orthographic(0, (float)w, (float)h, 0, -1, 1);
-#endif
     }
 
     bool GraphicsDevice::GetGLSupportFlag(GraphicsDevice::OpenGLFeature feature_) {

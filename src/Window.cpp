@@ -43,7 +43,6 @@
 #include <stdexcept>
 
 #include "Audio/AudioDevice.hpp"
-#include "Graphics/OpenGL/OpenGL.hpp"
 #include "Input/Gamepad.hpp"
 #include "Input/Mouse.hpp"
 #include "Input/Keyboard.hpp"
@@ -96,29 +95,19 @@ namespace NerdThings::Ngine {
         if (config_.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
 
         // Set version string
-        switch(Graphics::OpenGL::GL::GetGLVersion()) {
-            case Graphics::OpenGL::OPENGL_21:
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-                break;
-            case Graphics::OpenGL::OPENGL_33:
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-                break;
-            case Graphics::OpenGL::OPENGL_ES2:
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+#if defined(GRAPHICS_OPENGL33)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#elif defined(GRAPHICS_OPENGL21)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+#elif defined(GRAPHICS_OPENGLES2)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-#if defined(PLATFORM_DESKTOP)
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-#else
-                glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 #endif
-                break;
-            case Graphics::OpenGL::OPENGL_UNKNOWN:
-                throw std::runtime_error("Error, unable to determine an OpenGL version to use.");
-        }
 #endif
 
         // Creation
@@ -376,11 +365,6 @@ namespace NerdThings::Ngine {
 
         // Make this window current
         MakeCurrent();
-
-#ifndef USE_EXPERIMENTAL_RENDERER
-        // Init OpenGL
-        Graphics::OpenGL::GL::Init();
-#endif
 
         // Create Input APIs
         m_mouseInput = new Input::Mouse(this);
@@ -646,11 +630,6 @@ namespace NerdThings::Ngine {
         // Destroy input APIs
         delete m_mouseInput;
         delete m_keyboardInput;
-
-#ifndef USE_EXPERIMENTAL_RENDERER
-        // Cleanup OpenGL
-        Graphics::OpenGL::GL::Cleanup();
-#endif
 
 #if defined(PLATFORM_DESKTOP)
         // Destroy window

@@ -166,7 +166,6 @@
 #include "Graphics/Color.hpp"
 #include "Graphics/Font.hpp"
 #include "Graphics/GraphicsDevice.hpp"
-#include "Graphics/GraphicsManager.hpp"
 #include "Graphics/Image.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/RenderTarget.hpp"

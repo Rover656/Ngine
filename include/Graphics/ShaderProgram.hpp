@@ -23,8 +23,6 @@
 
 #include "../Config.hpp"
 
-#ifdef USE_EXPERIMENTAL_RENDERER
-
 namespace NerdThings::Ngine::Graphics {
     class Shader;
 
@@ -86,7 +84,5 @@ namespace NerdThings::Ngine::Graphics {
         bool IsValid();
     };
 }
-
-#endif
 
 #endif //SHADERPROGRAM_HPP
