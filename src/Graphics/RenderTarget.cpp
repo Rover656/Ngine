@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/RenderTexture.hpp"
+#include "Graphics/RenderTarget.hpp"
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
 #include "Graphics/OpenGL.hpp"

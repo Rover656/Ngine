@@ -24,7 +24,7 @@
 #include "../Config.hpp"
 
 #include "Camera.hpp"
-#include "RenderTexture.hpp"
+#include "RenderTarget.hpp"
 #include "ShaderProgram.hpp"
 
 #include "NewRenderer.hpp"

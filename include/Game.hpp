@@ -25,7 +25,7 @@
 
 #include "Graphics/Color.hpp"
 #include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTexture.hpp"
+#include "Graphics/RenderTarget.hpp"
 #include "Filesystem/ResourceManager.hpp"
 #include "Events.hpp"
 #include "Math.hpp"

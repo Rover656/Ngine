@@ -22,7 +22,7 @@
 
 #include "Graphics/OpenGL.hpp"
 #include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTexture.hpp"
+#include "Graphics/RenderTarget.hpp"
 #include "Console.hpp"
 
 #include "API/PlatformGLAPI.hpp"

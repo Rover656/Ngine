@@ -18,8 +18,8 @@
 *
 **********************************************************************************************/
 
-#ifndef RENDERTEXTURE_HPP
-#define RENDERTEXTURE_HPP
+#ifndef RENDERTARGET_HPP
+#define RENDERTARGET_HPP
 
 #include "../Config.hpp"
 
@@ -97,4 +97,4 @@ namespace Ngine::Graphics {
     };
 }
 
-#endif //RENDERTEXTURE_HPP
+#endif //RENDERTARGET_HPP
