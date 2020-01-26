@@ -21,12 +21,13 @@
 #ifndef VERTEXLAYOUT_HPP
 #define VERTEXLAYOUT_HPP
 
-#include "../../Config.hpp"
+#include "../Config.hpp"
 
-#include "../GraphicsDevice.hpp"
-#include "PlatformGraphicsAPI.hpp"
+#include "API/PlatformGraphicsAPI.hpp"
+#include "Buffer.hpp"
+#include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics::API {
+namespace Ngine::Graphics {
     /**
      * Description of what a vertex array contains and where it should be routed to in the shader.
      */
@@ -79,7 +80,7 @@ namespace Ngine::Graphics::API {
         /**
          * The graphics API.
          */
-        PlatformGraphicsAPI *m_API = nullptr;
+        API::PlatformGraphicsAPI *m_API = nullptr;
 
         /**
          * Once configured, the layout locks.
@@ -91,7 +92,14 @@ namespace Ngine::Graphics::API {
          */
         std::vector<VertexElement> m_elements;
 
+        /**
+         * The attached vertex buffer.
+         */
         Buffer *m_vertexBuffer = nullptr;
+
+        /**
+         * The attached index buffer.
+         */
         Buffer *m_indexBuffer = nullptr;
 
         /**
@@ -111,6 +119,13 @@ namespace Ngine::Graphics::API {
             void *Ptr;
         };
 
+        /**
+         * Create a vertex layout.
+         *
+         * @param graphicsDevice_ The graphics device.
+         * @param vertexBuffer_ The vertex buffer to bind when using this layout.
+         * @param indexBuffer_ The index buffer to bind when using this layout or null.
+         */
         VertexLayout(GraphicsDevice *graphicsDevice_, Buffer *vertexBuffer_, Buffer *indexBuffer_);
         ~VertexLayout();
 
@@ -135,8 +150,14 @@ namespace Ngine::Graphics::API {
          */
         void Configure();
 
+        /**
+         * Get the attached vertex buffer.
+         */
         Buffer *GetVertexBuffer();
 
+        /**
+         * Get the attached index buffer.
+         */
         Buffer *GetIndexBuffer();
 
         /**

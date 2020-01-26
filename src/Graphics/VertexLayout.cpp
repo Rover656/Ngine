@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/API/VertexLayout.hpp"
+#include "Graphics/VertexLayout.hpp"
 
-#include "Graphics/API/Buffer.hpp"
+#include "Graphics/Buffer.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Graphics::API {
+namespace Ngine::Graphics {
     VertexLayout::VertexLayout(GraphicsDevice *graphicsDevice_, Buffer *vertexBuffer_, Buffer *indexBuffer_)
             : m_API(graphicsDevice_->GetAPI()) {
         // Check buffers

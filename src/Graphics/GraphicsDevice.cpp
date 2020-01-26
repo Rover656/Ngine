@@ -75,9 +75,15 @@ namespace Ngine::Graphics {
         // Check API minimum versions
         switch (m_targetAPI) {
             case GraphicsAPI::OpenGL:
-                if (m_targetMajorVersion < 2 && (m_targetMajorVersion == 2 && m_targetMinorVersion < 1))
-                    Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 2.1");
-
+#if !defined(PLATFORM_DESKTOP)
+                Console::Fail("GraphicsDevice", "OpenGL is not supported on this platform.");
+#endif
+                if (m_targetMajorVersion < 3 && (m_targetMajorVersion == 3 && m_targetMinorVersion < 0))
+                    Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 3.0");
+                break;
+            case GraphicsAPI::OpenGLES:
+                if (!(m_targetMajorVersion == 2 && m_targetMinorVersion == 0))
+                    Console::Fail("GraphicsDevice", "OpenGL ES 2.0 is the only version supported at the moment.");
                 break;
         }
 

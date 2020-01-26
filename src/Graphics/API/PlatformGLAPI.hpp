@@ -77,7 +77,7 @@ namespace Ngine::Graphics::API {
         /**
          * Depth texture support.
          */
-        EX_TEX_DEPTH,
+        EXT_TEX_DEPTH,
 
         /**
          * Texture float support.
@@ -104,6 +104,8 @@ namespace Ngine::Graphics::API {
         bool m_GLES = false;
 
         bool m_featureFlags[EXT_TEX_NPOT + 1];
+        int m_maxDepthBits = 0;
+        float m_maxAnisotropicLevel = 0;
 
         // For EGL platforms
 #if defined(EGL)

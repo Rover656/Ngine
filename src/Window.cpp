@@ -114,6 +114,11 @@ namespace Ngine {
 
         // Creation
 #if defined(PLATFORM_DESKTOP)
+        // Set callback
+        glfwSetErrorCallback([] (int,const char*msg) {
+            Console::Error("GLFW", "%s", msg);
+        });
+
         // Create window
         m_GLFWWindow = glfwCreateWindow(config_.InitialWidth, config_.InitialHeight, config_.Title.c_str(), nullptr, nullptr);
 

@@ -23,10 +23,10 @@
 
 #include "../Config.hpp"
 
-#include "API/Buffer.hpp"
-#include "API/VertexLayout.hpp"
+#include "Buffer.hpp"
 #include "Renderer.hpp"
 #include "Texture2D.hpp"
+#include "VertexLayout.hpp"
 
 namespace Ngine::Graphics {
     /**
@@ -73,17 +73,17 @@ namespace Ngine::Graphics {
         /**
          * The batch vertex layout.
          */
-        API::VertexLayout *m_layout;
+        VertexLayout *m_layout;
 
         /**
          * The vertex buffer for the batch.
          */
-        API::Buffer *m_VBO;
+        Buffer *m_VBO;
 
         /**
          * The index buffer for the batch.
          */
-        API::Buffer *m_IBO;
+        Buffer *m_IBO;
 
         /**
          * The texture being used for the current batch
@@ -245,7 +245,7 @@ namespace Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void RenderBuffer(API::VertexLayout *layout_, API::Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
+        void RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
 
         /**
          * Render an indexed vertex buffer.
@@ -257,7 +257,7 @@ namespace Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void RenderBufferIndexed(API::VertexLayout *layout_, API::Buffer *VBO_, API::Buffer *IBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
+        void RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
 
         /**
          * Get the graphics device attached to the renderer.

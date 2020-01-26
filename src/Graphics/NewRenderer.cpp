@@ -59,24 +59,24 @@ namespace Ngine::Graphics {
 
     NewRenderer::NewRenderer(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
         // Create vertex buffer
-        m_VBO = new API::Buffer(m_graphicsDevice, API::BufferType::Vertex, API::BufferUsage::Dynamic);
+        m_VBO = new Buffer(m_graphicsDevice, BufferType::Vertex, BufferUsage::Dynamic);
 
         // Write null data
         m_VBO->Write<Vertex>(nullptr, MAX_TRIANGLE_VERTICES);
 
         // Create IBO
-        m_IBO = new API::Buffer(m_graphicsDevice, API::BufferType::Index, API::BufferUsage::Dynamic);
+        m_IBO = new Buffer(m_graphicsDevice, BufferType::Index, BufferUsage::Dynamic);
 
         // Write null data
         m_IBO->Write<unsigned short>(nullptr, MAX_TRIANGLE_VERTICES);
 
         // Create vertex layout TODO: Tidy API a little
-        m_layout = new API::VertexLayout(m_graphicsDevice, m_VBO, m_IBO);
+        m_layout = new VertexLayout(m_graphicsDevice, m_VBO, m_IBO);
         m_layout->AddElement({
                                      "", // DX
                                      0, // GL
                                      3,
-                                     API::VertexLayout::VertexElementType::Float,
+                                     VertexLayout::VertexElementType::Float,
                                      sizeof(Vertex),
                                      offsetof(Vertex, Position)
                              });
@@ -84,7 +84,7 @@ namespace Ngine::Graphics {
                                      "",
                                      2,
                                      2,
-                                     API::VertexLayout::VertexElementType::Float,
+                                     VertexLayout::VertexElementType::Float,
                                      sizeof(Vertex),
                                      offsetof(Vertex, TexCoords)
                              });
@@ -92,7 +92,7 @@ namespace Ngine::Graphics {
                                      "",
                                      1,
                                      4,
-                                     API::VertexLayout::VertexElementType::Float,
+                                     VertexLayout::VertexElementType::Float,
                                      sizeof(Vertex),
                                      offsetof(Vertex, Color)
                              });
@@ -292,15 +292,15 @@ namespace Ngine::Graphics {
         m_indexCount = 0;
     }
 
-    void NewRenderer::RenderBuffer(API::VertexLayout *layout_, API::Buffer *VBO_, int count_, Texture2D *texture_,
+    void NewRenderer::RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_,
                                    ShaderProgram *shader_) {
         RenderBufferIndexed(layout_, VBO_, nullptr, count_, texture_, shader_);
     }
 
-    void NewRenderer::RenderBufferIndexed(API::VertexLayout *layout_, API::Buffer *VBO_, API::Buffer *IBO_, int count_,
+    void NewRenderer::RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_,
                                           Texture2D *texture_, ShaderProgram *shader_) {
         // Check buffer types
-        if (VBO_->Type != API::BufferType::Vertex || (IBO_ != nullptr && IBO_->Type != API::BufferType::Index))
+        if (VBO_->Type != BufferType::Vertex || (IBO_ != nullptr && IBO_->Type != BufferType::Index))
             Console::Fail("Renderer", "Incorrect buffers provided to RenderBufferIndexed");
 
         // Configure the current framebuffer for rendering

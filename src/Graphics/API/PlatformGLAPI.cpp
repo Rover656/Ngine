@@ -33,24 +33,38 @@
 #include <EGL/eglext.h>
 #endif
 
+#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
+#ifndef GL_TEXTURE_MAX_ANISOTROPY_EXT
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#endif
+
 #if defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
 #include "UWP/GameApp.hpp"
 #endif
 
-#include "Graphics/API/Buffer.hpp"
-#include "Graphics/API/VertexLayout.hpp"
+#include "Graphics/Buffer.hpp"
+#include "Graphics/VertexLayout.hpp"
 #include "Console.hpp"
+
+#if defined(GLAD)
+static PFNGLGENVERTEXARRAYSPROC glGenVertexArraysOES;
+static PFNGLBINDVERTEXARRAYPROC glBindVertexArrayOES;
+static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
+#endif
 
 namespace Ngine::Graphics::API {
     void PlatformGLAPI::_useVertexLayout(VertexLayout *layout_) {
         // Bind VAO if enabled
-#if !defined(PLATFORM_UWP)
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            glBindVertexArray(layout_->VAO);
-        } else
+        if (m_featureFlags[FEATURE_VAO]) {
+            if (m_GLES)
+                glBindVertexArrayOES(layout_->VAO);
+#if !defined(EGL)
+            else glBindVertexArray(layout_->VAO);
 #endif
-        {
+        } else {
             // Bind buffers
             auto vBuf = layout_->GetVertexBuffer();
             auto iBuf = layout_->GetIndexBuffer();
@@ -75,13 +89,14 @@ namespace Ngine::Graphics::API {
     }
 
     void PlatformGLAPI::_stopVertexLayout(VertexLayout *layout_) {
-#if !defined(PLATFORM_UWP)
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+        if (m_featureFlags[FEATURE_VAO]) {
             // Unbind VAO
-            glBindVertexArray(0);
-        } else
+            if (m_GLES)
+                glBindVertexArrayOES(0);
+#if !defined(EGL)
+            else glBindVertexArray(0);
 #endif
-        {
+        } else {
             // Unbind buffers
             auto vBuf = layout_->GetVertexBuffer();
             auto iBuf = layout_->GetIndexBuffer();
@@ -322,8 +337,115 @@ namespace Ngine::Graphics::API {
 #if defined(PLATFORM_DESKTOP) // Desktop supports GL and GLES, so we need to distinguish between them
         if (!m_GLES && GLAD_GL_VERSION_3_0) {
             m_featureFlags[FEATURE_VAO] = true;
+            m_featureFlags[EXT_TEX_NPOT] = true;
+            m_featureFlags[EXT_TEX_FLOAT] = true;
+            m_featureFlags[EXT_TEX_DEPTH] = true;
         }
 #endif
+
+        // Build extension list
+        int numExt = 0;
+        const char **extList = nullptr;
+        if (m_GLES) {
+            // Create array
+            extList = new const char*[512];
+
+            const char *extensions = (const char *) glGetString(GL_EXTENSIONS);
+
+            int len = strlen(extensions) + 1;
+            char *exts = (char *) new char[len];
+            strcpy(exts, extensions);
+
+            extList[numExt] = exts;
+
+            for (int i = 0; i < len; i++) {
+                if (exts[i] == ' ') {
+                    exts[i] = '\0';
+                    numExt++;
+                    extList[numExt] = &exts[i + 1];
+                }
+            }
+        } else {
+#if defined(GLAD)
+            // Get extension count
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
+
+            // Get extensions
+            extList = new const char*[numExt];
+            for (auto i = 0; i < numExt; i++) extList[i] = (char *) glGetStringi(GL_EXTENSIONS, i);
+#endif
+        }
+
+        // Process extensions
+        for (auto i = 0; i < numExt; i++) {
+            // GLES2 Specific Extensions
+            if (m_GLES) {
+                // Check for VAO support
+                if (strcmp(extList[i], "GL_OES_vertex_array_object") == 0) {
+#if defined(GLAD)
+#if defined(PLATFORM_DESKTOP)
+                    // GLFW does not provide the OES version, try to find it.
+                    glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress("glGenVertexArraysOES");
+                    glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress("glBindVertexArrayOES");
+                    glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSPROC) glfwGetProcAddress("glDeleteVertexArraysOES");
+
+                    if ((glGenVertexArraysOES != nullptr) && (glBindVertexArrayOES != nullptr) &&
+                        (glDeleteVertexArraysOES != nullptr))
+                        m_featureFlags[FEATURE_VAO] = true;
+#endif
+#elif defined(EGL)
+                    // gl2ext.h provides the functions already.
+                    m_featureFlags[FEATURE_VAO] = true;
+#endif
+                }
+
+                // Check NPOT textures support
+                if (strcmp(extList[i], "GL_OES_texture_npot") == 0) m_featureFlags[EXT_TEX_NPOT] = true;
+
+                // Check texture float support
+                if (strcmp(extList[i], "GL_OES_texture_float") == 0) m_featureFlags[EXT_TEX_FLOAT] = true;
+
+                // Check depth texture support
+                if ((strcmp(extList[i], "GL_OES_depth_texture") == 0) ||
+                    (strcmp(extList[i], "GL_WEBGL_depth_texture") == 0))
+                    m_featureFlags[EXT_TEX_DEPTH] = true;
+
+                if (strcmp(extList[i], "GL_OES_depth24") == 0) m_maxDepthBits = 24;
+                if (strcmp(extList[i], "GL_OES_depth32") == 0) m_maxDepthBits = 32;
+            }
+
+            // DDS texture compression support
+            if ((strcmp(extList[i], "GL_EXT_texture_compression_s3tc") == 0) ||
+                (strcmp(extList[i], "GL_WEBGL_compressed_texture_s3tc") == 0) ||
+                (strcmp(extList[i], "GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0))
+                m_featureFlags[EXT_COMP_DXT] = true;
+
+            // ETC1 texture compression support
+            if ((strcmp(extList[i], "GL_OES_compressed_ETC1_RGB8_texture") == 0) ||
+                (strcmp(extList[i], "GL_WEBGL_compressed_texture_etc1") == 0))
+                m_featureFlags[EXT_COMP_ETC1] = true;
+
+            // ETC2/EAC texture compression support
+            if (strcmp(extList[i], "GL_ARB_ES3_compatibility") == 0) m_featureFlags[EXT_COMP_ETC2] = true;
+
+            // PVR texture compression support
+            if (strcmp(extList[i], "GL_IMG_texture_compression_pvrtc") == 0) m_featureFlags[EXT_COMP_PVRT] = true;
+
+            // ASTC texture compression support
+            if (strcmp(extList[i], "GL_KHR_texture_compression_astc_hdr") == 0) m_featureFlags[EXT_COMP_ASTC] = true;
+
+            // Anisotropic texture filter
+            if (strcmp(extList[i], (const char *) "GL_EXT_texture_filter_anisotropic") == 0) {
+                m_featureFlags[EXT_ANISOTROPIC_TEXTURE_FILTER] = true;
+                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropicLevel);
+            }
+
+            // Clamp mirror wrap mode supported
+            if (strcmp(extList[i], (const char *) "GL_EXT_texture_mirror_clamp") == 0)
+                m_featureFlags[EXT_TEX_MIRROR_CLAMP] = true;
+
+            // TODO: Determine m_maxDepthBits for OpenGL
+        }
     }
 
     PlatformGLAPI::~PlatformGLAPI() {
@@ -453,22 +575,26 @@ namespace Ngine::Graphics::API {
 
     void PlatformGLAPI::InitializeVertexLayout(VertexLayout *layout_) {
         // Create VAO if enabled
-#if !defined(PLATFORM_UWP)
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+        if (m_featureFlags[FEATURE_VAO]) {
             layout_->VAO = 0;
-            glGenVertexArrays(1, &layout_->VAO);
-        }
+            if (m_GLES)
+                glGenVertexArraysOES(1, &layout_->VAO);
+#if !defined(EGL)
+            else glGenVertexArrays(1, &layout_->VAO);
 #endif
+        }
     }
 
     void PlatformGLAPI::CleanupVertexLayout(VertexLayout *layout_) {
         // Delete VAO if enabled
-#if !defined(PLATFORM_UWP)
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            glDeleteVertexArrays(1, &layout_->VAO);
+        if (m_featureFlags[FEATURE_VAO]) {
+            if (m_GLES)
+                glDeleteVertexArraysOES(1, &layout_->VAO);
+#if !defined(EGL)
+            else glDeleteVertexArrays(1, &layout_->VAO);
+#endif
             layout_->VAO = 0;
         }
-#endif
     }
 
     void PlatformGLAPI::ConfigureVertexLayout(VertexLayout *layout_) {
@@ -476,21 +602,23 @@ namespace Ngine::Graphics::API {
         auto vBuf = layout_->GetVertexBuffer();
         auto iBuf = layout_->GetIndexBuffer();
 
-#if !defined(PLATFORM_UWP)
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
+        if (m_featureFlags[FEATURE_VAO]) {
             // Unbind any existing buffers
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
             // Bind VAO
-            glBindVertexArray(layout_->VAO);
+            if (m_GLES)
+                glBindVertexArrayOES(layout_->VAO);
+#if !defined(EGL)
+            else glBindVertexArray(layout_->VAO);
+#endif
 
             // Bind buffers
             BindBuffer(vBuf);
             if (iBuf != nullptr)
                 BindBuffer(iBuf);
         }
-#endif
 
         auto elements = layout_->GetElements();
         for (const auto& elm : elements) {
@@ -506,13 +634,15 @@ namespace Ngine::Graphics::API {
         }
 
         // Unbind VAO then buffers (if present)
-#if !defined(PLATFORM_UWP)
-        if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_VAO)) {
-            glBindVertexArray(0);
+        if (m_featureFlags[FEATURE_VAO]) {
+            if (m_GLES)
+                glBindVertexArrayOES(0);
+#if !defined(EGL)
+            else glBindVertexArray(0);
+#endif
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
-#endif
     }
 
     void PlatformGLAPI::Draw(int count_, int start_) {

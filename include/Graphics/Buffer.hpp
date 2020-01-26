@@ -21,11 +21,11 @@
 #ifndef BUFFER_HPP
 #define BUFFER_HPP
 
-#include "../../Config.hpp"
+#include "../Config.hpp"
 
-#include "../GraphicsDevice.hpp"
+#include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics::API {
+namespace Ngine::Graphics {
     /**
      * A GPU buffer type.
      */
@@ -50,7 +50,7 @@ namespace Ngine::Graphics::API {
         /**
          * The graphics API.
          */
-        PlatformGraphicsAPI *m_API;
+        API::PlatformGraphicsAPI *m_API;
 
         /**
          * Write data to the buffer (internal).

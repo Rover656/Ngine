@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/API/Buffer.hpp"
+#include "Graphics/Buffer.hpp"
 
-namespace Ngine::Graphics::API {
+namespace Ngine::Graphics {
     void Buffer::_writeBuffer(void *data_, int count_, int size_, bool update_) {
         // Use API
         m_API->WriteBuffer(this, data_, count_, size_, update_);

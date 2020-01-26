@@ -26,103 +26,108 @@
 #include "../ShaderProgram.hpp"
 #include "../Texture2D.hpp"
 
-namespace Ngine::Graphics::API {
+namespace Ngine::Graphics {
     class Buffer;
     class VertexLayout;
 
-    /**
-     * The platform renderer interface. This defines what a renderer can do and how.
-     */
-    class NEAPI PlatformGraphicsAPI {
-    protected:
+    namespace API {
         /**
-         * The graphics device.
+         * The platform renderer interface. This defines what a renderer can do and how.
          */
-         GraphicsDevice *m_graphicsDevice = nullptr;
+        class NEAPI PlatformGraphicsAPI {
+        protected:
+            /**
+             * The graphics device.
+             */
+            GraphicsDevice *m_graphicsDevice = nullptr;
 
-         VertexLayout *m_currentLayout = nullptr;
+            VertexLayout *m_currentLayout = nullptr;
 
-         virtual void _useVertexLayout(VertexLayout *layout_) = 0;
-         virtual void _stopVertexLayout(VertexLayout *layout_) = 0;
-    public:
-        PlatformGraphicsAPI(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {}
-        virtual ~PlatformGraphicsAPI() = default;
+            virtual void _useVertexLayout(VertexLayout *layout_) = 0;
 
-        /**
-         * Clear the display.
-         *
-         * @param color_ The color to clear with.
-         */
-        virtual void Clear(const Color &color_) = 0;
+            virtual void _stopVertexLayout(VertexLayout *layout_) = 0;
 
-        /**
-         * Bind a texture.
-         *
-         * @param texture_ Texture to bind, null to unbind.
-         */
-        virtual void BindTexture(Texture2D *texture_) = 0;
+        public:
+            PlatformGraphicsAPI(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {}
 
-        /**
-         * Bind a shader.
-         *
-         * @param shader_ Shader to bind, null to unbind.
-         */
-        virtual void BindShader(ShaderProgram *shader_) = 0;
+            virtual ~PlatformGraphicsAPI() = default;
 
-        /**
-         * Bind a buffer.
-         *
-         * @warning Due to the nature of buffers, you must use `UnbindBuffer` instead of passing null.
-         * @param buffer_ The buffer to bind
-         */
-        virtual void BindBuffer(Buffer *buffer_) = 0;
+            /**
+             * Clear the display.
+             *
+             * @param color_ The color to clear with.
+             */
+            virtual void Clear(const Color &color_) = 0;
 
-        /**
-         * Unbind a buffer
-         *
-         * @param buffer_ Buffer to unbind.
-         */
-        virtual void UnbindBuffer(Buffer *buffer_) = 0;
+            /**
+             * Bind a texture.
+             *
+             * @param texture_ Texture to bind, null to unbind.
+             */
+            virtual void BindTexture(Texture2D *texture_) = 0;
 
-        /**
-         * Using a provided buffer, create it on the GPU.
-         *
-         * @param buffer_ Buffer to initialize.
-         */
-        virtual void InitializeBuffer(Buffer *buffer_) = 0;
+            /**
+             * Bind a shader.
+             *
+             * @param shader_ Shader to bind, null to unbind.
+             */
+            virtual void BindShader(ShaderProgram *shader_) = 0;
 
-        /**
-         * Cleanup buffer on GPU.
-         *
-         * @param buffer_ Buffer to clean/remove.
-         */
-        virtual void CleanupBuffer(Buffer *buffer_) = 0;
+            /**
+             * Bind a buffer.
+             *
+             * @warning Due to the nature of buffers, you must use `UnbindBuffer` instead of passing null.
+             * @param buffer_ The buffer to bind
+             */
+            virtual void BindBuffer(Buffer *buffer_) = 0;
 
-        /**
-         * Write the given data to the given buffer.
-         *
-         * @param buffer_ The buffer to write to.
-         * @param data_ The data array
-         * @param count_ The number of array entries
-         * @param size_ The size of each entry
-         * @param update_ GL only, whether or not to use glBufferSubData
-         */
-        virtual void WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) = 0;
+            /**
+             * Unbind a buffer
+             *
+             * @param buffer_ Buffer to unbind.
+             */
+            virtual void UnbindBuffer(Buffer *buffer_) = 0;
 
-        virtual void InitializeVertexLayout(VertexLayout *layout_) = 0;
+            /**
+             * Using a provided buffer, create it on the GPU.
+             *
+             * @param buffer_ Buffer to initialize.
+             */
+            virtual void InitializeBuffer(Buffer *buffer_) = 0;
 
-        virtual void CleanupVertexLayout(VertexLayout *layout_) = 0;
+            /**
+             * Cleanup buffer on GPU.
+             *
+             * @param buffer_ Buffer to clean/remove.
+             */
+            virtual void CleanupBuffer(Buffer *buffer_) = 0;
 
-        virtual void ConfigureVertexLayout(VertexLayout *layout_) = 0;
+            /**
+             * Write the given data to the given buffer.
+             *
+             * @param buffer_ The buffer to write to.
+             * @param data_ The data array
+             * @param count_ The number of array entries
+             * @param size_ The size of each entry
+             * @param update_ GL only, whether or not to use glBufferSubData
+             */
+            virtual void WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) = 0;
 
-        void UseVertexLayout(VertexLayout *layout_);
+            virtual void InitializeVertexLayout(VertexLayout *layout_) = 0;
 
-        void StopVertexLayout(VertexLayout *layout_);
+            virtual void CleanupVertexLayout(VertexLayout *layout_) = 0;
 
-        virtual void Draw(int count_, int start_) = 0;
+            virtual void ConfigureVertexLayout(VertexLayout *layout_) = 0;
 
-        virtual void DrawIndexed(int count_, int start_) = 0;
-    };
+            void UseVertexLayout(VertexLayout *layout_);
+
+            void StopVertexLayout(VertexLayout *layout_);
+
+            virtual void Draw(int count_, int start_) = 0;
+
+            virtual void DrawIndexed(int count_, int start_) = 0;
+        };
+    }
 }
 
 #endif //PLATFORMGRAPHICSAPI_HPP
