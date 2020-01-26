@@ -27,7 +27,7 @@
 #include "../Resource.hpp"
 #include "AudioStream.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     /**
      * The music context type.
      */

@@ -26,7 +26,7 @@
 #include "../Math.hpp"
 #include "GraphicsDevice.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * Defines a camera configuration.
      */
@@ -59,7 +59,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param zoom_ Camera zoom level.
          * @param origin_ Camera origin.
          */
-        Camera(Vector2 position_ = Vector2::Zero, float rotation_ = 0, float zoom_ = 0,
+        Camera(Vector2 position_ = Vector2::Zero, float rotation_ = 0, float zoom_ = 1,
                Vector2 origin_ = Vector2::Zero) : Position(position_), Rotation(rotation_), Zoom(zoom_),
                                               Origin(origin_) {}
 

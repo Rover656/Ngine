@@ -118,31 +118,31 @@
 //----------------------------------------------------------------------------------
 
 /**
- * @namespace NerdThings::Ngine
+ * @namespace Ngine
  * The main Ngine namespace. Contains everything as part of the engine itself.
  *
- * @namespace NerdThings::Ngine::Audio
+ * @namespace Ngine::Audio
  * Ngine Audio module.
  *
- * @namespace NerdThings::Ngine::Components
+ * @namespace Ngine::Components
  * This namespace consists of useful components.
  *
- * @namespace NerdThings::Ngine::Filesystem
+ * @namespace Ngine::Filesystem
  * Ngine Filesystem module.
  *
- * @namespace NerdThings::Ngine::Graphics
+ * @namespace Ngine::Graphics
  * Ngine Graphics module.
  *
- * @namespace NerdThings::Ngine::Input
+ * @namespace Ngine::Input
  * Ngine Input module.
  *
- * @namespace NerdThings::Ngine::Physics
+ * @namespace Ngine::Physics
  * Ngine Physics module.
  *
- * @namespace NerdThings::Ngine::Physics::Shapes
+ * @namespace Ngine::Physics::Shapes
  * Physics shapes.
  *
- * @namespace NerdThings::Ngine::UWP
+ * @namespace Ngine::UWP
  * This namespace contains UWP specific code.
  */
 
@@ -162,12 +162,12 @@
 #include "Filesystem/Filesystem.hpp"
 #include "Filesystem/ResourceManager.hpp"
 #include "Graphics/Camera.hpp"
-#include "Graphics/Canvas.hpp"
 #include "Graphics/Color.hpp"
 #include "Graphics/Font.hpp"
 #include "Graphics/GraphicsDevice.hpp"
 #include "Graphics/Image.hpp"
 #include "Graphics/Renderer.hpp"
+#include "Graphics/RenderSpace.hpp"
 #include "Graphics/RenderTexture.hpp"
 #include "Graphics/Shader.hpp"
 #include "Graphics/ShaderProgram.hpp"

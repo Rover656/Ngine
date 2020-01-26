@@ -35,7 +35,7 @@
 
 #define AUDIO_BUFFER_SIZE 4096
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     /**
      * Audio device control
      */

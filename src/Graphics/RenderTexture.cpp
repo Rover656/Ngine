@@ -26,8 +26,8 @@
 
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Graphics {
-    RenderTexture::RenderTexture(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
+namespace Ngine::Graphics {
+    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
         Width = width_;
         Height = height_;
 
@@ -66,7 +66,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Set depth and color attachment
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferID);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->m_ID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->ID, 0);
 
         // Check framebuffer status
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -99,22 +99,22 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    RenderTexture::~RenderTexture() {
+    RenderTarget::~RenderTarget() {
         // Delete self
         Unload();
     }
 
-    Texture2D *RenderTexture::GetTexture() {
+    Texture2D *RenderTarget::GetTexture() {
         return m_texture;
     }
 
-    bool RenderTexture::IsValid() const {
+    bool RenderTarget::IsValid() const {
         if (m_ID > 0)
             return true;
         return false;
     }
 
-    void RenderTexture::Unload() {
+    void RenderTarget::Unload() {
         Width = 0;
         Height = 0;
         // Delete texture
@@ -134,11 +134,11 @@ namespace NerdThings::Ngine::Graphics {
         }
     }
 
-    bool RenderTexture::operator==(const RenderTexture &b) const {
+    bool RenderTarget::operator==(const RenderTarget &b) const {
         return m_ID == b.m_ID;
     }
 
-    bool RenderTexture::operator!=(const RenderTexture &b) const {
+    bool RenderTarget::operator!=(const RenderTarget &b) const {
         return m_ID != b.m_ID;
     }
 }

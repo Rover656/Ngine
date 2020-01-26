@@ -21,7 +21,7 @@
 #include "Audio/AudioDevice.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     std::vector<Music *> AudioDevice::m_activeMusic;
 
     ma_mutex AudioDevice::m_audioLock;

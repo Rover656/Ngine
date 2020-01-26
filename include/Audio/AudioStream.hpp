@@ -25,7 +25,7 @@
 
 #include "AudioBuffer.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     /**
      * Audio stream.
      */

@@ -20,7 +20,7 @@
 
 #include "Graphics/Color.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     Color::Color() : R(1), G(1), B(1), A(1) {}
 
     Color::Color(float r_, float g_, float b_, float a_)

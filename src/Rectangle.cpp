@@ -20,7 +20,7 @@
 
 #include "Rectangle.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     bool Rectangle::Contains(Vector2 point_) const {
         return X <= point_.X
             && point_.X < X + Width

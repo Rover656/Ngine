@@ -20,18 +20,19 @@
 
 #include "Graphics/Camera.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     // Public Methods
 
     void Camera::BeginCamera(GraphicsDevice *graphicsDevice_) const {
         // Load matrix
+        graphicsDevice_->PushModelViewMatrix();
         graphicsDevice_->LoadModelViewIdentity();
         graphicsDevice_->MultModelView(GetTranslationMatrix());
     }
 
     void Camera::EndCamera(GraphicsDevice *graphicsDevice_) const {
         // Reload matrix
-        graphicsDevice_->LoadModelViewIdentity();
+        graphicsDevice_->PopModelViewMatrix();
     }
 
     Vector2 Camera::ScreenToWorld(Vector2 pos_) {

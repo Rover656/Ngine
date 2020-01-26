@@ -32,15 +32,15 @@
 #include "ShaderProgram.hpp"
 #include "Texture2D.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * Vertex data.
      * `Vector3` for Position, `Vector2` for tex coords and `Color` for color.
      */
-    struct VertexData {
+    struct Vertex {
         Vector3 Position;
-        Color Color;
         Vector2 TexCoords;
+        Color Color;
     };
 
     /**
@@ -72,7 +72,6 @@ namespace NerdThings::Ngine::Graphics {
      * @todo Make the renderer platform agnostic so that its easier to switch graphics API
      * @todo Add scissor/stencil tests
      */
-
     class NEAPI Renderer {
     public:
         /**
@@ -84,34 +83,11 @@ namespace NerdThings::Ngine::Graphics {
          * The maximum number of matrices on the stack.
          */
         static const unsigned int MATRIX_STACK_SIZE = 32;
-
-        /**
-         * A simple render task.
-         * This contains information about what is in the vertex array.
-         */
-        class NEAPI RenderTask {
-            unsigned int Texture;
-            ShaderProgram *Shader;
-            unsigned int VertexCount;
-            unsigned int IndexCount;
-        };
-
-        /**
-         * A renderqueue describes a sorted list of render tasks
-         */
-        class NEAPI RenderQueue {
-
-        };
     private:
         /**
          * The graphics device.
          */
         GraphicsDevice *m_graphicsDevice = nullptr;
-
-        /**
-         * The default shader program.
-         */
-        ShaderProgram *m_defaultShaderProgram = nullptr;
 
         /**
          * 1x1 white texture.
@@ -146,7 +122,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * This contains a list of all the vertices to be pushed into the VBO.
          */
-        VertexData m_vertices[MAX_BUFFER_SIZE];
+        Vertex m_vertices[MAX_BUFFER_SIZE];
 
         /**
          * The number of vertices to be pushed from the array
@@ -162,6 +138,33 @@ namespace NerdThings::Ngine::Graphics {
          * The number of indices to be written.
          */
         int m_indexCount = 0;
+
+        /**
+         * The matrix stack.
+         */
+        Matrix m_matrixStack[MATRIX_STACK_SIZE];
+
+        /**
+         * The matrix stack counter.
+         */
+        int m_matrixStackCounter = 0;
+
+        /**
+         * The temporary vertex data from immediate mode calls.
+         */
+        Vertex m_tempVertexData[MAX_BUFFER_SIZE];
+
+        /**
+         * The number of vertices from immediate mode calls.
+         */
+        int m_tempVertexDataCount = 0;
+
+        // Below this, any fields here are just for immediate mode rendering
+
+        /**
+         * The default shader program.
+         */
+        ShaderProgram *m_defaultShaderProgram = nullptr;
 
         /**
          * The currently applied shader program.
@@ -180,25 +183,7 @@ namespace NerdThings::Ngine::Graphics {
          */
         PrimitiveType m_currentPrimitiveType = PrimitiveType::Triangles;
 
-        /**
-         * The matrix stack.
-         */
-        Matrix m_matrixStack[MATRIX_STACK_SIZE];
-
-        /**
-         * The matrix stack counter.
-         */
-        int m_matrixStackCounter = 0;
-
-        /**
-         * The temporary vertex data from immediate mode calls.
-         */
-        VertexData m_tempVertexData[MAX_BUFFER_SIZE];
-
-        /**
-         * The number of vertices from immediate mode calls.
-         */
-        int m_tempVertexDataCount = 0;
+        // END SEGMENTATION
 
         /**
          * Enable OpenGL capabilities.
@@ -244,7 +229,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param vertices_ The vertex array.
          * @param count_ The size of the array.
          */
-        void _addVertices(PrimitiveType type_, VertexData *vertices_, int count_);
+        void _addVertices(PrimitiveType type_, Vertex *vertices_, int count_);
 
         /**
          * Add a set of indexed vertices.
@@ -252,7 +237,7 @@ namespace NerdThings::Ngine::Graphics {
          * @warning Only supports Triangles at the moment.
          * @todo Implement index conversion.
          */
-        void _addIndexedVertices(PrimitiveType type_, VertexData *vertices_, int vCount_, unsigned short *indices_,
+        void _addIndexedVertices(PrimitiveType type_, Vertex *vertices_, int vCount_, unsigned short *indices_,
                                  int iCount_);
 
         /**
@@ -267,7 +252,6 @@ namespace NerdThings::Ngine::Graphics {
          * @param graphicsDevice_ The current graphics device.
          */
         explicit Renderer(GraphicsDevice *graphicsDevice_);
-
         ~Renderer();
 
         /**
@@ -278,7 +262,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr,
+        void Add(std::vector<Vertex> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr,
                  ShaderProgram *shader_ = nullptr);
 
         /**
@@ -289,7 +273,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, unsigned int texture_ = 0,
+        void Add(std::vector<Vertex> vertices_, PrimitiveType primitiveType_, unsigned int texture_ = 0,
                  ShaderProgram *shader_ = nullptr);
 
         /**
@@ -301,7 +285,7 @@ namespace NerdThings::Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void AddIndexed(std::vector<VertexData> vertices_, std::vector<unsigned short> indices_,
+        void AddIndexed(std::vector<Vertex> vertices_, std::vector<unsigned short> indices_,
                         PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
 
         /**
@@ -318,7 +302,7 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @param vertexData_ The data to push.
          */
-        void Vertex(VertexData vertexData_);
+        void Vertex(Vertex vertexData_);
 
         /**
          * Create a new vertex and push it to the batch.

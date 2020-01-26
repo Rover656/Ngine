@@ -27,7 +27,7 @@
 #include "Audio/AudioDevice.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     // Destructor
 
     Music::~Music() {

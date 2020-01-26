@@ -26,7 +26,7 @@
 
 #include "Window.hpp"
 
-namespace NerdThings::Ngine::Input {
+namespace Ngine::Input {
     Vector2 Mouse::_internalGetMousePosition() {
         auto pos = Vector2::Zero;
 #if defined(PLATFORM_DESKTOP)

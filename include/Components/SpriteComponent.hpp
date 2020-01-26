@@ -28,7 +28,7 @@
 #include "../Entity.hpp"
 #include "../Events.hpp"
 
-namespace NerdThings::Ngine::Components {
+namespace Ngine::Components {
     /**
      * Sprite component. Attaches a sprite at the position of the entity.
      */

@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     class Shader;
 
     /**

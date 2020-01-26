@@ -3,14 +3,14 @@
 #include <Physics/Shapes/CircleShape.hpp>
 #include <Physics/Shapes/PolygonShape.hpp>
 
-using namespace NGINE_NS;
-using namespace NGINE_NS::Audio;
-using namespace NGINE_NS::Components;
-using namespace NGINE_NS::Filesystem;
-using namespace NGINE_NS::Graphics;
-using namespace NGINE_NS::Input;
-using namespace NGINE_NS::Physics;
-using namespace NGINE_NS::Physics::Shapes;
+using namespace Ngine;
+using namespace Ngine::Audio;
+using namespace Ngine::Components;
+using namespace Ngine::Filesystem;
+using namespace Ngine::Graphics;
+using namespace Ngine::Input;
+using namespace Ngine::Physics;
+using namespace Ngine::Physics::Shapes;
 
 class KeyboardMovementComponent2D : public Component {
 public:
@@ -233,8 +233,36 @@ public:
     }
 };
 
+#include <Graphics/NewRenderer.hpp>
+
+class TestNode : public RenderableNode {
+    Texture2D *m_texture;
+
+    std::vector<Vertex> m_vertices;
+    std::vector<unsigned short> m_indices;
+public:
+    TestNode(Texture2D *texture_) {
+        m_texture = texture_;
+
+        VertexDataTool::GenerateRect(100, 100, Color::White, m_vertices, m_indices);
+    }
+
+    void Render(NewRenderer *renderer_) override {
+        //m_texture->Draw(renderer_, {0, 0});
+        renderer_->SetTexture(m_texture);
+        renderer_->PushMatrix();
+        renderer_->Translate({0, 0, 0});
+        renderer_->AddIndexedTriangles(m_vertices.data(), m_vertices.size(), m_indices.data(), m_indices.size());
+        renderer_->PopMatrix();
+    }
+};
+
 class TestGame : public Game {
     TestScene *m_scene;
+
+    RenderSpace *m_space;
+
+    NewRenderer *m_renderer;
 public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
@@ -255,6 +283,9 @@ public:
 
     void Draw(Graphics::Renderer *renderer_) {
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
+
+        // Test new renderer capabilities
+        m_space->Render(m_renderer, "defaultCamera");
     }
 
     void Init() {
@@ -268,11 +299,24 @@ public:
         // Load arial as default font
         Font::SetDefaultFont(resMan->GetFont("Upheaval"));
 
+        // Create new renderer
+        m_renderer = new NewRenderer(GetGraphicsDevice());
+
+        // Create test render space
+        m_space = new RenderSpace();
+
+        // Add a camera
+        auto cam = m_space->CreateCamera("defaultCamera");
+        //cam->Zoom = 2;
+
+        // Add a node
+        m_space->AddNode(new TestNode(resMan->GetTexture("test_spritesheet")));
+
         // Create scene
         m_scene = new TestScene(this);
 
         // Set scene
-        SetScene(m_scene);
+        //SetScene(m_scene);
     }
 };
 
@@ -280,11 +324,17 @@ NGINE_GAME_ENTRY {
     // Load icon (must remain in scope until NGINE_RUN_GAME happens)
     Graphics::Image icon(Path::GetExecutableDirectory() / "content" / "test_icon.png");
 
+    // Set graphics API
+#if defined(PLATFORM_DESKTOP)
+    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
+#elif defined(PLATFORM_UWP)
+#endif
+
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
-    gameConfig.MaintainResolution = true;
+    //gameConfig.MaintainResolution = true;
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

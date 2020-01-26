@@ -27,7 +27,7 @@
 #include "Physics/Polygon.hpp"
 #include "Math.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     /*
      * A rectangle
      */

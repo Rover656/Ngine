@@ -23,7 +23,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Rectangle.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     // Public Constructor(s)
 
     Tileset::Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_)

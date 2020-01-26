@@ -28,7 +28,7 @@
 #include "AudioStream.hpp"
 #include "Wave.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     /**
      * A sound.
      */

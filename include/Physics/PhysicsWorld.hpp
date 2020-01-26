@@ -29,7 +29,7 @@
 // Forward declare Box2D stuff
 class b2World;
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     class NEAPI PhysicsWorld {
     private:
         // Private Fields

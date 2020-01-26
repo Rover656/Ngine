@@ -30,10 +30,12 @@
 #include "Color.hpp"
 #include "Image.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     class GraphicsDevice;
     class Renderer;
-    class RenderTexture;
+    class RenderTarget;
+
+    class NewRenderer;
 
     /**
      * Texture filter mode.
@@ -100,15 +102,9 @@ namespace NerdThings::Ngine::Graphics {
      */
     class NEAPI Texture2D : public IResource {
         // Friends
-        friend class Renderer;
-        friend class RenderTexture;
+        friend class RenderTarget;
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        /**
-         * OpenGL Texture ID
-         */
-        unsigned int m_ID = 0;
-
         /**
          * The number of mipmaps.
          */
@@ -137,6 +133,11 @@ namespace NerdThings::Ngine::Graphics {
         int _calculatePixelDataSize();
 #endif
     public:
+        union {
+            unsigned int ID;
+            void *Ptr;
+        };
+
         /**
          * Texture width
          */

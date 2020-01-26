@@ -25,12 +25,11 @@
 
 #include "../Physics/Polygon.hpp"
 #include "../Rectangle.hpp"
-#include "Canvas.hpp"
 #include "Tileset.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
-     * A tileset canvas.
+     * A tileset renderer.
      *
      * @todo Wait for Tileset to be finished before documenting.
      */

@@ -21,7 +21,7 @@
 #include "Audio/AudioStream.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     void AudioStream::UpdateStream(const void *data_, int samplesCount_) {
         if (Buffer != nullptr) {
             if (Buffer->IsSubBufferProcessed[0] || Buffer->IsSubBufferProcessed[1]) {

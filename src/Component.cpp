@@ -24,7 +24,7 @@
 
 // TODO: SORT
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     Component::~Component() {
         // Fire OnDestroy
         OnDestroy();

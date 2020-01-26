@@ -22,7 +22,7 @@
 
 #include <Box2D/Box2D.h>
 
-namespace NerdThings::Ngine::Physics::Shapes {
+namespace Ngine::Physics::Shapes {
     // Protected Constructors
 
     PhysicsShape::PhysicsShape() {

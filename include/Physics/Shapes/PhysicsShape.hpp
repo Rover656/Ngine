@@ -30,7 +30,7 @@
 // Forward declare box2d
 class b2Shape;
 
-namespace NerdThings::Ngine::Physics::Shapes {
+namespace Ngine::Physics::Shapes {
     enum PhysicsShapeType {
         SHAPE_CIRCLE = 0,
         SHAPE_EDGE = 1,

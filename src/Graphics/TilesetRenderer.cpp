@@ -22,7 +22,7 @@
 
 #include <cmath>
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     // Public Constructor(s)
 
     TilesetRenderer::TilesetRenderer(const Tileset &tileset_, int width_, int height_)

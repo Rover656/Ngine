@@ -26,7 +26,7 @@
 
 #include "Graphics/Shader.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     ShaderProgram::ShaderProgram() {
         ID = glCreateProgram();
     }

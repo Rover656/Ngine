@@ -25,7 +25,7 @@
 
 #include "../../third-party/miniaudio/miniaudio.h"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     /**
      * Audio buffer usage type
      */

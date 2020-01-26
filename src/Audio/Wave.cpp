@@ -27,7 +27,7 @@
 
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     Wave::~Wave() {
         Unload();
     }

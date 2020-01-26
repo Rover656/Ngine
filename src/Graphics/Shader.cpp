@@ -26,7 +26,7 @@
 
 // TODO: Logger messages
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     bool Shader::__Compile(unsigned int id_) {
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         // Compile

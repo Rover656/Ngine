@@ -18,10 +18,11 @@ endif ()
 
 # Find dependencies
 if (${PLATFORM} MATCHES "Desktop")
+    # Add glad
+    set(EXTRA_FILES ${EXTRA_FILES} "${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c")
     if (${RENDERER} MATCHES "GL33" OR ${RENDERER} MATCHES "GL22")
-        # Find OpenGL and add GLAD
+        # Find OpenGL
         find_package(OpenGL REQUIRED)
-        set(EXTRA_FILES ${EXTRA_FILES} "${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c")
 
         # We need OpenGL
         set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${OPENGL_LIBRARIES})
@@ -79,7 +80,7 @@ endif ()
 # Depend on docs if enabled
 if (${BUILD_DOCS})
     find_package(Doxygen)
-    if (FOUND_DOXYGEN)
+    if (DOXYGEN_FOUND)
         add_dependencies(Ngine Ngine_Docs)
     endif ()
 endif ()

@@ -31,7 +31,7 @@
 struct b2Shape;
 struct b2PolygonShape;
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     /**
      * A Polygon shape.
      *

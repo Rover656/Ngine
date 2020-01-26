@@ -23,7 +23,7 @@
 
 #include "Config.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     // We do this forward declaration instead of include because Entity uses this.
     class Entity;
 
@@ -74,7 +74,7 @@ namespace NerdThings::Ngine {
          * Add an unnamed entity.
          *
          * @note The entity's lifecycle is now managed by this container.
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
          * @param entity_ The entity to add.
          * @return An std::pair with first being name and second the entity
          */
@@ -101,7 +101,7 @@ namespace NerdThings::Ngine {
          * Add an entity.
          *
          * @note The entity's lifecycle is now managed by this container.
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
          * @param name_ The name of the entity.
          * @param entity_ The entity to add.
          * @return The entity, for chaining commands.
@@ -148,7 +148,7 @@ namespace NerdThings::Ngine {
         /**
          * Get an entity by name.
          *
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
          * @param name_ The name of the entity to get.
          * @return The entity, or null if not found.
          */
@@ -165,7 +165,7 @@ namespace NerdThings::Ngine {
         /**
          * Count all of the entities by type
          *
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
          * @return The number of children who match the selected type.
          */
         template <class EntityType = Entity>
@@ -182,7 +182,7 @@ namespace NerdThings::Ngine {
         /**
          * Get all of the entities of type.
          *
-         * @tparam EntityType The entity type. Must be derrived from NerdThings::Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
          * @return A vector with all of the entities of the provided type.
          */
         template <class EntityType = Entity>

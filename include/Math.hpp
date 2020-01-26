@@ -25,7 +25,7 @@
 
 // TODO: The Math library will be going through some rewriting soon.
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     struct Matrix;
     struct Angle;
     struct Transform2D;

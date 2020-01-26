@@ -25,7 +25,7 @@
 
 #include "../Resource.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     class ShaderProgram;
 
     class NEAPI Shader : public IResource {

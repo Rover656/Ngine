@@ -24,7 +24,7 @@
 #include "Game.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     void Scene::_addEntity(Entity *ent_) {
         // When an entity is added, mark as active
         m_entityActivities.insert({ent_, true});

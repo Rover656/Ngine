@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * A 32-bit packed color.
      */

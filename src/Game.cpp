@@ -30,18 +30,17 @@
 #include "UWP/GameApp.hpp"
 #endif
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     void Game::_init() {
         // Create window
         m_gameWindow = new Window(m_gameWindowCreationConfig);
         Console::Notice("Game", "Created game window.");
 
-        // Create graphics device.
-        m_graphicsDevice = new Graphics::GraphicsDevice(m_gameWindow);
-        Console::Notice("Game", "Created graphics device.");
+        // Get graphics device
+        auto graphicsDevice = GetGraphicsDevice();
 
         // Create renderer.
-        m_renderer = new Graphics::Renderer(m_graphicsDevice);
+        m_renderer = new Graphics::Renderer(graphicsDevice);
         Console::Notice("Game", "Created renderer.");
 
         // Init Gamepad
@@ -60,13 +59,13 @@ namespace NerdThings::Ngine {
         // Create render target
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
-            m_renderTarget = new Graphics::RenderTexture(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
         // Create resource manager
         Console::Notice("Game", "Creating the game resource manager.");
-        m_resourceManager = new Filesystem::ResourceManager(m_graphicsDevice);
+        m_resourceManager = new Filesystem::ResourceManager(graphicsDevice);
 
         // DEV: If anything new is added to the Game class, its initialization should occur here (Before OnInit())
 
@@ -93,6 +92,9 @@ namespace NerdThings::Ngine {
         // Make our window current so we can render to it.
         m_gameWindow->MakeCurrent();
 
+        // Get graphics device
+        auto graphicsDevice = GetGraphicsDevice();
+
         // Window/Game Size variables
         const auto w = static_cast<float>(m_gameWindow->GetWidth());
         const auto h = static_cast<float>(m_gameWindow->GetHeight());
@@ -104,12 +106,12 @@ namespace NerdThings::Ngine {
 
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
-            m_renderTarget = new Graphics::RenderTexture(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
-            m_renderTarget = new Graphics::RenderTexture(m_graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
             m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
 
@@ -135,7 +137,7 @@ namespace NerdThings::Ngine {
                 m_renderer->Clear();
 
                 // Enable our render target
-                m_graphicsDevice->PushTarget(m_renderTarget);
+                graphicsDevice->PushTarget(m_renderTarget);
             }
 
             // Clear with clear color
@@ -152,7 +154,7 @@ namespace NerdThings::Ngine {
 
             // If using a target, draw target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                m_graphicsDevice->PopTarget();
+                graphicsDevice->PopTarget();
                 m_renderTarget->GetTexture()->Draw(
                         m_renderer,
                         {
@@ -317,11 +319,6 @@ namespace NerdThings::Ngine {
         m_renderer = nullptr;
         Console::Notice("Game", "Deleted renderer.");
 
-        // Delete graphics device
-        delete m_graphicsDevice;
-        m_graphicsDevice = nullptr;
-        Console::Notice("Game", "Deleted graphics device.");
-
         // Close window
         delete m_gameWindow;
         m_gameWindow = nullptr;
@@ -344,7 +341,7 @@ namespace NerdThings::Ngine {
     }
 
     Graphics::GraphicsDevice *Game::GetGraphicsDevice() {
-        return m_graphicsDevice;
+        return m_gameWindow->GetGraphicsDevice();
     }
 
     Vector2 Game::GetDefaultWindowDimensions() const {

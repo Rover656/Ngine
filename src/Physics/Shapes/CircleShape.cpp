@@ -25,7 +25,7 @@
 
 #include <Box2D/Collision/Shapes/b2CircleShape.h>
 
-namespace NerdThings::Ngine::Physics::Shapes {
+namespace Ngine::Physics::Shapes {
     // Public Constructors
 
     CircleShape::CircleShape() : PhysicsShape() {

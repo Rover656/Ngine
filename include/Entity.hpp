@@ -31,7 +31,7 @@
 
 // TODO: Proper way to handle rotation from a components point of view. Need to have entity centers and ways to rotate both with the entity and independently.
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     // Forward declare
     class Component;
 
@@ -183,7 +183,7 @@ namespace NerdThings::Ngine {
         /**
          * Add a component to the entity.
          *
-         * @tparam ComponentType The component type. This must be a class derived from `NerdThings::Ngine::Component`
+         * @tparam ComponentType The component type. This must be a class derived from `Ngine::Component`
          * @param name_ The name of the component.
          * @param component_ The component.
          * @return The component, so you may chain calls.

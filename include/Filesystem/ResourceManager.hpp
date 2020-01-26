@@ -30,7 +30,7 @@
 #include "../Graphics/Texture2D.hpp"
 #include "Filesystem.hpp"
 
-namespace NerdThings::Ngine::Filesystem {
+namespace Ngine::Filesystem {
     /**
      * Content type for content directories
      */

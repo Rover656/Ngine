@@ -29,7 +29,7 @@
 #include "Console.hpp"
 #include "Rectangle.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     Font *Font::m_defaultFont;
 
     Font::Font() {}

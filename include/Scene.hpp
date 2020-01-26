@@ -30,7 +30,7 @@
 #include "Events.hpp"
 #include "Rectangle.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     // Forward declare
     class Game;
 

@@ -23,7 +23,7 @@
 
 #include "Config.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     /**
      * Abstract class defining requirements for a resource.
      */

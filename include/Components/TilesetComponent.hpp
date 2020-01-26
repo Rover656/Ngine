@@ -27,7 +27,7 @@
 #include "../Entity.hpp"
 #include "../Component.hpp"
 
-namespace NerdThings::Ngine::Components {
+namespace Ngine::Components {
     /**
      * A tileset renderer component.
      * Attaches a tileset renderer to an entity for easy rendering.

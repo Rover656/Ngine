@@ -26,7 +26,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Rectangle.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     Sprite::Sprite(Texture2D *texture_) {
         // Add texture
         m_textures.push_back(texture_);

@@ -20,7 +20,7 @@
 
 #include "Components/TilesetComponent.hpp"
 
-namespace NerdThings::Ngine::Components {
+namespace Ngine::Components {
     TilesetComponent::TilesetComponent(Entity *parent_, Graphics::TilesetRenderer *tileset_)
             : Component(parent_), m_tileset(tileset_) {
         // Prepare for drawing the renderer.

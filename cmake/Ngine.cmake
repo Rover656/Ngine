@@ -339,13 +339,13 @@ function(__ngine_link_ngine GAME_TARGET_NAME)
         if(${PLATFORM} MATCHES "Desktop")
             add_custom_command(TARGET ${GAME_TARGET_NAME}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${NGINE_SOURCE_DIR}/../third-party/ANGLE/lib/x86/libEGL.dll
+                    ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${NGINE_SOURCE_DIR}/../third-party/ANGLE/lib/x86/libGLESv2.dll
+                    ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${NGINE_SOURCE_DIR}/../third-party/ANGLE/lib/x86/d3dcompiler_47.dll
+                    ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>)
         endif()
     endif()

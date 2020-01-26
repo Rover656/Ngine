@@ -26,7 +26,7 @@
 #if defined(PLATFORM_DESKTOP)
 typedef struct GLFWwindow GLFWwindow;
 #elif defined(PLATFORM_UWP)
-namespace NerdThings::Ngine::UWP {
+namespace Ngine::UWP {
     ref class GameApp;
 }
 
@@ -41,7 +41,11 @@ typedef void *EGLContext;
 #include "Graphics/Image.hpp"
 #include "Events.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
+    namespace Graphics {
+        class GraphicsDevice;
+    }
+
     namespace Input {
         class Mouse;
         class Keyboard;
@@ -218,6 +222,11 @@ namespace NerdThings::Ngine {
          */
         std::string m_windowTitle = "";
 
+        /**
+         * The graphics device attached to the window context.
+         */
+        Graphics::GraphicsDevice *m_graphicsDevice;
+
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
          * Whether or not a native console is allocated
@@ -268,6 +277,13 @@ namespace NerdThings::Ngine {
          */
         explicit Window(const WindowConfig &config_);
         ~Window();
+
+        /**
+         * Get the graphics device for the window context.
+         *
+         * @return The graphics device.
+         */
+        Graphics::GraphicsDevice *GetGraphicsDevice();
 
         /**
          * Make this window's context current.

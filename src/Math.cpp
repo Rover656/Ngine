@@ -20,7 +20,7 @@
 
 #include "Math.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     const Vector2 Vector2::UnitX = {1, 0};
     const Vector2 Vector2::UnitY = {0, 1};
     const Vector2 Vector2::Zero = {0, 0};

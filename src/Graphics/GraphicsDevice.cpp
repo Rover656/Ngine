@@ -25,25 +25,77 @@
 #include "Graphics/RenderTexture.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+#include "API/PlatformGLAPI.hpp"
+
+namespace Ngine::Graphics {
+    // The default APIs are set here.
+    GraphicsAPI GraphicsDevice::m_targetAPI
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#if defined(PLATFORM_DESKTOP) && !defined(GRAPHICS_OPENGLES2)
+            = GraphicsAPI::OpenGL
+#elif defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGLES2)
+            = GraphicsAPI::OpenGLES
+#elif defined(PLATFORM_UWP)
+            = GraphicsAPI::OpenGLES
+#endif
+#endif
+    ;
+
+    int GraphicsDevice::m_targetMajorVersion
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#if defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGL33)
+            = 3
+#elif defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGLES2)
+            = 2
+#elif defined(PLATFORM_UWP)
+            = 2
+#endif
+#endif
+    ;
+
+    int GraphicsDevice::m_targetMinorVersion
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#if defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGL33)
+            = 3
+#elif defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGLES2)
+            = 0
+#elif defined(PLATFORM_UWP)
+            = 0
+#endif
+#endif
+    ;
+
+    bool GraphicsDevice::m_targetAccessed = false;
+
     GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {
         // Check window
-        if (m_attachedWindow == nullptr) 
+        if (m_attachedWindow == nullptr)
             throw std::runtime_error("Window cannot be null.");
 
-#if defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGL33)
-        // Init GLAD loader
-        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-            // Terminate, we can't load
-            glfwTerminate();
-            Console::Fail("GraphicsDevice", "Failed to init GLAD.");
+        // Check API minimum versions
+        switch (m_targetAPI) {
+            case GraphicsAPI::OpenGL:
+                if (m_targetMajorVersion < 2 && (m_targetMajorVersion == 2 && m_targetMinorVersion < 1))
+                    Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 2.1");
+
+                break;
         }
-        Console::Notice("GraphicsDevice", "Successfully initialized GLAD.");
-#endif
 
-        // Make window current while we configure OpenGL
-        m_attachedWindow->MakeCurrent();
+        // Create API
+        switch (m_targetAPI) {
+            case GraphicsAPI::OpenGL:
+            case GraphicsAPI::OpenGLES: // TEMP
+                m_platformAPI = new API::PlatformGLAPI(this);
+                break;
+            case GraphicsAPI::DirectX:
+                Console::Fail("GraphicsDevice", "DirectX not implemented.");
+                break;
+            default:
+                Console::Fail("GraphicsDevice", "Cannot determine target API.");
+                break;
+        }
 
+        // TEMP: Leaving this here for compatibility
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Send OpenGL Version to console
         const char *ver = (const char *) glGetString(GL_VERSION);
@@ -149,17 +201,44 @@ namespace NerdThings::Ngine::Graphics {
         m_projectionMatrix = Matrix::Identity;
     }
 
+    GraphicsDevice::~GraphicsDevice() {
+        delete m_platformAPI;
+    }
+
+    void GraphicsDevice::SetTargetAPI(GraphicsAPI api_, int majorVersion_, int minorVersion_) {
+        if (m_targetAccessed)
+            Console::Fail("GraphicsDevice", "Cannot change target API once the target has been used.");
+        m_targetAPI = api_;
+        m_targetMajorVersion = majorVersion_;
+        m_targetMinorVersion = minorVersion_;
+    }
+
+    GraphicsAPI GraphicsDevice::GetTargetAPI() {
+        if (!m_targetAccessed) m_targetAccessed = true;
+        return m_targetAPI;
+    }
+
+    int GraphicsDevice::GetTargetAPIMajorVersion() {
+        if (!m_targetAccessed) m_targetAccessed = true;
+        return m_targetMajorVersion;
+    }
+
+    int GraphicsDevice::GetTargetAPIMinorVersion() {
+        if (!m_targetAccessed) m_targetAccessed = true;
+        return m_targetMinorVersion;
+    }
+
     Window *GraphicsDevice::GetWindow() {
         return m_attachedWindow;
     }
 
-    RenderTexture *GraphicsDevice::GetCurrentTarget() {
+    RenderTarget *GraphicsDevice::GetCurrentTarget() {
         if (m_targetCounter > 0)
             return m_targetStack[m_targetCounter - 1];
         return nullptr;
     }
 
-    void GraphicsDevice::PushTarget(RenderTexture *target_) {
+    void GraphicsDevice::PushTarget(RenderTarget *target_) {
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
             Console::Fail("GraphicsDevice", "Render target stack overflow.");
@@ -223,7 +302,8 @@ namespace NerdThings::Ngine::Graphics {
         // Bind the next framebuffer
         if (m_targetCounter > 0)
             glBindFramebuffer(GL_FRAMEBUFFER, m_targetStack[m_targetCounter - 1]->m_ID);
-        else glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        else
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Get viewport width and height.
         int w, h;
@@ -239,7 +319,7 @@ namespace NerdThings::Ngine::Graphics {
         glViewport(0, 0, w, h);
 
         // Create new matrix
-        m_projectionMatrix = Matrix::Orthographic(0, (float)w, (float)h, 0, -1, 1);
+        m_projectionMatrix = Matrix::Orthographic(0, (float) w, (float) h, 0, -1, 1);
     }
 
     bool GraphicsDevice::GetGLSupportFlag(GraphicsDevice::OpenGLFeature feature_) {
@@ -420,5 +500,9 @@ namespace NerdThings::Ngine::Graphics {
                 throw std::runtime_error("Unsupported format.");
         }
 #endif
+    }
+
+    API::PlatformGraphicsAPI *GraphicsDevice::GetAPI() {
+        return m_platformAPI;
     }
 }

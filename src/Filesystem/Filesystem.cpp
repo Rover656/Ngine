@@ -50,7 +50,7 @@
 
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Filesystem {
+namespace Ngine::Filesystem {
     ////////
     // Path
     ////////

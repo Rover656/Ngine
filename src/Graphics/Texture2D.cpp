@@ -28,7 +28,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
         // Save graphics device
         m_graphicsDevice = graphicsDevice_;
@@ -67,10 +67,10 @@ namespace NerdThings::Ngine::Graphics {
 
         // Create texture
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glGenTextures(1, &m_ID);
+        glGenTextures(1, &ID);
 
         // Bind
-        glBindTexture(GL_TEXTURE_2D, m_ID);
+        glBindTexture(GL_TEXTURE_2D, ID);
 
         // Generate mipmaps
         int mipWidth = Width;
@@ -222,7 +222,7 @@ namespace NerdThings::Ngine::Graphics {
 
     void Texture2D::SetTextureFilter(const TextureFilterMode filterMode_) const {
         // Bind
-        glBindTexture(GL_TEXTURE_2D, m_ID);
+        glBindTexture(GL_TEXTURE_2D, ID);
         auto maxAnisotropicLevel = m_graphicsDevice->GetGLMaxAnisotropicLevel();
 
         switch (filterMode_) {
@@ -299,7 +299,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Texture2D::IsValid() const {
-        return m_ID != 0 && Width > 0 && Height > 0;
+        return ID != 0 && Width > 0 && Height > 0;
     }
 
     void Texture2D::Unload() {
@@ -308,8 +308,8 @@ namespace NerdThings::Ngine::Graphics {
         Height = 0;
 
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        glDeleteTextures(1, &m_ID);
-        m_ID = 0;
+        glDeleteTextures(1, &ID);
+        ID = 0;
 #endif
     }
 
@@ -412,10 +412,10 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     bool Texture2D::operator==(const Texture2D &tex_) const {
-        return m_ID == tex_.m_ID;
+        return ID == tex_.ID;
     }
 
     bool Texture2D::operator!=(const Texture2D &tex_) const {
-        return m_ID != tex_.m_ID;
+        return ID != tex_.ID;
     }
 }

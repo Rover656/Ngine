@@ -29,7 +29,7 @@
 #include "Game.hpp"
 #include "Window.hpp"
 
-namespace NerdThings::Ngine::Input {
+namespace Ngine::Input {
 #if defined(PLATFORM_DESKTOP)
 
     void Keyboard::_GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_) {

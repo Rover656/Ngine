@@ -26,7 +26,7 @@
 #include "../Math.hpp"
 #include "Shape.hpp"
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     /*
      * A 2D Bounding Box
      */

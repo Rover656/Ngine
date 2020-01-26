@@ -28,7 +28,7 @@
 #include "../Entity.hpp"
 #include "../Math.hpp"
 
-namespace NerdThings::Ngine::Components {
+namespace Ngine::Components {
     /**
      * Camera management component.
      */

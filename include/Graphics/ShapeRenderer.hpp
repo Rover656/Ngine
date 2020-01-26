@@ -28,7 +28,7 @@
 #include "Color.hpp"
 #include "Renderer.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * The shape renderer is a static API that allows shapes do be drawn. Kinda figures.
      *

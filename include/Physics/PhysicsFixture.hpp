@@ -30,7 +30,7 @@ class b2Fixture;
 
 // BIG TODO: Work out how to allow modification of shapes.
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     class PhysicsBody;
 
     class PhysicsFixture {

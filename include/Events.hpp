@@ -25,7 +25,7 @@
 
 #include <functional>
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     /**
      * Base structure for event arguments.
      */

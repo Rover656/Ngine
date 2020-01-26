@@ -26,7 +26,7 @@
 #include "Events.hpp"
 #include "Scene.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     class Entity;
 
     /**

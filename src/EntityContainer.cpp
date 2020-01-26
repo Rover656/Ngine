@@ -22,7 +22,7 @@
 
 #include "Entity.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     void EntityContainer::_addEntity(Entity *entity_) {
         if (m_type == ENTITY) {
             auto meEnt = (Entity*) this;

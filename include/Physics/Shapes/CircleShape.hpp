@@ -27,7 +27,7 @@
 
 class b2CircleShape;
 
-namespace NerdThings::Ngine::Physics::Shapes {
+namespace Ngine::Physics::Shapes {
     class NEAPI CircleShape : public PhysicsShape {
     public:
         // Public Constructors

@@ -26,11 +26,11 @@
 #include "../Resource.hpp"
 #include "Texture2D.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * A 2D Texture in the GPU that can be rendered to.
      */
-    struct NEAPI RenderTexture : public IResource {
+    struct NEAPI RenderTarget : public IResource {
         friend class GraphicsDevice;
     private:
         /**
@@ -68,8 +68,8 @@ namespace NerdThings::Ngine::Graphics {
          * @param width_ Render target width.
          * @param height_ Render target height.
          */
-        RenderTexture(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_);
-        ~RenderTexture();
+        RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_);
+        ~RenderTarget();
 
         /**
          * Get rendered texture.
@@ -92,8 +92,8 @@ namespace NerdThings::Ngine::Graphics {
          */
         void Unload() override;
 
-        bool operator==(const RenderTexture &b) const;
-        bool operator!=(const RenderTexture &b) const;
+        bool operator==(const RenderTarget &b) const;
+        bool operator!=(const RenderTarget &b) const;
     };
 }
 

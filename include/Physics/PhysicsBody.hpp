@@ -30,7 +30,7 @@
 // Forward declare Box2D
 class b2Body;
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     // Forward declare
     class PhysicsWorld;
 

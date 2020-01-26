@@ -33,7 +33,7 @@ struct GLFWwindow;
 #include "../Math.hpp"
 #include "../Window.hpp"
 
-namespace NerdThings::Ngine::Input {
+namespace Ngine::Input {
     /**
      * Mouse button
      */

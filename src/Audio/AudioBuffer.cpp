@@ -20,7 +20,7 @@
 
 #include "Audio/AudioBuffer.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     // Public Methods
     bool AudioBuffer::IsPlaying() const {
         return (Playing && !Paused);

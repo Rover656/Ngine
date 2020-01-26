@@ -25,22 +25,90 @@
 
 #include "../Math.hpp"
 #include "../Window.hpp"
+#include "Graphics/API/PlatformGraphicsAPI.hpp"
 #include "Image.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     class Renderer;
-    struct RenderTexture;
+    struct RenderTarget;
+
+    /**
+     * This defines the available graphics APIs in Ngine.
+     */
+    enum class GraphicsAPI {
+        /**
+         * The OpenGL API.
+         *
+         * Supported versions:
+         * * 2.X
+         * * 3.X
+         *
+         * Supported on:
+         * * Desktop
+         */
+        OpenGL,
+
+        /**
+         * The OpenGL ES API.
+         *
+         * Supported versions:
+         * * 2.X
+         *
+         * Supported on:
+         * * Desktop (Windows Only)
+         * * UWP
+         *
+         * @todo Use of this on Desktop and UWP will be deprecated once DirectX11 API is added as ANGLE will be obsolete. This will be left purely for GLES support for possible other platforms.
+         */
+        OpenGLES,
+
+        /**
+         * The DirectX API.
+         *
+         * Placeholder. Not implemented yet, will throw if selected.
+         *
+         * Supported on:
+         * * Desktop (Windows Only)
+         * * UWP
+         */
+        DirectX
+    };
 
     /**
      * The graphics device.
      * Manages the OpenGL Context and it's features.
      * Once feature complete this will replace `GraphicsManager`.
      *
-     * @note This is very WIP. Only features that are required will be implemented until the new `Renderer` works.
+     * @todo Remove all 'GL' things, this will be controlled by platform APIs instead.
      */
     class NEAPI GraphicsDevice {
         friend class Renderer;
+        friend class Window;
+
+        /**
+         * The target graphics API.
+         */
+        static GraphicsAPI m_targetAPI;
+
+        /**
+         * The default target API major version.
+         */
+        static int m_targetMajorVersion;
+
+        /**
+         * The default target API minor version.
+         */
+        static int m_targetMinorVersion;
+
+        /**
+         * Whether or not the target is accessed.
+         * Once accessed, it is used and therefore can no longer change.
+         */
+        static bool m_targetAccessed;
     public:
+        /**
+         * Maximum targets in a stack.
+         */
         static const int MAX_TARGETS = 32;
 
         /**
@@ -109,6 +177,11 @@ namespace NerdThings::Ngine::Graphics {
         };
     private:
         /**
+         * The current platform API.
+         */
+        API::PlatformGraphicsAPI *m_platformAPI;
+
+        /**
          * The window this graphics device is attached to.
          */
         Window *m_attachedWindow;
@@ -126,7 +199,7 @@ namespace NerdThings::Ngine::Graphics {
         /**
          * The render target stack.
          */
-        RenderTexture *m_targetStack[MAX_TARGETS];
+        RenderTarget *m_targetStack[MAX_TARGETS];
 
         /**
          * The render target stack counter.
@@ -154,13 +227,30 @@ namespace NerdThings::Ngine::Graphics {
          */
         bool m_GLSupportFlags[GL_VAO + 1];
 #endif
-    public:
 
         /**
          * Create a graphics device.
          */
         explicit GraphicsDevice(Window *window_);
-        ~GraphicsDevice() = default;
+        ~GraphicsDevice();
+    public:
+
+        /**
+         * Set the target API.
+         *
+         * Default values:
+         * Platform | API     | Version
+         * -------- | ------- | -------
+         * Desktop | OpenGL   | 3.3
+         * UWP     | OpenGLES | 2.0
+         */
+        static void SetTargetAPI(GraphicsAPI api_, int majorVersion_, int minorVersion_);
+
+        static GraphicsAPI GetTargetAPI();
+
+        static int GetTargetAPIMajorVersion();
+
+        static int GetTargetAPIMinorVersion();
 
         /**
          * Get the window attached to this device.
@@ -172,7 +262,7 @@ namespace NerdThings::Ngine::Graphics {
          *
          * @return The current render target or null if rendering straight to window.
          */
-        RenderTexture *GetCurrentTarget();
+        RenderTarget *GetCurrentTarget();
 
         /**
          * Set the current render target.
@@ -181,7 +271,7 @@ namespace NerdThings::Ngine::Graphics {
          * @warning This will force all renderers to draw.
          * @param target_ The new target.
          */
-        void PushTarget(RenderTexture *target_);
+        void PushTarget(RenderTarget *target_);
 
         /**
          * Pop the current target off of the stack.
@@ -251,6 +341,13 @@ namespace NerdThings::Ngine::Graphics {
          * @param glType_ The GL type.
          */
         void GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
+
+        /**
+         * Get the graphics API.
+         *
+         * @warning This is intended for internal use, please use the classes provided by the `Graphics` or `Graphics::API` namespaces instead.
+         */
+        API::PlatformGraphicsAPI *GetAPI();
     };
 }
 

@@ -44,7 +44,7 @@ using namespace Windows::Graphics::Display;
 using namespace Microsoft::WRL;
 using namespace Platform;
 
-namespace NerdThings::Ngine::UWP {
+namespace Ngine::UWP {
     /**
      * Quick and nasty bootstrapper.
      * This saves the game pointer until the UWP app starts.

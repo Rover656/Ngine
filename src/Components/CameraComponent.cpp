@@ -22,7 +22,7 @@
 
 #include "Entity.hpp"
 
-namespace NerdThings::Ngine::Components {
+namespace Ngine::Components {
     void CameraComponent::_updateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
         m_camera.Position = e.EntityTransformation.Position;

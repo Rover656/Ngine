@@ -23,7 +23,7 @@
 #include "Graphics/OpenGL.hpp"
 #include "Console.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     void Renderer::_enableGLCapabilities() {
         // Enable blending
         glEnable(GL_BLEND);
@@ -135,12 +135,12 @@ namespace NerdThings::Ngine::Graphics {
         Console::Notice("Renderer", "Created VBO with ID %i.", m_VBO);
 
         // Write null data
-        glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData) * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Graphics::Vertex) * MAX_BUFFER_SIZE, nullptr, GL_STREAM_DRAW);
 
         // Configure vertex attrib arrays
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Graphics::Vertex), (GLvoid*) offsetof(Graphics::Vertex, Position));
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Graphics::Vertex), (GLvoid*) offsetof(Graphics::Vertex, Color));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Graphics::Vertex), (GLvoid*) offsetof(Graphics::Vertex, TexCoords));
 
         // Create IBO
         glGenBuffers(1, &m_IBO);
@@ -199,9 +199,9 @@ namespace NerdThings::Ngine::Graphics {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
 
             // Configure vertex attrib arrays
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Position));
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, Color));
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (GLvoid*) offsetof(VertexData, TexCoords));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Graphics::Vertex), (GLvoid*) offsetof(Graphics::Vertex, Position));
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Graphics::Vertex), (GLvoid*) offsetof(Graphics::Vertex, Color));
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Graphics::Vertex), (GLvoid*) offsetof(Graphics::Vertex, TexCoords));
         }
     }
 
@@ -239,7 +239,7 @@ namespace NerdThings::Ngine::Graphics {
 #endif
     }
 
-    void Renderer::_addVertices(PrimitiveType type_, VertexData *vertices_, int count_) {
+    void Renderer::_addVertices(PrimitiveType type_, Graphics::Vertex *vertices_, int count_) {
         // Check if this will fill the buffers
         if (!CheckSize(type_, count_)) {
             Console::Fail("Renderer", "Indexed vertices will not fit in a buffer, please split your data.");
@@ -315,7 +315,7 @@ namespace NerdThings::Ngine::Graphics {
     }
 
     void
-    Renderer::_addIndexedVertices(PrimitiveType type_, VertexData *vertices_, int vCount_, unsigned short *indices_,
+    Renderer::_addIndexedVertices(PrimitiveType type_, Graphics::Vertex *vertices_, int vCount_, unsigned short *indices_,
                                   int iCount_) {
         // Check if this will fill the buffers
         if (m_vertexCount + vCount_ >= MAX_BUFFER_SIZE || m_indexCount + iCount_ >= MAX_BUFFER_SIZE) {
@@ -368,7 +368,7 @@ namespace NerdThings::Ngine::Graphics {
         auto MVP = m_graphicsDevice->GetProjectionMatrix();
 
         // Upload data
-        _writeBuffer(m_VBO, GL_ARRAY_BUFFER, m_vertices, sizeof(VertexData), m_vertexCount);
+        _writeBuffer(m_VBO, GL_ARRAY_BUFFER, m_vertices, sizeof(Graphics::Vertex), m_vertexCount);
         _writeBuffer(m_IBO, GL_ELEMENT_ARRAY_BUFFER, m_indices, sizeof(unsigned short), m_indexCount);
 
         // Bind the buffers
@@ -376,7 +376,7 @@ namespace NerdThings::Ngine::Graphics {
 
         // Get shader and texture
         auto shader = m_currentShader != nullptr ? m_currentShader : m_defaultShaderProgram;
-        auto tex = m_currentTexture != 0 ? m_currentTexture : m_whiteTexture->m_ID;
+        auto tex = m_currentTexture != 0 ? m_currentTexture : m_whiteTexture->ID;
 
         // Use program
         glUseProgram(shader->ID);
@@ -444,30 +444,30 @@ namespace NerdThings::Ngine::Graphics {
         delete m_defaultShaderProgram;
     }
 
-    void Renderer::Add(std::vector<VertexData> vertices_, PrimitiveType primitiveType_, Texture2D *texture_,
+    void Renderer::Add(std::vector<Graphics::Vertex> vertices_, PrimitiveType primitiveType_, Texture2D *texture_,
                        ShaderProgram *shader_) {
         // If the texture, shader don't match, push a render.
-        if (m_currentTexture != texture_->m_ID
+        if (m_currentTexture != texture_->ID
             || m_currentShader != shader_)
             Render();
 
         // Set current shader, texture and primitive
-        m_currentTexture = texture_->m_ID;
+        m_currentTexture = texture_->ID;
         m_currentShader = shader_;
 
         // Add
         _addVertices(primitiveType_, vertices_.data(), vertices_.size());
     }
 
-    void Renderer::AddIndexed(std::vector<VertexData> vertices_, std::vector<unsigned short> indices_,
+    void Renderer::AddIndexed(std::vector<Graphics::Vertex> vertices_, std::vector<unsigned short> indices_,
                               PrimitiveType primitiveType_, Texture2D *texture_, ShaderProgram *shader_) {
         // If the texture, shader and primitive type don't match, push a render.
-        if (m_currentTexture != (texture_ != nullptr ? texture_->m_ID : 0)
+        if (m_currentTexture != (texture_ != nullptr ? texture_->ID : 0)
             || m_currentShader != shader_)
             Render();
 
         // Set current shader, texture and primitive
-        m_currentTexture = texture_ != nullptr ? texture_->m_ID : 0;
+        m_currentTexture = texture_ != nullptr ? texture_->ID : 0;
         m_currentShader = shader_;
 
         // Add
@@ -484,18 +484,18 @@ namespace NerdThings::Ngine::Graphics {
             Console::Fail("Renderer", "Cannot begin a second batch before finishing the last one.");
 
         // If we are changing texture, primitive type or shader, draw
-        if (m_currentTexture != (texture_ != nullptr ? texture_->m_ID : 0)
+        if (m_currentTexture != (texture_ != nullptr ? texture_->ID : 0)
             || m_currentShader != shader_)
             Render();
 
         // We are now running a batch
         m_midBatch = true;
-        m_currentTexture = texture_ != nullptr ? texture_->m_ID : 0;
+        m_currentTexture = texture_ != nullptr ? texture_->ID : 0;
         m_currentShader = shader_;
         m_currentPrimitiveType = primitiveType_;
     }
 
-    void Renderer::Vertex(VertexData vertexData_) {
+    void Renderer::Vertex(Graphics::Vertex vertexData_) {
         // Add vertex data
         m_tempVertexData[m_tempVertexDataCount] = vertexData_;
 
@@ -509,7 +509,7 @@ namespace NerdThings::Ngine::Graphics {
 
         if (m_vertexCount < MAX_BUFFER_SIZE) {
             // Build vertex data
-            VertexData vDat;
+            Graphics::Vertex vDat;
             vDat.Position = Vector3(pos_.X, pos_.Y, 0).Transform(m_matrixStack[m_matrixStackCounter]);
             vDat.TexCoords = texCoord_;
             vDat.Color = color_;

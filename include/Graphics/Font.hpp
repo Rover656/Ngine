@@ -30,7 +30,7 @@
 #include "Image.hpp"
 #include "Texture2D.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * The text alignment
      *

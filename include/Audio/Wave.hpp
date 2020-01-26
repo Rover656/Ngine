@@ -26,7 +26,7 @@
 #include "../Filesystem/Filesystem.hpp"
 #include "../Resource.hpp"
 
-namespace NerdThings::Ngine::Audio {
+namespace Ngine::Audio {
     /**
      * Wave sound data.
      */

@@ -22,7 +22,7 @@
 
 #include <Box2D/Box2D.h>
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     b2PolygonShape Polygon::createPolygonShape(std::vector<Vector2> verts_) {
         b2PolygonShape shp;
         shp.Set((b2Vec2 *)verts_.data(), verts_.size());

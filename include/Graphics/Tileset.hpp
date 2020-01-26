@@ -26,7 +26,7 @@
 #include "../Math.hpp"
 #include "Texture2D.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * Information about a tileset.
      *

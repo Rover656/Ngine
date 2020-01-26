@@ -22,7 +22,7 @@
 
 #include "Component.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     void Entity::_addToScene(Scene *scene_) {
         if (m_parentScene != nullptr)
             throw std::runtime_error("Cannot add entity to more than one scene. Remove from current scene first.");

@@ -27,7 +27,7 @@
 #include <ppltasks.h>
 #endif
 
-namespace NerdThings::Ngine {
+namespace Ngine {
     /**
      * Log writer class.
      *

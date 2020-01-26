@@ -24,7 +24,7 @@
 
 #include <ppltasks.h>
 
-namespace NerdThings::Ngine::UWP {
+namespace Ngine::UWP {
     ////////
     // UWPGameBootstrapper
     ////////
@@ -55,8 +55,8 @@ namespace NerdThings::Ngine::UWP {
     void GameApp::Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
         // Register application events
         CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(this, &GameApp::OnSuspended);
-        CoreApplication::Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &NerdThings::Ngine::UWP::GameApp::OnResuming);
-        applicationView->Activated += ref new Windows::Foundation::TypedEventHandler<Windows::ApplicationModel::Core::CoreApplicationView ^, Windows::ApplicationModel::Activation::IActivatedEventArgs ^>(this, &NerdThings::Ngine::UWP::GameApp::OnActivated);
+        CoreApplication::Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &Ngine::UWP::GameApp::OnResuming);
+        applicationView->Activated += ref new Windows::Foundation::TypedEventHandler<Windows::ApplicationModel::Core::CoreApplicationView ^, Windows::ApplicationModel::Activation::IActivatedEventArgs ^>(this, &Ngine::UWP::GameApp::OnActivated);
     }
 
     void GameApp::Load(Platform::String^ entryPoint) {}
@@ -113,7 +113,7 @@ namespace NerdThings::Ngine::UWP {
         });
     }
 
-    void NerdThings::Ngine::UWP::GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
+    void Ngine::UWP::GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
         // Resume game
         m_game->OnResume();
         m_game->m_running = true;

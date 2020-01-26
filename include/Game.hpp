@@ -32,7 +32,7 @@
 #include "Scene.hpp"
 #include "Window.hpp"
 
-namespace NerdThings::Ngine {
+namespace Ngine {
 #if defined(PLATFORM_UWP)
     namespace UWP {
         ref class GameApp;
@@ -93,11 +93,6 @@ namespace NerdThings::Ngine {
         WindowConfig m_gameWindowCreationConfig;
 
         /**
-         * The graphics device for our window.
-         */
-        Graphics::GraphicsDevice *m_graphicsDevice = nullptr;
-
-        /**
          * The game renderer.
          */
         Graphics::Renderer *m_renderer = nullptr;
@@ -110,7 +105,7 @@ namespace NerdThings::Ngine {
         /**
          * The render target used for enforcing resolution
          */
-        Graphics::RenderTexture *m_renderTarget = nullptr;
+        Graphics::RenderTarget *m_renderTarget = nullptr;
 
         /**
          * Is the game loop running

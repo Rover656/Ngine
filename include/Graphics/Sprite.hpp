@@ -27,7 +27,7 @@
 #include "../Rectangle.hpp"
 #include "Texture2D.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * A sprite is a wrapper which controls the behaviour of a texture or textures.
      */

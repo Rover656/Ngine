@@ -24,7 +24,7 @@
 
 #include <Box2D/Box2D.h>
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     PhysicsBody::PhysicsBody(b2Body *body_) {
         // Save body
         m_b2Body = body_;

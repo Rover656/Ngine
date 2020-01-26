@@ -22,7 +22,7 @@
 
 #include <stb_image.h>
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     void Image::_create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
         // Bits per pixel
         int bpp = 0;

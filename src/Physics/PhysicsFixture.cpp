@@ -26,7 +26,7 @@
 
 #include <Box2D/Box2D.h>
 
-namespace NerdThings::Ngine::Physics {
+namespace Ngine::Physics {
     // Public Constructor
 
     PhysicsFixture::PhysicsFixture(b2Fixture *fixture_) {

@@ -29,7 +29,7 @@
 
 class b2PolygonShape;
 
-namespace NerdThings::Ngine::Physics::Shapes {
+namespace Ngine::Physics::Shapes {
     class PolygonShape : public PhysicsShape {
     public:
         // Public Constructors

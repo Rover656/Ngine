@@ -25,7 +25,7 @@
 
 #include <cstdio>
 
-namespace NerdThings::Ngine::Filesystem {
+namespace Ngine::Filesystem {
     /**
      * Resource type.
      */
@@ -609,7 +609,7 @@ namespace NerdThings::Ngine::Filesystem {
          * This will return a varying degree of paths (Documents, Roaming app data, etc.).
          *
          * @return The AppData directory.
-         * @sa NerdThings::Ngine::Filesystem::Path::GetAppDataDirectory() for platform specific notes.
+         * @sa Ngine::Filesystem::Path::GetAppDataDirectory() for platform specific notes.
          */
         static Directory GetAppDataDirectory();
 
@@ -652,7 +652,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Get the executable directory.
          *
          * @return The executable directory.
-         * @sa NerdThings::Ngine::Filesystem::Path::GetExecutableDirectory().
+         * @sa Ngine::Filesystem::Path::GetExecutableDirectory().
          */
         static Directory GetExecutableDirectory();
 
@@ -660,7 +660,7 @@ namespace NerdThings::Ngine::Filesystem {
          * Get the working directory.
          *
          * @return The working directory (path the game was launched from).
-         * @sa NerdThings::Ngine::Filesystem::Path::GetWorkingDirectory().
+         * @sa Ngine::Filesystem::Path::GetWorkingDirectory().
          */
         static Directory GetWorkingDirectory();
 

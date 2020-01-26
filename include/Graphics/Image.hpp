@@ -26,7 +26,7 @@
 #include "../Filesystem/Filesystem.hpp"
 #include "../Resource.hpp"
 
-namespace NerdThings::Ngine::Graphics {
+namespace Ngine::Graphics {
     /**
      * Image/Texture Pixel Format.
      * Corresponds with OpenGL Abstraction values.

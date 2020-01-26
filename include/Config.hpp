@@ -61,9 +61,6 @@
 #define NEAPI
 #endif
 
-// Root Ngine namespace
-#define NGINE_NS NerdThings::Ngine
-
 // Angle maths
 #define PI 3.1415
 

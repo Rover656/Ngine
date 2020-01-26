@@ -20,7 +20,7 @@
 
 #include "Components/SpriteComponent.hpp"
 
-namespace NerdThings::Ngine::Components {
+namespace Ngine::Components {
     SpriteComponent::SpriteComponent(Entity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_)
             : Component(parent_), m_origin(origin_), m_sprite(sprite_) {
         SubscribeToDraw();

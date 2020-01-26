@@ -30,7 +30,7 @@
 struct GLFWwindow;
 #endif
 
-namespace NerdThings::Ngine::Input {
+namespace Ngine::Input {
     /**
      * A keyboard key
      */

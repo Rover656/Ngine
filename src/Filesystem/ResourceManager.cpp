@@ -23,7 +23,7 @@
 #include <regex>
 #include <sstream>
 
-namespace NerdThings::Ngine::Filesystem {
+namespace Ngine::Filesystem {
     ResourceManager::ResourceManager(Graphics::GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
         if (m_graphicsDevice == nullptr) throw std::runtime_error("Graphics device cannot be null.");
     }
