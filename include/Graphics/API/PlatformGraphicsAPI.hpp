@@ -23,6 +23,7 @@
 
 #include "../../Config.hpp"
 
+#include "../GraphicsDevice.hpp"
 #include "../ShaderProgram.hpp"
 #include "../Texture2D.hpp"
 
@@ -32,7 +33,7 @@ namespace Ngine::Graphics {
 
     namespace API {
         /**
-         * The platform renderer interface. This defines what a renderer can do and how.
+         * The platform graphics API interface. This defines all functions required of a graphics API and exposes them.
          */
         class NEAPI PlatformGraphicsAPI {
         protected:
@@ -41,15 +42,32 @@ namespace Ngine::Graphics {
              */
             GraphicsDevice *m_graphicsDevice = nullptr;
 
+            /**
+             * The current applied vertex layout.
+             */
             VertexLayout *m_currentLayout = nullptr;
 
+            /**
+             * Actually use the vertex layout.
+             *
+             * @param layout_ Layout to use.
+             */
             virtual void _useVertexLayout(VertexLayout *layout_) = 0;
 
+            /**
+             * Actually stop using the vertex layout.
+             *
+             * @param layout_ Layout to stop.
+             */
             virtual void _stopVertexLayout(VertexLayout *layout_) = 0;
 
         public:
+            /**
+             * Create a platform API.
+             *
+             * @param graphicsDevice_ The graphics device to attach to.
+             */
             PlatformGraphicsAPI(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {}
-
             virtual ~PlatformGraphicsAPI() = default;
 
             /**
@@ -58,6 +76,23 @@ namespace Ngine::Graphics {
              * @param color_ The color to clear with.
              */
             virtual void Clear(const Color &color_) = 0;
+
+            /**
+             * Create a texture on the GPU.
+             *
+             * @param texture_ Texture object.
+             * @param data_ Pixel data (can be null).
+             */
+            virtual void CreateTexture(Texture2D *texture_, unsigned char *data_) = 0;
+
+            /**
+             * Delete a texture on the GPU.
+             *
+             * @param texture_ Texture to delete.
+             */
+            virtual void DeleteTexture(Texture2D *texture_) = 0;
+
+            // TODO: Texture wraps etc.
 
             /**
              * Bind a texture.
@@ -93,14 +128,14 @@ namespace Ngine::Graphics {
              *
              * @param buffer_ Buffer to initialize.
              */
-            virtual void InitializeBuffer(Buffer *buffer_) = 0;
+            virtual void CreateBuffer(Buffer *buffer_) = 0;
 
             /**
              * Cleanup buffer on GPU.
              *
              * @param buffer_ Buffer to clean/remove.
              */
-            virtual void CleanupBuffer(Buffer *buffer_) = 0;
+            virtual void DeleteBuffer(Buffer *buffer_) = 0;
 
             /**
              * Write the given data to the given buffer.
@@ -113,18 +148,55 @@ namespace Ngine::Graphics {
              */
             virtual void WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) = 0;
 
-            virtual void InitializeVertexLayout(VertexLayout *layout_) = 0;
+            /**
+             * Initialize a vertex layout on the GPU.
+             *
+             * @param layout_ The layout to initialize
+             */
+            virtual void CreateVertexLayout(VertexLayout *layout_) = 0;
 
-            virtual void CleanupVertexLayout(VertexLayout *layout_) = 0;
+            /**
+             * Cleanup a vertex layout in the GPU.
+             *
+             * @param layout_ Layout to clean.
+             */
+            virtual void DeleteVertexLayout(VertexLayout *layout_) = 0;
 
+            /**
+             * Configure/Finalize the vertex layout in the GPU.
+             *
+             * @param layout_ Layout to configure.
+             */
             virtual void ConfigureVertexLayout(VertexLayout *layout_) = 0;
 
+            /**
+             * Use a vertex layout.
+             *
+             * @param layout_ Layout to use.
+             */
             void UseVertexLayout(VertexLayout *layout_);
 
+            /**
+             * Stop using a vertex layout.
+             *
+             * @param layout_ Layout to stop.
+             */
             void StopVertexLayout(VertexLayout *layout_);
 
+            /**
+             * Draw the currently bound buffer array.
+             *
+             * @param count_ Number of vertices (triangles * 3) to draw.
+             * @param start_ The starting index.
+             */
             virtual void Draw(int count_, int start_) = 0;
 
+            /**
+             * Draw the currently bound vertex buffer which is indexed by a bound index buffer.
+             *
+             * @param count_ Number of vertices (triangles * 3) to draw.
+             * @param start_ The starting index.
+             */
             virtual void DrawIndexed(int count_, int start_) = 0;
         };
     }

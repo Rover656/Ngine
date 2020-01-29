@@ -29,7 +29,8 @@
 namespace Ngine::Graphics {
     /**
      * Image/Texture Pixel Format.
-     * Corresponds with OpenGL Abstraction values.
+     *
+     * @todo Need to eliminate/segregate any GL only formats.
      */
     enum PixelFormat {
         UNCOMPRESSED_GRAYSCALE = 1,

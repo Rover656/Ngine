@@ -37,6 +37,10 @@ namespace Ngine::Graphics {
 
     class NewRenderer;
 
+    namespace API {
+        class PlatformGraphicsAPI;
+    }
+
     /**
      * Texture filter mode.
      */
@@ -104,7 +108,6 @@ namespace Ngine::Graphics {
         // Friends
         friend class RenderTarget;
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         /**
          * The number of mipmaps.
          */
@@ -115,23 +118,13 @@ namespace Ngine::Graphics {
          */
         PixelFormat m_format = UNCOMPRESSED_R8G8B8A8;
 
-        /**
-         * The graphics device used to create this
-         */
+        // TEMP
         GraphicsDevice *m_graphicsDevice = nullptr;
 
         /**
-         * Create the texture on the GPU
-         *
-         * @param data_ The pixel data.
+         * Graphics API.
          */
-        void _createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_);
-
-        /**
-         * Calculate the size of my pixel data.
-         */
-        int _calculatePixelDataSize();
-#endif
+        API::PlatformGraphicsAPI *m_API = nullptr;
     public:
         union {
             unsigned int ID;
@@ -186,6 +179,11 @@ namespace Ngine::Graphics {
          * @param img_ Image to load onto GPU.
          */
         Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_);
+
+        /**
+         * Get the texture pixel format.
+         */
+        PixelFormat GetFormat();
 
         /**
          * Get the number of mipmaps this texture has

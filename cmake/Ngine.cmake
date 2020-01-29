@@ -346,7 +346,9 @@ function(__ngine_link_ngine GAME_TARGET_NAME)
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
-                    $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>)
+                    $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
+
+                    COMMENT "Copying ANGLE binaries")
         endif()
     endif()
 endfunction()

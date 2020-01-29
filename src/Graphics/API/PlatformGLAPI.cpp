@@ -20,19 +20,62 @@
 
 #include "PlatformGLAPI.hpp"
 
-// TODO: GLES gets its own renderer.
-#if defined(PLATFORM_DESKTOP)
+#if defined(GLAD)
 #include <glad/glad.h>
+#endif
+
+#if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
 #elif defined(EGL)
 #define GL_KHR_debug 0
-#define GL_GLEXT_PROTOTYPES 1 // UWP???
+#define GL_GLEXT_PROTOTYPES 1 
+
+#ifndef GLAD
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
+
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #endif
 
+// Fix any missing GL definitions
+#ifndef GL_SHADING_LANGUAGE_VERSION
+#define GL_SHADING_LANGUAGE_VERSION 0x8B8C
+#endif
+#ifndef GL_COMPRESSED_RGB_S3TC_DXT1_EXT
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT 0x83F0
+#endif
+#ifndef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
+#endif
+#ifndef GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
+#endif
+#ifndef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#endif
+#ifndef GL_ETC1_RGB8_OES
+#define GL_ETC1_RGB8_OES 0x8D64
+#endif
+#ifndef GL_COMPRESSED_RGB8_ETC2
+#define GL_COMPRESSED_RGB8_ETC2 0x9274
+#endif
+#ifndef GL_COMPRESSED_RGBA8_ETC2_EAC
+#define GL_COMPRESSED_RGBA8_ETC2_EAC 0x9278
+#endif
+#ifndef GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG
+#define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG 0x8C00
+#endif
+#ifndef GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG
+#define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG 0x8C02
+#endif
+#ifndef GL_COMPRESSED_RGBA_ASTC_4x4_KHR
+#define GL_COMPRESSED_RGBA_ASTC_4x4_KHR 0x93b0
+#endif
+#ifndef GL_COMPRESSED_RGBA_ASTC_8x8_KHR
+#define GL_COMPRESSED_RGBA_ASTC_8x8_KHR 0x93b7
+#endif
 #ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
 #define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
@@ -56,6 +99,272 @@ static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
 #endif
 
 namespace Ngine::Graphics::API {
+    void
+    PlatformGLAPI::_getTextureFormats(PixelFormat format_, unsigned int *glInternalFormat_, unsigned int *glFormat_,
+                                      unsigned int *glType_) {
+        // Set to -1 for error checking
+        *glInternalFormat_ = -1;
+        *glFormat_ = -1;
+        *glType_ = -1;
+
+#if defined(API_OPENGLES_ENABLED)
+        // GLES specific
+        if (m_GLES) {
+            switch (format_) {
+                case UNCOMPRESSED_GRAYSCALE:
+                    *glInternalFormat_ = GL_LUMINANCE;
+                    *glFormat_ = GL_LUMINANCE;
+                    *glType_ = GL_UNSIGNED_BYTE;
+                    return;
+                case UNCOMPRESSED_GRAY_ALPHA:
+                    *glInternalFormat_ = GL_LUMINANCE_ALPHA;
+                    *glFormat_ = GL_LUMINANCE_ALPHA;
+                    *glType_ = GL_UNSIGNED_BYTE;
+                    return;
+                case UNCOMPRESSED_R5G6B5:
+                    *glInternalFormat_ = GL_RGB;
+                    *glFormat_ = GL_RGB;
+                    *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+                    return;
+                case UNCOMPRESSED_R8G8B8:
+                    *glInternalFormat_ = GL_RGB;
+                    *glFormat_ = GL_RGB;
+                    *glType_ = GL_UNSIGNED_BYTE;
+                    return;
+                case UNCOMPRESSED_R5G5B5A1:
+                    *glInternalFormat_ = GL_RGBA;
+                    *glFormat_ = GL_RGBA;
+                    *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+                    return;
+                case UNCOMPRESSED_R4G4B4A4:
+                    *glInternalFormat_ = GL_RGBA;
+                    *glFormat_ = GL_RGBA;
+                    *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+                    return;
+                case UNCOMPRESSED_R8G8B8A8:
+                    *glInternalFormat_ = GL_RGBA;
+                    *glFormat_ = GL_RGBA;
+                    *glType_ = GL_UNSIGNED_BYTE;
+                    return;
+                case UNCOMPRESSED_R32:
+                    // Requires OES_texture_float
+                    if (m_featureFlags[EXT_TEX_FLOAT]) {
+                        *glInternalFormat_ = GL_LUMINANCE;
+                        *glFormat_ = GL_LUMINANCE;
+                        *glType_ = GL_FLOAT;
+                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+                case UNCOMPRESSED_R32G32B32:
+                    // Requires OES_texture_float
+                    if (m_featureFlags[EXT_TEX_FLOAT]) {
+                        *glInternalFormat_ = GL_RGB;
+                        *glFormat_ = GL_RGB;
+                        *glType_ = GL_FLOAT;
+                    }
+                    return;
+                case UNCOMPRESSED_R32G32B32A32:
+                    // Requires OES_texture_float
+                    if (m_featureFlags[EXT_TEX_FLOAT]) {
+                        *glInternalFormat_ = GL_RGBA;
+                        *glFormat_ = GL_RGBA;
+                        *glType_ = GL_FLOAT;
+                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+            }
+#endif
+
+#if defined(API_OPENGL_ENABLED)
+            // GL specific
+            if (!m_GLES) {
+                switch (format_) {
+                    case UNCOMPRESSED_GRAYSCALE:
+                        *glInternalFormat_ = GL_R8;
+                        *glFormat_ = GL_RED;
+                        *glType_ = GL_UNSIGNED_BYTE;
+                        return;
+                    case UNCOMPRESSED_GRAY_ALPHA:
+                        *glInternalFormat_ = GL_RG8;
+                        *glFormat_ = GL_RG;
+                        *glType_ = GL_UNSIGNED_BYTE;
+                        return;
+                    case UNCOMPRESSED_R5G6B5:
+                        *glInternalFormat_ = GL_RGB565;
+                        *glFormat_ = GL_RGB;
+                        *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+                        return;
+                    case UNCOMPRESSED_R8G8B8:
+                        *glInternalFormat_ = GL_RGB8;
+                        *glFormat_ = GL_RGB;
+                        *glType_ = GL_UNSIGNED_BYTE;
+                        return;
+                    case UNCOMPRESSED_R5G5B5A1:
+                        *glInternalFormat_ = GL_RGB5_A1;
+                        *glFormat_ = GL_RGBA;
+                        *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+                        return;
+                    case UNCOMPRESSED_R4G4B4A4:
+                        *glInternalFormat_ = GL_RGBA4;
+                        *glFormat_ = GL_RGBA;
+                        *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+                        return;
+                    case UNCOMPRESSED_R8G8B8A8:
+                        *glInternalFormat_ = GL_RGBA8;
+                        *glFormat_ = GL_RGBA;
+                        *glType_ = GL_UNSIGNED_BYTE;
+                        return;
+                    case UNCOMPRESSED_R32:
+                        // Requires OES_texture_float
+                        if (m_featureFlags[EXT_TEX_FLOAT]) {
+                            *glInternalFormat_ = GL_R32F;
+                            *glFormat_ = GL_RED;
+                            *glType_ = GL_FLOAT;
+                        } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                        return;
+                    case UNCOMPRESSED_R32G32B32:
+                        // Requires OES_texture_float
+                        if (m_featureFlags[EXT_TEX_FLOAT]) {
+                            *glInternalFormat_ = GL_RGB32F;
+                            *glFormat_ = GL_RGB;
+                            *glType_ = GL_FLOAT;
+                        } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                        return;
+                    case UNCOMPRESSED_R32G32B32A32:
+                        // Requires OES_texture_float
+                        if (m_featureFlags[EXT_TEX_FLOAT]) {
+                            *glInternalFormat_ = GL_RGBA32F;
+                            *glFormat_ = GL_RGBA;
+                            *glType_ = GL_FLOAT;
+                        } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                        return;
+                }
+            }
+#endif
+
+            // General/Common
+            switch (format_) {
+                case COMPRESSED_DXT1_RGB:
+                    if (m_featureFlags[EXT_COMP_DXT])
+                        *glInternalFormat_ = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+                case COMPRESSED_DXT1_RGBA:
+                    if (m_featureFlags[EXT_COMP_DXT])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+                case COMPRESSED_DXT3_RGBA:
+                    if (m_featureFlags[EXT_COMP_DXT])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+                case COMPRESSED_DXT5_RGBA:
+                    if (m_featureFlags[EXT_COMP_DXT])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+                case COMPRESSED_ETC1_RGB:
+                    if (m_featureFlags[EXT_COMP_ETC1])
+                        *glInternalFormat_ = GL_ETC1_RGB8_OES;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
+                case COMPRESSED_ETC2_RGB:
+                    if (m_featureFlags[EXT_COMP_ETC2])
+                        *glInternalFormat_ = GL_COMPRESSED_RGB8_ETC2;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+                case COMPRESSED_ETC2_EAC_RGBA:
+                    if (m_featureFlags[EXT_COMP_ETC2])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA8_ETC2_EAC;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+                case COMPRESSED_PVRT_RGB:
+                    if (m_featureFlags[EXT_COMP_PVRT])
+                        *glInternalFormat_ = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires PowerVR GPU
+                case COMPRESSED_PVRT_RGBA:
+                    if (m_featureFlags[EXT_COMP_PVRT])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires PowerVR GPU
+                case COMPRESSED_ASTC_4x4_RGBA:
+                    if (m_featureFlags[EXT_COMP_ASTC])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+                case COMPRESSED_ASTC_8x8_RGBA:
+                    if (m_featureFlags[EXT_COMP_ASTC])
+                        *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
+                    else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+                default:
+                    Console::Fail("PlatformGLAPI", "Format not supported.");
+                    return;
+            }
+        }
+    }
+
+    int PlatformGLAPI::_calculatePixelDataSize(int width_, int height_, PixelFormat format_) {
+        auto bpp = 0;
+
+        switch (format_) {
+            case UNCOMPRESSED_GRAYSCALE:
+                bpp = 8;
+                break;
+            case UNCOMPRESSED_GRAY_ALPHA:
+            case UNCOMPRESSED_R5G6B5:
+            case UNCOMPRESSED_R5G5B5A1:
+            case UNCOMPRESSED_R4G4B4A4:
+                bpp = 16;
+                break;
+            case UNCOMPRESSED_R8G8B8A8:
+                bpp = 32;
+                break;
+            case UNCOMPRESSED_R8G8B8:
+                bpp = 24;
+                break;
+            case UNCOMPRESSED_R32:
+                bpp = 32;
+                break;
+            case UNCOMPRESSED_R32G32B32:
+                bpp = 32 * 3;
+                break;
+            case UNCOMPRESSED_R32G32B32A32:
+                bpp = 32 * 4;
+                break;
+            case COMPRESSED_DXT1_RGB:
+            case COMPRESSED_DXT1_RGBA:
+            case COMPRESSED_ETC1_RGB:
+            case COMPRESSED_ETC2_RGB:
+            case COMPRESSED_PVRT_RGB:
+            case COMPRESSED_PVRT_RGBA:
+                bpp = 4;
+                break;
+            case COMPRESSED_DXT3_RGBA:
+            case COMPRESSED_DXT5_RGBA:
+            case COMPRESSED_ETC2_EAC_RGBA:
+            case COMPRESSED_ASTC_4x4_RGBA:
+                bpp = 8;
+                break;
+            case COMPRESSED_ASTC_8x8_RGBA:
+                bpp = 2;
+                break;
+            default:
+                break;
+        }
+
+        auto dataSize = width_ * height_ * bpp / 8;  // Total data size in bytes
+
+        // Most compressed formats works on 4x4 blocks,
+        // if texture is smaller, minimum dataSize is 8 or 16
+        if ((width_ < 4) && (height_ < 4)) {
+            if ((format_ >= COMPRESSED_DXT1_RGB) && (format_ < COMPRESSED_DXT3_RGBA)) dataSize = 8;
+            else if ((format_ >= COMPRESSED_DXT3_RGBA) && (format_ < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
+        }
+
+        return dataSize;
+    }
+
     void PlatformGLAPI::_useVertexLayout(VertexLayout *layout_) {
         // Bind VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
@@ -114,6 +423,10 @@ namespace Ngine::Graphics::API {
 
     PlatformGLAPI::PlatformGLAPI(GraphicsDevice *graphicsDevice_)
      : PlatformGraphicsAPI(graphicsDevice_) {
+        // Determine if we're running GLES
+        if (GraphicsDevice::GetTargetAPI() == GraphicsAPI::OpenGLES)
+            m_GLES = true;
+
         // Clear feature flags
         for (auto i = 0; i < EXT_TEX_NPOT; i++) m_featureFlags[i] = false;
 
@@ -316,26 +629,33 @@ namespace Ngine::Graphics::API {
 
 #if defined(GLAD)
         // Init GLAD loader
-        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        auto status = false;
+
+        if (GraphicsDevice::GetTargetAPI() == GraphicsAPI::OpenGLES) {
+#if defined(GLFW)
+            status = gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress);
+#elif defined(EGL)
+            status = gladLoadGLES2Loader((GLADloadproc) eglGetProcAddress);
+#endif
+        } else {
+#if defined(GLFW)
+            status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+#endif
+        }
+
+        if (!status) {
             // Terminate, we can't load
+#if defined(GLFW)
             glfwTerminate();
+#endif
             Console::Fail("PlatformGLAPI", "Failed to init GLAD.");
         }
         Console::Notice("PlatformGLAPI", "Successfully initialized GLAD.");
 #endif
 
-        // Determine if we're running GLES
-#if defined(GLAD)
-        if (GraphicsDevice::GetTargetAPI() == GraphicsAPI::OpenGLES)
-            m_GLES = true;
-#elif defined(EGL)
-        // EGL has to be GLES, no matter what.
-        m_GLES = true;
-#endif
-
         // Setup default extensions
 #if defined(PLATFORM_DESKTOP) // Desktop supports GL and GLES, so we need to distinguish between them
-        if (!m_GLES && GLAD_GL_VERSION_3_0) {
+        if (GLAD_GL_VERSION_3_0) {
             m_featureFlags[FEATURE_VAO] = true;
             m_featureFlags[EXT_TEX_NPOT] = true;
             m_featureFlags[EXT_TEX_FLOAT] = true;
@@ -365,6 +685,9 @@ namespace Ngine::Graphics::API {
                     extList[numExt] = &exts[i + 1];
                 }
             }
+
+            // Delete exts
+            delete[] exts;
         } else {
 #if defined(GLAD)
             // Get extension count
@@ -383,7 +706,7 @@ namespace Ngine::Graphics::API {
                 // Check for VAO support
                 if (strcmp(extList[i], "GL_OES_vertex_array_object") == 0) {
 #if defined(GLAD)
-#if defined(PLATFORM_DESKTOP)
+#if defined(GLFW)
                     // GLFW does not provide the OES version, try to find it.
                     glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress("glGenVertexArraysOES");
                     glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress("glBindVertexArrayOES");
@@ -475,6 +798,67 @@ namespace Ngine::Graphics::API {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
+    void PlatformGLAPI::CreateTexture(Texture2D *texture_, unsigned char *data_) {
+        // Create texture
+        texture_->ID = 0;
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glGenTextures(1, &texture_->ID);
+
+        // Bind
+        glBindTexture(GL_TEXTURE_2D, texture_->ID);
+
+        // Generate mipmaps
+        int mipWidth = texture_->Width;
+        int mipHeight = texture_->Height;
+        int mipOffset = 0;
+
+        auto format = texture_->GetFormat();
+        unsigned int glInternalFormat, glFormat, glType;
+        _getTextureFormats(format, &glInternalFormat, &glFormat, &glType);
+
+        for (int i = 0; i < texture_->GetMipmapCount(); i++) {
+            unsigned int mipSize = _calculatePixelDataSize(mipWidth, mipHeight, format);
+
+            if (glInternalFormat != -1) {
+                if (format < COMPRESSED_DXT1_RGB)
+                    glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType,
+                                 (unsigned char *) data_ + mipOffset);
+                else
+                    glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize,
+                                           (unsigned char *) data_ + mipOffset);
+
+#if defined(API_OPENGL_ENABLED)
+                if (!m_GLES) {
+                    if (format == UNCOMPRESSED_GRAYSCALE) {
+                        GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
+                        glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                    } else if (format == UNCOMPRESSED_GRAY_ALPHA) {
+#if defined(GLAD)
+                        if (GLAD_GL_VERSION_3_0) {
+                            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_GREEN};
+                            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                        } else if (GLAD_GL_VERSION_2_0) {
+                            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ALPHA};
+                            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                        }
+#endif
+                    }
+                }
+
+#endif
+            }
+
+            // Set default filters
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+    }
+
+    void PlatformGLAPI::DeleteTexture(Texture2D *texture_) {
+        glDeleteTextures(1, &texture_->ID);
+        texture_->ID = 0;
+    }
+
     void PlatformGLAPI::BindTexture(Texture2D *texture_) {
         if (texture_ != m_currentTexture) {
             glBindTexture(GL_TEXTURE_2D, texture_ != nullptr ? texture_->ID : 0);
@@ -521,7 +905,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::InitializeBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::CreateBuffer(Buffer *buffer_) {
         // Create buffer
         buffer_->ID = 0;
         glGenBuffers(1, &buffer_->ID);
@@ -530,7 +914,7 @@ namespace Ngine::Graphics::API {
         BindBuffer(buffer_);
     }
 
-    void PlatformGLAPI::CleanupBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::DeleteBuffer(Buffer *buffer_) {
         // Unbind buffer
         UnbindBuffer(buffer_);
 
@@ -573,7 +957,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::InitializeVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::CreateVertexLayout(VertexLayout *layout_) {
         // Create VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
             layout_->VAO = 0;
@@ -585,7 +969,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::CleanupVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::DeleteVertexLayout(VertexLayout *layout_) {
         // Delete VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
             if (m_GLES)

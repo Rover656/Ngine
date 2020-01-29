@@ -100,6 +100,7 @@ namespace Ngine {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, targetMajor);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, targetMinor);
         } else if (targetAPI == Graphics::GraphicsAPI::OpenGLES) {
+            // Setup for GLES
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 
@@ -469,7 +470,7 @@ namespace Ngine {
 
     void Window::SwapBuffers() {
 #if defined(PLATFORM_DESKTOP)
-        glfwSwapBuffers((GLFWwindow *)m_GLFWWindow);
+        glfwSwapBuffers((GLFWwindow *) m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
         if (Graphics::GraphicsDevice::GetTargetAPI() == Graphics::GraphicsAPI::OpenGLES)
             ((Graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SwapEGLBuffers();

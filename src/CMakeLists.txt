@@ -7,7 +7,7 @@ if (${PLATFORM} MATCHES "Desktop" AND MSVC AND ${BUILD_SHARED_LIBS})
     # Generate windows product info
     include(generate_product_version)
     generate_product_version(
-            EXTRA_FILES
+            _NGINE_EXTRA_FILES
             NAME Ngine
             VERSION_MAJOR ${Ngine_VERSION_MAJOR}
             VERSION_MINOR ${Ngine_VERSION_MINOR}
@@ -18,44 +18,9 @@ endif ()
 
 # Find dependencies
 if (${PLATFORM} MATCHES "Desktop")
-    # Add glad
-    set(EXTRA_FILES ${EXTRA_FILES} "${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c")
-    if (${RENDERER} MATCHES "GL33" OR ${RENDERER} MATCHES "GL22")
-        # Find OpenGL
-        find_package(OpenGL REQUIRED)
-
-        # We need OpenGL
-        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${OPENGL_LIBRARIES})
-        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
-    elseif (${RENDERER} MATCHES "GLES2")
-        # We need ANGLE
-        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
-        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/ANGLE)
-
-        # Copy static libs
-        add_custom_command(OUTPUT NgineCopyES2
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
-                $<TARGET_FILE_DIR:${target}>
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
-                $<TARGET_FILE_DIR:${target}>
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
-                $<TARGET_FILE_DIR:${target}>)
-    endif ()
-
     # Link glfw and glad
     set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} glfw)
-    set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/glfw/include ${Ngine_SOURCE_DIR}/third-party/glad/include)
-elseif (${PLATFORM} MATCHES "UWP")
-    # Add ANGLE via NuGet
-    configure_file(${Ngine_SOURCE_DIR}/cmake/UWP/packages.config.in
-            ${CMAKE_BINARY_DIR}/packages.config COPYONLY)
-    execute_process(COMMAND ${Ngine_SOURCE_DIR}/redist/nuget.exe restore -SolutionDirectory ${CMAKE_BINARY_DIR})
-
-    # Link ANGLE
-    set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${CMAKE_BINARY_DIR}/packages/ANGLE.WindowsStore.2.1.13/build/native/ANGLE.WindowsStore.targets)
+    set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/glfw/include)
 endif ()
 
 # Add stb, Box2D and Miniaudio
@@ -66,16 +31,78 @@ set(_NGINE_INCLUDE_DIRS
         "${Ngine_SOURCE_DIR}/third-party/miniaudio")
 set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} Box2D-cmake)
 
+# Pre-Target Creation: Graphics API Setup
+if (${PLATFORM} MATCHES "Desktop")
+    if (${ENABLE_OPENGL})
+        # Find OpenGL
+        find_package(OpenGL REQUIRED)
+
+        # We need OpenGL
+        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${OPENGL_LIBRARIES})
+        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
+    endif ()
+
+    if (${ENABLE_OPENGLES})
+        # Add ANGLE
+        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
+        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/ANGLE)
+    endif ()
+elseif (${PLATFORM} MATCHES "UWP")
+    if (${ENABLE_OPENGLES})
+        # Add ANGLE which is installed by Nuget
+        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${CMAKE_CURRENT_BINARY_DIR}/packages/ANGLE.WindowsStore.2.1.13/build/native/ANGLE.WindowsStore.targets)
+    endif ()
+endif ()
+
+if (${ENABLE_OPENGL} OR ${ENABLE_OPENGLES})
+    # Add glad
+    set(_NGINE_EXTRA_FILES ${_NGINE_EXTRA_FILES} ${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c)
+    set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/glad/include)
+endif ()
+
 if (${BUILD_SHARED_LIBS})
     # Add library
-    add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
+    add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ${_NGINE_EXTRA_FILES})
 
     # Mark for exporting
     target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
 else ()
     # Add library
-    add_library(Ngine STATIC ${SOURCE_FILES} ${HEADER_FILES} ${EXTRA_FILES})
+    add_library(Ngine STATIC ${SOURCE_FILES} ${HEADER_FILES} ${_NGINE_EXTRA_FILES})
 endif ()
+
+# Graphics API handling
+if (${PLATFORM} MATCHES "Desktop")
+    if (${ENABLE_OPENGLES})
+        # Copy static libs TODO: Support x64 linking.
+        add_custom_command(TARGET Ngine
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
+                $<TARGET_FILE_DIR:Ngine>
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
+                $<TARGET_FILE_DIR:Ngine>
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
+                $<TARGET_FILE_DIR:Ngine>
+                COMMENT "Copying ANGLE binaries to output.")
+    endif ()
+elseif (${PLATFORM} MATCHES "UWP")
+    if (${ENABLE_OPENGLES})
+        # Install ANGLE with Nuget
+        add_custom_target(NgineInstallANGLEUWP
+                COMMAND ${Ngine_SOURCE_DIR}/redist/nuget.exe install ANGLE.WindowsStore -Version 2.1.13 -OutputDirectory ${CMAKE_CURRENT_BINARY_DIR}/packages
+                COMMENT "Installing ANGLE.WindowStore V2.1.13")
+        add_dependencies(Ngine NgineInstallANGLEUWP)
+    endif ()
+endif ()
+
+if (${ENABLE_OPENGL} AND ${PLATFORM} MATCHES "Desktop")
+    target_compile_definitions(Ngine PUBLIC API_OPENGL_ENABLED=1)
+endif()
+if (${ENABLE_OPENGLES})
+    target_compile_definitions(Ngine PUBLIC API_OPENGLES_ENABLED=1)
+endif()
 
 # Depend on docs if enabled
 if (${BUILD_DOCS})
@@ -95,7 +122,7 @@ if (${PLATFORM} MATCHES "UWP")
 
     # No warnings
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-endif()
+endif ()
 
 # Include our headers
 target_include_directories(Ngine PUBLIC ${Ngine_SOURCE_DIR}/include)
@@ -105,7 +132,6 @@ target_link_libraries(Ngine ${_NGINE_LIBRARIES})
 target_include_directories(Ngine PUBLIC ${_NGINE_INCLUDE_DIRS})
 
 ### Feature Flags
-
 
 
 ### End Feature Flags

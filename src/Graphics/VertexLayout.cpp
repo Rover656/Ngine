@@ -35,12 +35,12 @@ namespace Ngine::Graphics {
         m_indexBuffer = indexBuffer_;
 
         // Use API to init
-        m_API->InitializeVertexLayout(this);
+        m_API->CreateVertexLayout(this);
     }
 
     VertexLayout::~VertexLayout() {
         // Use API to cleanup
-        m_API->CleanupVertexLayout(this);
+        m_API->DeleteVertexLayout(this);
     }
 
     void VertexLayout::AddElement(const VertexLayout::VertexElement &element_) {

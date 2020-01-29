@@ -25,12 +25,15 @@
 
 #include "../Math.hpp"
 #include "../Window.hpp"
-#include "Graphics/API/PlatformGraphicsAPI.hpp"
 #include "Image.hpp"
 
 namespace Ngine::Graphics {
     class Renderer;
     struct RenderTarget;
+
+    namespace API {
+        class PlatformGraphicsAPI;
+    }
 
     /**
      * This defines the available graphics APIs in Ngine.

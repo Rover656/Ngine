@@ -326,7 +326,12 @@ NGINE_GAME_ENTRY {
 
     // Set graphics API
 #if defined(PLATFORM_DESKTOP)
+#if defined(_WIN32)
     GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 2, 0);
+    //GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
+#else
+    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 3, 3);
+#endif
 #elif defined(PLATFORM_UWP)
 #endif
 

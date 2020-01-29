@@ -31,14 +31,16 @@
 #endif
 
 // Platform specifics
-#if defined(GRAPHICS_OPENGL33)
-#include "../../../third-party/glad/include/glad/glad.h"
-#elif defined(GRAPHICS_OPENGLES2)
+#if defined(PLATFORM_DESKTOP)
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#elif defined(PLATFORM_UWP)
 #define GL_KHR_debug 0
-#define GL_GLEXT_PROTOTYPES 1 // UWP???
-#include "../../../third-party/ANGLE/GLES2/gl2.h"
-#include "../../../third-party/ANGLE/GLES2/gl2ext.h"
-#include "../../../third-party/ANGLE/EGL/egl.h"
+#define GL_GLEXT_PROTOTYPES 1
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -103,11 +105,6 @@
 #define glClearDepth glClearDepthf
 #define GL_READ_FRAMEBUFFER GL_FRAMEBUFFER
 #define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
-
-// VAO functionality is exposed via extensions
-static PFNGLGENVERTEXARRAYSOESPROC glGenVertexArrays;
-static PFNGLBINDVERTEXARRAYOESPROC glBindVertexArray;
-static PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArrays;
 #endif
 
 #endif // NGINE_OPENGL

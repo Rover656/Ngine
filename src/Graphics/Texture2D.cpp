@@ -24,163 +24,12 @@
 #include "Graphics/OpenGL.hpp"
 #endif
 
+#include "Graphics/API/PlatformGraphicsAPI.hpp"
 #include "Graphics/GraphicsDevice.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
-    void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, unsigned char *data_) {
-        // Save graphics device
-        m_graphicsDevice = graphicsDevice_;
-
-        // Unbind any bound textures
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        // Check format support
-        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_DXT))
-            && ((m_format == COMPRESSED_DXT1_RGB)
-                || (m_format == COMPRESSED_DXT1_RGBA)
-                || (m_format == COMPRESSED_DXT3_RGBA)
-                || (m_format == COMPRESSED_DXT5_RGBA))) {
-            throw std::runtime_error("DXT compressed texture format not supported");
-        }
-
-        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ETC1))
-            && (m_format == COMPRESSED_ETC1_RGB)) {
-            throw std::runtime_error("ETC1 compressed texture format not supported");
-        }
-
-        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ETC2)) &&
-            ((m_format == COMPRESSED_ETC2_RGB) || (m_format == COMPRESSED_ETC2_EAC_RGBA))) {
-            throw std::runtime_error("ETC2 compressed texture format not supported");
-        }
-
-        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_PVRT)) &&
-            ((m_format == COMPRESSED_PVRT_RGB) || (m_format == COMPRESSED_PVRT_RGBA))) {
-            throw std::runtime_error("PVRT compressed texture format not supported");
-        }
-
-        if ((!graphicsDevice_->GetGLSupportFlag(GraphicsDevice::GL_COMP_ASTC)) &&
-            ((m_format == COMPRESSED_ASTC_4x4_RGBA) || (m_format == COMPRESSED_ASTC_8x8_RGBA))) {
-            throw std::runtime_error("ASTC compressed texture format not supported");
-        }
-
-        // Create texture
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glGenTextures(1, &ID);
-
-        // Bind
-        glBindTexture(GL_TEXTURE_2D, ID);
-
-        // Generate mipmaps
-        int mipWidth = Width;
-        int mipHeight = Height;
-        int mipOffset = 0;
-
-        unsigned int glInternalFormat, glFormat, glType;
-        graphicsDevice_->GetGLTextureFormats(m_format, &glInternalFormat, &glFormat, &glType);
-
-        for (int i = 0; i < m_mipmapCount; i++) {
-            unsigned int mipSize = _calculatePixelDataSize();
-
-            if (glInternalFormat != -1) {
-                if (m_format < COMPRESSED_DXT1_RGB)
-                    glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType,
-                                 (unsigned char *) data_ + mipOffset);
-                else
-                    glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize,
-                                           (unsigned char *) data_ + mipOffset);
-
-#if defined(GRAPHICS_OPENGL33)
-                if (m_format == UNCOMPRESSED_GRAYSCALE) {
-                    GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
-                    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
-                } else if (m_format == UNCOMPRESSED_GRAY_ALPHA) {
-#if defined(GRAPHICS_OPENGL21)
-                    GLint swizzleMask[] = { GL_RED, GL_RED, GL_RED, GL_ALPHA };
-#elif defined(GRAPHICS_OPENGL33)
-                    GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_GREEN};
-#endif
-                    glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
-                }
-#endif
-            }
-
-            mipWidth /= 2;
-            mipHeight /= 2;
-            mipOffset += mipSize;
-
-            // Security check for NPOT textures
-            if (mipWidth < 1) mipWidth = 1;
-            if (mipHeight < 1) mipHeight = 1;
-        }
-
-        // TEMP: Needs proper implementation
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
-
-    int Texture2D::_calculatePixelDataSize() {
-        auto bpp = 0;
-
-        switch (m_format) {
-            case UNCOMPRESSED_GRAYSCALE:
-                bpp = 8;
-                break;
-            case UNCOMPRESSED_GRAY_ALPHA:
-            case UNCOMPRESSED_R5G6B5:
-            case UNCOMPRESSED_R5G5B5A1:
-            case UNCOMPRESSED_R4G4B4A4:
-                bpp = 16;
-                break;
-            case UNCOMPRESSED_R8G8B8A8:
-                bpp = 32;
-                break;
-            case UNCOMPRESSED_R8G8B8:
-                bpp = 24;
-                break;
-            case UNCOMPRESSED_R32:
-                bpp = 32;
-                break;
-            case UNCOMPRESSED_R32G32B32:
-                bpp = 32 * 3;
-                break;
-            case UNCOMPRESSED_R32G32B32A32:
-                bpp = 32 * 4;
-                break;
-            case COMPRESSED_DXT1_RGB:
-            case COMPRESSED_DXT1_RGBA:
-            case COMPRESSED_ETC1_RGB:
-            case COMPRESSED_ETC2_RGB:
-            case COMPRESSED_PVRT_RGB:
-            case COMPRESSED_PVRT_RGBA:
-                bpp = 4;
-                break;
-            case COMPRESSED_DXT3_RGBA:
-            case COMPRESSED_DXT5_RGBA:
-            case COMPRESSED_ETC2_EAC_RGBA:
-            case COMPRESSED_ASTC_4x4_RGBA:
-                bpp = 8;
-                break;
-            case COMPRESSED_ASTC_8x8_RGBA:
-                bpp = 2;
-                break;
-            default:
-                break;
-        }
-
-        auto dataSize = Width * Height * bpp / 8;  // Total data size in bytes
-
-        // Most compressed formats works on 4x4 blocks,
-        // if texture is smaller, minimum dataSize is 8 or 16
-        if ((Width < 4) && (Height < 4)) {
-            if ((m_format >= COMPRESSED_DXT1_RGB) && (m_format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
-            else if ((m_format >= COMPRESSED_DXT3_RGBA) && (m_format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
-        }
-
-        return dataSize;
-    }
-
     Texture2D::Texture2D() {
         Unload();
     }
@@ -193,16 +42,18 @@ namespace Ngine::Graphics {
             return;
         }
 
+        // Save API
+        m_API = graphicsDevice_->GetAPI();
+        m_graphicsDevice = graphicsDevice_;
+
+        // Set fields
         Width = width_;
         Height = height_;
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        // Set fields
         m_mipmapCount = mipmapCount_;
         m_format = format_;
 
         // Make our texture
-        _createTexture(graphicsDevice_, data_);
-#endif
+        m_API->CreateTexture(this, data_);
     }
 
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
@@ -214,6 +65,10 @@ namespace Ngine::Graphics {
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_) {
         // Create
         *this = Texture2D(graphicsDevice_, img_->PixelData, img_->Width, img_->Height, img_->Format, img_->MipmapCount);
+    }
+
+    PixelFormat Texture2D::GetFormat() {
+        return m_format;
     }
 
     int Texture2D::GetMipmapCount() const {
@@ -303,14 +158,12 @@ namespace Ngine::Graphics {
     }
 
     void Texture2D::Unload() {
-        // Delete texture data
+        // Delete
+        m_API->DeleteTexture(this);
+
+        // Clear fields
         Width = 0;
         Height = 0;
-
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        glDeleteTextures(1, &ID);
-        ID = 0;
-#endif
     }
 
     void Texture2D::Draw(Graphics::Renderer *renderer_, Vector2 pos_, Color col_, float scale_, Vector2 origin_,

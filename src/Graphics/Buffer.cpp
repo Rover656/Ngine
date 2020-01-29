@@ -20,6 +20,8 @@
 
 #include "Graphics/Buffer.hpp"
 
+#include "Graphics/API/PlatformGraphicsAPI.hpp"
+
 namespace Ngine::Graphics {
     void Buffer::_writeBuffer(void *data_, int count_, int size_, bool update_) {
         // Use API
@@ -29,12 +31,12 @@ namespace Ngine::Graphics {
     Buffer::Buffer(GraphicsDevice *graphicsDevice_, BufferType type_, BufferUsage usage_)
             : m_API(graphicsDevice_->GetAPI()), Type(type_), Usage(usage_) {
         // Get API and create buffer.
-        m_API->InitializeBuffer(this);
+        m_API->CreateBuffer(this);
     }
 
     Buffer::~Buffer() {
         // Delete this buffer
-        m_API->CleanupBuffer(this);
+        m_API->DeleteBuffer(this);
     }
 
     void Buffer::Bind() {

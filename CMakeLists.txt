@@ -40,7 +40,8 @@ message(STATUS "Building Ngine V${PROJECT_VERSION}")
 
 ### Feature Flags
 
-
+option(ENABLE_OPENGL "Enable the OpenGL Rendering API." ON)
+option(ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will add ANGLE as a dependency." ON)
 
 ### End Feature Flags
 

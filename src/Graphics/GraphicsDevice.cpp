@@ -101,6 +101,9 @@ namespace Ngine::Graphics {
                 break;
         }
 
+        // Make current
+        m_attachedWindow->MakeCurrent();
+
         // TEMP: Leaving this here for compatibility
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
         // Send OpenGL Version to console
@@ -146,17 +149,6 @@ namespace Ngine::Graphics {
         for (auto i = 0; i < numExt; i++) {
             // GLES2 Specific Extensions
 #if defined (GRAPHICS_OPENGLES2)
-            // Check for VAO support
-            if (strcmp(extList[i], "GL_OES_vertex_array_object") == 0)
-            {
-                // The extension is supported by our hardware and driver, try to get related functions pointers
-                glGenVertexArrays = (PFNGLGENVERTEXARRAYSOESPROC)eglGetProcAddress("glGenVertexArraysOES");
-                glBindVertexArray = (PFNGLBINDVERTEXARRAYOESPROC)eglGetProcAddress("glBindVertexArrayOES");
-                glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSOESPROC)eglGetProcAddress("glDeleteVertexArraysOES");
-
-                if ((glGenVertexArrays != NULL) && (glBindVertexArray != NULL) && (glDeleteVertexArrays != NULL)) m_GLSupportFlags[GL_VAO] = true;
-            }
-
             // Check NPOT textures support
             if (strcmp(extList[i], "GL_OES_texture_npot") == 0) m_GLSupportFlags[GL_TEX_NPOT] = true;
 
@@ -356,7 +348,7 @@ namespace Ngine::Graphics {
         *glType_ = -1;
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
         switch (format_) {
-#if defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
+#if defined(PLATFORM_UWP) || true
             // NOTE: on OpenGL ES 2.0 (WebGL), internalFormat must match format and options allowed are: GL_LUMINANCE, GL_RGB, GL_RGBA
         case UNCOMPRESSED_GRAYSCALE:
             *glInternalFormat_ = GL_LUMINANCE;
@@ -417,7 +409,7 @@ namespace Ngine::Graphics {
                 *glType_ = GL_FLOAT;
             }
             break;
-#elif defined(GRAPHICS_OPENGL33)
+#else
             case UNCOMPRESSED_GRAYSCALE:
                 *glInternalFormat_ = GL_R8;
                 *glFormat_ = GL_RED;

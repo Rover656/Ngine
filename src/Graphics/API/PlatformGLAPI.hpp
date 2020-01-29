@@ -26,9 +26,11 @@
 #include "Graphics/API/PlatformGraphicsAPI.hpp"
 
 #if defined(PLATFORM_DESKTOP)
-#define GLAD // GLAD supports GL and GLES, No other platform can do this.
-#elif defined(PLATFORM_UWP) && defined(GRAPHICS_OPENGLES2)
+#define GLAD
+#define GLFW
+#elif defined(PLATFORM_UWP)
 #define EGL
+#define GLAD
 #endif
 
 #if defined(EGL)
@@ -107,7 +109,7 @@ namespace Ngine::Graphics::API {
         int m_maxDepthBits = 0;
         float m_maxAnisotropicLevel = 0;
 
-        // For EGL platforms
+        // We control the context for EGL platforms.
 #if defined(EGL)
         /**
          * EGL Context
@@ -124,6 +126,9 @@ namespace Ngine::Graphics::API {
          */
         EGLSurface m_surface;
 #endif
+
+        void _getTextureFormats(PixelFormat format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
+        int _calculatePixelDataSize(int width_, int height_, PixelFormat format_);
     protected:
         void _useVertexLayout(VertexLayout *layout_) override;
         void _stopVertexLayout(VertexLayout *layout_) override;
@@ -132,15 +137,17 @@ namespace Ngine::Graphics::API {
         ~PlatformGLAPI() override;
 
         void Clear(const Color &color_) override;
+        void CreateTexture(Texture2D *texture_, unsigned char *data_) override;
+        void DeleteTexture(Texture2D *texture_) override;
         void BindTexture(Texture2D *texture_) override;
         void BindShader(ShaderProgram *shader_) override;
         void BindBuffer(Buffer *buffer_) override;
         void UnbindBuffer(Buffer *buffer_) override;
-        void InitializeBuffer(Buffer *buffer_) override;
-        void CleanupBuffer(Buffer *buffer_) override;
+        void CreateBuffer(Buffer *buffer_) override;
+        void DeleteBuffer(Buffer *buffer_) override;
         void WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) override;
-        void InitializeVertexLayout(VertexLayout *layout_) override;
-        void CleanupVertexLayout(VertexLayout *layout_) override;
+        void CreateVertexLayout(VertexLayout *layout_) override;
+        void DeleteVertexLayout(VertexLayout *layout_) override;
         void ConfigureVertexLayout(VertexLayout *layout_) override;
         void Draw(int count_, int start_) override;
         void DrawIndexed(int count_, int start_) override;
