@@ -20,20 +20,14 @@
 
 #include "PlatformGLAPI.hpp"
 
-// TODO: Add support for GLES3
-
 #if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
 
 #if defined(GLAD)
-
 #include <glad/glad.h>
-
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-
 #include <GLFW/glfw3.h>
-
 #elif defined(EGL)
 #define GL_KHR_debug 0
 #define GL_GLEXT_PROTOTYPES 1 
@@ -653,6 +647,16 @@ namespace Ngine::Graphics::API {
 #endif
         }
 
+        if (!status) {
+            // Terminate, we can't load
+#if defined(GLFW)
+            glfwTerminate();
+#endif
+            Console::Fail("PlatformGLAPI", "Failed to init GLAD.");
+        }
+        Console::Notice("PlatformGLAPI", "Successfully initialized GLAD.");
+#endif
+
         // Determine if we're running GLES
 #if !defined(GLAD)
         if (GraphicsDevice::GetTargetAPI() == GraphicsAPI::OpenGLES) {
@@ -665,16 +669,6 @@ namespace Ngine::Graphics::API {
         m_GLES3 = GLAD_GL_ES_VERSION_3_0;
 #endif
 
-        if (!status) {
-            // Terminate, we can't load
-#if defined(GLFW)
-            glfwTerminate();
-#endif
-            Console::Fail("PlatformGLAPI", "Failed to init GLAD.");
-        }
-        Console::Notice("PlatformGLAPI", "Successfully initialized GLAD.");
-#endif
-
         // Setup default extensions
 #if defined(GLAD)
         if (GLAD_GL_VERSION_3_0) {
@@ -684,6 +678,11 @@ namespace Ngine::Graphics::API {
             m_featureFlags[EXT_TEX_DEPTH] = true;
         }
 #endif
+        // GLES3 defaults
+        if (m_GLES3) {
+            m_featureFlags[FEATURE_VAO] = true;
+            // TODO: Add others.
+        }
 
         // Build extension list
         int numExt = 0;
@@ -721,17 +720,17 @@ namespace Ngine::Graphics::API {
 
         // Process extensions
         for (auto i = 0; i < numExt; i++) {
-            // GLES Specific Extensions
-            if (m_GLES2 || m_GLES3) {
+            // GLES 2 extensions
+            if (m_GLES2) {
                 // Check for VAO support
                 if (strcmp(extList[i], "GL_OES_vertex_array_object") == 0) {
 #if defined(GLAD)
 #if defined(GLFW)
                     // GLFW does not provide the OES methods, try to find them.
-                    glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress("glGenVertexArraysOES");
-                    glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress("glBindVertexArrayOES");
-                    glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSPROC) glfwGetProcAddress(
-                            "glDeleteVertexArraysOES");
+                    glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress("glGenVertexArraysOES");
+                    glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress("glBindVertexArrayOES");
+                    glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSPROC)glfwGetProcAddress(
+                        "glDeleteVertexArraysOES");
 #endif
                     if ((glGenVertexArraysOES != nullptr) && (glBindVertexArrayOES != nullptr) &&
                         (glDeleteVertexArraysOES != nullptr))
@@ -741,7 +740,10 @@ namespace Ngine::Graphics::API {
                     m_featureFlags[FEATURE_VAO] = true;
 #endif
                 }
+            }
 
+            // GLES 2/3 Specific extensions
+            if (m_GLES2 || m_GLES3) {
                 // Check NPOT textures support
                 if (strcmp(extList[i], "GL_OES_texture_npot") == 0) m_featureFlags[EXT_TEX_NPOT] = true;
 
