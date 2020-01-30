@@ -24,14 +24,16 @@
 #include "Console.hpp"
 
 #if defined(PLATFORM_DESKTOP)
-
 #include <glad/glad.h>
-
 #elif defined(PLATFORM_UWP)
 #define GL_KHR_debug 0
-#define GL_GLEXT_PROTOTYPES 1 // UWP???
-#include "../../../third-party/ANGLE/GLES2/gl2.h"
-#include "../../../third-party/ANGLE/GLES2/gl2ext.h"
+#define GL_GLEXT_PROTOTYPES 1
+
+// Include latest GLES header
+#include <GLES3/gl31.h>
+// Add GLES2 extensions
+#include <GLES2/gl2ext.h>
+
 #include "../../../third-party/ANGLE/EGL/egl.h"
 #endif
 

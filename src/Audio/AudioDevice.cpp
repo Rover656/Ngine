@@ -21,6 +21,8 @@
 #include "Audio/AudioDevice.hpp"
 #include "Console.hpp"
 
+#include <cstring>
+
 namespace Ngine::Audio {
     std::vector<Music *> AudioDevice::m_activeMusic;
 
