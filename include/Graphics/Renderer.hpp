@@ -42,7 +42,7 @@ namespace Ngine::Graphics {
     struct Vertex {
         Vector3 Position;
         Vector2 TexCoords;
-        Color Color;
+        Graphics::Color Color;
     };
 
     /**
