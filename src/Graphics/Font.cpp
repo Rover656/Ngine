@@ -108,7 +108,7 @@ namespace Ngine::Graphics {
                           float spacing_, const Color &color_, LineSpacing lineSpacing_, const Angle &rotation_,
                           const Vector2 &origin_) {
         // Check if a single batch will fit:
-        auto willFit = renderer_->CheckSize(PrimitiveType::Quads, string_.length());
+        auto willFit = renderer_->WillFit(PrimitiveType::Quads, string_.length());
         if (!willFit) // TODO: Automatically batch text for the developer
             Console::Fail("Font", "Too much text for a single buffer, please split your draw calls up.");
 
@@ -119,7 +119,8 @@ namespace Ngine::Graphics {
         renderer_->Translate({-origin_.X, -origin_.Y, 0});
 
         // Ready our texture
-        renderer_->Begin(PrimitiveType::Quads, m_texture);
+        renderer_->SetTexture(m_texture);
+        renderer_->BeginVertices(PrimitiveType::Quads);
 
         // Get ready to render text
         float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize_ / m_baseSize;
@@ -160,30 +161,30 @@ namespace Ngine::Graphics {
                     auto height = m_characters[index].Rectangle.Height * scaleFactor;
                     auto atlasWidth = m_texture->Width;
                     auto atlasHeight = m_texture->Height;
-                    renderer_->Vertex(
-                            {0, 0},
-                            {
-                                    (srcRect.X) / (float) atlasWidth,
-                                    (srcRect.Y) / (float) atlasHeight
-                            }, color_);
-                    renderer_->Vertex(
-                            {0, height},
-                            {
-                                    (srcRect.X) / (float) atlasWidth,
-                                    (srcRect.Height + srcRect.Y) / (float) atlasHeight
-                            }, color_);
-                    renderer_->Vertex(
-                            {width, height},
-                            {
-                                    (srcRect.Width + srcRect.X) / (float) atlasWidth,
-                                    (srcRect.Height + srcRect.Y) / (float) atlasHeight
-                            }, color_);
-                    renderer_->Vertex(
-                            {width, 0},
-                            {
-                                    (srcRect.Width + srcRect.X) / (float) atlasWidth,
-                                    (srcRect.Y) / (float) atlasHeight
-                            }, color_);
+                    renderer_->PushVertex({
+                                                  {0, 0, 0},
+                                                  {
+                                                          (srcRect.X) / (float) atlasWidth,
+                                                          (srcRect.Y) / (float) atlasHeight
+                                                  }, color_});
+                    renderer_->PushVertex({
+                                                  {0, height, 0},
+                                                  {
+                                                          (srcRect.X) / (float) atlasWidth,
+                                                          (srcRect.Height + srcRect.Y) / (float) atlasHeight
+                                                  }, color_});
+                    renderer_->PushVertex({
+                                                  {width, height, 0},
+                                                  {
+                                                          (srcRect.Width + srcRect.X) / (float) atlasWidth,
+                                                          (srcRect.Height + srcRect.Y) / (float) atlasHeight
+                                                  }, color_});
+                    renderer_->PushVertex({
+                                                  {width, 0, 0},
+                                                  {
+                                                          (srcRect.Width + srcRect.X) / (float) atlasWidth,
+                                                          (srcRect.Y) / (float) atlasHeight
+                                                  }, color_});
 
                     // Pop matrix
                     renderer_->PopMatrix();
@@ -196,7 +197,7 @@ namespace Ngine::Graphics {
         }
 
         // End renderer
-        renderer_->End();
+        renderer_->EndVertices();
         renderer_->PopMatrix();
     }
 

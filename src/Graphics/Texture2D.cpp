@@ -206,59 +206,60 @@ namespace Ngine::Graphics {
         renderer_->Translate({-origin_.X, -origin_.Y, 0});
 
         // Push vertices
-        renderer_->Begin(PrimitiveType::Quads, this);
+        renderer_->SetTexture(this);
+        renderer_->BeginVertices(PrimitiveType::Quads);
         if (flipX) {
-            renderer_->Vertex(
-                    {0, 0},
+            renderer_->PushVertex({
+                    {0, 0, 0},
                     {
                             (srcRect_.Width + srcRect_.X) / (float)Width,
                             (srcRect_.Y) / (float)Height
-                    }, col_);
-            renderer_->Vertex(
-                    {0, destRect_.Height},
+                    }, col_});
+            renderer_->PushVertex({
+                    {0, destRect_.Height, 0},
                     {
                             (srcRect_.Width + srcRect_.X) / (float)Width,
                             (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_);
-            renderer_->Vertex(
-                    {destRect_.Width, destRect_.Height},
+                    }, col_});
+            renderer_->PushVertex({
+                    {destRect_.Width, destRect_.Height, 0},
                     {
                             (srcRect_.X) / (float)Width,
                             (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_);
-            renderer_->Vertex(
-                    {destRect_.Width, 0},
+                    }, col_});
+            renderer_->PushVertex({
+                    {destRect_.Width, 0, 0},
                     {
                             (srcRect_.X) / (float)Width,
                             (srcRect_.Y) / (float)Height
-                    }, col_);
+                    }, col_});
         } else {
-            renderer_->Vertex(
-                    {0, 0},
+            renderer_->PushVertex({
+                    {0, 0, 0},
                     {
                             (srcRect_.X) / (float)Width,
                             (srcRect_.Y) / (float)Height
-                    }, col_);
-            renderer_->Vertex(
-                    {0, destRect_.Height},
+                    }, col_});
+            renderer_->PushVertex({
+                    {0, destRect_.Height, 0},
                     {
                             (srcRect_.X) / (float)Width,
                             (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_);
-            renderer_->Vertex(
-                    {destRect_.Width, destRect_.Height},
+                    }, col_});
+            renderer_->PushVertex({
+                    {destRect_.Width, destRect_.Height, 0},
                     {
                             (srcRect_.Width + srcRect_.X) / (float)Width,
                             (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_);
-            renderer_->Vertex(
-                    {destRect_.Width, 0},
+                    }, col_});
+            renderer_->PushVertex({
+                    {destRect_.Width, 0, 0},
                     {
                             (srcRect_.Width + srcRect_.X) / (float)Width,
                             (srcRect_.Y) / (float)Height
-                    }, col_);
+                    }, col_});
         }
-        renderer_->End();
+        renderer_->EndVertices();
 
         // Pop matrix
         renderer_->PopMatrix();

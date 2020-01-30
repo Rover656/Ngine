@@ -25,14 +25,14 @@ namespace Ngine::Graphics {
 
     void Camera::BeginCamera(GraphicsDevice *graphicsDevice_) const {
         // Load matrix
-        graphicsDevice_->PushModelViewMatrix();
-        graphicsDevice_->LoadModelViewIdentity();
-        graphicsDevice_->MultModelView(GetTranslationMatrix());
+        graphicsDevice_->PushViewMatrix();
+        graphicsDevice_->LoadViewIdentity();
+        graphicsDevice_->MultView(GetTranslationMatrix());
     }
 
     void Camera::EndCamera(GraphicsDevice *graphicsDevice_) const {
         // Reload matrix
-        graphicsDevice_->PopModelViewMatrix();
+        graphicsDevice_->PopViewMatrix();
     }
 
     Vector2 Camera::ScreenToWorld(Vector2 pos_) {

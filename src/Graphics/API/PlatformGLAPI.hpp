@@ -21,6 +21,8 @@
 #ifndef GLRENDERER_HPP
 #define GLRENDERER_HPP
 
+#if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
+
 #include "Config.hpp"
 
 #include "Graphics/API/PlatformGraphicsAPI.hpp"
@@ -30,7 +32,6 @@
 #define GLFW
 #elif defined(PLATFORM_UWP)
 #define EGL
-#define GLAD
 #endif
 
 #if defined(EGL)
@@ -103,7 +104,8 @@ namespace Ngine::Graphics::API {
     class PlatformGLAPI : public PlatformGraphicsAPI {
         Texture2D *m_currentTexture = nullptr;
         ShaderProgram *m_currentShader = nullptr;
-        bool m_GLES = false;
+        bool m_GLES2 = false;
+        bool m_GLES3 = false;
 
         bool m_featureFlags[EXT_TEX_NPOT + 1];
         int m_maxDepthBits = 0;
@@ -149,6 +151,7 @@ namespace Ngine::Graphics::API {
         void CreateVertexLayout(VertexLayout *layout_) override;
         void DeleteVertexLayout(VertexLayout *layout_) override;
         void ConfigureVertexLayout(VertexLayout *layout_) override;
+        void PrepareFor2D() override;
         void Draw(int count_, int start_) override;
         void DrawIndexed(int count_, int start_) override;
 
@@ -163,5 +166,7 @@ namespace Ngine::Graphics::API {
 #endif
     };
 }
+
+#endif
 
 #endif //GLRENDERER_HPP

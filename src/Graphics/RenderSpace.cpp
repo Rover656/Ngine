@@ -80,7 +80,7 @@ namespace Ngine::Graphics {
         return nullptr;
     }
 
-    void RenderSpace::Render(NewRenderer *renderer_, const std::string &camera_, RenderTarget *target_) {
+    void RenderSpace::Render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_) {
         // Check if we need to re-sort
         if (m_dirty) _sortNodes();
 
@@ -103,7 +103,6 @@ namespace Ngine::Graphics {
         }
 
         // Clean
-        //renderer_->Render();
         renderer_->RenderBatch();
         camera->EndCamera(graphicsDevice);
         if (target_ != nullptr)

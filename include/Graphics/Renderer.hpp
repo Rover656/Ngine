@@ -25,12 +25,14 @@
 
 #include "../Math.hpp"
 #include "../Rectangle.hpp"
+#include "Buffer.hpp"
 #include "Color.hpp"
 #include "Font.hpp"
 #include "GraphicsDevice.hpp"
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
 #include "Texture2D.hpp"
+#include "VertexLayout.hpp"
 
 namespace Ngine::Graphics {
     /**
@@ -75,69 +77,76 @@ namespace Ngine::Graphics {
     class NEAPI Renderer {
     public:
         /**
-         * The maximum size of elements per buffer allowed.
+         * The maximum number of triangle vertices per batch.
+         *
+         * @note 65535 because that is the maximum indexable by unsigned short.
          */
-        static const unsigned int MAX_BUFFER_SIZE = 65535;
+        static const int MAX_TRIANGLE_VERTICES = 65535;
 
         /**
-         * The maximum number of matrices on the stack.
+         * The size of the matrix stack size.
          */
-        static const unsigned int MATRIX_STACK_SIZE = 32;
+        static const int MATRIX_STACK_SIZE = 32;
     private:
         /**
-         * The graphics device.
+         * The graphics device attached to the renderer.
          */
         GraphicsDevice *m_graphicsDevice = nullptr;
 
         /**
-         * 1x1 white texture.
+         * The batch vertex layout.
          */
-        Texture2D *m_whiteTexture = nullptr;
+        VertexLayout *m_layout;
 
         /**
-         * Flag to fix threading problems.
+         * The vertex buffer for the batch.
          */
-        bool m_rendering = false;
+        Buffer *m_VBO;
 
         /**
-         * Whether or not we are adding to the vertex array.
+         * The index buffer for the batch.
          */
-        bool m_midBatch = false;
+        Buffer *m_IBO;
 
         /**
-         * The VAO used for rendering.
+         * The texture being used for the current batch
          */
-        unsigned int m_VAO;
+        Texture2D *m_currentTexture = nullptr;
 
         /**
-         * The VBO used to store vertex data.
+         * The shader being used for the current batch.
          */
-        unsigned int m_VBO;
+        ShaderProgram *m_currentShader = nullptr;
 
         /**
-         * The IBO used to store index data.
+         * The vertex array for the current batch.
          */
-        unsigned int m_IBO;
+        Vertex m_vertexArray[MAX_TRIANGLE_VERTICES];
 
         /**
-         * This contains a list of all the vertices to be pushed into the VBO.
-         */
-        Vertex m_vertices[MAX_BUFFER_SIZE];
-
-        /**
-         * The number of vertices to be pushed from the array
+         * The vertex array counter.
          */
         int m_vertexCount = 0;
 
         /**
-         * This contains all of the indices for being written to the buffer.
+         * The index array for the current batch.
          */
-        unsigned short m_indices[MAX_BUFFER_SIZE];
+        unsigned short m_indexArray[MAX_TRIANGLE_VERTICES];
 
         /**
-         * The number of indices to be written.
+         * The index array counter.
          */
         int m_indexCount = 0;
+
+        /**
+         * The default shader program for rendering.
+         */
+        ShaderProgram *m_defaultShader = nullptr;
+
+        /**
+         * White texture used for rendering things without texture.
+         */
+        Texture2D *m_whiteTexture = nullptr;
 
         /**
          * The matrix stack.
@@ -150,190 +159,95 @@ namespace Ngine::Graphics {
         int m_matrixStackCounter = 0;
 
         /**
-         * The temporary vertex data from immediate mode calls.
+         * Whether or not we are building vertices.
          */
-        Vertex m_tempVertexData[MAX_BUFFER_SIZE];
+        bool m_buildingVertices = false;
 
         /**
-         * The number of vertices from immediate mode calls.
+         * The vertex data type used to build.
+         * Will be converted if not Triangles.
          */
-        int m_tempVertexDataCount = 0;
-
-        // Below this, any fields here are just for immediate mode rendering
+        PrimitiveType m_builtType;
 
         /**
-         * The default shader program.
+         * The built vertex array.
          */
-        ShaderProgram *m_defaultShaderProgram = nullptr;
+        Vertex m_builtVertices[MAX_TRIANGLE_VERTICES];
 
         /**
-         * The currently applied shader program.
-         *
-         * @todo Replace with ShaderProgramState when added.
+         * The number of vertices built.
          */
-        ShaderProgram *m_currentShader;
+        int m_builtVertexCount = 0;
 
         /**
-         * The currently applied texture.
+         * Add triangles to the buffer.
          */
-        unsigned int m_currentTexture;
+        void _addTriangles(Vertex *vertices_, int count_, bool translate_ = false);
 
         /**
-         * The current primitive type being rendered.
+         * Add indexed triangles to the buffer (no matrix translation).
          */
-        PrimitiveType m_currentPrimitiveType = PrimitiveType::Triangles;
-
-        // END SEGMENTATION
-
-        /**
-         * Enable OpenGL capabilities.
-         */
-        void _enableGLCapabilities();
-
-        /**
-         * Create the default shader
-         */
-        void _createDefaultShader();
-
-        /**
-         * Create the buffers needed for rendering.
-         */
-        void _createBuffers();
-
-        /**
-         * Delete the rendering buffers.
-         */
-        void _deleteBuffers();
-
-        /**
-         * Bind the rendering buffers.
-         */
-        void _bindBuffers();
-
-        /**
-         * Unbind the buffers
-         */
-        void _unbindBuffers();
-
-        /**
-         * Write the data to a buffer.
-         * Buffer max size may be reset to `MAX_BUFFER_SIZE`.
-         */
-        static void _writeBuffer(unsigned int buffer_, unsigned int bufferType_, void *data_, int size_, int count_);
-
-        /**
-         * Add a vertex array to the buffer.
-         *
-         * @note This converts any primitive type to triangles.
-         * @param type_ The primitive type.
-         * @param vertices_ The vertex array.
-         * @param count_ The size of the array.
-         */
-        void _addVertices(PrimitiveType type_, Vertex *vertices_, int count_);
-
-        /**
-         * Add a set of indexed vertices.
-         *
-         * @warning Only supports Triangles at the moment.
-         * @todo Implement index conversion.
-         */
-        void _addIndexedVertices(PrimitiveType type_, Vertex *vertices_, int vCount_, unsigned short *indices_,
-                                 int iCount_);
-
-        /**
-         * Render the batch to the display.
-         */
-        void _renderBatch();
-
+        void _addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_, bool translate_ = false);
     public:
-        /**
-         * Create a renderer.
-         *
-         * @param graphicsDevice_ The current graphics device.
-         */
-        explicit Renderer(GraphicsDevice *graphicsDevice_);
+        Renderer(GraphicsDevice *graphicsDevice_);
         ~Renderer();
 
         /**
-         * Add a vertex array to the renderer batch.
+         * Add triangle vertices to the current batch.
          *
-         * @param vertices_ The vertex array to add.
-         * @param primitiveType_ The primitive type.
+         * @param vertices_ Triangle vertices to add.
+         * @param count_ The number of vertices in the array.
+         */
+        void AddTriangles(Vertex *vertices_, int count_);
+
+        /**
+         * Add indexed triangle vertices and indices.
+         *
+         * @param vertices_ Triangle vertices that are indexed by `indices_`
+         * @param vCount_ The number of vertices in the array.
+         * @param indices_ The indices for the vertex array.
+         * @param iCount_ The number of indices in the array.
+         */
+        void AddIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_);
+
+        /**
+         * Begin pushing vertices.
+         *
+         * @param type_ The vertex type. Will be converted by the `VertexDataTool`.
+         * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
+         */
+        void BeginVertices(PrimitiveType type_);
+
+        /**
+         * Finish pushing vertices and add to the render queue.
+         * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
+         */
+        void EndVertices();
+
+        /**
+         * Add a vertex to the current vertex build.
+         *
+         * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
+         * @param vertex_ Vertex to add.
+         */
+        void PushVertex(Vertex vertex_);
+
+        /**
+         * Set the current texture for rendering.
+         *
+         * @note Will force a draw of anything before this call if the texture is different.
          * @param texture_ The texture to render with.
-         * @param shader_ The shader to render with.
          */
-        void Add(std::vector<Vertex> vertices_, PrimitiveType primitiveType_, Texture2D *texture_ = nullptr,
-                 ShaderProgram *shader_ = nullptr);
+        void SetTexture(Texture2D *texture_);
 
         /**
-         * Add a vertex array to the renderer batch.
+         * Set the current shader for rendering.
          *
-         * @param vertices_ The vertex array to add.
-         * @param primitiveType_ The primitive type.
-         * @param texture_ The texture to render with.
-         * @param shader_ The shader to render with.
+         * @note Will force a draw of anything before this call if the texture is different.
+         * @todo ShaderProgramState/Material.
+         * @param shader_ The shader to use.
          */
-        void Add(std::vector<Vertex> vertices_, PrimitiveType primitiveType_, unsigned int texture_ = 0,
-                 ShaderProgram *shader_ = nullptr);
-
-        /**
-         * Add indexed vertices to the renderer batch.
-         *
-         * @param vertices_ The vertex array.
-         * @param indices_ The index array.
-         * @param primitiveType_ The primitive type.
-         * @param texture_ The texture to render with.
-         * @param shader_ The shader to render with.
-         */
-        void AddIndexed(std::vector<Vertex> vertices_, std::vector<unsigned short> indices_,
-                        PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
-
-        /**
-         * Begin adding some vertices to the current framebuffer batch.
-         *
-         * @param primitiveType_ The primitive type.
-         * @param texture_ The texture to render with.
-         * @param shader_ The shader to render with.
-         */
-        void Begin(PrimitiveType primitiveType_, Texture2D *texture_ = nullptr, ShaderProgram *shader_ = nullptr);
-
-        /**
-         * Push some vertex data to the batch.
-         *
-         * @param vertexData_ The data to push.
-         */
-        void Vertex(Vertex vertexData_);
-
-        /**
-         * Create a new vertex and push it to the batch.
-         *
-         * @param pos_ Vertex position.
-         * @param texCoord_ Vertex texture coord.
-         * @param color_ Vertex color.
-         */
-        void Vertex(const Vector2 &pos_, const Vector2 &texCoord_, const Color &color_);
-
-        /**
-         * End the current batch.
-         */
-        void End();
-
-        /**
-         * Render the current batch.
-         */
-        void Render();
-
-        /**
-         * Clear the framebuffer.
-         */
-        void Clear();
-
-        /**
-         * Set the clear color.
-         *
-         * @param color_ The color to clear with.
-         */
-        void SetClearColor(Color color_);
+        void SetShader(ShaderProgram *shader_);
 
         /**
          * Push a matrix onto the stack (with the current matrix's value).
@@ -369,7 +283,7 @@ namespace Ngine::Graphics {
          *
          * @note Formula is as follows: Current Matrix = Matrix Provided * Current Matrix
          */
-        void MultMatrix(const Matrix &mat_);
+        void MultiplyMatrix(const Matrix &mat_);
 
         /**
          * Multiply the current matrix with a translation matrix.
@@ -394,22 +308,47 @@ namespace Ngine::Graphics {
         void Scale(const Vector3 &scale_);
 
         /**
-         * Check if count_ of type_ will fit inside of a buffer.
-         *
-         * @param type_ The primitive type.
-         * @param count_ The number of primitives.
-         * @return Whether or not a buffer can hold this primitive.
+         * Trigger a render of the internal buffers.
          */
-        bool CheckSize(PrimitiveType type_, int count_);
+        void RenderBatch();
 
         /**
-         * Get the graphics device used by the renderer.
+         * Render a vertex buffer.
          *
-         * @return The graphics device.
+         * @param layout_ The vertex layout.
+         * @param VBO_ The vertex buffer.
+         * @param count_ Number of vertices to render.
+         * @param texture_ The texture to render with.
+         * @param shader_ The shader to render with.
          */
-        GraphicsDevice *GetGraphicsDevice() {
-            return m_graphicsDevice;
-        }
+        void RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
+
+        /**
+         * Render an indexed vertex buffer.
+         *
+         * @param layout_ The vertex layout.
+         * @param VBO_ The vertex buffer.
+         * @param IBO_ The index buffer.
+         * @param count_ The number of elements. I.e. triangle count * 3
+         * @param texture_ The texture to render with.
+         * @param shader_ The shader to render with.
+         */
+        void RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
+
+        /**
+         * Check if n elements of type will fit in a buffer.
+         *
+         * @param type_ The primitive type.
+         * @param elements_ The number of elements.
+         */
+        bool WillFit(PrimitiveType type_, int elements_);
+
+        /**
+         * Get the graphics device attached to the renderer.
+         *
+         * @return The attached graphics device.
+         */
+        GraphicsDevice *GetGraphicsDevice();
     };
 }
 

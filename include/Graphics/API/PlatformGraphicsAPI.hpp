@@ -184,6 +184,11 @@ namespace Ngine::Graphics {
             void StopVertexLayout(VertexLayout *layout_);
 
             /**
+             * Prepare for rendering 2D
+             */
+            virtual void PrepareFor2D() = 0;
+
+            /**
              * Draw the currently bound buffer array.
              *
              * @param count_ Number of vertices (triangles * 3) to draw.

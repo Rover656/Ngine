@@ -75,23 +75,37 @@ namespace Ngine::Graphics {
         // Check API minimum versions
         switch (m_targetAPI) {
             case GraphicsAPI::OpenGL:
+#if defined(API_OPENGL_ENABLED)
 #if !defined(PLATFORM_DESKTOP)
                 Console::Fail("GraphicsDevice", "OpenGL is not supported on this platform.");
 #endif
                 if (m_targetMajorVersion < 3 && (m_targetMajorVersion == 3 && m_targetMinorVersion < 0))
                     Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 3.0");
+                if (m_targetMajorVersion == 4 && m_targetMinorVersion > 6)
+                    Console::Fail("GraphicsDevice", "OpenGL 4.6 is the latest Ngine supports.");
+#else
+                Console::Fail("GraphicsDevice", "OpenGL not supported as Ngine was not built with it enabled.");
+#endif
                 break;
             case GraphicsAPI::OpenGLES:
-                if (!(m_targetMajorVersion == 2 && m_targetMinorVersion == 0))
-                    Console::Fail("GraphicsDevice", "OpenGL ES 2.0 is the only version supported at the moment.");
+#if defined(API_OPENGLES_ENABLED)
+                if (m_targetMajorVersion < 2)
+                    Console::Fail("GraphicsDevice", "OpenGL ES 2.0+ required.");
+                if (m_targetMajorVersion == 3 && m_targetMinorVersion > 1)
+                    Console::Fail("GraphicsDevice", "OpenGL ES 3.1 is the latest Ngine supports.");
+#else
+                Console::Fail("GraphicsDevice", "OpenGL ES not supported as Ngine was not built with it enabled.");
+#endif
                 break;
         }
 
-        // Create API
+        // Create API (If context is created by the API, it should be made current.)
         switch (m_targetAPI) {
             case GraphicsAPI::OpenGL:
-            case GraphicsAPI::OpenGLES: // TEMP
+            case GraphicsAPI::OpenGLES:
+#if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
                 m_platformAPI = new API::PlatformGLAPI(this);
+#endif
                 break;
             case GraphicsAPI::DirectX:
                 Console::Fail("GraphicsDevice", "DirectX not implemented.");
@@ -100,9 +114,6 @@ namespace Ngine::Graphics {
                 Console::Fail("GraphicsDevice", "Cannot determine target API.");
                 break;
         }
-
-        // Make current
-        m_attachedWindow->MakeCurrent();
 
         // TEMP: Leaving this here for compatibility
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGLES2)
@@ -230,6 +241,10 @@ namespace Ngine::Graphics {
         return m_attachedWindow;
     }
 
+    void GraphicsDevice::Clear(Color color_) {
+        m_platformAPI->Clear(color_);
+    }
+
     RenderTarget *GraphicsDevice::GetCurrentTarget() {
         if (m_targetCounter > 0)
             return m_targetStack[m_targetCounter - 1];
@@ -241,9 +256,9 @@ namespace Ngine::Graphics {
         if (m_targetCounter >= MAX_TARGETS)
             Console::Fail("GraphicsDevice", "Render target stack overflow.");
 
-        // Force render before swapping target
+        // Force render of any batch before swapping target
         for (auto renderer : m_attachedRenderers)
-            renderer->Render();
+            renderer->RenderBatch(); // TODO: Review this stuff now.
 
         // Add to stack
         m_targetStack[m_targetCounter] = target_;
@@ -254,9 +269,9 @@ namespace Ngine::Graphics {
     }
 
     void GraphicsDevice::PopTarget() {
-        // Force render before swapping target
+        // Force render of any batch before swapping target
         for (auto renderer : m_attachedRenderers)
-            renderer->Render();
+            renderer->RenderBatch();
 
         // If target counter greater than 0, decrease
         if (m_targetCounter > 0) m_targetCounter--;
@@ -266,34 +281,34 @@ namespace Ngine::Graphics {
         return m_projectionMatrix;
     }
 
-    Matrix GraphicsDevice::GetModelViewMatrix() const {
-        if (m_modelViewCounter > 0)
-            return m_modelViewStack[m_modelViewCounter - 1];
+    Matrix GraphicsDevice::GetViewMatrix() const {
+        if (m_viewCounter > 0)
+            return m_viewMatrixStack[m_viewCounter - 1];
         return Matrix::Identity;
     }
 
-    void GraphicsDevice::PushModelViewMatrix() {
-        if (m_modelViewCounter >= MAX_MATRICES)
+    void GraphicsDevice::PushViewMatrix() {
+        if (m_viewCounter >= MAX_MATRICES)
             Console::Fail("GraphicsDevice", "ModelView Matrix stack overflow.");
 
         // Add to stack
-        m_modelViewStack[m_modelViewCounter] = GetModelViewMatrix();
-        m_modelViewCounter++;
+        m_viewMatrixStack[m_viewCounter] = GetViewMatrix();
+        m_viewCounter++;
     }
 
-    void GraphicsDevice::PopModelViewMatrix() {
+    void GraphicsDevice::PopViewMatrix() {
         // If target counter greater than 0, decrease
-        if (m_modelViewCounter > 0) m_modelViewCounter--;
+        if (m_viewCounter > 0) m_viewCounter--;
     }
 
-    void GraphicsDevice::LoadModelViewIdentity() {
-        if (m_modelViewCounter == 0) PushModelViewMatrix();
-        m_modelViewStack[m_modelViewCounter - 1] = Matrix::Identity;
+    void GraphicsDevice::LoadViewIdentity() {
+        if (m_viewCounter == 0) PushViewMatrix();
+        m_viewMatrixStack[m_viewCounter - 1] = Matrix::Identity;
     }
 
-    void GraphicsDevice::MultModelView(const Matrix &matrix_) {
-        if (m_modelViewCounter == 0) PushModelViewMatrix();
-        m_modelViewStack[m_modelViewCounter - 1] = m_modelViewStack[m_modelViewCounter - 1] * matrix_;
+    void GraphicsDevice::MultView(const Matrix &matrix_) {
+        if (m_viewCounter == 0) PushViewMatrix();
+        m_viewMatrixStack[m_viewCounter - 1] = m_viewMatrixStack[m_viewCounter - 1] * matrix_;
     }
 
     void GraphicsDevice::SetupFramebuffer() {

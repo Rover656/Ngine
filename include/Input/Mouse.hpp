@@ -166,12 +166,12 @@ namespace Ngine::Input {
         /**
          * Mouse position offset.
          */
-        Vector2 m_mouseOffset;
+        Vector2 m_mouseOffset = {0, 0};
 
         /**
          * Mouse position scale.
          */
-        Vector2 m_mouseScale;
+        Vector2 m_mouseScale = {1, 1};
 
         /**
          * Get the mouse position direct from the device.

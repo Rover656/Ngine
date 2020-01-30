@@ -25,6 +25,7 @@
 
 #include "../Math.hpp"
 #include "../Window.hpp"
+#include "Color.hpp"
 #include "Image.hpp"
 
 namespace Ngine::Graphics {
@@ -209,9 +210,9 @@ namespace Ngine::Graphics {
          */
         int m_targetCounter = 0;
 
-        Matrix m_modelViewStack[MAX_MATRICES];
+        Matrix m_viewMatrixStack[MAX_MATRICES];
 
-        int m_modelViewCounter = 0;
+        int m_viewCounter = 0;
 
         // OpenGL Features
 #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
@@ -261,6 +262,11 @@ namespace Ngine::Graphics {
         Window *GetWindow();
 
         /**
+         * Clear the current framebuffer with the given color.
+         */
+        void Clear(Color color_);
+
+        /**
          * Get the current render target.
          *
          * @return The current render target or null if rendering straight to window.
@@ -296,15 +302,15 @@ namespace Ngine::Graphics {
          * @note This is basically just for camera support.
          * @return The current model view matrix.
          */
-        Matrix GetModelViewMatrix() const;
+        Matrix GetViewMatrix() const;
 
-        void PushModelViewMatrix();
+        void PushViewMatrix();
 
-        void PopModelViewMatrix();
+        void PopViewMatrix();
 
-        void LoadModelViewIdentity();
+        void LoadViewIdentity();
 
-        void MultModelView(const Matrix &matrix_);
+        void MultView(const Matrix &matrix_);
 
         /**
          * Setup the framebuffer.

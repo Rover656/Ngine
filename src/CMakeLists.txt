@@ -54,10 +54,12 @@ elseif (${PLATFORM} MATCHES "UWP")
     endif ()
 endif ()
 
-if (${ENABLE_OPENGL} OR ${ENABLE_OPENGLES})
-    # Add glad
-    set(_NGINE_EXTRA_FILES ${_NGINE_EXTRA_FILES} ${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c)
-    set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/glad/include)
+if (NOT ${PLATFORM} MATCHES "UWP")
+    if (${ENABLE_OPENGL} OR ${ENABLE_OPENGLES})
+        # Add glad
+        set(_NGINE_EXTRA_FILES ${_NGINE_EXTRA_FILES} ${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c)
+        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/glad/include)
+    endif ()
 endif ()
 
 if (${BUILD_SHARED_LIBS})

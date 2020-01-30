@@ -37,6 +37,8 @@ namespace Ngine::Graphics {
         float d = sqrtf(dx * dx + dy * dy);
         float angle = asinf(dy / d);
 
+        auto t = RadToDeg(angle);
+
         // Build translation
         renderer_->PushMatrix();
         renderer_->Translate({v1_.X, v1_.Y, 0});
@@ -46,10 +48,10 @@ namespace Ngine::Graphics {
         else renderer_->Translate({-thickness_ / 2.0f, -thickness_ / 2.0f, 0});
 
         // Write to renderer
-        renderer_->Vertex({0, 0}, {0, 0}, color_);
-        renderer_->Vertex({0, thickness_}, {0, 1}, color_);
-        renderer_->Vertex({d, thickness_}, {1, 1}, color_);
-        renderer_->Vertex({d, 0}, {1, 0}, color_);
+        renderer_->PushVertex({{0, 0, 0}, {0, 0}, color_});
+        renderer_->PushVertex({{0, thickness_, 0}, {0, 1}, color_});
+        renderer_->PushVertex({{d, thickness_, 0}, {1, 1}, color_});
+        renderer_->PushVertex({{d, 0, 0}, {1, 0}, color_});
 
         // Pop matrix
         renderer_->PopMatrix();
@@ -57,22 +59,24 @@ namespace Ngine::Graphics {
 
     void Graphics::ShapeRenderer::DrawLine(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Color color_,
                                            float thickness_) {
-        renderer_->Begin(PrimitiveType::Quads);
+        renderer_->SetTexture(nullptr);
+        renderer_->BeginVertices(PrimitiveType::Quads);
         _drawLine(renderer_, v1_, v2_, color_, thickness_);
-        renderer_->End();
+        renderer_->EndVertices();
     }
 
     void
     Graphics::ShapeRenderer::DrawCircle(Renderer *renderer_, Vector2 center_, float radius_, Color color_,
                                         bool outline_,
                                         float lineThickness_) {
+        renderer_->SetTexture(nullptr);
         if (outline_) {
             // Get two times PI
             auto twoPi = 2.0f * PI;
             float step = DegToRad(360.0f / LINES_PER_CIRCLE);
 
             // Render lines.
-            renderer_->Begin(PrimitiveType::Quads);
+            renderer_->BeginVertices(PrimitiveType::Quads);
             for (auto i = 0; i < LINES_PER_CIRCLE; i++) {
                 _drawLine(renderer_,
                           {center_.X + sinf((float) i * step) * radius_, center_.Y + cosf((float) i * step) * radius_},
@@ -80,21 +84,21 @@ namespace Ngine::Graphics {
                            center_.Y + cosf((float) (i + 1) * step) * radius_},
                           color_, lineThickness_);
             }
-            renderer_->End();
+            renderer_->EndVertices();
         } else {
             // Get two times PI
             float twoPi = 2.0f * PI;
 
             // Render using triangle fan primitive type (NEW!!!)
-            renderer_->Begin(PrimitiveType::TriangleFan);
-            renderer_->Vertex(center_, {0, 0}, color_);
+            renderer_->BeginVertices(PrimitiveType::TriangleFan);
+            renderer_->PushVertex({{center_.X, center_.Y, 0}, {0, 0}, color_});
             for (auto i = 1; i <= TRIANGLES_PER_CIRCLE + 1; i++) {
-                renderer_->Vertex({
+                renderer_->PushVertex({{
                                           center_.X + (radius_ * cosf(i * twoPi / TRIANGLES_PER_CIRCLE)),
-                                          center_.Y + (radius_ * sinf(i * twoPi / TRIANGLES_PER_CIRCLE))
-                                  }, {0, 0}, color_);
+                                          center_.Y + (radius_ * sinf(i * twoPi / TRIANGLES_PER_CIRCLE)), 0
+                                  }, {0, 0}, color_});
             }
-            renderer_->End();
+            renderer_->EndVertices();
         }
     }
 
@@ -107,6 +111,7 @@ namespace Ngine::Graphics {
     void Graphics::ShapeRenderer::DrawRectangle(Renderer *renderer_, Rectangle rect_, Color color_, Angle rotation_,
                                                 Vector2 origin_, bool outline_, float lineThickness_) {
         // Push a matrix and set up our transform/rotation
+        renderer_->SetTexture(nullptr);
         renderer_->PushMatrix();
         renderer_->Translate({rect_.X, rect_.Y, 0});
         renderer_->Rotate(rotation_, {0, 0, 1});
@@ -114,19 +119,19 @@ namespace Ngine::Graphics {
 
         if (outline_) {
             // Draw lines
-            renderer_->Begin(PrimitiveType::Quads);
+            renderer_->BeginVertices(PrimitiveType::Quads);
             _drawLine(renderer_, {0, 0}, {rect_.Width, 0}, color_, lineThickness_);
             _drawLine(renderer_, {rect_.Width, 0}, {rect_.Width, rect_.Height}, color_, lineThickness_);
             _drawLine(renderer_, {rect_.Width, rect_.Height}, {0, rect_.Height}, color_, lineThickness_);
             _drawLine(renderer_, {0, rect_.Height}, {0, 0}, color_, lineThickness_);
-            renderer_->End();
+            renderer_->EndVertices();
         } else {
-            renderer_->Begin(PrimitiveType::Quads);
-            renderer_->Vertex({0, 0}, {0, 0}, color_);
-            renderer_->Vertex({rect_.Width, 0}, {1, 0}, color_);
-            renderer_->Vertex({rect_.Width, rect_.Height}, {1, 1}, color_);
-            renderer_->Vertex({0, rect_.Height}, {0, 1}, color_);
-            renderer_->End();
+            renderer_->BeginVertices(PrimitiveType::Quads);
+            renderer_->PushVertex({{0, 0, 0}, {0, 0}, color_});
+            renderer_->PushVertex({{rect_.Width, 0, 0}, {1, 0}, color_});
+            renderer_->PushVertex({{rect_.Width, rect_.Height, 0}, {1, 1}, color_});
+            renderer_->PushVertex({{0, rect_.Height, 0}, {0, 1}, color_});
+            renderer_->EndVertices();
         }
         renderer_->PopMatrix();
     }
@@ -134,6 +139,7 @@ namespace Ngine::Graphics {
     void Graphics::ShapeRenderer::DrawTriangle(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Vector2 v3_, Color color_,
                                                Angle rotation_, Vector2 origin_, bool outline_, float lineThickness_) {
         // Push matrix (for rotation)
+        renderer_->SetTexture(nullptr);
         renderer_->PushMatrix();
         renderer_->Translate({v1_.X, v1_.Y, 0});
         renderer_->Rotate(rotation_, {0, 0, 1});
@@ -145,18 +151,18 @@ namespace Ngine::Graphics {
 
         if (outline_) {
             // Render with lines
-            renderer_->Begin(PrimitiveType::Quads);
+            renderer_->BeginVertices(PrimitiveType::Quads);
             _drawLine(renderer_, a, b, color_, lineThickness_);
             _drawLine(renderer_, b, c, color_, lineThickness_);
             _drawLine(renderer_, c, a, color_, lineThickness_);
-            renderer_->End();
+            renderer_->EndVertices();
         } else {
             // Render it.
-            renderer_->Begin(PrimitiveType::Triangles);
-            renderer_->Vertex(a, {}, color_);
-            renderer_->Vertex(b, {}, color_);
-            renderer_->Vertex(c, {}, color_);
-            renderer_->End();
+            renderer_->BeginVertices(PrimitiveType::Triangles);
+            renderer_->PushVertex({{a.X, a.Y, 0}, {}, color_});
+            renderer_->PushVertex({{b.X, b.Y, 0}, {}, color_});
+            renderer_->PushVertex({{c.X, c.Y, 0}, {}, color_});
+            renderer_->EndVertices();
         }
 
         // Pop

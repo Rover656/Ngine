@@ -24,10 +24,9 @@
 #include "../Config.hpp"
 
 #include "Camera.hpp"
+#include "Renderer.hpp"
 #include "RenderTarget.hpp"
 #include "ShaderProgram.hpp"
-
-#include "NewRenderer.hpp"
 
 namespace Ngine::Graphics {
     /**
@@ -58,7 +57,7 @@ namespace Ngine::Graphics {
         /**
          * Draw the renderable to the current `RenderSpace`.
          */
-        virtual void Render(NewRenderer *renderer_) = 0;
+        virtual void Render(Renderer *renderer_) = 0;
     };
 
     /**
@@ -123,7 +122,7 @@ namespace Ngine::Graphics {
          * @param camera_ The camera to use.
          * @param target_ Texture to render to or null.
          */
-        void Render(NewRenderer *renderer_, const std::string &camera_, RenderTarget *target_ = nullptr);
+        void Render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_ = nullptr);
     };
 }
 

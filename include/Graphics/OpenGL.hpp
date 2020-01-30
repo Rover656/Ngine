@@ -107,6 +107,16 @@
 #define GL_DRAW_FRAMEBUFFER GL_FRAMEBUFFER
 #endif
 
+#ifndef glBindVertexArray
+#define glBindVertexArray glBindVertexArrayOES
+#endif
+#ifndef glGenVertexArrays
+#define glGenVertexArrays glGenVertexArraysOES
+#endif
+#ifndef glDeleteVertexArrays
+#define glDeleteVertexArrays glDeleteVertexArraysOES
+#endif
+
 #endif // NGINE_OPENGL
 
 #endif

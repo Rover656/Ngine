@@ -213,7 +213,7 @@ public:
         ShapeRenderer::DrawRectangle(renderer_, GetCullArea(), Color::Green, 0, Vector2::Zero, true);
         testTiles->Draw(renderer_, {0, 0}, GetCullAreaPosition(), GetCullAreaEndPosition(), 2.0f);
 
-        auto text = "Hello World.\nG'day";
+        auto text = "Hello World.\nGood day.";
         auto spacing = 0;
         auto fontSize = 32;
         auto lSpacing = LineSpacing::OnePointFive;
@@ -233,8 +233,6 @@ public:
     }
 };
 
-#include <Graphics/NewRenderer.hpp>
-
 class TestNode : public RenderableNode {
     Texture2D *m_texture;
 
@@ -247,13 +245,38 @@ public:
         VertexDataTool::GenerateRect(100, 100, Color::White, m_vertices, m_indices);
     }
 
-    void Render(NewRenderer *renderer_) override {
+    void Render(Renderer *renderer_) override {
         //m_texture->Draw(renderer_, {0, 0});
         renderer_->SetTexture(m_texture);
         renderer_->PushMatrix();
         renderer_->Translate({0, 0, 0});
-        renderer_->AddIndexedTriangles(m_vertices.data(), m_vertices.size(), m_indices.data(), m_indices.size());
+//        renderer_->AddIndexedTriangles(m_vertices.data(), m_vertices.size(), m_indices.data(), m_indices.size());
+
+        renderer_->BeginVertices(PrimitiveType::Quads);
+        renderer_->PushVertex({
+                                      {0, 0, 0},
+                                      {0, 0},
+                                      Color::White
+        });
+        renderer_->PushVertex({
+                                      {0, 64, 0},
+                                      {0, 1},
+                                      Color::White
+                              });
+        renderer_->PushVertex({
+                                      {64, 64, 0},
+                                      {1, 1},
+                                      Color::White
+                              });
+        renderer_->PushVertex({
+                                      {64, 0, 0},
+                                      {1, 0},
+                                      Color::White
+                              });
+        renderer_->EndVertices();
+
         renderer_->PopMatrix();
+
     }
 };
 
@@ -261,8 +284,6 @@ class TestGame : public Game {
     TestScene *m_scene;
 
     RenderSpace *m_space;
-
-    NewRenderer *m_renderer;
 public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
@@ -285,7 +306,7 @@ public:
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
 
         // Test new renderer capabilities
-        m_space->Render(m_renderer, "defaultCamera");
+        //m_space->Render(renderer_, "defaultCamera");
     }
 
     void Init() {
@@ -298,9 +319,6 @@ public:
 
         // Load arial as default font
         Font::SetDefaultFont(resMan->GetFont("Upheaval"));
-
-        // Create new renderer
-        m_renderer = new NewRenderer(GetGraphicsDevice());
 
         // Create test render space
         m_space = new RenderSpace();
@@ -316,7 +334,7 @@ public:
         m_scene = new TestScene(this);
 
         // Set scene
-        //SetScene(m_scene);
+        SetScene(m_scene);
     }
 };
 
@@ -327,19 +345,20 @@ NGINE_GAME_ENTRY {
     // Set graphics API
 #if defined(PLATFORM_DESKTOP)
 #if defined(_WIN32)
-    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 2, 0);
-    //GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
+    //GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 3, 1);
+    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
 #else
     GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 3, 3);
 #endif
 #elif defined(PLATFORM_UWP)
+    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 2, 0);
 #endif
 
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
-    //gameConfig.MaintainResolution = true;
+    gameConfig.MaintainResolution = true;
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

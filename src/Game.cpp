@@ -107,13 +107,14 @@ namespace Ngine {
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
             m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
             m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
         }
+
+        m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+        m_renderTarget->GetTexture()->SetTextureFilter(Graphics::FILTER_BILINEAR);
 
         if (Config.MaintainResolution && m_renderTarget != nullptr)
             m_renderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
@@ -133,16 +134,14 @@ namespace Ngine {
             // If using, start render target
             if (Config.MaintainResolution && m_renderTarget->IsValid()) {
                 // Clear the main framebuffer (for black bars)
-                m_renderer->SetClearColor(Graphics::Color::Black);
-                m_renderer->Clear();
+                graphicsDevice->Clear(Graphics::Color::Black);
 
                 // Enable our render target
                 graphicsDevice->PushTarget(m_renderTarget);
             }
 
             // Clear with clear color
-            m_renderer->SetClearColor(ClearColor);
-            m_renderer->Clear();
+            graphicsDevice->Clear(ClearColor);
 
             // Render scene
             if (m_currentScene != nullptr) {
@@ -173,7 +172,7 @@ namespace Ngine {
             }
 
             // Render final buffers
-            m_renderer->Render();
+            m_renderer->RenderBatch();
 
             // Swap buffers
             m_gameWindow->SwapBuffers();
