@@ -21,6 +21,8 @@
 #include "Audio/AudioStream.hpp"
 #include "Console.hpp"
 
+#include <cstring>
+
 namespace Ngine::Audio {
     void AudioStream::UpdateStream(const void *data_, int samplesCount_) {
         if (Buffer != nullptr) {
