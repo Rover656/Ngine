@@ -22,6 +22,8 @@
 
 #include "Console.hpp"
 
+#include <cmath>
+
 namespace Ngine::Graphics {
     void VertexDataTool::GenerateRect(float width_, float height_, Color color_, std::vector<Vertex> &vertexArray_,
                                       std::vector<unsigned short> &indexArray_) {
