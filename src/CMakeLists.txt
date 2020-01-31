@@ -41,12 +41,6 @@ if (${PLATFORM} MATCHES "Desktop")
         set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${OPENGL_LIBRARIES})
         set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
     endif ()
-
-    if (${ENABLE_OPENGLES})
-        # Add ANGLE
-        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.lib ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.lib)
-        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/ANGLE)
-    endif ()
 elseif (${PLATFORM} MATCHES "UWP")
     if (${ENABLE_OPENGLES})
         # Add ANGLE which is installed by Nuget
@@ -76,18 +70,21 @@ endif ()
 # Graphics API handling
 if (${PLATFORM} MATCHES "Desktop")
     if (${ENABLE_OPENGLES} AND WIN32)
-        # Copy static libs TODO: Support x64 linking.
+        # ANGLE
         add_custom_command(TARGET Ngine
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libEGL.dll
                 $<TARGET_FILE_DIR:Ngine>
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libGLESv2.dll
                 $<TARGET_FILE_DIR:Ngine>
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
                 $<TARGET_FILE_DIR:Ngine>
                 COMMENT "Copying ANGLE binaries to output.")
+
+        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libEGL.lib ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libGLESv2.lib)
+        set(_NGINE_INCLUDE_DIRS ${_NGINE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/third-party/ANGLE)
     endif ()
 elseif (${PLATFORM} MATCHES "UWP")
     if (${ENABLE_OPENGLES})
