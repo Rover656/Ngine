@@ -20,6 +20,7 @@
 
 #include "Graphics/Image.hpp"
 
+#include <cstring>
 #include <stb_image.h>
 
 namespace Ngine::Graphics {
