@@ -20,12 +20,13 @@
 
 #include "Graphics/GraphicsDevice.hpp"
 
+#include "API/PlatformGLAPI.hpp"
 #include "Graphics/OpenGL.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/RenderTarget.hpp"
 #include "Console.hpp"
 
-#include "API/PlatformGLAPI.hpp"
+#include <cstring>
 
 namespace Ngine::Graphics {
     // The default APIs are set here.
