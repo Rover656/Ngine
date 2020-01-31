@@ -107,7 +107,7 @@ if (${ENABLE_OPENGLES})
 endif()
 
 # Depend on docs if enabled
-if (${BUILD_DOCS})
+if (${BUILD_DOCS} AND ${CMAKE_BUILD_TYPE} MATCHES "Release")
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         add_dependencies(Ngine Ngine_Docs)
