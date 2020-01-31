@@ -46,6 +46,7 @@
 #include <sys/stat.h>
 #endif
 
+#include <cstring>
 #include <sstream>
 
 #include "Console.hpp"
