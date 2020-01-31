@@ -20,6 +20,8 @@
 
 #include "Math.hpp"
 
+#include <cmath>
+
 namespace Ngine {
     const Vector2 Vector2::UnitX = {1, 0};
     const Vector2 Vector2::UnitY = {0, 1};
