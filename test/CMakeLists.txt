@@ -9,16 +9,13 @@ project(NgineTest
         VERSION 1.0.0
         DESCRIPTION "A test program to see if the game engine performs given tasks. To be replaced with examples.")
 
-# Check config is ok
-ngine_check_config() # TODO remove
-
 # Get UWP resources
 if (${PLATFORM} MATCHES "UWP")
     # Configure asset files
     file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/*")
 endif()
 
-ngine_add_game(
+add_game(
         NAME ${PROJECT_NAME}
         TARGET_NAME "NgineTest"
 

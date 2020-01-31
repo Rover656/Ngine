@@ -24,7 +24,7 @@ option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_SHARED_LIBS "Build Ngine as a shared library. Will build instead of shared." OFF)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
-enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.")
+enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.") # TODO: Remove for good.
 
 # Setup project (if we are the main project)
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -45,25 +45,32 @@ option(ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will
 
 ### End Feature Flags
 
-# Option validation
+# Option validation (basically disable any incompatible rendering pipelines.
 if(${PLATFORM} MATCHES "Desktop")
-
+    # TODO: Does GLES work on Mac/Linux. Do we need to block this?
 elseif (${PLATFORM} MATCHES "UWP")
-    if (NOT ${RENDERER} MATCHES "ES2")
-        message(WARNING "UWP does not support OpenGL Version ${OPENGL_VERSION}")
-        set(RENDERER "GLES2")
-    endif()
+    set(ENABLE_OPENGL OFF)
+    set(ENABLE_OPENGLES ON) # Force until DX support arrives.
+endif()
 
-    if (${RENDERER} MATCHES "ES2")
-        if (NOT MSVC)
-            message("Cannot use OpenGL ES2 on non-windows.")
-            set(RENDERER "GL33")
-        endif()
+# Check options
+if (${PLATFORM} MATCHES "Desktop")
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
+        message(FATAL_ERROR "Cannot build Desktop for UWP. Use UWP platform instead.")
+    endif()
+elseif(${PLATFORM} MATCHES "UWP")
+    if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
+        message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_NAME=WindowsStore")
+    endif()
+    if (NOT ${CMAKE_SYSTEM_VERSION} STREQUAL "10.0")
+        message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_VERSION=10.0")
     endif()
 endif()
 
 # Broadcast renderer
-message("Building for the \"${PLATFORM}\" platform with the \"${RENDERER}\" renderer.")
+message(STATUS "Building Ngine for the \"${PLATFORM}\" platform.")
+message(STATUS "Ngine OpenGL support is ${ENABLE_OPENGL}")
+message(STATUS "Ngine OpenGLES support is ${ENABLE_OPENGLES}")
 
 # Add sub directories
 add_subdirectory(third-party)

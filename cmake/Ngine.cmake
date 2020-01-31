@@ -4,24 +4,8 @@
 include (CMakeParseArguments)
 set(NGINE_MODULE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-# Check all config is okay
-function(ngine_check_config)
-    if (${PLATFORM} MATCHES "Desktop")
-        if (${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
-            message(FATAL_ERROR "Cannot build Desktop for UWP. Use UWP platform instead.")
-        endif()
-    elseif(${PLATFORM} MATCHES "UWP")
-        if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
-            message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_NAME=WindowsStore")
-        endif()
-        if (NOT ${CMAKE_SYSTEM_VERSION} STREQUAL "10.0")
-            message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_VERSION=10.0")
-        endif()
-    endif()
-endfunction()
-
 # TODO: Revisit this
-function(ngine_add_library target shared)
+function(add_game_library target shared)
     # Add lib
     if (${shared})
         add_library(${target} SHARED ${ARGN})
@@ -30,13 +14,10 @@ function(ngine_add_library target shared)
     endif()
 
     # Link
-    __ngine_link_ngine(${target})
-
-    # UWP additions
-    __ngine_post_uwp_additions(${target})
+    link_ngine(${target})
 endfunction()
 
-function(ngine_add_game)
+function(add_game)
     # Get parameters
     set (options)
     set (oneValueArgs
@@ -45,6 +26,10 @@ function(ngine_add_game)
             SHORT_NAME # Shortened game name
             TARGET_NAME # Target name
             DESCRIPTION # Game description, otherwise it will be set to short name
+
+            # Dependency management
+            TARGET_PLATFORM # Defaults to the -DPLATFORM setting, errors if no value is present.
+            INCLUDE_ANGLE # For Windows, should be set to ON if OpenGLES is to be used. Defaults if ENABLE_OPENGLES detected.
 
             # Content
             CONTENT_DIR # Content directory
@@ -110,6 +95,22 @@ function(ngine_add_game)
 
     if (NOT GAME_DESCRIPTION OR "${GAME_DESCRIPTION}" STREQUAL "")
         set(GAME_DESCRIPTION ${GAME_SHORT_NAME})
+    endif()
+
+    if (NOT GAME_TARGET_PLATFORM OR "${GAME_TARGET_PLATFORM}" STREQUAL "")
+        if (${PLATFORM} OR NOT "${PLATFORM}" STREQUAL "")
+            set(GAME_TARGET_PLATFORM ${PLATFORM})
+        else()
+            message(FATAL_ERROR "Target platform not set for game and cannot determine a suitable value.")
+        endif()
+    endif()
+
+    if (NOT GAME_INCLUDE_ANGLE OR "${GAME_INCLUDE_ANGLE}" STREQUAL "")
+        if (${GAME_TARGET_PLATFORM} MATCHES "Desktop" AND (DEFINED ${ENABLE_OPENGLES} AND ${ENABLE_OPENGLES}))
+            set(GAME_INCLUDE_ANGLE ON)
+        else()
+            set(GAME_INCLUDE_ANGLE OFF)
+        endif()
     endif()
 
     if (NOT GAME_CONTENT_DIR OR "${GAME_CONTENT_DIR}" STREQUAL "")
@@ -183,9 +184,9 @@ function(ngine_add_game)
     # Get content files
     file(GLOB_RECURSE GAME_CONTENT_FILES "${GAME_CONTENT_DIR}/*")
 
-    if(${PLATFORM} MATCHES "UWP")
+    if(${GAME_TARGET_PLATFORM} MATCHES "UWP")
         # Setup UWP manifest
-        if (${PLATFORM} MATCHES "UWP")
+        if (${GAME_TARGET_PLATFORM} MATCHES "UWP")
             # Configure manifest
             configure_file(
                     ${NGINE_MODULE_DIR}/UWP/Package.appxmanifest.in
@@ -214,7 +215,7 @@ function(ngine_add_game)
     endif()
 
     # Windows versioning info
-    if(${PLATFORM} MATCHES "Desktop")
+    if(${GAME_TARGET_PLATFORM} MATCHES "Desktop")
         if (MSVC)
             # Generate product info
             configure_file(
@@ -244,7 +245,7 @@ function(ngine_add_game)
     endif()
 
     # UWP Specifics
-    if (${PLATFORM} MATCHES "UWP")
+    if (${GAME_TARGET_PLATFORM} MATCHES "UWP")
         # Mark as WinRT Component
         set_property(TARGET ${GAME_TARGET_NAME} PROPERTY VS_WINRT_COMPONENT TRUE)
 
@@ -255,8 +256,24 @@ function(ngine_add_game)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     endif()
 
+    # Add ANGLE binaries if needed
+    if(${GAME_INCLUDE_ANGLE})
+        add_custom_command(TARGET ${GAME_TARGET_NAME}
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
+                $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
+                $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
+                $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
+
+                COMMENT "Copying ANGLE binaries to game output")
+    endif()
+
     # Link Ngine
-    __ngine_link_ngine(${GAME_TARGET_NAME})
+    link_ngine(${GAME_TARGET_NAME})
 
     # Get content dir name
     get_filename_component(CONTENT_DIR_NAME ${GAME_CONTENT_DIR} NAME)
@@ -271,12 +288,12 @@ function(ngine_add_game)
     ### End Feature Flags
 
     # Include content
-    if (${PLATFORM} MATCHES "Desktop")
+    if (${GAME_TARGET_PLATFORM} MATCHES "Desktop")
         add_custom_command(TARGET ${GAME_TARGET_NAME} PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${GAME_CONTENT_DIR}
                 $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>/${CONTENT_DIR_NAME})
-    elseif(${PLATFORM} MATCHES "UWP")
+    elseif(${GAME_TARGET_PLATFORM} MATCHES "UWP")
         # Mark for deploy
         set_property(SOURCE ${GAME_CONTENT_FILES} PROPERTY VS_DEPLOYMENT_CONTENT 1)
 
@@ -309,8 +326,8 @@ function(ngine_add_game)
     endif()
 endfunction()
 
-# Link Ngine and schedule copying
-function(__ngine_link_ngine GAME_TARGET_NAME)
+# Link Ngine project and schedule binary copy.
+function(link_ngine GAME_TARGET_NAME)
     # Link
     target_include_directories(${GAME_TARGET_NAME} PRIVATE ${Ngine_SOURCE_DIR}/include)
     target_link_libraries(${GAME_TARGET_NAME} Ngine)
@@ -325,30 +342,8 @@ function(__ngine_link_ngine GAME_TARGET_NAME)
             add_custom_command(TARGET ${GAME_TARGET_NAME}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     $<TARGET_FILE:Ngine>
-                    $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>)
-        endif()
-    endif()
-
-    if (${OPENGL_VERSION} MATCHES "3.3")
-        target_compile_definitions(${GAME_TARGET_NAME} PRIVATE GRAPHICS_OPENGL33=1)
-    elseif (${OPENGL_VERSION} MATCHES "2.1")
-        target_compile_definitions(${GAME_TARGET_NAME} PRIVATE GRAPHICS_OPENGL21=1)
-    elseif(${OPENGL_VERSION} MATCHES "ES2")
-        target_compile_definitions(${GAME_TARGET_NAME} PRIVATE GRAPHICS_OPENGLES2=1)
-
-        if(${PLATFORM} MATCHES "Desktop")
-            add_custom_command(TARGET ${GAME_TARGET_NAME}
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libEGL.dll
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/libGLESv2.dll
-                    $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${Ngine_SOURCE_DIR}/third-party/ANGLE/lib/x86/d3dcompiler_47.dll
-                    $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
-
-                    COMMENT "Copying ANGLE binaries")
+                    STATUS "Copying Ngine shared libs to game/library...")
         endif()
     endif()
 endfunction()
