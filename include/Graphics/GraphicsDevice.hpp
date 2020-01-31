@@ -119,66 +119,6 @@ namespace Ngine::Graphics {
          * The maximum number of matrices permitted per stack.
          */
         static const int MAX_MATRICES = 32;
-
-        /**
-         * OpenGL Feature flags
-         */
-        enum OpenGLFeature {
-            /**
-             * Anisotropic filtering support.
-             */
-            GL_ANISOTROPIC_TEXTURE_FILTER = 0,
-
-            /**
-             * DDS texture compression support.
-             */
-            GL_COMP_DXT,
-
-            /**
-             * ETC1 texture compression support.
-             */
-            GL_COMP_ETC1,
-
-            /**
-             * ETC2/EAC texture compression support.
-             */
-            GL_COMP_ETC2,
-
-            /**
-             * PVR texture compression support.
-             */
-            GL_COMP_PVRT,
-
-            /**
-             * ASTC texture compression support.
-             */
-            GL_COMP_ASTC,
-
-            /**
-             * Depth texture support.
-             */
-            GL_TEX_DEPTH,
-
-            /**
-             * Texture float support.
-             */
-            GL_TEX_FLOAT,
-
-            /**
-             * Clamp mirror wrap mode support.
-             */
-            GL_TEX_MIRROR_CLAMP,
-
-            /**
-             * NPOT Texture support.
-             */
-            GL_TEX_NPOT,
-
-            /**
-             * VAO Support.
-             */
-            GL_VAO
-        };
     private:
         /**
          * The current platform API.
@@ -213,24 +153,6 @@ namespace Ngine::Graphics {
         Matrix m_viewMatrixStack[MAX_MATRICES];
 
         int m_viewCounter = 0;
-
-        // OpenGL Features
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        /**
-         * Maximum anisotropic filtering level.
-         */
-        float m_GLMaxAnisotropicLevel;
-
-        /**
-         * Maximum number of bits in a depth buffer/texture.
-         */
-        int m_GLMaxDepthBits;
-
-        /**
-         * All OpenGL Support flags.
-         */
-        bool m_GLSupportFlags[GL_VAO + 1];
-#endif
 
         /**
          * Create a graphics device.
@@ -319,37 +241,6 @@ namespace Ngine::Graphics {
          * This will be created for the framebuffer if there is no render target attached, otherwise it will be for the render target.
          */
         void SetupFramebuffer();
-
-        /**
-          * Get an OpenGL feature support flag (to determine feature set).
-          *
-          * @return Whether or not the device has support for the selected flag.
-          */
-        bool GetGLSupportFlag(OpenGLFeature feature_);
-
-        /**
-         * Get the max anisotropic filtering level.
-         *
-         * @return The max anisotropic filtering level.
-         */
-        float GetGLMaxAnisotropicLevel();
-
-        /**
-         * Get the max depth buffer size (in bits).
-         *
-         * @return The max depth buffer size.
-         */
-        int GetGLMaxDepthBits();
-
-        /**
-         * Get OpenGL Texture formats.
-         *
-         * @param format_ Our format.
-         * @param glInternalFormat_ The GL Internal format.
-         * @param glFormat_ The GL format.
-         * @param glType_ The GL type.
-         */
-        void GetGLTextureFormats(int format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
 
         /**
          * Get the graphics API.

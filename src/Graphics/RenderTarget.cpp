@@ -20,18 +20,14 @@
 
 #include "Graphics/RenderTarget.hpp"
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#include "Graphics/OpenGL.hpp"
-#endif
-
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
-    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_) {
-        Width = width_;
-        Height = height_;
+    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)
+            : Width(width_), Height(height_) {
+        // Get API
+        m_API = graphicsDevice_->GetAPI();
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
         // Create color attachment
         m_texture = new Texture2D(graphicsDevice_, nullptr, width_, height_, UNCOMPRESSED_R8G8B8A8, 1);
 
@@ -42,61 +38,14 @@ namespace Ngine::Graphics {
             // Delete texture
             delete m_texture;
             m_texture = nullptr;
-
-            // Unset dimensions
-            Width = 0;
-            Height = 0;
             return;
         }
 
-        // Unbind texture
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        // Depth buffer
-        glGenRenderbuffers(1, &m_depthBufferID);
-        glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferID);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width_, height_);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-        // Create FBO
-        glGenFramebuffers(1, &m_ID);
-
-        // Bind
-        glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-
-        // Set depth and color attachment
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferID);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->ID, 0);
-
-        // Check framebuffer status
-        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (status != GL_FRAMEBUFFER_COMPLETE) {
-            Console::Error("RenderTarget", "Failed to create framebuffer.");
-
-            // Unbind
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            // Unset dimensions
-            Width = 0;
-            Height = 0;
-
-            // Delete texture
+        // Create render target
+        if (!m_API->CreateRenderTarget(this)) {
             delete m_texture;
             m_texture = nullptr;
-
-            // Delete depth buffer
-            glDeleteRenderbuffers(1, &m_depthBufferID);
-            m_depthBufferID = 0;
-
-            // Delete framebuffer
-            glDeleteFramebuffers(1, &m_ID);
-            m_ID = 0;
-            return;
         }
-
-        Console::Notice("RenderTarget", "Successfully created framebuffer with ID %i", m_ID);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif
     }
 
     RenderTarget::~RenderTarget() {
@@ -109,36 +58,23 @@ namespace Ngine::Graphics {
     }
 
     bool RenderTarget::IsValid() const {
-        if (m_ID > 0)
-            return true;
-        return false;
+        return m_API->IsRenderTargetValid(this);
     }
 
     void RenderTarget::Unload() {
-        Width = 0;
-        Height = 0;
         // Delete texture
         delete m_texture;
         m_texture = nullptr;
 
-        // Delete depth buffer
-        if (m_depthBufferID > 0) {
-            glDeleteRenderbuffers(1, &m_depthBufferID);
-            m_depthBufferID = 0;
-        }
-
-        // Delete framebuffer
-        if (m_ID > 0) {
-            glDeleteFramebuffers(1, &m_ID);
-            m_ID = 0;
-        }
+        // Delete on GPU
+        m_API->DeleteRenderTarget(this);
     }
 
     bool RenderTarget::operator==(const RenderTarget &b) const {
-        return m_ID == b.m_ID;
+        return m_API->CompareRenderTargets(this, &b);
     }
 
     bool RenderTarget::operator!=(const RenderTarget &b) const {
-        return m_ID != b.m_ID;
+        return !m_API->CompareRenderTargets(this, &b);
     }
 }

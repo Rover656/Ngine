@@ -143,6 +143,16 @@ namespace Ngine::Graphics {
              */
             virtual void BindBuffer(Buffer *buffer_) = 0;
 
+            virtual bool CreateRenderTarget(RenderTarget *renderTarget_) = 0;
+
+            virtual void DeleteRenderTarget(RenderTarget *renderTarget_) = 0;
+
+            virtual void BindRenderTarget(RenderTarget *renderTarget_) = 0;
+
+            virtual bool IsRenderTargetValid(const RenderTarget *renderTarget_) = 0;
+
+            virtual bool CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) = 0;
+
             /**
              * Unbind a buffer
              *

@@ -93,6 +93,7 @@
 #endif
 
 #include "Graphics/Buffer.hpp"
+#include "Graphics/RenderTarget.hpp"
 #include "Graphics/VertexLayout.hpp"
 #include "Console.hpp"
 
@@ -971,6 +972,81 @@ namespace Ngine::Graphics::API {
 
     bool PlatformGLAPI::CompareTextures(const Texture2D *a_, const Texture2D *b_) {
         return a_->ID == b_->ID;
+    }
+
+    bool PlatformGLAPI::CreateRenderTarget(RenderTarget *renderTarget_) {
+        // Set initial IDs
+        renderTarget_->ID[0] = 0;
+        renderTarget_->ID[1] = 0;
+
+        // Depth buffer
+        glGenRenderbuffers(1, &renderTarget_->ID[1]);
+        glBindRenderbuffer(GL_RENDERBUFFER, renderTarget_->ID[1]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, renderTarget_->Width, renderTarget_->Height);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        // Create FBO
+        glGenFramebuffers(1, &renderTarget_->ID[0]);
+
+        // Bind
+        glBindFramebuffer(GL_FRAMEBUFFER, renderTarget_->ID[0]);
+
+        // Set depth and color attachment
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTarget_->ID[1]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget_->GetTexture()->ID, 0);
+
+        // Check framebuffer status
+        auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            Console::Error("PlatformGLAPI", "Failed to create framebuffer.");
+
+            // Unbind
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // Delete depth buffer
+            glDeleteRenderbuffers(1, &renderTarget_->ID[1]);
+            renderTarget_->ID[1] = 0;
+
+            // Delete framebuffer
+            glDeleteFramebuffers(1, &renderTarget_->ID[0]);
+            renderTarget_->ID[0] = 0;
+
+            return false;
+        }
+
+        Console::Notice("PlatformGLAPI", "Successfully created framebuffer with ID %i", renderTarget_->ID[0]);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        return true;
+    }
+
+    void PlatformGLAPI::DeleteRenderTarget(RenderTarget *renderTarget_) {
+        // Delete depth buffer
+        if (renderTarget_->ID[1] > 0) {
+            glDeleteRenderbuffers(1, &renderTarget_->ID[1]);
+            renderTarget_->ID[1] = 0;
+        }
+
+        // Delete framebuffer
+        if (renderTarget_->ID[0] > 0) {
+            glDeleteFramebuffers(1, &renderTarget_->ID[0]);
+            renderTarget_->ID[0] = 0;
+        }
+    }
+
+    void PlatformGLAPI::BindRenderTarget(RenderTarget *renderTarget_) {
+        if (renderTarget_ != m_currentRenderTarget) {
+            glBindFramebuffer(GL_FRAMEBUFFER, renderTarget_ != nullptr ? renderTarget_->ID[0] : 0);
+            m_currentRenderTarget = renderTarget_;
+        }
+    }
+
+    bool PlatformGLAPI::IsRenderTargetValid(const RenderTarget *renderTarget_) {
+        return renderTarget_->ID[0] > 0;
+    }
+
+    bool PlatformGLAPI::CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) {
+        return a_->ID[0] == b_->ID[0] && a_->ID[1] == b_->ID[1];
     }
 
     void PlatformGLAPI::BindShader(ShaderProgram *shader_) {

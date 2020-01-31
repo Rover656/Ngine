@@ -104,6 +104,7 @@ namespace Ngine::Graphics::API {
     class PlatformGLAPI : public PlatformGraphicsAPI {
         Texture2D *m_currentTexture = nullptr;
         ShaderProgram *m_currentShader = nullptr;
+        RenderTarget *m_currentRenderTarget = nullptr;
         bool m_GLES2 = false;
         bool m_GLES3 = false;
 
@@ -146,6 +147,11 @@ namespace Ngine::Graphics::API {
         void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) override;
         bool IsTextureValid(const Texture2D *texture_) override;
         bool CompareTextures(const Texture2D *a_, const Texture2D *b_) override;
+        bool CreateRenderTarget(RenderTarget *renderTarget_) override;
+        void DeleteRenderTarget(RenderTarget *renderTarget_) override;
+        void BindRenderTarget(RenderTarget *renderTarget_) override;
+        bool IsRenderTargetValid(const RenderTarget *renderTarget_) override;
+        bool CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) override;
         void BindShader(ShaderProgram *shader_) override;
         void BindBuffer(Buffer *buffer_) override;
         void UnbindBuffer(Buffer *buffer_) override;

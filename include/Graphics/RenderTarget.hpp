@@ -24,13 +24,14 @@
 #include "../Config.hpp"
 
 #include "../Resource.hpp"
+#include "API/PlatformGraphicsAPI.hpp"
 #include "Texture2D.hpp"
 
 namespace Ngine::Graphics {
     /**
      * A 2D Texture in the GPU that can be rendered to.
      */
-    struct NEAPI RenderTarget : public IResource {
+    struct NEAPI RenderTarget final : public IResource {
         friend class GraphicsDevice;
     private:
         /**
@@ -38,29 +39,26 @@ namespace Ngine::Graphics {
          */
         Texture2D *m_texture;
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-        /**
-         * Render target ID (OpenGL)
-         */
-        unsigned int m_ID = 0;
-
-        /**
-         * Depth buffer ID (OpenGL)
-         *
-         * @todo Do we need this, we don't use the Z parameter atm.
-         */
-        unsigned int m_depthBufferID = 0;
-#endif
+        API::PlatformGraphicsAPI *m_API;
     public:
+        union {
+            /**
+             * List of GPU ID's in OpenGL (2).
+             * [0] - Framebuffer
+             * [1] - Depth attachment
+             */
+            unsigned int ID[2] = {0, 0};
+        };
+
         /**
          * Render target width.
          */
-        unsigned int Width = 0;
+        const unsigned int Width = 0;
 
         /**
          * Render target height.
          */
-        unsigned int Height = 0;
+        const unsigned int Height = 0;
 
         /**
          * Create a render target.

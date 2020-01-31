@@ -124,7 +124,7 @@ namespace Ngine::Graphics {
             /**
              * GPU ID (OpenGL)
              */
-            unsigned int ID;
+            unsigned int ID = 0;
 
             /**
              * GPU Pointer.
