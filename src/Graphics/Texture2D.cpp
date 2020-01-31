@@ -128,6 +128,9 @@ namespace Ngine::Graphics {
     }
 
     void Texture2D::SetTextureWrap(const TextureWrapMode wrapMode_) const {
+        // Bind
+        glBindTexture(GL_TEXTURE_2D, ID);
+        
         switch (wrapMode_) {
 #if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
             case WRAP_REPEAT:
