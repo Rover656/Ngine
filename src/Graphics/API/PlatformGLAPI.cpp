@@ -893,6 +893,86 @@ namespace Ngine::Graphics::API {
         }
     }
 
+    void PlatformGLAPI::SetTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) {
+        // Bind
+        BindTexture(texture_);
+
+        // Get variables
+        auto mipmapCount = texture_->GetMipmapCount();
+
+        // Set filter mode
+        switch (mode_) {
+            case TextureFilterMode::Point:
+                if (mipmapCount > 1) {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                } else {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                }
+                break;
+            case TextureFilterMode::Bilinear:
+                if (mipmapCount > 1) {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                } else {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                }
+                break;
+            case TextureFilterMode::Trilinear:
+                if (mipmapCount > 1) {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                } else {
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                }
+                break;
+            case TextureFilterMode::Anisotropic_4X:
+                if (4 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 4);
+                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
+                break;
+            case TextureFilterMode::Anisotropic_8X:
+                if (8 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
+                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
+                break;
+            case TextureFilterMode::Anisotropic_16X:
+                if (16 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
+                break;
+        }
+    }
+
+    void PlatformGLAPI::SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) {
+        // Bind
+        BindTexture(texture_);
+
+        // Set wrap mode
+        switch (mode_) {
+            case TextureWrapMode::Repeat:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                break;
+            case TextureWrapMode::Clamp:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                break;
+            case TextureWrapMode::MirrorRepeat:
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+                break;
+        }
+    }
+
+    bool PlatformGLAPI::IsTextureValid(const Texture2D *texture_) {
+        return texture_->ID > 0;
+    }
+
+    bool PlatformGLAPI::CompareTextures(const Texture2D *a_, const Texture2D *b_) {
+        return a_->ID == b_->ID;
+    }
+
     void PlatformGLAPI::BindShader(ShaderProgram *shader_) {
         if (shader_ != m_currentShader) {
             glUseProgram(shader_ != nullptr ? shader_->ID : 0);

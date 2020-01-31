@@ -358,7 +358,7 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
-    gameConfig.MaintainResolution = true;
+    gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

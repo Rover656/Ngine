@@ -92,8 +92,6 @@ namespace Ngine::Graphics {
              */
             virtual void DeleteTexture(Texture2D *texture_) = 0;
 
-            // TODO: Texture wraps etc.
-
             /**
              * Bind a texture.
              *
@@ -102,11 +100,40 @@ namespace Ngine::Graphics {
             virtual void BindTexture(Texture2D *texture_) = 0;
 
             /**
+             * Set the texture's filter mode.
+             *
+             * @param texture_ Texture.
+             * @param mode_ Mode to use.
+             */
+            virtual void SetTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) = 0;
+
+            /**
+             * Set the texture's wrap mode.
+             *
+             * @param texture_ Texture.
+             * @param mode_ Mode to use.
+             */
+            virtual void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) = 0;
+
+            /**
              * Bind a shader.
              *
              * @param shader_ Shader to bind, null to unbind.
              */
             virtual void BindShader(ShaderProgram *shader_) = 0;
+
+            /**
+             * Determine if the texture is valid on the GPU.
+             *
+             * @param texture_ Texture to check.
+             * @return Whether or not the texture is valid.
+             */
+            virtual bool IsTextureValid(const Texture2D *texture_) = 0;
+
+            /**
+             * Compare the similarity of two textures.
+             */
+            virtual bool CompareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
 
             /**
              * Bind a buffer.

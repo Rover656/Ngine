@@ -44,70 +44,62 @@ namespace Ngine::Graphics {
     /**
      * Texture filter mode.
      */
-    enum TextureFilterMode {
+    enum class TextureFilterMode {
         /**
          * No filter, just approximation.
          */
-        FILTER_POINT = 0,
+        Point = 0,
 
         /**
          * Linear filtering.
          */
-        FILTER_BILINEAR,
+        Bilinear,
 
         /**
          * Trilinear filtering (with mipmaps).
          */
-        FILTER_TRILINEAR,
+        Trilinear,
 
         /**
          * Anisotropic filtering 4x.
          */
-        FILTER_ANISOTROPIC_4X,
+        Anisotropic_4X,
 
         /**
          * Anisotropic filtering 8x.
          */
-        FILTER_ANISOTROPIC_8X,
+        Anisotropic_8X,
 
         /**
          * Anisotropic filtering 16x.
          */
-        FILTER_ANISOTROPIC_16X
+        Anisotropic_16X
     };
 
     /**
      * Texture wrap mode.
      */
-    enum TextureWrapMode {
+    enum class TextureWrapMode {
         /**
          * Repeats texture
          */
-        WRAP_REPEAT = 0,
+        Repeat = 0,
 
         /**
          * Clamps texture to edge pixel.
          */
-        WRAP_CLAMP,
+        Clamp,
 
         /**
          * Mirrors and repeats the texture.
          */
-        WRAP_MIRROR_REPEAT,
-
-        /**
-         * Mirrors and clamps to the border.
-         */
-        WRAP_MIRROR_CLAMP
+        MirrorRepeat
     };
 
     /**
      * A 2D Texture stored in the GPU memory.
      */
-    class NEAPI Texture2D : public IResource {
-        // Friends
-        friend class RenderTarget;
-
+    class NEAPI Texture2D final : public IResource {
         /**
          * The number of mipmaps.
          */
@@ -125,9 +117,18 @@ namespace Ngine::Graphics {
          * Graphics API.
          */
         API::PlatformGraphicsAPI *m_API = nullptr;
+
+        void _createTexture(GraphicsDevice *graphicsDevice_, int width_, int height_, PixelFormat format_, unsigned char *pixelData_, int mipmapCount_);
     public:
         union {
+            /**
+             * GPU ID (OpenGL)
+             */
             unsigned int ID;
+
+            /**
+             * GPU Pointer.
+             */
             void *Ptr;
         };
 
@@ -140,11 +141,6 @@ namespace Ngine::Graphics {
          * Texture Height
          */
         unsigned int Height = 0;
-
-        /**
-         * Create a null texture
-         */
-        Texture2D();
 
         /**
          * Copy constructor.
@@ -179,6 +175,7 @@ namespace Ngine::Graphics {
          * @param img_ Image to load onto GPU.
          */
         Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_);
+        ~Texture2D();
 
         /**
          * Get the texture pixel format.
@@ -197,14 +194,14 @@ namespace Ngine::Graphics {
          *
          * @param filterMode_ The filter mode to set.
          */
-        void SetTextureFilter(TextureFilterMode filterMode_) const;
+        void SetTextureFilter(TextureFilterMode filterMode_);
 
         /**
          * Set the texture wrap mode.
          *
          * @param wrapMode_ The texture wrap mode.
          */
-        void SetTextureWrap(TextureWrapMode wrapMode_) const;
+        void SetTextureWrap(TextureWrapMode wrapMode_);
 
         /**
          * Is the texture valid and ready for use.

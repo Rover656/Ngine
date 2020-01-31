@@ -60,7 +60,7 @@ namespace Ngine {
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
             m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
+            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::TextureWrapMode::Clamp);
         }
 
         // Create resource manager
@@ -107,14 +107,14 @@ namespace Ngine {
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
             m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::TextureWrapMode::Clamp);
         } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
+            delete m_renderTarget;
             m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::TextureWrapMode::Clamp);
         }
-
-        m_renderTarget->GetTexture()->SetTextureWrap(Graphics::WRAP_CLAMP);
-        m_renderTarget->GetTexture()->SetTextureFilter(Graphics::FILTER_BILINEAR);
 
         if (Config.MaintainResolution && m_renderTarget != nullptr)
             m_renderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);

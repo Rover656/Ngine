@@ -142,6 +142,10 @@ namespace Ngine::Graphics::API {
         void CreateTexture(Texture2D *texture_, unsigned char *data_) override;
         void DeleteTexture(Texture2D *texture_) override;
         void BindTexture(Texture2D *texture_) override;
+        void SetTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) override;
+        void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) override;
+        bool IsTextureValid(const Texture2D *texture_) override;
+        bool CompareTextures(const Texture2D *a_, const Texture2D *b_) override;
         void BindShader(ShaderProgram *shader_) override;
         void BindBuffer(Buffer *buffer_) override;
         void UnbindBuffer(Buffer *buffer_) override;

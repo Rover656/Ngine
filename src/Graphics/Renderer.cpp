@@ -24,7 +24,9 @@
 #include "Console.hpp"
 
 #if defined(PLATFORM_DESKTOP)
+
 #include <glad/glad.h>
+
 #elif defined(PLATFORM_UWP)
 #define GL_KHR_debug 0
 #define GL_GLEXT_PROTOTYPES 1
@@ -225,9 +227,17 @@ namespace Ngine::Graphics {
         // The default matrix
         m_matrixStackCounter = 0;
         m_matrixStack[0] = Matrix::Identity;
+
+        // Add to graphics device for tracking
+        m_graphicsDevice->m_attachedRenderers.push_back(this);
     }
 
     Renderer::~Renderer() {
+        // Remove from graphics device
+        m_graphicsDevice->m_attachedRenderers.erase(
+                std::remove(m_graphicsDevice->m_attachedRenderers.begin(), m_graphicsDevice->m_attachedRenderers.end(),
+                            this), m_graphicsDevice->m_attachedRenderers.end());
+
         // Stop using internal layout (if enabled).
         m_layout->Stop();
 

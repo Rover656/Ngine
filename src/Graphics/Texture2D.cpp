@@ -20,27 +20,22 @@
 
 #include "Graphics/Texture2D.hpp"
 
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-#include "Graphics/OpenGL.hpp"
-#endif
-
 #include "Graphics/API/PlatformGraphicsAPI.hpp"
 #include "Graphics/GraphicsDevice.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
-    Texture2D::Texture2D() {
-        Unload();
-    }
-
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
-                         unsigned height_, PixelFormat format_, int mipmapCount_) {
+    void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, int width_, int height_, PixelFormat format_, unsigned char *pixelData_, int mipmapCount_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
             Console::Error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width_, height_);
             return;
         }
+
+        // Check mipmap count
+        if (mipmapCount_ <= 0)
+            Console::Fail("Texture2D", "Texture cannot have no mipmaps.");
 
         // Save API
         m_API = graphicsDevice_->GetAPI();
@@ -53,18 +48,25 @@ namespace Ngine::Graphics {
         m_format = format_;
 
         // Make our texture
-        m_API->CreateTexture(this, data_);
+        m_API->CreateTexture(this, pixelData_);
+    }
+
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
+                         unsigned height_, PixelFormat format_, int mipmapCount_) {
+        _createTexture(graphicsDevice_, width_, height_, format_, data_, mipmapCount_);
     }
 
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
-        // Create
         Image img(path_);
-        *this = Texture2D(graphicsDevice_, &img);
+        _createTexture(graphicsDevice_, img.Width, img.Height, img.Format, img.PixelData, img.MipmapCount);
     }
 
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_) {
-        // Create
-        *this = Texture2D(graphicsDevice_, img_->PixelData, img_->Width, img_->Height, img_->Format, img_->MipmapCount);
+        _createTexture(graphicsDevice_, img_->Width, img_->Height, img_->Format, img_->PixelData, img_->MipmapCount);
+    }
+
+    Texture2D::~Texture2D() {
+        Unload();
     }
 
     PixelFormat Texture2D::GetFormat() {
@@ -75,89 +77,18 @@ namespace Ngine::Graphics {
         return m_mipmapCount;
     }
 
-    void Texture2D::SetTextureFilter(const TextureFilterMode filterMode_) const {
-        // Bind
-        glBindTexture(GL_TEXTURE_2D, ID);
-        auto maxAnisotropicLevel = m_graphicsDevice->GetGLMaxAnisotropicLevel();
-
-        switch (filterMode_) {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-            case FILTER_POINT:
-                if (m_mipmapCount > 1) {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                } else {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                }
-                break;
-            case FILTER_BILINEAR:
-                if (m_mipmapCount > 1) {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                } else {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                }
-                break;
-            case FILTER_TRILINEAR:
-                if (m_mipmapCount > 1) {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                } else {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                }
-                break;
-            case FILTER_ANISOTROPIC_4X:
-                if (4 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 4);
-                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
-                break;
-            case FILTER_ANISOTROPIC_8X:
-                if (8 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
-                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
-                break;
-            case FILTER_ANISOTROPIC_16X:
-                if (16 < maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropicLevel);
-                break;
-#endif
-            default:
-                break;
-        }
+    void Texture2D::SetTextureFilter(TextureFilterMode filterMode_) {
+        // Set filter
+        m_API->SetTextureFilterMode(this, filterMode_);
     }
 
-    void Texture2D::SetTextureWrap(const TextureWrapMode wrapMode_) const {
-        // Bind
-        glBindTexture(GL_TEXTURE_2D, ID);
-        
-        switch (wrapMode_) {
-#if defined(GRAPHICS_OPENGL33) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGLES2)
-            case WRAP_REPEAT:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-                break;
-            case WRAP_CLAMP:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                break;
-            case WRAP_MIRROR_REPEAT:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-                break;
-            case WRAP_MIRROR_CLAMP:
-                // GL_MIRROR_CLAMP_EXT = 0x8742
-                if (m_graphicsDevice->GetGLSupportFlag(GraphicsDevice::GL_TEX_MIRROR_CLAMP)) {
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 0x8742);
-                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 0x8742);
-                } else Console::Warn("GLTexture", "Clamp mirror mode not supported.");
-                break;
-#endif
-        }
+    void Texture2D::SetTextureWrap(TextureWrapMode wrapMode_) {
+        // Set wrap
+        m_API->SetTextureWrapMode(this, wrapMode_);
     }
 
     bool Texture2D::IsValid() const {
-        return ID != 0 && Width > 0 && Height > 0;
+        return Width > 0 && Height > 0 && m_API->IsTextureValid(this);
     }
 
     void Texture2D::Unload() {
@@ -213,54 +144,54 @@ namespace Ngine::Graphics {
         renderer_->BeginVertices(PrimitiveType::Quads);
         if (flipX) {
             renderer_->PushVertex({
-                    {0, 0, 0},
-                    {
-                            (srcRect_.Width + srcRect_.X) / (float)Width,
-                            (srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {0, 0, 0},
+                                          {
+                                                  (srcRect_.Width + srcRect_.X) / (float) Width,
+                                                  (srcRect_.Y) / (float) Height
+                                          }, col_});
             renderer_->PushVertex({
-                    {0, destRect_.Height, 0},
-                    {
-                            (srcRect_.Width + srcRect_.X) / (float)Width,
-                            (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {0, destRect_.Height, 0},
+                                          {
+                                                  (srcRect_.Width + srcRect_.X) / (float) Width,
+                                                  (srcRect_.Height + srcRect_.Y) / (float) Height
+                                          }, col_});
             renderer_->PushVertex({
-                    {destRect_.Width, destRect_.Height, 0},
-                    {
-                            (srcRect_.X) / (float)Width,
-                            (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {destRect_.Width, destRect_.Height, 0},
+                                          {
+                                                  (srcRect_.X) / (float) Width,
+                                                  (srcRect_.Height + srcRect_.Y) / (float) Height
+                                          }, col_});
             renderer_->PushVertex({
-                    {destRect_.Width, 0, 0},
-                    {
-                            (srcRect_.X) / (float)Width,
-                            (srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {destRect_.Width, 0, 0},
+                                          {
+                                                  (srcRect_.X) / (float) Width,
+                                                  (srcRect_.Y) / (float) Height
+                                          }, col_});
         } else {
             renderer_->PushVertex({
-                    {0, 0, 0},
-                    {
-                            (srcRect_.X) / (float)Width,
-                            (srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {0, 0, 0},
+                                          {
+                                                  (srcRect_.X) / (float) Width,
+                                                  (srcRect_.Y) / (float) Height
+                                          }, col_});
             renderer_->PushVertex({
-                    {0, destRect_.Height, 0},
-                    {
-                            (srcRect_.X) / (float)Width,
-                            (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {0, destRect_.Height, 0},
+                                          {
+                                                  (srcRect_.X) / (float) Width,
+                                                  (srcRect_.Height + srcRect_.Y) / (float) Height
+                                          }, col_});
             renderer_->PushVertex({
-                    {destRect_.Width, destRect_.Height, 0},
-                    {
-                            (srcRect_.Width + srcRect_.X) / (float)Width,
-                            (srcRect_.Height + srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {destRect_.Width, destRect_.Height, 0},
+                                          {
+                                                  (srcRect_.Width + srcRect_.X) / (float) Width,
+                                                  (srcRect_.Height + srcRect_.Y) / (float) Height
+                                          }, col_});
             renderer_->PushVertex({
-                    {destRect_.Width, 0, 0},
-                    {
-                            (srcRect_.Width + srcRect_.X) / (float)Width,
-                            (srcRect_.Y) / (float)Height
-                    }, col_});
+                                          {destRect_.Width, 0, 0},
+                                          {
+                                                  (srcRect_.Width + srcRect_.X) / (float) Width,
+                                                  (srcRect_.Y) / (float) Height
+                                          }, col_});
         }
         renderer_->EndVertices();
 
@@ -269,10 +200,10 @@ namespace Ngine::Graphics {
     }
 
     bool Texture2D::operator==(const Texture2D &tex_) const {
-        return ID == tex_.ID;
+        return m_API->CompareTextures(this, &tex_);
     }
 
     bool Texture2D::operator!=(const Texture2D &tex_) const {
-        return ID != tex_.ID;
+        return !m_API->CompareTextures(this, &tex_);
     }
 }

@@ -216,7 +216,7 @@ namespace Ngine {
         /**
          * Filter mode for scaling render target
          */
-        Graphics::TextureFilterMode RenderTargetFilterMode = Graphics::FILTER_BILINEAR;
+        Graphics::TextureFilterMode RenderTargetFilterMode = Graphics::TextureFilterMode::Trilinear;
 
         /**
          * Create a new Game
