@@ -206,7 +206,7 @@ namespace Ngine::Filesystem {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
         // Create texture
-        auto tex = new Graphics::Texture2D(m_graphicsDevice, inPath_);
+        auto tex = Graphics::Texture2D::LoadTexture(m_graphicsDevice, inPath_);
 
         // Check if it is valid.
         if (tex->IsValid()) {

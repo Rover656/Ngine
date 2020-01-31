@@ -110,15 +110,10 @@ namespace Ngine::Graphics {
          */
         PixelFormat m_format = UNCOMPRESSED_R8G8B8A8;
 
-        // TEMP
-        GraphicsDevice *m_graphicsDevice = nullptr;
-
         /**
          * Graphics API.
          */
         API::PlatformGraphicsAPI *m_API = nullptr;
-
-        void _createTexture(GraphicsDevice *graphicsDevice_, int width_, int height_, PixelFormat format_, unsigned char *pixelData_, int mipmapCount_);
     public:
         union {
             /**
@@ -135,12 +130,12 @@ namespace Ngine::Graphics {
         /**
          * Texture width
          */
-        unsigned int Width = 0;
+        const unsigned int Width = 0;
 
         /**
          * Texture Height
          */
-        unsigned int Height = 0;
+        const unsigned int Height = 0;
 
         /**
          * Copy constructor.
@@ -161,14 +156,6 @@ namespace Ngine::Graphics {
         Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
 
         /**
-         * Load a texture file.
-         *
-         * @param graphicsDevice_ The current graphics device.
-         * @param path_ Texture file to load.
-         */
-        Texture2D(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_);
-
-        /**
          * Create a texture from an image.
          *
          * @param graphicsDevice_ The current graphics device.
@@ -176,6 +163,14 @@ namespace Ngine::Graphics {
          */
         Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_);
         ~Texture2D();
+
+        /**
+         * Load a texture from a file.
+         *
+         * @param graphicsDevice_ The current graphics device.
+         * @param path_ Texture file to load.
+         */
+        static Texture2D *LoadTexture(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_);
 
         /**
          * Get the texture pixel format.

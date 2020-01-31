@@ -139,6 +139,7 @@ namespace Ngine::Graphics::API {
         PlatformGLAPI(GraphicsDevice *graphicsDevice_);
         ~PlatformGLAPI() override;
 
+        void ConfigureViewport(int x_, int y_, int width_, int height_) override;
         void Clear(const Color &color_) override;
         void CreateTexture(Texture2D *texture_, unsigned char *data_) override;
         void DeleteTexture(Texture2D *texture_) override;

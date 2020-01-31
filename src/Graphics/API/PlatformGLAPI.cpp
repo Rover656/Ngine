@@ -821,6 +821,10 @@ namespace Ngine::Graphics::API {
 #endif
     }
 
+    void PlatformGLAPI::ConfigureViewport(int x_, int y_, int width_, int height_) {
+        glViewport(x_, y_, width_, height_);
+    }
+
     void PlatformGLAPI::Clear(const Color &color_) {
         glClearColor(color_.R, color_.G, color_.B, color_.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

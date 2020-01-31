@@ -21,7 +21,6 @@
 #include "Graphics/GraphicsDevice.hpp"
 
 #include "API/PlatformGLAPI.hpp"
-#include "Graphics/OpenGL.hpp"
 #include "Graphics/Renderer.hpp"
 #include "Graphics/RenderTarget.hpp"
 #include "Console.hpp"
@@ -236,8 +235,8 @@ namespace Ngine::Graphics {
             h = m_attachedWindow->GetHeight();
         }
 
-        // Set viewport
-        glViewport(0, 0, w, h);
+        // Configure viewport
+        m_platformAPI->ConfigureViewport(0, 0, w, h);
 
         // Create new matrix
         m_projectionMatrix = Matrix::Orthographic(0, (float) w, (float) h, 0, -1, 1);

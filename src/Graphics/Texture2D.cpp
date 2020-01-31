@@ -26,7 +26,9 @@
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
-    void Texture2D::_createTexture(GraphicsDevice *graphicsDevice_, int width_, int height_, PixelFormat format_, unsigned char *pixelData_, int mipmapCount_) {
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
+                         unsigned height_, PixelFormat format_, int mipmapCount_)
+            : Width(width_), Height(height_) {
         // Check dimensions
         if (width_ <= 0 || height_ <= 0) {
             Console::Error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width_, height_);
@@ -39,30 +41,21 @@ namespace Ngine::Graphics {
 
         // Save API
         m_API = graphicsDevice_->GetAPI();
-        m_graphicsDevice = graphicsDevice_;
 
         // Set fields
-        Width = width_;
-        Height = height_;
         m_mipmapCount = mipmapCount_;
         m_format = format_;
 
         // Make our texture
-        m_API->CreateTexture(this, pixelData_);
+        m_API->CreateTexture(this, data_);
     }
 
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
-                         unsigned height_, PixelFormat format_, int mipmapCount_) {
-        _createTexture(graphicsDevice_, width_, height_, format_, data_, mipmapCount_);
-    }
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_)
+            : Texture2D(graphicsDevice_, img_->PixelData, img_->Width, img_->Height, img_->Format, img_->MipmapCount) {}
 
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
+    Texture2D *Texture2D::LoadTexture(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
         Image img(path_);
-        _createTexture(graphicsDevice_, img.Width, img.Height, img.Format, img.PixelData, img.MipmapCount);
-    }
-
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_) {
-        _createTexture(graphicsDevice_, img_->Width, img_->Height, img_->Format, img_->PixelData, img_->MipmapCount);
+        return new Texture2D(graphicsDevice_, &img);
     }
 
     Texture2D::~Texture2D() {
@@ -94,10 +87,6 @@ namespace Ngine::Graphics {
     void Texture2D::Unload() {
         // Delete
         m_API->DeleteTexture(this);
-
-        // Clear fields
-        Width = 0;
-        Height = 0;
     }
 
     void Texture2D::Draw(Graphics::Renderer *renderer_, Vector2 pos_, Color col_, float scale_, Vector2 origin_,

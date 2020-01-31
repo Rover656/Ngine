@@ -70,6 +70,16 @@ namespace Ngine::Graphics {
             virtual ~PlatformGraphicsAPI() = default;
 
             /**
+             * Configure the viewport.
+             *
+             * @param x_ X coordinate.
+             * @param y_ Y coordinate.
+             * @param width_ Width.
+             * @param height_ Height.
+             */
+            virtual void ConfigureViewport(int x_, int y_, int width_, int height_) = 0;
+
+            /**
              * Clear the display.
              *
              * @param color_ The color to clear with.
