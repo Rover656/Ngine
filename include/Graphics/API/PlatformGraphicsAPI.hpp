@@ -33,7 +33,7 @@ namespace Ngine::Graphics {
 
     namespace API {
         /**
-         * The platform graphics API interface. This defines all functions required of a graphics API and exposes them.
+         * The platform graphics API interface. This defines all functions required of a graphics API and exposes them in a universal way.
          */
         class NEAPI PlatformGraphicsAPI {
         protected:
@@ -60,7 +60,6 @@ namespace Ngine::Graphics {
              * @param layout_ Layout to stop.
              */
             virtual void _stopVertexLayout(VertexLayout *layout_) = 0;
-
         public:
             /**
              * Create a platform API.
@@ -131,7 +130,11 @@ namespace Ngine::Graphics {
             virtual bool IsTextureValid(const Texture2D *texture_) = 0;
 
             /**
-             * Compare the similarity of two textures.
+             * Compare two textures.
+             *
+             * @param a_ Texture A.
+             * @param b_ Texture B.
+             * @returns Whether or not the textures are the same.
              */
             virtual bool CompareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
 
@@ -143,14 +146,42 @@ namespace Ngine::Graphics {
              */
             virtual void BindBuffer(Buffer *buffer_) = 0;
 
+            /**
+             * Create a render target on the GPU.
+             *
+             * @param renderTarget_ Render target object.
+             */
             virtual bool CreateRenderTarget(RenderTarget *renderTarget_) = 0;
 
+            /**
+             * Delete a render target from the GPU.
+             *
+             * @param renderTarget_ Render target object.
+             */
             virtual void DeleteRenderTarget(RenderTarget *renderTarget_) = 0;
 
+            /**
+             * Bind a render target.
+             *
+             * @param renderTarget_ Target to bind or null.
+             */
             virtual void BindRenderTarget(RenderTarget *renderTarget_) = 0;
 
+            /**
+             * Test if a render target is valid.
+             *
+             * @param renderTarget_ Render target to check.
+             * @return Whether or not the render target is valid.
+             */
             virtual bool IsRenderTargetValid(const RenderTarget *renderTarget_) = 0;
 
+            /**
+             * Compare two render targets.
+             *
+             * @param a_ Render target A.
+             * @param b_ Render target B.
+             * @return Whether or not the targets are the same.
+             */
             virtual bool CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) = 0;
 
             /**
