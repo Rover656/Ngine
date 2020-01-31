@@ -21,7 +21,7 @@ include(EnumOption)
 option(BUILD_TEST "Build the test program." ON)
 option(BUILD_DOCS "Build documentation" ON)
 
-option(BUILD_NGINE_SHARED "Build Ngine as a shared library. Will build instead of shared." ON)
+option(BUILD_NGINE_SHARED "Build Ngine as a shared library. Will build instead of shared." OFF)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
 enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.") # TODO: Remove for good.
