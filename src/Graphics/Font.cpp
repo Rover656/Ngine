@@ -20,14 +20,15 @@
 
 #include "Graphics/Font.hpp"
 
-#include <numeric>
-#include <utility>
-#include <stb_truetype.h>
-
 #include "Graphics/Renderer.hpp"
 #include "Math.hpp"
 #include "Console.hpp"
 #include "Rectangle.hpp"
+
+#include <cmath>
+#include <numeric>
+#include <utility>
+#include <stb_truetype.h>
 
 namespace Ngine::Graphics {
     Font *Font::m_defaultFont;
