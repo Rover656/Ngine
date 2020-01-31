@@ -333,9 +333,9 @@ namespace Ngine::Filesystem {
         stat(GetString().c_str(), &path_stat);
 
         if (S_ISREG(path_stat.st_mode))
-            return TYPE_FILE;
+            return ResourceType::File;
         else if (S_ISDIR(path_stat.st_mode))
-            return TYPE_DIRECTORY;
+            return ResourceType::Directory;
 #endif
         return ResourceType::Invalid;
     }
