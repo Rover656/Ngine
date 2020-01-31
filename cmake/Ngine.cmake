@@ -13,6 +13,9 @@ function(add_game_library target shared)
         add_library(${target} ${ARGN})
     endif()
 
+    # C++17
+    target_compile_features(${target} PRIVATE cxx_std_17)
+
     # Link
     link_ngine(${target})
 endfunction()
@@ -238,6 +241,9 @@ function(add_game)
     # Configure game
     add_executable(${GAME_TARGET_NAME} WIN32 ${GAME_SOURCE_FILES} ${GAME_HEADER_FILES} ${GAME_CONTENT_FILES} ${GAME_RESOURCE_FILES} ${ADDITIONAL_FILES})
 
+    # C++17
+    target_compile_features(${GAME_TARGET_NAME} PRIVATE cxx_std_17)
+
     # Visual Studio Source Groups
     if(MSVC)
         source_group(TREE ${GAME_CONTENT_DIR} PREFIX "\\Content" FILES ${GAME_CONTENT_FILES})
@@ -333,7 +339,7 @@ function(link_ngine GAME_TARGET_NAME)
     target_link_libraries(${GAME_TARGET_NAME} Ngine)
 
     # Copy shared lib
-    if (${BUILD_SHARED})
+    if (${BUILD_NGINE_SHARED})
         # Mark as shared
         target_compile_definitions(${GAME_TARGET_NAME} PRIVATE NGINE_SHARED=1)
 
@@ -343,7 +349,7 @@ function(link_ngine GAME_TARGET_NAME)
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     $<TARGET_FILE:Ngine>
                     $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
-                    STATUS "Copying Ngine shared libs to game/library...")
+                    COMMENT "Copying Ngine shared libs to game/library...")
         endif()
     endif()
 endfunction()

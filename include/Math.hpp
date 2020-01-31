@@ -33,7 +33,7 @@ namespace Ngine {
     /**
      * A vector with 2 components.
      */
-    struct Vector2 {
+    struct NEAPI Vector2 {
         /**
          * Unit Vector X
          */
@@ -561,7 +561,7 @@ namespace Ngine {
     /**
      * Describes an angle.
      */
-    struct Angle {
+    struct NEAPI Angle {
         /**
          * The sine of the angle.
          */
@@ -595,10 +595,10 @@ namespace Ngine {
          */
         float GetDegrees() const;
 
-        friend Angle operator+(Angle angle_, float theta_);
-        friend Angle operator-(Angle angle_, float theta_);
-        friend Angle operator*(Angle angle_, float theta_);
-        friend Angle operator/(Angle angle_, float theta_);
+        friend NEAPI Angle operator+(Angle angle_, float theta_);
+        friend NEAPI Angle operator-(Angle angle_, float theta_);
+        friend NEAPI Angle operator*(Angle angle_, float theta_);
+        friend NEAPI Angle operator/(Angle angle_, float theta_);
     };
 
     /**

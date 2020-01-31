@@ -6,12 +6,12 @@ project(Ngine
         VERSION 1.0.0
         DESCRIPTION "A 2D Game Engine")
 
-# Add a suffix
+# Add a version suffix
 set(PROJECT_VERSION_SUFFIX "dev")
 if (NOT ${PROJECT_VERSION_SUFFIX} STREQUAL "")
     set(PROJECT_VERSION ${PROJECT_VERSION}-${PROJECT_VERSION_SUFFIX})
     set(Ngine_VERSION ${PROJECT_VERSION})
-endif()
+endif ()
 
 # Include modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -21,19 +21,16 @@ include(EnumOption)
 option(BUILD_TEST "Build the test program." ON)
 option(BUILD_DOCS "Build documentation" ON)
 
-option(BUILD_SHARED_LIBS "Build Ngine as a shared library. Will build instead of shared." OFF)
+option(BUILD_NGINE_SHARED "Build Ngine as a shared library. Will build instead of shared." ON)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
 enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.") # TODO: Remove for good.
 
 # Setup project (if we are the main project)
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    # C++17
-    set(CMAKE_CXX_STANDARD 17)
-
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # -fPIC
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif()
+endif ()
 
 # Project details
 message(STATUS "Building Ngine V${PROJECT_VERSION}")
@@ -46,26 +43,26 @@ option(ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will
 ### End Feature Flags
 
 # Option validation (basically disable any incompatible rendering pipelines.
-if(${PLATFORM} MATCHES "Desktop")
+if (${PLATFORM} MATCHES "Desktop")
     # TODO: Does GLES work on Mac/Linux. Do we need to block this?
 elseif (${PLATFORM} MATCHES "UWP")
     set(ENABLE_OPENGL OFF)
     set(ENABLE_OPENGLES ON) # Force until DX support arrives.
-endif()
+endif ()
 
 # Check options
 if (${PLATFORM} MATCHES "Desktop")
     if (${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
         message(FATAL_ERROR "Cannot build Desktop for UWP. Use UWP platform instead.")
-    endif()
-elseif(${PLATFORM} MATCHES "UWP")
+    endif ()
+elseif (${PLATFORM} MATCHES "UWP")
     if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
         message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_NAME=WindowsStore")
-    endif()
+    endif ()
     if (NOT ${CMAKE_SYSTEM_VERSION} STREQUAL "10.0")
         message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_VERSION=10.0")
-    endif()
-endif()
+    endif ()
+endif ()
 
 # Broadcast renderer
 message(STATUS "Building Ngine for the \"${PLATFORM}\" platform.")
@@ -77,12 +74,12 @@ add_subdirectory(third-party)
 add_subdirectory(src)
 
 # Extra subdirectories if building as main project
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     if (${BUILD_DOCS})
         add_subdirectory(docs)
-    endif()
+    endif ()
 
     if (${BUILD_TEST})
         add_subdirectory(test)
-    endif()
-endif()
+    endif ()
+endif ()

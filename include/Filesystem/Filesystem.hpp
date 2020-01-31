@@ -209,22 +209,22 @@ namespace Ngine::Filesystem {
         /*
          * Combine to paths
          */
-        friend Path operator/(const std::string &path_, const std::string &pathB_);
+        friend NEAPI Path operator/(const std::string &path_, const std::string &pathB_);
 
         /*
          * Combine to paths
          */
-        friend Path operator/(const Path &path_, const Path &pathB_);
+        friend NEAPI Path operator/(const Path &path_, const Path &pathB_);
 
         /*
          * Combine to paths
          */
-        friend Path operator/(const std::string &path_, const Path &pathB_);
+        friend NEAPI Path operator/(const std::string &path_, const Path &pathB_);
 
         /*
          * Combine to paths
          */
-        friend Path operator/(const Path &path_, const std::string &pathB_);
+        friend NEAPI Path operator/(const Path &path_, const std::string &pathB_);
 
         /*
          * Combine two paths

@@ -27,7 +27,7 @@ namespace Ngine::Physics {
     /*
      * A collision shape interface
      */
-    struct Shape {
+    struct NEAPI Shape {
     };
 }
 

@@ -30,7 +30,7 @@
 class b2PolygonShape;
 
 namespace Ngine::Physics::Shapes {
-    class PolygonShape : public PhysicsShape {
+    class NEAPI PolygonShape : public PhysicsShape {
     public:
         // Public Constructors
 

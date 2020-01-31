@@ -32,7 +32,7 @@ namespace Ngine::Components {
      * A tileset renderer component.
      * Attaches a tileset renderer to an entity for easy rendering.
      */
-    class TilesetComponent : public Component {
+    class NEAPI TilesetComponent : public Component {
         /**
          * The tileset renderer.
          */

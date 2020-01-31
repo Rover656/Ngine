@@ -31,36 +31,42 @@ namespace Ngine::Graphics {
     // The default APIs are set here.
     GraphicsAPI GraphicsDevice::m_targetAPI
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(PLATFORM_DESKTOP) && !defined(GRAPHICS_OPENGLES2)
+#if defined(PLATFORM_DESKTOP) && defined(API_OPENGL_ENABLED)
             = GraphicsAPI::OpenGL
-#elif defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGLES2)
+#elif defined(PLATFORM_DESKTOP) && defined(API_OPENGLES_ENABLED)
             = GraphicsAPI::OpenGLES
-#elif defined(PLATFORM_UWP)
+#elif defined(PLATFORM_UWP) && defined(API_OPENGLES_ENABLED)
             = GraphicsAPI::OpenGLES
+#else
+#error "Cannot determine default API."
 #endif
 #endif
     ;
 
     int GraphicsDevice::m_targetMajorVersion
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGL33)
+#if defined(PLATFORM_DESKTOP) && defined(API_OPENGL_ENABLED)
             = 3
-#elif defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGLES2)
+#elif defined(PLATFORM_DESKTOP) && defined(API_OPENGLES_ENABLED)
             = 2
-#elif defined(PLATFORM_UWP)
+#elif defined(PLATFORM_UWP) && defined(API_OPENGLES_ENABLED)
             = 2
+#else
+#error "Cannot determine default API."
 #endif
 #endif
     ;
 
     int GraphicsDevice::m_targetMinorVersion
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGL33)
+#if defined(PLATFORM_DESKTOP) && defined(API_OPENGL_ENABLED)
             = 3
-#elif defined(PLATFORM_DESKTOP) && defined(GRAPHICS_OPENGLES2)
+#elif defined(PLATFORM_DESKTOP) && defined(API_OPENGLES_ENABLED)
             = 0
-#elif defined(PLATFORM_UWP)
+#elif defined(PLATFORM_UWP) && defined(API_OPENGLES_ENABLED)
             = 0
+#else
+#error "Cannot determine default API."
 #endif
 #endif
     ;

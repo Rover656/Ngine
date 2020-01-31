@@ -33,7 +33,7 @@ class b2Fixture;
 namespace Ngine::Physics {
     class PhysicsBody;
 
-    class PhysicsFixture {
+    class NEAPI PhysicsFixture {
         // Private Fields
 
         /*

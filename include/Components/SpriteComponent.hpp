@@ -32,7 +32,7 @@ namespace Ngine::Components {
     /**
      * Sprite component. Attaches a sprite at the position of the entity.
      */
-    class SpriteComponent : public Component {
+    class NEAPI SpriteComponent : public Component {
         /**
          * Render origin.
          */
