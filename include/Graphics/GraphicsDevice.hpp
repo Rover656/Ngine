@@ -87,7 +87,7 @@ namespace Ngine::Graphics {
      */
     class NEAPI GraphicsDevice {
         friend class Renderer;
-        friend class Window;
+        friend class Ngine::Window;
 
         /**
          * The target graphics API.
