@@ -143,65 +143,39 @@ namespace Ngine::Graphics {
 
         // Create default shader
 
-        // Vertex source TODO: Make work with new graphics APIs
-        std::string vertexShaderSrc =
-#if defined(GRAPHICS_OPENGL21)
-                "#version 120\n"
-#elif defined(GRAPHICS_OPENGLES2)
-                "#version 100\n"
-                #endif
-                #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "attribute vec3 NG_VertexPos;\n"
-                "attribute vec2 NG_VertexTexCoord;\n"
-                "attribute vec4 NG_VertexColor;\n"
-                "varying vec2 fragTexCoord;\n"
-                "varying vec4 fragColor;\n"
-                #elif defined(GRAPHICS_OPENGL33)
-                "#version 330\n"
-                "in vec3 NG_VertexPos;\n"
-                "in vec2 NG_VertexTexCoord;\n"
-                "in vec4 NG_VertexColor;\n"
-                "out vec2 fragTexCoord;\n"
-                "out vec4 fragColor;\n"
-                #endif
-                "uniform mat4 NGU_MATRIX_MVP;\n"
-                "void main()\n"
-                "{\n"
-                "    fragTexCoord = NG_VertexTexCoord;\n"
-                "    fragColor = NG_VertexColor;\n"
-                "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                "}\n";
+        const char *vSrc = nullptr;
+        const char *fSrc = nullptr;
 
-        // Fragment source
-        std::string fragmentShaderSrc =
-#if defined(GRAPHICS_OPENGL21)
-                "#version 120\n"
-#elif defined(GRAPHICS_OPENGLES2)
-                "#version 100\n"
-                "precision mediump float;\n"
-                #endif
-                #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "varying vec2 fragTexCoord;\n"
-                "varying vec4 fragColor;\n"
-                #else
-                "#version 330\n"
-                "in vec2 fragTexCoord;\n"
-                "in vec4 fragColor;\n"
-                "out vec4 finalColor;\n"
-                #endif
-                "uniform sampler2D NGU_TEXTURE;\n"
-                "void main()\n"
-                "{\n"
-                "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
-                #if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21)
-                "    gl_FragColor = texelColor*fragColor;\n"
-                #elif defined(GRAPHICS_OPENGL33)
-                "    finalColor = texelColor*fragColor;\n"
-                #endif
-                "}\n";
+        auto major = GraphicsDevice::GetTargetAPIMajorVersion();
+        auto minor = GraphicsDevice::GetTargetAPIMinorVersion();
+        switch (GraphicsDevice::GetTargetAPI()) {
+            case GraphicsAPI::OpenGL:
+                if (major == 2) {
+                    vSrc = GL21_V_SHADER;
+                    fSrc = GL21_F_SHADER;
+                } else if (major >= 3) {
+                    vSrc = GL33_V_SHADER;
+                    fSrc = GL33_F_SHADER;
+                }
+                break;
+            case GraphicsAPI::OpenGLES:
+                if (major == 2) {
+                    vSrc = GLES2_V_SHADER;
+                    fSrc = GLES2_F_SHADER;
+                } else if (major == 3) {
+                    vSrc = GL33_V_SHADER;
+                    fSrc = GL33_F_SHADER;
+                }
+                break;
+            case GraphicsAPI::DirectX:
+                break;
+        }
+
+        if (vSrc == nullptr || fSrc == nullptr)
+            Console::Fail("Renderer", "Shader not available for current graphics API.");
 
         // Create shader
-        auto shader = new Shader(vertexShaderSrc, fragmentShaderSrc);
+        auto shader = new Shader(vSrc, fSrc);
         auto compiled = shader->Compile();
 
         if (!compiled) {

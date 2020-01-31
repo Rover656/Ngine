@@ -75,7 +75,7 @@ endif ()
 
 # Graphics API handling
 if (${PLATFORM} MATCHES "Desktop")
-    if (${ENABLE_OPENGLES})
+    if (${ENABLE_OPENGLES} AND WIN32)
         # Copy static libs TODO: Support x64 linking.
         add_custom_command(TARGET Ngine
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different

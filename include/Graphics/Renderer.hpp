@@ -52,7 +52,7 @@ namespace Ngine::Graphics {
         /**
          * Render the vertices as triangles.
          */
-        Triangles = 0,
+                Triangles = 0,
 
         /**
          * Draw a fan of triangles.
@@ -60,12 +60,12 @@ namespace Ngine::Graphics {
          * A triangle is formed for each *adjacent* vertex pair.
          * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
          */
-        TriangleFan,
+                TriangleFan,
 
         /**
          * Render the vertices as quads.
          */
-        Quads
+                Quads
     };
 
     /**
@@ -87,6 +87,81 @@ namespace Ngine::Graphics {
          * The size of the matrix stack size.
          */
         static const int MATRIX_STACK_SIZE = 32;
+
+        // TEMP: GLES shaders for each version. I want to have a single shader language for this somepoint (either HLSL converter or something else)
+        static constexpr const char *GL21_V_SHADER = "#version 120\n"
+                                                     "attribute vec3 NG_VertexPos;\n"
+                                                     "attribute vec2 NG_VertexTexCoord;\n"
+                                                     "attribute vec4 NG_VertexColor;\n"
+                                                     "varying vec2 fragTexCoord;\n"
+                                                     "varying vec4 fragColor;\n"
+                                                     "uniform mat4 NGU_MATRIX_MVP;\n"
+                                                     "void main()\n"
+                                                     "{\n"
+                                                     "    fragTexCoord = NG_VertexTexCoord;\n"
+                                                     "    fragColor = NG_VertexColor;\n"
+                                                     "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                     "}\n";
+
+        static constexpr const char *GL21_F_SHADER = "#version 120\n"
+                                                     "varying vec2 fragTexCoord;\n"
+                                                     "varying vec4 fragColor;\n"
+                                                     "uniform sampler2D NGU_TEXTURE;\n"
+                                                     "void main()\n"
+                                                     "{\n"
+                                                     "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
+                                                     "    gl_FragColor = texelColor*fragColor;\n"
+                                                     "}\n";
+
+        static constexpr const char *GLES2_V_SHADER = "#version 100\n"
+                                                      "attribute vec3 NG_VertexPos;\n"
+                                                      "attribute vec2 NG_VertexTexCoord;\n"
+                                                      "attribute vec4 NG_VertexColor;\n"
+                                                      "varying vec2 fragTexCoord;\n"
+                                                      "varying vec4 fragColor;\n"
+                                                      "uniform mat4 NGU_MATRIX_MVP;\n"
+                                                      "void main()\n"
+                                                      "{\n"
+                                                      "    fragTexCoord = NG_VertexTexCoord;\n"
+                                                      "    fragColor = NG_VertexColor;\n"
+                                                      "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                      "}\n";
+
+        static constexpr const char *GLES2_F_SHADER = "#version 100\n"
+                                                      "precision mediump float;\n"
+                                                      "varying vec2 fragTexCoord;\n"
+                                                      "varying vec4 fragColor;\n"
+                                                      "uniform sampler2D NGU_TEXTURE;\n"
+                                                      "void main()\n"
+                                                      "{\n"
+                                                      "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
+                                                      "    gl_FragColor = texelColor*fragColor;\n"
+                                                      "}\n";
+
+        static constexpr const char *GL33_V_SHADER = "#version 330\n"
+                                                     "in vec3 NG_VertexPos;\n"
+                                                     "in vec2 NG_VertexTexCoord;\n"
+                                                     "in vec4 NG_VertexColor;\n"
+                                                     "out vec2 fragTexCoord;\n"
+                                                     "out vec4 fragColor;\n"
+                                                     "uniform mat4 NGU_MATRIX_MVP;\n"
+                                                     "void main()\n"
+                                                     "{\n"
+                                                     "    fragTexCoord = NG_VertexTexCoord;\n"
+                                                     "    fragColor = NG_VertexColor;\n"
+                                                     "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                     "}\n";
+
+        static constexpr const char *GL33_F_SHADER = "#version 330\n"
+                                                     "in vec2 fragTexCoord;\n"
+                                                     "in vec4 fragColor;\n"
+                                                     "out vec4 finalColor;\n"
+                                                     "uniform sampler2D NGU_TEXTURE;\n"
+                                                     "void main()\n"
+                                                     "{\n"
+                                                     "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
+                                                     "    finalColor = texelColor*fragColor;\n"
+                                                     "}\n";
     private:
         /**
          * The graphics device attached to the renderer.
@@ -187,9 +262,12 @@ namespace Ngine::Graphics {
         /**
          * Add indexed triangles to the buffer (no matrix translation).
          */
-        void _addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_, bool translate_ = false);
+        void _addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_,
+                                  bool translate_ = false);
+
     public:
         Renderer(GraphicsDevice *graphicsDevice_);
+
         ~Renderer();
 
         /**
@@ -333,7 +411,8 @@ namespace Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader to render with.
          */
-        void RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
+        void RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_,
+                                 ShaderProgram *shader_);
 
         /**
          * Check if n elements of type will fit in a buffer.
