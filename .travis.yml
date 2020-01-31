@@ -19,7 +19,7 @@ before_script:
   - if [ -z "$BUILD_SHARED" ]; then export BUILD_SHARED=ON; fi
   - mkdir build
   - cd build
-  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=$BUILD_SHARED -DDCMAKE_CXX_COMPILER=/usr/bin/g++-8 ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED=$BUILD_SHARED -DCMAKE_CXX_COMPILER=/usr/bin/g++-8 ..
 
 script:
   - make
