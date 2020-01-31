@@ -96,6 +96,8 @@
 #include "Graphics/VertexLayout.hpp"
 #include "Console.hpp"
 
+#include <cstring>
+
 #if defined(GLAD)
 static PFNGLGENVERTEXARRAYSPROC glGenVertexArraysOES;
 static PFNGLBINDVERTEXARRAYPROC glBindVertexArrayOES;
