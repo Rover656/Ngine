@@ -348,7 +348,7 @@ NGINE_GAME_ENTRY {
     //GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 3, 1);
     GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
 #else
-    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 2, 1); // So my linux VM can run this
+    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 3, 3);
 #endif
 #elif defined(PLATFORM_UWP)
     GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 2, 0);

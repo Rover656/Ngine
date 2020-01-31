@@ -150,10 +150,7 @@ namespace Ngine::Graphics {
         auto minor = GraphicsDevice::GetTargetAPIMinorVersion();
         switch (GraphicsDevice::GetTargetAPI()) {
             case GraphicsAPI::OpenGL:
-                if (major == 2) {
-                    vSrc = GL21_V_SHADER;
-                    fSrc = GL21_F_SHADER;
-                } else if (major >= 3) {
+                if (major >= 3) {
                     vSrc = GL33_V_SHADER;
                     fSrc = GL33_F_SHADER;
                 }

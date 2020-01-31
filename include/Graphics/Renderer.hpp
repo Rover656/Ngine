@@ -88,31 +88,7 @@ namespace Ngine::Graphics {
          */
         static const int MATRIX_STACK_SIZE = 32;
 
-        // TEMP: GLES shaders for each version. I want to have a single shader language for this somepoint (either HLSL converter or something else)
-        static constexpr const char *GL21_V_SHADER = "#version 120\n"
-                                                     "attribute vec3 NG_VertexPos;\n"
-                                                     "attribute vec2 NG_VertexTexCoord;\n"
-                                                     "attribute vec4 NG_VertexColor;\n"
-                                                     "varying vec2 fragTexCoord;\n"
-                                                     "varying vec4 fragColor;\n"
-                                                     "uniform mat4 NGU_MATRIX_MVP;\n"
-                                                     "void main()\n"
-                                                     "{\n"
-                                                     "    fragTexCoord = NG_VertexTexCoord;\n"
-                                                     "    fragColor = NG_VertexColor;\n"
-                                                     "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                                                     "}\n";
-
-        static constexpr const char *GL21_F_SHADER = "#version 120\n"
-                                                     "varying vec2 fragTexCoord;\n"
-                                                     "varying vec4 fragColor;\n"
-                                                     "uniform sampler2D NGU_TEXTURE;\n"
-                                                     "void main()\n"
-                                                     "{\n"
-                                                     "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
-                                                     "    gl_FragColor = texelColor*fragColor;\n"
-                                                     "}\n";
-
+        // TEMP: GLSL shaders for each version. I want to have a single shader language for this somepoint (either HLSL converter or something else)
         static constexpr const char *GLES2_V_SHADER = "#version 100\n"
                                                       "attribute vec3 NG_VertexPos;\n"
                                                       "attribute vec2 NG_VertexTexCoord;\n"

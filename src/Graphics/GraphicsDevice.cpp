@@ -79,8 +79,8 @@ namespace Ngine::Graphics {
 #if !defined(PLATFORM_DESKTOP)
                 Console::Fail("GraphicsDevice", "OpenGL is not supported on this platform.");
 #endif
-                if (m_targetMajorVersion < 2 && (m_targetMajorVersion == 2 && m_targetMinorVersion < 1))
-                    Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 2.1");
+                if (m_targetMajorVersion < 2 && (m_targetMajorVersion == 3 && m_targetMinorVersion < 0))
+                    Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 3.0");
                 if (m_targetMajorVersion == 4 && m_targetMinorVersion > 6)
                     Console::Fail("GraphicsDevice", "OpenGL 4.6 is the latest Ngine supports.");
 #else
