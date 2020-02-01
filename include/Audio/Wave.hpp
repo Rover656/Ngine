@@ -74,9 +74,9 @@ namespace Ngine::Audio {
         static Wave *LoadWave(const Filesystem::Path &path_);
 
         /**
-         * Unload wave file.
+         * Free wave file.
          */
-        void Unload() override;
+        void Free() override;
 
     private:
         void __LoadFLAC(const Filesystem::Path &path_);

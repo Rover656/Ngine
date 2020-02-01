@@ -29,7 +29,7 @@
 
 namespace Ngine::Audio {
     Wave::~Wave() {
-        Unload();
+        Free();
     }
 
     bool Wave::IsValid() const {
@@ -52,7 +52,7 @@ namespace Ngine::Audio {
         return wav;
     }
 
-    void Wave::Unload() {
+    void Wave::Free() {
         free(Data);
         Data = nullptr;
         Console::Notice("Wave", "Unloaded wav data from RAM.");

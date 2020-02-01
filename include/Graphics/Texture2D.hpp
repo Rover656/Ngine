@@ -206,9 +206,9 @@ namespace Ngine::Graphics {
         bool IsValid() const override;
 
         /**
-         * Unload the texture.
+         * Free the texture.
          */
-        void Unload() override;
+        void Free() override;
 
         /**
          * Draw the texture.

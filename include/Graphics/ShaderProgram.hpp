@@ -23,8 +23,14 @@
 
 #include "../Config.hpp"
 
+#include "GraphicsDevice.hpp"
+
 namespace Ngine::Graphics {
     class Shader;
+
+    namespace API {
+        class PlatformGraphicsAPI;
+    }
 
     /**
      * Shader program which contains a shader and manages it.
@@ -38,17 +44,12 @@ namespace Ngine::Graphics {
      *  * mat4 - NGU_MATRIX_MVP
      *  * sampler2D - NGU_TEXTURE
      */
-    class NEAPI ShaderProgram {
+    class NEAPI ShaderProgram final : public IResource {
     private:
         /**
-         * The attached shader.
+         * The graphics API.
          */
-        Shader *_Shader = nullptr;
-
-        /**
-         * Whether or not the shader program has linked.
-         */
-        bool _Linked = false;
+        API::PlatformGraphicsAPI *m_API;
 
         /**
          * Attribute location cache.
@@ -60,28 +61,47 @@ namespace Ngine::Graphics {
          */
         std::unordered_map<std::string, unsigned int> _UniformLocationCache;
     public:
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        /**
-         * Shader program ID.
-         */
-        unsigned int ID = 0;
-#endif
+        union {
+            /**
+             * Shader program ID.
+             */
+            unsigned int ID = 0;
+        };
 
-        ShaderProgram();
-        explicit ShaderProgram(Shader *shader_);
+        /**
+         * The attached vertex shader.
+         */
+        const Shader *VertexShader;
+
+        /**
+         * The attached fragment/pixel shader.
+         */
+        const Shader *FragmentShader;
+
+        /**
+         * Create a shader program.
+         *
+         * @todo Rework this constructor if we want to support more kinds of shader.
+         * @param graphicsDevice_ The graphics device.
+         * @param vertexShader_ The vertex shader.
+         * @param fragmentShader_ The fragment shader.
+         */
+        ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_);
         ~ShaderProgram();
 
+        // These need a universal system.
         unsigned int GetAttribLocation(const std::string &name_);
-
         unsigned int GetUniformLocation(const std::string &name_);
 
-        void SetShader(Shader *shader_);
+        /**
+         * Determine if the shader program is valid.
+         */
+        bool IsValid() const override;
 
-        bool Link();
-
-        void Use();
-
-        bool IsValid();
+        /**
+         * Free the shader program.
+         */
+        void Free() override;
     };
 }
 

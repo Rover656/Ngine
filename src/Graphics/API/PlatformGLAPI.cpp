@@ -93,6 +93,8 @@
 #endif
 
 #include "Graphics/Buffer.hpp"
+#include "Graphics/Shader.hpp"
+#include "Graphics/ShaderProgram.hpp"
 #include "Graphics/RenderTarget.hpp"
 #include "Graphics/VertexLayout.hpp"
 #include "Console.hpp"
@@ -1053,11 +1055,92 @@ namespace Ngine::Graphics::API {
         return a_->ID[0] == b_->ID[0] && a_->ID[1] == b_->ID[1];
     }
 
-    void PlatformGLAPI::BindShader(ShaderProgram *shader_) {
-        if (shader_ != m_currentShader) {
-            glUseProgram(shader_ != nullptr ? shader_->ID : 0);
-            m_currentShader = shader_;
+    void PlatformGLAPI::CreateShader(Shader *shader_, void *sourceData_) {
+        // Get shader type
+        GLenum type;
+        switch (shader_->Type) {
+            case ShaderType::Vertex:
+                type = GL_VERTEX_SHADER;
+                break;
+            case ShaderType::Fragment:
+                type = GL_FRAGMENT_SHADER;
+                break;
         }
+
+        // Create shader object
+        shader_->ID = glCreateShader(type);
+
+        // Set source
+        const char *src = (const char *)sourceData_;
+        glShaderSource(shader_->ID, 1, &src, nullptr);
+
+        // Compile
+        glCompileShader(shader_->ID);
+
+        // Test compile status
+        GLint compiled;
+        glGetShaderiv(shader_->ID, GL_COMPILE_STATUS, &compiled);
+
+        if (compiled != GL_TRUE) // error in compilation occurred
+        {
+            glDeleteShader(shader_->ID);
+            Console::Fail("PlatformGLAPI", "Failed to compile shader.");
+        }
+    }
+
+    void PlatformGLAPI::DeleteShader(Shader *shader_) {
+        // Delete
+        glDeleteShader(shader_->ID);
+        shader_->ID = 0;
+    }
+
+    bool PlatformGLAPI::IsShaderValid(const Shader *shader_) {
+        return shader_->ID > 0;
+    }
+
+    void PlatformGLAPI::CreateShaderProgram(ShaderProgram *program_) {
+        // Create
+        program_->ID = glCreateProgram();
+
+        // Attach shaders
+        glAttachShader(program_->ID, program_->VertexShader->ID);
+        glAttachShader(program_->ID, program_->FragmentShader->ID);
+
+        // TODO: Develop a better system for this. (One that is universal across shader languages)
+        //  Maybe do this as part of VertexLayout, whenever a shader or a vertex layout is bound, link these attrib locations up?
+        // Bind attrib locations
+        glBindAttribLocation(program_->ID, 0, "NG_VertexPos");
+        glBindAttribLocation(program_->ID, 1, "NG_VertexColor");
+        glBindAttribLocation(program_->ID, 2, "NG_VertexTexCoord");
+
+        // Link
+        glLinkProgram(program_->ID);
+
+        // Get link status
+        int linked = GL_TRUE;
+        glGetProgramiv(program_->ID, GL_LINK_STATUS, &linked);
+
+        if (linked != GL_TRUE) {
+            glDeleteProgram(program_->ID);
+            Console::Fail("PlatformGLAPI", "Failed to link shader program.");
+            return;
+        }
+    }
+
+    void PlatformGLAPI::DeleteShaderProgram(ShaderProgram *program_) {
+        glDeleteProgram(program_->ID);
+        program_->ID = 0;
+    }
+
+    void PlatformGLAPI::BindShaderProgram(ShaderProgram *program_) {
+        if (program_ != m_currentShaderProgram) {
+            glUseProgram(program_ != nullptr ? program_->ID : 0);
+            m_currentShaderProgram = program_;
+        }
+    }
+
+    bool PlatformGLAPI::IsShaderProgramValid(const ShaderProgram *program_) {
+        return program_->ID > 0 && IsShaderValid(program_->VertexShader) && IsShaderValid(program_->FragmentShader);
     }
 
     void PlatformGLAPI::BindBuffer(Buffer *buffer_) {

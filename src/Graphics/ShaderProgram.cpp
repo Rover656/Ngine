@@ -20,25 +20,31 @@
 
 #include "Graphics/ShaderProgram.hpp"
 
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-#include "Graphics/OpenGL.hpp"
-#endif
+#include "Graphics/OpenGL.hpp" // TEMP
 
+#include "Graphics/API/PlatformGraphicsAPI.hpp"
 #include "Graphics/Shader.hpp"
+#include "Console.hpp"
 
 namespace Ngine::Graphics {
-    ShaderProgram::ShaderProgram() {
-        ID = glCreateProgram();
-    }
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_)
+            : VertexShader(vertexShader_), FragmentShader(fragmentShader_) {
+        // Check shaders
+        if (VertexShader->Type != ShaderType::Vertex)
+            Console::Fail("ShaderProgram", "Vertex shader is not a vertex shader.");
 
-    ShaderProgram::ShaderProgram(Shader *shader_) : ShaderProgram() {
-        SetShader(shader_);
-        Link();
+        if (FragmentShader->Type != ShaderType::Fragment)
+            Console::Fail("ShaderProgram", "Fragment shader is not a fragment shader.");
+
+        // Get API
+        m_API = graphicsDevice_->GetAPI();
+
+        // Create with API
+        m_API->CreateShaderProgram(this);
     }
 
     ShaderProgram::~ShaderProgram() {
-        glDeleteProgram(ID);
-        ID = 0;
+        Free();
     }
 
     unsigned int ShaderProgram::GetAttribLocation(const std::string &name_) {
@@ -63,52 +69,11 @@ namespace Ngine::Graphics {
         return 0;
     }
 
-    void ShaderProgram::SetShader(Shader *shader_) {
-        if (!shader_->IsValid()) throw std::runtime_error("Invalid shader!");
-
-        _Shader = shader_;
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        glAttachShader(ID, _Shader->_FragmentShader);
-        glAttachShader(ID, _Shader->_VertexShader);
-#endif
-
-        _Linked = false;
+    bool ShaderProgram::IsValid() const {
+        return m_API->IsShaderProgramValid(this);
     }
 
-    bool ShaderProgram::Link() {
-        _Linked = false;
-        _AttribLocationCache.clear();
-        _UniformLocationCache.clear();
-
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        // Link program
-        glLinkProgram(ID);
-
-        // Get link status
-        int linked = GL_TRUE;
-        glGetProgramiv(ID, GL_LINK_STATUS, &linked);
-
-        if (linked == GL_TRUE) {
-            _Linked = true;
-
-            // Bind attrib locations
-            glBindAttribLocation(ID, 0, "NG_VertexPos");
-            glBindAttribLocation(ID, 1, "NG_VertexColor");
-            glBindAttribLocation(ID, 2, "NG_VertexTexCoord");
-        }
-#endif
-
-        return _Linked;
-    }
-
-    void ShaderProgram::Use() {
-        if (!IsValid()) throw std::runtime_error("Attempted to use incomplete shader program.");
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        glUseProgram(ID);
-#endif
-    }
-
-    bool ShaderProgram::IsValid() {
-        return _Linked;
+    void ShaderProgram::Free() {
+        m_API->DeleteShaderProgram(this);
     }
 }

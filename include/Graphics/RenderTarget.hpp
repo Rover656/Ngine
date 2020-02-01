@@ -31,9 +31,9 @@ namespace Ngine::Graphics {
     /**
      * A 2D Texture in the GPU that can be rendered to.
      */
-    struct NEAPI RenderTarget final : public IResource {
+    class NEAPI RenderTarget final : public IResource {
         friend class GraphicsDevice;
-    private:
+
         /**
          * The texture that the render target renders to.
          */
@@ -84,11 +84,11 @@ namespace Ngine::Graphics {
         bool IsValid() const override;
 
         /**
-         * Unload the render target.
+         * Free the render target.
 
          * @warning This will delete the texture too, ensure it is not going to be rendered this frame.
          */
-        void Unload() override;
+        void Free() override;
 
         bool operator==(const RenderTarget &b) const;
         bool operator!=(const RenderTarget &b) const;

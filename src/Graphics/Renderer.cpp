@@ -172,24 +172,11 @@ namespace Ngine::Graphics {
             Console::Fail("Renderer", "Shader not available for current graphics API.");
 
         // Create shader
-        auto shader = new Shader(vSrc, fSrc);
-        auto compiled = shader->Compile();
-
-        if (!compiled) {
-            delete shader;
-            Console::Fail("Renderer", "Failed to compile internal shader!");
-        }
+        auto vShader = new Shader(m_graphicsDevice, ShaderType::Vertex, vSrc);
+        auto fShader = new Shader(m_graphicsDevice, ShaderType::Fragment, fSrc);
 
         // Create shader program
-        m_defaultShader = new ShaderProgram(shader);
-        auto linked = m_defaultShader->Link();
-        delete shader;
-
-        if (!linked) {
-            delete m_defaultShader;
-            m_defaultShader = nullptr;
-            Console::Fail("Renderer", "Failed to link internal shader program!");
-        }
+        m_defaultShader = new ShaderProgram(m_graphicsDevice, vShader, fShader);
 
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
@@ -335,7 +322,7 @@ namespace Ngine::Graphics {
         api->PrepareFor2D();
 
         // Use shader
-        api->BindShader(shader_);
+        api->BindShaderProgram(shader_);
 
         // Set the MVP matrix. It is just the projection as model view is already applied in vertices
         glUniformMatrix4fv(shader_->GetUniformLocation("NGU_MATRIX_MVP"), 1, GL_FALSE, MVP.ToFloatArray().data());
@@ -356,7 +343,7 @@ namespace Ngine::Graphics {
         api->BindTexture(nullptr);
 
         // Stop using shader
-        api->BindShader(nullptr);
+        api->BindShaderProgram(nullptr);
     }
 
     void Renderer::PushMatrix() {

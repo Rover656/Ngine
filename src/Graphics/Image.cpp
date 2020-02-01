@@ -91,7 +91,7 @@ namespace Ngine::Graphics {
     }
 
     Image::~Image() {
-        Unload();
+        Free();
     }
 
     bool Image::IsValid() const {
@@ -100,7 +100,7 @@ namespace Ngine::Graphics {
                 && PixelData != nullptr;
     }
 
-    void Image::Unload() {
+    void Image::Free() {
         // Removes image data from the container (across all copies of this image)
         Format = UNCOMPRESSED_GRAYSCALE;
         Height = 0;

@@ -166,9 +166,9 @@ namespace Ngine::Audio {
         void Stop();
 
         /**
-         * Unload the music.
+         * Free the music.
          */
-        void Unload() override;
+        void Free() override;
 
         /**
          * Update all active music.

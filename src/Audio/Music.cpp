@@ -31,7 +31,7 @@ namespace Ngine::Audio {
     // Destructor
 
     Music::~Music() {
-        Unload();
+        Free();
     }
 
     // Public Methods
@@ -179,7 +179,7 @@ namespace Ngine::Audio {
         _ActiveMusic.erase(std::remove(_ActiveMusic.begin(), _ActiveMusic.end(), this), _ActiveMusic.end());
     }
 
-    void Music::Unload() {
+    void Music::Free() {
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
 
         switch(CTXType) {

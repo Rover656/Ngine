@@ -190,9 +190,9 @@ namespace Ngine::Graphics {
                                  std::vector<int> fontChars_ = std::vector<int>());
 
         /**
-         * Unload the font.
+         * Free the font.
          */
-        void Unload() override;
+        void Free() override;
 
         /**
          * Draw a string with this font at the given position.

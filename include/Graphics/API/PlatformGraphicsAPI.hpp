@@ -125,11 +125,57 @@ namespace Ngine::Graphics {
             virtual void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) = 0;
 
             /**
-             * Bind a shader.
+             * Create a shader on the GPU.
              *
-             * @param shader_ Shader to bind, null to unbind.
+             * @note This will compile the shader too.
+             * @param shader_ Shader object.
+             * @param sourceData_ The source data, this will be a GLSL string for OpenGL, HLSL bytecode for DirectX and so on.
              */
-            virtual void BindShader(ShaderProgram *shader_) = 0;
+            virtual void CreateShader(Shader *shader_, void *sourceData_) = 0;
+
+            /**
+             * Delete a shader.
+             *
+             * @param shader_ Shader to delete.
+             */
+            virtual void DeleteShader(Shader *shader_) = 0;
+
+            /**
+             * Check if a shader is valid.
+             *
+             * @param shader_ Shader to check.
+             */
+            virtual bool IsShaderValid(const Shader *shader_) = 0;
+
+            /**
+             * Create a shader program.
+             *
+             * @note DirectX does not use these, its just really for OGL.
+             * @note This will also link the GL program.
+             * @param program_ Program object.
+             */
+            virtual void CreateShaderProgram(ShaderProgram *program_) = 0;
+
+            /**
+             * Delete a shader program.
+             *
+             * @param program_ Program to delete.
+             */
+            virtual void DeleteShaderProgram(ShaderProgram *program_) = 0;
+
+            /**
+             * Bind the provided shader program.
+             *
+             * @param program_ Program to bind.
+             */
+            virtual void BindShaderProgram(ShaderProgram *program_) = 0;
+
+            /**
+             * Check if a shader program is valid.
+             *
+             * @param program_ Program to check.
+             */
+            virtual bool IsShaderProgramValid(const ShaderProgram *program_) = 0;
 
             /**
              * Determine if the texture is valid on the GPU.

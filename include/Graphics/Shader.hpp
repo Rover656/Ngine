@@ -24,50 +24,54 @@
 #include "../Config.hpp"
 
 #include "../Resource.hpp"
+#include "GraphicsDevice.hpp"
 
 namespace Ngine::Graphics {
     class ShaderProgram;
 
-    class NEAPI Shader : public IResource {
-        // Set ShaderProgram as a friend.
-        friend class ShaderProgram;
+    namespace API {
+        class PlatformGraphicsAPI;
+    }
 
+    /**
+     * Shader type.
+     *
+     * @todo Should we support more?
+     */
+    enum class ShaderType {
+        Vertex,
+        Fragment
+    };
+
+    /**
+     * A program that runs on the graphics card.
+     */
+    class NEAPI Shader final : public IResource {
         /**
-         * Vertex shader ID.
+         * Graphics API.
          */
-        unsigned int _VertexShader;
-
-        /**
-         * Fragment shader ID.
-         */
-        unsigned int _FragmentShader;
-
-        /**
-         * Whether or not the shader is compiled
-         */
-        bool _Compiled = false;
-
-        /**
-         * Compile the given shader.
-         */
-        bool __Compile(unsigned int id_);
-
+        API::PlatformGraphicsAPI *m_API;
     public:
+        union {
+            /**
+             * Shader ID.
+             */
+            unsigned int ID;
+        };
+
+        /**
+         * This shader's type.
+         */
+        const ShaderType Type;
+
         /**
          * Create a shader with source strings.
          *
-         * @param vertSrc_
-         * @param fragSrc_
+         * @todo Universal constructor.
+         * @param src_ GLSL source
          */
-        Shader(std::string vertSrc_, std::string fragSrc_);
+        Shader(GraphicsDevice *graphicsDevice_, ShaderType type_, const char *src_);
         ~Shader();
-
-        /**
-         * Compile the shader.
-         *
-         * @return Whether or not the shader compiled successfully.
-         */
-        bool Compile();
 
         /**
          * Determine if the shader is valid.
@@ -80,7 +84,7 @@ namespace Ngine::Graphics {
         /**
          * Delete the shader.
          */
-        void Unload() override;
+        void Free() override;
     };
 }
 

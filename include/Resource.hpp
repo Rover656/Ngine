@@ -37,9 +37,9 @@ namespace Ngine {
         virtual bool IsValid() const = 0;
 
         /**
-         * Unload this resource from memory.
+         * Free this resource from memory.
          */
-        virtual void Unload() = 0;
+        virtual void Free() = 0;
     };
 }
 

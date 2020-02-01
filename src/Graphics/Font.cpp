@@ -37,7 +37,7 @@ namespace Ngine::Graphics {
 
     Font::~Font() {
         Console::Notice("Font", "Unloading and deleting font.");
-        Unload();
+        Free();
     }
 
     Font *Font::GetDefaultFont() {
@@ -79,9 +79,9 @@ namespace Ngine::Graphics {
             // Generate font atals
             font->_generateAtlas(graphicsDevice_);
 
-            // Unload individual character images
+            // Free individual character images
             for (auto i = 0; i < font->m_characterCount; i++) {
-                font->m_characters[i].Image->Unload();
+                font->m_characters[i].Image->Free();
             }
         } else {
             font = GetDefaultFont();
@@ -94,7 +94,7 @@ namespace Ngine::Graphics {
         m_defaultFont = font_;
     }
 
-    void Font::Unload() {
+    void Font::Free() {
         // Delete atlas texture.
         delete m_texture;
         m_texture = nullptr;

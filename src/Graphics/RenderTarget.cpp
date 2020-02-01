@@ -50,7 +50,7 @@ namespace Ngine::Graphics {
 
     RenderTarget::~RenderTarget() {
         // Delete self
-        Unload();
+        Free();
     }
 
     Texture2D *RenderTarget::GetTexture() {
@@ -61,7 +61,7 @@ namespace Ngine::Graphics {
         return m_API->IsRenderTargetValid(this);
     }
 
-    void RenderTarget::Unload() {
+    void RenderTarget::Free() {
         // Delete texture
         delete m_texture;
         m_texture = nullptr;

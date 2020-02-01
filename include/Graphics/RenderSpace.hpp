@@ -36,7 +36,7 @@ namespace Ngine::Graphics {
      */
     class NEAPI RenderableNode {
         /**
-         * The depth is the 2D z-index
+         * The depth is the 2D z-index.
          */
         float m_depth;
 

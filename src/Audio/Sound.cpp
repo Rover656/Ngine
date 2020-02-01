@@ -29,7 +29,7 @@ namespace Ngine::Audio {
     // Destructor
 
     Sound::~Sound() {
-        Unload();
+        Free();
     }
 
     // Public Methods
@@ -105,7 +105,7 @@ namespace Ngine::Audio {
         Stream.Buffer->Stop();
     }
 
-    void Sound::Unload() {
+    void Sound::Free() {
         // Close buffer
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
         Stream.Buffer = nullptr;

@@ -59,7 +59,7 @@ namespace Ngine::Graphics {
     }
 
     Texture2D::~Texture2D() {
-        Unload();
+        Free();
     }
 
     PixelFormat Texture2D::GetFormat() {
@@ -84,7 +84,7 @@ namespace Ngine::Graphics {
         return Width > 0 && Height > 0 && m_API->IsTextureValid(this);
     }
 
-    void Texture2D::Unload() {
+    void Texture2D::Free() {
         // Delete
         m_API->DeleteTexture(this);
     }

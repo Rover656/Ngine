@@ -143,9 +143,9 @@ namespace Ngine::Graphics {
         bool IsValid() const override;
 
         /**
-         * Unload image from memory.
+         * Free image from memory.
          */
-        void Unload() override;
+        void Free() override;
     };
 }
 

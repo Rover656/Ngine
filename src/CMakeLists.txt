@@ -3,7 +3,7 @@ file(GLOB_RECURSE SOURCE_FILES "${Ngine_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES "${Ngine_SOURCE_DIR}/include/*.hpp")
 
 # Generate versioning
-if (${PLATFORM} MATCHES "Desktop" AND MSVC AND ${BUILD_SHARED_LIBS})
+if (${PLATFORM} MATCHES "Desktop" AND WIN32 AND ${BUILD_NGINE_SHARED})
     # Generate windows product info
     include(generate_product_version)
     generate_product_version(
@@ -13,7 +13,7 @@ if (${PLATFORM} MATCHES "Desktop" AND MSVC AND ${BUILD_SHARED_LIBS})
             VERSION_MINOR ${Ngine_VERSION_MINOR}
             VERSION_PATCH ${Ngine_VERSION_PATCH}
             VERSION_REVISION 0
-            COMPANY_NAME ${PUBLISHER_DISPLAY_NAME})
+            COMPANY_NAME NerdThings)
 endif ()
 
 # GLAD
@@ -51,8 +51,8 @@ if (${ENABLE_OPENGLES})
     target_compile_definitions(Ngine PUBLIC API_OPENGLES_ENABLED=1)
 endif ()
 
-# Depend on docs if enabled
-if (${BUILD_DOCS} AND (NOT DEFINED ${CMAKE_BUILD_TYPE} OR ${CMAKE_BUILD_TYPE} MATCHES "Release"))
+# Depend on docs if enabled and we are able to say we're building release
+if (${BUILD_DOCS} AND (DEFINED ${CMAKE_BUILD_TYPE} AND ${CMAKE_BUILD_TYPE} MATCHES "Release"))
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         add_dependencies(Ngine Ngine_Docs)
@@ -79,7 +79,6 @@ target_link_libraries(Ngine
 target_include_directories(Ngine
         PUBLIC
             "${Ngine_SOURCE_DIR}/include"
-            "${_NGINE_INCLUDE_DIRS}"
         PRIVATE
             "${Ngine_SOURCE_DIR}/src"
             "${Ngine_SOURCE_DIR}/third-party/stb"

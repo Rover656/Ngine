@@ -114,9 +114,9 @@ namespace Ngine::Audio {
         void Stop();
 
         /**
-         * Unload sound.
+         * Free sound.
          */
-        void Unload() override;
+        void Free() override;
     };
 }
 
