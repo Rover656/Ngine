@@ -33,10 +33,63 @@ namespace Ngine::Graphics {
     }
 
     enum class ShaderUniformType {
+        /**
+         * A signed integer.
+         */
         Int = 0,
+
+        /**
+         * An unsigned integer.
+         */
         UnsignedInt,
+
+        /**
+         * A float.
+         */
         Float,
-        Matrix
+
+        /**
+         * A matrix is a grid of 16 floats.
+         */
+        Matrix,
+
+        // Next two are wip.
+        /**
+         * A struct contains a number of different types.
+         */
+        Struct,
+
+        /**
+         * An array contains a list of a single type.
+         */
+        Array
+    };
+
+    // WIP
+    struct ShaderDataStructureDefinition {
+        /**
+         * The number of elements.
+         *
+         * @note For standard scalars, this determines float, vec2, vec3 etc.
+         */
+        int Count = 1;
+
+        /**
+         * The element type. This is used to calculate the memory size.
+         */
+        ShaderUniformType Type;
+
+        /**
+         * The element name.
+         */
+        std::string Name;
+
+        /**
+         * The element members.
+         *
+         * @note For arrays this should contain a singular member to determine what type the array is holding.
+         */
+        std::vector<ShaderDataStructureDefinition> Members;
     };
 
     /**

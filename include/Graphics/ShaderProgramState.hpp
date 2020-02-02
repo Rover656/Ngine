@@ -34,8 +34,6 @@ namespace Ngine::Graphics {
         /**
          * The data to be passed to the GPU.
          * This is manually allocated and managed.
-         *
-         * @note Once this data has been created, the uniform layout cannot be modified without freeing the current data.
          */
         void *m_data = nullptr;
     public:

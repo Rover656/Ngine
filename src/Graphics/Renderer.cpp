@@ -178,6 +178,31 @@ namespace Ngine::Graphics {
         // Create shader program
         m_defaultShader = new ShaderProgram(m_graphicsDevice, vShader, fShader);
 
+        // NEW: Setup test structure
+        ShaderDataStructureDefinition testStruct;
+        testStruct.Type = ShaderUniformType::Struct;
+        testStruct.Name = "StructThing";
+        {
+            ShaderDataStructureDefinition memberA;
+            memberA.Type = ShaderUniformType::Float;
+            memberA.Count = 4;
+            memberA.Name = "TestColor";
+
+            ShaderDataStructureDefinition memberB;
+            memberB.Type = ShaderUniformType::Matrix;
+            memberB.Name = "TestMatrix";
+
+            testStruct.Members.push_back(memberA);
+            testStruct.Members.push_back(memberB);
+        }
+
+        // Create an array of these structs
+        ShaderDataStructureDefinition testStructArray;
+        testStructArray.Name = "StructArray";
+        testStructArray.Type = ShaderUniformType::Array;
+        testStructArray.Members.push_back(testStruct);
+        testStructArray.Count = 2; // Array of two structs.
+
         // Setup uniforms
         m_defaultShader->AddUniform({"NGINE_MATRIX_MVP", ShaderUniformType::Matrix, 1}); // Matrix has 16 floats
         m_defaultShader->AddUniform({"NGINE_TEXTURE", ShaderUniformType::Int, 1});
