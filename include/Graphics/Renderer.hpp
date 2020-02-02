@@ -31,6 +31,7 @@
 #include "GraphicsDevice.hpp"
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
+#include "ShaderProgramState.hpp"
 #include "Texture2D.hpp"
 #include "VertexLayout.hpp"
 
@@ -52,7 +53,7 @@ namespace Ngine::Graphics {
         /**
          * Render the vertices as triangles.
          */
-                Triangles = 0,
+        Triangles = 0,
 
         /**
          * Draw a fan of triangles.
@@ -60,12 +61,12 @@ namespace Ngine::Graphics {
          * A triangle is formed for each *adjacent* vertex pair.
          * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
          */
-                TriangleFan,
+         TriangleFan,
 
         /**
          * Render the vertices as quads.
          */
-                Quads
+        Quads
     };
 
     /**
@@ -95,22 +96,22 @@ namespace Ngine::Graphics {
                                                       "attribute vec4 NG_VertexColor;\n"
                                                       "varying vec2 fragTexCoord;\n"
                                                       "varying vec4 fragColor;\n"
-                                                      "uniform mat4 NGU_MATRIX_MVP;\n"
+                                                      "uniform mat4 NGINE_MATRIX_MVP;\n"
                                                       "void main()\n"
                                                       "{\n"
                                                       "    fragTexCoord = NG_VertexTexCoord;\n"
                                                       "    fragColor = NG_VertexColor;\n"
-                                                      "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                      "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
                                                       "}\n";
 
         static constexpr const char *GLES2_F_SHADER = "#version 100\n"
                                                       "precision mediump float;\n"
                                                       "varying vec2 fragTexCoord;\n"
                                                       "varying vec4 fragColor;\n"
-                                                      "uniform sampler2D NGU_TEXTURE;\n"
+                                                      "uniform sampler2D NGINE_TEXTURE;\n"
                                                       "void main()\n"
                                                       "{\n"
-                                                      "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
+                                                      "    vec4 texelColor = texture2D(NGINE_TEXTURE, fragTexCoord);\n"
                                                       "    gl_FragColor = texelColor*fragColor;\n"
                                                       "}\n";
 
@@ -120,22 +121,22 @@ namespace Ngine::Graphics {
                                                      "in vec4 NG_VertexColor;\n"
                                                      "out vec2 fragTexCoord;\n"
                                                      "out vec4 fragColor;\n"
-                                                     "uniform mat4 NGU_MATRIX_MVP;\n"
+                                                     "uniform mat4 NGINE_MATRIX_MVP;\n"
                                                      "void main()\n"
                                                      "{\n"
                                                      "    fragTexCoord = NG_VertexTexCoord;\n"
                                                      "    fragColor = NG_VertexColor;\n"
-                                                     "    gl_Position = NGU_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                     "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
                                                      "}\n";
 
         static constexpr const char *GL33_F_SHADER = "#version 330\n"
                                                      "in vec2 fragTexCoord;\n"
                                                      "in vec4 fragColor;\n"
                                                      "out vec4 finalColor;\n"
-                                                     "uniform sampler2D NGU_TEXTURE;\n"
+                                                     "uniform sampler2D NGINE_TEXTURE;\n"
                                                      "void main()\n"
                                                      "{\n"
-                                                     "    vec4 texelColor = texture2D(NGU_TEXTURE, fragTexCoord);\n"
+                                                     "    vec4 texelColor = texture2D(NGINE_TEXTURE, fragTexCoord);\n"
                                                      "    finalColor = texelColor*fragColor;\n"
                                                      "}\n";
     private:
@@ -165,9 +166,9 @@ namespace Ngine::Graphics {
         Texture2D *m_currentTexture = nullptr;
 
         /**
-         * The shader being used for the current batch.
+         * The shader state being used for the current batch.
          */
-        ShaderProgram *m_currentShader = nullptr;
+        ShaderProgramState *m_currentShaderState = nullptr;
 
         /**
          * The vertex array for the current batch.
@@ -193,6 +194,11 @@ namespace Ngine::Graphics {
          * The default shader program for rendering.
          */
         ShaderProgram *m_defaultShader = nullptr;
+
+        /**
+         * The default shaders state.
+         */
+        ShaderProgramState *m_defaultShaderState = nullptr;
 
         /**
          * White texture used for rendering things without texture.
@@ -298,10 +304,9 @@ namespace Ngine::Graphics {
          * Set the current shader for rendering.
          *
          * @note Will force a draw of anything before this call if the texture is different.
-         * @todo ShaderProgramState/Material.
-         * @param shader_ The shader to use.
+         * @param state_ The shader program state to use.
          */
-        void SetShader(ShaderProgram *shader_);
+        void SetShader(ShaderProgramState *state_);
 
         /**
          * Push a matrix onto the stack (with the current matrix's value).
@@ -373,9 +378,9 @@ namespace Ngine::Graphics {
          * @param VBO_ The vertex buffer.
          * @param count_ Number of vertices to render.
          * @param texture_ The texture to render with.
-         * @param shader_ The shader to render with.
+         * @param shader_ The shader program state to render with.
          */
-        void RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgram *shader_);
+        void RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgramState *state_);
 
         /**
          * Render an indexed vertex buffer.
@@ -385,10 +390,10 @@ namespace Ngine::Graphics {
          * @param IBO_ The index buffer.
          * @param count_ The number of elements. I.e. triangle count * 3
          * @param texture_ The texture to render with.
-         * @param shader_ The shader to render with.
+         * @param state_ The shader program state to render with.
          */
         void RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_,
-                                 ShaderProgram *shader_);
+                                 ShaderProgramState *state_);
 
         /**
          * Check if n elements of type will fit in a buffer.

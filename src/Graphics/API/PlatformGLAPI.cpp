@@ -23,11 +23,15 @@
 #if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
 
 #if defined(GLAD)
+
 #include <glad/glad.h>
+
 #endif
 
 #if defined(PLATFORM_DESKTOP)
+
 #include <GLFW/glfw3.h>
+
 #elif defined(EGL)
 #define GL_KHR_debug 0
 #define GL_GLEXT_PROTOTYPES 1 
@@ -670,7 +674,8 @@ namespace Ngine::Graphics::API {
             m_GLES3 = major == 3;
         }
 #else
-        m_GLES2 = GLAD_GL_ES_VERSION_2_0 && !GLAD_GL_ES_VERSION_3_0 && !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
+        m_GLES2 =
+                GLAD_GL_ES_VERSION_2_0 && !GLAD_GL_ES_VERSION_3_0 && !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
         m_GLES3 = GLAD_GL_ES_VERSION_3_0;
 #endif
 
@@ -686,7 +691,7 @@ namespace Ngine::Graphics::API {
         // GLES3 defaults
         if (m_GLES3) {
             m_featureFlags[FEATURE_VAO] = true;
-            // TODO: Add others.
+            // TODO: Add any others.
         }
 
         // Build extension list
@@ -732,10 +737,10 @@ namespace Ngine::Graphics::API {
 #if defined(GLAD)
 #if defined(GLFW)
                     // GLFW does not provide the OES methods, try to find them.
-                    glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress("glGenVertexArraysOES");
-                    glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress("glBindVertexArrayOES");
-                    glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSPROC)glfwGetProcAddress(
-                        "glDeleteVertexArraysOES");
+                    glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress("glGenVertexArraysOES");
+                    glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress("glBindVertexArrayOES");
+                    glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSPROC) glfwGetProcAddress(
+                            "glDeleteVertexArraysOES");
 #endif
                     if ((glGenVertexArraysOES != nullptr) && (glBindVertexArrayOES != nullptr) &&
                         (glDeleteVertexArraysOES != nullptr))
@@ -841,7 +846,7 @@ namespace Ngine::Graphics::API {
         // Bind
         glBindTexture(GL_TEXTURE_2D, texture_->ID);
 
-        // Generate mipmaps
+        // Generate mipmaps TODO: Just generate mipmaps through OGL instead?
         int mipWidth = texture_->Width;
         int mipHeight = texture_->Height;
         int mipOffset = 0;
@@ -878,7 +883,6 @@ namespace Ngine::Graphics::API {
 #endif
                     }
                 }
-
 #endif
             }
 
@@ -938,15 +942,18 @@ namespace Ngine::Graphics::API {
                 break;
             case TextureFilterMode::Anisotropic_4X:
                 if (4 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 4);
-                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
+                else
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
                 break;
             case TextureFilterMode::Anisotropic_8X:
                 if (8 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
-                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
+                else
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
                 break;
             case TextureFilterMode::Anisotropic_16X:
                 if (16 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-                else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
+                else
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
                 break;
         }
     }
@@ -1071,7 +1078,7 @@ namespace Ngine::Graphics::API {
         shader_->ID = glCreateShader(type);
 
         // Set source
-        const char *src = (const char *)sourceData_;
+        const char *src = (const char *) sourceData_;
         glShaderSource(shader_->ID, 1, &src, nullptr);
 
         // Compile
@@ -1132,10 +1139,105 @@ namespace Ngine::Graphics::API {
         program_->ID = 0;
     }
 
-    void PlatformGLAPI::BindShaderProgram(ShaderProgram *program_) {
-        if (program_ != m_currentShaderProgram) {
-            glUseProgram(program_ != nullptr ? program_->ID : 0);
-            m_currentShaderProgram = program_;
+    void PlatformGLAPI::BindShaderProgram(const ShaderProgram *program_) {
+        glUseProgram(program_ != nullptr ? program_->ID : 0);
+    }
+
+    void PlatformGLAPI::BindShaderProgramState(ShaderProgramState *state_) {
+        // Bind the program
+        BindShaderProgram(state_->AttachedProgram);
+
+        // Apply each uniform
+        for (const auto &uniform : state_->AttachedProgram->GetUniforms()) {
+            auto loc = glGetUniformLocation(state_->AttachedProgram->ID, uniform.Name.c_str());
+            auto dat = state_->GetUniform(uniform.Name);
+
+            switch (uniform.Type) {
+                case ShaderUniformType::Int: {
+                    int *ints = (int *) dat;
+                    if (uniform.ArraySize > 1) {
+                        // TODO
+                        //glUniform1iv(loc, uniform.Count, (int *) state_->GetUniform(uniform.Name));
+                    } else {
+                        switch (uniform.Count) {
+                            case 1:
+                                glUniform1i(loc, *ints);
+                                break;
+                            case 2:
+                                glUniform2i(loc, *ints, *(ints + 1));
+                                break;
+                            case 3:
+                                glUniform3i(loc, *ints, *(ints + 1), *(ints + 2));
+                                break;
+                            case 4:
+                                glUniform4i(loc, *ints, *(ints + 1), *(ints + 2), *(ints + 3));
+                                break;
+                            default:
+                                Console::Fail("PlatformGLAPI", "Can only have 1-4 ints.");
+                                break;
+                        }
+                    }
+
+                    break;
+                }
+                case ShaderUniformType::UnsignedInt: {
+                    unsigned int *uints = (unsigned int *) dat;
+                    if (uniform.ArraySize > 1) {
+                        // TODO
+                        //glUniform1iv(loc, uniform.Count, (int *) state_->GetUniform(uniform.Name));
+                    } else {
+                        switch (uniform.Count) {
+                            case 1:
+                                glUniform1ui(loc, *uints);
+                                break;
+                            case 2:
+                                glUniform2ui(loc, *uints, *(uints + 1));
+                                break;
+                            case 3:
+                                glUniform3ui(loc, *uints, *(uints + 1), *(uints + 2));
+                                break;
+                            case 4:
+                                glUniform4ui(loc, *uints, *(uints + 1), *(uints + 2), *(uints + 3));
+                                break;
+                            default:
+                                Console::Fail("PlatformGLAPI", "Can only have 1-4 unsigned ints.");
+                                break;
+                        }
+                    }
+                    break;
+                }
+                case ShaderUniformType::Float: {
+                    float *floats = (float *) dat;
+
+                    if (uniform.ArraySize > 1) {
+                        // TODO
+                        //glUniform1iv(loc, uniform.Count, (int *) state_->GetUniform(uniform.Name));
+                    } else {
+                        switch (uniform.Count) {
+                            case 1:
+                                glUniform1f(loc, *floats);
+                                break;
+                            case 2:
+                                glUniform2f(loc, *floats, *(floats + 1));
+                                break;
+                            case 3:
+                                glUniform3f(loc, *floats, *(floats + 1), *(floats + 2));
+                                break;
+                            case 4:
+                                glUniform4f(loc, *floats, *(floats + 1), *(floats + 2), *(floats + 3));
+                                break;
+                            default:
+                                Console::Fail("PlatformGLAPI", "Can only have 1-4 floats.");
+                                break;
+                        }
+                        break;
+                    }
+                }
+                case ShaderUniformType::Matrix: {
+                    glUniformMatrix4fv(loc, uniform.Count, GL_FALSE, (float *) state_->GetUniform(uniform.Name));
+                    break;
+                }
+            }
         }
     }
 
@@ -1311,6 +1413,7 @@ namespace Ngine::Graphics::API {
     }
 
 #if defined(EGL)
+    // TODO: Add an abstraction kind of thing for Window so this kind of context management can be handled externally?
     EGLContext PlatformGLAPI::GetEGLContext() {
         return m_context;
     }

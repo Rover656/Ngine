@@ -27,7 +27,7 @@
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
-    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_)
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderUniformDesc> uniforms_)
             : VertexShader(vertexShader_), FragmentShader(fragmentShader_) {
         // Check shaders
         if (VertexShader->Type != ShaderType::Vertex)
@@ -41,10 +41,54 @@ namespace Ngine::Graphics {
 
         // Create with API
         m_API->CreateShaderProgram(this);
+
+        // Add uniforms
+        for (const auto& uniform : uniforms_) {
+            AddUniform(uniform);
+        }
     }
 
     ShaderProgram::~ShaderProgram() {
         Free();
+    }
+
+    void ShaderProgram::AddUniform(ShaderUniformDesc uniform_) {
+        // Verify
+        if (uniform_.Name.empty())
+            Console::Fail("ShaderProgram", "Uniform must have a name.");
+        if (uniform_.Size <= 0 || uniform_.Count <= 0)
+            Console::Fail("ShaderProgram", "Uniform sizes are incorrect.");
+        if (uniform_.Offset != -1)
+            Console::Warn("ShaderProgram", "Uniform offset has been set outside of the program, this value will be ignored.");
+
+        // Get the current data size (total of previous offsets).
+        auto size = GetUniformDataSize();
+
+        // Set offset
+        uniform_.Offset = size;
+
+        // Add
+        m_uniforms.push_back(uniform_);
+    }
+
+    int ShaderProgram::GetUniformDataSize() const {
+        int s = 0;
+        for (const auto& uniform : m_uniforms) {
+            s += uniform.Size * uniform.Count * uniform.ArraySize;
+        }
+        return s;
+    }
+
+    std::vector<ShaderUniformDesc> ShaderProgram::GetUniforms() const {
+        return m_uniforms;
+    }
+
+    void ShaderProgram::Finalize() {
+        m_final = true;
+    }
+
+    bool ShaderProgram::IsFinal() const {
+        return m_final;
     }
 
     unsigned int ShaderProgram::GetAttribLocation(const std::string &name_) {

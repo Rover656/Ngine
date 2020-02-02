@@ -178,6 +178,16 @@ namespace Ngine::Graphics {
         // Create shader program
         m_defaultShader = new ShaderProgram(m_graphicsDevice, vShader, fShader);
 
+        // Setup uniforms
+        m_defaultShader->AddUniform({"NGINE_MATRIX_MVP", ShaderUniformType::Matrix, 1}); // Matrix has 16 floats
+        m_defaultShader->AddUniform({"NGINE_TEXTURE", ShaderUniformType::Int, 1});
+        m_defaultShader->Finalize();
+
+        // Create program state
+        m_defaultShaderState = new ShaderProgramState(m_defaultShader);
+        int defaultTextureUnit = 0;
+        m_defaultShaderState->SetUniform("NGINE_TEXTURE", &defaultTextureUnit);
+
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
         m_whiteTexture = new Texture2D(m_graphicsDevice, pixels, 1, 1);
@@ -270,10 +280,10 @@ namespace Ngine::Graphics {
         }
     }
 
-    void Renderer::SetShader(ShaderProgram *shader_) {
-        if (m_currentShader != shader_) {
+    void Renderer::SetShader(ShaderProgramState *state_) {
+        if (m_currentShaderState != state_) {
             RenderBatch();
-            m_currentShader = shader_;
+            m_currentShaderState = state_;
         }
     }
 
@@ -288,7 +298,7 @@ namespace Ngine::Graphics {
         // Render our batch buffers
         RenderBufferIndexed(m_layout, m_VBO, m_IBO, m_indexCount,
                             m_currentTexture != nullptr ? m_currentTexture : m_whiteTexture,
-                            m_currentShader != nullptr ? m_currentShader : m_defaultShader);
+                            m_currentShaderState != nullptr ? m_currentShaderState : m_defaultShaderState);
 
         // Clear data
         m_vertexCount = 0;
@@ -296,12 +306,12 @@ namespace Ngine::Graphics {
     }
 
     void Renderer::RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_,
-                                ShaderProgram *shader_) {
-        RenderBufferIndexed(layout_, VBO_, nullptr, count_, texture_, shader_);
+                                ShaderProgramState *state_) {
+        RenderBufferIndexed(layout_, VBO_, nullptr, count_, texture_, state_);
     }
 
     void Renderer::RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_,
-                                       Texture2D *texture_, ShaderProgram *shader_) {
+                                       Texture2D *texture_, ShaderProgramState *state_) {
         // Check buffer types
         if (VBO_->Type != BufferType::Vertex || (IBO_ != nullptr && IBO_->Type != BufferType::Index))
             Console::Fail("Renderer", "Incorrect buffers provided to RenderBufferIndexed");
@@ -309,8 +319,9 @@ namespace Ngine::Graphics {
         // Configure the current framebuffer for rendering
         m_graphicsDevice->SetupFramebuffer();
 
-        // Get MVP
+        // Set predefined uniforms
         auto MVP = m_graphicsDevice->GetProjectionMatrix();
+        state_->SetUniform("NGINE_MATRIX_MVP", MVP.ToFloatArray().data());
 
         // Use layout
         layout_->Use();
@@ -322,12 +333,12 @@ namespace Ngine::Graphics {
         api->PrepareFor2D();
 
         // Use shader
-        api->BindShaderProgram(shader_);
+        api->BindShaderProgramState(state_);
 
         // Set the MVP matrix. It is just the projection as model view is already applied in vertices
-        glUniformMatrix4fv(shader_->GetUniformLocation("NGU_MATRIX_MVP"), 1, GL_FALSE, MVP.ToFloatArray().data());
+        //glUniformMatrix4fv(shader_->GetUniformLocation("NGU_MATRIX_MVP"), 1, GL_FALSE, MVP.ToFloatArray().data());
 
-        // Bind texture
+        // Bind texture TODO: Should we ever consider the possibility of multiple textures?
         api->BindTexture(texture_);
 
         // Draw all elements

@@ -103,7 +103,6 @@ namespace Ngine::Graphics::API {
      */
     class PlatformGLAPI : public PlatformGraphicsAPI {
         Texture2D *m_currentTexture = nullptr;
-        ShaderProgram *m_currentShaderProgram = nullptr;
         RenderTarget *m_currentRenderTarget = nullptr;
         bool m_GLES2 = false;
         bool m_GLES3 = false;
@@ -158,8 +157,9 @@ namespace Ngine::Graphics::API {
         bool IsShaderValid(const Shader *shader_) override;
         void CreateShaderProgram(ShaderProgram *program_) override;
         void DeleteShaderProgram(ShaderProgram *program_) override;
-        void BindShaderProgram(ShaderProgram *program_) override;
+        void BindShaderProgram(const ShaderProgram *program_) override;
         bool IsShaderProgramValid(const ShaderProgram *program_) override;
+        void BindShaderProgramState(ShaderProgramState *state_) override;
         void BindBuffer(Buffer *buffer_) override;
         void UnbindBuffer(Buffer *buffer_) override;
         void CreateBuffer(Buffer *buffer_) override;

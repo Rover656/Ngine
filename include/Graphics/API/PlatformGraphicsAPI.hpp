@@ -25,6 +25,7 @@
 
 #include "../GraphicsDevice.hpp"
 #include "../ShaderProgram.hpp"
+#include "../ShaderProgramState.hpp"
 #include "../Texture2D.hpp"
 
 namespace Ngine::Graphics {
@@ -125,6 +126,23 @@ namespace Ngine::Graphics {
             virtual void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) = 0;
 
             /**
+             * Determine if the texture is valid on the GPU.
+             *
+             * @param texture_ Texture to check.
+             * @return Whether or not the texture is valid.
+             */
+            virtual bool IsTextureValid(const Texture2D *texture_) = 0;
+
+            /**
+             * Compare two textures.
+             *
+             * @param a_ Texture A.
+             * @param b_ Texture B.
+             * @returns Whether or not the textures are the same.
+             */
+            virtual bool CompareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
+
+            /**
              * Create a shader on the GPU.
              *
              * @note This will compile the shader too.
@@ -168,7 +186,7 @@ namespace Ngine::Graphics {
              *
              * @param program_ Program to bind.
              */
-            virtual void BindShaderProgram(ShaderProgram *program_) = 0;
+            virtual void BindShaderProgram(const ShaderProgram *program_) = 0;
 
             /**
              * Check if a shader program is valid.
@@ -178,21 +196,11 @@ namespace Ngine::Graphics {
             virtual bool IsShaderProgramValid(const ShaderProgram *program_) = 0;
 
             /**
-             * Determine if the texture is valid on the GPU.
+             * Bind a shader program's state.
              *
-             * @param texture_ Texture to check.
-             * @return Whether or not the texture is valid.
+             * @param state_ State to bind.
              */
-            virtual bool IsTextureValid(const Texture2D *texture_) = 0;
-
-            /**
-             * Compare two textures.
-             *
-             * @param a_ Texture A.
-             * @param b_ Texture B.
-             * @returns Whether or not the textures are the same.
-             */
-            virtual bool CompareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
+            virtual void BindShaderProgramState(ShaderProgramState *state_) = 0;
 
             /**
              * Bind a buffer.
