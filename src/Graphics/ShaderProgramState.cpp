@@ -50,7 +50,7 @@ namespace Ngine::Graphics {
 
     const void *ShaderProgramState::GetUniform(const std::string &name_) {
         // Find the uniform
-        ShaderUniformDesc uniformDesc;
+        ShaderDataStructure uniformDesc;
         for (const auto& uniform : AttachedProgram->GetUniforms()) {
             if (uniform.Name == name_) {
                 uniformDesc = uniform;
@@ -59,7 +59,7 @@ namespace Ngine::Graphics {
         }
 
         // Skip if there is no data
-        if (uniformDesc.Size == 0 || uniformDesc.Count == 0)
+        if (uniformDesc.GetSize() == 0 || uniformDesc.Count == 0)
             Console::Fail("ShaderUniformData", "Uniform could not be found or uniform has invalid parameters.");
 
         char *dat = (char *) m_data;
@@ -71,7 +71,7 @@ namespace Ngine::Graphics {
             Console::Fail("ShaderUniformData", "Memory not allocated. Call Allocate() first.");
 
         // Find the uniform
-        ShaderUniformDesc uniformDesc;
+        ShaderDataStructure uniformDesc;
         for (const auto& uniform : AttachedProgram->GetUniforms()) {
             if (uniform.Name == name_) {
                 uniformDesc = uniform;
@@ -80,11 +80,64 @@ namespace Ngine::Graphics {
         }
 
         // Skip if there is no data
-        if (uniformDesc.Size == 0 || uniformDesc.Count == 0) return;
+        if (uniformDesc.GetSize() == 0 || uniformDesc.Count == 0) return;
 
         // Copy data in
         char *dat = (char *) m_data;
-        memcpy(&dat[uniformDesc.Offset], data_, uniformDesc.Size * uniformDesc.Count * uniformDesc.ArraySize);
+        memcpy(&dat[uniformDesc.Offset], data_, uniformDesc.GetSize() * uniformDesc.Count);
+    }
+
+    void ShaderProgramState::SetUniformEx(std::vector<std::string> nameTree_, void *data_) {
+        ShaderDataStructure target;
+
+        // Find initial structure
+        for (const auto& uniform : AttachedProgram->GetUniforms()) {
+            if (uniform.Name == nameTree_[0]) {
+                target = uniform;
+                break;
+            }
+        }
+
+        // Skip if there is no target
+        if (target.GetSize() == 0 || target.Count == 0) return;
+
+        // Navigate name tree
+        int dataOffset = target.Offset;
+        for (auto i = 1; i < nameTree_.size(); i++) {
+            switch (target.Type) {
+                case ShaderDataType::Int:
+                case ShaderDataType::UnsignedInt:
+                case ShaderDataType::Float:
+                case ShaderDataType::Matrix:
+                    Console::Fail("ShaderProgramState", "Cannot navigate *into* a simple data format.");
+                    break;
+                case ShaderDataType::Struct:
+                    // Find target within this struct
+                    for (const auto& member : target.Members) {
+                        if (member.Name == nameTree_[i]) {
+                            target = member;
+                            goto found;
+                        }
+                    }
+                    break;
+                case ShaderDataType::Array:
+                    int elementSize = target.Members[0].GetSize();
+                    int targetElement = std::stoi(nameTree_[i]);
+                    if (targetElement < target.Count) {
+                        target = target.Members[0];
+                        goto found;
+                    }
+                    break;
+            }
+            Console::Fail("ShaderProgramState", "Could not find member.");
+            found:
+                dataOffset += target.Offset;
+                break;
+        }
+
+        // Copy data in
+        char *dat = (char *) m_data;
+        memcpy(&dat[dataOffset], data_, target.GetSize() * target.Count);
     }
 
     const void *ShaderProgramState::GetData() const {

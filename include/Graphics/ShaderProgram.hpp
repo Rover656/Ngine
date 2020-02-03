@@ -32,7 +32,7 @@ namespace Ngine::Graphics {
         class PlatformGraphicsAPI;
     }
 
-    enum class ShaderUniformType {
+    enum class ShaderDataType {
         /**
          * A signed integer.
          */
@@ -65,8 +65,16 @@ namespace Ngine::Graphics {
         Array
     };
 
+    class T {
+    public:
+        std::string Name;
+        ShaderDataType Type;
+        int Count;
+        int Offset;
+    };
+
     // WIP
-    struct ShaderDataStructureDefinition {
+    struct ShaderDataStructure {
         /**
          * The number of elements.
          *
@@ -77,7 +85,7 @@ namespace Ngine::Graphics {
         /**
          * The element type. This is used to calculate the memory size.
          */
-        ShaderUniformType Type;
+        ShaderDataType Type;
 
         /**
          * The element name.
@@ -89,7 +97,50 @@ namespace Ngine::Graphics {
          *
          * @note For arrays this should contain a singular member to determine what type the array is holding.
          */
-        std::vector<ShaderDataStructureDefinition> Members;
+        std::vector<ShaderDataStructure> Members;
+
+        /**
+         * Offset. Set internally.
+         */
+        int Offset = 0;
+
+        /**
+         * Add a member.
+         */
+        void AddMember(ShaderDataStructure member_) {
+            member_.Offset = GetSize();
+            Members.push_back(member_);
+        }
+
+        /**
+         * Get the size of the structure.
+         */
+        int GetSize() const {
+            int s = 0;
+            switch(Type) {
+                case ShaderDataType::Int:
+                    s = sizeof(int) * Count;
+                    break;
+                case ShaderDataType::UnsignedInt:
+                    s = sizeof(unsigned int) * Count;
+                    break;
+                case ShaderDataType::Float:
+                    s = sizeof(float) * Count;
+                    break;
+                case ShaderDataType::Matrix:
+                    s = sizeof(float) * 16;
+                    break;
+                case ShaderDataType::Struct:
+                    for (auto member : Members)
+                        s += member.GetSize();
+                    break;
+                case ShaderDataType::Array:
+                    s = Members[0].GetSize() * Count;
+                    break;
+            }
+
+            return s;
+        }
     };
 
     /**
@@ -120,7 +171,7 @@ namespace Ngine::Graphics {
         /**
          * The target data type.
          */
-        ShaderUniformType Type;
+        ShaderDataType Type;
 
         /**
          * The size of the array (1 = no array).
@@ -135,18 +186,18 @@ namespace Ngine::Graphics {
         /**
          * Define a new shader uniform.
          */
-        ShaderUniformDesc(std::string name_, ShaderUniformType type_, int count_, int arraySize_ = 1) : Name(std::move(name_)), Count(count_), Type(type_), ArraySize(arraySize_) {
+        ShaderUniformDesc(std::string name_, ShaderDataType type_, int count_, int arraySize_ = 1) : Name(std::move(name_)), Count(count_), Type(type_), ArraySize(arraySize_) {
             switch (Type) {
-                case ShaderUniformType::Int:
+                case ShaderDataType::Int:
                     Size = sizeof(int);
                     break;
-                case ShaderUniformType::UnsignedInt:
+                case ShaderDataType::UnsignedInt:
                     Size = sizeof(unsigned int);
                     break;
-                case ShaderUniformType::Float:
+                case ShaderDataType::Float:
                     Size = sizeof(float);
                     break;
-                case ShaderUniformType::Matrix:
+                case ShaderDataType::Matrix:
                     Size = sizeof(float) * 16;
                     break;
             }
@@ -185,7 +236,7 @@ namespace Ngine::Graphics {
         /**
          * All of the uniforms that are part of the shader.
          */
-        std::vector<ShaderUniformDesc> m_uniforms;
+        std::vector<ShaderDataStructure> m_uniforms;
 
         /**
          * Whether or not the shader is final.
@@ -219,7 +270,7 @@ namespace Ngine::Graphics {
          * @param fragmentShader_ The fragment shader.
          * @param uniforms_ The uniform definitions for the program.
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderUniformDesc> uniforms_ = {});
+        ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderDataStructure> uniforms_ = {});
         ~ShaderProgram();
 
         /**
@@ -227,12 +278,12 @@ namespace Ngine::Graphics {
          *
          * @param uniform_ The uniform to add.
          */
-        void AddUniform(ShaderUniformDesc uniform_);
+        void AddUniform(ShaderDataStructure uniform_);
 
         /**
          * Get the list of uniforms.
          */
-        std::vector<ShaderUniformDesc> GetUniforms() const;
+        std::vector<ShaderDataStructure> GetUniforms() const;
 
         /**
          * Get the size of the uniform data.

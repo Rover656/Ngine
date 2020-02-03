@@ -131,6 +131,12 @@ namespace Ngine::Graphics::API {
 
         void _getTextureFormats(PixelFormat format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
         int _calculatePixelDataSize(int width_, int height_, PixelFormat format_);
+        void _setUniform(ShaderProgramState *state_, std::string name_, ShaderDataStructure structure_, const void *data_);
+
+        /**
+         * Write a simple uniform (int, uint, float, matrix).
+         */
+        void _writeSimpleUniform(const ShaderProgram *program_, const char *name_, ShaderDataType type_, int count_, const void* data_);
     protected:
         void _useVertexLayout(VertexLayout *layout_) override;
         void _stopVertexLayout(VertexLayout *layout_) override;

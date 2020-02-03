@@ -179,17 +179,17 @@ namespace Ngine::Graphics {
         m_defaultShader = new ShaderProgram(m_graphicsDevice, vShader, fShader);
 
         // NEW: Setup test structure
-        ShaderDataStructureDefinition testStruct;
-        testStruct.Type = ShaderUniformType::Struct;
+        ShaderDataStructure testStruct;
+        testStruct.Type = ShaderDataType::Struct;
         testStruct.Name = "StructThing";
         {
-            ShaderDataStructureDefinition memberA;
-            memberA.Type = ShaderUniformType::Float;
+            ShaderDataStructure memberA;
+            memberA.Type = ShaderDataType::Float;
             memberA.Count = 4;
             memberA.Name = "TestColor";
 
-            ShaderDataStructureDefinition memberB;
-            memberB.Type = ShaderUniformType::Matrix;
+            ShaderDataStructure memberB;
+            memberB.Type = ShaderDataType::Matrix;
             memberB.Name = "TestMatrix";
 
             testStruct.Members.push_back(memberA);
@@ -197,21 +197,36 @@ namespace Ngine::Graphics {
         }
 
         // Create an array of these structs
-        ShaderDataStructureDefinition testStructArray;
+        ShaderDataStructure testStructArray;
         testStructArray.Name = "StructArray";
-        testStructArray.Type = ShaderUniformType::Array;
+        testStructArray.Type = ShaderDataType::Array;
         testStructArray.Members.push_back(testStruct);
         testStructArray.Count = 2; // Array of two structs.
 
+        ShaderDataStructure MVP;
+        MVP.Name = "NGINE_MATRIX_MVP";
+        MVP.Type = ShaderDataType::Matrix;
+
+        ShaderDataStructure texture;
+        texture.Name = "NGINE_TEXTURE";
+        texture.Type = ShaderDataType::Int;
+
         // Setup uniforms
-        m_defaultShader->AddUniform({"NGINE_MATRIX_MVP", ShaderUniformType::Matrix, 1}); // Matrix has 16 floats
-        m_defaultShader->AddUniform({"NGINE_TEXTURE", ShaderUniformType::Int, 1});
+        m_defaultShader->AddUniform(MVP); // Matrix has 16 floats
+        m_defaultShader->AddUniform(texture);
+        m_defaultShader->AddUniform(testStruct);
         m_defaultShader->Finalize();
 
         // Create program state
         m_defaultShaderState = new ShaderProgramState(m_defaultShader);
         int defaultTextureUnit = 0;
         m_defaultShaderState->SetUniform("NGINE_TEXTURE", &defaultTextureUnit);
+
+        float tC[] = {1.0f, 0.5f, 0.25f, 1.0f};
+        m_defaultShaderState->SetUniformEx({
+            "StructThing",
+            "TestColor"
+        }, tC); // Hmmm.. Dont work just yet...
 
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};

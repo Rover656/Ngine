@@ -433,6 +433,105 @@ namespace Ngine::Graphics::API {
         }
     }
 
+    void PlatformGLAPI::_setUniform(ShaderProgramState *state_, std::string name_, ShaderDataStructure structure_, const void *data_) {
+        // Complete actions based on type.
+        switch (structure_.Type) {
+            case ShaderDataType::Int:
+            case ShaderDataType::UnsignedInt:
+            case ShaderDataType::Float:
+            case ShaderDataType::Matrix:
+                _writeSimpleUniform(state_->AttachedProgram, name_.c_str(), structure_.Type, structure_.Count, (char *)data_);
+                break;
+            case ShaderDataType::Struct: {
+                // Write each member
+                int offset = 0;
+                for (const auto& s : structure_.Members) {
+                    _setUniform(state_, name_ + "." + s.Name, s, (char *)data_ + offset);
+                    offset += s.GetSize();
+                }
+                break;
+            }
+            case ShaderDataType::Array: {
+                // Write simple data for each bit
+                auto sizePerEntry = structure_.Members[0].GetSize();
+                for (auto i = 0; i < structure_.Count; i++) {
+                    _setUniform(state_, name_ + "[" + std::to_string(i) + "]", structure_.Members[0], (char*)data_ + sizePerEntry * i);
+                }
+                break;
+            }
+        }
+    }
+
+    void PlatformGLAPI::_writeSimpleUniform(const ShaderProgram *program_, const char *name_, ShaderDataType type_, int count_, const void *data_) {
+        auto loc = glGetUniformLocation(program_->ID, name_);
+        switch (type_) {
+            case ShaderDataType::Int: {
+                auto ints = (int *)data_;
+                switch (count_) {
+                    case 1:
+                        glUniform1i(loc, *ints);
+                        break;
+                    case 2:
+                        glUniform2i(loc, *ints, *(ints + 1));
+                        break;
+                    case 3:
+                        glUniform3i(loc, *ints, *(ints + 1), *(ints + 2));
+                        break;
+                    case 4:
+                        glUniform4i(loc, *ints, *(ints + 1), *(ints + 2), *(ints + 3));
+                        break;
+                    default:
+                        Console::Fail("PlatformGLAPI", "Invalid count for int type.");
+                }
+                break;
+            }
+            case ShaderDataType::UnsignedInt: {
+                auto uints = (unsigned int *)data_;
+                switch (count_) {
+                    case 1:
+                        glUniform1ui(loc, *uints);
+                        break;
+                    case 2:
+                        glUniform2ui(loc, *uints, *(uints + 1));
+                        break;
+                    case 3:
+                        glUniform3ui(loc, *uints, *(uints + 1), *(uints + 2));
+                        break;
+                    case 4:
+                        glUniform4ui(loc, *uints, *(uints + 1), *(uints + 2), *(uints + 3));
+                        break;
+                    default:
+                        Console::Fail("PlatformGLAPI", "Invalid count for uint type.");
+                }
+                break;
+            }
+            case ShaderDataType::Float: {
+                auto floats = (float *)data_;
+                switch (count_) {
+                    case 1:
+                        glUniform1f(loc, *floats);
+                        break;
+                    case 2:
+                        glUniform2f(loc, *floats, *(floats + 1));
+                        break;
+                    case 3:
+                        glUniform3f(loc, *floats, *(floats + 1), *(floats + 2));
+                        break;
+                    case 4:
+                        glUniform4f(loc, *floats, *(floats + 1), *(floats + 2), *(floats + 3));
+                        break;
+                    default:
+                        Console::Fail("PlatformGLAPI", "Invalid count for float type.");
+                }
+                break;
+            }
+            case ShaderDataType::Matrix:
+                glUniformMatrix4fv(loc, count_, GL_FALSE, (float*)data_);
+                break;
+            default: Console::Fail("PlatformGLAPI", "Non simple passed to simple write.");
+        }
+    }
+
     PlatformGLAPI::PlatformGLAPI(GraphicsDevice *graphicsDevice_)
             : PlatformGraphicsAPI(graphicsDevice_) {
         // Clear feature flags
@@ -1149,95 +1248,7 @@ namespace Ngine::Graphics::API {
 
         // Apply each uniform
         for (const auto &uniform : state_->AttachedProgram->GetUniforms()) {
-            auto loc = glGetUniformLocation(state_->AttachedProgram->ID, uniform.Name.c_str());
-            auto dat = state_->GetUniform(uniform.Name);
-
-            switch (uniform.Type) {
-                case ShaderUniformType::Int: {
-                    int *ints = (int *) dat;
-                    if (uniform.ArraySize > 1) {
-                        // TODO
-                        //glUniform1iv(loc, uniform.Count, (int *) state_->GetUniform(uniform.Name));
-                    } else {
-                        switch (uniform.Count) {
-                            case 1:
-                                glUniform1i(loc, *ints);
-                                break;
-                            case 2:
-                                glUniform2i(loc, *ints, *(ints + 1));
-                                break;
-                            case 3:
-                                glUniform3i(loc, *ints, *(ints + 1), *(ints + 2));
-                                break;
-                            case 4:
-                                glUniform4i(loc, *ints, *(ints + 1), *(ints + 2), *(ints + 3));
-                                break;
-                            default:
-                                Console::Fail("PlatformGLAPI", "Can only have 1-4 ints.");
-                                break;
-                        }
-                    }
-
-                    break;
-                }
-                case ShaderUniformType::UnsignedInt: {
-                    unsigned int *uints = (unsigned int *) dat;
-                    if (uniform.ArraySize > 1) {
-                        // TODO
-                        //glUniform1iv(loc, uniform.Count, (int *) state_->GetUniform(uniform.Name));
-                    } else {
-                        switch (uniform.Count) {
-                            case 1:
-                                glUniform1ui(loc, *uints);
-                                break;
-                            case 2:
-                                glUniform2ui(loc, *uints, *(uints + 1));
-                                break;
-                            case 3:
-                                glUniform3ui(loc, *uints, *(uints + 1), *(uints + 2));
-                                break;
-                            case 4:
-                                glUniform4ui(loc, *uints, *(uints + 1), *(uints + 2), *(uints + 3));
-                                break;
-                            default:
-                                Console::Fail("PlatformGLAPI", "Can only have 1-4 unsigned ints.");
-                                break;
-                        }
-                    }
-                    break;
-                }
-                case ShaderUniformType::Float: {
-                    float *floats = (float *) dat;
-
-                    if (uniform.ArraySize > 1) {
-                        // TODO
-                        //glUniform1iv(loc, uniform.Count, (int *) state_->GetUniform(uniform.Name));
-                    } else {
-                        switch (uniform.Count) {
-                            case 1:
-                                glUniform1f(loc, *floats);
-                                break;
-                            case 2:
-                                glUniform2f(loc, *floats, *(floats + 1));
-                                break;
-                            case 3:
-                                glUniform3f(loc, *floats, *(floats + 1), *(floats + 2));
-                                break;
-                            case 4:
-                                glUniform4f(loc, *floats, *(floats + 1), *(floats + 2), *(floats + 3));
-                                break;
-                            default:
-                                Console::Fail("PlatformGLAPI", "Can only have 1-4 floats.");
-                                break;
-                        }
-                        break;
-                    }
-                }
-                case ShaderUniformType::Matrix: {
-                    glUniformMatrix4fv(loc, uniform.Count, GL_FALSE, (float *) state_->GetUniform(uniform.Name));
-                    break;
-                }
-            }
+            _setUniform(state_, uniform.Name, uniform, state_->GetUniform(uniform.Name));
         }
     }
 

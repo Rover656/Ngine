@@ -27,7 +27,7 @@
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
-    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderUniformDesc> uniforms_)
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderDataStructure> uniforms_)
             : VertexShader(vertexShader_), FragmentShader(fragmentShader_) {
         // Check shaders
         if (VertexShader->Type != ShaderType::Vertex)
@@ -52,11 +52,11 @@ namespace Ngine::Graphics {
         Free();
     }
 
-    void ShaderProgram::AddUniform(ShaderUniformDesc uniform_) {
+    void ShaderProgram::AddUniform(ShaderDataStructure uniform_) {
         // Verify
         if (uniform_.Name.empty())
             Console::Fail("ShaderProgram", "Uniform must have a name.");
-        if (uniform_.Size <= 0 || uniform_.Count <= 0)
+        if (uniform_.GetSize() <= 0 || uniform_.Count <= 0)
             Console::Fail("ShaderProgram", "Uniform sizes are incorrect.");
         if (uniform_.Offset != -1)
             Console::Warn("ShaderProgram", "Uniform offset has been set outside of the program, this value will be ignored.");
@@ -74,12 +74,12 @@ namespace Ngine::Graphics {
     int ShaderProgram::GetUniformDataSize() const {
         int s = 0;
         for (const auto& uniform : m_uniforms) {
-            s += uniform.Size * uniform.Count * uniform.ArraySize;
+            s += uniform.GetSize() * uniform.Count;
         }
         return s;
     }
 
-    std::vector<ShaderUniformDesc> ShaderProgram::GetUniforms() const {
+    std::vector<ShaderDataStructure> ShaderProgram::GetUniforms() const {
         return m_uniforms;
     }
 
