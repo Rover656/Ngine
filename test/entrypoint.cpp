@@ -235,14 +235,9 @@ public:
 
 class TestNode : public RenderableNode {
     Texture2D *m_texture;
-
-    std::vector<Vertex> m_vertices;
-    std::vector<unsigned short> m_indices;
 public:
     TestNode(Texture2D *texture_) {
         m_texture = texture_;
-
-        VertexDataConverter::GenerateRect(100, 100, Color::White, m_vertices, m_indices);
     }
 
     void Render(Renderer *renderer_) override {
@@ -250,7 +245,6 @@ public:
         renderer_->SetTexture(m_texture);
         renderer_->PushMatrix();
         renderer_->Translate({0, 0, 0});
-//        renderer_->AddIndexedTriangles(m_vertices.data(), m_vertices.size(), m_indices.data(), m_indices.size());
 
         renderer_->BeginVertices(PrimitiveType::Quads);
         renderer_->PushVertex({
