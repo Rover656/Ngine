@@ -331,25 +331,6 @@ public:
 
         // Set scene
         SetScene(m_scene);
-
-        // Test ShaderUniformData
-//        ShaderProgramState data;
-//        data.AddUniform({"Test", sizeof(int), 1});
-//        data.AddUniform({"TestB", sizeof(const char*), 1});
-//        data.Allocate();
-//
-//        int iDat = 69;
-//        const char *sDat = "Hello world";
-//        data.SetUniform("Test", &iDat);
-//        data.SetUniform("TestB", &sDat);
-//
-//        auto testDat = data.GetUniformAs<int>("Test");
-//        auto testBDat = data.GetUniformAs<const char*>("TestB");
-//
-//        auto worked = *testDat == iDat;
-//        auto workedB = *testBDat == sDat;
-//
-//        data.Free();
     }
 };
 

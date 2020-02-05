@@ -129,12 +129,6 @@ namespace Ngine::Graphics {
                                                      "}\n";
 
         static constexpr const char *GL33_F_SHADER = "#version 330\n"
-                                                     ""
-                                                     "struct TheStruct {\n"
-                                                     "  vec4 TestColor;\n"
-                                                     "  mat4 TestMatrix;\n"
-                                                     "};\n"
-                                                     "uniform TheStruct StructArray[2];\n"
                                                      "in vec2 fragTexCoord;\n"
                                                      "in vec4 fragColor;\n"
                                                      "out vec4 finalColor;\n"
@@ -142,7 +136,7 @@ namespace Ngine::Graphics {
                                                      "void main()\n"
                                                      "{\n"
                                                      "    vec4 texelColor = texture2D(NGINE_TEXTURE, fragTexCoord);\n"
-                                                     "    finalColor = texelColor*StructArray[1].TestColor;//texelColor*fragColor;\n"
+                                                     "    finalColor = texelColor*fragColor;\n"
                                                      "}\n";
     private:
         /**
