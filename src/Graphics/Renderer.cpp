@@ -23,22 +23,6 @@
 #include "Graphics/VertexDataTool.hpp"
 #include "Console.hpp"
 
-#if defined(PLATFORM_DESKTOP)
-
-#include <glad/glad.h>
-
-#elif defined(PLATFORM_UWP)
-#define GL_KHR_debug 0
-#define GL_GLEXT_PROTOTYPES 1
-
-// Include latest GLES header
-#include <GLES3/gl31.h>
-// Add GLES2 extensions
-#include <GLES2/gl2ext.h>
-
-#include "../../../third-party/ANGLE/EGL/egl.h"
-#endif
-
 namespace Ngine::Graphics {
     void Renderer::_addTriangles(Vertex *vertices_, int count_, bool translate_) {
         // Check array size
@@ -178,31 +162,7 @@ namespace Ngine::Graphics {
         // Create shader program
         m_defaultShader = new ShaderProgram(m_graphicsDevice, vShader, fShader);
 
-        // NEW: Setup test structure
-        ShaderDataStructure testStruct;
-        testStruct.Type = ShaderDataType::Struct;
-        testStruct.Name = "StructThing";
-        {
-            ShaderDataStructure memberA;
-            memberA.Type = ShaderDataType::Float;
-            memberA.Count = 4;
-            memberA.Name = "TestColor";
-
-            ShaderDataStructure memberB;
-            memberB.Type = ShaderDataType::Matrix;
-            memberB.Name = "TestMatrix";
-
-            testStruct.Members.push_back(memberA);
-            testStruct.Members.push_back(memberB);
-        }
-
-        // Create an array of these structs
-        ShaderDataStructure testStructArray;
-        testStructArray.Name = "StructArray";
-        testStructArray.Type = ShaderDataType::Array;
-        testStructArray.Members.push_back(testStruct);
-        testStructArray.Count = 2; // Array of two structs.
-
+        // Initialize data structures
         ShaderDataStructure MVP;
         MVP.Name = "NGINE_MATRIX_MVP";
         MVP.Type = ShaderDataType::Matrix;
@@ -212,21 +172,14 @@ namespace Ngine::Graphics {
         texture.Type = ShaderDataType::Int;
 
         // Setup uniforms
-        m_defaultShader->AddUniform(MVP); // Matrix has 16 floats
+        m_defaultShader->AddUniform(MVP);
         m_defaultShader->AddUniform(texture);
-        m_defaultShader->AddUniform(testStruct);
         m_defaultShader->Finalize();
 
         // Create program state
         m_defaultShaderState = new ShaderProgramState(m_defaultShader);
         int defaultTextureUnit = 0;
         m_defaultShaderState->SetUniform("NGINE_TEXTURE", &defaultTextureUnit);
-
-        float tC[] = {1.0f, 0.5f, 0.25f, 1.0f};
-        m_defaultShaderState->SetUniformEx({
-            "StructThing",
-            "TestColor"
-        }, tC); // Hmmm.. Dont work just yet...
 
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
@@ -359,9 +312,11 @@ namespace Ngine::Graphics {
         // Configure the current framebuffer for rendering
         m_graphicsDevice->SetupFramebuffer();
 
-        // Set predefined uniforms
+        // Set predefined uniforms (only if they are on the lowest level, i.e. not nested inside of another structure).
         auto MVP = m_graphicsDevice->GetProjectionMatrix();
-        state_->SetUniform("NGINE_MATRIX_MVP", MVP.ToFloatArray().data());
+        state_->SetUniform("NGINE_MATRIX_MVP", MVP.ToFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
+        int texUnit = 0;
+        state_->SetUniform("NGINE_TEXTURE", &texUnit);
 
         // Use layout
         layout_->Use();
@@ -374,9 +329,6 @@ namespace Ngine::Graphics {
 
         // Use shader
         api->BindShaderProgramState(state_);
-
-        // Set the MVP matrix. It is just the projection as model view is already applied in vertices
-        //glUniformMatrix4fv(shader_->GetUniformLocation("NGU_MATRIX_MVP"), 1, GL_FALSE, MVP.ToFloatArray().data());
 
         // Bind texture TODO: Should we ever consider the possibility of multiple textures?
         api->BindTexture(texture_);

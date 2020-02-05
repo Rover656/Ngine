@@ -129,12 +129,34 @@ namespace Ngine::Graphics::API {
         EGLSurface m_surface;
 #endif
 
+        /**
+         * Get OpenGL texture formats for a specified pixel format.
+         */
         void _getTextureFormats(PixelFormat format_, unsigned int *glInternalFormat_, unsigned int *glFormat_, unsigned int *glType_);
+
+        /**
+         * Calculate the size of the pixel data.
+         */
         int _calculatePixelDataSize(int width_, int height_, PixelFormat format_);
-        void _setUniform(ShaderProgramState *state_, std::string name_, ShaderDataStructure structure_, const void *data_);
+
+        /**
+         * Set a uniform value inside of the current program.
+         *
+         * @param program_ The program we are writing to.
+         * @param name_ The current name (this is for traversing the OpenGL naming setup)
+         * @param structure_ The current structure being processed.
+         * @param data_ The data (at the current offset).
+         */
+        void _setUniform(ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_);
 
         /**
          * Write a simple uniform (int, uint, float, matrix).
+         *
+         * @param program_ Program to write to.
+         * @param name_ The name to write to.
+         * @param type_ The data type.
+         * @param count_ The number of values.
+         * @param data_ The data to write.
          */
         void _writeSimpleUniform(const ShaderProgram *program_, const char *name_, ShaderDataType type_, int count_, const void* data_);
     protected:

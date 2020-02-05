@@ -433,20 +433,21 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::_setUniform(ShaderProgramState *state_, std::string name_, ShaderDataStructure structure_, const void *data_) {
+    void PlatformGLAPI::_setUniform(ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_) {
         // Complete actions based on type.
         switch (structure_.Type) {
             case ShaderDataType::Int:
             case ShaderDataType::UnsignedInt:
             case ShaderDataType::Float:
             case ShaderDataType::Matrix:
-                _writeSimpleUniform(state_->AttachedProgram, name_.c_str(), structure_.Type, structure_.Count, (char *)data_);
+                // This could be separated again, but this looks better.
+                _writeSimpleUniform(program_, name_.c_str(), structure_.Type, structure_.Count, (char *)data_);
                 break;
             case ShaderDataType::Struct: {
                 // Write each member
                 int offset = 0;
                 for (const auto& s : structure_.Members) {
-                    _setUniform(state_, name_ + "." + s.Name, s, (char *)data_ + offset);
+                    _setUniform(program_, name_ + "." + s.Name, s, (char *)data_ + offset);
                     offset += s.GetSize();
                 }
                 break;
@@ -455,7 +456,7 @@ namespace Ngine::Graphics::API {
                 // Write simple data for each bit
                 auto sizePerEntry = structure_.Members[0].GetSize();
                 for (auto i = 0; i < structure_.Count; i++) {
-                    _setUniform(state_, name_ + "[" + std::to_string(i) + "]", structure_.Members[0], (char*)data_ + sizePerEntry * i);
+                    _setUniform(program_, name_ + "[" + std::to_string(i) + "]", structure_.Members[0], (char*)data_ + sizePerEntry * i);
                 }
                 break;
             }
@@ -517,9 +518,14 @@ namespace Ngine::Graphics::API {
                     case 3:
                         glUniform3f(loc, *floats, *(floats + 1), *(floats + 2));
                         break;
-                    case 4:
+                    case 4: {
+                        auto a = *floats;
+                        auto b = *(floats + 1);
+                        auto c = *(floats + 2);
+                        auto d = *(floats + 3);
                         glUniform4f(loc, *floats, *(floats + 1), *(floats + 2), *(floats + 3));
                         break;
+                    }
                     default:
                         Console::Fail("PlatformGLAPI", "Invalid count for float type.");
                 }

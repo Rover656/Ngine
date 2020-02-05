@@ -116,23 +116,23 @@ namespace Ngine::Graphics {
                     for (const auto& member : target.Members) {
                         if (member.Name == nameTree_[i]) {
                             target = member;
+                            dataOffset += target.Offset;
                             goto found;
                         }
                     }
                     break;
                 case ShaderDataType::Array:
-                    int elementSize = target.Members[0].GetSize();
-                    int targetElement = std::stoi(nameTree_[i]);
-                    if (targetElement < target.Count) {
-                        target = target.Members[0];
+                    auto mem = target.Members[0];
+                    auto index = std::stoi(nameTree_[i]);
+                    if (index < target.Count) {
+                        target = mem;
+                        dataOffset += target.GetSize() * index;
                         goto found;
                     }
                     break;
             }
             Console::Fail("ShaderProgramState", "Could not find member.");
-            found:
-                dataOffset += target.Offset;
-                break;
+            found: continue;
         }
 
         // Copy data in

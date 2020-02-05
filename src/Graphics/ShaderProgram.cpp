@@ -20,8 +20,6 @@
 
 #include "Graphics/ShaderProgram.hpp"
 
-#include "Graphics/OpenGL.hpp" // TEMP
-
 #include "Graphics/API/PlatformGraphicsAPI.hpp"
 #include "Graphics/Shader.hpp"
 #include "Console.hpp"
@@ -89,28 +87,6 @@ namespace Ngine::Graphics {
 
     bool ShaderProgram::IsFinal() const {
         return m_final;
-    }
-
-    unsigned int ShaderProgram::GetAttribLocation(const std::string &name_) {
-        if (_AttribLocationCache.find(name_) != _AttribLocationCache.end())
-            return _AttribLocationCache.at(name_);
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        unsigned int loc = glGetAttribLocation(ID, name_.c_str());
-        _AttribLocationCache.insert({name_, loc});
-        return loc;
-#endif
-        return 0;
-    }
-
-    unsigned int ShaderProgram::GetUniformLocation(const std::string &name_) {
-        if (_UniformLocationCache.find(name_) != _UniformLocationCache.end())
-            return _UniformLocationCache.at(name_);
-#if defined(GRAPHICS_OPENGLES2) || defined(GRAPHICS_OPENGL21) || defined(GRAPHICS_OPENGL33)
-        unsigned int loc = glGetUniformLocation(ID, name_.c_str());
-        _UniformLocationCache.insert({name_, loc});
-        return loc;
-#endif
-        return 0;
     }
 
     bool ShaderProgram::IsValid() const {

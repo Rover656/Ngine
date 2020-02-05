@@ -32,6 +32,9 @@ namespace Ngine::Graphics {
         class PlatformGraphicsAPI;
     }
 
+    /**
+     * This defines the range of types that are supported by Ngine shaders.
+     */
     enum class ShaderDataType {
         /**
          * A signed integer.
@@ -53,7 +56,6 @@ namespace Ngine::Graphics {
          */
         Matrix,
 
-        // Next two are wip.
         /**
          * A struct contains a number of different types.
          */
@@ -65,20 +67,14 @@ namespace Ngine::Graphics {
         Array
     };
 
-    class T {
-    public:
-        std::string Name;
-        ShaderDataType Type;
-        int Count;
-        int Offset;
-    };
-
-    // WIP
+    /**
+     * This defines what a data structure look like within a shader.
+     */
     struct ShaderDataStructure {
         /**
          * The number of elements.
          *
-         * @note For standard scalars, this determines float, vec2, vec3 etc.
+         * @note For standard scalars, this determines float, vec2, vec3 etc. For arrays this defines how many entries and this does nothing for structs.
          */
         int Count = 1;
 
@@ -144,67 +140,6 @@ namespace Ngine::Graphics {
     };
 
     /**
-     * Description of a shader uniform.
-     */
-    struct NEAPI ShaderUniformDesc {
-        /**
-         * Size of a single element in memory.
-         */
-        int Size = 0;
-
-        /**
-         * The number of elements to be submitted,
-         */
-        int Count = 0;
-
-        /**
-         * Unique identifier for the uniform.
-         */
-        std::string Name = "";
-
-        /**
-         * The memory offset within the uniform data.
-         * @note This is normally determined by `ShaderUniformData` upon format construction. Only set this if using your own data structure.
-         */
-        int Offset = -1;
-
-        /**
-         * The target data type.
-         */
-        ShaderDataType Type;
-
-        /**
-         * The size of the array (1 = no array).
-         */
-        int ArraySize = 1;
-
-        /**
-         * Blank shader uniform description.
-         */
-        ShaderUniformDesc() {}
-
-        /**
-         * Define a new shader uniform.
-         */
-        ShaderUniformDesc(std::string name_, ShaderDataType type_, int count_, int arraySize_ = 1) : Name(std::move(name_)), Count(count_), Type(type_), ArraySize(arraySize_) {
-            switch (Type) {
-                case ShaderDataType::Int:
-                    Size = sizeof(int);
-                    break;
-                case ShaderDataType::UnsignedInt:
-                    Size = sizeof(unsigned int);
-                    break;
-                case ShaderDataType::Float:
-                    Size = sizeof(float);
-                    break;
-                case ShaderDataType::Matrix:
-                    Size = sizeof(float) * 16;
-                    break;
-            }
-        }
-    };
-
-    /**
      * Shader program which contains a shader and manages it.
      *
      * Predefined attributes:
@@ -213,8 +148,8 @@ namespace Ngine::Graphics {
      *  * vec4 - NG_VertexColor
      *
      * Predefined uniforms:
-     *  * mat4 - NGU_MATRIX_MVP
-     *  * sampler2D - NGU_TEXTURE
+     *  * 4x4 matrix - NGINE_MATRIX_MVP
+     *  * texture sampler - NGINE_TEXTURE
      */
     class NEAPI ShaderProgram final : public IResource {
     private:
@@ -303,10 +238,6 @@ namespace Ngine::Graphics {
          * @return Whether or not the shader program is final/ready for use.
          */
         bool IsFinal() const;
-
-        // These need a universal system.
-        unsigned int GetAttribLocation(const std::string &name_);
-        unsigned int GetUniformLocation(const std::string &name_);
 
         /**
          * Determine if the shader program is valid.
