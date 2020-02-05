@@ -147,7 +147,7 @@ namespace Ngine::Graphics::API {
          * @param structure_ The current structure being processed.
          * @param data_ The data (at the current offset).
          */
-        void _setUniform(ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_);
+        void _setUniform(const ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_);
 
         /**
          * Write a simple uniform (int, uint, float, matrix).

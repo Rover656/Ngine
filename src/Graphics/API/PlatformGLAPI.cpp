@@ -433,7 +433,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::_setUniform(ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_) {
+    void PlatformGLAPI::_setUniform(const ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_) {
         // Complete actions based on type.
         switch (structure_.Type) {
             case ShaderDataType::Int:
@@ -1254,7 +1254,7 @@ namespace Ngine::Graphics::API {
 
         // Apply each uniform
         for (const auto &uniform : state_->AttachedProgram->GetUniforms()) {
-            _setUniform(state_, uniform.Name, uniform, state_->GetUniform(uniform.Name));
+            _setUniform(state_->AttachedProgram, uniform.Name, uniform, state_->GetUniform(uniform.Name));
         }
     }
 
