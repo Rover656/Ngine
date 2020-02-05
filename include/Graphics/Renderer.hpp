@@ -72,7 +72,6 @@ namespace Ngine::Graphics {
     /**
      * The Ngine renderer.
      *
-     * @todo Make the renderer platform agnostic so that its easier to switch graphics API
      * @todo Add scissor/stencil tests
      */
     class NEAPI Renderer {

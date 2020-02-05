@@ -59,7 +59,7 @@ namespace Ngine::Graphics {
     /**
      * An image stored in CPU memory.
      */
-    struct NEAPI Image : public IResource {
+    struct NEAPI Image final : public IResource {
     private:
         /**
          * Create the image with pixel data.

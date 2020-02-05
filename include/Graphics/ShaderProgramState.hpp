@@ -42,6 +42,11 @@ namespace Ngine::Graphics {
          */
         const ShaderProgram *AttachedProgram;
 
+        /**
+         * Create a shader program state for the given program.
+         *
+         * @param program_ The program to create a state for.
+         */
         ShaderProgramState(ShaderProgram *program_);
         ~ShaderProgramState();
 
@@ -53,6 +58,13 @@ namespace Ngine::Graphics {
          */
         const void *GetUniform(const std::string &name_);
 
+        /**
+         * Get a uniform as a given type.
+         *
+         * @tparam Type Type to cast to.
+         * @param name_ The name of the uniform to get.
+         * @return The uniform data as the desired type.
+         */
         template<typename Type>
         const Type *GetUniformAs(const std::string &name_) {
             return (Type *)GetUniform(name_);
@@ -76,6 +88,8 @@ namespace Ngine::Graphics {
 
         /**
          * Get the data that is being stored.
+         *
+         * @return The data pointer.
          */
         const void *GetData() const;
     };
