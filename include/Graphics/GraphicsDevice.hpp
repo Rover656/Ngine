@@ -62,7 +62,7 @@ namespace Ngine::Graphics {
          * * Desktop (Windows Only)
          * * UWP
          *
-         * @todo Use of this on Desktop and UWP will be deprecated once DirectX11 API is added as ANGLE will be obsolete. This will be left purely for GLES support for possible other platforms.
+         * @warning Use of this on Desktop and UWP will be deprecated once DirectX11 API is added as ANGLE will be obsolete. This will be left purely for GLES support for possible other platforms.
          */
         OpenGLES,
 
@@ -80,10 +80,6 @@ namespace Ngine::Graphics {
 
     /**
      * The graphics device.
-     * Manages the OpenGL Context and it's features.
-     * Once feature complete this will replace `GraphicsManager`.
-     *
-     * @todo Remove all 'GL' things, this will be controlled by platform APIs instead.
      */
     class NEAPI GraphicsDevice {
         friend class Renderer;

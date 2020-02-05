@@ -63,11 +63,9 @@ namespace Ngine::Graphics {
         int FrameHeight = 0;
 
         /**
-         * Animation Speed.
-         *
-         * @todo Rename this to reflect what it does better. It currently defines how long each frame lasts.
+         * The number of game frames before changing animation frame. E.g for 60fps game, setting this to 60 makes one animation frame happen each second.
          */
-        float ImageSpeed = 0;
+        float FrameTime = 0;
 
         /**
          * Width to draw the sprite with.

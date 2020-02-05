@@ -42,7 +42,7 @@ namespace Ngine::Graphics {
     Sprite::Sprite(Texture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
                    float imageSpeed_, int startingFrame)
             : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
-              ImageSpeed(imageSpeed_) {
+              FrameTime(imageSpeed_) {
         // Add texture
         m_textures.push_back(texture_);
 
@@ -88,7 +88,7 @@ namespace Ngine::Graphics {
             // Increment timer
             m_animationTimer++;
 
-            while (m_animationTimer > 0 && fmod(m_animationTimer, ImageSpeed) == 0) {
+            while (m_animationTimer > 0 && fmod(m_animationTimer, FrameTime) == 0) {
                 // Reset timer
                 m_animationTimer = 0;
 
@@ -196,11 +196,11 @@ namespace Ngine::Graphics {
 
     bool Sprite::operator==(const Sprite &b) {
         return m_textures == b.m_textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth &&
-               FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && ImageSpeed == b.ImageSpeed;
+               FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && FrameTime == b.FrameTime;
     }
 
     bool Sprite::operator!=(const Sprite &b) {
         return m_textures != b.m_textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth ||
-               FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || ImageSpeed != b.ImageSpeed;
+               FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || FrameTime != b.FrameTime;
     }
 }
