@@ -73,7 +73,6 @@ namespace Ngine {
         if (m_physicsBody != nullptr) m_physicsBody->Destroy();
 
         // Detach all events
-        OnDraw.Clear();
         OnTransformChanged.Clear();
         OnUpdate.Clear();
 
@@ -314,8 +313,10 @@ namespace Ngine {
     }
 
     void Entity::Draw(Graphics::Renderer *renderer_) {
-        // Trigger draw
-        OnDraw(renderer_);
+        // Draw components
+        for (const auto &comp : m_components) {
+            comp.second->Draw(renderer_);
+        }
 
         // Debug draw
         if (m_physicsBody != nullptr) {

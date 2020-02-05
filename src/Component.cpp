@@ -22,19 +22,22 @@
 
 #include "Entity.hpp"
 
-// TODO: SORT
-
 namespace Ngine {
+    Component::Component(Entity *parent_)
+            : m_parentEntity(parent_) {
+        // Check our parent is valid
+        if (parent_ == nullptr) {
+            throw std::runtime_error("A valid parent must be attached to this component.");
+        }
+    }
+
     Component::~Component() {
         // Fire OnDestroy
         OnDestroy();
 
         // Detach events
-        UnsubscribeFromDraw();
         UnsubscribeFromUpdate();
     }
-
-    void Component::Draw(Graphics::Renderer *renderer_) {}
 
     Game *Component::GetGame() const {
         return m_parentEntity->GetGame();
@@ -42,18 +45,6 @@ namespace Ngine {
 
     Filesystem::ResourceManager *Component::GetResourceManager() const {
         return m_parentEntity->GetResourceManager();
-    }
-
-    void Component::SubscribeToDraw() {
-        m_onDrawRef = m_parentEntity->OnDraw += new ClassMethodEventHandler<Component, Graphics::Renderer *>(this, &Component::Draw);
-    }
-
-    bool Component::SubscribedToDraw() const {
-        return m_onDrawRef.IsAttached();
-    }
-
-    void Component::UnsubscribeFromDraw() {
-        m_onDrawRef.Detach();
     }
 
     void Component::SubscribeToUpdate() {
@@ -71,13 +62,7 @@ namespace Ngine {
         m_onUpdateRef.Detach();
     }
 
-    void Component::Update() { }
+    void Component::Draw(Graphics::Renderer *renderer_) {}
 
-    Component::Component(Entity *parent_)
-            : m_parentEntity(parent_) {
-        // Check our parent is valid
-        if (parent_ == nullptr) {
-            throw std::runtime_error("A valid parent must be attached to this component.");
-        }
-    }
+    void Component::Update() {}
 }

@@ -149,12 +149,6 @@ namespace Ngine {
         Event<EntityTransformChangedEventArgs> OnTransformChanged;
 
         /**
-         * Fired when the entity draws.
-         * This should be used by components.
-         */
-        Event<Graphics::Renderer *> OnDraw;
-
-        /**
          * Fired when the entity updates.
          * This should be used by components.
          */

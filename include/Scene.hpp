@@ -185,7 +185,6 @@ namespace Ngine {
          * @param ppm_ The physics pixel to meter ratio.
          */
         Scene(Game* parentGame_, Vector2 grav_, float ppm_ = 1);
-
         virtual ~Scene();
 
         /**

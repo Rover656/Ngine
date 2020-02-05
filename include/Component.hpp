@@ -30,7 +30,7 @@ namespace Ngine {
     class Entity;
 
     /**
-     * A component is an object that is attached to an entity and manipulates its behaviour.
+     * A component is an object that is attached to an entity and manipulates/defines its behaviour.
      */
     class NEAPI Component {
         /**
@@ -41,14 +41,16 @@ namespace Ngine {
         Entity *m_parentEntity = nullptr;
 
         /**
-         * Entity OnDraw reference.
-         */
-        EventAttachment<Graphics::Renderer *> m_onDrawRef;
-
-        /**
          * Entity OnUpdate reference.
          */
         EventAttachment<> m_onUpdateRef;
+    protected:
+        /**
+         * Initialise the component.
+         *
+         * @param parent_ The parent entity.
+         */
+        Component(Entity *parent_);
     public:
         /**
          * Fired when an entity destroys this component.
@@ -94,23 +96,6 @@ namespace Ngine {
         Filesystem::ResourceManager *GetResourceManager() const;
 
         /**
-         * Subscribe to the entity's draw event.
-         */
-        void SubscribeToDraw();
-
-        /**
-         * Determine if the component is subscribed to the draw event.
-         *
-         * @return Whether or not the component is subscribed to draw.
-         */
-        bool SubscribedToDraw() const;
-
-        /**
-         * Unsubscribe from the entity's draw event.
-         */
-        void UnsubscribeFromDraw();
-
-        /**
          * Subscribe to the entity's update event.
          */
         void SubscribeToUpdate();
@@ -136,15 +121,6 @@ namespace Ngine {
          * Component update code.
          */
         virtual void Update();
-
-    protected:
-        /**
-         * Initialise component
-         *
-         * @note This is protected as `Component` MUST be used as a base class only.
-         * @param parent_ The parent entity.
-         */
-        Component(Entity *parent_);
     };
 }
 
