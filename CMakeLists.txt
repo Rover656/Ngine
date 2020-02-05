@@ -24,7 +24,6 @@ option(BUILD_DOCS "Build documentation" ON)
 option(BUILD_NGINE_SHARED "Build Ngine as a shared library. Will build instead of shared." OFF)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
-enum_option(RENDERER "GL33;GL21;GLES2" "The preferred renderer/graphics API.") # TODO: Remove for good.
 
 # Setup project (if we are the main project)
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

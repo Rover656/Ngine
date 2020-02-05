@@ -136,12 +136,3 @@ endif ()
 # Source Groups TODO: Account for different directory structures
 source_group(TREE ${Ngine_SOURCE_DIR}/src PREFIX "\\Source Files" FILES ${SOURCE_FILES})
 source_group(TREE ${Ngine_SOURCE_DIR}/include PREFIX "\\Header Files" FILES ${HEADER_FILES})
-
-# Set Renderer Defines TODO: REMOVE
-if (${RENDERER} MATCHES "GL33")
-    target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGL33=1)
-elseif (${RENDERER} MATCHES "GL21")
-    target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGL21=1)
-elseif (${RENDERER} MATCHES "GLES2")
-    target_compile_definitions(Ngine PUBLIC GRAPHICS_OPENGLES2=1)
-endif ()
