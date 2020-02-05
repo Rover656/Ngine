@@ -242,7 +242,7 @@ public:
     TestNode(Texture2D *texture_) {
         m_texture = texture_;
 
-        VertexDataTool::GenerateRect(100, 100, Color::White, m_vertices, m_indices);
+        VertexDataConverter::GenerateRect(100, 100, Color::White, m_vertices, m_indices);
     }
 
     void Render(Renderer *renderer_) override {

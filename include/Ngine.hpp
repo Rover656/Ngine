@@ -176,7 +176,7 @@
 #include "Graphics/Texture2D.hpp"
 #include "Graphics/Tileset.hpp"
 #include "Graphics/TilesetRenderer.hpp"
-#include "Graphics/VertexDataTool.hpp"
+#include "Graphics/VertexDataConverter.hpp"
 #include "Graphics/VertexLayout.hpp"
 #include "Input/Gamepad.hpp"
 #include "Input/Keyboard.hpp"

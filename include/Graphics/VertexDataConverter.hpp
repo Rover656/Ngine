@@ -18,33 +18,19 @@
 *
 **********************************************************************************************/
 
-#ifndef VERTEXDATATOOL_HPP
-#define VERTEXDATATOOL_HPP
+#ifndef VERTEXDATACONVERTER_HPP
+#define VERTEXDATACONVERTER_HPP
 
 #include "../Config.hpp"
 #include "Renderer.hpp"
 
 namespace Ngine::Graphics {
     /**
-     * The vertex data tool can do many useful things.
-     * The tool can convert between primitive types (useful as the renderer only uses Triangles).
-     * The tool can also generate vertices for basic things (such as a rect) and give you them in Triangle form.
-     *
-     * @warning This tool is a work in progress and may be removed at any time.
-     * @todo Add a tool that can split vertex arrays that are too large?
+     * The vertex data converter converts other `PrimitiveType`'s to triangles, by creating indices for them.
+     * One day I may add vertex optimisation...
      */
-    class NEAPI VertexDataTool {
+    class NEAPI VertexDataConverter {
     public:
-        /**
-         * Generate a rectangle using indexed triangles.
-         *
-         * @param width_ Rectangle width.
-         * @param height_ Rectangle height.
-         * @param vertexArray_ The vertex array to write to.
-         * @param indexArray_ The index array to write to.
-         */
-        static void GenerateRect(float width_, float height_, Color color_, std::vector<Vertex> &vertexArray_, std::vector<unsigned short> &indexArray_);
-
         /**
          * Convert vertex data to triangles.
          *
@@ -54,4 +40,4 @@ namespace Ngine::Graphics {
     };
 }
 
-#endif //VERTEXDATATOOL_HPP
+#endif //VERTEXDATACONVERTER_HPP

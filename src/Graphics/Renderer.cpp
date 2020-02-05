@@ -20,7 +20,7 @@
 
 #include "Graphics/Renderer.hpp"
 
-#include "Graphics/VertexDataTool.hpp"
+#include "Graphics/VertexDataConverter.hpp"
 #include "Console.hpp"
 
 namespace Ngine::Graphics {
@@ -239,7 +239,7 @@ namespace Ngine::Graphics {
         if (m_builtType != PrimitiveType::Triangles) {
             // Convert
             unsigned short *indices;
-            auto count = VertexDataTool::GetTriangleIndices(m_builtType, m_builtVertexCount, &indices);
+            auto count = VertexDataConverter::GetTriangleIndices(m_builtType, m_builtVertexCount, &indices);
 
             // Push
             _addIndexedTriangles(m_builtVertices, m_builtVertexCount, indices, count);

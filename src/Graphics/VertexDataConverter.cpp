@@ -18,38 +18,14 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/VertexDataTool.hpp"
+#include "Graphics/VertexDataConverter.hpp"
 
 #include "Console.hpp"
 
 #include <cmath>
 
 namespace Ngine::Graphics {
-    void VertexDataTool::GenerateRect(float width_, float height_, Color color_, std::vector<Vertex> &vertexArray_,
-                                      std::vector<unsigned short> &indexArray_) {
-        auto vertStart = vertexArray_.size();
-        vertexArray_.push_back({{0, 0, 0},
-                                {0, 0},
-                                color_});
-        vertexArray_.push_back({{0, height_, 0},
-                                {0, 1},
-                                color_});
-        vertexArray_.push_back({{width_, height_, 0},
-                                {1, 1},
-                                color_});
-        vertexArray_.push_back({{width_, 0, 0},
-                                {1, 0},
-                                color_});
-
-        indexArray_.push_back(vertStart + 0);
-        indexArray_.push_back(vertStart + 1);
-        indexArray_.push_back(vertStart + 3);
-        indexArray_.push_back(vertStart + 1);
-        indexArray_.push_back(vertStart + 2);
-        indexArray_.push_back(vertStart + 3);
-    }
-
-    int VertexDataTool::GetTriangleIndices(PrimitiveType currentType_, int vertexCount_, unsigned short **indices_) {
+    int VertexDataConverter::GetTriangleIndices(PrimitiveType currentType_, int vertexCount_, unsigned short **indices_) {
         switch (currentType_) {
             case PrimitiveType::TriangleFan: {
                 // Create array
