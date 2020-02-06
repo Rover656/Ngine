@@ -23,15 +23,11 @@
 #if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
 
 #if defined(GLAD)
-
 #include <glad/glad.h>
-
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-
 #include <GLFW/glfw3.h>
-
 #elif defined(EGL)
 #define GL_KHR_debug 0
 #define GL_GLEXT_PROTOTYPES 1 

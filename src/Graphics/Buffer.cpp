@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Buffer.hpp"
+#include "graphics/Buffer.hpp"
 
-#include "Graphics/API/PlatformGraphicsAPI.hpp"
+#include "graphics/API/PlatformGraphicsAPI.hpp"
 
 namespace ngine::graphics {
     void Buffer::_writeBuffer(void *data_, int count_, int size_, bool update_) {

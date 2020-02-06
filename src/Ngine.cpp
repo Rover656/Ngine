@@ -18,10 +18,6 @@
 *
 **********************************************************************************************/
 
-#include "Ngine.hpp"
-
-#include "Config.hpp"
-
 // STB Image
 
 #define STB_IMAGE_IMPLEMENTATION

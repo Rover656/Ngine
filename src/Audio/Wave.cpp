@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Audio/Wave.hpp"
+#include "audio/Wave.hpp"
 
 #include <dr_flac.h>
 #include <dr_mp3.h>

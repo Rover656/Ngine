@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Physics/Polygon.hpp"
+#include "physics/Polygon.hpp"
 
 #include <Box2D/Box2D.h>
 

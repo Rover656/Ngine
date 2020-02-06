@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Input/Mouse.hpp"
+#include "input/Mouse.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>

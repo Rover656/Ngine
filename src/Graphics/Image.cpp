@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Image.hpp"
+#include "graphics/Image.hpp"
 
 #include <cstring>
 #include <stb_image.h>

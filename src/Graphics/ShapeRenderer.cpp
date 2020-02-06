@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/ShapeRenderer.hpp"
+#include "graphics/ShapeRenderer.hpp"
 
 #include <cmath>
 

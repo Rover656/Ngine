@@ -22,7 +22,7 @@
 
 // EGL stuff
 #if defined(PLATFORM_UWP) // TODO: Add other platforms which use EGL
-#include "Graphics/API/PlatformGLAPI.hpp"
+#include "graphics/API/PlatformGLAPI.hpp"
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -31,11 +31,9 @@
 
 #include <stdexcept>
 
-#include "Audio/AudioDevice.hpp"
-#include "Graphics/GraphicsDevice.hpp"
-#include "Input/Gamepad.hpp"
-#include "Input/Mouse.hpp"
-#include "Input/Keyboard.hpp"
+#include "graphics/GraphicsDevice.hpp"
+#include "input/Mouse.hpp"
+#include "input/Keyboard.hpp"
 #include "Console.hpp"
 
 namespace ngine {

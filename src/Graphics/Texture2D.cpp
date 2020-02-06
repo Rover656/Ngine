@@ -18,11 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Texture2D.hpp"
+#include "graphics/Texture2D.hpp"
 
-#include "Graphics/API/PlatformGraphicsAPI.hpp"
-#include "Graphics/GraphicsDevice.hpp"
-#include "Graphics/Renderer.hpp"
+#include "graphics/API/PlatformGraphicsAPI.hpp"
+#include "graphics/Renderer.hpp"
 #include "Console.hpp"
 
 namespace ngine::graphics {

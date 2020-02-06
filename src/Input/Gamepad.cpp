@@ -18,14 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "Input/Gamepad.hpp"
+#include "input/Gamepad.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
 #elif defined(PLATFORM_UWP)
 #endif
-
-#include "Window.hpp"
 
 namespace ngine::input {
     float Gamepad::m_currentAxisValue[4][GAMEPAD_AXIS_RIGHT_TRIGGER + 1];

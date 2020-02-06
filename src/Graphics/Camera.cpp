@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Camera.hpp"
+#include "graphics/Camera.hpp"
 
 namespace ngine::graphics {
     // Public Methods

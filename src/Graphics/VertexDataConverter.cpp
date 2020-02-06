@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/VertexDataConverter.hpp"
+#include "graphics/VertexDataConverter.hpp"
 
 #include "Console.hpp"
 

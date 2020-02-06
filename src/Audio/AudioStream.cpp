@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Audio/AudioStream.hpp"
+#include "audio/AudioStream.hpp"
 #include "Console.hpp"
 
 #include <cstring>

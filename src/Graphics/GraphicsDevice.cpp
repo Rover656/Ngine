@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/GraphicsDevice.hpp"
+#include "graphics/GraphicsDevice.hpp"
 
 #include "API/PlatformGLAPI.hpp"
-#include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTarget.hpp"
+#include "graphics/Renderer.hpp"
+#include "graphics/RenderTarget.hpp"
 #include "Console.hpp"
 
 #include <cstring>

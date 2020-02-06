@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/VertexLayout.hpp"
+#include "graphics/VertexLayout.hpp"
 
-#include "Graphics/Buffer.hpp"
+#include "graphics/Buffer.hpp"
 #include "Console.hpp"
 
 namespace ngine::graphics {

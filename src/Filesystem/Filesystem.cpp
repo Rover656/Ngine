@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Filesystem/Filesystem.hpp"
+#include "filesystem/Filesystem.hpp"
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -330,7 +330,7 @@ namespace ngine::filesystem {
 #elif defined(__linux__) || defined(__APPLE__)
         // Get path info
         struct stat path_stat;
-        stat(GetString().c_str(), &path_stat);
+        stat(getString().c_str(), &path_stat);
 
         if (S_ISREG(path_stat.st_mode))
             return ResourceType::File;
@@ -910,7 +910,7 @@ namespace ngine::filesystem {
         success = CreateDirectoryA(getPath().getString().c_str(), nullptr) != 0;
 #elif defined(__linux__) || defined(__APPLE__)
         // Create directory
-        success = mkdir(GetObjectPath().GetString().c_str(), 0777) == 0;
+        success = mkdir(getPath().getString().c_str(), 0777) == 0;
 #endif
         return success;
     }
@@ -929,7 +929,7 @@ namespace ngine::filesystem {
         auto del = RemoveDirectoryA(m_objectPath.getString().c_str());
         return del != 0;
 #elif defined(__linux__) || defined(__APPLE__)
-        return remove(m_objectPath.GetString().c_str()) == 0;
+        return remove(m_objectPath.getString().c_str()) == 0;
 #endif
         return false;
     }
@@ -986,7 +986,7 @@ namespace ngine::filesystem {
                 (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #elif defined(__linux__) || defined(__APPLE__)
         // Test opening of file
-        DIR *dir = opendir(m_objectPath.GetString().c_str());
+        DIR *dir = opendir(m_objectPath.getString().c_str());
         if (dir) {
             closedir(dir);
             return true;
@@ -1034,7 +1034,7 @@ namespace ngine::filesystem {
         dirent *entry;
 
         // Open dir
-        dir = opendir(m_objectPath.GetString().c_str());
+        dir = opendir(m_objectPath.getString().c_str());
 
         // Test open
         if (!dir) throw std::runtime_error("Cannot open directory.");
@@ -1086,7 +1086,7 @@ namespace ngine::filesystem {
         dirent *entry;
 
         // Open dir
-        dir = opendir(m_objectPath.GetString().c_str());
+        dir = opendir(m_objectPath.getString().c_str());
 
         // Test open
         if (!dir) throw std::runtime_error("Cannot open directory.");

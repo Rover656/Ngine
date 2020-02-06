@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Input/Keyboard.hpp"
+#include "input/Keyboard.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
@@ -27,7 +27,6 @@
 #endif
 
 #include "Game.hpp"
-#include "Window.hpp"
 
 namespace ngine::input {
 #if defined(PLATFORM_DESKTOP)

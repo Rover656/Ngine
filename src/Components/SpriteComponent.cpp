@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Components/SpriteComponent.hpp"
+#include "components/SpriteComponent.hpp"
 
 namespace ngine::components {
     SpriteComponent::SpriteComponent(Entity *parent_, const graphics::Sprite &sprite_, Vector2 origin_)

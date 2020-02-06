@@ -18,13 +18,13 @@
 *
 **********************************************************************************************/
 
-#include "Audio/Music.hpp"
+#include "audio/Music.hpp"
 
 #include <dr_mp3.h>
 #include <dr_flac.h>
 #include <stb_vorbis.h>
 
-#include "Audio/AudioDevice.hpp"
+#include "audio/AudioDevice.hpp"
 #include "Console.hpp"
 
 namespace ngine::audio {

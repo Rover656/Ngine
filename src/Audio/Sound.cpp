@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "Audio/Sound.hpp"
+#include "audio/Sound.hpp"
 
 #include <miniaudio.h>
 
-#include "Audio/AudioDevice.hpp"
+#include "audio/AudioDevice.hpp"
 #include "Console.hpp"
 
 namespace ngine::audio {

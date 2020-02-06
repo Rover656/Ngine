@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Physics/BoundingBox.hpp"
+#include "physics/BoundingBox.hpp"
 
 namespace ngine::physics {
 

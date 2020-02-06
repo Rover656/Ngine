@@ -18,10 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/ShaderProgram.hpp"
+#include "graphics/ShaderProgram.hpp"
 
-#include "Graphics/API/PlatformGraphicsAPI.hpp"
-#include "Graphics/Shader.hpp"
+#include "graphics/API/PlatformGraphicsAPI.hpp"
+#include "graphics/Shader.hpp"
 #include "Console.hpp"
 
 namespace ngine::graphics {

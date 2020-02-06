@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Renderer.hpp"
+#include "graphics/Renderer.hpp"
 
-#include "Graphics/VertexDataConverter.hpp"
+#include "graphics/VertexDataConverter.hpp"
 #include "Console.hpp"
 
 namespace ngine::graphics {

@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Audio/AudioDevice.hpp"
+#include "audio/AudioDevice.hpp"
 #include "Console.hpp"
 
 #include <cstring>

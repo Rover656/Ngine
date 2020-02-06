@@ -18,10 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Tileset.hpp"
+#include "graphics/Tileset.hpp"
 
-#include "Graphics/Renderer.hpp"
-#include "Rectangle.hpp"
+#include "graphics/Renderer.hpp"
 
 namespace ngine::graphics {
     // Public Constructor(s)

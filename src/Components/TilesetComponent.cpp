@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Components/TilesetComponent.hpp"
+#include "components/TilesetComponent.hpp"
 
 namespace ngine::components {
     TilesetComponent::TilesetComponent(Entity *parent_, graphics::TilesetRenderer *tileset_)

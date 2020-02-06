@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Physics/PhysicsWorld.hpp"
+#include "physics/PhysicsWorld.hpp"
 
 #include <Box2D/Box2D.h>
 

@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Color.hpp"
+#include "graphics/Color.hpp"
 
 namespace ngine::graphics {
     Color::Color() : R(1), G(1), B(1), A(1) {}

@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/RenderTarget.hpp"
+#include "graphics/RenderTarget.hpp"
 
 #include "Console.hpp"
 

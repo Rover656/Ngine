@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Physics/Circle.hpp"
+#include "physics/Circle.hpp"
 
-#include "Physics/BoundingBox.hpp"
+#include "physics/BoundingBox.hpp"
 
 namespace ngine::physics {
 

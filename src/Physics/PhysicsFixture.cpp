@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "Physics/PhysicsFixture.hpp"
+#include "physics/PhysicsFixture.hpp"
 
-#include "Physics/Shapes/CircleShape.hpp"
-#include "Physics/Shapes/PolygonShape.hpp"
-#include "Physics/PhysicsWorld.hpp"
+#include "physics/shapes/CircleShape.hpp"
+#include "physics/shapes/PolygonShape.hpp"
+#include "physics/PhysicsWorld.hpp"
 
 #include <Box2D/Box2D.h>
 

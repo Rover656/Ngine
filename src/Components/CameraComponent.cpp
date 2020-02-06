@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Components/CameraComponent.hpp"
+#include "components/CameraComponent.hpp"
 
 #include "Entity.hpp"
 

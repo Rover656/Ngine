@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/API/PlatformGraphicsAPI.hpp"
+#include "graphics/API/PlatformGraphicsAPI.hpp"
 
 #include "Console.hpp"
 

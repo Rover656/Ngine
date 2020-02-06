@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/ShaderProgramState.hpp"
+#include "graphics/ShaderProgramState.hpp"
 
 #include "Console.hpp"
 

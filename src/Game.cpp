@@ -20,10 +20,10 @@
 
 #include "Game.hpp"
 
-#include "Audio/AudioDevice.hpp"
-#include "Input/Gamepad.hpp"
-#include "Input/Keyboard.hpp"
-#include "Input/Mouse.hpp"
+#include "audio/AudioDevice.hpp"
+#include "input/Gamepad.hpp"
+#include "input/Keyboard.hpp"
+#include "input/Mouse.hpp"
 #include "Console.hpp"
 
 #if defined(PLATFORM_UWP)

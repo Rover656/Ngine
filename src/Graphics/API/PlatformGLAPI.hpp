@@ -25,7 +25,7 @@
 
 #include "Config.hpp"
 
-#include "Graphics/API/PlatformGraphicsAPI.hpp"
+#include "graphics/API/PlatformGraphicsAPI.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLAD

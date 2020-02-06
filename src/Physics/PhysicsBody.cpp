@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Physics/PhysicsBody.hpp"
+#include "physics/PhysicsBody.hpp"
 
-#include "Physics/PhysicsWorld.hpp"
+#include "physics/PhysicsWorld.hpp"
 
 #include <Box2D/Box2D.h>
 

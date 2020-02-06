@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Sprite.hpp"
+#include "graphics/Sprite.hpp"
 
 #include <cmath>
 
-#include "Graphics/Color.hpp"
-#include "Graphics/Renderer.hpp"
+#include "graphics/Color.hpp"
+#include "graphics/Renderer.hpp"
 #include "Rectangle.hpp"
 
 namespace ngine::graphics {

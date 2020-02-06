@@ -18,10 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Physics/Shapes/PolygonShape.hpp"
+#include "physics/shapes/PolygonShape.hpp"
 
-#include "Graphics/Renderer.hpp"
-#include "Graphics/ShapeRenderer.hpp"
+#include "graphics/ShapeRenderer.hpp"
 
 #include <Box2D/Box2D.h>
 

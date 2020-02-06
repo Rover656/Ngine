@@ -18,10 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/Font.hpp"
+#include "graphics/Font.hpp"
 
-#include "Graphics/Renderer.hpp"
-#include "Math.hpp"
+#include "graphics/Renderer.hpp"
 #include "Console.hpp"
 #include "Rectangle.hpp"
 
