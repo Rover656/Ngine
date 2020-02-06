@@ -275,7 +275,7 @@ public:
     }
 };
 
-#include <Graphics/ShaderProgramState.hpp>
+#include <graphics/ShaderProgramState.hpp>
 
 class TestGame : public Game {
     TestScene *m_scene;
