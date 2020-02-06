@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "Graphics/RenderSpace.hpp"
+#include "graphics/RenderSpace.hpp"
 
-#include "Graphics/Renderer.hpp"
+#include "graphics/Renderer.hpp"
 #include "Console.hpp"
 
 namespace ngine::graphics {
