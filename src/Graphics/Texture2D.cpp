@@ -25,7 +25,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_,
                          unsigned height_, PixelFormat format_, int mipmapCount_)
             : Width(width_), Height(height_) {
@@ -40,58 +40,58 @@ namespace Ngine::Graphics {
             Console::Fail("Texture2D", "Texture cannot have no mipmaps.");
 
         // Save API
-        m_API = graphicsDevice_->GetAPI();
+        m_API = graphicsDevice_->getAPI();
 
         // Set fields
         m_mipmapCount = mipmapCount_;
         m_format = format_;
 
         // Make our texture
-        m_API->CreateTexture(this, data_);
+        m_API->createTexture(this, data_);
     }
 
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_)
             : Texture2D(graphicsDevice_, img_->PixelData, img_->Width, img_->Height, img_->Format, img_->MipmapCount) {}
 
-    Texture2D *Texture2D::LoadTexture(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_) {
+    Texture2D *Texture2D::LoadTexture(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_) {
         Image img(path_);
         return new Texture2D(graphicsDevice_, &img);
     }
 
     Texture2D::~Texture2D() {
-        Free();
+        free();
     }
 
-    PixelFormat Texture2D::GetFormat() {
+    PixelFormat Texture2D::getFormat() {
         return m_format;
     }
 
-    int Texture2D::GetMipmapCount() const {
+    int Texture2D::getMipmapCount() const {
         return m_mipmapCount;
     }
 
-    void Texture2D::SetTextureFilter(TextureFilterMode filterMode_) {
+    void Texture2D::setTextureFilter(TextureFilterMode filterMode_) {
         // Set filter
-        m_API->SetTextureFilterMode(this, filterMode_);
+        m_API->setTextureFilterMode(this, filterMode_);
     }
 
-    void Texture2D::SetTextureWrap(TextureWrapMode wrapMode_) {
+    void Texture2D::setTextureWrap(TextureWrapMode wrapMode_) {
         // Set wrap
-        m_API->SetTextureWrapMode(this, wrapMode_);
+        m_API->setTextureWrapMode(this, wrapMode_);
     }
 
-    bool Texture2D::IsValid() const {
-        return Width > 0 && Height > 0 && m_API->IsTextureValid(this);
+    bool Texture2D::isValid() const {
+        return Width > 0 && Height > 0 && m_API->isTextureValid(this);
     }
 
-    void Texture2D::Free() {
+    void Texture2D::free() {
         // Delete
-        m_API->DeleteTexture(this);
+        m_API->deleteTexture(this);
     }
 
-    void Texture2D::Draw(Graphics::Renderer *renderer_, Vector2 pos_, Color col_, float scale_, Vector2 origin_,
+    void Texture2D::draw(graphics::Renderer *renderer_, Vector2 pos_, Color col_, float scale_, Vector2 origin_,
                          Angle rotation_) {
-        Draw(renderer_,
+        draw(renderer_,
              {
                      0,
                      0,
@@ -109,7 +109,7 @@ namespace Ngine::Graphics {
     }
 
     void
-    Texture2D::Draw(Graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_, Vector2 origin_,
+    Texture2D::draw(graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_, Vector2 origin_,
                     Angle rotation_) {
         // Fix parameters
         bool flipX = false;
@@ -123,76 +123,76 @@ namespace Ngine::Graphics {
         }
 
         // Push transformation matrix
-        renderer_->PushMatrix();
-        renderer_->Translate({destRect_.X, destRect_.Y, 0});
-        renderer_->Rotate(rotation_, {0, 0, 1});
-        renderer_->Translate({-origin_.X, -origin_.Y, 0});
+        renderer_->pushMatrix();
+        renderer_->translate({destRect_.X, destRect_.Y, 0});
+        renderer_->rotate(rotation_, {0, 0, 1});
+        renderer_->translate({-origin_.X, -origin_.Y, 0});
 
         // Push vertices
-        renderer_->SetTexture(this);
-        renderer_->BeginVertices(PrimitiveType::Quads);
+        renderer_->setTexture(this);
+        renderer_->beginVertices(PrimitiveType::Quads);
         if (flipX) {
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {0, 0, 0},
                                           {
                                                   (srcRect_.Width + srcRect_.X) / (float) Width,
                                                   (srcRect_.Y) / (float) Height
                                           }, col_});
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {0, destRect_.Height, 0},
                                           {
                                                   (srcRect_.Width + srcRect_.X) / (float) Width,
                                                   (srcRect_.Height + srcRect_.Y) / (float) Height
                                           }, col_});
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {destRect_.Width, destRect_.Height, 0},
                                           {
                                                   (srcRect_.X) / (float) Width,
                                                   (srcRect_.Height + srcRect_.Y) / (float) Height
                                           }, col_});
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {destRect_.Width, 0, 0},
                                           {
                                                   (srcRect_.X) / (float) Width,
                                                   (srcRect_.Y) / (float) Height
                                           }, col_});
         } else {
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {0, 0, 0},
                                           {
                                                   (srcRect_.X) / (float) Width,
                                                   (srcRect_.Y) / (float) Height
                                           }, col_});
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {0, destRect_.Height, 0},
                                           {
                                                   (srcRect_.X) / (float) Width,
                                                   (srcRect_.Height + srcRect_.Y) / (float) Height
                                           }, col_});
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {destRect_.Width, destRect_.Height, 0},
                                           {
                                                   (srcRect_.Width + srcRect_.X) / (float) Width,
                                                   (srcRect_.Height + srcRect_.Y) / (float) Height
                                           }, col_});
-            renderer_->PushVertex({
+            renderer_->pushVertex({
                                           {destRect_.Width, 0, 0},
                                           {
                                                   (srcRect_.Width + srcRect_.X) / (float) Width,
                                                   (srcRect_.Y) / (float) Height
                                           }, col_});
         }
-        renderer_->EndVertices();
+        renderer_->endVertices();
 
         // Pop matrix
-        renderer_->PopMatrix();
+        renderer_->popMatrix();
     }
 
     bool Texture2D::operator==(const Texture2D &tex_) const {
-        return m_API->CompareTextures(this, &tex_);
+        return m_API->compareTextures(this, &tex_);
     }
 
     bool Texture2D::operator!=(const Texture2D &tex_) const {
-        return !m_API->CompareTextures(this, &tex_);
+        return !m_API->compareTextures(this, &tex_);
     }
 }

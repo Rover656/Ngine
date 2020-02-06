@@ -24,7 +24,7 @@
 #include "Game.hpp"
 #include "Console.hpp"
 
-namespace Ngine {
+namespace ngine {
     void Scene::_addEntity(Entity *ent_) {
         // When an entity is added, mark as active
         m_entityActivities.insert({ent_, true});
@@ -73,7 +73,7 @@ namespace Ngine {
             : Scene(parentGame_) {
         // Physics setup
         m_physicsEnabled = true;
-        m_physicsWorld = new Physics::PhysicsWorld(grav_, ppm_);
+        m_physicsWorld = new physics::PhysicsWorld(grav_, ppm_);
     }
 
     Scene::~Scene() {
@@ -87,43 +87,43 @@ namespace Ngine {
         m_entityDepths.clear();
     }
 
-    Graphics::Camera *Scene::GetActiveCamera() const {
+    graphics::Camera *Scene::getActiveCamera() const {
         return m_activeCamera;
     }
 
-    void Scene::SetActiveCamera(Graphics::Camera *camera_) {
+    void Scene::setActiveCamera(graphics::Camera *camera_) {
         m_activeCamera = camera_;
     }
 
-    Rectangle Scene::GetCullArea() const {
-        return {GetCullAreaPosition(), GetCullAreaWidth(), GetCullAreaHeight()};
+    Rectangle Scene::getCullArea() const {
+        return {getCullAreaPosition(), getCullAreaWidth(), getCullAreaHeight()};
     }
 
-    Vector2 Scene::GetCullAreaPosition() const {
+    Vector2 Scene::getCullAreaPosition() const {
         // Get viewport position
-        auto pos = GetViewportPosition();
+        auto pos = getViewportPosition();
 
         // Get center of viewport
-        pos.X += GetViewportWidth() / 2.0f;
-        pos.Y += GetViewportHeight() / 2.0f;
+        pos.X += getViewportWidth() / 2.0f;
+        pos.Y += getViewportHeight() / 2.0f;
 
         if (m_cullAreaCenterInViewport) {
             // Offset from cull area size
-            pos.X -= GetCullAreaWidth() / 2.0f;
-            pos.Y -= GetCullAreaHeight() / 2.0f;
+            pos.X -= getCullAreaWidth() / 2.0f;
+            pos.Y -= getCullAreaHeight() / 2.0f;
         }
 
         return pos;
     }
 
-    Vector2 Scene::GetCullAreaEndPosition() const {
-        auto pos = GetCullAreaPosition();
+    Vector2 Scene::getCullAreaEndPosition() const {
+        auto pos = getCullAreaPosition();
         pos.X += m_cullAreaWidth;
         pos.Y += m_cullAreaHeight;
         return pos;
     }
 
-    float Scene::GetCullAreaWidth() const {
+    float Scene::getCullAreaWidth() const {
         float scale = 1;
         if (m_activeCamera != nullptr) {
             scale = m_activeCamera->Zoom;
@@ -132,7 +132,7 @@ namespace Ngine {
         return m_cullAreaWidth / scale;
     }
 
-    float Scene::GetCullAreaHeight() const {
+    float Scene::getCullAreaHeight() const {
         float scale = 1;
         if (m_activeCamera != nullptr) {
             scale = m_activeCamera->Zoom;
@@ -141,33 +141,33 @@ namespace Ngine {
         return m_cullAreaHeight / scale;
     }
 
-    void Scene::SetCullArea(float width_, float height_, bool centerInViewport_) {
+    void Scene::setCullArea(float width_, float height_, bool centerInViewport_) {
         m_cullAreaWidth = width_;
         m_cullAreaHeight = height_;
         m_cullAreaCenterInViewport = centerInViewport_;
     }
 
-    Rectangle Scene::GetViewport() const {
-        return {GetViewportPosition(), GetViewportWidth(), GetViewportHeight()};
+    Rectangle Scene::getViewport() const {
+        return {getViewportPosition(), getViewportWidth(), getViewportHeight()};
     }
 
-    Vector2 Scene::GetViewportPosition() const {
+    Vector2 Scene::getViewportPosition() const {
         if (m_activeCamera != nullptr) {
             // Top left coordinate of camera is screen 0,0
-            auto pos = m_activeCamera->ScreenToWorld({0, 0});
+            auto pos = m_activeCamera->screenToWorld({0, 0});
             return pos;
         }
         return {0, 0};
     }
 
-    Vector2 Scene::GetViewportEndPosition() const {
-        auto pos = GetViewportPosition();
-        pos.X += GetViewportWidth();
-        pos.Y += GetViewportHeight();
+    Vector2 Scene::getViewportEndPosition() const {
+        auto pos = getViewportPosition();
+        pos.X += getViewportWidth();
+        pos.Y += getViewportHeight();
         return pos;
     }
 
-    float Scene::GetViewportWidth() const {
+    float Scene::getViewportWidth() const {
         float scale = 1;
         if (m_activeCamera != nullptr) {
             scale = m_activeCamera->Zoom;
@@ -178,11 +178,11 @@ namespace Ngine {
             return m_parentGame->Config.TargetWidth / scale;
         } else {
             // Window size
-            return m_parentGame->GetGameWindow()->GetWidth() / scale;
+            return m_parentGame->getGameWindow()->getWidth() / scale;
         }
     }
 
-    float Scene::GetViewportHeight() const {
+    float Scene::getViewportHeight() const {
         float scale = 1;
         if (m_activeCamera != nullptr) {
             scale = m_activeCamera->Zoom;
@@ -193,45 +193,45 @@ namespace Ngine {
             return m_parentGame->Config.TargetHeight / scale;
         } else {
             // Window size
-            return m_parentGame->GetGameWindow()->GetHeight() / scale;
+            return m_parentGame->getGameWindow()->getHeight() / scale;
         }
     }
 
-    Game *Scene::GetGame() {
+    Game *Scene::getGame() {
         return m_parentGame;
     }
 
-    Filesystem::ResourceManager *Scene::GetResourceManager() const {
-        return m_parentGame->GetResourceManager();
+    filesystem::ResourceManager *Scene::getResourceManager() const {
+        return m_parentGame->getResourceManager();
     }
 
-    Physics::PhysicsWorld *Scene::GetPhysicsWorld() {
+    physics::PhysicsWorld *Scene::getPhysicsWorld() {
         return m_physicsWorld;
     }
 
-    const Physics::PhysicsWorld *Scene::GetPhysicsWorld() const {
+    const physics::PhysicsWorld *Scene::getPhysicsWorld() const {
         return m_physicsWorld;
     }
 
-    void Scene::Pause() {
+    void Scene::pause() {
         m_paused = true;
     }
 
-    void Scene::Resume() {
+    void Scene::resume() {
         m_paused = false;
     }
 
-    bool Scene::IsPaused() {
+    bool Scene::isPaused() {
         return m_paused;
     }
 
-    void Scene::Draw(Graphics::Renderer *renderer_) {
+    void Scene::draw(graphics::Renderer *renderer_) {
         // Invoke draw calls
         OnDraw(renderer_);
 
         // Draw with camera
         if (m_activeCamera != nullptr)
-            m_activeCamera->BeginCamera(renderer_->GetGraphicsDevice());
+            m_activeCamera->beginCamera(renderer_->getGraphicsDevice());
 
         OnDrawCamera(renderer_);
 
@@ -241,13 +241,13 @@ namespace Ngine {
             for (auto ent : vec) {
                 if (ent != nullptr) {
                     if (m_entityActivities[ent] && ent->DrawWithCamera)
-                        ent->Draw(renderer_);
+                        ent->draw(renderer_);
                 }
             }
         }
 
         if (m_activeCamera != nullptr)
-            m_activeCamera->EndCamera(renderer_->GetGraphicsDevice());
+            m_activeCamera->endCamera(renderer_->getGraphicsDevice());
 
         // Draw entities
         for (auto pair : m_entityDepths) {
@@ -258,19 +258,19 @@ namespace Ngine {
                         m_entityActivities.insert({ent, true});
 
                     if (m_entityActivities[ent] && !ent->DrawWithCamera)
-                        ent->Draw(renderer_);
+                        ent->draw(renderer_);
                 }
             }
         }
     }
 
-    void Scene::Update() {
+    void Scene::update() {
         if (m_paused) {
             OnPersistentUpdate();
             return;
         }
 
-        auto fps = m_parentGame->GetTargetFPS();
+        auto fps = m_parentGame->getTargetFPS();
 
         m_updateCounter++;
 
@@ -278,14 +278,14 @@ namespace Ngine {
         if (m_updateCounter % fps / 4 == 0) {
             // Check culling
 
-            for (auto ent : GetChildren()) {
+            for (auto ent : getChildren()) {
                 if (ent != nullptr) {
                     // Check if we can cull
-                    if (ent->CanCull()) {
-                        auto area = GetCullArea();
+                    if (ent->canCull()) {
+                        auto area = getCullArea();
                         if (m_entityActivities.find(ent) == m_entityActivities.end())
                             m_entityActivities.insert({ent, true});
-                        m_entityActivities[ent] = !ent->CheckForCulling(area);
+                        m_entityActivities[ent] = !ent->checkForCulling(area);
                     }
                 }
             }
@@ -300,7 +300,7 @@ namespace Ngine {
 
         // Physics
         if (m_physicsWorld != nullptr) {
-            m_physicsWorld->Step(1.0f / m_parentGame->GetTargetFPS(), 6, 2); // TODO: Proper values
+            m_physicsWorld->step(1.0f / m_parentGame->getTargetFPS(), 6, 2); // TODO: Proper values
         }
     }
 }

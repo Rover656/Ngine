@@ -27,7 +27,7 @@
 #include "../Entity.hpp"
 #include "../Component.hpp"
 
-namespace Ngine::Components {
+namespace ngine::components {
     /**
      * A tileset renderer component.
      * Attaches a tileset renderer to an entity for easy rendering.
@@ -36,7 +36,7 @@ namespace Ngine::Components {
         /**
          * The tileset renderer.
          */
-        Graphics::TilesetRenderer *m_tileset;
+        graphics::TilesetRenderer *m_tileset;
 
         /**
          * Use the cull area instead of the viewport for rendering tiles.
@@ -50,7 +50,7 @@ namespace Ngine::Components {
          * @param parent_ The entity we are attaching to.
          * @param tileset_ The tileset renderer we will be using.
          */
-        TilesetComponent(Entity *parent_, Graphics::TilesetRenderer *tileset_);
+        TilesetComponent(Entity *parent_, graphics::TilesetRenderer *tileset_);
         virtual ~TilesetComponent();
 
         /**
@@ -58,21 +58,21 @@ namespace Ngine::Components {
          *
          * @return The tileset renderer.
          */
-        Graphics::TilesetRenderer *GetTileset();
+        graphics::TilesetRenderer *getTileset();
 
         /**
          * Get a read-only pointer to the tileset renderer.
          *
          * @return The (read-only) tileset renderer.
          */
-        const Graphics::TilesetRenderer *GetTileset() const;
+        const graphics::TilesetRenderer *getTileset() const;
 
         /**
          * Determine whether we render tiles only inside the cull area, or in the viewport.
          *
          * @return true for rendering only in cull area, false for viewport.
          */
-        bool GetCullAreaDraw() const;
+        bool getCullAreaDraw() const;
 
         /**
          * Set whether or not we render tiles inside the cull area, or viewport
@@ -80,12 +80,12 @@ namespace Ngine::Components {
          * @note Normally, rendering only in viewport is the best option, but if you have black-bars or something, cull area is better.
          * @param flag_ true for rendering only in cull area, false for viewport.
          */
-        void SetCullAreaDraw(bool flag_);
+        void setCullAreaDraw(bool flag_);
 
         /**
          * Draw the tileset (called by engine).
          */
-        void Draw(Graphics::Renderer *renderer_) override;
+        void draw(graphics::Renderer *renderer_) override;
     };
 }
 

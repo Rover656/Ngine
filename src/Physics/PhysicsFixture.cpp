@@ -26,29 +26,29 @@
 
 #include <Box2D/Box2D.h>
 
-namespace Ngine::Physics {
+namespace ngine::physics {
     // Public Constructor
 
     PhysicsFixture::PhysicsFixture(b2Fixture *fixture_) {
         // Save fixture
-        _Fixture = fixture_;
+        m_fixture = fixture_;
 
         // Save ourselves
-        _Fixture->SetUserData(this);
+        m_fixture->SetUserData(this);
 
         // Get shape
-        switch(GetType()) {
-            case Shapes::SHAPE_CIRCLE:
-                _Shape = new Shapes::CircleShape((b2CircleShape*)_Fixture->GetShape());
+        switch(getType()) {
+            case shapes::SHAPE_CIRCLE:
+                m_shape = new shapes::CircleShape((b2CircleShape*)m_fixture->GetShape());
                 break;
-            case Shapes::SHAPE_EDGE:
+            case shapes::SHAPE_EDGE:
                 break;
-            case Shapes::SHAPE_POLYGON:
-                _Shape = new Shapes::PolygonShape((b2PolygonShape*)_Fixture->GetShape());
+            case shapes::SHAPE_POLYGON:
+                m_shape = new shapes::PolygonShape((b2PolygonShape*)m_fixture->GetShape());
                 break;
-            case Shapes::SHAPE_CHAIN:
+            case shapes::SHAPE_CHAIN:
                 break;
-            case Shapes::SHAPE_TYPECOUNT:
+            case shapes::SHAPE_TYPECOUNT:
                 break;
         }
     }
@@ -59,57 +59,57 @@ namespace Ngine::Physics {
 
     // Public Methods
 
-    void PhysicsFixture::Destroy() {
-        GetBody()->DestroyFixture(this);
+    void PhysicsFixture::destroy() {
+        getBody()->destroyFixture(this);
     }
 
-    b2Fixture *PhysicsFixture::GetB2Fixture() {
-        return _Fixture;
+    b2Fixture *PhysicsFixture::getB2Fixture() {
+        return m_fixture;
     }
 
-    PhysicsBody *PhysicsFixture::GetBody() {
-        return (PhysicsBody *)_Fixture->GetBody()->GetUserData();
+    PhysicsBody *PhysicsFixture::getBody() {
+        return (PhysicsBody *)m_fixture->GetBody()->GetUserData();
     }
 
-    float PhysicsFixture::GetDensity() const {
-        return _Fixture->GetDensity();
+    float PhysicsFixture::getDensity() const {
+        return m_fixture->GetDensity();
     }
 
-    float PhysicsFixture::GetFriction() const {
-        return _Fixture->GetFriction();
+    float PhysicsFixture::getFriction() const {
+        return m_fixture->GetFriction();
     }
 
-    float PhysicsFixture::GetRestitution() const {
-        return _Fixture->GetRestitution();
+    float PhysicsFixture::getRestitution() const {
+        return m_fixture->GetRestitution();
     }
 
-    Shapes::PhysicsShape *PhysicsFixture::GetShape() {
-        return _Shape;
+    shapes::PhysicsShape *PhysicsFixture::getShape() {
+        return m_shape;
     }
 
-    const Shapes::PhysicsShape *PhysicsFixture::GetShape() const {
-        return _Shape;
+    const shapes::PhysicsShape *PhysicsFixture::getShape() const {
+        return m_shape;
     }
 
-    Shapes::PhysicsShapeType PhysicsFixture::GetType() const {
-        return (Shapes::PhysicsShapeType)_Fixture->GetType();
+    shapes::PhysicsShapeType PhysicsFixture::getType() const {
+        return (shapes::PhysicsShapeType)m_fixture->GetType();
     }
 
-    bool PhysicsFixture::IsSensor() {
-        return _Fixture->IsSensor();
+    bool PhysicsFixture::isSensor() {
+        return m_fixture->IsSensor();
     }
 
-    void PhysicsFixture::Refilter() {
-        _Fixture->Refilter();
+    void PhysicsFixture::refilter() {
+        m_fixture->Refilter();
     }
 
-    void PhysicsFixture::SetSensor(bool sensor_) {
-        _Fixture->SetSensor(sensor_);
+    void PhysicsFixture::setSensor(bool sensor_) {
+        m_fixture->SetSensor(sensor_);
     }
 
-    bool PhysicsFixture::TestPoint(const Vector2 &p) {
+    bool PhysicsFixture::testPoint(const Vector2 &p) {
         // Translate point (PPM)
-        b2Vec2 pos(p.X / GetBody()->GetWorld()->PixelsPerMeter, p.Y / GetBody()->GetWorld()->PixelsPerMeter);
-        return _Fixture->TestPoint(pos);
+        b2Vec2 pos(p.X / getBody()->getWorld()->PixelsPerMeter, p.Y / getBody()->getWorld()->PixelsPerMeter);
+        return m_fixture->TestPoint(pos);
     }
 }

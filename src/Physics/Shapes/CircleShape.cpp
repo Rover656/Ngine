@@ -25,7 +25,7 @@
 
 #include <Box2D/Collision/Shapes/b2CircleShape.h>
 
-namespace Ngine::Physics::Shapes {
+namespace ngine::physics::shapes {
     // Public Constructors
 
     CircleShape::CircleShape() : PhysicsShape() {
@@ -33,8 +33,8 @@ namespace Ngine::Physics::Shapes {
     }
 
     CircleShape::CircleShape(float radius_, Vector2 position_) : CircleShape() {
-        SetRadius(radius_);
-        SetPosition(position_);
+        setRadius(radius_);
+        setPosition(position_);
     }
 
     CircleShape::CircleShape(b2CircleShape *circle_) : PhysicsShape(circle_) {}
@@ -47,26 +47,26 @@ namespace Ngine::Physics::Shapes {
         _Shape = new b2CircleShape();
 
         // Copy data
-        SetRadius(circle_.GetRadius());
-        SetPosition(circle_.GetPosition());
+        setRadius(circle_.getRadius());
+        setPosition(circle_.getPosition());
     }
 
     // Public Methods
 
-    void CircleShape::DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float rotation_) const {
-        auto pos = GetPosition();
+    void CircleShape::debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float rotation_) const {
+        auto pos = getPosition();
         pos *= ppm_;
         pos += pos_;
 
-        Graphics::ShapeRenderer::DrawCircle(renderer_, pos, GetRadius() * ppm_, Graphics::Color::Red, true);
+        graphics::ShapeRenderer::DrawCircle(renderer_, pos, getRadius() * ppm_, graphics::Color::Red, true);
     }
 
-    Vector2 CircleShape::GetPosition() const {
+    Vector2 CircleShape::getPosition() const {
         auto p = ((b2CircleShape *)_Shape)->m_p;
         return {p.x, p.y};
     }
 
-    void CircleShape::SetPosition(Vector2 pos_) {
+    void CircleShape::setPosition(Vector2 pos_) {
         ((b2CircleShape *) _Shape)->m_p = {pos_.X, pos_.Y};
     }
 }

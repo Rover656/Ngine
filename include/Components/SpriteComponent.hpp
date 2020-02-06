@@ -28,7 +28,7 @@
 #include "../Entity.hpp"
 #include "../Events.hpp"
 
-namespace Ngine::Components {
+namespace ngine::components {
     /**
      * Sprite component. Attaches a sprite at the position of the entity.
      */
@@ -41,7 +41,7 @@ namespace Ngine::Components {
         /**
          * Sprite to render.
          */
-        Graphics::Sprite m_sprite;
+        graphics::Sprite m_sprite;
     public:
         /**
          * Create a sprite component.
@@ -50,52 +50,52 @@ namespace Ngine::Components {
          * @param sprite_ The sprite to render with.
          * @param origin_ The sprite render origin.
          */
-        SpriteComponent(Entity *parent_, const Graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
+        SpriteComponent(Entity *parent_, const graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
 
         /**
          * Get the sprite render origin.
          *
          * @return The rendering origin.
          */
-        Vector2 GetOrigin() const;
+        Vector2 getOrigin() const;
 
         /**
          * Set the sprite render origin.
          *
          * @param origin_ The new rendering origin.
          */
-        void SetOrigin(const Vector2 &origin_);
+        void setOrigin(const Vector2 &origin_);
 
         /**
          * Get a pointer to the sprite.
          *
          * @return The current sprite (pointer to it).
          */
-        Graphics::Sprite *GetSprite();
+        graphics::Sprite *getSprite();
 
         /**
          * Get a pointer to the sprite (read-only).
          *
          * @return A read-only pointer to the current sprite.
          */
-        const Graphics::Sprite *GetSprite() const;
+        const graphics::Sprite *getSprite() const;
 
         /**
          * Set the sprite.
          *
          * @param sprite_ The new sprite to use.
          */
-        void SetSprite(const Graphics::Sprite &sprite_);
+        void setSprite(const graphics::Sprite &sprite_);
 
         /**
          * Draw the sprite (called by the engine).
          */
-        void Draw(Graphics::Renderer *renderer_) override;
+        void draw(graphics::Renderer *renderer_) override;
 
         /**
          * Update the sprite (called by the engine).
          */
-        void Update() override;
+        void update() override;
     };
 }
 

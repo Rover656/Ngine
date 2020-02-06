@@ -33,7 +33,7 @@ struct GLFWwindow;
 #include "../Math.hpp"
 #include "../Window.hpp"
 
-namespace Ngine::Input {
+namespace ngine::input {
     /**
      * Mouse button
      */
@@ -141,7 +141,7 @@ namespace Ngine::Input {
      */
     class NEAPI Mouse {
         // Window needs our constructor
-        friend class Ngine::Window;
+        friend class ngine::Window;
 
         /**
          * The window we are attached to.
@@ -232,28 +232,28 @@ namespace Ngine::Input {
          *
          * @param button_ The button to cancel.
          */
-        void CancelButton(MouseButton button_);
+        void cancelButton(MouseButton button_);
 
         /**
          * Get mouse position.
          *
          * @return The mouse position in screen coordinates.
          */
-        Vector2 GetMousePosition();
+        Vector2 getMousePosition();
 
         /**
          * Get mouse wheel X movement.
          *
          * @return Mouse wheel X movement.
          */
-        int GetMouseWheelXDelta();
+        int getMouseWheelXDelta();
 
         /**
          * Get mouse wheel Y movement.
          *
          * @return Mouse wheel Y movement.
          */
-        int GetMouseWheelYDelta();
+        int getMouseWheelYDelta();
 
         /**
          * Is button down.
@@ -261,7 +261,7 @@ namespace Ngine::Input {
          * @param button_ Button to check.
          * @return Whether or not the button is down.
          */
-        bool IsButtonDown(MouseButton button_);
+        bool isButtonDown(MouseButton button_);
 
         /**
          * Was button pushed this frame.
@@ -269,7 +269,7 @@ namespace Ngine::Input {
          * @param button_Button to check.
          * @return Whether or not the button was pushed this frame.
          */
-        bool IsButtonPressed(MouseButton button_);
+        bool isButtonPressed(MouseButton button_);
 
         /**
          * Was button released this frame.
@@ -277,12 +277,12 @@ namespace Ngine::Input {
          * @param button_Button to check.
          * @return Whether or not the button was released this frame.
          */
-        bool IsButtonReleased(MouseButton button_);
+        bool isButtonReleased(MouseButton button_);
 
         /**
          * Poll Mouse Inputs.
          */
-        void PollInputs();
+        void pollInputs();
 
         /**
          * Set mouse offset.
@@ -291,7 +291,7 @@ namespace Ngine::Input {
          * @param ox_ X offset.
          * @param oy_ Y offset.
          */
-        void SetOffset(float ox_, float oy_);
+        void setOffset(float ox_, float oy_);
 
         /**
          * Set mouse scale.
@@ -300,9 +300,8 @@ namespace Ngine::Input {
          * @param sx_ X scale.
          * @param sy_ Y scale.
          */
-        void SetScale(float sx_, float sy_);
+        void setScale(float sx_, float sy_);
     };
 }
 
 #endif //MOUSE_H
-                                                                                                                  

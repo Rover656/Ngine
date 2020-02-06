@@ -30,7 +30,7 @@
 #include "Image.hpp"
 #include "Texture2D.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * The text alignment
      *
@@ -72,7 +72,7 @@ namespace Ngine::Graphics {
         /**
          * Sprite font source rectangle.
          */
-        Ngine::Rectangle Rectangle;
+        ngine::Rectangle Rectangle;
 
         /**
          * Character X offset for drawing.
@@ -92,7 +92,7 @@ namespace Ngine::Graphics {
         /**
          * Greyscale pixel data.
          */
-        std::shared_ptr<Graphics::Image> Image;
+        std::shared_ptr<graphics::Image> Image;
 
         /**
          * Create an empty character info structure.
@@ -161,21 +161,21 @@ namespace Ngine::Graphics {
          * @param char_ The character to get.
          * @return The glyph index within the character info.
          */
-        int GetGlyphIndex(int char_) const;
+        int getGlyphIndex(int char_) const;
 
         /**
          * Get the font texture.
          *
          * @return The font atlas (for rendering).
          */
-        Texture2D *GetTexture() const;
+        Texture2D *getTexture() const;
 
         /**
          * Whether or not the font is valid.
          *
          * @return Whether or not the font is valid.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Load a true type font with specified characters.
@@ -186,13 +186,13 @@ namespace Ngine::Graphics {
          * @param fontChars_ The list of characters to add into the atlas. Leave empty for standard alpha-numeric characters
          * @return The loaded font.
          */
-        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_, int baseSize_ = 36,
+        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_, int baseSize_ = 36,
                                  std::vector<int> fontChars_ = std::vector<int>());
 
         /**
          * Free the font.
          */
-        void Free() override;
+        void free() override;
 
         /**
          * Draw a string with this font at the given position.
@@ -203,14 +203,16 @@ namespace Ngine::Graphics {
          * @param fontSize_ The font size to use.
          * @param spacing_ Letter spacing.
          */
-        void DrawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
+        void drawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
                         float spacing_, const Color &color_, LineSpacing lineSpacing_ = LineSpacing::OnePointFive,
                         const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
 
         /**
          * Draw a string within given bounds with options for alignment and wrapping.
+         *
+         * @warning Not implemented.
          */
-        void DrawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
+        void drawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
                         float spacing_, const Color &color_, LineSpacing lineSpacing_ = LineSpacing::OnePointFive,
                         TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None,
                         const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
@@ -218,27 +220,31 @@ namespace Ngine::Graphics {
         /**
          * Measure the size of a string if it was rendered without constraints.
          */
-        Vector2 MeasureString(const std::string &string_, float fontSize_, float spacing_,
+        Vector2 measureString(const std::string &string_, float fontSize_, float spacing_,
                               LineSpacing lineSpacing_ = LineSpacing::OnePointFive);
 
         /**
          * Measure the size of a string if it was rendered with a maximum width.
+         *
+         * @warning Not implemented.
          */
-        Vector2 MeasureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
+        Vector2 measureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
                                          TextAlignment alignment_ = TextAlignment::Left,
                                          TextWrap wrap_ = TextWrap::None);
 
         /**
          * Measure the size of a string if it was rendered with a maximum height.
+         *
+         * @warning Not implemented.
          */
-        Vector2 MeasureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
+        Vector2 measureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
                                          TextAlignment alignment_ = TextAlignment::Left,
                                          TextWrap wrap_ = TextWrap::None);
 
     private:
         void _generateAtlas(GraphicsDevice *graphicsDevice_);
 
-        void _loadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_);
+        void _loadFontInfo(const filesystem::Path &path_, std::vector<int> chars_);
     };
 }
 

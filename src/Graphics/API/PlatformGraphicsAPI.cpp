@@ -22,15 +22,15 @@
 
 #include "Console.hpp"
 
-namespace Ngine::Graphics::API {
-    void PlatformGraphicsAPI::UseVertexLayout(VertexLayout *layout_) {
+namespace ngine::graphics::API {
+    void PlatformGraphicsAPI::useVertexLayout(VertexLayout *layout_) {
         if (m_currentLayout != nullptr)
             Console::Fail("PlatformGraphicsAPI", "Cannot start another vertex layout without stopping the last one!");
         _useVertexLayout(layout_);
         m_currentLayout = layout_;
     }
 
-    void PlatformGraphicsAPI::StopVertexLayout(VertexLayout *layout_) {
+    void PlatformGraphicsAPI::stopVertexLayout(VertexLayout *layout_) {
         if (m_currentLayout == nullptr)
             Console::Fail("PlatformGraphicsAPI", "There is no vertex layout to stop.");
         _stopVertexLayout(layout_);

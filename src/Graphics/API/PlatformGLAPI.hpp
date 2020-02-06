@@ -40,7 +40,7 @@ typedef void *EGLSurface;
 typedef void *EGLContext;
 #endif
 
-namespace Ngine::Graphics::API {
+namespace ngine::graphics::API {
     enum GLFeatureFlag {
         /**
          * VAO Support.
@@ -166,39 +166,39 @@ namespace Ngine::Graphics::API {
         PlatformGLAPI(GraphicsDevice *graphicsDevice_);
         ~PlatformGLAPI() override;
 
-        void ConfigureViewport(int x_, int y_, int width_, int height_) override;
-        void Clear(const Color &color_) override;
-        void CreateTexture(Texture2D *texture_, unsigned char *data_) override;
-        void DeleteTexture(Texture2D *texture_) override;
-        void BindTexture(Texture2D *texture_) override;
-        void SetTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) override;
-        void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) override;
-        bool IsTextureValid(const Texture2D *texture_) override;
-        bool CompareTextures(const Texture2D *a_, const Texture2D *b_) override;
-        bool CreateRenderTarget(RenderTarget *renderTarget_) override;
-        void DeleteRenderTarget(RenderTarget *renderTarget_) override;
-        void BindRenderTarget(RenderTarget *renderTarget_) override;
-        bool IsRenderTargetValid(const RenderTarget *renderTarget_) override;
-        bool CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) override;
-        void CreateShader(Shader *shader_, void *sourceData_) override;
-        void DeleteShader(Shader *shader_) override;
-        bool IsShaderValid(const Shader *shader_) override;
-        void CreateShaderProgram(ShaderProgram *program_) override;
-        void DeleteShaderProgram(ShaderProgram *program_) override;
-        void BindShaderProgram(const ShaderProgram *program_) override;
-        bool IsShaderProgramValid(const ShaderProgram *program_) override;
-        void BindShaderProgramState(ShaderProgramState *state_) override;
-        void BindBuffer(Buffer *buffer_) override;
-        void UnbindBuffer(Buffer *buffer_) override;
-        void CreateBuffer(Buffer *buffer_) override;
-        void DeleteBuffer(Buffer *buffer_) override;
-        void WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) override;
-        void CreateVertexLayout(VertexLayout *layout_) override;
-        void DeleteVertexLayout(VertexLayout *layout_) override;
-        void ConfigureVertexLayout(VertexLayout *layout_) override;
-        void PrepareFor2D() override;
-        void Draw(int count_, int start_) override;
-        void DrawIndexed(int count_, int start_) override;
+        void configureViewport(int x_, int y_, int width_, int height_) override;
+        void clear(const Color &color_) override;
+        void createTexture(Texture2D *texture_, unsigned char *data_) override;
+        void deleteTexture(Texture2D *texture_) override;
+        void bindTexture(Texture2D *texture_) override;
+        void setTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) override;
+        void setTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) override;
+        bool isTextureValid(const Texture2D *texture_) override;
+        bool compareTextures(const Texture2D *a_, const Texture2D *b_) override;
+        bool createRenderTarget(RenderTarget *renderTarget_) override;
+        void deleteRenderTarget(RenderTarget *renderTarget_) override;
+        void bindRenderTarget(RenderTarget *renderTarget_) override;
+        bool isRenderTargetValid(const RenderTarget *renderTarget_) override;
+        bool compareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) override;
+        void createShader(Shader *shader_, void *sourceData_) override;
+        void deleteShader(Shader *shader_) override;
+        bool isShaderValid(const Shader *shader_) override;
+        void createShaderProgram(ShaderProgram *program_) override;
+        void deleteShaderProgram(ShaderProgram *program_) override;
+        void bindShaderProgram(const ShaderProgram *program_) override;
+        bool isShaderProgramValid(const ShaderProgram *program_) override;
+        void bindShaderProgramState(ShaderProgramState *state_) override;
+        void bindBuffer(Buffer *buffer_) override;
+        void unbindBuffer(Buffer *buffer_) override;
+        void createBuffer(Buffer *buffer_) override;
+        void deleteBuffer(Buffer *buffer_) override;
+        void writeBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) override;
+        void createVertexLayout(VertexLayout *layout_) override;
+        void deleteVertexLayout(VertexLayout *layout_) override;
+        void configureVertexLayout(VertexLayout *layout_) override;
+        void prepareFor2D() override;
+        void draw(int count_, int start_) override;
+        void drawIndexed(int count_, int start_) override;
 
 #if defined(EGL)
         EGLContext GetEGLContext();

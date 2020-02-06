@@ -30,21 +30,21 @@
 #include <utility>
 #include <stb_truetype.h>
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     Font *Font::m_defaultFont;
 
     Font::Font() {}
 
     Font::~Font() {
         Console::Notice("Font", "Unloading and deleting font.");
-        Free();
+        free();
     }
 
     Font *Font::GetDefaultFont() {
         return m_defaultFont;
     }
 
-    int Font::GetGlyphIndex(int char_) const {
+    int Font::getGlyphIndex(int char_) const {
         for (auto i = 0; i < m_characterCount; i++) {
             if (m_characters[i].Character == char_) return i;
         }
@@ -53,15 +53,15 @@ namespace Ngine::Graphics {
         return -1;
     }
 
-    Texture2D *Font::GetTexture() const {
+    Texture2D *Font::getTexture() const {
         return m_texture;
     }
 
-    bool Font::IsValid() const {
-        return m_texture->IsValid();
+    bool Font::isValid() const {
+        return m_texture->isValid();
     }
 
-    Font *Font::LoadTTFFont(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_, int baseSize_,
+    Font *Font::LoadTTFFont(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_, int baseSize_,
                             std::vector<int> fontChars_) {
         // Check size
         if (baseSize_ < 1) throw std::runtime_error("Invalid base size.");
@@ -81,7 +81,7 @@ namespace Ngine::Graphics {
 
             // Free individual character images
             for (auto i = 0; i < font->m_characterCount; i++) {
-                font->m_characters[i].Image->Free();
+                font->m_characters[i].Image->free();
             }
         } else {
             font = GetDefaultFont();
@@ -94,7 +94,7 @@ namespace Ngine::Graphics {
         m_defaultFont = font_;
     }
 
-    void Font::Free() {
+    void Font::free() {
         // Delete atlas texture.
         delete m_texture;
         m_texture = nullptr;
@@ -105,23 +105,23 @@ namespace Ngine::Graphics {
         m_characters.clear();
     }
 
-    void Font::DrawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
+    void Font::drawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
                           float spacing_, const Color &color_, LineSpacing lineSpacing_, const Angle &rotation_,
                           const Vector2 &origin_) {
         // Check if a single batch will fit:
-        auto willFit = renderer_->WillFit(PrimitiveType::Quads, string_.length());
+        auto willFit = renderer_->willFit(PrimitiveType::Quads, string_.length());
         if (!willFit) // TODO: Automatically batch text for the developer
             Console::Fail("Font", "Too much text for a single buffer, please split your draw calls up.");
 
         // Transform to get it in the right place and orientation
-        renderer_->PushMatrix();
-        renderer_->Translate({position_.X, position_.Y, 0});
-        renderer_->Rotate(rotation_, {0, 0, 1});
-        renderer_->Translate({-origin_.X, -origin_.Y, 0});
+        renderer_->pushMatrix();
+        renderer_->translate({position_.X, position_.Y, 0});
+        renderer_->rotate(rotation_, {0, 0, 1});
+        renderer_->translate({-origin_.X, -origin_.Y, 0});
 
         // Ready our texture
-        renderer_->SetTexture(m_texture);
-        renderer_->BeginVertices(PrimitiveType::Quads);
+        renderer_->setTexture(m_texture);
+        renderer_->beginVertices(PrimitiveType::Quads);
 
         // Get ready to render text
         float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize_ / m_baseSize;
@@ -143,7 +143,7 @@ namespace Ngine::Graphics {
         // Cycle over each character
         for (auto i = 0; i < string_.length(); i++) {
             auto letter = string_[i]; // TODO: Unicode support
-            auto index = GetGlyphIndex(letter);
+            auto index = getGlyphIndex(letter);
 
             if (letter == '\n') {
                 // New line
@@ -152,8 +152,8 @@ namespace Ngine::Graphics {
             } else {
                 if (letter != ' ') {
                     // Translate to correct position
-                    renderer_->PushMatrix();
-                    renderer_->Translate({textX + m_characters[index].OffsetX * scaleFactor,
+                    renderer_->pushMatrix();
+                    renderer_->translate({textX + m_characters[index].OffsetX * scaleFactor,
                                           textY + m_characters[index].OffsetY * scaleFactor, 0});
 
                     // Push vertices
@@ -162,25 +162,25 @@ namespace Ngine::Graphics {
                     auto height = m_characters[index].Rectangle.Height * scaleFactor;
                     auto atlasWidth = m_texture->Width;
                     auto atlasHeight = m_texture->Height;
-                    renderer_->PushVertex({
+                    renderer_->pushVertex({
                                                   {0, 0, 0},
                                                   {
                                                           (srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Y) / (float) atlasHeight
                                                   }, color_});
-                    renderer_->PushVertex({
+                    renderer_->pushVertex({
                                                   {0, height, 0},
                                                   {
                                                           (srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Height + srcRect.Y) / (float) atlasHeight
                                                   }, color_});
-                    renderer_->PushVertex({
+                    renderer_->pushVertex({
                                                   {width, height, 0},
                                                   {
                                                           (srcRect.Width + srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Height + srcRect.Y) / (float) atlasHeight
                                                   }, color_});
-                    renderer_->PushVertex({
+                    renderer_->pushVertex({
                                                   {width, 0, 0},
                                                   {
                                                           (srcRect.Width + srcRect.X) / (float) atlasWidth,
@@ -188,7 +188,7 @@ namespace Ngine::Graphics {
                                                   }, color_});
 
                     // Pop matrix
-                    renderer_->PopMatrix();
+                    renderer_->popMatrix();
                 }
 
                 if (m_characters[index].AdvanceX == 0)
@@ -198,17 +198,17 @@ namespace Ngine::Graphics {
         }
 
         // End renderer
-        renderer_->EndVertices();
-        renderer_->PopMatrix();
+        renderer_->endVertices();
+        renderer_->popMatrix();
     }
 
-    void Font::DrawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
+    void Font::drawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
                           float spacing_, const Color &color_, LineSpacing lineSpacing_, TextAlignment alignment_,
                           TextWrap wrap_, const Angle &rotation_, const Vector2 &origin_) {
         Console::Fail("Font", "This version of DrawString is not yet implemented.");
     }
 
-    Vector2 Font::MeasureString(const std::string &string_, float fontSize_, float spacing_, LineSpacing lineSpacing_) {
+    Vector2 Font::measureString(const std::string &string_, float fontSize_, float spacing_, LineSpacing lineSpacing_) {
         // Get ready to process text
         float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize_ / (float) m_baseSize, maxX = 0.0f;
 
@@ -232,7 +232,7 @@ namespace Ngine::Graphics {
         // Cycle over each character
         for (auto i = 0; i < string_.length(); i++) {
             auto letter = string_[i]; // TODO: Unicode support
-            auto index = GetGlyphIndex(letter);
+            auto index = getGlyphIndex(letter);
 
             if (letter == '\n') {
                 // Save max X before continuing
@@ -253,14 +253,14 @@ namespace Ngine::Graphics {
     }
 
     Vector2
-    Font::MeasureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
+    Font::measureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
                                    TextAlignment alignment_, TextWrap wrap_) {
         Console::Fail("Font", "MeasureStringRestrictedW is not yet implemented.");
         return {};
     }
 
     Vector2
-    Font::MeasureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
+    Font::measureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
                                    TextAlignment alignment_, TextWrap wrap_) {
         Console::Fail("Font", "MeasureStringRestrictedH is not yet implemented.");
         return {};
@@ -356,20 +356,20 @@ namespace Ngine::Graphics {
         delete atlas;
     }
 
-    void Font::_loadFontInfo(const Filesystem::Path &path_, std::vector<int> chars_) {
+    void Font::_loadFontInfo(const filesystem::Path &path_, std::vector<int> chars_) {
         // Characters
         std::vector<CharInfo> characters;
 
         // TODO: Support for bitmap fonts something to consider?
 
         // Load font file
-        auto fontFile = Filesystem::File(path_);
-        if (fontFile.Open(Filesystem::FileOpenMode::Read, true)) {
+        auto fontFile = filesystem::File(path_);
+        if (fontFile.open(filesystem::FileOpenMode::Read, true)) {
             // Get font data
-            auto size = fontFile.GetSize();
+            auto size = fontFile.getSize();
 
-            auto fontData = fontFile.ReadBytes();
-            fontFile.Close();
+            auto fontData = fontFile.readBytes();
+            fontFile.close();
 
             // Get ready to read data
             stbtt_fontinfo fontInfo;

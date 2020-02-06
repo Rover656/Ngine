@@ -27,7 +27,7 @@
 #include "../Rectangle.hpp"
 #include "Tileset.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * A tileset renderer.
      *
@@ -75,7 +75,7 @@ namespace Ngine::Graphics {
          * Draw the tileset.
          * Origin is in tile coordinates.
          */
-        void Draw(Graphics::Renderer *renderer_, Vector2 pos_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void draw(graphics::Renderer *renderer_, Vector2 pos_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /*
          * Draw the tileset. Does not currently support rotation.
@@ -83,56 +83,56 @@ namespace Ngine::Graphics {
          * renderFrom defines where to begin rendering. Normally the viewport position.
          * renderTo defines where to finish rendering. Normally the viewport position + dimensions.
          */
-        void Draw(Graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_ = 1);
+        void draw(graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_ = 1);
 
         /*
          * Get collision shapes for a tile in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::Shape *> GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<physics::Shape *> getCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::Shape *> GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<physics::Shape *> getCollisionShapesFor(std::vector<int> tiles_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * min_ <= tile <= max_.
          * All shapes must be deleted afterwards.
          */
-        std::vector<Physics::Shape *> GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<physics::Shape *> getCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
 
         /*
          * Get render area height in tile units
          */
-        int GetHeight();
+        int getHeight();
 
         /*
          * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
          */
-        int GetTileAt(Vector2 pos_);
+        int getTileAt(Vector2 pos_);
 
         /*
          * Get the tileset being used
          */
-        Tileset *GetTileset();
+        Tileset *getTileset();
 
         /*
          * Get render area width in tile units
          */
-        int GetWidth();
+        int getWidth();
 
         /*
          * Set the tile value at a position.
          */
-        void SetTileAt(Vector2 pos_, int tile_);
+        void setTileAt(Vector2 pos_, int tile_);
 
         /*
          * Set all tile data
          */
-        void SetTileData(std::vector<int> data_);
+        void setTileData(std::vector<int> data_);
     };
 }
 

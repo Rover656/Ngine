@@ -26,7 +26,7 @@
 
 #include "Window.hpp"
 
-namespace Ngine::Input {
+namespace ngine::input {
     Vector2 Mouse::_internalGetMousePosition() {
         auto pos = Vector2::Zero;
 #if defined(PLATFORM_DESKTOP)
@@ -83,13 +83,13 @@ namespace Ngine::Input {
 
     void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_) {
         if (button_ <= MOUSE_BUTTON_RIGHT) { // GLFW supports more than our 3 buttons
-            auto mouse = ((Window *)glfwGetWindowUserPointer(window_))->GetMouse();
+            auto mouse = ((Window *) glfwGetWindowUserPointer(window_))->getMouse();
             mouse->m_nextMouseState.ButtonsDown[button_] = (action_ == GLFW_PRESS);
         }
     }
 
     void Mouse::_GLFWScrollCallback(GLFWwindow *window_, double x_, double y_) {
-        auto mouse = ((Window *)glfwGetWindowUserPointer(window_))->GetMouse();
+        auto mouse = ((Window *) glfwGetWindowUserPointer(window_))->getMouse();
         mouse->m_nextMouseState.MouseWheelXDelta = static_cast<int>(x_);
         mouse->m_nextMouseState.MouseWheelYDelta = static_cast<int>(y_);
     }
@@ -125,15 +125,15 @@ namespace Ngine::Input {
 
     Mouse *Mouse::GetCurrent() {
         auto w = Window::GetCurrent();
-        return w == nullptr ? nullptr : w->GetMouse();
+        return w == nullptr ? nullptr : w->getMouse();
     }
 
-    void Mouse::CancelButton(MouseButton button_) {
+    void Mouse::cancelButton(MouseButton button_) {
         m_currentMouseState.ButtonsDown[button_] = false;
         m_nextMouseState.ButtonsDown[button_] = false;
     }
 
-    Vector2 Mouse::GetMousePosition() {
+    Vector2 Mouse::getMousePosition() {
         auto pos = m_currentMouseState.Position;
 
         // Apply translation
@@ -143,27 +143,27 @@ namespace Ngine::Input {
         return pos;
     }
 
-    int Mouse::GetMouseWheelXDelta() {
+    int Mouse::getMouseWheelXDelta() {
         return m_currentMouseState.MouseWheelXDelta;
     }
 
-    int Mouse::GetMouseWheelYDelta() {
+    int Mouse::getMouseWheelYDelta() {
         return m_currentMouseState.MouseWheelYDelta;
     }
 
-    bool Mouse::IsButtonDown(MouseButton button_) {
+    bool Mouse::isButtonDown(MouseButton button_) {
         return m_currentMouseState.ButtonsDown[button_];
     }
 
-    bool Mouse::IsButtonPressed(MouseButton button_) {
+    bool Mouse::isButtonPressed(MouseButton button_) {
         return m_currentMouseState.ButtonsDown[button_] != m_previousMouseState.ButtonsDown[button_] && m_currentMouseState.ButtonsDown[button_] == true;
     }
 
-    bool Mouse::IsButtonReleased(MouseButton button_) {
+    bool Mouse::isButtonReleased(MouseButton button_) {
         return m_currentMouseState.ButtonsDown[button_] != m_previousMouseState.ButtonsDown[button_] && m_currentMouseState.ButtonsDown[button_] == false;
     }
 
-    void Mouse::PollInputs() {
+    void Mouse::pollInputs() {
         // Mouse position events
         if (m_previousMouseState.Position != m_currentMouseState.Position) {
             OnMouseMoved({m_currentMouseState.Position, m_currentMouseState.Position - m_previousMouseState.Position});
@@ -171,9 +171,9 @@ namespace Ngine::Input {
 
         // Mouse button events
         for (auto i = 0; i < 3; i++) {
-            if (IsButtonPressed((MouseButton)i)) {
+            if (isButtonPressed((MouseButton) i)) {
                 OnMouseButtonPressed({static_cast<MouseButton>(i), true});
-            } else if (IsButtonReleased((MouseButton)i)) {
+            } else if (isButtonReleased((MouseButton) i)) {
                 OnMouseButtonReleased({static_cast<MouseButton>(i), false});
             }
         }
@@ -202,11 +202,11 @@ namespace Ngine::Input {
         m_nextMouseState.MouseWheelXDelta = 0;
     }
 
-    void Mouse::SetOffset(float ox_, float oy_) {
+    void Mouse::setOffset(float ox_, float oy_) {
         m_mouseOffset = {ox_, oy_};
     }
 
-    void Mouse::SetScale(float sx_, float sy_) {
+    void Mouse::setScale(float sx_, float sy_) {
         m_mouseScale = {sx_, sy_};
     }
 }

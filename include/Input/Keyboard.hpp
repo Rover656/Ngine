@@ -30,7 +30,7 @@
 struct GLFWwindow;
 #endif
 
-namespace Ngine::Input {
+namespace ngine::input {
     /**
      * A keyboard key
      */
@@ -159,14 +159,14 @@ namespace Ngine::Input {
         /**
          * The key this event is fore
          */
-        Input::Key Key;
+        input::Key Key;
 
         /**
          * Create a key event argument.
          *
          * @param key_ The key changed.
          */
-        KeyEventArgs(Input::Key key_) : Key(key_) {}
+        KeyEventArgs(input::Key key_) : Key(key_) {}
     };
 
     /**
@@ -177,7 +177,7 @@ namespace Ngine::Input {
      */
     class NEAPI Keyboard {
         // Make window a friend so it can use our constructor
-        friend class Ngine::Window;
+        friend class ngine::Window;
 
         /**
          * Last frame's key state
@@ -243,7 +243,7 @@ namespace Ngine::Input {
          *
          * @return The latest key that has been pressed.
          */
-        Key GetLatestKeypress();
+        Key getLatestKeypress();
 
         /**
          * Is the key down.
@@ -251,7 +251,7 @@ namespace Ngine::Input {
          * @param key_ Key to check
          * @return Whether the key is down or not.
          */
-        bool IsKeyDown(Key key_);
+        bool isKeyDown(Key key_);
 
         /**
          * Has a key been pressed this tick.
@@ -259,7 +259,7 @@ namespace Ngine::Input {
          * @param key_ Key to check
          * @return Whether the key is was pressed this frame.
          */
-        bool IsKeyPressed(Key key_);
+        bool isKeyPressed(Key key_);
 
         /**
          * Was the key released this frame.
@@ -267,7 +267,7 @@ namespace Ngine::Input {
          * @param key_ Key to check
          * @return Whether the key was released this frame.
          */
-        bool IsKeyReleased(Key key_);
+        bool isKeyReleased(Key key_);
 
         /**
          * Is the key up.
@@ -275,12 +275,12 @@ namespace Ngine::Input {
          * @param key_ Key to check
          * @return Whether the key is up or not.
          */
-        bool IsKeyUp(Key key_);
+        bool isKeyUp(Key key_);
 
         /**
          * Poll keyboard inputs.
          */
-        void PollInputs();
+        void pollInputs();
 
         /**
          * Set the key to close the game.
@@ -289,7 +289,7 @@ namespace Ngine::Input {
          * @todo Move this to Game??
          * @param key_ Set the key that can close the game.
          */
-        void SetExitKey(Key key_);
+        void setExitKey(Key key_);
     };
 }
 

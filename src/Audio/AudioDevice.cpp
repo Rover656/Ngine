@@ -23,7 +23,7 @@
 
 #include <cstring>
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     std::vector<Music *> AudioDevice::m_activeMusic;
 
     ma_mutex AudioDevice::m_audioLock;
@@ -88,7 +88,7 @@ namespace Ngine::Audio {
 
                 // Stop if not looping
                 if (!buffer->Looping) {
-                    buffer->Stop();
+                    buffer->stop();
                     break;
                 }
             }
@@ -169,7 +169,7 @@ namespace Ngine::Audio {
 
                         if (framesJustRead < framesToReadRightNow) {
                             if (!buffer->Looping) {
-                                buffer->Stop();
+                                buffer->stop();
                                 break;
                             } else {
                                 buffer->FrameCursorPos = 0;

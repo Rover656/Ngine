@@ -22,7 +22,7 @@
 
 #include "Component.hpp"
 
-namespace Ngine {
+namespace ngine {
     void Entity::_addToScene(Scene *scene_) {
         if (m_parentScene != nullptr)
             throw std::runtime_error("Cannot add entity to more than one scene. Remove from current scene first.");
@@ -34,10 +34,10 @@ namespace Ngine {
         // Create physics body if physics is enabled
         if (m_physicsEnabled) {
             // Create body
-            m_physicsBody = new Physics::PhysicsBody(m_parentScene->GetPhysicsWorld());
+            m_physicsBody = new physics::PhysicsBody(m_parentScene->getPhysicsWorld());
 
             // Send initial position and rotation to body (TODO: body center system too!)
-            m_physicsBody->SetTransform(m_transform);
+            m_physicsBody->setTransform(m_transform);
         }
 
         // Add to scene
@@ -46,7 +46,7 @@ namespace Ngine {
 
     void Entity::_removeFromScene() {
         // Unbind update event
-        UnsubscribeFromUpdate();
+        unsubscribeFromUpdate();
 
         // Delete physics body
         if (m_physicsEnabled) {
@@ -70,14 +70,14 @@ namespace Ngine {
         m_components.clear();
 
         // Destroy physics body
-        if (m_physicsBody != nullptr) m_physicsBody->Destroy();
+        if (m_physicsBody != nullptr) m_physicsBody->destroy();
 
         // Detach all events
-        OnTransformChanged.Clear();
-        OnUpdate.Clear();
+        OnTransformChanged.clear();
+        OnUpdate.clear();
 
         // Unsubscribe from update
-        UnsubscribeFromUpdate();
+        unsubscribeFromUpdate();
 
         // Make our parents are null
         m_parentEntity = nullptr;
@@ -93,16 +93,16 @@ namespace Ngine {
     Entity::~Entity() {
         // Remove from parent (if not already)
         if (m_parentEntity != nullptr || m_parentScene != nullptr)
-            GetContainer()->RemoveChild(this);
+            getContainer()->removeChild(this);
 
         // Destroy everything (being thorough).
         _doDestroy();
     }
 
-    void Entity::Destroy() {
-        if (GetContainer() != nullptr) {
+    void Entity::destroy() {
+        if (getContainer() != nullptr) {
             // We have a container, so we detach from it
-            GetContainer()->RemoveChild(this);
+            getContainer()->removeChild(this);
         } else {
             // We don't have a container, so we we do this ourselves
             _doDestroy();
@@ -112,8 +112,8 @@ namespace Ngine {
         delete this;
     }
 
-    bool Entity::RemoveComponent(const std::string &name_) {
-        auto comp = GetComponent<Component>(name_);
+    bool Entity::removeComponent(const std::string &name_) {
+        auto comp = getComponent<Component>(name_);
 
         if (comp != nullptr) {
             // Remove component from map
@@ -129,7 +129,7 @@ namespace Ngine {
         return false;
     }
 
-    std::vector<Component *> Entity::GetComponents() {
+    std::vector<Component *> Entity::getComponents() {
         std::vector<Component *> vec;
 
         for (auto &_Component : m_components) {
@@ -139,23 +139,23 @@ namespace Ngine {
         return vec;
     }
 
-    bool Entity::HasComponent(const std::string &name_) const {
+    bool Entity::hasComponent(const std::string &name_) const {
         return m_components.find(name_) != m_components.end();
     }
 
-    bool Entity::CanCull() const {
+    bool Entity::canCull() const {
         return m_canCull;
     }
 
-    void Entity::SetCanCull(bool canCull_) {
+    void Entity::setCanCull(bool canCull_) {
         m_canCull = canCull_;
     }
 
-    bool Entity::CheckForCulling(Rectangle cullArea_) {
-        return !cullArea_.Contains(GetPosition());
+    bool Entity::checkForCulling(Rectangle cullArea_) {
+        return !cullArea_.contains(getPosition());
     }
 
-    EntityContainer *Entity::GetContainer() const {
+    EntityContainer *Entity::getContainer() const {
         if (m_parentEntity != nullptr)
             return static_cast<EntityContainer *>(m_parentEntity);
         else if (m_parentScene != nullptr)
@@ -163,136 +163,136 @@ namespace Ngine {
         return nullptr;
     }
 
-    Game *Entity::GetGame() const {
+    Game *Entity::getGame() const {
         if (m_parentScene == nullptr) return nullptr;
-        return m_parentScene->GetGame();
+        return m_parentScene->getGame();
     }
 
-    Filesystem::ResourceManager *Entity::GetResourceManager() const {
+    filesystem::ResourceManager *Entity::getResourceManager() const {
         if (m_parentScene == nullptr) return nullptr;
-        return m_parentScene->GetResourceManager();
+        return m_parentScene->getResourceManager();
     }
 
-    int Entity::GetDepth() const {
+    int Entity::getDepth() const {
         return m_depth;
     }
 
-    void Entity::SetDepth(int depth_) {
+    void Entity::setDepth(int depth_) {
         if (m_parentScene != nullptr)
             m_parentScene->_updateEntityDepth(depth_, this);
         m_depth = depth_;
     }
 
-    Transform2D Entity::GetTransform() const {
+    Transform2D Entity::getTransform() const {
         if (m_physicsEnabled) {
-            return m_physicsBody->GetTransform();
+            return m_physicsBody->getTransform();
         } else {
             return m_transform;
         }
     }
 
-    void Entity::SetTransform(const Transform2D &transform_) {
+    void Entity::setTransform(const Transform2D &transform_) {
         if (m_physicsEnabled) {
-            m_physicsBody->SetTransform(transform_);
+            m_physicsBody->setTransform(transform_);
         } else {
             m_transform = transform_;
         }
     }
 
-    Vector2 Entity::GetPosition() const {
+    Vector2 Entity::getPosition() const {
         if (m_physicsEnabled) {
-            return m_physicsBody->GetPosition();
+            return m_physicsBody->getPosition();
         } else {
             return m_transform.Position;
         }
     }
 
-    void Entity::SetPosition(const Vector2 position_) {
+    void Entity::setPosition(Vector2 position_) {
         if (m_physicsEnabled) {
-            m_physicsBody->SetPosition(position_);
+            m_physicsBody->setPosition(position_);
         } else {
             m_transform.Position = position_;
         }
 
         // Fire event
-        OnTransformChanged(GetTransform());
+        OnTransformChanged(getTransform());
     }
 
-    void Entity::MoveBy(const Vector2 moveBy_) {
+    void Entity::moveBy(Vector2 moveBy_) {
         if (m_physicsEnabled) {
             // Not recommended, read warning in docs.
-            auto p = m_physicsBody->GetPosition();
-            m_physicsBody->SetPosition(p + moveBy_);
+            auto p = m_physicsBody->getPosition();
+            m_physicsBody->setPosition(p + moveBy_);
         } else {
             m_transform.Position += moveBy_;
         }
 
         // Fire event
-        OnTransformChanged(GetTransform());
+        OnTransformChanged(getTransform());
     }
 
-    Angle Entity::GetRotation() const {
+    Angle Entity::getRotation() const {
         if (m_physicsBody == nullptr) {
             return m_transform.Rotation;
         } else {
-            return m_physicsBody->GetTransform().Rotation;
+            return m_physicsBody->getTransform().Rotation;
         }
     }
 
-    void Entity::SetRotation(Angle rotation_) {
+    void Entity::setRotation(Angle rotation_) {
         if (m_physicsBody == nullptr) {
             // Set our rotation
             m_transform.Rotation = rotation_;
         } else {
             // Set the body rotation
-            m_physicsBody->SetRotation(rotation_);
+            m_physicsBody->setRotation(rotation_);
         }
 
         // Fire event
-        OnTransformChanged(GetTransform());
+        OnTransformChanged(getTransform());
     }
 
-    bool Entity::IsPhysicsEnabled() const {
+    bool Entity::isPhysicsEnabled() const {
         return m_physicsBody != nullptr;
     }
 
-    Physics::PhysicsBody *Entity::GetPhysicsBody() {
+    physics::PhysicsBody *Entity::getPhysicsBody() {
         return m_physicsBody;
     }
 
-    const Physics::PhysicsBody *Entity::GetPhysicsBody() const {
+    const physics::PhysicsBody *Entity::getPhysicsBody() const {
         return m_physicsBody;
     }
 
-    Physics::PhysicsWorld *Entity::GetPhysicsWorld() {
+    physics::PhysicsWorld *Entity::getPhysicsWorld() {
         if (m_physicsBody == nullptr) return nullptr;
-        return m_physicsBody->GetWorld();
+        return m_physicsBody->getWorld();
     }
 
-    const Physics::PhysicsWorld *Entity::GetPhysicsWorld() const {
+    const physics::PhysicsWorld *Entity::getPhysicsWorld() const {
         if (m_physicsBody == nullptr) return nullptr;
-        return m_physicsBody->GetWorld();
+        return m_physicsBody->getWorld();
     }
 
-    bool Entity::GetDoPersistentUpdates() const {
+    bool Entity::getDoPersistentUpdates() const {
         return m_persistentUpdates;
     }
 
-    void Entity::SetDoPersistentUpdates(bool persistentUpdates_) {
-        if (m_onUpdateRef.IsAttached())
+    void Entity::setDoPersistentUpdates(bool persistentUpdates_) {
+        if (m_onUpdateRef.isAttached())
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
         m_persistentUpdates = persistentUpdates_;
     }
 
-    bool Entity::SubscribeToUpdate() {
+    bool Entity::subscribeToUpdate() {
         if (m_parentScene != nullptr) {
-            if (!m_onUpdateRef.IsAttached()) {
+            if (!m_onUpdateRef.isAttached()) {
                 if (m_persistentUpdates)
                     m_onUpdateRef = m_parentScene->OnPersistentUpdate
-                            += new ClassMethodEventHandler<Entity>(this, &Entity::Update);
+                            += new ClassMethodEventHandler<Entity>(this, &Entity::update);
                 else
                     m_onUpdateRef = m_parentScene->OnUpdate
-                            += new ClassMethodEventHandler<Entity>(this, &Entity::Update);
+                            += new ClassMethodEventHandler<Entity>(this, &Entity::update);
                 return true;
             } else {
                 // The event already exists, so return true anyway to avoid errors.
@@ -302,37 +302,37 @@ namespace Ngine {
         return false;
     }
 
-    bool Entity::SubscribedToUpdate() const {
+    bool Entity::subscribedToUpdate() const {
         if (m_parentScene == nullptr) return false;
-        return m_onUpdateRef.IsAttached();
+        return m_onUpdateRef.isAttached();
     }
 
-    void Entity::UnsubscribeFromUpdate() {
+    void Entity::unsubscribeFromUpdate() {
         // Detach using the reference.
-        m_onUpdateRef.Detach();
+        m_onUpdateRef.detach();
     }
 
-    void Entity::Draw(Graphics::Renderer *renderer_) {
+    void Entity::draw(graphics::Renderer *renderer_) {
         // Draw components
         for (const auto &comp : m_components) {
-            comp.second->Draw(renderer_);
+            comp.second->draw(renderer_);
         }
 
         // Debug draw
         if (m_physicsBody != nullptr) {
-            if (m_physicsBody->GetWorld()->DebugDraw) {
-                m_physicsBody->DebugDraw(renderer_);
+            if (m_physicsBody->getWorld()->DebugDraw) {
+                m_physicsBody->debugDraw(renderer_);
             }
         }
     }
 
-    void Entity::Update() {
+    void Entity::update() {
         // Fire update event
         OnUpdate();
 
         if (m_physicsBody != nullptr) {
             // As we are a physics entity, fire this each frame
-            OnTransformChanged(GetTransform());
+            OnTransformChanged(getTransform());
         }
     }
 }

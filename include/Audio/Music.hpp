@@ -27,7 +27,7 @@
 #include "../Resource.hpp"
 #include "AudioStream.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     /**
      * The music context type.
      */
@@ -65,7 +65,22 @@ namespace Ngine::Audio {
     /**
      * Music stream
      */
-    struct NEAPI Music : public IResource {
+    class NEAPI Music : public IResource {
+        /**
+         * List of all playing music.
+         */
+        static std::vector<Music *> m_activeMusic;
+
+        /**
+         * Number of loops completed since last play.
+         */
+        unsigned int m_loopsCompleted;
+
+        /**
+         * Update music stream.
+         */
+        void _update();
+    public:
         /**
          * Context data.
          */
@@ -100,28 +115,28 @@ namespace Ngine::Audio {
          *
          * @return Music length in seconds.
          */
-        float GetLength();
+        float getLength();
 
         /**
          * Get the current amount of time played in seconds.
          *
          * @return The amount of time the music has played through.
          */
-        float GetTimePlayed();
+        float getTimePlayed();
 
         /**
          * Whether or not music is playing.
          *
          * @return Whether or not the music is playing.
          */
-        bool IsPlaying() const;
+        bool isPlaying() const;
 
         /**
          * Test if the music is valid.
          *
          * @return Whether the music is valid or not.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Load music from a file.
@@ -129,68 +144,51 @@ namespace Ngine::Audio {
          * @param path_ The music file to be loaded.
          * @return The Music.
          */
-        static Music *LoadMusic(const Filesystem::Path &path_);
+        static Music *LoadMusic(const filesystem::Path &path_);
 
         /**
-         * Pause music.
+         * pause music.
          */
-        void Pause();
+        void pause();
 
         /**
          * Play music.
          */
-        void Play();
+        void play();
 
         /**
          * Resume music.
          */
-        void Resume();
+        void resume();
 
         /**
          * Set music pitch.
          *
          * @param pitch_ The pitch.
          */
-        void SetPitch(float pitch_);
+        void setPitch(float pitch_);
 
         /**
          * Set music volume.
          *
          * @param vol_ The music volume.
          */
-        void SetVolume(float vol_);
+        void setVolume(float vol_);
 
         /**
          * Stop music.
          */
-        void Stop();
+        void stop();
 
         /**
          * Free the music.
          */
-        void Free() override;
+        void free() override;
 
         /**
          * Update all active music.
          */
         static void Update();
-
-    private:
-        // Private Fields
-
-        static std::vector<Music *> _ActiveMusic;
-
-        /*
-         * Number of loops completed since last play.
-         */
-        unsigned int _LoopsCompleted;
-
-        // Private Methods
-
-        /*
-         * Update music stream.
-         */
-        void __Update();
     };
 }
 

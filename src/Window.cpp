@@ -38,7 +38,7 @@
 #include "Input/Keyboard.hpp"
 #include "Console.hpp"
 
-namespace Ngine {
+namespace ngine {
     Window *Window::m_currentWindow = nullptr;
 
 #if defined(PLATFORM_UWP)
@@ -49,19 +49,19 @@ namespace Ngine {
         if (!m_initialized) return;
 
         // Enable debug console
-        SetEnableNativeConsole(config_.NativeDebugConsole);
+        setEnableNativeConsole(config_.NativeDebugConsole);
 
         // Set fullscreen mode.
-        SetFullscreen(config_.Fullscreen);
+        setFullscreen(config_.Fullscreen);
 
         // Set the window icon.
-        SetIcon(config_.Icon);
+        setIcon(config_.Icon);
 
         // Set resizeable or not.
-        SetResizable(config_.Resizable);
+        setResizable(config_.Resizable);
 
         // Enable/disable V-Sync
-        SetVSyncEnabled(config_.VSync);
+        setVSyncEnabled(config_.VSync);
     }
 
     Window::Window(const WindowConfig &config_) {
@@ -85,12 +85,12 @@ namespace Ngine {
         if (config_.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
 
         // Set version string
-        auto targetAPI = Graphics::GraphicsDevice::GetTargetAPI();
-        auto targetMajor = Graphics::GraphicsDevice::GetTargetAPIMajorVersion();
-        auto targetMinor = Graphics::GraphicsDevice::GetTargetAPIMinorVersion();
+        auto targetAPI = graphics::GraphicsDevice::GetTargetAPI();
+        auto targetMajor = graphics::GraphicsDevice::GetTargetAPIMajorVersion();
+        auto targetMinor = graphics::GraphicsDevice::GetTargetAPIMinorVersion();
 
         // OpenGL Core
-        if (targetAPI == Graphics::GraphicsAPI::OpenGL) {
+        if (targetAPI == graphics::GraphicsAPI::OpenGL) {
             // Set core profile for GL 3.2 or greater
             if (targetMajor >= 3 && targetMinor >= 2) {
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -99,7 +99,7 @@ namespace Ngine {
             // Set target version
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, targetMajor);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, targetMinor);
-        } else if (targetAPI == Graphics::GraphicsAPI::OpenGLES) {
+        } else if (targetAPI == graphics::GraphicsAPI::OpenGLES) {
             // Setup for GLES
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
@@ -107,7 +107,7 @@ namespace Ngine {
             // Set target version
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, targetMajor);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, targetMinor);
-        } else if (targetAPI == Graphics::GraphicsAPI::DirectX) {
+        } else if (targetAPI == graphics::GraphicsAPI::DirectX) {
             // No API
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         }
@@ -153,22 +153,22 @@ namespace Ngine {
         m_initialized = true;
 
         // Create graphics device
-        m_graphicsDevice = new Graphics::GraphicsDevice(this);
+        m_graphicsDevice = new graphics::GraphicsDevice(this);
 
 #if defined(PLATFORM_UWP) // TODO: Add other platforms which use EGL
         // If we are using GLES, use the EGL API
-        if (Graphics::GraphicsDevice::GetTargetAPI() == Graphics::GraphicsAPI::OpenGLES) {
+        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES) {
             // Get EGL surface size
-            ((Graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
         }
 #endif
 
         // Make this window current
-        MakeCurrent();
+        makeCurrent();
 
         // Create Input APIs
-        m_mouseInput = new Input::Mouse(this);
-        m_keyboardInput = new Input::Keyboard(this);
+        m_mouseInput = new input::Mouse(this);
+        m_keyboardInput = new input::Keyboard(this);
         Console::Notice("Window", "Successfully opened keyboard and mouse APIs.");
 
         // Apply any after-creation config
@@ -177,22 +177,22 @@ namespace Ngine {
 
     Window::~Window() {
         // Close if we aren't
-        if (m_initialized) Close();
+        if (m_initialized) close();
     }
 
-    Graphics::GraphicsDevice *Window::GetGraphicsDevice() {
+    graphics::GraphicsDevice *Window::getGraphicsDevice() {
         return m_graphicsDevice;
     }
 
-    void Window::MakeCurrent() {
+    void Window::makeCurrent() {
         if (!m_initialized) throw std::runtime_error("This window is not ready to be made current!");
 #if defined(PLATFORM_DESKTOP)
         // Make this context current
         glfwMakeContextCurrent((GLFWwindow*) m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
         // Make egl context current.
-        if (Graphics::GraphicsDevice::GetTargetAPI() == Graphics::GraphicsAPI::OpenGLES)
-            ((Graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->MakeEGLCurrent();
+        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->MakeEGLCurrent();
 #endif
 
         // Make current
@@ -203,23 +203,23 @@ namespace Ngine {
         return m_currentWindow;
     }
 
-    Input::Mouse *Window::GetMouse() {
+    input::Mouse *Window::getMouse() {
         return m_mouseInput;
     }
 
-    Input::Keyboard *Window::GetKeyboard() {
+    input::Keyboard *Window::getKeyboard() {
         return m_keyboardInput;
     }
 
-    int Window::GetWidth() {
+    int Window::getWidth() {
         return m_currentWidth;
     }
 
-    int Window::GetHeight() {
+    int Window::getHeight() {
         return m_currentHeight;
     }
 
-    void Window::Resize(int width_, int height_) {
+    void Window::setSize(int width_, int height_) {
 #if defined(PLATFORM_DESKTOP)
         // Set size
         glfwSetWindowSize((GLFWwindow *)m_GLFWWindow, width_, height_);
@@ -229,19 +229,19 @@ namespace Ngine {
 #endif
     }
 
-    void Window::SetVSyncEnabled(bool flag_) {
+    void Window::setVSyncEnabled(bool flag_) {
         // Make this window context current
-        MakeCurrent();
+        makeCurrent();
 
 #if defined(PLATFORM_DESKTOP)
         glfwSwapInterval(flag_ ? 1 : 0);
 #else
-        if (Graphics::GraphicsDevice::GetTargetAPI() == Graphics::GraphicsAPI::OpenGLES)
-            ((Graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SetEGLSwapInterval(flag_ ? 1 : 0);
+        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SetEGLSwapInterval(flag_ ? 1 : 0);
 #endif
     }
 
-    void Window::SetIcon(Graphics::Image *icon_) {
+    void Window::setIcon(graphics::Image *icon_) {
 #if defined(PLATFORM_DESKTOP)
         if (icon_ == nullptr) {
             glfwSetWindowIcon(m_GLFWWindow, 0, nullptr);
@@ -255,15 +255,15 @@ namespace Ngine {
 #endif
     }
 
-    bool Window::IsFullscreen() {
+    bool Window::isFullscreen() {
         return m_isFullscreen;
     }
 
-    void Window::ToggleFullscreen() {
-        SetFullscreen(!m_isFullscreen);
+    void Window::toggleFullscreen() {
+        setFullscreen(!m_isFullscreen);
     }
 
-    void Window::SetFullscreen(bool fullscreen_) {
+    void Window::setFullscreen(bool fullscreen_) {
 #if defined(PLATFORM_DESKTOP)
         // TODO: This is very buggy.
 
@@ -293,17 +293,17 @@ namespace Ngine {
 #endif
     }
 
-    void Window::SetResizable(bool resizable_) {
+    void Window::setResizable(bool resizable_) {
 #if defined(PLATFORM_DESKTOP)
         glfwSetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_RESIZABLE, resizable_ ? 1 : 0);
 #endif
     }
 
-    std::string Window::GetTitle() {
+    std::string Window::getTitle() {
         return m_windowTitle;
     }
 
-    void Window::SetTitle(const std::string& title_) {
+    void Window::setTitle(const std::string& title_) {
 #if defined(PLATFORM_DESKTOP)
         glfwSetWindowTitle(m_GLFWWindow, title_.c_str());
         m_windowTitle = title_;
@@ -312,14 +312,14 @@ namespace Ngine {
 #endif
     }
 
-    void Window::SetEnableNativeConsole(bool flag_) {
+    void Window::setEnableNativeConsole(bool flag_) {
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         if (flag_ && !m_consoleAllocated) {
             // Add console
             AllocConsole();
-            auto title = GetTitle();
+            auto title = getTitle();
             if (!title.empty())
-                SetConsoleTitle((GetTitle() + ": Debug Console").c_str());
+                SetConsoleTitle((getTitle() + ": Debug Console").c_str());
             else SetConsoleTitle("Ngine Game Debug Console.");
 
             // Save old buffers
@@ -374,7 +374,7 @@ namespace Ngine {
 #endif
     }
 
-    bool Window::IsFocussed() {
+    bool Window::isFocussed() {
 #if defined(PLATFORM_DESKTOP)
         return glfwGetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_FOCUSED) == GLFW_TRUE;
 #elif defined(PLATFORM_UWP)
@@ -385,7 +385,7 @@ namespace Ngine {
         return true;
     }
 
-    bool Window::IsVisible() {
+    bool Window::isVisible() {
 #if defined(PLATFORM_DESKTOP)
         return glfwGetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_ICONIFIED) == 0;
 #elif defined(PLATFORM_UWP)
@@ -395,7 +395,7 @@ namespace Ngine {
         return true;
     }
 
-    void Window::PollEvents() {
+    void Window::pollEvents() {
 #if defined(PLATFORM_DESKTOP)
         // Poll window events
         glfwPollEvents();
@@ -404,7 +404,7 @@ namespace Ngine {
         glfwGetWindowSize((GLFWwindow *)m_GLFWWindow, &m_currentWidth, &m_currentHeight);
 #elif defined(PLATFORM_UWP)
         // Poll window events
-        if (IsVisible())
+        if (isVisible())
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
         else
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
@@ -414,8 +414,8 @@ namespace Ngine {
         m_visible = CoreWindow::GetForCurrentThread()->Visible == true;
 
         // Query dimensions
-        if (Graphics::GraphicsDevice::GetTargetAPI() == Graphics::GraphicsAPI::OpenGLES)
-            ((Graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
+        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
 
         // Toggle fullscreen if necessary
         if (m_fullscreenSet != 0) {
@@ -432,7 +432,7 @@ namespace Ngine {
 #endif
     }
 
-    void Window::Close() {
+    void Window::close() {
         // Destroy input APIs
         delete m_mouseInput;
         delete m_keyboardInput;
@@ -449,7 +449,7 @@ namespace Ngine {
 #endif
 
         // Ensure the console is deallocated.
-        SetEnableNativeConsole(false);
+        setEnableNativeConsole(false);
 
         // Inform of closure
         Console::Notice("Window", "Closed window.");
@@ -460,20 +460,20 @@ namespace Ngine {
         m_initialized = false;
     }
 
-    bool Window::ShouldClose() {
+    bool Window::shouldClose() {
         auto windowWantsClose = false;
 #if defined(PLATFORM_DESKTOP)
         windowWantsClose = glfwWindowShouldClose((GLFWwindow *)m_GLFWWindow);
 #endif
-        return windowWantsClose || m_keyboardInput->IsKeyDown(m_keyboardInput->m_exitKey);
+        return windowWantsClose || m_keyboardInput->isKeyDown(m_keyboardInput->m_exitKey);
     }
 
-    void Window::SwapBuffers() {
+    void Window::swapBuffers() {
 #if defined(PLATFORM_DESKTOP)
         glfwSwapBuffers((GLFWwindow *) m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
-        if (Graphics::GraphicsDevice::GetTargetAPI() == Graphics::GraphicsAPI::OpenGLES)
-            ((Graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SwapEGLBuffers();
+        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SwapEGLBuffers();
 #endif
     }
 }

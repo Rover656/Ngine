@@ -22,23 +22,23 @@
 
 #include "Entity.hpp"
 
-namespace Ngine::Components {
+namespace ngine::components {
     void CameraComponent::_updateCamera(EntityTransformChangedEventArgs e) {
         // Update the target
         m_camera.Position = e.EntityTransformation.Position;
     }
 
     CameraComponent::~CameraComponent() {
-        m_transformChangeEvent.Detach();
+        m_transformChangeEvent.detach();
     }
 
     CameraComponent::CameraComponent(Entity *parent_, const float zoom_, const Vector2 origin_,
                                      const float rotation_)
         : Component(parent_) {
-        auto par = GetEntity < Entity > ();
+        auto par = getEntity<Entity>();
 
         // Setup camera
-        m_camera = Graphics::Camera(par->GetPosition(), rotation_, zoom_, origin_);;
+        m_camera = graphics::Camera(par->getPosition(), rotation_, zoom_, origin_);;
 
         // Attach to on position changed
         m_transformChangeEvent = par->OnTransformChanged +=
@@ -46,31 +46,31 @@ namespace Ngine::Components {
                                                                                               &CameraComponent::_updateCamera);
     }
 
-    void CameraComponent::Activate() {
-        GetScene()->SetActiveCamera(&m_camera);
+    void CameraComponent::activate() {
+        getScene()->setActiveCamera(&m_camera);
     }
 
-    Vector2 CameraComponent::GetOrigin() {
+    Vector2 CameraComponent::getOrigin() {
         return m_camera.Origin;
     }
 
-    void CameraComponent::SetOrigin(const Vector2 origin_) {
+    void CameraComponent::setOrigin(Vector2 origin_) {
         m_camera.Origin = origin_;
     }
 
-    float CameraComponent::GetRotation() {
+    float CameraComponent::getRotation() {
         return m_camera.Rotation;
     }
 
-    void CameraComponent::SetRotation(const float rotation_) {
+    void CameraComponent::setRotation(const float rotation_) {
         m_camera.Rotation = rotation_;
     }
 
-    float CameraComponent::GetZoom() {
+    float CameraComponent::getZoom() {
         return m_camera.Zoom;
     }
 
-    void CameraComponent::SetZoom(const float zoom_) {
+    void CameraComponent::setZoom(const float zoom_) {
         m_camera.Zoom = zoom_;
     }
 }

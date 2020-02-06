@@ -28,7 +28,7 @@
 #include "../ShaderProgramState.hpp"
 #include "../Texture2D.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     class Buffer;
     class VertexLayout;
 
@@ -78,14 +78,14 @@ namespace Ngine::Graphics {
              * @param width_ Width.
              * @param height_ Height.
              */
-            virtual void ConfigureViewport(int x_, int y_, int width_, int height_) = 0;
+            virtual void configureViewport(int x_, int y_, int width_, int height_) = 0;
 
             /**
              * Clear the display.
              *
              * @param color_ The color to clear with.
              */
-            virtual void Clear(const Color &color_) = 0;
+            virtual void clear(const Color &color_) = 0;
 
             /**
              * Create a texture on the GPU.
@@ -93,21 +93,21 @@ namespace Ngine::Graphics {
              * @param texture_ Texture object.
              * @param data_ Pixel data (can be null).
              */
-            virtual void CreateTexture(Texture2D *texture_, unsigned char *data_) = 0;
+            virtual void createTexture(Texture2D *texture_, unsigned char *data_) = 0;
 
             /**
              * Delete a texture on the GPU.
              *
              * @param texture_ Texture to delete.
              */
-            virtual void DeleteTexture(Texture2D *texture_) = 0;
+            virtual void deleteTexture(Texture2D *texture_) = 0;
 
             /**
              * Bind a texture.
              *
              * @param texture_ Texture to bind, null to unbind.
              */
-            virtual void BindTexture(Texture2D *texture_) = 0;
+            virtual void bindTexture(Texture2D *texture_) = 0;
 
             /**
              * Set the texture's filter mode.
@@ -115,7 +115,7 @@ namespace Ngine::Graphics {
              * @param texture_ Texture.
              * @param mode_ Mode to use.
              */
-            virtual void SetTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) = 0;
+            virtual void setTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) = 0;
 
             /**
              * Set the texture's wrap mode.
@@ -123,7 +123,7 @@ namespace Ngine::Graphics {
              * @param texture_ Texture.
              * @param mode_ Mode to use.
              */
-            virtual void SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) = 0;
+            virtual void setTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) = 0;
 
             /**
              * Determine if the texture is valid on the GPU.
@@ -131,7 +131,7 @@ namespace Ngine::Graphics {
              * @param texture_ Texture to check.
              * @return Whether or not the texture is valid.
              */
-            virtual bool IsTextureValid(const Texture2D *texture_) = 0;
+            virtual bool isTextureValid(const Texture2D *texture_) = 0;
 
             /**
              * Compare two textures.
@@ -140,7 +140,7 @@ namespace Ngine::Graphics {
              * @param b_ Texture B.
              * @returns Whether or not the textures are the same.
              */
-            virtual bool CompareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
+            virtual bool compareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
 
             /**
              * Create a shader on the GPU.
@@ -149,21 +149,21 @@ namespace Ngine::Graphics {
              * @param shader_ Shader object.
              * @param sourceData_ The source data, this will be a GLSL string for OpenGL, HLSL bytecode for DirectX and so on.
              */
-            virtual void CreateShader(Shader *shader_, void *sourceData_) = 0;
+            virtual void createShader(Shader *shader_, void *sourceData_) = 0;
 
             /**
              * Delete a shader.
              *
              * @param shader_ Shader to delete.
              */
-            virtual void DeleteShader(Shader *shader_) = 0;
+            virtual void deleteShader(Shader *shader_) = 0;
 
             /**
              * Check if a shader is valid.
              *
              * @param shader_ Shader to check.
              */
-            virtual bool IsShaderValid(const Shader *shader_) = 0;
+            virtual bool isShaderValid(const Shader *shader_) = 0;
 
             /**
              * Create a shader program.
@@ -172,64 +172,56 @@ namespace Ngine::Graphics {
              * @note This will also link the GL program.
              * @param program_ Program object.
              */
-            virtual void CreateShaderProgram(ShaderProgram *program_) = 0;
+            virtual void createShaderProgram(ShaderProgram *program_) = 0;
 
             /**
              * Delete a shader program.
              *
              * @param program_ Program to delete.
              */
-            virtual void DeleteShaderProgram(ShaderProgram *program_) = 0;
+            virtual void deleteShaderProgram(ShaderProgram *program_) = 0;
 
             /**
              * Bind the provided shader program.
              *
              * @param program_ Program to bind.
              */
-            virtual void BindShaderProgram(const ShaderProgram *program_) = 0;
+            virtual void bindShaderProgram(const ShaderProgram *program_) = 0;
 
             /**
              * Check if a shader program is valid.
              *
              * @param program_ Program to check.
              */
-            virtual bool IsShaderProgramValid(const ShaderProgram *program_) = 0;
+            virtual bool isShaderProgramValid(const ShaderProgram *program_) = 0;
 
             /**
              * Bind a shader program's state.
              *
              * @param state_ State to bind.
              */
-            virtual void BindShaderProgramState(ShaderProgramState *state_) = 0;
-
-            /**
-             * Bind a buffer.
-             *
-             * @warning Due to the nature of buffers, you must use `UnbindBuffer` instead of passing null.
-             * @param buffer_ The buffer to bind
-             */
-            virtual void BindBuffer(Buffer *buffer_) = 0;
+            virtual void bindShaderProgramState(ShaderProgramState *state_) = 0;
 
             /**
              * Create a render target on the GPU.
              *
              * @param renderTarget_ Render target object.
              */
-            virtual bool CreateRenderTarget(RenderTarget *renderTarget_) = 0;
+            virtual bool createRenderTarget(RenderTarget *renderTarget_) = 0;
 
             /**
              * Delete a render target from the GPU.
              *
              * @param renderTarget_ Render target object.
              */
-            virtual void DeleteRenderTarget(RenderTarget *renderTarget_) = 0;
+            virtual void deleteRenderTarget(RenderTarget *renderTarget_) = 0;
 
             /**
              * Bind a render target.
              *
              * @param renderTarget_ Target to bind or null.
              */
-            virtual void BindRenderTarget(RenderTarget *renderTarget_) = 0;
+            virtual void bindRenderTarget(RenderTarget *renderTarget_) = 0;
 
             /**
              * Test if a render target is valid.
@@ -237,7 +229,7 @@ namespace Ngine::Graphics {
              * @param renderTarget_ Render target to check.
              * @return Whether or not the render target is valid.
              */
-            virtual bool IsRenderTargetValid(const RenderTarget *renderTarget_) = 0;
+            virtual bool isRenderTargetValid(const RenderTarget *renderTarget_) = 0;
 
             /**
              * Compare two render targets.
@@ -246,28 +238,36 @@ namespace Ngine::Graphics {
              * @param b_ Render target B.
              * @return Whether or not the targets are the same.
              */
-            virtual bool CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) = 0;
+            virtual bool compareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) = 0;
+
+            /**
+             * Bind a buffer.
+             *
+             * @warning Due to the nature of buffers, you must use `UnbindBuffer` instead of passing null.
+             * @param buffer_ The buffer to bind
+             */
+            virtual void bindBuffer(Buffer *buffer_) = 0;
 
             /**
              * Unbind a buffer
              *
              * @param buffer_ Buffer to unbind.
              */
-            virtual void UnbindBuffer(Buffer *buffer_) = 0;
+            virtual void unbindBuffer(Buffer *buffer_) = 0;
 
             /**
              * Using a provided buffer, create it on the GPU.
              *
              * @param buffer_ Buffer to initialize.
              */
-            virtual void CreateBuffer(Buffer *buffer_) = 0;
+            virtual void createBuffer(Buffer *buffer_) = 0;
 
             /**
              * Cleanup buffer on GPU.
              *
              * @param buffer_ Buffer to clean/remove.
              */
-            virtual void DeleteBuffer(Buffer *buffer_) = 0;
+            virtual void deleteBuffer(Buffer *buffer_) = 0;
 
             /**
              * Write the given data to the given buffer.
@@ -278,47 +278,47 @@ namespace Ngine::Graphics {
              * @param size_ The size of each entry
              * @param update_ GL only, whether or not to use glBufferSubData
              */
-            virtual void WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) = 0;
+            virtual void writeBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) = 0;
 
             /**
              * Initialize a vertex layout on the GPU.
              *
              * @param layout_ The layout to initialize
              */
-            virtual void CreateVertexLayout(VertexLayout *layout_) = 0;
+            virtual void createVertexLayout(VertexLayout *layout_) = 0;
 
             /**
              * Cleanup a vertex layout in the GPU.
              *
              * @param layout_ Layout to clean.
              */
-            virtual void DeleteVertexLayout(VertexLayout *layout_) = 0;
+            virtual void deleteVertexLayout(VertexLayout *layout_) = 0;
 
             /**
              * Configure/Finalize the vertex layout in the GPU.
              *
              * @param layout_ Layout to configure.
              */
-            virtual void ConfigureVertexLayout(VertexLayout *layout_) = 0;
+            virtual void configureVertexLayout(VertexLayout *layout_) = 0;
 
             /**
              * Use a vertex layout.
              *
              * @param layout_ Layout to use.
              */
-            void UseVertexLayout(VertexLayout *layout_);
+            void useVertexLayout(VertexLayout *layout_);
 
             /**
              * Stop using a vertex layout.
              *
              * @param layout_ Layout to stop.
              */
-            void StopVertexLayout(VertexLayout *layout_);
+            void stopVertexLayout(VertexLayout *layout_);
 
             /**
              * Prepare for rendering 2D
              */
-            virtual void PrepareFor2D() = 0;
+            virtual void prepareFor2D() = 0;
 
             /**
              * Draw the currently bound buffer array.
@@ -326,7 +326,7 @@ namespace Ngine::Graphics {
              * @param count_ Number of vertices (triangles * 3) to draw.
              * @param start_ The starting index.
              */
-            virtual void Draw(int count_, int start_) = 0;
+            virtual void draw(int count_, int start_) = 0;
 
             /**
              * Draw the currently bound vertex buffer which is indexed by a bound index buffer.
@@ -334,7 +334,7 @@ namespace Ngine::Graphics {
              * @param count_ Number of vertices (triangles * 3) to draw.
              * @param start_ The starting index.
              */
-            virtual void DrawIndexed(int count_, int start_) = 0;
+            virtual void drawIndexed(int count_, int start_) = 0;
         };
     }
 }

@@ -27,7 +27,7 @@
 #include "API/PlatformGraphicsAPI.hpp"
 #include "Texture2D.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * A 2D Texture in the GPU that can be rendered to.
      */
@@ -74,21 +74,21 @@ namespace Ngine::Graphics {
          *
          * @return Get the texture that rendered to.
          */
-        Texture2D *GetTexture();
+        Texture2D *getTexture();
 
         /**
          * Whether or not the render target is valid and usable.
          *
          * @return Whether the target is valid or not.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Free the render target.
 
          * @warning This will delete the texture too, ensure it is not going to be rendered this frame.
          */
-        void Free() override;
+        void free() override;
 
         bool operator==(const RenderTarget &b) const;
         bool operator!=(const RenderTarget &b) const;

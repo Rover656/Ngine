@@ -23,7 +23,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     float RenderableNode::GetDepth() {
         return m_depth;
     }
@@ -51,19 +51,19 @@ namespace Ngine::Graphics {
         m_dirty = false;
     }
 
-    void RenderSpace::AddNode(RenderableNode *node_) {
+    void RenderSpace::addNode(RenderableNode *node_) {
         // Add to the vector then asks for re-sort
         m_nodes.push_back(node_);
         m_dirty = true;
     }
 
-    void RenderSpace::RemoveNode(RenderableNode *node_) {
+    void RenderSpace::removeNode(RenderableNode *node_) {
         // Remove from the vector (does not dirty as it doesnt break order)
         m_nodes.erase(std::remove(m_nodes.begin(), m_nodes.end(), node_), m_nodes.end());
     }
 
-    Camera *RenderSpace::CreateCamera(const std::string &name_) {
-        if (GetCamera(name_) == nullptr) {
+    Camera *RenderSpace::createCamera(const std::string &name_) {
+        if (getCamera(name_) == nullptr) {
             m_cameras[name_] = Camera();
             return &m_cameras[name_];
         }
@@ -72,7 +72,7 @@ namespace Ngine::Graphics {
         return nullptr;
     }
 
-    Camera *RenderSpace::GetCamera(const std::string &name_) {
+    Camera *RenderSpace::getCamera(const std::string &name_) {
         auto it = m_cameras.find(name_);
         if (it != m_cameras.end()) {
             return &m_cameras[name_];
@@ -80,22 +80,22 @@ namespace Ngine::Graphics {
         return nullptr;
     }
 
-    void RenderSpace::Render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_) {
+    void RenderSpace::render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_) {
         // Check if we need to re-sort
         if (m_dirty) _sortNodes();
 
         // Get camera
-        auto camera = GetCamera(camera_);
+        auto camera = getCamera(camera_);
         if (camera == nullptr)
             Console::Fail("RenderSpace", "Camera does not exist.");
 
         // TODO: Camera based culling system.
 
         // Get graphics device and enable camera and target
-        auto graphicsDevice = renderer_->GetGraphicsDevice();
-        camera->BeginCamera(graphicsDevice);
+        auto graphicsDevice = renderer_->getGraphicsDevice();
+        camera->beginCamera(graphicsDevice);
         if (target_ != nullptr)
-            graphicsDevice->PushTarget(target_);
+            graphicsDevice->pushTarget(target_);
 
         // Render each node
         for (auto node : m_nodes) {
@@ -103,9 +103,9 @@ namespace Ngine::Graphics {
         }
 
         // Clean
-        renderer_->RenderBatch();
-        camera->EndCamera(graphicsDevice);
+        renderer_->renderBatch();
+        camera->endCamera(graphicsDevice);
         if (target_ != nullptr)
-            graphicsDevice->PopTarget();
+            graphicsDevice->popTarget();
     }
 }

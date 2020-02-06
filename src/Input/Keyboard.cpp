@@ -29,11 +29,11 @@
 #include "Game.hpp"
 #include "Window.hpp"
 
-namespace Ngine::Input {
+namespace ngine::input {
 #if defined(PLATFORM_DESKTOP)
 
     void Keyboard::_GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_) {
-        auto kbd = ((Window *)glfwGetWindowUserPointer(window_))->GetKeyboard();
+        auto kbd = ((Window *) glfwGetWindowUserPointer(window_))->getKeyboard();
         kbd->m_nextKeyState[key_] = (action_ != GLFW_RELEASE);
         kbd->m_latestKeyPress = (Key)key_;
     }
@@ -151,32 +151,32 @@ namespace Ngine::Input {
 
     Keyboard *Keyboard::GetCurrent() {
         auto w = Window::GetCurrent();
-        return w == nullptr ? nullptr : w->GetKeyboard();
+        return w == nullptr ? nullptr : w->getKeyboard();
     }
 
-    Key Keyboard::GetLatestKeypress() {
+    Key Keyboard::getLatestKeypress() {
         return m_latestKeyPress;
     }
 
-    bool Keyboard::IsKeyDown(const Key key_) {
+    bool Keyboard::isKeyDown(Key key_) {
         if (key_ == KEY_NONE) return false;
         return m_currentKeyState[key_];
     }
 
-    bool Keyboard::IsKeyPressed(const Key key_) {
+    bool Keyboard::isKeyPressed(Key key_) {
         return m_currentKeyState[key_] != m_previousKeyState[key_] && m_currentKeyState[key_];
     }
 
-    bool Keyboard::IsKeyReleased(const Key key_) {
+    bool Keyboard::isKeyReleased(Key key_) {
         return m_currentKeyState[key_] != m_previousKeyState[key_] && !m_currentKeyState[key_];
     }
 
-    bool Keyboard::IsKeyUp(const Key key_) {
+    bool Keyboard::isKeyUp(Key key_) {
         if (key_ == KEY_NONE) return true;
-        return !IsKeyDown(key_);
+        return !isKeyDown(key_);
     }
 
-    void Keyboard::PollInputs() {
+    void Keyboard::pollInputs() {
         // Move current to last and next into current
         for (auto i = 0; i <= KEY_MAX; i++) {
             m_previousKeyState[i] = m_currentKeyState[i];
@@ -186,15 +186,15 @@ namespace Ngine::Input {
         // Fire events
         for (auto i = 0; i <= KEY_MAX; i++) {
             auto k = (Key)i;
-            if (IsKeyPressed(k)) {
+            if (isKeyPressed(k)) {
                 KeyPressed({k});
-            } else if (IsKeyReleased(k)) {
+            } else if (isKeyReleased(k)) {
                 KeyReleased({k});
             }
         }
     }
 
-    void Keyboard::SetExitKey(const Key key_) {
+    void Keyboard::setExitKey(Key key_) {
         m_exitKey = key_;
     }
 }

@@ -22,7 +22,7 @@
 
 #include <Box2D/Box2D.h>
 
-namespace Ngine::Physics {
+namespace ngine::physics {
     // Public Constructor
 
     PhysicsWorld::PhysicsWorld(const Vector2 &gravVector, float ppm)
@@ -51,102 +51,102 @@ namespace Ngine::Physics {
 
     // Public Methods
 
-    void PhysicsWorld::ClearForces() {
+    void PhysicsWorld::clearForces() {
         _B2World->ClearForces();
     }
 
-    PhysicsBody *PhysicsWorld::CreateBody(PhysicsBody::BodyInfo info_) {
+    PhysicsBody *PhysicsWorld::createBody(PhysicsBody::BodyInfo info_) {
         return new PhysicsBody(this, info_);
     }
 
-    void PhysicsWorld::DestroyBody(PhysicsBody *body_) {
-        _B2World->DestroyBody(body_->GetB2Body());
+    void PhysicsWorld::destroyBody(PhysicsBody *body_) {
+        _B2World->DestroyBody(body_->getB2Body());
         delete body_;
     }
 
-    bool PhysicsWorld::GetAllowSleeping() {
+    bool PhysicsWorld::getAllowSleeping() {
         return _B2World->GetAllowSleeping();
     }
 
-    b2World *PhysicsWorld::GetB2World() {
+    b2World *PhysicsWorld::getB2World() {
         return _B2World;
     }
 
-    int PhysicsWorld::GetBodyCount() {
+    int PhysicsWorld::getBodyCount() {
         return _B2World->GetBodyCount();
     }
 
-    int PhysicsWorld::GetContactCount() {
+    int PhysicsWorld::getContactCount() {
         return _B2World->GetContactCount();
     }
 
-    bool PhysicsWorld::GetContinuousPhysics() {
+    bool PhysicsWorld::getContinuousPhysics() {
         return _B2World->GetContinuousPhysics();
     }
 
-    Vector2 PhysicsWorld::GetGravity() {
+    Vector2 PhysicsWorld::getGravity() {
         auto vec = _B2World->GetGravity();
         return {vec.x, vec.y};
     }
 
-    Vector2 PhysicsWorld::GetGravityPixels() {
+    Vector2 PhysicsWorld::getGravityPixels() {
         auto vec = _B2World->GetGravity();
         return {vec.x * PixelsPerMeter, vec.y * PixelsPerMeter};
     }
 
-    int PhysicsWorld::GetJointCount() {
+    int PhysicsWorld::getJointCount() {
         return _B2World->GetJointCount();
     }
 
-    int PhysicsWorld::GetProxyCount() {
+    int PhysicsWorld::getProxyCount() {
         return _B2World->GetProxyCount();
     }
 
-    bool PhysicsWorld::GetSubStepping() {
+    bool PhysicsWorld::getSubStepping() {
         return _B2World->GetSubStepping();
     }
 
-    bool PhysicsWorld::GetTreeBalance() {
+    bool PhysicsWorld::getTreeBalance() {
         return _B2World->GetTreeBalance();
     }
 
-    bool PhysicsWorld::GetTreeHeight() {
+    bool PhysicsWorld::getTreeHeight() {
         return _B2World->GetTreeHeight();
     }
 
-    bool PhysicsWorld::GetWarmStarting() {
+    bool PhysicsWorld::getWarmStarting() {
         return _B2World->GetWarmStarting();
     }
 
-    bool PhysicsWorld::IsLocked() {
+    bool PhysicsWorld::isLocked() {
         return _B2World->IsLocked();
     }
 
-    void PhysicsWorld::SetAllowSleeping(bool flag_) {
+    void PhysicsWorld::setAllowSleeping(bool flag_) {
         _B2World->SetAllowSleeping(flag_);
     }
 
-    void PhysicsWorld::SetAutoClearForces(bool flag_) {
+    void PhysicsWorld::setAutoClearForces(bool flag_) {
         _B2World->SetAutoClearForces(flag_);
     }
 
-    void PhysicsWorld::SetContinuousPhysics(bool flag_) {
+    void PhysicsWorld::setContinuousPhysics(bool flag_) {
         _B2World->SetContinuousPhysics(flag_);
     }
 
-    void PhysicsWorld::SetGravity(const Vector2 &gravVector) {
+    void PhysicsWorld::setGravity(const Vector2 &gravVector) {
         _B2World->SetGravity({gravVector.X, gravVector.Y});
     }
 
-    void PhysicsWorld::SetSubStepping(bool flag_) {
+    void PhysicsWorld::setSubStepping(bool flag_) {
         _B2World->SetSubStepping(flag_);
     }
 
-    void PhysicsWorld::SetWarmStarting(bool flag_) {
+    void PhysicsWorld::setWarmStarting(bool flag_) {
         _B2World->SetWarmStarting(flag_);
     }
 
-    void PhysicsWorld::Step(float timeStep, int velocityIterations, int positionIterations) {
+    void PhysicsWorld::step(float timeStep, int velocityIterations, int positionIterations) {
         _B2World->Step(timeStep, velocityIterations, positionIterations);
     }
 }

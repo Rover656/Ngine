@@ -26,7 +26,7 @@
 #include "../Math.hpp"
 #include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * Defines a camera configuration.
      */
@@ -68,14 +68,14 @@ namespace Ngine::Graphics {
          *
          * @note Internally, this starts using the translation matrix for this camera.
          */
-        void BeginCamera(GraphicsDevice *graphicsDevice_) const;
+        void beginCamera(GraphicsDevice *graphicsDevice_) const;
 
         /**
          * Finish using the camera (internal).
          *
          * @note Internally, this pops the translation matrix for this camera.
          */
-        void EndCamera(GraphicsDevice *graphicsDevice_) const;
+        void endCamera(GraphicsDevice *graphicsDevice_) const;
 
         /**
          * Convert a screen/window position to a world position.
@@ -83,7 +83,7 @@ namespace Ngine::Graphics {
          * @param pos_ A screen position to be converted.
          * @return The world coordinate (according to the camera).
          */
-        Vector2 ScreenToWorld(Vector2 pos_);
+        Vector2 screenToWorld(Vector2 pos_);
 
         /**
          * Convert a world position to a screen/window position.
@@ -91,14 +91,14 @@ namespace Ngine::Graphics {
          * @param pos_ The world position to locate on the screen.
          * @return The position on the screen.
          */
-        Vector2 WorldToScreen(Vector2 pos_);
+        Vector2 worldToScreen(Vector2 pos_);
 
         /**
          * Get the translation matrix.
          *
          * @return The translation matrix for the camera.
          */
-        Matrix GetTranslationMatrix() const;
+        Matrix getTranslationMatrix() const;
     };
 }
 

@@ -25,7 +25,7 @@
 
 #include "../../third-party/miniaudio/miniaudio.h"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     /**
      * Audio buffer usage type
      */
@@ -120,41 +120,41 @@ namespace Ngine::Audio {
          *
          * @return Whether the buffer is playing or not.
          */
-        bool IsPlaying() const;
+        bool isPlaying() const;
 
         /**
          * Pause buffer.
          */
-        void Pause();
+        void pause();
 
         /**
          * Play buffer.
          */
-        void Play();
+        void play();
 
         /**
          * Resume buffer.
          */
-        void Resume();
+        void resume();
 
         /**
          * Set buffer pitch
          *
          * @param pitch_ The pitch for the buffer.
          */
-        void SetPitch(float pitch_);
+        void setPitch(float pitch_);
 
         /**
          * Set buffer volume
          *
          * @param vol_ The volume for the buffer.
          */
-        void SetVolume(float vol_);
+        void setVolume(float vol_);
 
         /**
          * Stop buffer
          */
-        void Stop();
+        void stop();
     };
 }
 

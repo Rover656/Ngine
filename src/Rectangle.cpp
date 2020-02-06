@@ -20,23 +20,23 @@
 
 #include "Rectangle.hpp"
 
-namespace Ngine {
-    bool Rectangle::Contains(Vector2 point_) const {
+namespace ngine {
+    bool Rectangle::contains(Vector2 point_) const {
         return X <= point_.X
             && point_.X < X + Width
             && Y <= point_.Y
             && point_.Y < Y + Height;
     }
 
-    Physics::BoundingBox Rectangle::ToBoundingBox(const float rotation_, Vector2 origin_) const {
+    physics::BoundingBox Rectangle::toBoundingBox(float rotation_, Vector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 
         // Get rectangle coords rotated
-        const auto tl = Vector2(X, Y).Transform(origin_, rotation_);
-        const auto tr = Vector2(X + Width, Y).Transform(origin_, rotation_);
-        const auto bl = Vector2(X, Y + Height).Transform(origin_, rotation_);
-        const auto br = Vector2(X + Width, Y + Height).Transform(origin_, rotation_);
+        const auto tl = Vector2(X, Y).transform(origin_, rotation_);
+        const auto tr = Vector2(X + Width, Y).transform(origin_, rotation_);
+        const auto bl = Vector2(X, Y + Height).transform(origin_, rotation_);
+        const auto br = Vector2(X + Width, Y + Height).transform(origin_, rotation_);
 
         // Find min and max
         auto minX = std::min(tl.X, std::min(tr.X, std::min(bl.X, br.X)));
@@ -45,41 +45,41 @@ namespace Ngine {
         auto maxY = std::max(tl.Y, std::max(tr.Y, std::max(bl.Y, br.Y)));
 
         // Create bounding box
-        Physics::BoundingBox box;
+        physics::BoundingBox box;
         box.Min = {minX, minY};
         box.Max = {maxX, maxY};
         return box;
     }
 
-    Physics::BoundingBox *Rectangle::ToBoundingBoxPtr(float rotation_, Vector2 origin_) const {
-        auto valbbox = ToBoundingBox(rotation_, origin_);
-        auto bbox = new Physics::BoundingBox();
+    physics::BoundingBox *Rectangle::toBoundingBoxPtr(float rotation_, Vector2 origin_) const {
+        auto valbbox = toBoundingBox(rotation_, origin_);
+        auto bbox = new physics::BoundingBox();
         bbox->Min = valbbox.Min;
         bbox->Max = valbbox.Max;
         return bbox;
     }
 
-    Physics::Polygon Rectangle::ToPolygon(const float rotation_, Vector2 origin_) const {
+    physics::Polygon Rectangle::toPolygon(float rotation_, Vector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 
         // Make polygon
         std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
-            vertex = vertex.Transform(origin_, rotation_);
+            vertex = vertex.transform(origin_, rotation_);
         }
-        return Physics::Polygon(vertices);
+        return physics::Polygon(vertices);
     }
 
-    Physics::Polygon *Rectangle::ToPolygonPtr(const float rotation_, Vector2 origin_) const {
+    physics::Polygon *Rectangle::toPolygonPtr(float rotation_, Vector2 origin_) const {
         // Fix origin
         origin_ += {X, Y};
 
         // Make polygon
         std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
-            vertex = vertex.Transform(origin_, rotation_);
+            vertex = vertex.transform(origin_, rotation_);
         }
-        return new Physics::Polygon(vertices);
+        return new physics::Polygon(vertices);
     }
 }

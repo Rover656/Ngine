@@ -24,16 +24,16 @@
 
 #include <cstring>
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     ShaderProgramState::ShaderProgramState(ShaderProgram *program_)
             : AttachedProgram(program_) {
         // Check program
-        if (!AttachedProgram->IsFinal())
+        if (!AttachedProgram->isFinal())
             Console::Fail("ShaderProgramState", "Shader program must be marked as final before use.");
 
         // Allocate
         // Get data size.
-        int size = AttachedProgram->GetUniformDataSize();
+        int size = AttachedProgram->getUniformDataSize();
 
         // Allocate
         m_data = malloc(size);
@@ -48,10 +48,10 @@ namespace Ngine::Graphics {
         m_data = nullptr;
     }
 
-    const void *ShaderProgramState::GetUniform(const std::string &name_) {
+    const void *ShaderProgramState::getUniform(const std::string &name_) {
         // Find the uniform
         ShaderDataStructure uniformDesc;
-        for (const auto& uniform : AttachedProgram->GetUniforms()) {
+        for (const auto& uniform : AttachedProgram->getUniforms()) {
             if (uniform.Name == name_) {
                 uniformDesc = uniform;
                 break;
@@ -59,20 +59,20 @@ namespace Ngine::Graphics {
         }
 
         // Skip if there is no data
-        if (uniformDesc.GetSize() == 0 || uniformDesc.Count == 0)
+        if (uniformDesc.getSize() == 0 || uniformDesc.Count == 0)
             Console::Fail("ShaderUniformData", "Uniform could not be found or uniform has invalid parameters.");
 
         char *dat = (char *) m_data;
         return &dat[uniformDesc.Offset];
     }
 
-    void ShaderProgramState::SetUniform(const std::string &name_, void *data_) {
+    void ShaderProgramState::setUniform(const std::string &name_, void *data_) {
         if (m_data == nullptr)
             Console::Fail("ShaderUniformData", "Memory not allocated. Call Allocate() first.");
 
         // Find the uniform
         ShaderDataStructure uniformDesc;
-        for (const auto& uniform : AttachedProgram->GetUniforms()) {
+        for (const auto& uniform : AttachedProgram->getUniforms()) {
             if (uniform.Name == name_) {
                 uniformDesc = uniform;
                 break;
@@ -80,18 +80,18 @@ namespace Ngine::Graphics {
         }
 
         // Skip if there is no data
-        if (uniformDesc.GetSize() == 0 || uniformDesc.Count == 0) return;
+        if (uniformDesc.getSize() == 0 || uniformDesc.Count == 0) return;
 
         // Copy data in
         char *dat = (char *) m_data;
-        memcpy(&dat[uniformDesc.Offset], data_, uniformDesc.GetSize() * uniformDesc.Count);
+        memcpy(&dat[uniformDesc.Offset], data_, uniformDesc.getSize() * uniformDesc.Count);
     }
 
-    void ShaderProgramState::SetUniformEx(std::vector<std::string> nameTree_, void *data_) {
+    void ShaderProgramState::setUniformEx(std::vector<std::string> nameTree_, void *data_) {
         ShaderDataStructure target;
 
         // Find initial structure
-        for (const auto& uniform : AttachedProgram->GetUniforms()) {
+        for (const auto& uniform : AttachedProgram->getUniforms()) {
             if (uniform.Name == nameTree_[0]) {
                 target = uniform;
                 break;
@@ -99,7 +99,7 @@ namespace Ngine::Graphics {
         }
 
         // Skip if there is no target
-        if (target.GetSize() == 0 || target.Count == 0) return;
+        if (target.getSize() == 0 || target.Count == 0) return;
 
         // Navigate name tree
         int dataOffset = target.Offset;
@@ -126,7 +126,7 @@ namespace Ngine::Graphics {
                     auto index = std::stoi(nameTree_[i]);
                     if (index < target.Count) {
                         target = mem;
-                        dataOffset += target.GetSize() * index;
+                        dataOffset += target.getSize() * index;
                         goto found;
                     }
                     break;
@@ -137,10 +137,10 @@ namespace Ngine::Graphics {
 
         // Copy data in
         char *dat = (char *) m_data;
-        memcpy(&dat[dataOffset], data_, target.GetSize() * target.Count);
+        memcpy(&dat[dataOffset], data_, target.getSize() * target.Count);
     }
 
-    const void *ShaderProgramState::GetData() const {
+    const void *ShaderProgramState::getData() const {
         return m_data;
     }
 }

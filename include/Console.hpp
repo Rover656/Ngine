@@ -27,7 +27,7 @@
 #include <ppltasks.h>
 #endif
 
-namespace Ngine {
+namespace ngine {
     /**
      * Log writer class.
      *

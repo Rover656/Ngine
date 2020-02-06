@@ -26,11 +26,16 @@
 #include "../Filesystem/Filesystem.hpp"
 #include "../Resource.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     /**
      * Wave sound data.
      */
-    struct NEAPI Wave : public IResource {
+    class NEAPI Wave : public IResource {
+        void _loadFLAC(const filesystem::Path &path_);
+        void _loadMP3(const filesystem::Path &path_);
+        void _loadOGG(const filesystem::Path &path_);
+        void _loadWAV(const filesystem::Path &path_);
+    public:
         /**
          * Number of audio channels.
          */
@@ -63,7 +68,7 @@ namespace Ngine::Audio {
          *
          * @return Whether or not the sound is valid.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Load wave file.
@@ -71,18 +76,12 @@ namespace Ngine::Audio {
          * @param path_ The file to load wave data from.
          * @return The wave data.
          */
-        static Wave *LoadWave(const Filesystem::Path &path_);
+        static Wave *LoadWave(const filesystem::Path &path_);
 
         /**
          * Free wave file.
          */
-        void Free() override;
-
-    private:
-        void __LoadFLAC(const Filesystem::Path &path_);
-        void __LoadMP3(const Filesystem::Path &path_);
-        void __LoadOGG(const Filesystem::Path &path_);
-        void __LoadWAV(const Filesystem::Path &path_);
+        void free() override;
     };
 }
 

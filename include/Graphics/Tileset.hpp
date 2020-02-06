@@ -26,7 +26,7 @@
 #include "../Math.hpp"
 #include "Texture2D.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * Information about a tileset.
      *
@@ -51,7 +51,7 @@ namespace Ngine::Graphics {
 
         Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_);
 
-        void DrawTile(Graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void drawTile(graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
     };
 }
 

@@ -28,11 +28,12 @@
 #include "AudioStream.hpp"
 #include "Wave.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     /**
      * A sound.
      */
-    struct NEAPI Sound : public IResource {
+    class NEAPI Sound : public IResource {
+    public:
         /**
          * The number of samples.
          */
@@ -46,7 +47,7 @@ namespace Ngine::Audio {
         /**
          * Create an empty sound.
          */
-        Sound() {}
+        Sound() = default;
         ~Sound();
 
         /**
@@ -54,14 +55,14 @@ namespace Ngine::Audio {
          *
          * @return Whether the sound is playing or not.
          */
-        bool IsPlaying() const;
+        bool isPlaying() const;
 
         /**
          * Whether or not the sound is valid.
          *
          * @return Whether the sound is valid or not.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Load a sound from a file.
@@ -69,7 +70,7 @@ namespace Ngine::Audio {
          * @param path_ The file to load sound from.
          * @return The loaded sound.
          */
-        static Sound *LoadSound(const Filesystem::Path &path_);
+        static Sound *LoadSound(const filesystem::Path &path_);
 
         /**
          * Load sound from wave data.
@@ -82,41 +83,41 @@ namespace Ngine::Audio {
         /**
          * Pause sound.
          */
-        void Pause();
+        void pause();
 
         /**
          * Play sound.
          */
-        void Play();
+        void play();
 
         /**
          * Resume sound.
          */
-        void Resume();
+        void resume();
 
         /**
          * Set sound pitch.
          *
          * @param pitch_ Sound pitch.
          */
-        void SetPitch(float pitch_);
+        void setPitch(float pitch_);
 
         /**
          * Set sound volume.
          *
          * @param vol_ Sound volume.
          */
-        void SetVolume(float vol_);
+        void setVolume(float vol_);
 
         /**
          * Stop sound.
          */
-        void Stop();
+        void stop();
 
         /**
          * Free sound.
          */
-        void Free() override;
+        void free() override;
     };
 }
 

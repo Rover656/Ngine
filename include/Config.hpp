@@ -90,4 +90,4 @@
     #error "Unsupported platform"
 #endif
 
-#endif //CONFIG_HPP
+#endif // CONFIG_HPP

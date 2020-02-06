@@ -27,7 +27,7 @@
 
 #include <cstring>
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     // The default APIs are set here.
     GraphicsAPI GraphicsDevice::m_targetAPI
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -153,83 +153,83 @@ namespace Ngine::Graphics {
         return m_targetMinorVersion;
     }
 
-    Window *GraphicsDevice::GetWindow() {
+    Window *GraphicsDevice::getWindow() {
         return m_attachedWindow;
     }
 
-    void GraphicsDevice::Clear(Color color_) {
-        m_platformAPI->Clear(color_);
+    void GraphicsDevice::clear(Color color_) {
+        m_platformAPI->clear(color_);
     }
 
-    RenderTarget *GraphicsDevice::GetCurrentTarget() {
+    RenderTarget *GraphicsDevice::getCurrentTarget() {
         if (m_targetCounter > 0)
             return m_targetStack[m_targetCounter - 1];
         return nullptr;
     }
 
-    void GraphicsDevice::PushTarget(RenderTarget *target_) {
+    void GraphicsDevice::pushTarget(RenderTarget *target_) {
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
             Console::Fail("GraphicsDevice", "Render target stack overflow.");
 
         // Force render of any batch before swapping target
         for (auto renderer : m_attachedRenderers)
-            renderer->RenderBatch(); // TODO: Review this stuff now.
+            renderer->renderBatch(); // TODO: Review this stuff now.
 
         // Add to stack
         m_targetStack[m_targetCounter] = target_;
         m_targetCounter++;
 
         // Bind
-        m_platformAPI->BindRenderTarget(target_);
+        m_platformAPI->bindRenderTarget(target_);
     }
 
-    void GraphicsDevice::PopTarget() {
+    void GraphicsDevice::popTarget() {
         // Force render of any batch before swapping target
         for (auto renderer : m_attachedRenderers)
-            renderer->RenderBatch();
+            renderer->renderBatch();
 
         // If target counter greater than 0, decrease
         if (m_targetCounter > 0) m_targetCounter--;
     }
 
-    Matrix GraphicsDevice::GetProjectionMatrix() const {
+    Matrix GraphicsDevice::getProjectionMatrix() const {
         return m_projectionMatrix;
     }
 
-    Matrix GraphicsDevice::GetViewMatrix() const {
+    Matrix GraphicsDevice::getViewMatrix() const {
         if (m_viewCounter > 0)
             return m_viewMatrixStack[m_viewCounter - 1];
         return Matrix::Identity;
     }
 
-    void GraphicsDevice::PushViewMatrix() {
+    void GraphicsDevice::pushViewMatrix() {
         if (m_viewCounter >= MAX_MATRICES)
             Console::Fail("GraphicsDevice", "ModelView Matrix stack overflow.");
 
         // Add to stack
-        m_viewMatrixStack[m_viewCounter] = GetViewMatrix();
+        m_viewMatrixStack[m_viewCounter] = getViewMatrix();
         m_viewCounter++;
     }
 
-    void GraphicsDevice::PopViewMatrix() {
+    void GraphicsDevice::popViewMatrix() {
         // If target counter greater than 0, decrease
         if (m_viewCounter > 0) m_viewCounter--;
     }
 
-    void GraphicsDevice::LoadViewIdentity() {
-        if (m_viewCounter == 0) PushViewMatrix();
+    void GraphicsDevice::loadViewIdentity() {
+        if (m_viewCounter == 0) pushViewMatrix();
         m_viewMatrixStack[m_viewCounter - 1] = Matrix::Identity;
     }
 
-    void GraphicsDevice::MultView(const Matrix &matrix_) {
-        if (m_viewCounter == 0) PushViewMatrix();
+    void GraphicsDevice::multView(const Matrix &matrix_) {
+        if (m_viewCounter == 0) pushViewMatrix();
         m_viewMatrixStack[m_viewCounter - 1] = m_viewMatrixStack[m_viewCounter - 1] * matrix_;
     }
 
-    void GraphicsDevice::SetupFramebuffer() {
+    void GraphicsDevice::setupFramebuffer() {
         // Bind render target, just to be sure it is done.
-        m_platformAPI->BindRenderTarget(m_targetCounter > 0 ? m_targetStack[m_targetCounter - 1] : nullptr);
+        m_platformAPI->bindRenderTarget(m_targetCounter > 0 ? m_targetStack[m_targetCounter - 1] : nullptr);
 
         // Get viewport width and height.
         int w, h;
@@ -237,18 +237,18 @@ namespace Ngine::Graphics {
             w = m_targetStack[m_targetCounter - 1]->Width;
             h = m_targetStack[m_targetCounter - 1]->Height;
         } else {
-            w = m_attachedWindow->GetWidth();
-            h = m_attachedWindow->GetHeight();
+            w = m_attachedWindow->getWidth();
+            h = m_attachedWindow->getHeight();
         }
 
         // Configure viewport
-        m_platformAPI->ConfigureViewport(0, 0, w, h);
+        m_platformAPI->configureViewport(0, 0, w, h);
 
         // Create new matrix
         m_projectionMatrix = Matrix::Orthographic(0, (float) w, (float) h, 0, -1, 1);
     }
 
-    API::PlatformGraphicsAPI *GraphicsDevice::GetAPI() {
+    API::PlatformGraphicsAPI *GraphicsDevice::getAPI() {
         return m_platformAPI;
     }
 }

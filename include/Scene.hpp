@@ -30,7 +30,7 @@
 #include "Events.hpp"
 #include "Rectangle.hpp"
 
-namespace Ngine {
+namespace ngine {
     // Forward declare
     class Game;
 
@@ -61,7 +61,7 @@ namespace Ngine {
         /**
          * Currently active camera which controls the viewport
          */
-        Graphics::Camera *m_activeCamera = nullptr;
+        graphics::Camera *m_activeCamera = nullptr;
 
         /**
          * The culling area width.
@@ -107,7 +107,7 @@ namespace Ngine {
         /**
          * The physics world, if enabled.
          */
-        Physics::PhysicsWorld *m_physicsWorld;
+        physics::PhysicsWorld *m_physicsWorld;
 
         /**
          * The update counter.
@@ -151,12 +151,12 @@ namespace Ngine {
         /**
          * On draw event.
          */
-        Event<Graphics::Renderer *> OnDraw;
+        Event<graphics::Renderer *> OnDraw;
 
         /**
          * On draw with the camera.
          */
-        Event<Graphics::Renderer *> OnDrawCamera;
+        Event<graphics::Renderer *> OnDrawCamera;
 
         /**
          * On update event.
@@ -192,49 +192,49 @@ namespace Ngine {
          *
          * @return A pointer to the currently active camera
          */
-        Graphics::Camera *GetActiveCamera() const;
+        graphics::Camera *getActiveCamera() const;
 
         /**
          * Set the currently active camera.
          *
          * @param camera_ The new camera.
          */
-        void SetActiveCamera(Graphics::Camera *camera_);
+        void setActiveCamera(graphics::Camera *camera_);
 
         /**
          * Get the culling area.
          *
          * @return The cull area rectangle.
          */
-        Rectangle GetCullArea() const;
+        Rectangle getCullArea() const;
 
         /**
          * Get the top-left coordinate of the cull area. (Same as viewport).
          *
          * @return The top-left coordinate of the cull area.
          */
-        Vector2 GetCullAreaPosition() const;
+        Vector2 getCullAreaPosition() const;
 
         /**
          * Get the bottom-right coordinate of the cull area.
          *
          * @return The bottom-right coordinate of the cull area.
          */
-        Vector2 GetCullAreaEndPosition() const;
+        Vector2 getCullAreaEndPosition() const;
 
         /**
          * Get cull area width.
          *
          * @return The width of the cull area.
          */
-        float GetCullAreaWidth() const;
+        float getCullAreaWidth() const;
 
         /**
          * Get cull area height.
          *
          * @return The height of the cull area.
          */
-        float GetCullAreaHeight() const;
+        float getCullAreaHeight() const;
 
         /**
          * Set the entity culling area.
@@ -243,85 +243,85 @@ namespace Ngine {
          * @param height_ The cull area height.
          * @param centerInViewport_ Whether or not to center the cull area in the viewport.
          */
-        void SetCullArea(float width_, float height_, bool centerInViewport_);
+        void setCullArea(float width_, float height_, bool centerInViewport_);
 
         /**
          * Get the current viewport.
          *
          * @return The current viewport taking into account the camera.
          */
-        Rectangle GetViewport() const;
+        Rectangle getViewport() const;
 
         /**
          * Get the current viewport position.
          *
          * @return The top left coordinate of the viewport.
          */
-        Vector2 GetViewportPosition() const;
+        Vector2 getViewportPosition() const;
 
         /**
          * Get the bottom right coordinate of the viewport.
          *
          * @return The bottom right coordinate of the viewport.
          */
-        Vector2 GetViewportEndPosition() const;
+        Vector2 getViewportEndPosition() const;
 
         /**
          * Get the width of the current viewport.
          *
          * @return The width of the viewport.
          */
-        float GetViewportWidth() const;
+        float getViewportWidth() const;
 
         /**
          * Get the height of the current viewport.
          *
          * @return The height of the viewport.
          */
-        float GetViewportHeight() const;
+        float getViewportHeight() const;
 
         /**
          * Get the parent game.
          */
-        Game *GetGame();
+        Game *getGame();
 
         /**
          * Get the game resource manager.
          *
          * @return The game resource manager.
          */
-        Filesystem::ResourceManager *GetResourceManager() const;
+        filesystem::ResourceManager *getResourceManager() const;
 
         /**
          * Get the current physics world.
          *
          * @return The current physics world.
          */
-        Physics::PhysicsWorld *GetPhysicsWorld();
+        physics::PhysicsWorld *getPhysicsWorld();
 
         /**
          * Get the current physics world (read-only).
          *
          * @return (Read-only) The current physics world.
          */
-        const Physics::PhysicsWorld *GetPhysicsWorld() const;
+        const physics::PhysicsWorld *getPhysicsWorld() const;
 
         /**
          * Pause the scene.
          */
-        void Pause();
+        void pause();
 
         /**
          * Unpause the scene.
          */
-        void Resume();
+        void resume();
 
         /**
          * Is the scene paused.
          *
          * @return Whether or not the scene is paused.
          */
-        bool IsPaused();
+        bool isPaused();
 
         /**
          * Draw the scene.
@@ -329,14 +329,14 @@ namespace Ngine {
          * @warning Should only be called by the game.
          * @param renderer_ The game renderer.
          */
-        void Draw(Graphics::Renderer *renderer_);
+        void draw(graphics::Renderer *renderer_);
 
         /**
          * Update the scene.
          *
          * @warning Should only be called by the game.
          */
-        void Update();
+        void update();
     };
 }
 

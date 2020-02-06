@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * A 32-bit packed color.
      */

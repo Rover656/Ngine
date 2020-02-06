@@ -22,7 +22,7 @@
 
 #include "Entity.hpp"
 
-namespace Ngine {
+namespace ngine {
     Component::Component(Entity *parent_)
             : m_parentEntity(parent_) {
         // Check our parent is valid
@@ -36,33 +36,33 @@ namespace Ngine {
         OnDestroy();
 
         // Detach events
-        UnsubscribeFromUpdate();
+        unsubscribeFromUpdate();
     }
 
-    Game *Component::GetGame() const {
-        return m_parentEntity->GetGame();
+    Game *Component::getGame() const {
+        return m_parentEntity->getGame();
     }
 
-    Filesystem::ResourceManager *Component::GetResourceManager() const {
-        return m_parentEntity->GetResourceManager();
+    filesystem::ResourceManager *Component::getResourceManager() const {
+        return m_parentEntity->getResourceManager();
     }
 
-    void Component::SubscribeToUpdate() {
+    void Component::subscribeToUpdate() {
         // Ensure the entity is subscribed to updates.
-        if (m_parentEntity->SubscribeToUpdate()) {
-            m_onUpdateRef = m_parentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::Update);
+        if (m_parentEntity->subscribeToUpdate()) {
+            m_onUpdateRef = m_parentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::update);
         }
     }
 
-    bool Component::SubscribedToUpdate() const {
-        return m_onUpdateRef.IsAttached();
+    bool Component::subscribedToUpdate() const {
+        return m_onUpdateRef.isAttached();
     }
 
-    void Component::UnsubscribeFromUpdate() {
-        m_onUpdateRef.Detach();
+    void Component::unsubscribeFromUpdate() {
+        m_onUpdateRef.detach();
     }
 
-    void Component::Draw(Graphics::Renderer *renderer_) {}
+    void Component::draw(graphics::Renderer *renderer_) {}
 
-    void Component::Update() {}
+    void Component::update() {}
 }

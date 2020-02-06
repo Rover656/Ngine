@@ -24,7 +24,7 @@
 
 #include <ppltasks.h>
 
-namespace Ngine::UWP {
+namespace ngine::UWP {
     ////////
     // UWPGameBootstrapper
     ////////
@@ -55,15 +55,15 @@ namespace Ngine::UWP {
     void GameApp::Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
         // Register application events
         CoreApplication::Suspending += ref new Windows::Foundation::EventHandler<Windows::ApplicationModel::SuspendingEventArgs ^>(this, &GameApp::OnSuspended);
-        CoreApplication::Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &Ngine::UWP::GameApp::OnResuming);
-        applicationView->Activated += ref new Windows::Foundation::TypedEventHandler<Windows::ApplicationModel::Core::CoreApplicationView ^, Windows::ApplicationModel::Activation::IActivatedEventArgs ^>(this, &Ngine::UWP::GameApp::OnActivated);
+        CoreApplication::Resuming += ref new Windows::Foundation::EventHandler<Platform::Object ^>(this, &ngine::UWP::GameApp::OnResuming);
+        applicationView->Activated += ref new Windows::Foundation::TypedEventHandler<Windows::ApplicationModel::Core::CoreApplicationView ^, Windows::ApplicationModel::Activation::IActivatedEventArgs ^>(this, &GameApp::OnActivated);
     }
 
     void GameApp::Load(Platform::String^ entryPoint) {}
 
     void GameApp::Run() {
         // Run the game.
-        while (m_game->m_running && !m_game->m_gameWindow->ShouldClose()) {
+        while (m_game->m_running && !m_game->m_gameWindow->shouldClose()) {
             m_game->_runDraw();
         }
 
@@ -113,7 +113,7 @@ namespace Ngine::UWP {
         });
     }
 
-    void Ngine::UWP::GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
+    void GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
         // Resume game
         m_game->OnResume();
         m_game->m_running = true;

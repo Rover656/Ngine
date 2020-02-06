@@ -23,7 +23,7 @@
 
 #include "Config.hpp"
 
-namespace Ngine {
+namespace ngine {
     // We do this forward declaration instead of include because Entity uses this.
     class Entity;
 
@@ -74,12 +74,12 @@ namespace Ngine {
          * Add an unnamed entity.
          *
          * @note The entity's lifecycle is now managed by this container.
-         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
          * @param entity_ The entity to add.
          * @return An std::pair with first being name and second the entity
          */
         template <class EntityType = Entity>
-        std::pair<std::string, EntityType *> AddChild(EntityType *entity_) {
+        std::pair<std::string, EntityType *> addChild(EntityType *entity_) {
             // Get as base type
             auto ent = (Entity *) entity_;
 
@@ -101,15 +101,15 @@ namespace Ngine {
          * Add an entity.
          *
          * @note The entity's lifecycle is now managed by this container.
-         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
          * @param name_ The name of the entity.
          * @param entity_ The entity to add.
          * @return The entity, for chaining commands.
          */
         template <class EntityType = Entity>
-        EntityType *AddChild(std::string name_, EntityType *entity_) {
+        EntityType *addChild(std::string name_, EntityType *entity_) {
             // Check the name is not taken
-            if (HasChild(name_))
+            if (hasChild(name_))
                 return nullptr;
 
             // Get as base type
@@ -134,7 +134,7 @@ namespace Ngine {
          * @param Whether or not to delete the entity from memory.
          * @return Whether the entity was removed or not.
          */
-        bool RemoveChild(const std::string &name_, bool delete_ = true);
+        bool removeChild(const std::string &name_, bool delete_ = true);
 
         /**
          * Remove entity by pointer.
@@ -143,19 +143,19 @@ namespace Ngine {
          * @param Whether or not to delete the entity from memory.
          * @return Whether the entity was removed or not.
          */
-        bool RemoveChild(Entity *entity_, bool delete_ = true);
+        bool removeChild(Entity *entity_, bool delete_ = true);
 
         /**
          * Get an entity by name.
          *
-         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
          * @param name_ The name of the entity to get.
          * @return The entity, or null if not found.
          */
         template <class EntityType = Entity>
-        EntityType *GetChild(const std::string &name_) {
+        EntityType *getChild(const std::string &name_) {
             // Try to find the entity
-            if (HasChild(name_)) {
+            if (hasChild(name_)) {
                 return (EntityType *) m_entities.at(name_);
             }
 
@@ -165,13 +165,13 @@ namespace Ngine {
         /**
          * Count all of the entities by type
          *
-         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
          * @return The number of children who match the selected type.
          */
         template <class EntityType = Entity>
-        int CountChildren() {
+        int countChildren() {
             int c = 0;
-            for (auto e : GetChildren()) {
+            for (auto e : getChildren()) {
                 // Dynamic cast so that we count only the correct children.
                 // TODO: Way to identify entity types without dynamically casting. (Reflection maybe?)
                 if (dynamic_cast<EntityType*>(e) != nullptr) c++;
@@ -182,11 +182,11 @@ namespace Ngine {
         /**
          * Get all of the entities of type.
          *
-         * @tparam EntityType The entity type. Must be derrived from Ngine::Entity.
+         * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
          * @return A vector with all of the entities of the provided type.
          */
         template <class EntityType = Entity>
-        std::vector<EntityType*> GetChildren() {
+        std::vector<EntityType*> getChildren() {
             std::vector<EntityType*> ents;
             for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
                 auto ent = it->second;
@@ -205,7 +205,7 @@ namespace Ngine {
          * @return Whether the entity exists or not.
          */
         template<class EntityType = Entity>
-        bool HasChild(const std::string &name_) {
+        bool hasChild(const std::string &name_) {
             auto exists = m_entities.find(name_) != m_entities.end();
             if (!exists) return false;
 

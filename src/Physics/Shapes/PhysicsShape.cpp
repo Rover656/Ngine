@@ -22,7 +22,7 @@
 
 #include <Box2D/Box2D.h>
 
-namespace Ngine::Physics::Shapes {
+namespace ngine::physics::shapes {
     // Protected Constructors
 
     PhysicsShape::PhysicsShape() {
@@ -52,7 +52,7 @@ namespace Ngine::Physics::Shapes {
 
     // Public Methods
 
-    BoundingBox PhysicsShape::ComputeAABB(const Transform2D &xf, int childIndex) {
+    BoundingBox PhysicsShape::computeAABB(const Transform2D &xf, int childIndex) {
         // Convert transform
         b2Transform transform;
         transform.p = {xf.Position.X, xf.Position.Y};
@@ -70,23 +70,23 @@ namespace Ngine::Physics::Shapes {
         return b;
     }
 
-    b2Shape *PhysicsShape::GetB2Shape() {
+    b2Shape *PhysicsShape::getB2Shape() {
         return _Shape;
     }
 
-    int PhysicsShape::GetChildCount() const {
+    int PhysicsShape::getChildCount() const {
         return _Shape->GetChildCount();
     }
 
-    float PhysicsShape::GetRadius() const {
+    float PhysicsShape::getRadius() const {
         return _Shape->m_radius;
     }
 
-    void PhysicsShape::SetRadius(float radius_) {
+    void PhysicsShape::setRadius(float radius_) {
         _Shape->m_radius = radius_;
     }
 
-    bool PhysicsShape::TestPoint(const Transform2D &xf, const Vector2 &p) {
+    bool PhysicsShape::testPoint(const Transform2D &xf, const Vector2 &p) {
         // Convert transform
         b2Transform transform;
         transform.p = {xf.Position.X, xf.Position.Y};

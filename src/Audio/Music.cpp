@@ -27,20 +27,20 @@
 #include "Audio/AudioDevice.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     // Destructor
 
     Music::~Music() {
-        Free();
+        free();
     }
 
     // Public Methods
 
-    float Music::GetLength() {
+    float Music::getLength() {
         return (float)SampleCount/(float)(Stream.SampleRate*Stream.Channels);
     }
 
-    float Music::GetTimePlayed() {
+    float Music::getTimePlayed() {
         float secondsPlayed = 0.0f;
 
         unsigned int samplesPlayed = Stream.Buffer->TotalFramesProcessed*Stream.Channels;
@@ -49,23 +49,23 @@ namespace Ngine::Audio {
         return secondsPlayed;
     }
 
-    bool Music::IsPlaying() const {
-        return Stream.Buffer->IsPlaying();
+    bool Music::isPlaying() const {
+        return Stream.Buffer->isPlaying();
     }
 
-    bool Music::IsValid() const {
+    bool Music::isValid() const {
         return CTXData != nullptr;
     }
 
-    Music *Music::LoadMusic(const Filesystem::Path &path_) {
+    Music *Music::LoadMusic(const filesystem::Path &path_) {
         auto music = new Music();
         bool loaded = false;
 
-        if (path_.GetFileExtension() == "mp3") {
+        if (path_.getFileExtension() == "mp3") {
             auto ctxMp3 = (drmp3 *) malloc(sizeof(drmp3));
             music->CTXData = ctxMp3;
 
-            int result = drmp3_init_file(ctxMp3, path_.GetString().c_str(), nullptr);
+            int result = drmp3_init_file(ctxMp3, path_.getString().c_str(), nullptr);
 
             if (result > 0) {
                 music->CTXType = MusicContextType::MP3;
@@ -75,9 +75,9 @@ namespace Ngine::Audio {
                 music->LoopCount = 0;
                 loaded = true;
             }
-        } else if (path_.GetFileExtension() == "ogg") {
+        } else if (path_.getFileExtension() == "ogg") {
             // Open ogg audio stream
-            music->CTXData = stb_vorbis_open_filename(path_.GetString().c_str(), nullptr, nullptr);
+            music->CTXData = stb_vorbis_open_filename(path_.getString().c_str(), nullptr, nullptr);
 
             if (music->CTXData != nullptr) {
                 music->CTXType = MusicContextType::OGG;
@@ -90,8 +90,8 @@ namespace Ngine::Audio {
                 music->LoopCount = 0;
                 loaded = true;
             }
-        } else if (path_.GetFileExtension() == "flac") {
-            music->CTXData = drflac_open_file(path_.GetString().c_str());
+        } else if (path_.getFileExtension() == "flac") {
+            music->CTXData = drflac_open_file(path_.getString().c_str());
 
             if (music->CTXData != nullptr) {
                 music->CTXType = MusicContextType::FLAC;
@@ -109,7 +109,7 @@ namespace Ngine::Audio {
             switch(music->CTXType) {
                 case MusicContextType::MP3: {
                     drmp3_uninit((drmp3 *) music->CTXData);
-                    free(music->CTXData);
+                    ::free(music->CTXData);
                 } break;
 
                 case MusicContextType::OGG: {
@@ -131,35 +131,35 @@ namespace Ngine::Audio {
         }
     }
 
-    void Music::Pause() {
-        Stream.Buffer->Pause();
+    void Music::pause() {
+        Stream.Buffer->pause();
     }
 
-    void Music::Play() {
+    void Music::play() {
         ma_uint32 curCursorPos = Stream.Buffer->FrameCursorPos;
-        Stream.Buffer->Play();
+        Stream.Buffer->play();
         Stream.Buffer->FrameCursorPos = curCursorPos;
 
         // Add to active music
-        auto it = std::find(_ActiveMusic.begin(), _ActiveMusic.end(), this);
-        if (it == _ActiveMusic.end())
-            _ActiveMusic.push_back(this);
+        auto it = std::find(m_activeMusic.begin(), m_activeMusic.end(), this);
+        if (it == m_activeMusic.end())
+            m_activeMusic.push_back(this);
     }
 
-    void Music::Resume() {
-        Stream.Buffer->Resume();
+    void Music::resume() {
+        Stream.Buffer->resume();
     }
 
-    void Music::SetPitch(float pitch_) {
-        Stream.Buffer->SetPitch(pitch_);
+    void Music::setPitch(float pitch_) {
+        Stream.Buffer->setPitch(pitch_);
     }
 
-    void Music::SetVolume(float vol_) {
-        Stream.Buffer->SetVolume(vol_);
+    void Music::setVolume(float vol_) {
+        Stream.Buffer->setVolume(vol_);
     }
 
-    void Music::Stop() {
-        Stream.Buffer->Stop();
+    void Music::stop() {
+        Stream.Buffer->stop();
 
         switch(CTXType) {
             case MusicContextType::MP3: {
@@ -176,16 +176,16 @@ namespace Ngine::Audio {
         }
 
         // Remove from active music
-        _ActiveMusic.erase(std::remove(_ActiveMusic.begin(), _ActiveMusic.end(), this), _ActiveMusic.end());
+        m_activeMusic.erase(std::remove(m_activeMusic.begin(), m_activeMusic.end(), this), m_activeMusic.end());
     }
 
-    void Music::Free() {
+    void Music::free() {
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
 
         switch(CTXType) {
             case MusicContextType::MP3: {
                 drmp3_uninit((drmp3 *) CTXData);
-                free(CTXData);
+                ::free(CTXData);
             } break;
 
             case MusicContextType::OGG: {
@@ -202,18 +202,18 @@ namespace Ngine::Audio {
     }
 
     void Music::Update() {
-        for (auto mus : _ActiveMusic) {
-            mus->__Update();
+        for (auto mus : m_activeMusic) {
+            mus->_update();
         }
     }
 
     // Private Fields
 
-    std::vector<Music *> Music::_ActiveMusic;
+    std::vector<Music *> Music::m_activeMusic;
 
     // Private Methods
 
-    void Music::__Update() {
+    void Music::_update() {
         bool streamEnding = false;
 
         unsigned int subBufferSizeInFrames = Stream.Buffer->BufferSizeInFrames / 2;
@@ -245,7 +245,7 @@ namespace Ngine::Audio {
                 } break;
             }
 
-            Stream.UpdateStream(pcm, samplesCount);
+            Stream.updateStream(pcm, samplesCount);
 
             if ((CTXType == MusicContextType::XM) || (CTXType == MusicContextType::MOD)) {
                 if (samplesCount > 1) sampleLeft -= samplesCount / 2;
@@ -259,22 +259,22 @@ namespace Ngine::Audio {
         }
 
         // Free pcm data
-        free(pcm);
+        ::free(pcm);
 
         if (streamEnding) {
             // Stop music
-            Stop();
+            stop();
 
             // Increase completed loops
-            _LoopsCompleted++;
+            m_loopsCompleted++;
 
             // Decrease loop count to stop when required.
-            if (_LoopsCompleted < LoopCount || LoopCount == 0) Play();
+            if (m_loopsCompleted < LoopCount || LoopCount == 0) play();
 
             // Reset if complete.
-            if (_LoopsCompleted == LoopCount && LoopCount != 0) _LoopsCompleted = 0;
+            if (m_loopsCompleted == LoopCount && LoopCount != 0) m_loopsCompleted = 0;
         } else {
-            if (Stream.Buffer->IsPlaying()) Play();
+            if (Stream.Buffer->isPlaying()) play();
         }
     }
 }

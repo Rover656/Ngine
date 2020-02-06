@@ -20,27 +20,27 @@
 
 #include "Audio/AudioBuffer.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     // Public Methods
-    bool AudioBuffer::IsPlaying() const {
+    bool AudioBuffer::isPlaying() const {
         return (Playing && !Paused);
     }
 
-    void AudioBuffer::Pause() {
+    void AudioBuffer::pause() {
         Paused = true;
     }
 
-    void AudioBuffer::Play() {
+    void AudioBuffer::play() {
         Playing = true;
         Paused = false;
         FrameCursorPos = 0;
     }
 
-    void AudioBuffer::Resume() {
+    void AudioBuffer::resume() {
         Paused = false;
     }
 
-    void AudioBuffer::SetPitch(float pitch_) {
+    void AudioBuffer::setPitch(float pitch_) {
         float pitchMul = pitch_ / Pitch;
 
         auto newOutputSampleRate = (ma_uint32)((float)DSP.src.config.sampleRateOut/pitchMul);
@@ -49,12 +49,12 @@ namespace Ngine::Audio {
         ma_pcm_converter_set_output_sample_rate(&DSP, newOutputSampleRate);
     }
 
-    void AudioBuffer::SetVolume(float vol_) {
+    void AudioBuffer::setVolume(float vol_) {
         Volume = vol_;
     }
 
-    void AudioBuffer::Stop() {
-        if (IsPlaying()) {
+    void AudioBuffer::stop() {
+        if (isPlaying()) {
             Playing = false;
             Paused = false;
             FrameCursorPos = 0;

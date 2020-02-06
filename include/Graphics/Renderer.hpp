@@ -35,7 +35,7 @@
 #include "Texture2D.hpp"
 #include "VertexLayout.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * Vertex data.
      * `Vector3` for Position, `Vector2` for tex coords and `Color` for color.
@@ -43,7 +43,7 @@ namespace Ngine::Graphics {
     struct Vertex {
         Vector3 Position;
         Vector2 TexCoords;
-        Graphics::Color Color;
+        graphics::Color Color;
     };
 
     /**
@@ -257,7 +257,7 @@ namespace Ngine::Graphics {
          * @param vertices_ Triangle vertices to add.
          * @param count_ The number of vertices in the array.
          */
-        void AddTriangles(Vertex *vertices_, int count_);
+        void addTriangles(Vertex *vertices_, int count_);
 
         /**
          * Add indexed triangle vertices and indices.
@@ -267,7 +267,7 @@ namespace Ngine::Graphics {
          * @param indices_ The indices for the vertex array.
          * @param iCount_ The number of indices in the array.
          */
-        void AddIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_);
+        void addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_);
 
         /**
          * Begin pushing vertices.
@@ -275,13 +275,13 @@ namespace Ngine::Graphics {
          * @param type_ The vertex type. Will be converted by the `VertexDataTool`.
          * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
          */
-        void BeginVertices(PrimitiveType type_);
+        void beginVertices(PrimitiveType type_);
 
         /**
          * Finish pushing vertices and add to the render queue.
          * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
          */
-        void EndVertices();
+        void endVertices();
 
         /**
          * Add a vertex to the current vertex build.
@@ -289,7 +289,7 @@ namespace Ngine::Graphics {
          * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
          * @param vertex_ Vertex to add.
          */
-        void PushVertex(Vertex vertex_);
+        void pushVertex(Vertex vertex_);
 
         /**
          * Set the current texture for rendering.
@@ -297,7 +297,7 @@ namespace Ngine::Graphics {
          * @note Will force a draw of anything before this call if the texture is different.
          * @param texture_ The texture to render with.
          */
-        void SetTexture(Texture2D *texture_);
+        void setTexture(Texture2D *texture_);
 
         /**
          * Set the current shader for rendering.
@@ -305,21 +305,21 @@ namespace Ngine::Graphics {
          * @note Will force a draw of anything before this call if the texture is different.
          * @param state_ The shader program state to use.
          */
-        void SetShader(ShaderProgramState *state_);
+        void setShader(ShaderProgramState *state_);
 
         /**
          * Push a matrix onto the stack (with the current matrix's value).
          *
          * @note This is extremely handy for moving vertices around. This **only** supports the immediate mode (Begin, Vertex, End) workflow at the moment.
          */
-        void PushMatrix();
+        void pushMatrix();
 
         /**
          * Pop a matrix from the stack.
          *
          * @warning Will throw if called when there's nothing to pop.
          */
-        void PopMatrix();
+        void popMatrix();
 
         /**
          * Set the value of the current Matrix.
@@ -327,28 +327,28 @@ namespace Ngine::Graphics {
          * @warning Remember to push first, this could destroy critical existing data. General rule of thumb: Push if you modify something.
          * @param mat_ The new value for the matrix.
          */
-        void SetMatrix(const Matrix &mat_);
+        void setMatrix(const Matrix &mat_);
 
         /**
          * Load the identity matrix to the current matrix.
          *
          * @see `SetMatrix`
          */
-        void LoadIdentity();
+        void loadIdentity();
 
         /**
          * Multiply the given matrix by the current one.
          *
          * @note Formula is as follows: Current Matrix = Matrix Provided * Current Matrix
          */
-        void MultiplyMatrix(const Matrix &mat_);
+        void multiplyMatrix(const Matrix &mat_);
 
         /**
          * Multiply the current matrix with a translation matrix.
          *
          * @param translation_ The translation to apply.
          */
-        void Translate(const Vector3 &translation_);
+        void translate(const Vector3 &translation_);
 
         /**
          * Multiply the current matrix with a rotation matrix.
@@ -356,19 +356,19 @@ namespace Ngine::Graphics {
          * @param rotation_ Rotation to apply
          * @param axis_ Axis in which to apply rotation.
          */
-        void Rotate(const Angle &rotation_, const Vector3 &axis_);
+        void rotate(const Angle &rotation_, const Vector3 &axis_);
 
         /**
          * Multiply the current matrix with a scale matrix.
          *
          * @param scale_ The scale to apply.
          */
-        void Scale(const Vector3 &scale_);
+        void scale(const Vector3 &scale_);
 
         /**
          * Trigger a render of the internal buffers.
          */
-        void RenderBatch();
+        void renderBatch();
 
         /**
          * Render a vertex buffer.
@@ -379,7 +379,7 @@ namespace Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param shader_ The shader program state to render with.
          */
-        void RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgramState *state_);
+        void renderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgramState *state_);
 
         /**
          * Render an indexed vertex buffer.
@@ -391,7 +391,7 @@ namespace Ngine::Graphics {
          * @param texture_ The texture to render with.
          * @param state_ The shader program state to render with.
          */
-        void RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_,
+        void renderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_,
                                  ShaderProgramState *state_);
 
         /**
@@ -400,14 +400,14 @@ namespace Ngine::Graphics {
          * @param type_ The primitive type.
          * @param elements_ The number of elements.
          */
-        bool WillFit(PrimitiveType type_, int elements_);
+        bool willFit(PrimitiveType type_, int elements_);
 
         /**
          * Get the graphics device attached to the renderer.
          *
          * @return The attached graphics device.
          */
-        GraphicsDevice *GetGraphicsDevice();
+        GraphicsDevice *getGraphicsDevice();
     };
 }
 

@@ -23,7 +23,7 @@
 
 #include "Config.hpp"
 
-namespace Ngine {
+namespace ngine {
     /**
      * Abstract class defining requirements for a resource.
      */
@@ -34,12 +34,12 @@ namespace Ngine {
          *
          * @return Whether the resource is valid or not.
          */
-        virtual bool IsValid() const = 0;
+        virtual bool isValid() const = 0;
 
         /**
          * Free this resource from memory.
          */
-        virtual void Free() = 0;
+        virtual void free() = 0;
     };
 }
 

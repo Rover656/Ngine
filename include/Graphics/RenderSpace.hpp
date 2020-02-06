@@ -28,7 +28,7 @@
 #include "RenderTarget.hpp"
 #include "ShaderProgram.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * An object that can be rendered to the screen.
      *
@@ -90,14 +90,14 @@ namespace Ngine::Graphics {
          *
          * @param node_ The node to add.
          */
-        void AddNode(RenderableNode *node_);
+        void addNode(RenderableNode *node_);
 
         /**
          * Remove a renderable node from the space.
          *
          * @param node_ The node to remove.
          */
-        void RemoveNode(RenderableNode *node_);
+        void removeNode(RenderableNode *node_);
 
         /**
          * Create a new named camera.
@@ -105,7 +105,7 @@ namespace Ngine::Graphics {
          * @param name_ The name of the camera.
          * @return The new camera.
          */
-        Camera *CreateCamera(const std::string &name_);
+        Camera *createCamera(const std::string &name_);
 
         /**
          * Get a named camera.
@@ -113,7 +113,7 @@ namespace Ngine::Graphics {
          * @param name_ The camera to get.
          * @return The camera or null if not found.
          */
-        Camera *GetCamera(const std::string &name_);
+        Camera *getCamera(const std::string &name_);
 
         /**
          * Render everything in this space with the given camera optionally to a render target.
@@ -122,7 +122,7 @@ namespace Ngine::Graphics {
          * @param camera_ The camera to use.
          * @param target_ Texture to render to or null.
          */
-        void Render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_ = nullptr);
+        void render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_ = nullptr);
     };
 }
 

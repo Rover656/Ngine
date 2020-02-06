@@ -25,7 +25,7 @@
 
 #include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     class Shader;
 
     namespace API {
@@ -103,15 +103,15 @@ namespace Ngine::Graphics {
         /**
          * Add a member.
          */
-        void AddMember(ShaderDataStructure member_) {
-            member_.Offset = GetSize();
+        void addMember(ShaderDataStructure member_) {
+            member_.Offset = getSize();
             Members.push_back(member_);
         }
 
         /**
          * Get the size of the structure.
          */
-        int GetSize() const {
+        int getSize() const {
             int s = 0;
             switch(Type) {
                 case ShaderDataType::Int:
@@ -128,10 +128,10 @@ namespace Ngine::Graphics {
                     break;
                 case ShaderDataType::Struct:
                     for (auto member : Members)
-                        s += member.GetSize();
+                        s += member.getSize();
                     break;
                 case ShaderDataType::Array:
-                    s = Members[0].GetSize() * Count;
+                    s = Members[0].getSize() * Count;
                     break;
             }
 
@@ -213,41 +213,41 @@ namespace Ngine::Graphics {
          *
          * @param uniform_ The uniform to add.
          */
-        void AddUniform(ShaderDataStructure uniform_);
+        void addUniform(ShaderDataStructure uniform_);
 
         /**
          * Get the list of uniforms.
          */
-        std::vector<ShaderDataStructure> GetUniforms() const;
+        std::vector<ShaderDataStructure> getUniforms() const;
 
         /**
          * Get the size of the uniform data.
          *
          * @return The size (in bytes) the uniform data occupies.
          */
-        int GetUniformDataSize() const;
+        int getUniformDataSize() const;
 
         /**
          * Mark shader program as final. This makes it ready for use.
          */
-        void Finalize();
+        void finalize();
 
         /**
          * Whether or not the shader program is final.
          *
          * @return Whether or not the shader program is final/ready for use.
          */
-        bool IsFinal() const;
+        bool isFinal() const;
 
         /**
          * Determine if the shader program is valid.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Free the shader program.
          */
-        void Free() override;
+        void free() override;
     };
 }
 

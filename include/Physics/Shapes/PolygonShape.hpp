@@ -29,7 +29,7 @@
 
 class b2PolygonShape;
 
-namespace Ngine::Physics::Shapes {
+namespace ngine::physics::shapes {
     class NEAPI PolygonShape : public PhysicsShape {
     public:
         // Public Constructors
@@ -61,39 +61,40 @@ namespace Ngine::Physics::Shapes {
          */
         static PolygonShape CreateAsBox(float hx, float hy);
 
-        void DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
+        void debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
 
-        Vector2 GetCentroid() const;
+        Vector2 getCentroid() const;
 
-        std::vector<Vector2> GetNormals() const;
+        std::vector<Vector2> getNormals() const;
 
-        int GetVertexCount() const;
+        int getVertexCount() const;
 
-        std::vector<Vector2> GetVertices() const;
+        std::vector<Vector2> getVertices() const;
+
         /*
          * Build vertices to represent an axis-aligned box centered on the local origin.
          */
-        void SetAsBox(float hx, float hy);
+        void setAsBox(float hx, float hy);
 
         /*
          * Build vertices to represent an oriented box.
          */
-        void SetAsBox(float hx, float hy, const Vector2 &center_, float rotation_);
+        void setAsBox(float hx, float hy, const Vector2 &center_, float rotation_);
 
         /*
          * Set polygon centroid.
          */
-        void SetCentroid(Vector2 centroid_);
+        void setCentroid(Vector2 centroid_);
 
         /*
          * Set polygon normals. Must have the same number of normals as vertices.
          */
-        void SetNormals(std::vector<Vector2> verts_);
+        void setNormals(std::vector<Vector2> verts_);
 
         /*
          * Set polygon vertices.
          */
-        void SetVertices(std::vector<Vector2> verts_);
+        void setVertices(std::vector<Vector2> verts_);
     };
 }
 

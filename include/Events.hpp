@@ -25,7 +25,7 @@
 
 #include <functional>
 
-namespace Ngine {
+namespace ngine {
     /**
      * Base structure for event arguments.
      */
@@ -47,10 +47,10 @@ namespace Ngine {
          *
          * @param args Arguments to be passed to the callback
          */
-        virtual void Invoke(ArgTypes... args) = 0;
+        virtual void invoke(ArgTypes... args) = 0;
 
         void operator()(ArgTypes... args) {
-            Invoke(args...);
+            invoke(args...);
         }
     };
 
@@ -80,7 +80,7 @@ namespace Ngine {
             AttachedFunction = func_;
         }
 
-        void Invoke(ArgTypes... args) override {
+        void invoke(ArgTypes... args) override {
             if (AttachedFunction != nullptr)
                 AttachedFunction(args...);
         }
@@ -120,7 +120,7 @@ namespace Ngine {
             AttachedMethod = func_;
         }
 
-        void Invoke(ArgTypes... args) override {
+        void invoke(ArgTypes... args) override {
             if (AttachedClass != nullptr && AttachedMethod != nullptr)
                 (AttachedClass->*AttachedMethod)(args...);
         }
@@ -175,11 +175,11 @@ namespace Ngine {
         /**
          * Detach the handler.
          */
-        void Detach() {
+        void detach() {
             if (AttachmentInfo != nullptr) {
                 if (AttachmentInfo->AttachedEvent != nullptr && AttachmentInfo->Handler != nullptr) {
                     // Detach from event
-                    AttachmentInfo->AttachedEvent->Detach(AttachmentInfo->Handler);
+                    AttachmentInfo->AttachedEvent->detach(AttachmentInfo->Handler);
 
                     // Delete internal attachment info
                     AttachmentInfo = nullptr;
@@ -192,10 +192,10 @@ namespace Ngine {
          *
          * @return Whether or not the event handler is still attached to the event.
          */
-        bool IsAttached() const {
+        bool isAttached() const {
             if (AttachmentInfo != nullptr) {
                 if (AttachmentInfo->AttachedEvent != nullptr && AttachmentInfo->Handler != nullptr) {
-                    return AttachmentInfo->AttachedEvent->IsAttached(AttachmentInfo->Handler);
+                    return AttachmentInfo->AttachedEvent->isAttached(AttachmentInfo->Handler);
                 }
             }
             return false;
@@ -220,7 +220,7 @@ namespace Ngine {
          * @param handler_ The event handler to be attached.
          * @return The event attachment information.
          */
-        EventAttachment<ArgTypes...> Attach(AbstractEventHandler<ArgTypes...> *handler_) {
+        EventAttachment<ArgTypes...> attach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Add
             m_handlers.push_back(handler_);
 
@@ -231,9 +231,9 @@ namespace Ngine {
         /**
          * Clear the entire event.
          */
-        void Clear() {
+        void clear() {
             for (auto handler : m_handlers) {
-                Detach(handler);
+                detach(handler);
             }
         }
 
@@ -242,7 +242,7 @@ namespace Ngine {
          *
          * @param handler_ The handler to be detached.
          */
-        void Detach(AbstractEventHandler<ArgTypes...> *handler_) {
+        void detach(AbstractEventHandler<ArgTypes...> *handler_) {
             // Find in handler array
             auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler_);
             if (iterator == m_handlers.end())
@@ -260,9 +260,9 @@ namespace Ngine {
          *
          * @param args The arguments to pass to the handlers.
          */
-        void Invoke(ArgTypes... args) {
+        void invoke(ArgTypes... args) {
             for (auto handler : m_handlers) {
-                handler->Invoke(args...);
+                handler->invoke(args...);
             }
         }
 
@@ -272,17 +272,17 @@ namespace Ngine {
          * @param handler_ The handler to check.
          * @return If the handler is attached.
          */
-        bool IsAttached(AbstractEventHandler<ArgTypes...> *handler_) const {
+        bool isAttached(AbstractEventHandler<ArgTypes...> *handler_) const {
             auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler_);
             return iterator != m_handlers.end();
         }
 
         void operator()(ArgTypes... args) {
-            Invoke(args...);
+            invoke(args...);
         }
 
         EventAttachment<ArgTypes...> operator+=(AbstractEventHandler<ArgTypes...> *handler_) {
-            return Attach(handler_);
+            return attach(handler_);
         }
     };
 }

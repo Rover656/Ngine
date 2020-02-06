@@ -25,7 +25,7 @@
 
 #include "AudioBuffer.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     /**
      * Audio stream.
      */
@@ -56,7 +56,7 @@ namespace Ngine::Audio {
          * @param data_ New buffer data.
          * @param samplesCount_ The number of samples.
          */
-        void UpdateStream(const void* data_, int samplesCount_);
+        void updateStream(const void* data_, int samplesCount_);
     };
 }
 

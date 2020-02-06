@@ -30,7 +30,7 @@
 #include "../Graphics/Texture2D.hpp"
 #include "Filesystem.hpp"
 
-namespace Ngine::Filesystem {
+namespace ngine::filesystem {
     /**
      * Content type for content directories
      */
@@ -60,7 +60,7 @@ namespace Ngine::Filesystem {
         /**
          * The directory structure of the resources directory.
          */
-        std::vector<std::pair<Filesystem::Path, int>> ResourceDirectories =
+        std::vector<std::pair<filesystem::Path, int>> ResourceDirectories =
             {
                 {
                     Path("content"),
@@ -77,27 +77,27 @@ namespace Ngine::Filesystem {
         /**
          * The graphics device we use to create graphics resources.
          */
-        Graphics::GraphicsDevice *m_graphicsDevice;
+        graphics::GraphicsDevice *m_graphicsDevice;
 
         /**
          * All named fonts.
          */
-        std::unordered_map<std::string, Graphics::Font *> m_fonts;
+        std::unordered_map<std::string, graphics::Font *> m_fonts;
 
         /**
          * All named music.
          */
-        std::unordered_map<std::string, Audio::Music *> m_music;
+        std::unordered_map<std::string, audio::Music *> m_music;
 
         /**
          * All named sounds.
          */
-        std::unordered_map<std::string, Audio::Sound *> m_sounds;
+        std::unordered_map<std::string, audio::Sound *> m_sounds;
 
         /**
          * All named textures.
          */
-        std::unordered_map<std::string, Graphics::Texture2D *> m_textures;
+        std::unordered_map<std::string, graphics::Texture2D *> m_textures;
     public:
         /**
          * Create a new resource manager.
@@ -105,7 +105,7 @@ namespace Ngine::Filesystem {
          * @warning The `Game` class provides a resource manager. Using more than one resource manager could get confusing in your implementation.
          * @param graphicsDevice_ The graphics device for graphics resources.
          */
-        ResourceManager(Graphics::GraphicsDevice *graphicsDevice_);
+        ResourceManager(graphics::GraphicsDevice *graphicsDevice_);
         ~ResourceManager() = default;
         /**
          * The resource manager config.
@@ -120,35 +120,35 @@ namespace Ngine::Filesystem {
          *
          * @warning This will break any pointers to existing textures, fonts etc. Ensure this is handled before calling.
          */
-        void DeleteAll();
+        void deleteAll();
 
         /**
          * Delete a named font.
          *
          * @param name_ Font to be deleted.
          */
-        void DeleteFont(const std::string &name_);
+        void deleteFont(const std::string &name_);
 
         /**
          * Delete a named music.
          *
          * @param name_ Music to be deleted.
          */
-        void DeleteMusic(const std::string &name_);
+        void deleteMusic(const std::string &name_);
 
         /**
          * Delete a named sound.
          *
          * @param name_ Sound to be deleted.
          */
-        void DeleteSound(const std::string &name_);
+        void deleteSound(const std::string &name_);
 
         /**
          * Delete a named texture.
          *
          * @param name_ Texture to be deleted.
          */
-        void DeleteTexture(const std::string &name_);
+        void deleteTexture(const std::string &name_);
 
         /**
          * Get a named font.
@@ -156,7 +156,7 @@ namespace Ngine::Filesystem {
          * @param name_ Font to get.
          * @return Pointer to the font.
          */
-        Graphics::Font *GetFont(const std::string &name_);
+        graphics::Font *getFont(const std::string &name_);
 
         /**
          * Get a named music.
@@ -164,7 +164,7 @@ namespace Ngine::Filesystem {
          * @param name_ Music to get.
          * @return Pointer to the music.
          */
-        Audio::Music *GetMusic(const std::string &name_);
+        audio::Music *getMusic(const std::string &name_);
 
         /**
          * Get a named sound.
@@ -172,7 +172,7 @@ namespace Ngine::Filesystem {
          * @param name_ Sound to get.
          * @return Pointer to the sound.
          */
-        Audio::Sound *GetSound(const std::string &name_);
+        audio::Sound *getSound(const std::string &name_);
 
         /**
          * Get a named texture.
@@ -180,12 +180,12 @@ namespace Ngine::Filesystem {
          * @param name_ Texture to get.
          * @return Pointer to the texture.
          */
-        Graphics::Texture2D *GetTexture(const std::string &name_);
+        graphics::Texture2D *getTexture(const std::string &name_);
 
         /**
          * Loads all data according to the Config.
          */
-        void LoadResources();
+        void loadResources();
 
         /**
          * Load font from file.
@@ -196,7 +196,7 @@ namespace Ngine::Filesystem {
          * @param baseSize_ The base size for the font.
          * @return Whether or not the font was loaded.
          */
-        bool LoadFont(const Path &inPath_, const std::string &name_, int baseSize_ = -1);
+        bool loadFont(const Path &inPath_, const std::string &name_, int baseSize_ = -1);
 
         /**
          * Load music from file.
@@ -205,7 +205,7 @@ namespace Ngine::Filesystem {
          * @param name_ The music's name.
          * @return Whether or not the music was loaded.
          */
-        bool LoadMusic(const Path &inPath_, const std::string &name_);
+        bool loadMusic(const Path &inPath_, const std::string &name_);
 
         /**
          * Load sound from file.
@@ -214,7 +214,7 @@ namespace Ngine::Filesystem {
          * @param name_ The sound's name.
          * @return Whether or not the sound was loaded.
          */
-        bool LoadSound(const Path &inPath_, const std::string &name_);
+        bool loadSound(const Path &inPath_, const std::string &name_);
 
         /**
          * Load texture from file.
@@ -223,7 +223,7 @@ namespace Ngine::Filesystem {
          * @param name_ The texture's name.
          * @return Whether or not the texture was loaded.
          */
-        bool LoadTexture(const Path &inPath_, const std::string &name_);
+        bool loadTexture(const Path &inPath_, const std::string &name_);
     };
 }
 

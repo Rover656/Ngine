@@ -27,12 +27,12 @@
 // Ngine includes
 // ---------------------------------------------------------------------------------
 
-#include "Audio/AudioBuffer.hpp"
-#include "Audio/AudioDevice.hpp"
-#include "Audio/AudioStream.hpp"
-#include "Audio/Music.hpp"
-#include "Audio/Sound.hpp"
-#include "Audio/Wave.hpp"
+#include "audio/AudioBuffer.hpp"
+#include "audio/AudioDevice.hpp"
+#include "audio/AudioStream.hpp"
+#include "audio/Music.hpp"
+#include "audio/Sound.hpp"
+#include "audio/Wave.hpp"
 #include "Components/CameraComponent.hpp"
 #include "Components/SpriteComponent.hpp"
 #include "Components/TilesetComponent.hpp"
@@ -104,7 +104,7 @@
 #include "UWP/GameApp.hpp"
 #define NGINE_RUN_GAME(game) UWP::UWPGameBootstrapper::ExecuteGame(&game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
 #else
-#define NGINE_RUN_GAME(game) game.Run();
+#define NGINE_RUN_GAME(game) game.run();
 #endif
 
 #endif // NGINE_HPP

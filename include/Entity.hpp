@@ -31,7 +31,7 @@
 
 // TODO: Proper way to handle rotation from a components point of view. Need to have entity centers and ways to rotate both with the entity and independently.
 
-namespace Ngine {
+namespace ngine {
     // Forward declare
     class Component;
 
@@ -110,7 +110,7 @@ namespace Ngine {
         /**
          * The current physics body.
          */
-        Physics::PhysicsBody *m_physicsBody = nullptr;
+        physics::PhysicsBody *m_physicsBody = nullptr;
 
         /**
          * Add to a new scene.
@@ -172,20 +172,20 @@ namespace Ngine {
          *
          * @warning No more calls must be made to the entity following this.
          */
-        void Destroy();
+        void destroy();
 
         /**
          * Add a component to the entity.
          *
-         * @tparam ComponentType The component type. This must be a class derived from `Ngine::Component`
+         * @tparam ComponentType The component type. This must be a class derived from `ngine::Component`
          * @param name_ The name of the component.
          * @param component_ The component.
          * @return The component, so you may chain calls.
          */
         template <typename ComponentType = Component>
-        ComponentType *AddComponent(const std::string &name_, ComponentType *component_) {
+        ComponentType *addComponent(const std::string &name_, ComponentType *component_) {
             // Check the name is not taken
-            if (HasComponent(name_))
+            if (hasComponent(name_))
                 return nullptr;
 
             // Make sure the component isn't null
@@ -205,14 +205,14 @@ namespace Ngine {
          * @param name_ The name of the component to remove.
          * @return Whether or not the component was removed.
          */
-        bool RemoveComponent(const std::string &name_);
+        bool removeComponent(const std::string &name_);
 
         /**
          * Get all components.
          *
          * @return An vector containing all components.
          */
-        std::vector<Component*> GetComponents();
+        std::vector<Component*> getComponents();
 
         /**
          * Test if a component exists by a name.
@@ -220,7 +220,7 @@ namespace Ngine {
          * @param name_ The name of the component to check for.
          * @return Whether or not the component exists.
          */
-        bool HasComponent(const std::string &name_) const;
+        bool hasComponent(const std::string &name_) const;
 
         /**
          * Get a component by name.
@@ -228,9 +228,9 @@ namespace Ngine {
          * @tparam ComponentType The component type to be returned.
          */
         template <typename ComponentType = Component>
-        ComponentType *GetComponent(const std::string &name_) {
+        ComponentType *getComponent(const std::string &name_) {
             // Try to find the component
-            if (HasComponent(name_)) {
+            if (hasComponent(name_)) {
                 return (ComponentType *) m_components.at(name_);
             }
 
@@ -242,14 +242,14 @@ namespace Ngine {
          *
          * @return Whether or not this entity can be culled.
          */
-        bool CanCull() const;
+        bool canCull() const;
 
         /**
          * Set whether or not this entity can be culled
          *
          * @param canCull_ Whether or not the entity can be culled.
          */
-        void SetCanCull(bool canCull_);
+        void setCanCull(bool canCull_);
 
         /**
          * This is used to determine if this entity should be culled.
@@ -258,7 +258,7 @@ namespace Ngine {
          * @param cullArea_ The scene cull area.
          * @return Whether or not this entity should be culled.
          */
-        virtual bool CheckForCulling(Rectangle cullArea_);
+        virtual bool checkForCulling(Rectangle cullArea_);
 
         /**
          * Get our parent container.
@@ -266,7 +266,7 @@ namespace Ngine {
          *
          * @return The parent container.
          */
-        EntityContainer *GetContainer() const;
+        EntityContainer *getContainer() const;
 
         /**
          * Get the parent entity.
@@ -275,7 +275,7 @@ namespace Ngine {
          * @return The parent entity, null if none.
          */
         template <typename EntityType = Entity>
-        Entity *GetParentEntity() const {
+        Entity *getParentEntity() const {
             return (EntityType *)(m_parentEntity);
         }
 
@@ -286,7 +286,7 @@ namespace Ngine {
          * @return The parent scene.
          */
         template <class SceneType = Scene>
-        SceneType *GetScene() const {
+        SceneType *getScene() const {
             return (SceneType *) m_parentScene;
         }
 
@@ -295,28 +295,28 @@ namespace Ngine {
          *
          * @return The parent game.
          */
-        Game *GetGame() const;
+        Game *getGame() const;
 
         /**
          * Get the game resource manager.
          *
          * @return The game resource manager.
          */
-        Filesystem::ResourceManager *GetResourceManager() const;
+        filesystem::ResourceManager *getResourceManager() const;
 
         /**
          * Get the entity depth.
          *
          * @return The depth of the entity.
          */
-        int GetDepth() const;
+        int getDepth() const;
 
         /**
          * Set the entity depth
          *
          * @param depth_ The depth to set the entity to.
          */
-        void SetDepth(int depth_);
+        void setDepth(int depth_);
 
         // MAJOR TODO: Add system for entity origin when not attached to physics body.
 
@@ -325,26 +325,26 @@ namespace Ngine {
          *
          * @return The entity transform.
          */
-        Transform2D GetTransform() const;
+        Transform2D getTransform() const;
 
         /**
          * Set the entity transform (position and rotation).
          */
-        void SetTransform(const Transform2D &transform_);
+        void setTransform(const Transform2D &transform_);
 
         /**
          * Get the entity position
          *
          * @return The position of the entity in world coordinates.
          */
-        Vector2 GetPosition() const;
+        Vector2 getPosition() const;
 
         /**
          * Set entity position
          *
          * @param position_ The position to move to.
          */
-        void SetPosition(Vector2 position_);
+        void setPosition(Vector2 position_);
 
         /**
          * Move an entity by a vector.
@@ -352,21 +352,21 @@ namespace Ngine {
          * @warning Use of this in a physics enabled entity is not recommended, add a velocity instead.
          * @param moveBy_ The number of pixels to move in each direction.
          */
-        void MoveBy(Vector2 moveBy_);
+        void moveBy(Vector2 moveBy_);
 
         /**
          * Get the entity rotation
          *
          * @return The entity rotation, in degrees.
          */
-        Angle GetRotation() const;
+        Angle getRotation() const;
 
         /**
          * Set entity rotation.
          *
          * @param rotation_ The rotation, in degrees, to set our entity to.
          */
-        void SetRotation(Angle rotation_);
+        void setRotation(Angle rotation_);
 
         /**
          * Determine if this entity is affected by physics.
@@ -375,42 +375,42 @@ namespace Ngine {
          * @note Once an entity is created, this property *can not* be changed.
          * @return Whether or not this entity has a physics body attached.
          */
-        bool IsPhysicsEnabled() const;
+        bool isPhysicsEnabled() const;
 
         /**
          * Get the attached physics body.
          *
          * @return The physics body. If none, null.
          */
-        Physics::PhysicsBody *GetPhysicsBody();
+        physics::PhysicsBody *getPhysicsBody();
 
         /**
          * Get the attached physics body.
          *
          * @return The physics body. If none, null.
          */
-        const Physics::PhysicsBody *GetPhysicsBody() const;
+        const physics::PhysicsBody *getPhysicsBody() const;
 
         /**
          * Get the world our body is a member of.
          *
          * @return The world the physics body is attached to, if any.
          */
-        Physics::PhysicsWorld *GetPhysicsWorld();
+        physics::PhysicsWorld *getPhysicsWorld();
 
         /**
          * Get the world our body is a member of.
          *
          * @return The world the physics body is attached to, if any.
          */
-        const Physics::PhysicsWorld *GetPhysicsWorld() const;
+        const physics::PhysicsWorld *getPhysicsWorld() const;
 
         /**
          * Test if we update when the scene is paused.
          *
          * @return Whether or not we will update even when the scene is paused.
          */
-        bool GetDoPersistentUpdates() const;
+        bool getDoPersistentUpdates() const;
 
         /**
          * Set whether or not we update when the `Scene` is paused
@@ -418,7 +418,7 @@ namespace Ngine {
          * @note This will unsubscribe and resubscribe if the events are already bound.
          * @param persistentUpdates_ Whether or not the entity can update during pauses.
          */
-        void SetDoPersistentUpdates(bool persistentUpdates_);
+        void setDoPersistentUpdates(bool persistentUpdates_);
 
         /**
          * Subscribe to update events in the scene.
@@ -426,31 +426,31 @@ namespace Ngine {
          * @warning If the entity changes parent this will need to be called again.
          * @return Whether or the entity now listens to updates.
          */
-        bool SubscribeToUpdate();
+        bool subscribeToUpdate();
 
         /**
          * Determine if the entity is subscribed to the `Scene` update events.
          *
          * @return Whether or not the entity is subscribed to `Scene` updates.
          */
-        bool SubscribedToUpdate() const;
+        bool subscribedToUpdate() const;
 
         /**
          * Unsubscribe from update events in the scene.
          */
-        void UnsubscribeFromUpdate();
+        void unsubscribeFromUpdate();
 
         /**
          * Draw code for the entity.
          *
          * @param renderer_ The game renderer.
          */
-        virtual void Draw(Graphics::Renderer *renderer_);
+        virtual void draw(graphics::Renderer *renderer_);
 
         /**
          * Update the entity.
          */
-        virtual void Update();
+        virtual void update();
     };
 }
 

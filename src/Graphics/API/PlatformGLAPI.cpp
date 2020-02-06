@@ -111,7 +111,7 @@ static PFNGLBINDVERTEXARRAYPROC glBindVertexArrayOES;
 static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
 #endif
 
-namespace Ngine::Graphics::API {
+namespace ngine::graphics::API {
     void
     PlatformGLAPI::_getTextureFormats(PixelFormat format_, unsigned int *glInternalFormat_, unsigned int *glFormat_,
                                       unsigned int *glType_) {
@@ -387,14 +387,14 @@ namespace Ngine::Graphics::API {
                 glBindVertexArray(layout_->VAO);
         } else {
             // Bind buffers
-            auto vBuf = layout_->GetVertexBuffer();
-            auto iBuf = layout_->GetIndexBuffer();
-            BindBuffer(vBuf);
+            auto vBuf = layout_->getVertexBuffer();
+            auto iBuf = layout_->getIndexBuffer();
+            bindBuffer(vBuf);
             if (iBuf != nullptr)
-                BindBuffer(iBuf);
+                bindBuffer(iBuf);
 
             // Setup layout
-            auto elements = layout_->GetElements();
+            auto elements = layout_->getElements();
             for (const auto &elm : elements) {
                 GLenum type;
                 switch (elm.Type) {
@@ -419,14 +419,14 @@ namespace Ngine::Graphics::API {
                 glBindVertexArray(0);
         } else {
             // Unbind buffers
-            auto vBuf = layout_->GetVertexBuffer();
-            auto iBuf = layout_->GetIndexBuffer();
-            UnbindBuffer(vBuf);
+            auto vBuf = layout_->getVertexBuffer();
+            auto iBuf = layout_->getIndexBuffer();
+            unbindBuffer(vBuf);
             if (iBuf != nullptr)
-                UnbindBuffer(iBuf);
+                unbindBuffer(iBuf);
 
             // Unset layout
-            auto elements = layout_->GetElements();
+            auto elements = layout_->getElements();
             for (const auto &elm : elements) {
                 glDisableVertexAttribArray(elm.ElementIndex);
             }
@@ -448,13 +448,13 @@ namespace Ngine::Graphics::API {
                 int offset = 0;
                 for (const auto& s : structure_.Members) {
                     _setUniform(program_, name_ + "." + s.Name, s, (char *)data_ + offset);
-                    offset += s.GetSize();
+                    offset += s.getSize();
                 }
                 break;
             }
             case ShaderDataType::Array: {
                 // Write simple data for each bit
-                auto sizePerEntry = structure_.Members[0].GetSize();
+                auto sizePerEntry = structure_.Members[0].getSize();
                 for (auto i = 0; i < structure_.Count; i++) {
                     _setUniform(program_, name_ + "[" + std::to_string(i) + "]", structure_.Members[0], (char*)data_ + sizePerEntry * i);
                 }
@@ -740,7 +740,7 @@ namespace Ngine::Graphics::API {
 
         // Make the attached window current so our GL context is active
 #if !defined(EGL) // EGL uses this API, which is still being created. TODO: Make this into an Init function instead to tidy this
-        m_graphicsDevice->GetWindow()->MakeCurrent();
+        m_graphicsDevice->getWindow()->makeCurrent();
 #else
         MakeEGLCurrent();
 #endif
@@ -933,16 +933,16 @@ namespace Ngine::Graphics::API {
 #endif
     }
 
-    void PlatformGLAPI::ConfigureViewport(int x_, int y_, int width_, int height_) {
+    void PlatformGLAPI::configureViewport(int x_, int y_, int width_, int height_) {
         glViewport(x_, y_, width_, height_);
     }
 
-    void PlatformGLAPI::Clear(const Color &color_) {
+    void PlatformGLAPI::clear(const Color &color_) {
         glClearColor(color_.R, color_.G, color_.B, color_.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void PlatformGLAPI::CreateTexture(Texture2D *texture_, unsigned char *data_) {
+    void PlatformGLAPI::createTexture(Texture2D *texture_, unsigned char *data_) {
         // Create texture
         texture_->ID = 0;
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -956,11 +956,11 @@ namespace Ngine::Graphics::API {
         int mipHeight = texture_->Height;
         int mipOffset = 0;
 
-        auto format = texture_->GetFormat();
+        auto format = texture_->getFormat();
         unsigned int glInternalFormat = 0, glFormat = 0, glType = 0;
         _getTextureFormats(format, &glInternalFormat, &glFormat, &glType);
 
-        for (int i = 0; i < texture_->GetMipmapCount(); i++) {
+        for (int i = 0; i < texture_->getMipmapCount(); i++) {
             unsigned int mipSize = _calculatePixelDataSize(mipWidth, mipHeight, format);
 
             if (glInternalFormat != -1) {
@@ -997,24 +997,24 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::DeleteTexture(Texture2D *texture_) {
+    void PlatformGLAPI::deleteTexture(Texture2D *texture_) {
         glDeleteTextures(1, &texture_->ID);
         texture_->ID = 0;
     }
 
-    void PlatformGLAPI::BindTexture(Texture2D *texture_) {
+    void PlatformGLAPI::bindTexture(Texture2D *texture_) {
         if (texture_ != m_currentTexture) {
             glBindTexture(GL_TEXTURE_2D, texture_ != nullptr ? texture_->ID : 0);
             m_currentTexture = texture_;
         }
     }
 
-    void PlatformGLAPI::SetTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) {
+    void PlatformGLAPI::setTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) {
         // Bind
-        BindTexture(texture_);
+        bindTexture(texture_);
 
         // Get variables
-        auto mipmapCount = texture_->GetMipmapCount();
+        auto mipmapCount = texture_->getMipmapCount();
 
         // Set filter mode
         switch (mode_) {
@@ -1063,9 +1063,9 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::SetTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) {
+    void PlatformGLAPI::setTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) {
         // Bind
-        BindTexture(texture_);
+        bindTexture(texture_);
 
         // Set wrap mode
         switch (mode_) {
@@ -1084,15 +1084,15 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    bool PlatformGLAPI::IsTextureValid(const Texture2D *texture_) {
+    bool PlatformGLAPI::isTextureValid(const Texture2D *texture_) {
         return texture_->ID > 0;
     }
 
-    bool PlatformGLAPI::CompareTextures(const Texture2D *a_, const Texture2D *b_) {
+    bool PlatformGLAPI::compareTextures(const Texture2D *a_, const Texture2D *b_) {
         return a_->ID == b_->ID;
     }
 
-    bool PlatformGLAPI::CreateRenderTarget(RenderTarget *renderTarget_) {
+    bool PlatformGLAPI::createRenderTarget(RenderTarget *renderTarget_) {
         // Set initial IDs
         renderTarget_->ID[0] = 0;
         renderTarget_->ID[1] = 0;
@@ -1111,7 +1111,7 @@ namespace Ngine::Graphics::API {
 
         // Set depth and color attachment
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTarget_->ID[1]);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget_->GetTexture()->ID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget_->getTexture()->ID, 0);
 
         // Check framebuffer status
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -1138,7 +1138,7 @@ namespace Ngine::Graphics::API {
         return true;
     }
 
-    void PlatformGLAPI::DeleteRenderTarget(RenderTarget *renderTarget_) {
+    void PlatformGLAPI::deleteRenderTarget(RenderTarget *renderTarget_) {
         // Delete depth buffer
         if (renderTarget_->ID[1] > 0) {
             glDeleteRenderbuffers(1, &renderTarget_->ID[1]);
@@ -1152,22 +1152,22 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::BindRenderTarget(RenderTarget *renderTarget_) {
+    void PlatformGLAPI::bindRenderTarget(RenderTarget *renderTarget_) {
         if (renderTarget_ != m_currentRenderTarget) {
             glBindFramebuffer(GL_FRAMEBUFFER, renderTarget_ != nullptr ? renderTarget_->ID[0] : 0);
             m_currentRenderTarget = renderTarget_;
         }
     }
 
-    bool PlatformGLAPI::IsRenderTargetValid(const RenderTarget *renderTarget_) {
+    bool PlatformGLAPI::isRenderTargetValid(const RenderTarget *renderTarget_) {
         return renderTarget_->ID[0] > 0;
     }
 
-    bool PlatformGLAPI::CompareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) {
+    bool PlatformGLAPI::compareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) {
         return a_->ID[0] == b_->ID[0] && a_->ID[1] == b_->ID[1];
     }
 
-    void PlatformGLAPI::CreateShader(Shader *shader_, void *sourceData_) {
+    void PlatformGLAPI::createShader(Shader *shader_, void *sourceData_) {
         // Get shader type
         GLenum type;
         switch (shader_->Type) {
@@ -1200,17 +1200,17 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::DeleteShader(Shader *shader_) {
+    void PlatformGLAPI::deleteShader(Shader *shader_) {
         // Delete
         glDeleteShader(shader_->ID);
         shader_->ID = 0;
     }
 
-    bool PlatformGLAPI::IsShaderValid(const Shader *shader_) {
+    bool PlatformGLAPI::isShaderValid(const Shader *shader_) {
         return shader_->ID > 0;
     }
 
-    void PlatformGLAPI::CreateShaderProgram(ShaderProgram *program_) {
+    void PlatformGLAPI::createShaderProgram(ShaderProgram *program_) {
         // Create
         program_->ID = glCreateProgram();
 
@@ -1239,30 +1239,30 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::DeleteShaderProgram(ShaderProgram *program_) {
+    void PlatformGLAPI::deleteShaderProgram(ShaderProgram *program_) {
         glDeleteProgram(program_->ID);
         program_->ID = 0;
     }
 
-    void PlatformGLAPI::BindShaderProgram(const ShaderProgram *program_) {
+    void PlatformGLAPI::bindShaderProgram(const ShaderProgram *program_) {
         glUseProgram(program_ != nullptr ? program_->ID : 0);
     }
 
-    void PlatformGLAPI::BindShaderProgramState(ShaderProgramState *state_) {
+    void PlatformGLAPI::bindShaderProgramState(ShaderProgramState *state_) {
         // Bind the program
-        BindShaderProgram(state_->AttachedProgram);
+        bindShaderProgram(state_->AttachedProgram);
 
         // Apply each uniform
-        for (const auto &uniform : state_->AttachedProgram->GetUniforms()) {
-            _setUniform(state_->AttachedProgram, uniform.Name, uniform, state_->GetUniform(uniform.Name));
+        for (const auto &uniform : state_->AttachedProgram->getUniforms()) {
+            _setUniform(state_->AttachedProgram, uniform.Name, uniform, state_->getUniform(uniform.Name));
         }
     }
 
-    bool PlatformGLAPI::IsShaderProgramValid(const ShaderProgram *program_) {
-        return program_->ID > 0 && IsShaderValid(program_->VertexShader) && IsShaderValid(program_->FragmentShader);
+    bool PlatformGLAPI::isShaderProgramValid(const ShaderProgram *program_) {
+        return program_->ID > 0 && isShaderValid(program_->VertexShader) && isShaderValid(program_->FragmentShader);
     }
 
-    void PlatformGLAPI::BindBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::bindBuffer(Buffer *buffer_) {
         // Check not null
         if (buffer_ == nullptr)
             Console::Fail("PlatformGLAPI", "Cannot bind null buffer.");
@@ -1278,7 +1278,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::UnbindBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::unbindBuffer(Buffer *buffer_) {
         // Check not null
         if (buffer_ == nullptr)
             Console::Fail("PlatformGLAPI", "Cannot unbind null buffer.");
@@ -1294,27 +1294,27 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::CreateBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::createBuffer(Buffer *buffer_) {
         // Create buffer
         buffer_->ID = 0;
         glGenBuffers(1, &buffer_->ID);
 
         // Bind
-        BindBuffer(buffer_);
+        bindBuffer(buffer_);
     }
 
-    void PlatformGLAPI::DeleteBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::deleteBuffer(Buffer *buffer_) {
         // Unbind buffer
-        UnbindBuffer(buffer_);
+        unbindBuffer(buffer_);
 
         // Delete
         glDeleteBuffers(1, &buffer_->ID);
         buffer_->ID = 0;
     }
 
-    void PlatformGLAPI::WriteBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) {
+    void PlatformGLAPI::writeBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) {
         // Bind
-        BindBuffer(buffer_);
+        bindBuffer(buffer_);
 
         // Get type
         GLenum bufType = 0;
@@ -1346,7 +1346,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::CreateVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::createVertexLayout(VertexLayout *layout_) {
         // Create VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
             layout_->VAO = 0;
@@ -1357,7 +1357,7 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::DeleteVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::deleteVertexLayout(VertexLayout *layout_) {
         // Delete VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
             if (m_GLES2)
@@ -1368,10 +1368,10 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::ConfigureVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::configureVertexLayout(VertexLayout *layout_) {
         // Get buffers
-        auto vBuf = layout_->GetVertexBuffer();
-        auto iBuf = layout_->GetIndexBuffer();
+        auto vBuf = layout_->getVertexBuffer();
+        auto iBuf = layout_->getIndexBuffer();
 
         if (m_featureFlags[FEATURE_VAO]) {
             // Unbind any existing buffers
@@ -1385,12 +1385,12 @@ namespace Ngine::Graphics::API {
                 glBindVertexArray(layout_->VAO);
 
             // Bind buffers
-            BindBuffer(vBuf);
+            bindBuffer(vBuf);
             if (iBuf != nullptr)
-                BindBuffer(iBuf);
+                bindBuffer(iBuf);
         }
 
-        auto elements = layout_->GetElements();
+        auto elements = layout_->getElements();
         for (const auto &elm : elements) {
             GLenum type;
             switch (elm.Type) {
@@ -1415,17 +1415,17 @@ namespace Ngine::Graphics::API {
         }
     }
 
-    void PlatformGLAPI::PrepareFor2D() {
+    void PlatformGLAPI::prepareFor2D() {
         // Enable blending
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void PlatformGLAPI::Draw(int count_, int start_) {
+    void PlatformGLAPI::draw(int count_, int start_) {
         glDrawArrays(GL_TRIANGLES, start_, count_);
     }
 
-    void PlatformGLAPI::DrawIndexed(int count_, int start_) {
+    void PlatformGLAPI::drawIndexed(int count_, int start_) {
         glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_SHORT, (GLvoid *) start_);
     }
 

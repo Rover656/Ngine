@@ -27,7 +27,7 @@
 
 #include "Window.hpp"
 
-namespace Ngine::Input {
+namespace ngine::input {
     float Gamepad::m_currentAxisValue[4][GAMEPAD_AXIS_RIGHT_TRIGGER + 1];
     bool Gamepad::m_currentButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
     bool Gamepad::m_previousButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB + 1];

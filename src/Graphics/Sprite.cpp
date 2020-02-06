@@ -26,7 +26,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Rectangle.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     Sprite::Sprite(Texture2D *texture_) {
         // Add texture
         m_textures.push_back(texture_);
@@ -66,25 +66,25 @@ namespace Ngine::Graphics {
         m_spriteSheet = false;
     }
 
-    void Sprite::Draw(Graphics::Renderer *renderer_, Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
+    void Sprite::draw(graphics::Renderer *renderer_, Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
         if (m_textures.empty())
             return;
 
-        GetCurrentTexture()->Draw(
+        getCurrentTexture()->draw(
                 renderer_,
                 {
                         position_,
                         static_cast<float>(DrawWidth * scale_),
                         static_cast<float>(DrawHeight * scale_)
                 },
-                GetSourceRectangle(),
+                getSourceRectangle(),
                 Color::White,
                 origin_,
                 rotation_);
     }
 
-    void Sprite::Update() {
-        if (IsAnimated()) {
+    void Sprite::update() {
+        if (isAnimated()) {
             // Increment timer
             m_animationTimer++;
 
@@ -98,7 +98,7 @@ namespace Ngine::Graphics {
                 // Reset if out of range
                 if (m_spriteSheet) {
                     auto count =
-                            (GetCurrentTexture()->Width / FrameWidth) * (GetCurrentTexture()->Height / FrameHeight);
+                            (getCurrentTexture()->Width / FrameWidth) * (getCurrentTexture()->Height / FrameHeight);
 
                     if (CurrentFrame > count - 1)
                         CurrentFrame = 0;
@@ -110,10 +110,10 @@ namespace Ngine::Graphics {
         }
     }
 
-    bool Sprite::IsAnimated() {
+    bool Sprite::isAnimated() {
         if (m_spriteSheet) {
-            if (GetCurrentTexture()->IsValid())
-                return FrameHeight != GetCurrentTexture()->Height || FrameWidth != GetCurrentTexture()->Width;
+            if (getCurrentTexture()->isValid())
+                return FrameHeight != getCurrentTexture()->Height || FrameWidth != getCurrentTexture()->Width;
             else
                 return false;
         } else {
@@ -121,21 +121,21 @@ namespace Ngine::Graphics {
         }
     }
 
-    int Sprite::FrameX() {
+    int Sprite::getFrameX() {
         if (!m_spriteSheet || m_textures.empty())
             return 0;
 
         auto x = 0;
         for (auto i = 0; i < CurrentFrame; i++) {
             x += FrameWidth;
-            if (x >= GetCurrentTexture()->Width)
+            if (x >= getCurrentTexture()->Width)
                 x = 0;
         }
 
         return x;
     }
 
-    int Sprite::FrameY() {
+    int Sprite::getFrameY() {
         if (!m_spriteSheet || m_textures.empty())
             return 0;
 
@@ -143,7 +143,7 @@ namespace Ngine::Graphics {
         auto y = 0;
         for (auto i = 0; i < CurrentFrame; i++) {
             x += FrameWidth;
-            if (x >= GetCurrentTexture()->Width) {
+            if (x >= getCurrentTexture()->Width) {
                 x = 0;
                 y += FrameHeight;
             }
@@ -152,7 +152,7 @@ namespace Ngine::Graphics {
         return y;
     }
 
-    Texture2D *Sprite::GetCurrentTexture() {
+    Texture2D *Sprite::getCurrentTexture() {
         if (m_textures.empty())
             return nullptr;
 
@@ -163,12 +163,12 @@ namespace Ngine::Graphics {
         return m_textures[CurrentFrame];
     }
 
-    void Sprite::SetTexture(Texture2D *texture_) {
+    void Sprite::setTexture(Texture2D *texture_) {
         m_textures.clear();
         m_textures.push_back(texture_);
     }
 
-    void Sprite::SetTextures(const std::vector<Texture2D *> &textures_) {
+    void Sprite::setTextures(const std::vector<Texture2D *> &textures_) {
         m_textures.clear();
 
         for (auto t : textures_) {
@@ -177,11 +177,11 @@ namespace Ngine::Graphics {
         }
     }
 
-    Rectangle Sprite::GetSourceRectangle() {
+    Rectangle Sprite::getSourceRectangle() {
         if (m_spriteSheet)
             return {
-                    static_cast<float>(FrameX()),
-                    static_cast<float>(FrameY()),
+                    static_cast<float>(getFrameX()),
+                    static_cast<float>(getFrameY()),
                     static_cast<float>(FrameWidth),
                     static_cast<float>(FrameHeight)
             };
@@ -189,8 +189,8 @@ namespace Ngine::Graphics {
             return {
                     0,
                     0,
-                    static_cast<float>(GetCurrentTexture()->Width),
-                    static_cast<float>(GetCurrentTexture()->Height)
+                    static_cast<float>(getCurrentTexture()->Width),
+                    static_cast<float>(getCurrentTexture()->Height)
             };
     }
 

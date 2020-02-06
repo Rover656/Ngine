@@ -23,7 +23,7 @@
 
 #include "../Math.hpp"
 
-namespace Ngine::Physics {
+namespace ngine::physics {
     /*
      * A collision shape interface
      */

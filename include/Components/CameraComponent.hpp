@@ -28,7 +28,7 @@
 #include "../Entity.hpp"
 #include "../Math.hpp"
 
-namespace Ngine::Components {
+namespace ngine::components {
     /**
      * Camera management component.
      */
@@ -36,7 +36,7 @@ namespace Ngine::Components {
         /**
          * The internal camera.
          */
-        Graphics::Camera m_camera;
+        graphics::Camera m_camera;
 
         /**
          * Reference to on position changed event.
@@ -64,49 +64,49 @@ namespace Ngine::Components {
          * Mark this camera as the currently active camera.
          * Overrides any other active camera.
          */
-        void Activate();
+        void activate();
 
         /**
          * Get the camera origin
          *
          * @return The camera origin
          */
-        Vector2 GetOrigin();
+        Vector2 getOrigin();
 
         /**
          * Set the camera origin.
          *
          * @param origin_ New camera origin.
          */
-        void SetOrigin(Vector2 origin_);
+        void setOrigin(Vector2 origin_);
 
         /**
          * Get the camera rotation.
          *
          * @return The camera rotation in degrees.
          */
-        float GetRotation();
+        float getRotation();
 
         /**
          * Set camera rotation.
          *
          * @param rotation_ New camera rotation.
          */
-        void SetRotation(float rotation_);
+        void setRotation(float rotation_);
 
         /**
          * Get the camera zoom.
          *
          * @return The camera's zoom level.
          */
-        float GetZoom();
+        float getZoom();
 
         /**
          * Set camera zoom.
          *
          * @param zoom_ New camera zoom;
          */
-        void SetZoom(float zoom_);
+        void setZoom(float zoom_);
     };
 }
 

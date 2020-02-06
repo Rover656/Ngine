@@ -28,7 +28,7 @@
 #include "Color.hpp"
 #include "Renderer.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * The shape renderer is a static API that allows shapes do be drawn. Kinda figures.
      *

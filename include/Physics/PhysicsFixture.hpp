@@ -30,7 +30,7 @@ class b2Fixture;
 
 // BIG TODO: Work out how to allow modification of shapes.
 
-namespace Ngine::Physics {
+namespace ngine::physics {
     class PhysicsBody;
 
     class NEAPI PhysicsFixture {
@@ -39,12 +39,12 @@ namespace Ngine::Physics {
         /*
          * The fixture
          */
-        b2Fixture *_Fixture = nullptr;
+        b2Fixture *m_fixture = nullptr;
 
         /*
          * The attached shape
          */
-        Shapes::PhysicsShape *_Shape = nullptr;
+        shapes::PhysicsShape *m_shape = nullptr;
     public:
         // Public Constructor
 
@@ -59,67 +59,67 @@ namespace Ngine::Physics {
         /*
          * Destroy ourself.
          */
-        void Destroy();
+        void destroy();
 
         /*
          * Get the Box2D fixture.
          */
-        b2Fixture *GetB2Fixture();
+        b2Fixture *getB2Fixture();
 
         /*
          * Get the physics body.
          */
-        PhysicsBody *GetBody();
+        PhysicsBody *getBody();
 
         /*
          * Get the density of this fixture.
          */
-        float GetDensity() const;
+        float getDensity() const;
 
         /*
          * Get the coefficient of friction.
          */
-        float GetFriction() const;
+        float getFriction() const;
 
         /*
          * Get the coefficient of restitution.
          */
-        float GetRestitution() const;
+        float getRestitution() const;
 
         /*
          * Get the attached shape.
          */
-        Shapes::PhysicsShape *GetShape();
+        shapes::PhysicsShape *getShape();
 
         /*
          * Get the attached shape.
          */
-        const Shapes::PhysicsShape *GetShape() const;
+        const shapes::PhysicsShape *getShape() const;
 
         /*
          * Get the shape type.
          */
-        Shapes::PhysicsShapeType GetType() const;
+        shapes::PhysicsShapeType getType() const;
 
         /*
          * Is this fixture a sensor (non-solid)?
          */
-        bool IsSensor();
+        bool isSensor();
 
         /*
          * Call this if you want to establish collision that was disabled by ContactFilter::ShouldCollide
          */
-        void Refilter();
+        void refilter();
 
         /*
          * Set if this fixture is a sensor.
          */
-        void SetSensor(bool sensor_);
+        void setSensor(bool sensor_);
 
         /*
          * Test a point for containment in this fixture.
          */
-        bool TestPoint(const Vector2 &p);
+        bool testPoint(const Vector2 &p);
     };
 }
 

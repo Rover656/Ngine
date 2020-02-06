@@ -25,7 +25,7 @@
 
 #include "ShaderProgram.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * Shader uniform data handler.
      * This holds all information that is to be sent to the shader in GPU readable format, and exposes this in a simple API.
@@ -56,7 +56,7 @@ namespace Ngine::Graphics {
          * @param name_ The uniform to get.
          * @return The pointer to the data in our buffer
          */
-        const void *GetUniform(const std::string &name_);
+        const void *getUniform(const std::string &name_);
 
         /**
          * Get a uniform as a given type.
@@ -66,8 +66,8 @@ namespace Ngine::Graphics {
          * @return The uniform data as the desired type.
          */
         template<typename Type>
-        const Type *GetUniformAs(const std::string &name_) {
-            return (Type *)GetUniform(name_);
+        const Type *getUniformAs(const std::string &name_) {
+            return (Type *) getUniform(name_);
         }
 
         /**
@@ -76,7 +76,7 @@ namespace Ngine::Graphics {
          * @param name_ Uniform for which to set the data.
          * @param data_ The date to write for the uniform. This expects `data_` to be the same size as the target uniform.
          */
-        void SetUniform(const std::string &name_, void *data_);
+        void setUniform(const std::string &name_, void *data_);
 
         /**
          * Set a uniform (advanced).
@@ -84,14 +84,14 @@ namespace Ngine::Graphics {
          * @param nameTree_ The tree of names to navigate. A number (in the form of a string) is expected if the target is an array. Ex. `{"TestArray", "5"}` to target `TestArray[5]`.
          * @param data_ Data to write to the target.
          */
-        void SetUniformEx(std::vector<std::string> nameTree_, void *data_);
+        void setUniformEx(std::vector<std::string> nameTree_, void *data_);
 
         /**
          * Get the data that is being stored.
          *
          * @return The data pointer.
          */
-        const void *GetData() const;
+        const void *getData() const;
     };
 }
 

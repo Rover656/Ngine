@@ -28,7 +28,7 @@
 #include "Color.hpp"
 #include "Image.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     class Renderer;
     struct RenderTarget;
 
@@ -83,7 +83,7 @@ namespace Ngine::Graphics {
      */
     class NEAPI GraphicsDevice {
         friend class Renderer;
-        friend class Ngine::Window;
+        friend class ngine::Window;
 
         /**
          * The target graphics API.
@@ -177,19 +177,19 @@ namespace Ngine::Graphics {
         /**
          * Get the window attached to this device.
          */
-        Window *GetWindow();
+        Window *getWindow();
 
         /**
          * Clear the current framebuffer with the given color.
          */
-        void Clear(Color color_);
+        void clear(Color color_);
 
         /**
          * Get the current render target.
          *
          * @return The current render target or null if rendering straight to window.
          */
-        RenderTarget *GetCurrentTarget();
+        RenderTarget *getCurrentTarget();
 
         /**
          * Set the current render target.
@@ -198,21 +198,21 @@ namespace Ngine::Graphics {
          * @warning This will force all renderers to draw.
          * @param target_ The new target.
          */
-        void PushTarget(RenderTarget *target_);
+        void pushTarget(RenderTarget *target_);
 
         /**
          * Pop the current target off of the stack.
          *
          * @warning This will force all renderers to draw
          */
-        void PopTarget();
+        void popTarget();
 
         /**
          * Get the current projection matrix.
          *
          * @return The current projection matrix.
          */
-        Matrix GetProjectionMatrix() const;
+        Matrix getProjectionMatrix() const;
 
         /**
          * Get the current model view matrix.
@@ -220,15 +220,29 @@ namespace Ngine::Graphics {
          * @note This is basically just for camera support.
          * @return The current model view matrix.
          */
-        Matrix GetViewMatrix() const;
+        Matrix getViewMatrix() const;
 
-        void PushViewMatrix();
+        /**
+         * Push a view matrix onto the stack.
+         */
+        void pushViewMatrix();
 
-        void PopViewMatrix();
+        /**
+         * Pop a view matrix off the stack.
+         */
+        void popViewMatrix();
 
-        void LoadViewIdentity();
+        /**
+         * Load identity onto the current view matrix.
+         */
+        void loadViewIdentity();
 
-        void MultView(const Matrix &matrix_);
+        /**
+         * Multiply the current matrix.
+         *
+         * @param matrix_ Multiplier.
+         */
+        void multView(const Matrix &matrix_);
 
         /**
          * Setup the framebuffer.
@@ -236,14 +250,14 @@ namespace Ngine::Graphics {
          * This will create an orthographic projection matrix.
          * This will be created for the framebuffer if there is no render target attached, otherwise it will be for the render target.
          */
-        void SetupFramebuffer();
+        void setupFramebuffer();
 
         /**
          * Get the graphics API.
          *
-         * @warning This is intended for internal use, please use the classes provided by the `Graphics` or `Graphics::API` namespaces instead.
+         * @warning This is intended for internal use, please use the classes provided by the `graphics` namespace instead.
          */
-        API::PlatformGraphicsAPI *GetAPI();
+        API::PlatformGraphicsAPI *getAPI();
     };
 }
 

@@ -22,25 +22,25 @@
 
 #include "Graphics/API/PlatformGraphicsAPI.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     Shader::Shader(GraphicsDevice *graphicsDevice_, ShaderType type_, const char *src_)
             : Type(type_) {
         // Get API
-        m_API = graphicsDevice_->GetAPI();
+        m_API = graphicsDevice_->getAPI();
 
         // Create
-        m_API->CreateShader(this, (void *)src_);
+        m_API->createShader(this, (void *) src_);
     }
 
     Shader::~Shader() {
-        Free();
+        free();
     }
 
-    bool Shader::IsValid() const {
-        return m_API->IsShaderValid(this);
+    bool Shader::isValid() const {
+        return m_API->isShaderValid(this);
     }
 
-    void Shader::Free() {
-        m_API->DeleteShader(this);
+    void Shader::free() {
+        m_API->deleteShader(this);
     }
 }

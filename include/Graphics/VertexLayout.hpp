@@ -27,7 +27,7 @@
 #include "Buffer.hpp"
 #include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * Description of what a vertex array contains and where it should be routed to in the shader.
      */
@@ -135,40 +135,40 @@ namespace Ngine::Graphics {
          * @warning Once `Configure` is called, this will throw as the layout cannot be modified at the moment.
          * @param element_
          */
-        void AddElement(const VertexElement &element_);
+        void addElement(const VertexElement &element_);
 
         /**
          * Get the list of vertex elements.
          *
          * @return The list of vertex elements.
          */
-        std::vector<VertexElement> GetElements();
+        std::vector<VertexElement> getElements();
 
         /**
          * Configure the vertex layout.
          * This should be done once all elements are added.
          */
-        void Configure();
+        void configure();
 
         /**
          * Get the attached vertex buffer.
          */
-        Buffer *GetVertexBuffer();
+        Buffer *getVertexBuffer();
 
         /**
          * Get the attached index buffer.
          */
-        Buffer *GetIndexBuffer();
+        Buffer *getIndexBuffer();
 
         /**
          * Use this layout.
          */
-        void Use();
+        void use();
 
         /**
          * Stop using this layout.
          */
-        void Stop();
+        void stop();
     };
 }
 

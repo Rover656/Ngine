@@ -22,14 +22,14 @@
 
 #include <Box2D/Box2D.h>
 
-namespace Ngine::Physics {
-    b2PolygonShape Polygon::createPolygonShape(std::vector<Vector2> verts_) {
+namespace ngine::physics {
+    b2PolygonShape Polygon::_createPolygonShape(std::vector<Vector2> verts_) {
         b2PolygonShape shp;
         shp.Set((b2Vec2 *)verts_.data(), verts_.size());
         return shp;
     }
 
-    b2PolygonShape Polygon::createPolygonShape(std::vector<Vector2> verts_, std::vector<Vector2> normals_) {
+    b2PolygonShape Polygon::_createPolygonShape(std::vector<Vector2> verts_, std::vector<Vector2> normals_) {
         b2PolygonShape shp;
         shp.Set((b2Vec2 *)verts_.data(), verts_.size());
         for (auto i = 0; i < normals_.size(); i++)
@@ -38,7 +38,7 @@ namespace Ngine::Physics {
     }
 
     Polygon::Polygon(std::vector<Vector2> verts_) {
-        Set(std::move(verts_));
+        set(std::move(verts_));
     }
 
     Polygon::Polygon(const b2PolygonShape &shape_) {
@@ -60,12 +60,12 @@ namespace Ngine::Physics {
         }
     }
 
-    void Polygon::Set(std::vector<Vector2> verts_) {
+    void Polygon::set(std::vector<Vector2> verts_) {
         // Save count
         Count = verts_.size();
 
         // Get normals from b2d
-        auto shp = createPolygonShape(verts_);
+        auto shp = _createPolygonShape(verts_);
 
         // Get normals
         auto norms = shp.m_normals;
@@ -77,7 +77,7 @@ namespace Ngine::Physics {
         Centroid = {shp.m_centroid.x, shp.m_centroid.y};
     }
 
-    void Polygon::SetAsBox(float hx, float hy) {
+    void Polygon::setAsBox(float hx, float hy) {
         Count = 4;
         Vertices[0] = {-hx, -hy};
         Vertices[1] = {hx, -hy};

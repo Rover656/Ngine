@@ -22,7 +22,7 @@
 
 #include <cmath>
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     // Public Constructor(s)
 
     TilesetRenderer::TilesetRenderer(const Tileset &tileset_, int width_, int height_)
@@ -40,7 +40,7 @@ namespace Ngine::Graphics {
 
     // Public Methods
 
-    void TilesetRenderer::Draw(Graphics::Renderer *renderer_, Vector2 pos_, float scale_, float rotation_, Vector2 origin_) {
+    void TilesetRenderer::draw(graphics::Renderer *renderer_, Vector2 pos_, float scale_, float rotation_, Vector2 origin_) {
         auto tileWidth = m_tileset.TileWidth;
         auto tileHeight = m_tileset.TileHeight;
 
@@ -54,12 +54,12 @@ namespace Ngine::Graphics {
                 Vector2 tileOrigin = {-pos.X, -pos.Y};
 
                 // Cheaty: Putting the wrong values in each argument for this to work
-                m_tileset.DrawTile(renderer_, tilePos, GetTileAt({(float)x, (float)y}), scale_, rotation_, tileOrigin);
+                m_tileset.drawTile(renderer_, tilePos, getTileAt({(float) x, (float) y}), scale_, rotation_, tileOrigin);
             }
         }
     }
 
-    void TilesetRenderer::Draw(Graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_) {
+    void TilesetRenderer::draw(graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_) {
         // TODO: How do we rotate this stuff??
 
         // Get tile sizes
@@ -91,14 +91,14 @@ namespace Ngine::Graphics {
             for (auto y = tYFrom; y < tYTo; y++) {
                 // Get tile position
                 Vector2 pos = {(pos_.X + x * tileWidth) * scale_, (pos_.Y + y * tileHeight) * scale_};
-                m_tileset.DrawTile(renderer_, pos, GetTileAt({(float)x, (float)y}), scale_);
+                m_tileset.drawTile(renderer_, pos, getTileAt({(float) x, (float) y}), scale_);
             }
         }
     }
 
-    std::vector<Physics::Shape *>
-    TilesetRenderer::GetCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_) {
-        std::vector<Physics::Shape *> shapes;
+    std::vector<physics::Shape *>
+    TilesetRenderer::getCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_) {
+        std::vector<physics::Shape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -106,8 +106,8 @@ namespace Ngine::Graphics {
         int eY = range_.Y + range_.Height;
 
         // Validate
-        auto w = GetWidth();
-        auto h = GetHeight();
+        auto w = getWidth();
+        auto h = getHeight();
 
         if (sX < 0) sX = 0;
         if (sY < 0) sY = 0;
@@ -121,12 +121,12 @@ namespace Ngine::Graphics {
 
         for (auto x = sX; x <= eX; x++) {
             for (auto y = sY; y <= eY; y++) {
-                if (GetTileAt({(float) x, (float) y}) == tile_) {
+                if (getTileAt({(float) x, (float) y}) == tile_) {
                     // Get polygon with world coordinates
                     auto poly = Rectangle(x * m_tileset.TileWidth + tilesetPosition_.X,
                                           y * m_tileset.TileWidth + tilesetPosition_.Y,
-                                          m_tileset.TileWidth, m_tileset.TileHeight).ToPolygonPtr();
-                    shapes.push_back(dynamic_cast<Physics::Shape *>(poly));
+                                          m_tileset.TileWidth, m_tileset.TileHeight).toPolygonPtr();
+                    shapes.push_back(dynamic_cast<physics::Shape *>(poly));
                 }
             }
         }
@@ -134,10 +134,10 @@ namespace Ngine::Graphics {
         return shapes;
     }
 
-    std::vector<Physics::Shape *>
-    TilesetRenderer::GetCollisionShapesFor(std::vector<int> tiles_, Rectangle range_,
+    std::vector<physics::Shape *>
+    TilesetRenderer::getCollisionShapesFor(std::vector<int> tiles_, Rectangle range_,
                                            Vector2 tilesetPosition_) {
-        std::vector<Physics::Shape *> shapes;
+        std::vector<physics::Shape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -145,8 +145,8 @@ namespace Ngine::Graphics {
         int eY = range_.Y + range_.Height;
 
         // Validate
-        auto w = GetWidth() / m_tileset.TileWidth;
-        auto h = GetHeight() / m_tileset.TileHeight;
+        auto w = getWidth() / m_tileset.TileWidth;
+        auto h = getHeight() / m_tileset.TileHeight;
 
         if (sX < 0) sX = 0;
         if (sY < 0) sY = 0;
@@ -160,12 +160,12 @@ namespace Ngine::Graphics {
 
         for (auto x = sX; x <= eX; x++) {
             for (auto y = sY; y <= eY; y++) {
-                if (std::find(tiles_.begin(), tiles_.end(), GetTileAt({(float) x, (float) y})) != tiles_.end()) {
+                if (std::find(tiles_.begin(), tiles_.end(), getTileAt({(float) x, (float) y})) != tiles_.end()) {
                     // Get polygon with world coordinates
                     auto poly = Rectangle(x * m_tileset.TileWidth + tilesetPosition_.X,
                                           y * m_tileset.TileWidth + tilesetPosition_.Y,
-                                          m_tileset.TileWidth, m_tileset.TileHeight).ToPolygonPtr();
-                    shapes.push_back(dynamic_cast<Physics::Shape *>(poly));
+                                          m_tileset.TileWidth, m_tileset.TileHeight).toPolygonPtr();
+                    shapes.push_back(dynamic_cast<physics::Shape *>(poly));
                 }
             }
         }
@@ -173,9 +173,9 @@ namespace Ngine::Graphics {
         return shapes;
     }
 
-    std::vector<Physics::Shape *>
-    TilesetRenderer::GetCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_) {
-        std::vector<Physics::Shape *> shapes;
+    std::vector<physics::Shape *>
+    TilesetRenderer::getCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_) {
+        std::vector<physics::Shape *> shapes;
 
         int sX = range_.X;
         int sY = range_.Y;
@@ -183,8 +183,8 @@ namespace Ngine::Graphics {
         int eY = range_.Y + range_.Height;
 
         // Validate
-        auto w = GetWidth() / m_tileset.TileWidth;
-        auto h = GetHeight() / m_tileset.TileHeight;
+        auto w = getWidth() / m_tileset.TileWidth;
+        auto h = getHeight() / m_tileset.TileHeight;
 
         if (sX < 0) sX = 0;
         if (sY < 0) sY = 0;
@@ -198,13 +198,13 @@ namespace Ngine::Graphics {
 
         for (auto x = sX; x <= eX; x++) {
             for (auto y = sY; y <= eY; y++) {
-                auto t = GetTileAt({(float) x, (float) y});
+                auto t = getTileAt({(float) x, (float) y});
                 if (t >= min_ && t <= max_) {
                     // Get polygon with world coordinates
                     auto poly = Rectangle(x * m_tileset.TileWidth + tilesetPosition_.X,
                                           y * m_tileset.TileWidth + tilesetPosition_.Y,
-                                          m_tileset.TileWidth, m_tileset.TileHeight).ToPolygonPtr();
-                    shapes.push_back(dynamic_cast<Physics::Shape *>(poly));
+                                          m_tileset.TileWidth, m_tileset.TileHeight).toPolygonPtr();
+                    shapes.push_back(dynamic_cast<physics::Shape *>(poly));
                 }
             }
         }
@@ -212,38 +212,38 @@ namespace Ngine::Graphics {
         return shapes;
     }
 
-    int TilesetRenderer::GetHeight() {
+    int TilesetRenderer::getHeight() {
         return m_height;
     }
 
-    int TilesetRenderer::GetTileAt(Vector2 pos_) {
-        auto w = GetWidth();
-        auto h = GetHeight();
+    int TilesetRenderer::getTileAt(Vector2 pos_) {
+        auto w = getWidth();
+        auto h = getHeight();
 
         auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
 
         return m_tiles[i];
     }
 
-    Tileset *TilesetRenderer::GetTileset() {
+    Tileset *TilesetRenderer::getTileset() {
         return &m_tileset;
     }
 
-    int TilesetRenderer::GetWidth() {
+    int TilesetRenderer::getWidth() {
         return m_width;
     }
 
-    void TilesetRenderer::SetTileAt(Vector2 pos_, int tile_) {
-        auto w = GetWidth();
-        auto h = GetHeight();
+    void TilesetRenderer::setTileAt(Vector2 pos_, int tile_) {
+        auto w = getWidth();
+        auto h = getHeight();
 
         auto i = static_cast<int>(pos_.X) + w * static_cast<int>(pos_.Y);
 
         m_tiles[i] = tile_;
     }
 
-    void TilesetRenderer::SetTileData(std::vector<int> data_) {
-        if (data_.size() != GetWidth() * GetHeight()) {
+    void TilesetRenderer::setTileData(std::vector<int> data_) {
+        if (data_.size() != getWidth() * getHeight()) {
             throw std::runtime_error("Tile data does not match dimensions.");
         }
         m_tiles = data_;

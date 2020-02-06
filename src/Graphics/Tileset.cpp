@@ -23,7 +23,7 @@
 #include "Graphics/Renderer.hpp"
 #include "Rectangle.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     // Public Constructor(s)
 
     Tileset::Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_)
@@ -31,7 +31,7 @@ namespace Ngine::Graphics {
 
     // Public Methods
 
-    void Tileset::DrawTile(Graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_, float rotation_, Vector2 origin_) {
+    void Tileset::drawTile(graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_, float rotation_, Vector2 origin_) {
         // Tile's start from 1 to allow 0 to mean nothing
         tile_ -= 1;
 
@@ -50,7 +50,7 @@ namespace Ngine::Graphics {
         }
 
         // Draw
-        Texture->Draw(
+        Texture->draw(
                 renderer_,
                 {
                         position_,

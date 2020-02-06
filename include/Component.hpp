@@ -26,7 +26,7 @@
 #include "Events.hpp"
 #include "Scene.hpp"
 
-namespace Ngine {
+namespace ngine {
     class Entity;
 
     /**
@@ -66,7 +66,7 @@ namespace Ngine {
          * @return The entity casted to the provided type.
          */
         template <typename EntityType = Entity>
-        EntityType *GetEntity() const {
+        EntityType *getEntity() const {
             return (EntityType *) m_parentEntity;
         }
 
@@ -77,8 +77,8 @@ namespace Ngine {
          * @return The parent entity's parent scene.
          */
         template <class SceneType = Scene>
-        SceneType *GetScene() const {
-            return (SceneType *) m_parentEntity->GetScene();
+        SceneType *getScene() const {
+            return (SceneType *) m_parentEntity->getScene();
         }
 
         /**
@@ -86,41 +86,41 @@ namespace Ngine {
          *
          * @return The game that we are a part of.
          */
-        Game *GetGame() const;
+        Game *getGame() const;
 
         /**
          * Get the game resource manager.
          *
          * @return The game resource manager.
          */
-        Filesystem::ResourceManager *GetResourceManager() const;
+        filesystem::ResourceManager *getResourceManager() const;
 
         /**
          * Subscribe to the entity's update event.
          */
-        void SubscribeToUpdate();
+        void subscribeToUpdate();
 
         /**
          * Determine if the component is subscribed to the update event.
          *
          * @return Whether or not the component is subscribed to update.
          */
-        bool SubscribedToUpdate() const;
+        bool subscribedToUpdate() const;
 
         /**
          * Unsubscribe from the entity's update event.
          */
-        void UnsubscribeFromUpdate();
+        void unsubscribeFromUpdate();
 
         /**
          * Component draw code.
          */
-        virtual void Draw(Graphics::Renderer *renderer_);
+        virtual void draw(graphics::Renderer *renderer_);
 
         /**
          * Component update code.
          */
-        virtual void Update();
+        virtual void update();
     };
 }
 

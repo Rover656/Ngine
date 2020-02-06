@@ -29,7 +29,7 @@
 // Forward declare Box2D stuff
 class b2World;
 
-namespace Ngine::Physics {
+namespace ngine::physics {
     class NEAPI PhysicsWorld {
     private:
         // Private Fields
@@ -66,123 +66,123 @@ namespace Ngine::Physics {
         /*
          * Clear force buffer on all bodies.
          */
-        void ClearForces();
+        void clearForces();
 
         /*
          * Create a body
          */
-        PhysicsBody *CreateBody(PhysicsBody::BodyInfo info_);
+        PhysicsBody *createBody(PhysicsBody::BodyInfo info_);
 
         /*
          * Destroy a body
          */
-        void DestroyBody(PhysicsBody *body_);
+        void destroyBody(PhysicsBody *body_);
 
         /*
          * Get is sleeping allowed
          */
-        bool GetAllowSleeping();
+        bool getAllowSleeping();
 
         /*
          * Get the Box2D world.
          * Should be used carefully.
          */
-        b2World *GetB2World();
+        b2World *getB2World();
 
         /*
          * Get the number of bodies
          */
-        int GetBodyCount();
+        int getBodyCount();
 
         /*
          * Get the number of contacts
          */
-        int GetContactCount();
+        int getContactCount();
 
         /*
          * Is using continuous physics.
          */
-        bool GetContinuousPhysics();
+        bool getContinuousPhysics();
 
         /*
          * Get the current gravity vector (meters).
          */
-        Vector2 GetGravity();
+        Vector2 getGravity();
 
         /*
          * Get the current gravity vector (pixels).
          */
-        Vector2 GetGravityPixels();
+        Vector2 getGravityPixels();
 
         /*
          * Get the number of joints
          */
-        int GetJointCount();
+        int getJointCount();
 
         /*
          * Get the number of broad-phase proxies
          */
-        int GetProxyCount();
+        int getProxyCount();
 
         /*
          * Is single stepping continual physics?
          */
-        bool GetSubStepping();
+        bool getSubStepping();
 
         /*
          * Get the balance of the dynamic tree
          */
-        bool GetTreeBalance();
+        bool getTreeBalance();
 
         /*
          * Get the height of the dynamic tree
          */
-        bool GetTreeHeight();
+        bool getTreeHeight();
 
         /*
          * Is warm starting?
          */
-        bool GetWarmStarting();
+        bool getWarmStarting();
 
         /*
          * Is world mid-timestep.
          */
-        bool IsLocked();
+        bool isLocked();
 
         /*
          * Enable/Disable sleep
          */
-        void SetAllowSleeping(bool flag_);
+        void setAllowSleeping(bool flag_);
 
         /*
          * Enable/Disable automatic clearing of forces after each timestep.
          */
-        void SetAutoClearForces(bool flag_);
+        void setAutoClearForces(bool flag_);
 
         /*
          * Enable/disable continuous physics.
          */
-        void SetContinuousPhysics(bool flag_);
+        void setContinuousPhysics(bool flag_);
 
         /*
          * Set the gravity vector (meters).
          */
-        void SetGravity(const Vector2 &gravVector);
+        void setGravity(const Vector2 &gravVector);
 
         /*
          * enable/disable single stepped continuous physics.
          */
-        void SetSubStepping(bool flag_);
+        void setSubStepping(bool flag_);
 
         /*
          * Enable/disable warm starting.
          */
-        void SetWarmStarting(bool flag_);
+        void setWarmStarting(bool flag_);
 
         /*
          * Take a time step
          */
-        void Step(float timeStep, int velocityIterations, int positionIterations);
+        void step(float timeStep, int velocityIterations, int positionIterations);
     };
 }
 

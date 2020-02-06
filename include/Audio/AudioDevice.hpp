@@ -35,7 +35,7 @@
 
 #define AUDIO_BUFFER_SIZE 4096
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     /**
      * Audio device control
      */

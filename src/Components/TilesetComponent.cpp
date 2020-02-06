@@ -20,8 +20,8 @@
 
 #include "Components/TilesetComponent.hpp"
 
-namespace Ngine::Components {
-    TilesetComponent::TilesetComponent(Entity *parent_, Graphics::TilesetRenderer *tileset_)
+namespace ngine::components {
+    TilesetComponent::TilesetComponent(Entity *parent_, graphics::TilesetRenderer *tileset_)
             : Component(parent_), m_tileset(tileset_) {
     }
 
@@ -31,36 +31,38 @@ namespace Ngine::Components {
         m_tileset = nullptr;
     }
 
-    Graphics::TilesetRenderer *TilesetComponent::GetTileset() {
+    graphics::TilesetRenderer *TilesetComponent::getTileset() {
         return m_tileset;
     }
 
-    const Graphics::TilesetRenderer *TilesetComponent::GetTileset() const {
+    const graphics::TilesetRenderer *TilesetComponent::getTileset() const {
         return m_tileset;
     }
 
-    bool TilesetComponent::GetCullAreaDraw() const {
+    bool TilesetComponent::getCullAreaDraw() const {
         return m_useCullArea;
     }
 
-    void TilesetComponent::SetCullAreaDraw(bool flag_) {
+    void TilesetComponent::setCullAreaDraw(bool flag_) {
         m_useCullArea = flag_;
     }
 
-    void TilesetComponent::Draw(Graphics::Renderer *renderer_) {
+    void TilesetComponent::draw(graphics::Renderer *renderer_) {
         // Prevent any exceptions.
         if (m_tileset != nullptr) return;
 
         // Get our parent
-        auto par = GetEntity();
+        auto par = getEntity();
 
         // TODO: Scale field
 
         // Render the tileset
         if (m_useCullArea) {
-            m_tileset->Draw(renderer_, par->GetPosition(), GetScene()->GetCullAreaPosition(), GetScene()->GetCullAreaEndPosition());
+            m_tileset->draw(renderer_, par->getPosition(), getScene()->getCullAreaPosition(),
+                            getScene()->getCullAreaEndPosition());
         } else {
-            m_tileset->Draw(renderer_, par->GetPosition(), GetScene()->GetViewportPosition(), GetScene()->GetViewportEndPosition());
+            m_tileset->draw(renderer_, par->getPosition(), getScene()->getViewportPosition(),
+                            getScene()->getViewportEndPosition());
         }
     }
 }

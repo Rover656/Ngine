@@ -30,7 +30,7 @@
 // Forward declare box2d
 class b2Shape;
 
-namespace Ngine::Physics::Shapes {
+namespace ngine::physics::shapes {
     enum PhysicsShapeType {
         SHAPE_CIRCLE = 0,
         SHAPE_EDGE = 1,
@@ -84,36 +84,36 @@ namespace Ngine::Physics::Shapes {
 
         // Public Methods
 
-        BoundingBox ComputeAABB(const Transform2D &xf, int childIndex = 0);
+        BoundingBox computeAABB(const Transform2D &xf, int childIndex = 0);
 
         // TODO: void ComputeMass()
 
-        virtual void DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const = 0;
+        virtual void debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const = 0;
 
         /*
          * Get the Box2D shape.
          */
-        b2Shape *GetB2Shape();
+        b2Shape *getB2Shape();
 
         /*
          * Get the number of child primitives
          */
-        int GetChildCount() const;
+        int getChildCount() const;
 
         /*
          * Get shape radius
          */
-        float GetRadius() const;
+        float getRadius() const;
 
         /*
          * Set shape radius.
          */
-        void SetRadius(float radius_);
+        void setRadius(float radius_);
 
         /*
          * Test a point for containment in this shape.
          */
-        bool TestPoint(const Transform2D &xf, const Vector2 &p);
+        bool testPoint(const Transform2D &xf, const Vector2 &p);
 
         // TODO: Raycasting
     };

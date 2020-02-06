@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-namespace Ngine::Input {
+namespace ngine::input {
     /**
      * Gamepad axis.
      */

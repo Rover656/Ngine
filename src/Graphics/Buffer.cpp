@@ -22,28 +22,28 @@
 
 #include "Graphics/API/PlatformGraphicsAPI.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     void Buffer::_writeBuffer(void *data_, int count_, int size_, bool update_) {
         // Use API
-        m_API->WriteBuffer(this, data_, count_, size_, update_);
+        m_API->writeBuffer(this, data_, count_, size_, update_);
     }
 
     Buffer::Buffer(GraphicsDevice *graphicsDevice_, BufferType type_, BufferUsage usage_)
-            : m_API(graphicsDevice_->GetAPI()), Type(type_), Usage(usage_) {
+            : m_API(graphicsDevice_->getAPI()), Type(type_), Usage(usage_) {
         // Get API and create buffer.
-        m_API->CreateBuffer(this);
+        m_API->createBuffer(this);
     }
 
     Buffer::~Buffer() {
         // Delete this buffer
-        m_API->DeleteBuffer(this);
+        m_API->deleteBuffer(this);
     }
 
-    void Buffer::Bind() {
-        m_API->BindBuffer(this);
+    void Buffer::bind() {
+        m_API->bindBuffer(this);
     }
 
-    void Buffer::Unbind() {
-        m_API->UnbindBuffer(this);
+    void Buffer::unbind() {
+        m_API->unbindBuffer(this);
     }
 }

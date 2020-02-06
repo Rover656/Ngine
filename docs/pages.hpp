@@ -93,30 +93,30 @@
 //----------------------------------------------------------------------------------
 
 /**
- * @namespace Ngine
+ * @namespace ngine
  * The main Ngine namespace. Contains everything as part of the engine itself.
  *
- * @namespace Ngine::Audio
+ * @namespace ngine::audio
  * Ngine Audio module.
  *
- * @namespace Ngine::Components
+ * @namespace ngine::components
  * This namespace consists of useful components.
  *
- * @namespace Ngine::Filesystem
+ * @namespace ngine::filesystem
  * Ngine Filesystem module.
  *
- * @namespace Ngine::Graphics
+ * @namespace ngine::graphics
  * Ngine Graphics module.
  *
- * @namespace Ngine::Input
+ * @namespace ngine::input
  * Ngine Input module.
  *
- * @namespace Ngine::Physics
+ * @namespace ngine::physics
  * Ngine Physics module.
  *
- * @namespace Ngine::Physics::Shapes
+ * @namespace ngine::physics::shapes
  * Physics shapes.
  *
- * @namespace Ngine::UWP
+ * @namespace ngine::UWP
  * This namespace contains UWP specific code.
  */

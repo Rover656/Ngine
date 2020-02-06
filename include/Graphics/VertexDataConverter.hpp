@@ -24,7 +24,7 @@
 #include "../Config.hpp"
 #include "Renderer.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * The vertex data converter converts other `PrimitiveType`'s to triangles, by creating indices for them.
      * One day I may add vertex optimisation...

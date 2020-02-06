@@ -27,7 +27,7 @@
 
 class b2CircleShape;
 
-namespace Ngine::Physics::Shapes {
+namespace ngine::physics::shapes {
     class NEAPI CircleShape : public PhysicsShape {
     public:
         // Public Constructors
@@ -59,17 +59,17 @@ namespace Ngine::Physics::Shapes {
 
         // Public Methods
 
-        void DebugDraw(Graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
+        void debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
 
         /*
          * Get circle position
          */
-        Vector2 GetPosition() const;
+        Vector2 getPosition() const;
 
         /*
          * Set circle position
          */
-        void SetPosition(Vector2 pos_);
+        void setPosition(Vector2 pos_);
     };
 }
 

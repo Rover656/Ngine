@@ -23,8 +23,8 @@
 
 #include <cstring>
 
-namespace Ngine::Audio {
-    void AudioStream::UpdateStream(const void *data_, int samplesCount_) {
+namespace ngine::audio {
+    void AudioStream::updateStream(const void *data_, int samplesCount_) {
         if (Buffer != nullptr) {
             if (Buffer->IsSubBufferProcessed[0] || Buffer->IsSubBufferProcessed[1]) {
                 ma_uint32 subBufferToUpdate = 0;

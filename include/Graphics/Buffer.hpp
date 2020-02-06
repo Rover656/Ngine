@@ -25,7 +25,7 @@
 
 #include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * A GPU buffer type.
      */
@@ -89,9 +89,15 @@ namespace Ngine::Graphics {
         Buffer(GraphicsDevice *graphicsDevice_, BufferType type_, BufferUsage usage_);
         ~Buffer();
 
-        void Bind();
+        /**
+         * Bind the buffer.
+         */
+        void bind();
 
-        void Unbind();
+        /**
+         * Unbind the buffer.
+         */
+        void unbind();
 
         /**
          * Write data to the buffer.
@@ -102,7 +108,7 @@ namespace Ngine::Graphics {
          * @param update_ Whether or not this is an update. If the size of the buffer is not changed and the buffer is dynamic, then use this.
          */
         template <typename Type>
-        void Write(Type *data_, int count_, bool update_ = false) {
+        void write(Type *data_, int count_, bool update_ = false) {
             _writeBuffer(data_, count_, sizeof(Type), update_);
         }
     };

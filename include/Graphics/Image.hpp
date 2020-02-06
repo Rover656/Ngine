@@ -26,7 +26,7 @@
 #include "../Filesystem/Filesystem.hpp"
 #include "../Resource.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * Image/Texture Pixel Format.
      *
@@ -120,7 +120,7 @@ namespace Ngine::Graphics {
          *
          * @param path_ Image file to load.
          */
-        Image(const Filesystem::Path &path_);
+        Image(const filesystem::Path &path_);
 
         /**
          * Create an image from raw pixel data.
@@ -140,12 +140,12 @@ namespace Ngine::Graphics {
          *
          * @return Whether or not the image is valid.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Free image from memory.
          */
-        void Free() override;
+        void free() override;
     };
 }
 

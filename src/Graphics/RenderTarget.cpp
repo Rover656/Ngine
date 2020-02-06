@@ -22,17 +22,17 @@
 
 #include "Console.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)
             : Width(width_), Height(height_) {
         // Get API
-        m_API = graphicsDevice_->GetAPI();
+        m_API = graphicsDevice_->getAPI();
 
         // Create color attachment
         m_texture = new Texture2D(graphicsDevice_, nullptr, width_, height_, UNCOMPRESSED_R8G8B8A8, 1);
 
         // Verify texture
-        if (!m_texture->IsValid()) {
+        if (!m_texture->isValid()) {
             Console::Error("RenderTarget", "Failed to create color attachment for render target.");
 
             // Delete texture
@@ -42,7 +42,7 @@ namespace Ngine::Graphics {
         }
 
         // Create render target
-        if (!m_API->CreateRenderTarget(this)) {
+        if (!m_API->createRenderTarget(this)) {
             delete m_texture;
             m_texture = nullptr;
         }
@@ -50,31 +50,31 @@ namespace Ngine::Graphics {
 
     RenderTarget::~RenderTarget() {
         // Delete self
-        Free();
+        free();
     }
 
-    Texture2D *RenderTarget::GetTexture() {
+    Texture2D *RenderTarget::getTexture() {
         return m_texture;
     }
 
-    bool RenderTarget::IsValid() const {
-        return m_API->IsRenderTargetValid(this);
+    bool RenderTarget::isValid() const {
+        return m_API->isRenderTargetValid(this);
     }
 
-    void RenderTarget::Free() {
+    void RenderTarget::free() {
         // Delete texture
         delete m_texture;
         m_texture = nullptr;
 
         // Delete on GPU
-        m_API->DeleteRenderTarget(this);
+        m_API->deleteRenderTarget(this);
     }
 
     bool RenderTarget::operator==(const RenderTarget &b) const {
-        return m_API->CompareRenderTargets(this, &b);
+        return m_API->compareRenderTargets(this, &b);
     }
 
     bool RenderTarget::operator!=(const RenderTarget &b) const {
-        return !m_API->CompareRenderTargets(this, &b);
+        return !m_API->compareRenderTargets(this, &b);
     }
 }

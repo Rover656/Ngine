@@ -26,7 +26,7 @@
 #include "../Math.hpp"
 #include "Shape.hpp"
 
-namespace Ngine::Physics {
+namespace ngine::physics {
     /*
      * A circle shape
      */

@@ -27,7 +27,7 @@
 #include "../Rectangle.hpp"
 #include "Texture2D.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     /**
      * A sprite is a wrapper which controls the behaviour of a texture or textures.
      */
@@ -122,62 +122,62 @@ namespace Ngine::Graphics {
          * @param rotation_ Rotation of the sprite.
          * @param origin_ Origin of the sprite.
          */
-        void Draw(Graphics::Renderer *renderer_, Vector2 position_, float scale_ = 1, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void draw(graphics::Renderer *renderer_, Vector2 position_, float scale_ = 1, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
 
         /**
          * Update the sprite timer.
          * Should be called every frame.
          */
-        void Update();
+        void update();
 
         /**
          * Whether or not the sprite is animated.
          *
          * @return Whether the sprite is animated or not.
          */
-        bool IsAnimated();
+        bool isAnimated();
 
         /**
          * Get the current X coordinate.
          *
          * @return The current X coordinate of the frame.
          */
-        int FrameX();
+        int getFrameX();
 
         /**
          * Get the current frame Y coordinate.
          *
          * @return The current Y coordinate of the frame.
          */
-        int FrameY();
+        int getFrameY();
 
         /**
          * Get the current texture.
          *
          * @return The currently active texture.
          */
-        Texture2D *GetCurrentTexture();
+        Texture2D *getCurrentTexture();
 
         /**
          * Set the sprite texture.
          *
          * @param texture_ The texture to use.
          */
-        void SetTexture(Texture2D *texture_);
+        void setTexture(Texture2D *texture_);
 
         /**
          * Set the sprite textures.
          *
          * @param textures_ The textures to use.
          */
-        void SetTextures(const std::vector<Texture2D*> &textures_);
+        void setTextures(const std::vector<Texture2D*> &textures_);
 
         /**
          * Get the source rectangle for drawing with.
          *
          * @return The source rectangle for rendering.
          */
-        Rectangle GetSourceRectangle();
+        Rectangle getSourceRectangle();
 
         bool operator==(const Sprite &b);
         bool operator!=(const Sprite &b);

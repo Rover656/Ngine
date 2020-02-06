@@ -24,7 +24,7 @@
 
 #include <cmath>
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     int VertexDataConverter::GetTriangleIndices(PrimitiveType currentType_, int vertexCount_, unsigned short **indices_) {
         switch (currentType_) {
             case PrimitiveType::TriangleFan: {

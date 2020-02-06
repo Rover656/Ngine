@@ -30,42 +30,42 @@
 #include "UWP/GameApp.hpp"
 #endif
 
-namespace Ngine {
+namespace ngine {
     void Game::_init() {
         // Create window
         m_gameWindow = new Window(m_gameWindowCreationConfig);
         Console::Notice("Game", "Created game window.");
 
         // Get graphics device
-        auto graphicsDevice = GetGraphicsDevice();
+        auto graphicsDevice = getGraphicsDevice();
 
         // Create renderer.
-        m_renderer = new Graphics::Renderer(graphicsDevice);
+        m_renderer = new graphics::Renderer(graphicsDevice);
         Console::Notice("Game", "Created renderer.");
 
         // Init Gamepad
-        Input::Gamepad::Init();
+        input::Gamepad::Init();
         Console::Notice("Game", "Gamepad API has been initialized.");
 
         // Init audio
         Console::Notice("Game", "Attempting to initialize audio device.");
-        Audio::AudioDevice::Initialize();
+        audio::AudioDevice::Initialize();
 
         // Check if the device was created
-        if (Audio::AudioDevice::IsReady())
+        if (audio::AudioDevice::IsReady())
             Console::Notice("Game", "Audio device initialized successfully.");
         else Console::Warn("Game", "Failed to create audio device. Audio APIs will be unavailable.");
 
         // Create render target
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
-            m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::TextureWrapMode::Clamp);
+            m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         }
 
         // Create resource manager
         Console::Notice("Game", "Creating the game resource manager.");
-        m_resourceManager = new Filesystem::ResourceManager(graphicsDevice);
+        m_resourceManager = new filesystem::ResourceManager(graphicsDevice);
 
         // DEV: If anything new is added to the Game class, its initialization should occur here (Before OnInit())
 
@@ -80,7 +80,7 @@ namespace Ngine {
 
     void Game::_runDraw() {
         // Poll events
-        m_gameWindow->PollEvents();
+        m_gameWindow->pollEvents();
 
         // Don't render if suspended
         if (m_suspended) {
@@ -90,14 +90,14 @@ namespace Ngine {
         }
 
         // Make our window current so we can render to it.
-        m_gameWindow->MakeCurrent();
+        m_gameWindow->makeCurrent();
 
         // Get graphics device
-        auto graphicsDevice = GetGraphicsDevice();
+        auto graphicsDevice = getGraphicsDevice();
 
         // Window/Game Size variables
-        const auto w = static_cast<float>(m_gameWindow->GetWidth());
-        const auto h = static_cast<float>(m_gameWindow->GetHeight());
+        const auto w = static_cast<float>(m_gameWindow->getWidth());
+        const auto h = static_cast<float>(m_gameWindow->getHeight());
         const auto iw = static_cast<float>(Config.TargetWidth);
         const auto ih = static_cast<float>(Config.TargetHeight);
         const auto scale = std::min(w / iw, h / ih);
@@ -106,55 +106,55 @@ namespace Ngine {
 
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
-            m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::TextureWrapMode::Clamp);
-        } else if (Config.MaintainResolution && (!m_renderTarget->IsValid() ||
+            m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
+        } else if (Config.MaintainResolution && (!m_renderTarget->isValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
             delete m_renderTarget;
-            m_renderTarget = new Graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->GetTexture()->SetTextureWrap(Graphics::TextureWrapMode::Clamp);
+            m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         }
 
         if (Config.MaintainResolution && m_renderTarget != nullptr)
-            m_renderTarget->GetTexture()->SetTextureFilter(RenderTargetFilterMode);
+            m_renderTarget->getTexture()->setTextureFilter(RenderTargetFilterMode);
 
         // Get the time that we begin (for timing)
         auto frameBegin = std::chrono::high_resolution_clock::now();
 
         // Setup mouse translation
-        if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-            const auto mouse = m_gameWindow->GetMouse();
-            mouse->SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
-            mouse->SetOffset(-offsetX, -offsetY);
+        if (Config.MaintainResolution && m_renderTarget->isValid()) {
+            const auto mouse = m_gameWindow->getMouse();
+            mouse->setScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+            mouse->setOffset(-offsetX, -offsetY);
         }
 
         // Only render if visible
-        if (m_gameWindow->IsVisible()) {
+        if (m_gameWindow->isVisible()) {
             // If using, start render target
-            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+            if (Config.MaintainResolution && m_renderTarget->isValid()) {
                 // Clear the main framebuffer (for black bars)
-                graphicsDevice->Clear(Graphics::Color::Black);
+                graphicsDevice->clear(graphics::Color::Black);
 
                 // Enable our render target
-                graphicsDevice->PushTarget(m_renderTarget);
+                graphicsDevice->pushTarget(m_renderTarget);
             }
 
             // Clear with clear color
-            graphicsDevice->Clear(ClearColor);
+            graphicsDevice->clear(ClearColor);
 
             // Render scene
             if (m_currentScene != nullptr) {
-                m_currentScene->Draw(m_renderer);
+                m_currentScene->draw(m_renderer);
             }
 
             // OnDraw event
             OnDraw(m_renderer);
 
             // If using a target, draw target
-            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
-                graphicsDevice->PopTarget();
-                m_renderTarget->GetTexture()->Draw(
+            if (Config.MaintainResolution && m_renderTarget->isValid()) {
+                graphicsDevice->popTarget();
+                m_renderTarget->getTexture()->draw(
                         m_renderer,
                         {
                                 (w - iw * scale) * 0.5f,
@@ -168,14 +168,14 @@ namespace Ngine {
                                 static_cast<float>(m_renderTarget->Width),
                                 static_cast<float>(m_renderTarget->Height) * -1
                         },
-                        Graphics::Color::White);
+                        graphics::Color::White);
             }
 
             // Render final buffers
-            m_renderer->RenderBatch();
+            m_renderer->renderBatch();
 
             // Swap buffers
-            m_gameWindow->SwapBuffers();
+            m_gameWindow->swapBuffers();
         }
 
         // FPS limiter
@@ -190,7 +190,7 @@ namespace Ngine {
 
     void Game::_runUpdate() {
         // Check if we are/should be suspended
-        if (!m_gameWindow->IsVisible() && !Config.RunWhileHidden) {
+        if (!m_gameWindow->isVisible() && !Config.RunWhileHidden) {
             // If told to quit, quit
             if (!m_running) return;
 
@@ -226,31 +226,31 @@ namespace Ngine {
             auto frameBegin = std::chrono::high_resolution_clock::now();
 
             // Get input managers
-            auto mouse = GetMouse();
-            auto keyboard = GetKeyboard();
+            auto mouse = getMouse();
+            auto keyboard = getKeyboard();
 
             // Setup mouse translation
-            if (Config.MaintainResolution && m_renderTarget->IsValid()) {
+            if (Config.MaintainResolution && m_renderTarget->isValid()) {
                 // Get fields required for ofsetting.
-                const auto w = (float) m_gameWindow->GetWidth();
-                const auto h = (float) m_gameWindow->GetHeight();
+                const auto w = (float) m_gameWindow->getWidth();
+                const auto h = (float) m_gameWindow->getHeight();
                 const auto iw = (float) Config.TargetWidth;
                 const auto ih = (float) Config.TargetHeight;
                 const auto scale = std::min(w / iw, h / ih);
                 const auto offsetX = (w - iw * scale) * 0.5f;
                 const auto offsetY = (h - ih * scale) * 0.5f;
 
-                mouse->SetScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
-                mouse->SetOffset(-offsetX, -offsetY);
+                mouse->setScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+                mouse->setOffset(-offsetX, -offsetY);
             }
 
             // TODO: Detect if we are behind on updates.
 
             // Poll inputs if window is visible and if we're going to update this frame
             if (m_lag >= m_timestep) {
-                Input::Gamepad::PollInputs();
-                mouse->PollInputs();
-                keyboard->PollInputs();
+                input::Gamepad::PollInputs();
+                mouse->pollInputs();
+                keyboard->pollInputs();
             }
 
             // Run required updates
@@ -263,11 +263,11 @@ namespace Ngine {
 
                 // Update the current scene.
                 if (m_currentScene != nullptr) {
-                    m_currentScene->Update();
+                    m_currentScene->update();
                 }
 
                 // AudioDevice update
-                Audio::AudioDevice::Update();
+                audio::AudioDevice::Update();
 
                 // If we need to quit, don't run any more frames
                 if (!m_running) return;
@@ -306,7 +306,7 @@ namespace Ngine {
         delete m_resourceManager;
 
         // Close audio
-        Audio::AudioDevice::Close();
+        audio::AudioDevice::Close();
         Console::Notice("Game", "Closed audio device.");
 
         // Delete render target
@@ -327,35 +327,35 @@ namespace Ngine {
     Game::Game(WindowConfig windowConfig_, const GameConfig &config_)
             : m_gameWindowCreationConfig(std::move(windowConfig_)), Config(config_) {}
 
-    Window *Game::GetGameWindow() const {
+    Window *Game::getGameWindow() const {
         return m_gameWindow;
     }
 
-    Input::Mouse *Game::GetMouse() const {
-        return m_gameWindow ? m_gameWindow->GetMouse() : nullptr;
+    input::Mouse *Game::getMouse() const {
+        return m_gameWindow ? m_gameWindow->getMouse() : nullptr;
     }
 
-    Input::Keyboard *Game::GetKeyboard() const {
-        return m_gameWindow ? m_gameWindow->GetKeyboard() : nullptr;
+    input::Keyboard *Game::getKeyboard() const {
+        return m_gameWindow ? m_gameWindow->getKeyboard() : nullptr;
     }
 
-    Graphics::GraphicsDevice *Game::GetGraphicsDevice() {
-        return m_gameWindow->GetGraphicsDevice();
+    graphics::GraphicsDevice *Game::getGraphicsDevice() {
+        return m_gameWindow->getGraphicsDevice();
     }
 
-    Vector2 Game::GetDefaultWindowDimensions() const {
-        return {(float) m_gameWindow->GetWidth(), (float) m_gameWindow->GetHeight()};
+    Vector2 Game::getDefaultWindowDimensions() const {
+        return {(float) m_gameWindow->getWidth(), (float) m_gameWindow->getHeight()};
     }
 
-    Vector2 Game::GetDimensions() const {
+    Vector2 Game::getDimensions() const {
         return {(float) Config.TargetWidth, (float) Config.TargetHeight};
     }
 
-    int Game::GetTargetFPS() const {
+    int Game::getTargetFPS() const {
         return Config.UpdatesPerSecond;
     }
 
-    void Game::Run() {
+    void Game::run() {
 #if defined(PLATFORM_UWP)
         throw std::runtime_error("For the UWP platform, the Run() method must not be used! Use UWP::GameApp instead.");
 #else
@@ -369,7 +369,7 @@ namespace Ngine {
         std::thread updateThread(&Game::_updateThread, this);
 
         // This checks the game should still run
-        while (!m_gameWindow->ShouldClose() && m_running) {
+        while (!m_gameWindow->shouldClose() && m_running) {
             // Draw frame
             _runDraw();
         }
@@ -385,28 +385,28 @@ namespace Ngine {
 #endif
     }
 
-    bool Game::IsRunning() {
+    bool Game::isRunning() {
         return m_running;
     }
 
-    void Game::Quit() {
+    void Game::quit() {
         m_running = false;
     }
 
-    void Game::SetFPS(int FPS_) {
+    void Game::setFPS(int FPS_) {
         Config.UpdatesPerSecond = FPS_;
     }
 
-    void Game::SetIntendedSize(Vector2 size_) {
+    void Game::setIntendedSize(Vector2 size_) {
         Config.TargetWidth = (int) size_.X;
         Config.TargetHeight = (int) size_.Y;
     }
 
-    void Game::SetIsRunning(bool running_) {
+    void Game::setIsRunning(bool running_) {
         m_running = running_;
     }
 
-    void Game::SetScene(Scene *scene_) {
+    void Game::setScene(Scene *scene_) {
         if (m_currentScene != nullptr)
             m_currentScene->OnUnload({this});
 
@@ -418,7 +418,7 @@ namespace Ngine {
         Console::Notice("Game", "A new scene has been loaded.");
     }
 
-    Filesystem::ResourceManager *Game::GetResourceManager() const {
+    filesystem::ResourceManager *Game::getResourceManager() const {
         return m_resourceManager;
     }
 }

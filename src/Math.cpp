@@ -22,12 +22,12 @@
 
 #include <cmath>
 
-namespace Ngine {
+namespace ngine {
     const Vector2 Vector2::UnitX = {1, 0};
     const Vector2 Vector2::UnitY = {0, 1};
     const Vector2 Vector2::Zero = {0, 0};
 
-    Vector2 Vector2::Clamp(const Vector2 &min_, const Vector2 &max_) {
+    Vector2 Vector2::clamp(const Vector2 &min_, const Vector2 &max_) {
         return Clamp(*this, min_, max_);
     }
 
@@ -38,7 +38,7 @@ namespace Ngine {
         };
     }
 
-    float Vector2::Dot(const Vector2 &b_) const {
+    float Vector2::dot(const Vector2 &b_) const {
         return Dot(*this, b_);
     }
 
@@ -46,7 +46,7 @@ namespace Ngine {
         return (a_.X * b_.X) + (b_.Y * b_.Y);
     }
 
-    float Vector2::Distance(const Vector2 &b_) const {
+    float Vector2::distance(const Vector2 &b_) const {
         return Distance(*this, b_);
     }
 
@@ -56,22 +56,22 @@ namespace Ngine {
         return sqrtf(xdiff * xdiff + ydiff * ydiff);
     }
 
-    float Vector2::Magnitude() const {
-        return sqrtf(MagnitudeSquared());
+    float Vector2::magnitude() const {
+        return sqrtf(magnitudeSquared());
     }
 
-    float Vector2::MagnitudeSquared() const {
+    float Vector2::magnitudeSquared() const {
         return (X * X) + (Y * Y);
     }
 
-    Vector2 Vector2::Transform(Matrix matrix_) const {
+    Vector2 Vector2::transform(Matrix matrix_) const {
         return {
                 (X * matrix_.M0) + (Y * matrix_.M4) + matrix_.M12,
                 (X * matrix_.M1) + (Y * matrix_.M5) + matrix_.M13
         };
     }
 
-    Vector2 Vector2::Transform(const Vector2 &origin_, const Angle &angle_) const {
+    Vector2 Vector2::transform(const Vector2 &origin_, const Angle &angle_) const {
         // Create return vector
         Vector2 ret = {X, Y};
 
@@ -170,7 +170,7 @@ namespace Ngine {
     const Vector3 Vector3::UnitZ = {0, 0, 1};
     const Vector3 Vector3::Zero = {0, 0, 0};
 
-    Vector3 Vector3::Clamp(const Vector3 &min_, const Vector3 &max_) {
+    Vector3 Vector3::clamp(const Vector3 &min_, const Vector3 &max_) {
         return Clamp(*this, min_, max_);
     }
 
@@ -182,7 +182,7 @@ namespace Ngine {
         };
     }
 
-    float Vector3::Dot(const Vector3 &b_) const {
+    float Vector3::dot(const Vector3 &b_) const {
         return Dot(*this, b_);
     }
 
@@ -190,7 +190,7 @@ namespace Ngine {
         return (a_.X * b_.X) + (a_.Y * b_.Y) + (a_.Z * b_.Z);
     }
 
-    float Vector3::Distance(const Vector3 &b_) {
+    float Vector3::distance(const Vector3 &b_) {
         return Distance(*this, b_);
     }
 
@@ -201,15 +201,15 @@ namespace Ngine {
         return sqrtf(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff);
     }
 
-    float Vector3::Magnitude() const {
-        return sqrtf(MagnitudeSquared());
+    float Vector3::magnitude() const {
+        return sqrtf(magnitudeSquared());
     }
 
-    float Vector3::MagnitudeSquared() const {
+    float Vector3::magnitudeSquared() const {
         return (X * X) + (Y * Y) + (Z * Z);
     }
 
-    Vector3 Vector3::Transform(Matrix matrix_) const {
+    Vector3 Vector3::transform(Matrix matrix_) const {
         return {
                 (X * matrix_.M0) + (Y * matrix_.M4) + (Z * matrix_.M8) + matrix_.M12,
                 (X * matrix_.M1) + (Y * matrix_.M5) + (Z * matrix_.M9) + matrix_.M13,
@@ -354,7 +354,7 @@ namespace Ngine {
         return result;
     }
 
-    std::vector<float> Matrix::ToFloatArray() const {
+    std::vector<float> Matrix::toFloatArray() const {
         auto buffer = std::vector<float>(16);
         buffer[0] = M0;
         buffer[1] = M1;
@@ -376,7 +376,7 @@ namespace Ngine {
         return buffer;
     }
 
-    float Matrix::Trace() const {
+    float Matrix::trace() const {
         const auto result = (M0 + M5 + M10 + M15);
         return result;
     }
@@ -396,7 +396,7 @@ namespace Ngine {
         return result;
     }
 
-    Matrix Matrix::Transpose() const {
+    Matrix Matrix::transpose() const {
         Matrix result = {0};
 
         result.M0 = M0;
@@ -419,7 +419,7 @@ namespace Ngine {
         return result;
     }
 
-    Matrix Matrix::Invert() const {
+    Matrix Matrix::invert() const {
         Matrix result = {0};
 
         // Cache the matrix values (speed optimization)
@@ -464,7 +464,7 @@ namespace Ngine {
         return result;
     }
 
-    Matrix Matrix::Normalize() const {
+    Matrix Matrix::normalize() const {
         Matrix result = {0};
 
         const auto det = Determinant();
@@ -505,25 +505,25 @@ namespace Ngine {
         return *this;
     }
 
-    float Angle::GetDegrees() const {
+    float Angle::getDegrees() const {
         return RadToDeg(atan2f(Sin, Cos));
     }
 
     Angle operator+(Angle angle_, float theta_) {
-        auto d = angle_.GetDegrees();
-        return Angle(angle_.GetDegrees() + theta_);
+        auto d = angle_.getDegrees();
+        return Angle(angle_.getDegrees() + theta_);
     }
 
     Angle operator-(Angle angle_, float theta_) {
-        return Angle(angle_.GetDegrees() - theta_);
+        return Angle(angle_.getDegrees() - theta_);
     }
 
     Angle operator*(Angle angle_, float theta_) {
-        return Angle(angle_.GetDegrees() * theta_);
+        return Angle(angle_.getDegrees() * theta_);
     }
 
     Angle operator/(Angle angle_, float theta_) {
-        return Angle(angle_.GetDegrees() / theta_);
+        return Angle(angle_.getDegrees() / theta_);
     }
 
     Transform2D Transform2D::Identity = Transform2D({0, 0}, {0});

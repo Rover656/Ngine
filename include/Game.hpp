@@ -32,7 +32,7 @@
 #include "Scene.hpp"
 #include "Window.hpp"
 
-namespace Ngine {
+namespace ngine {
 #if defined(PLATFORM_UWP)
     namespace UWP {
         ref class GameApp;
@@ -95,7 +95,7 @@ namespace Ngine {
         /**
          * The game renderer.
          */
-        Graphics::Renderer *m_renderer = nullptr;
+        graphics::Renderer *m_renderer = nullptr;
 
         /**
          * The currently loaded scene
@@ -105,7 +105,7 @@ namespace Ngine {
         /**
          * The render target used for enforcing resolution
          */
-        Graphics::RenderTarget *m_renderTarget = nullptr;
+        graphics::RenderTarget *m_renderTarget = nullptr;
 
         /**
          * Is the game loop running
@@ -140,7 +140,7 @@ namespace Ngine {
         /**
          * The resource manager.
          */
-        Filesystem::ResourceManager *m_resourceManager = nullptr;
+        filesystem::ResourceManager *m_resourceManager = nullptr;
 
         /**
          * Initialize the game ready to process frames.
@@ -170,7 +170,7 @@ namespace Ngine {
         /**
          * Background clear color.
          */
-        Graphics::Color ClearColor = Graphics::Color::Black;
+        graphics::Color ClearColor = graphics::Color::Black;
 
         /**
          * Game config.
@@ -206,7 +206,7 @@ namespace Ngine {
         /**
          * On update event
          */
-        Event<Graphics::Renderer *> OnDraw;
+        Event<graphics::Renderer *> OnDraw;
 
         /**
          * On update event
@@ -216,7 +216,7 @@ namespace Ngine {
         /**
          * Filter mode for scaling render target
          */
-        Graphics::TextureFilterMode RenderTargetFilterMode = Graphics::TextureFilterMode::Trilinear;
+        graphics::TextureFilterMode RenderTargetFilterMode = graphics::TextureFilterMode::Trilinear;
 
         /**
          * Create a new Game
@@ -231,69 +231,69 @@ namespace Ngine {
          *
          * @return The game window.
          */
-        Window *GetGameWindow() const;
+        Window *getGameWindow() const;
 
         /**
          * Get this game's mouse handler.
          */
-        Input::Mouse *GetMouse() const;
+        input::Mouse *getMouse() const;
 
         /**
          * Get this game's keyboard handler.
          */
-        Input::Keyboard *GetKeyboard() const;
+        input::Keyboard *getKeyboard() const;
 
         /**
          * Get the graphics device.
          *
          * @return The graphics device.
          */
-        Graphics::GraphicsDevice *GetGraphicsDevice();
+        graphics::GraphicsDevice *getGraphicsDevice();
 
         /**
          * Get the default OS window size
          *
          * @return The default window dimensions.
          */
-        Vector2 GetDefaultWindowDimensions() const;
+        Vector2 getDefaultWindowDimensions() const;
 
         /**
          * Get game dimensions
          *
          * @return The game's virtual dimensions.
          */
-        Vector2 GetDimensions() const;
+        Vector2 getDimensions() const;
 
         /**
          * Get the target FPS.
          *
          * @return The game target FPS.
          */
-        int GetTargetFPS() const;
+        int getTargetFPS() const;
 
         /**
          * Start the game loop.
          */
-        void Run();
+        void run();
 
         /**
          * Is the game running
          *
          * @return Whether or not the game is running.
          */
-        bool IsRunning();
+        bool isRunning();
 
         /**
          * Quit the game
          */
-        void Quit();
+        void quit();
 
         /**
          * Set the target FPS.
          *
          * @param FPS_ The new target FPS.
          */
-        void SetFPS(int FPS_);
+        void setFPS(int FPS_);
 
         /**
          * Set the intended game size.
@@ -301,28 +301,28 @@ namespace Ngine {
          *
          * @param size_ The new virtual resolution for the game.
          */
-        void SetIntendedSize(Vector2 size_);
+        void setIntendedSize(Vector2 size_);
 
         /**
          * Set whether or not the game is running
          *
          * @param running_ Whether or not the game should be running.
          */
-        void SetIsRunning(bool running_);
+        void setIsRunning(bool running_);
 
         /**
          * Set the current scene
          *
          * @param scene_ The scene to use now.
          */
-        void SetScene(Scene *scene_);
+        void setScene(Scene *scene_);
 
         /**
          * Get the game resource manager.
          *
          * @return The game resource manager.
          */
-        Filesystem::ResourceManager *GetResourceManager() const;
+        filesystem::ResourceManager *getResourceManager() const;
     };
 }
 

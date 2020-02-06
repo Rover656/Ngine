@@ -23,9 +23,9 @@
 #include "Graphics/Buffer.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     VertexLayout::VertexLayout(GraphicsDevice *graphicsDevice_, Buffer *vertexBuffer_, Buffer *indexBuffer_)
-            : m_API(graphicsDevice_->GetAPI()) {
+            : m_API(graphicsDevice_->getAPI()) {
         // Check buffers
         if (vertexBuffer_->Type != BufferType::Vertex || (indexBuffer_ != nullptr && indexBuffer_->Type != BufferType::Index) )
             Console::Fail("VertexLayout", "Buffers are not correct type.");
@@ -35,50 +35,50 @@ namespace Ngine::Graphics {
         m_indexBuffer = indexBuffer_;
 
         // Use API to init
-        m_API->CreateVertexLayout(this);
+        m_API->createVertexLayout(this);
     }
 
     VertexLayout::~VertexLayout() {
         // Use API to cleanup
-        m_API->DeleteVertexLayout(this);
+        m_API->deleteVertexLayout(this);
     }
 
-    void VertexLayout::AddElement(const VertexLayout::VertexElement &element_) {
+    void VertexLayout::addElement(const VertexLayout::VertexElement &element_) {
         if (m_locked)
             Console::Fail("VertexLayout", "Cannot change layout once configured.");
         m_elements.push_back(element_);
     }
 
-    std::vector<VertexLayout::VertexElement> VertexLayout::GetElements() {
+    std::vector<VertexLayout::VertexElement> VertexLayout::getElements() {
         return m_elements;
     }
 
-    void VertexLayout::Configure() {
+    void VertexLayout::configure() {
         // Configure
-        m_API->ConfigureVertexLayout(this);
+        m_API->configureVertexLayout(this);
 
         // Lock
         m_locked = true;
     }
 
-    Buffer *VertexLayout::GetVertexBuffer() {
+    Buffer *VertexLayout::getVertexBuffer() {
         return m_vertexBuffer;
     }
 
-    Buffer *VertexLayout::GetIndexBuffer() {
+    Buffer *VertexLayout::getIndexBuffer() {
         return m_indexBuffer;
     }
 
-    void VertexLayout::Use() {
+    void VertexLayout::use() {
         if (!m_using) {
-            m_API->UseVertexLayout(this);
+            m_API->useVertexLayout(this);
             m_using = true;
         }
     }
 
-    void VertexLayout::Stop() {
+    void VertexLayout::stop() {
         if (m_using) {
-            m_API->StopVertexLayout(this);
+            m_API->stopVertexLayout(this);
             m_using = false;
         }
     }

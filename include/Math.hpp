@@ -25,7 +25,7 @@
 
 // TODO: The Math library will be going through some rewriting soon.
 
-namespace Ngine {
+namespace ngine {
     struct Matrix;
     struct Angle;
     struct Transform2D;
@@ -86,7 +86,7 @@ namespace Ngine {
          * @param max_ The maximum value.
          * @return The clamped vector.
          */
-        Vector2 Clamp(const Vector2 &min_, const Vector2 &max_);
+        Vector2 clamp(const Vector2 &min_, const Vector2 &max_);
 
         /**
          * Clamp a vector.
@@ -104,7 +104,7 @@ namespace Ngine {
          * @param b_ The other vector.
          * @return The dot (scalar) product.
          */
-        float Dot(const Vector2 &b_) const;
+        float dot(const Vector2 &b_) const;
 
         /**
          * Find the dot (scalar) product between two vectors.
@@ -121,7 +121,7 @@ namespace Ngine {
          * @param b_ The other vector.
          * @return The distance between the vectors.
          */
-        float Distance(const Vector2 &b_) const;
+        float distance(const Vector2 &b_) const;
 
         /**
          * Find the distance between two vectors.
@@ -138,7 +138,7 @@ namespace Ngine {
          * @return The magnitude of this vector.
          * @note If using this for speed-critical comparisons, use MagnitudeSquared() instead.
          */
-        float Magnitude() const;
+        float magnitude() const;
 
         /**
          * Find the magnitude of this vector squared.
@@ -146,7 +146,7 @@ namespace Ngine {
          * @return The magnitude squared.
          * @note Use this for speed-critical comparisons (doesn't use sqrt()).
          */
-        float MagnitudeSquared() const;
+        float magnitudeSquared() const;
 
         /**
          * Translate using a matrix.
@@ -154,14 +154,14 @@ namespace Ngine {
          * @param matrix_ Matrix to transform with.
          * @return Transformed vector.
          */
-        Vector2 Transform(Matrix matrix_) const;
+        Vector2 transform(Matrix matrix_) const;
 
         /**
          * Translate this vector by an angle.
          *
          * @param angle_ The angle to rotate by.
          */
-        Vector2 Transform(const Vector2 &origin_, const Angle &angle_) const;
+        Vector2 transform(const Vector2 &origin_, const Angle &angle_) const;
 
         bool operator==(const Vector2 &b_) const;
         bool operator!=(const Vector2 &b_) const;
@@ -246,7 +246,7 @@ namespace Ngine {
          * @param max_ The maximum value.
          * @return The clamped vector.
          */
-        Vector3 Clamp(const Vector3 &min_, const Vector3 &max_);
+        Vector3 clamp(const Vector3 &min_, const Vector3 &max_);
 
         /**
          * Clamp a vector.
@@ -264,7 +264,7 @@ namespace Ngine {
          * @param b_ The other vector.
          * @return The dot (scalar) product.
          */
-        float Dot(const Vector3 &b_) const;
+        float dot(const Vector3 &b_) const;
 
         /**
          * Find the dot (scalar) product between two vectors.
@@ -281,7 +281,7 @@ namespace Ngine {
          * @param b_ The other vector.
          * @return The distance between the vectors.
          */
-        float Distance(const Vector3 &b_);
+        float distance(const Vector3 &b_);
 
         /**
          * Find the distance between two vectors.
@@ -298,7 +298,7 @@ namespace Ngine {
          * @return The magnitude of this vector.
          * @note If using this for speed-critical comparisons, use MagnitudeSquared() instead.
          */
-        float Magnitude() const;
+        float magnitude() const;
 
         /**
          * Find the magnitude of this vector squared.
@@ -306,7 +306,7 @@ namespace Ngine {
          * @return The magnitude squared.
          * @note Use this for speed-critical comparisons (doesn't use sqrt()).
          */
-        float MagnitudeSquared() const;
+        float magnitudeSquared() const;
 
         // TODO: New transformation functions.
 
@@ -316,7 +316,7 @@ namespace Ngine {
          * @param matrix_ Matrix to transform with.
          * @return Transformed vector.
          */
-        Vector3 Transform(Matrix matrix_) const;
+        Vector3 transform(Matrix matrix_) const;
 
         bool operator==(const Vector3 &b_) const {
             return X == b_.X && Y == b_.Y && Z == b_.Z;
@@ -434,19 +434,19 @@ namespace Ngine {
 
         static Matrix Scale(float x, float y, float z);
 
-        std::vector<float> ToFloatArray() const;
+        std::vector<float> toFloatArray() const;
 
-        float Trace() const;
+        float trace() const;
 
         static Matrix Translate(Vector3 translation_);
 
         static Matrix Translate(float x_, float y_, float z_);
 
-        Matrix Transpose() const;
+        Matrix transpose() const;
 
-        Matrix Invert() const;
+        Matrix invert() const;
 
-        Matrix Normalize() const;
+        Matrix normalize() const;
 
         friend Matrix operator+(const Matrix left_, const Matrix right_) {
             auto result = Identity;
@@ -593,7 +593,7 @@ namespace Ngine {
          *
          * @return This angle in degrees.
          */
-        float GetDegrees() const;
+        float getDegrees() const;
 
         friend NEAPI Angle operator+(Angle angle_, float theta_);
         friend NEAPI Angle operator-(Angle angle_, float theta_);

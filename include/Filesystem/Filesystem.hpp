@@ -25,7 +25,7 @@
 
 #include <cstdio>
 
-namespace Ngine::Filesystem {
+namespace ngine::filesystem {
     /**
      * Resource type.
      */
@@ -89,7 +89,7 @@ namespace Ngine::Filesystem {
          *
          * @return The absolute path from the executable directory.
          */
-        Path GetAbsolute() const;
+        Path getAbsolute() const;
 
         /**
          * Get app data directory.
@@ -122,21 +122,21 @@ namespace Ngine::Filesystem {
          *
          * @return File extension.
          */
-        std::string GetFileExtension() const;
+        std::string getFileExtension() const;
 
         /**
          * Get referenced object name.
          *
          * @return The object name.
          */
-        std::string GetObjectName() const;
+        std::string getObjectName() const;
 
         /**
          * Gets a parent (if any).
          *
          * @return The parent path (if any).
          */
-        Path GetParent() const;
+        Path getParent() const;
 
         /**
          * Get this path relative to a base.
@@ -144,28 +144,28 @@ namespace Ngine::Filesystem {
          * @param base_ The base path.
          * @return This path relative to the base.
          */
-        Path GetRelativeTo(const Path &base_) const;
+        Path getRelativeTo(const Path &base_) const;
 
         /**
          * Get the type of resource this points to.
          *
          * @return The resource type.
          */
-        ResourceType GetResourceType() const;
+        ResourceType getResourceType() const;
 
         /**
          * Get string version of path.
          *
          * @return The path in string form.
          */
-        std::string GetString() const;
+        std::string getString() const;
 
         /**
          *  Get string version of path without an extension.
          *
          *  @return The path in string form with the extension omitted (if any).
          */
-        std::string GetStringNoExtension() const;
+        std::string getStringNoExtension() const;
 
         /**
          * Get the working directory.
@@ -179,7 +179,7 @@ namespace Ngine::Filesystem {
          *
          * @return Whether the path is absolute or not.
          */
-        bool IsAbsolute() const;
+        bool isAbsolute() const;
 
         /**
          * Combine two parts of a path.
@@ -204,7 +204,7 @@ namespace Ngine::Filesystem {
          *
          * @return Whether or not the path is valid.
          */
-        bool IsValid() const;
+        bool isValid() const;
 
         /*
          * Combine to paths
@@ -293,42 +293,42 @@ namespace Ngine::Filesystem {
          *
          * @return Whether or not the object was deleted.
          */
-        virtual bool Delete() = 0;
+        virtual bool deleteObject() = 0;
 
         /**
          * Determine whether or not this object exists on the filesystem.
          *
          * @return Returns whether or not the object exists.
          */
-        virtual bool Exists() const = 0;
+        virtual bool exists() const = 0;
 
         /**
          * Move this object.
          *
          * @param newPath_ The new path for the object.
          */
-        void Move(const Path &newPath_);
+        void move(const Path &newPath_);
 
         /**
          * Rename this object.
          *
          * @param newName_ The new name for the object.
          */
-        void Rename(const std::string &newName_);
+        void rename(const std::string &newName_);
 
         /**
          * Get the name of the object.
          *
          * @return Object name.
          */
-        std::string GetObjectName() const;
+        std::string getName() const;
 
         /**
          * Get the object path.
          *
          * @return The object path.
          */
-        Path GetObjectPath() const;
+        Path getPath() const;
     protected:
         /**
          * Create a new filesystem object reference.
@@ -429,7 +429,7 @@ namespace Ngine::Filesystem {
         /**
          * Close the file.
          */
-        void Close();
+        void close();
 
         /**
          * Create a new file and optionally leave it open for read or write.
@@ -446,21 +446,21 @@ namespace Ngine::Filesystem {
          *
          * @return Whether or not the file was deleted.
          */
-        bool Delete() override;
+        bool deleteObject() override;
 
         /**
          * Determine whether or not this file exists on the filesystem.
          *
          * @return Whether the file exists or not.
          */
-        bool Exists() const override;
+        bool exists() const override;
 
         /**
          * Get the current file mode.
          *
          * @return The current open mode.
          */
-        FileOpenMode GetCurrentMode() const;
+        FileOpenMode getCurrentOpenMode() const;
 
         /**
          * Get a file from a path.
@@ -475,28 +475,28 @@ namespace Ngine::Filesystem {
          *
          * @return The file extension.
          */
-        std::string GetFileExtension() const;
+        std::string getFileExtension() const;
 
         /**
          * Get the raw handle to the file.
          *
          * @return C FILE handle.
          */
-        FILE *GetFileHandle() const;
+        FILE *getFileHandle() const;
 
         /**
          * Get the size of the file in bytes.
          *
          * @return The size of the file in bytes.
          */
-        int GetSize() const;
+        int getSize() const;
 
         /**
          * Whether or not the file is open.
          *
          * @return Whether the file is open or not.
          */
-        bool IsOpen() const;
+        bool isOpen() const;
 
         /**
          * Open the file in read or write mode.
@@ -506,7 +506,7 @@ namespace Ngine::Filesystem {
          * @param binary_ Whether or not to open as a binary file.
          * @return Whetehr the file was opened or not.
          */
-        bool Open(FileOpenMode mode_, bool binary_ = false);
+        bool open(FileOpenMode mode_, bool binary_ = false);
 
         /**
          * Read a number of bytes from the file.
@@ -516,7 +516,7 @@ namespace Ngine::Filesystem {
          * @param offset_ Offset the read operation
          * @return The data from the file.
          */
-        unsigned char *ReadBytes(int size_ = -1, int offset_ = 0);
+        unsigned char *readBytes(int size_ = -1, int offset_ = 0);
 
         /**
          * Read a string from the file.
@@ -526,7 +526,7 @@ namespace Ngine::Filesystem {
          * @param offset_ Offset the read operation
          * @return The data from the file.
          */
-        std::string ReadString(int size_ = -1, int offset_ = 0);
+        std::string readString(int size_ = -1, int offset_ = 0);
 
         /**
          * Write bytes to the file.
@@ -535,7 +535,7 @@ namespace Ngine::Filesystem {
          * @param The size of the data.
          * @return Whether the data was written or not.
          */
-        bool WriteBytes(unsigned char *data_, int size_);
+        bool writeBytes(unsigned char *data_, int size_);
 
         /**
          * Write a string to the file.
@@ -543,7 +543,7 @@ namespace Ngine::Filesystem {
          * @param The string to write.
          * @return Whether the string was written or not.
          */
-        bool WriteString(const std::string &string_);
+        bool writeString(const std::string &string_);
     };
 
     /**
@@ -568,7 +568,7 @@ namespace Ngine::Filesystem {
          *
          * @return Whether or not the directory was created.
          */
-        bool Create();
+        bool create();
 
         /**
          * Create a new directory.
@@ -586,7 +586,7 @@ namespace Ngine::Filesystem {
          * @throws std::runtime_error When this is pointing to a non-directory resource.
          * @return Whether or not the directory was deleted.
          */
-        bool Delete() override;
+        bool deleteObject() override;
 
         /**
          * Recursively delete the directory.
@@ -595,23 +595,23 @@ namespace Ngine::Filesystem {
          * @throws std::runtime_error When this is pointing to a non-directory resource.
          * @return Whether or not the directory and its contents were deleted.
          */
-        bool DeleteRecursive();
+        bool deleteRecursive();
 
         /**
          * Determine whether or not this directory exists on the filesystem.
          *
          * @return Whether or not this directory exists.
          */
-        bool Exists() const override;
+        bool exists() const override;
 
         /**
          * Get the app data directory for the operating system.
          * This will return a varying degree of paths (Documents, Roaming app data, etc.).
          *
          * @return The AppData directory.
-         * @sa Ngine::Filesystem::Path::GetAppDataDirectory() for platform specific notes.
+         * @sa ngine::filesystem::Path::GetAppDataDirectory() for platform specific notes.
          */
-        static Directory GetAppDataDirectory();
+        static Directory getAppDataDirectory();
 
         /**
          * Get all of the children directories.
@@ -620,7 +620,7 @@ namespace Ngine::Filesystem {
          * @throws std::runtime_error When this is pointing to a non-directory resource.
          * @return All child directories.
          */
-        std::vector<Directory> GetDirectories() const;
+        std::vector<Directory> getDirectories() const;
 
         /**
          * Get all of the children files.
@@ -629,7 +629,7 @@ namespace Ngine::Filesystem {
          * @throws std::runtime_error When this is pointing to a non-directory resource.
          * @return All child files.
          */
-        std::vector<File> GetFiles() const;
+        std::vector<File> getFiles() const;
 
         /**
          * Get all of the descended children inside any child directory.
@@ -638,7 +638,7 @@ namespace Ngine::Filesystem {
          * @throws std::runtime_error When this is pointing to a non-directory resource.
          * @return All child files within *every* child folder.
          */
-        std::vector<File> GetFilesRecursive() const;
+        std::vector<File> getFilesRecursive() const;
 
         /**
          * Get a directory.
@@ -652,7 +652,7 @@ namespace Ngine::Filesystem {
          * Get the executable directory.
          *
          * @return The executable directory.
-         * @sa Ngine::Filesystem::Path::GetExecutableDirectory().
+         * @sa ngine::filesystem::Path::GetExecutableDirectory().
          */
         static Directory GetExecutableDirectory();
 
@@ -660,7 +660,7 @@ namespace Ngine::Filesystem {
          * Get the working directory.
          *
          * @return The working directory (path the game was launched from).
-         * @sa Ngine::Filesystem::Path::GetWorkingDirectory().
+         * @sa ngine::filesystem::Path::GetWorkingDirectory().
          */
         static Directory GetWorkingDirectory();
 

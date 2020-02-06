@@ -30,7 +30,7 @@
 #include "Color.hpp"
 #include "Image.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     class GraphicsDevice;
     class Renderer;
     class RenderTarget;
@@ -170,45 +170,45 @@ namespace Ngine::Graphics {
          * @param graphicsDevice_ The current graphics device.
          * @param path_ Texture file to load.
          */
-        static Texture2D *LoadTexture(GraphicsDevice *graphicsDevice_, const Filesystem::Path &path_);
+        static Texture2D *LoadTexture(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_);
 
         /**
          * Get the texture pixel format.
          */
-        PixelFormat GetFormat();
+        PixelFormat getFormat();
 
         /**
          * Get the number of mipmaps this texture has
          *
          * @return The number of mipmaps generated.
          */
-        int GetMipmapCount() const;
+        int getMipmapCount() const;
 
         /**
          * Set the texture filter mode.
          *
          * @param filterMode_ The filter mode to set.
          */
-        void SetTextureFilter(TextureFilterMode filterMode_);
+        void setTextureFilter(TextureFilterMode filterMode_);
 
         /**
          * Set the texture wrap mode.
          *
          * @param wrapMode_ The texture wrap mode.
          */
-        void SetTextureWrap(TextureWrapMode wrapMode_);
+        void setTextureWrap(TextureWrapMode wrapMode_);
 
         /**
          * Is the texture valid and ready for use.
          *
          * @return Whether or not the texture is valid.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Free the texture.
          */
-        void Free() override;
+        void free() override;
 
         /**
          * Draw the texture.
@@ -219,7 +219,7 @@ namespace Ngine::Graphics {
          * @param origin_ The origin (for rotation).
          * @param rotation_ Rotation (from origin).
          */
-        void Draw(Graphics::Renderer *renderer_, Vector2 pos_, Color col_ = Color::White, float scale_ = 1, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+        void draw(graphics::Renderer *renderer_, Vector2 pos_, Color col_ = Color::White, float scale_ = 1, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
 
         /**
          * Draw the texture.
@@ -229,7 +229,7 @@ namespace Ngine::Graphics {
          * @param origin_ The origin (for rotation).
          * @param rotation_ Rotation (from origin).
          */
-        void Draw(Graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_ = Color::White, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+        void draw(graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_ = Color::White, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
 
         bool operator==(const Texture2D &tex_) const;
         bool operator!=(const Texture2D &tex_) const;

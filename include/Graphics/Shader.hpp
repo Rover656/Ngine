@@ -26,7 +26,7 @@
 #include "../Resource.hpp"
 #include "GraphicsDevice.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     class ShaderProgram;
 
     namespace API {
@@ -79,12 +79,12 @@ namespace Ngine::Graphics {
          * @note If the shader has not compiled, or failed to compile it will not be valid.
          * @return Whether or not the shader is valid.
          */
-        bool IsValid() const override;
+        bool isValid() const override;
 
         /**
          * Delete the shader.
          */
-        void Free() override;
+        void free() override;
     };
 }
 

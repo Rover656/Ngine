@@ -23,12 +23,12 @@
 #include <regex>
 #include <sstream>
 
-namespace Ngine::Filesystem {
-    ResourceManager::ResourceManager(Graphics::GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
+namespace ngine::filesystem {
+    ResourceManager::ResourceManager(graphics::GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
         if (m_graphicsDevice == nullptr) throw std::runtime_error("Graphics device cannot be null.");
     }
 
-    void ResourceManager::DeleteAll() {
+    void ResourceManager::deleteAll() {
         // Delete all
         for (const auto& fnt : m_fonts) delete fnt.second;
         for (const auto& mus : m_music) delete mus.second;
@@ -42,7 +42,7 @@ namespace Ngine::Filesystem {
         m_textures.clear();
     }
 
-    void ResourceManager::DeleteFont(const std::string &name_) {
+    void ResourceManager::deleteFont(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_fonts.find(name) != m_fonts.end()) {
             delete m_fonts[name];
@@ -50,7 +50,7 @@ namespace Ngine::Filesystem {
         }
     }
 
-    void ResourceManager::DeleteMusic(const std::string &name_) {
+    void ResourceManager::deleteMusic(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_music.find(name) != m_music.end()) {
             delete m_music[name];
@@ -58,7 +58,7 @@ namespace Ngine::Filesystem {
         }
     }
 
-    void ResourceManager::DeleteSound(const std::string &name_) {
+    void ResourceManager::deleteSound(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_sounds.find(name) != m_sounds.end()) {
             delete m_sounds[name];
@@ -66,7 +66,7 @@ namespace Ngine::Filesystem {
         }
     }
 
-    void ResourceManager::DeleteTexture(const std::string &name_) {
+    void ResourceManager::deleteTexture(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_textures.find(name) != m_textures.end()) {
             delete m_textures[name];
@@ -74,35 +74,35 @@ namespace Ngine::Filesystem {
         }
     }
 
-    Graphics::Font *ResourceManager::GetFont(const std::string &name_) {
+    graphics::Font *ResourceManager::getFont(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_fonts.find(name) != m_fonts.end())
             return m_fonts[name];
         return nullptr;
     }
 
-    Audio::Music *ResourceManager::GetMusic(const std::string &name_) {
+    audio::Music *ResourceManager::getMusic(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_music.find(name) != m_music.end())
             return m_music[name];
         return nullptr;
     }
 
-    Audio::Sound *ResourceManager::GetSound(const std::string &name_) {
+    audio::Sound *ResourceManager::getSound(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_sounds.find(name) != m_sounds.end())
             return m_sounds[name];
         return nullptr;
     }
 
-    Graphics::Texture2D *ResourceManager::GetTexture(const std::string &name_) {
+    graphics::Texture2D *ResourceManager::getTexture(const std::string &name_) {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
         if (m_textures.find(name) != m_textures.end())
             return m_textures[name];
         return nullptr;
     }
 
-    void ResourceManager::LoadResources() {
+    void ResourceManager::loadResources() {
         // File extension definitions
         std::vector<std::string> fntExts = {"ttf", "otf"};
         std::vector<std::string> musExts = {"ogg", "flac", "mp3"};//, "xm", "mod"};
@@ -112,39 +112,39 @@ namespace Ngine::Filesystem {
         // Loop over all resource directories
         for (auto dir : Config.ResourceDirectories) {
             // TODO: Will this need to be more robust for some platforms?
-            auto contentDir = Directory(dir.first.GetAbsolute());
+            auto contentDir = Directory(dir.first.getAbsolute());
 
             // Get all files
-            auto files = contentDir.GetFilesRecursive();
+            auto files = contentDir.getFilesRecursive();
 
             // Load all files
             for (auto file : files) {
                 // Get name (relative path to the content folder)
-                auto name = file.GetObjectPath().GetRelativeTo(contentDir.GetObjectPath()).GetStringNoExtension();
+                auto name = file.getPath().getRelativeTo(contentDir.getPath()).getStringNoExtension();
 
                 // Replace windows slashes with forward slashes
                 name = std::regex_replace(name, std::regex("\\\\"), "/");
 
                 // Get extension
-                auto ext = file.GetFileExtension();
+                auto ext = file.getFileExtension();
 
                 // Get actual path
-                auto path = file.GetObjectPath();
+                auto path = file.getPath();
 
                 // Load resources
                 if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end() && dir.second & CONTENT_FONTS)
-                    LoadFont(path, name);
+                    loadFont(path, name);
                 if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end() && dir.second & CONTENT_MUSIC)
-                    LoadMusic(path, name);
+                    loadMusic(path, name);
                 if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end() && dir.second & CONTENT_SOUNDS)
-                    LoadSound(path, name);
+                    loadSound(path, name);
                 if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end() && dir.second & CONTENT_TEXTURES)
-                    LoadTexture(path, name);
+                    loadTexture(path, name);
             }
         }
     }
 
-    bool ResourceManager::LoadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
+    bool ResourceManager::loadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
         // Fix base size
         if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
 
@@ -152,10 +152,10 @@ namespace Ngine::Filesystem {
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
         // Create font
-        auto fnt = Graphics::Font::LoadTTFFont(m_graphicsDevice, inPath_, baseSize_);
+        auto fnt = graphics::Font::LoadTTFFont(m_graphicsDevice, inPath_, baseSize_);
 
         // Check if it is valid
-        if (fnt->IsValid()) {
+        if (fnt->isValid()) {
             m_fonts.insert({name, fnt});
             return true;
         }
@@ -165,15 +165,15 @@ namespace Ngine::Filesystem {
         return false;
     }
 
-    bool ResourceManager::LoadMusic(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::loadMusic(const Path &inPath_, const std::string &name_) {
         // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
         // Create music
-        auto mus = Audio::Music::LoadMusic(inPath_);
+        auto mus = audio::Music::LoadMusic(inPath_);
 
         // Check if it is valid
-        if (mus->IsValid()) {
+        if (mus->isValid()) {
             m_music.insert({name, mus});
             return true;
         }
@@ -183,15 +183,15 @@ namespace Ngine::Filesystem {
         return false;
     }
 
-    bool ResourceManager::LoadSound(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::loadSound(const Path &inPath_, const std::string &name_) {
         // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
         // Create sound
-        auto snd = Audio::Sound::LoadSound(inPath_);
+        auto snd = audio::Sound::LoadSound(inPath_);
 
         // Check if it is valid
-        if (snd->IsValid()) {
+        if (snd->isValid()) {
             m_sounds.insert({name, snd});
             return true;
         }
@@ -201,15 +201,15 @@ namespace Ngine::Filesystem {
         return false;
     }
 
-    bool ResourceManager::LoadTexture(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::loadTexture(const Path &inPath_, const std::string &name_) {
         // Get the name
         auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
 
         // Create texture
-        auto tex = Graphics::Texture2D::LoadTexture(m_graphicsDevice, inPath_);
+        auto tex = graphics::Texture2D::LoadTexture(m_graphicsDevice, inPath_);
 
         // Check if it is valid.
-        if (tex->IsValid()) {
+        if (tex->isValid()) {
             m_textures.insert({ name, tex});
             return true;
         }

@@ -26,7 +26,7 @@
 #if defined(PLATFORM_DESKTOP)
 typedef struct GLFWwindow GLFWwindow;
 #elif defined(PLATFORM_UWP)
-namespace Ngine::UWP {
+namespace ngine::UWP {
     ref class GameApp;
 }
 
@@ -41,12 +41,12 @@ typedef void *EGLContext;
 #include "Graphics/Image.hpp"
 #include "Events.hpp"
 
-namespace Ngine {
-    namespace Graphics {
+namespace ngine {
+    namespace graphics {
         class GraphicsDevice;
     }
 
-    namespace Input {
+    namespace input {
         class Mouse;
         class Keyboard;
     }
@@ -71,7 +71,7 @@ namespace Ngine {
         /**
          * Window icon.
          */
-        Graphics::Image *Icon = nullptr;
+        graphics::Image *Icon = nullptr;
 
         /**
          * Initial window height.
@@ -114,8 +114,8 @@ namespace Ngine {
      * Ngine window management wrapper.
      */
     class NEAPI Window {
-        friend class Input::Mouse;
-        friend class Input::Keyboard;
+        friend class input::Mouse;
+        friend class input::Keyboard;
 
         /**
          * The current window.
@@ -170,12 +170,12 @@ namespace Ngine {
         /**
          * The mouse input manager for this window.
          */
-        Input::Mouse *m_mouseInput = nullptr;
+        input::Mouse *m_mouseInput = nullptr;
 
         /**
          * The keyboard input manager for this window.
          */
-        Input::Keyboard *m_keyboardInput = nullptr;
+        input::Keyboard *m_keyboardInput = nullptr;
 
         /**
          * Current window width.
@@ -225,7 +225,7 @@ namespace Ngine {
         /**
          * The graphics device attached to the window context.
          */
-        Graphics::GraphicsDevice *m_graphicsDevice;
+        graphics::GraphicsDevice *m_graphicsDevice;
 
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
@@ -283,12 +283,12 @@ namespace Ngine {
          *
          * @return The graphics device.
          */
-        Graphics::GraphicsDevice *GetGraphicsDevice();
+        graphics::GraphicsDevice *getGraphicsDevice();
 
         /**
          * Make this window's context current.
          */
-        void MakeCurrent();
+        void makeCurrent();
 
         /**
          * Get the current window.
@@ -300,26 +300,26 @@ namespace Ngine {
         /**
          * Get the mouse input handler.
          */
-        Input::Mouse *GetMouse();
+        input::Mouse *getMouse();
 
         /**
          * Get the keyboard input handler.
          */
-        Input::Keyboard *GetKeyboard();
+        input::Keyboard *getKeyboard();
 
         /**
          * Get window width.
          *
          * @return Current window width.
          */
-        int GetWidth();
+        int getWidth();
 
         /**
          * Get window height.
          *
          * @return Current window height.
          */
-        int GetHeight();
+        int getHeight();
 
         /**
          * Resize the window
@@ -327,7 +327,7 @@ namespace Ngine {
          * @param width_ New window width.
          * @param height_ New window height.
          */
-        void Resize(int width_, int height_);
+        void setSize(int width_, int height_);
 
         /**
          * Set whether or not VSync is enabled
@@ -335,14 +335,14 @@ namespace Ngine {
          * @warning Makes this window's context current.
          * @param flag_ Whether or not V-Sync should be enabled.
          */
-        void SetVSyncEnabled(bool flag_);
+        void setVSyncEnabled(bool flag_);
 
         /**
          * Set the window icon.
          *
          * @param icon_ The new window icon.
          */
-        void SetIcon(Graphics::Image *icon_);
+        void setIcon(graphics::Image *icon_);
 
         /**
          * Get whether or not the window is in fullscreen mode.
@@ -350,19 +350,19 @@ namespace Ngine {
          * @note This will still return false on platforms that don't support windowing, such as Xbox One or Android.
          * @return Whether the window is full screen nor not.
          */
-        bool IsFullscreen();
+        bool isFullscreen();
 
         /**
          * Toggle fullscreen. Enables if disabled and vice versa.
          */
-        void ToggleFullscreen();
+        void toggleFullscreen();
 
         /**
          * Set fullscreen.
          *
          * @param fullscreen_ Whether the window should be fullscreen.
          */
-        void SetFullscreen(bool fullscreen_);
+        void setFullscreen(bool fullscreen_);
 
         /**
          * Set whether or not the window can be resized.
@@ -370,7 +370,7 @@ namespace Ngine {
          * @note This can only be enforced on the Desktop platform.
          * @param resizable_ Whether the window can be resized.
          */
-        void SetResizable(bool resizable_);
+        void setResizable(bool resizable_);
 
         /**
          * Get the window title.
@@ -378,7 +378,7 @@ namespace Ngine {
          * @note Only works on Desktop and UWP.
          * @return The window title (if available.)
          */
-        std::string GetTitle();
+        std::string getTitle();
 
         /**
          * Set window title.
@@ -386,7 +386,7 @@ namespace Ngine {
          * @note Only works on Desktop platform.
          * @param title_ New window title.
          */
-        void SetTitle(const std::string& title_);
+        void setTitle(const std::string& title_);
 
         /**
          * Set whether or not there should be a native debug console.
@@ -394,7 +394,7 @@ namespace Ngine {
          * @note This only works on Windows native.
          * @param flag_ Whether or not the debug console should be attached.
          */
-        void SetEnableNativeConsole(bool flag_);
+        void setEnableNativeConsole(bool flag_);
 
         /**
          * Determine whether or not the window is focussed on.
@@ -402,26 +402,26 @@ namespace Ngine {
          * @note This only works on Desktop and UWP platforms.
          * @return Whether or not the window has focus.
          */
-        bool IsFocussed();
+        bool isFocussed();
 
         /**
          * Whether or not the window is visible.
          *
          * @return If the window is visible or not.
          */
-        bool IsVisible();
+        bool isVisible();
 
         /**
          * Poll window events.
          */
-        void PollEvents();
+        void pollEvents();
 
         /**
          * Close window.
          *
          * @warning This will delete this window's context.
          */
-        void Close();
+        void close();
 
         /**
          * Determine Whether or not the window should close.
@@ -429,12 +429,12 @@ namespace Ngine {
          *
          * @return Whether or not the window should close.
          */
-        bool ShouldClose();
+        bool shouldClose();
 
         /**
          * Swap the window buffers
          */
-        void SwapBuffers();
+        void swapBuffers();
     };
 }
 

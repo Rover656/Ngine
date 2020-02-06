@@ -22,6 +22,6 @@
 
 #include "Physics/BoundingBox.hpp"
 
-namespace Ngine::Physics {
+namespace ngine::physics {
 
 }

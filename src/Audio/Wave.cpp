@@ -27,41 +27,41 @@
 
 #include "Console.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     Wave::~Wave() {
-        Free();
+        free();
     }
 
-    bool Wave::IsValid() const {
+    bool Wave::isValid() const {
         return Channels > 0 && Data != nullptr;
     }
 
-    Wave *Wave::LoadWave(const Filesystem::Path &path_) {
+    Wave *Wave::LoadWave(const filesystem::Path &path_) {
         auto wav = new Wave();
 
-        if (path_.GetFileExtension() == "mp3") {
-            wav->__LoadMP3(path_);
-        } else if (path_.GetFileExtension() == "wav") {
-            wav->__LoadWAV(path_);
-        } else if (path_.GetFileExtension() == "ogg") {
-            wav->__LoadOGG(path_);
-        } else if (path_.GetFileExtension() == "flac") {
-            wav->__LoadFLAC(path_);
+        if (path_.getFileExtension() == "mp3") {
+            wav->_loadMP3(path_);
+        } else if (path_.getFileExtension() == "wav") {
+            wav->_loadWAV(path_);
+        } else if (path_.getFileExtension() == "ogg") {
+            wav->_loadOGG(path_);
+        } else if (path_.getFileExtension() == "flac") {
+            wav->_loadFLAC(path_);
         } else Console::Error("Wave", "File format not supported.");
 
         return wav;
     }
 
-    void Wave::Free() {
-        free(Data);
+    void Wave::free() {
+        ::free(Data);
         Data = nullptr;
         Console::Notice("Wave", "Unloaded wav data from RAM.");
     }
 
-    void Wave::__LoadFLAC(const Filesystem::Path &path_) {
+    void Wave::_loadFLAC(const filesystem::Path &path_) {
         // Decode entire FLAC file in one go
         uint64_t totalSampleCount;
-        Data = drflac_open_file_and_read_pcm_frames_s16(path_.GetString().c_str(), &Channels, &SampleRate, &totalSampleCount);
+        Data = drflac_open_file_and_read_pcm_frames_s16(path_.getString().c_str(), &Channels, &SampleRate, &totalSampleCount);
 
         SampleCount = (unsigned int) totalSampleCount;
         SampleSize = 16;
@@ -72,11 +72,11 @@ namespace Ngine::Audio {
         else Console::Notice("Wave", "Loaded FLAC file successfully!");
     }
 
-    void Wave::__LoadMP3(const Filesystem::Path &path_) {
+    void Wave::_loadMP3(const filesystem::Path &path_) {
         // Decode whole MP3 file in one go
         uint64_t totalFrameCount = 0;
         drmp3_config config = {0};
-        Data = drmp3_open_file_and_read_f32(path_.GetString().c_str(), &config, &totalFrameCount);
+        Data = drmp3_open_file_and_read_f32(path_.getString().c_str(), &config, &totalFrameCount);
 
         Channels = config.outputChannels;
         SampleRate = config.outputSampleRate;
@@ -90,9 +90,9 @@ namespace Ngine::Audio {
         else Console::Notice("Wave", "Loaded MP3 file successfully!");
     }
 
-    void Wave::__LoadOGG(const Filesystem::Path &path_) {
+    void Wave::_loadOGG(const filesystem::Path &path_) {
         // Load ogg file
-        stb_vorbis *oggFile = stb_vorbis_open_filename(path_.GetString().c_str(), nullptr, nullptr);
+        stb_vorbis *oggFile = stb_vorbis_open_filename(path_.getString().c_str(), nullptr, nullptr);
 
         if (oggFile == nullptr) Console::Warn("Wave", "OGG file could not be opened.");
         else {
@@ -110,10 +110,10 @@ namespace Ngine::Audio {
         }
     }
 
-    void Wave::__LoadWAV(const Filesystem::Path &path_) {
+    void Wave::_loadWAV(const filesystem::Path &path_) {
         // Load wav file
         uint64_t totalFrameCount = 0;
-        Data = drwav_open_file_and_read_pcm_frames_f32(path_.GetString().c_str(), &Channels, &SampleRate, &totalFrameCount);
+        Data = drwav_open_file_and_read_pcm_frames_f32(path_.getString().c_str(), &Channels, &SampleRate, &totalFrameCount);
 
         SampleCount = (int)totalFrameCount*Channels;
         SampleSize = 32;

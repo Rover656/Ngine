@@ -22,7 +22,7 @@
 
 #include "Entity.hpp"
 
-namespace Ngine {
+namespace ngine {
     void EntityContainer::_addEntity(Entity *entity_) {
         if (m_type == ENTITY) {
             auto meEnt = (Entity*) this;
@@ -44,9 +44,9 @@ namespace Ngine {
         m_entities.clear();
     }
 
-    bool EntityContainer::RemoveChild(const std::string &name_, bool delete_) {
+    bool EntityContainer::removeChild(const std::string &name_, bool delete_) {
         // Get the entity
-        const auto ent = GetChild<Entity>(name_);
+        const auto ent = getChild<Entity>(name_);
 
         if (ent != nullptr) {
             // Destroy the entity
@@ -63,11 +63,11 @@ namespace Ngine {
         return false;
     }
 
-    bool EntityContainer::RemoveChild(Entity *entity_, bool delete_) {
+    bool EntityContainer::removeChild(Entity *entity_, bool delete_) {
         // Search for the entity
         for (const auto &ent : m_entities) {
             if (ent.second == entity_)
-                return RemoveChild(ent.first, delete_);
+                return removeChild(ent.first, delete_);
         }
 
         return false;

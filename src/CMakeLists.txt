@@ -65,7 +65,7 @@ if (${PLATFORM} MATCHES "UWP")
     set_property(TARGET Ngine PROPERTY VS_WINRT_COMPONENT TRUE)
 
     # Link special libraries
-    target_link_libraries(Ngine WindowsApp)
+    target_link_libraries(Ngine PUBLIC WindowsApp)
 
     # No warnings
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)

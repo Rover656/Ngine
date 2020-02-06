@@ -25,24 +25,24 @@
 #include "Audio/AudioDevice.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Audio {
+namespace ngine::audio {
     // Destructor
 
     Sound::~Sound() {
-        Free();
+        free();
     }
 
     // Public Methods
 
-    bool Sound::IsPlaying() const {
-        return Stream.Buffer->IsPlaying();
+    bool Sound::isPlaying() const {
+        return Stream.Buffer->isPlaying();
     }
 
-    bool Sound::IsValid() const {
+    bool Sound::isValid() const {
         return Stream.Buffer != nullptr;
     }
 
-    Sound *Sound::LoadSound(const Filesystem::Path &path_) {
+    Sound *Sound::LoadSound(const filesystem::Path &path_) {
         auto wav = Wave::LoadWave(path_);
 
         auto snd = LoadSoundFromWave(wav);
@@ -53,7 +53,7 @@ namespace Ngine::Audio {
     }
 
     Sound *Sound::LoadSoundFromWave(Wave *wave_) {
-        if (wave_->IsValid()) {
+        if (wave_->isValid()) {
             auto snd = new Sound();
 
             // We convert every sound to be the same format.
@@ -81,31 +81,31 @@ namespace Ngine::Audio {
         return nullptr;
     }
 
-    void Sound::Pause() {
-        Stream.Buffer->Pause();
+    void Sound::pause() {
+        Stream.Buffer->pause();
     }
 
-    void Sound::Play() {
-        Stream.Buffer->Play();
+    void Sound::play() {
+        Stream.Buffer->play();
     }
 
-    void Sound::Resume() {
-        Stream.Buffer->Resume();
+    void Sound::resume() {
+        Stream.Buffer->resume();
     }
 
-    void Sound::SetPitch(float pitch_) {
-        Stream.Buffer->SetPitch(pitch_);
+    void Sound::setPitch(float pitch_) {
+        Stream.Buffer->setPitch(pitch_);
     }
 
-    void Sound::SetVolume(float vol_) {
-        Stream.Buffer->SetVolume(vol_);
+    void Sound::setVolume(float vol_) {
+        Stream.Buffer->setVolume(vol_);
     }
 
-    void Sound::Stop() {
-        Stream.Buffer->Stop();
+    void Sound::stop() {
+        Stream.Buffer->stop();
     }
 
-    void Sound::Free() {
+    void Sound::free() {
         // Close buffer
         AudioDevice::CloseAudioBuffer(Stream.Buffer);
         Stream.Buffer = nullptr;

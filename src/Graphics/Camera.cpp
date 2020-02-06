@@ -20,30 +20,30 @@
 
 #include "Graphics/Camera.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     // Public Methods
 
-    void Camera::BeginCamera(GraphicsDevice *graphicsDevice_) const {
+    void Camera::beginCamera(GraphicsDevice *graphicsDevice_) const {
         // Load matrix
-        graphicsDevice_->PushViewMatrix();
-        graphicsDevice_->LoadViewIdentity();
-        graphicsDevice_->MultView(GetTranslationMatrix());
+        graphicsDevice_->pushViewMatrix();
+        graphicsDevice_->loadViewIdentity();
+        graphicsDevice_->multView(getTranslationMatrix());
     }
 
-    void Camera::EndCamera(GraphicsDevice *graphicsDevice_) const {
+    void Camera::endCamera(GraphicsDevice *graphicsDevice_) const {
         // Reload matrix
-        graphicsDevice_->PopViewMatrix();
+        graphicsDevice_->popViewMatrix();
     }
 
-    Vector2 Camera::ScreenToWorld(Vector2 pos_) {
-        return pos_.Transform(GetTranslationMatrix().Invert());
+    Vector2 Camera::screenToWorld(Vector2 pos_) {
+        return pos_.transform(getTranslationMatrix().invert());
     }
 
-    Vector2 Camera::WorldToScreen(Vector2 pos_) {
-        return pos_.Transform(GetTranslationMatrix());
+    Vector2 Camera::worldToScreen(Vector2 pos_) {
+        return pos_.transform(getTranslationMatrix());
     }
 
-    Matrix Camera::GetTranslationMatrix() const {
+    Matrix Camera::getTranslationMatrix() const {
         Matrix ret = Matrix::Identity;
         ret = ret * Matrix::Translate(-Position.X, -Position.Y, 0);
         ret = ret * Matrix::RotateZ(Rotation);

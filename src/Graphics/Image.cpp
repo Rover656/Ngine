@@ -23,7 +23,7 @@
 #include <cstring>
 #include <stb_image.h>
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     void Image::_create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
         // Bits per pixel
         int bpp = 0;
@@ -58,9 +58,9 @@ namespace Ngine::Graphics {
         old_.PixelData = nullptr;
     }
 
-    Image::Image(const Filesystem::Path &path_) {
+    Image::Image(const filesystem::Path &path_) {
         // Check format
-        auto ext = path_.GetFileExtension();
+        auto ext = path_.getFileExtension();
 
         if (ext == "png"
             || ext == "bmp"
@@ -70,19 +70,19 @@ namespace Ngine::Graphics {
             || ext == "pic"
             || ext == "psd") {
             // Open file
-            auto file = Filesystem::File(path_);
-            file.Open(Filesystem::FileOpenMode::Read, true);
+            auto file = filesystem::File(path_);
+            file.open(filesystem::FileOpenMode::Read, true);
 
             // Load data
             int width = 0, height = 0, bpp = 0;
-            auto data = stbi_load_from_file(file.GetFileHandle(), &width, &height, &bpp, 4);
+            auto data = stbi_load_from_file(file.getFileHandle(), &width, &height, &bpp, 4);
 
             // Load image
             _create(data, width, height, UNCOMPRESSED_R8G8B8A8);
 
             // Close file
             stbi_image_free(data);
-            file.Close();
+            file.close();
         }
     }
 
@@ -91,16 +91,16 @@ namespace Ngine::Graphics {
     }
 
     Image::~Image() {
-        Free();
+        free();
     }
 
-    bool Image::IsValid() const {
+    bool Image::isValid() const {
         return Width > 0
                 && Height > 0
                 && PixelData != nullptr;
     }
 
-    void Image::Free() {
+    void Image::free() {
         // Removes image data from the container (across all copies of this image)
         Format = UNCOMPRESSED_GRAYSCALE;
         Height = 0;

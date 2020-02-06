@@ -23,7 +23,7 @@
 #include "Graphics/VertexDataConverter.hpp"
 #include "Console.hpp"
 
-namespace Ngine::Graphics {
+namespace ngine::graphics {
     void Renderer::_addTriangles(Vertex *vertices_, int count_, bool translate_) {
         // Check array size
         if (count_ > MAX_TRIANGLE_VERTICES)
@@ -31,14 +31,14 @@ namespace Ngine::Graphics {
 
         // Check if the batch will be full
         if (m_vertexCount + count_ >= MAX_TRIANGLE_VERTICES || m_indexCount + count_ >= MAX_TRIANGLE_VERTICES)
-            RenderBatch();
+            renderBatch();
 
         // Add vertices and indices
         for (auto i = 0; i < count_; i++) {
             m_vertexArray[m_vertexCount + i] = vertices_[i];
             if (translate_) {
-                m_vertexArray[m_vertexCount + i].Position = vertices_[i].Position.Transform(
-                        m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->GetViewMatrix());
+                m_vertexArray[m_vertexCount + i].Position = vertices_[i].Position.transform(
+                        m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->getViewMatrix());
             }
             m_indexArray[m_indexCount + i] = m_vertexCount + i;
         }
@@ -48,7 +48,7 @@ namespace Ngine::Graphics {
 
         // Check if the batch is full
         if (m_vertexCount + 1 >= MAX_TRIANGLE_VERTICES || m_indexCount + 1 >= MAX_TRIANGLE_VERTICES)
-            RenderBatch();
+            renderBatch();
     }
 
     void Renderer::_addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_,
@@ -60,14 +60,14 @@ namespace Ngine::Graphics {
 
         // Check if the batch will be full
         if (m_vertexCount + vCount_ >= MAX_TRIANGLE_VERTICES || m_indexCount + iCount_ >= MAX_TRIANGLE_VERTICES)
-            RenderBatch();
+            renderBatch();
 
         // Add vertices
         for (auto i = 0; i < vCount_; i++) {
             m_vertexArray[m_vertexCount + i] = vertices_[i];
             if (translate_) {
-                m_vertexArray[m_vertexCount + i].Position = vertices_[i].Position.Transform(
-                        m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->GetViewMatrix());
+                m_vertexArray[m_vertexCount + i].Position = vertices_[i].Position.transform(
+                        m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->getViewMatrix());
             }
         }
 
@@ -81,7 +81,7 @@ namespace Ngine::Graphics {
 
         // Check if the batch is full
         if (m_vertexCount + 1 >= MAX_TRIANGLE_VERTICES || m_indexCount + 1 >= MAX_TRIANGLE_VERTICES)
-            RenderBatch();
+            renderBatch();
     }
 
     Renderer::Renderer(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
@@ -89,17 +89,17 @@ namespace Ngine::Graphics {
         m_VBO = new Buffer(m_graphicsDevice, BufferType::Vertex, BufferUsage::Dynamic);
 
         // Write null data
-        m_VBO->Write<Vertex>(nullptr, MAX_TRIANGLE_VERTICES);
+        m_VBO->write<Vertex>(nullptr, MAX_TRIANGLE_VERTICES);
 
         // Create IBO
         m_IBO = new Buffer(m_graphicsDevice, BufferType::Index, BufferUsage::Dynamic);
 
         // Write null data
-        m_IBO->Write<unsigned short>(nullptr, MAX_TRIANGLE_VERTICES);
+        m_IBO->write<unsigned short>(nullptr, MAX_TRIANGLE_VERTICES);
 
         // Create vertex layout TODO: Tidy API a little
         m_layout = new VertexLayout(m_graphicsDevice, m_VBO, m_IBO);
-        m_layout->AddElement({
+        m_layout->addElement({
                                      "", // DX
                                      0, // GL
                                      3,
@@ -107,7 +107,7 @@ namespace Ngine::Graphics {
                                      sizeof(Vertex),
                                      offsetof(Vertex, Position)
                              });
-        m_layout->AddElement({
+        m_layout->addElement({
                                      "",
                                      2,
                                      2,
@@ -115,7 +115,7 @@ namespace Ngine::Graphics {
                                      sizeof(Vertex),
                                      offsetof(Vertex, TexCoords)
                              });
-        m_layout->AddElement({
+        m_layout->addElement({
                                      "",
                                      1,
                                      4,
@@ -123,7 +123,7 @@ namespace Ngine::Graphics {
                                      sizeof(Vertex),
                                      offsetof(Vertex, Color)
                              });
-        m_layout->Configure();
+        m_layout->configure();
 
         // Create default shader
 
@@ -172,14 +172,14 @@ namespace Ngine::Graphics {
         texture.Type = ShaderDataType::Int;
 
         // Setup uniforms
-        m_defaultShader->AddUniform(MVP);
-        m_defaultShader->AddUniform(texture);
-        m_defaultShader->Finalize();
+        m_defaultShader->addUniform(MVP);
+        m_defaultShader->addUniform(texture);
+        m_defaultShader->finalize();
 
         // Create program state
         m_defaultShaderState = new ShaderProgramState(m_defaultShader);
         int defaultTextureUnit = 0;
-        m_defaultShaderState->SetUniform("NGINE_TEXTURE", &defaultTextureUnit);
+        m_defaultShaderState->setUniform("NGINE_TEXTURE", &defaultTextureUnit);
 
         // Create default texture (for shader)
         unsigned char pixels[4] = {255, 255, 255, 255};
@@ -200,11 +200,11 @@ namespace Ngine::Graphics {
                             this), m_graphicsDevice->m_attachedRenderers.end());
 
         // Stop using internal layout (if enabled).
-        m_layout->Stop();
+        m_layout->stop();
 
         // Unbind buffers
-        m_VBO->Unbind();
-        m_IBO->Unbind();
+        m_VBO->unbind();
+        m_IBO->unbind();
 
         // Delete Layout
         delete m_layout;
@@ -219,22 +219,22 @@ namespace Ngine::Graphics {
         m_IBO = nullptr;
     }
 
-    void Renderer::AddTriangles(Vertex *vertices_, int count_) {
+    void Renderer::addTriangles(Vertex *vertices_, int count_) {
         _addTriangles(vertices_, count_, true);
     }
 
-    void Renderer::AddIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_) {
+    void Renderer::addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_) {
         _addIndexedTriangles(vertices_, vCount_, indices_, iCount_, true);
     }
 
-    void Renderer::BeginVertices(PrimitiveType type_) {
+    void Renderer::beginVertices(PrimitiveType type_) {
         if (m_buildingVertices)
             Console::Fail("Renderer", "Cannot begin pushing vertices until last vertices have been finished.");
         m_buildingVertices = true;
         m_builtType = type_;
     }
 
-    void Renderer::EndVertices() {
+    void Renderer::endVertices() {
         // Check type
         if (m_builtType != PrimitiveType::Triangles) {
             // Convert
@@ -255,41 +255,41 @@ namespace Ngine::Graphics {
         m_buildingVertices = false;
     }
 
-    void Renderer::PushVertex(Vertex vertex_) {
+    void Renderer::pushVertex(Vertex vertex_) {
         // Save vertex
         m_builtVertices[m_builtVertexCount] = vertex_;
 
         // Translate right now
-        m_builtVertices[m_builtVertexCount].Position = vertex_.Position.Transform(
-                m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->GetViewMatrix());
+        m_builtVertices[m_builtVertexCount].Position = vertex_.Position.transform(
+                m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->getViewMatrix());
 
         m_builtVertexCount++;
     }
 
-    void Renderer::SetTexture(Texture2D *texture_) {
+    void Renderer::setTexture(Texture2D *texture_) {
         if (m_currentTexture != texture_) {
-            RenderBatch();
+            renderBatch();
             m_currentTexture = texture_;
         }
     }
 
-    void Renderer::SetShader(ShaderProgramState *state_) {
+    void Renderer::setShader(ShaderProgramState *state_) {
         if (m_currentShaderState != state_) {
-            RenderBatch();
+            renderBatch();
             m_currentShaderState = state_;
         }
     }
 
-    void Renderer::RenderBatch() {
+    void Renderer::renderBatch() {
         // No data, no render
         if (m_vertexCount == 0 || m_indexCount == 0) return;
 
         // Write each buffer
-        m_VBO->Write<Vertex>(m_vertexArray, m_vertexCount, true);
-        m_IBO->Write<unsigned short>(m_indexArray, m_indexCount, true);
+        m_VBO->write<Vertex>(m_vertexArray, m_vertexCount, true);
+        m_IBO->write<unsigned short>(m_indexArray, m_indexCount, true);
 
         // Render our batch buffers
-        RenderBufferIndexed(m_layout, m_VBO, m_IBO, m_indexCount,
+        renderBufferIndexed(m_layout, m_VBO, m_IBO, m_indexCount,
                             m_currentTexture != nullptr ? m_currentTexture : m_whiteTexture,
                             m_currentShaderState != nullptr ? m_currentShaderState : m_defaultShaderState);
 
@@ -298,58 +298,58 @@ namespace Ngine::Graphics {
         m_indexCount = 0;
     }
 
-    void Renderer::RenderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_,
+    void Renderer::renderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_,
                                 ShaderProgramState *state_) {
-        RenderBufferIndexed(layout_, VBO_, nullptr, count_, texture_, state_);
+        renderBufferIndexed(layout_, VBO_, nullptr, count_, texture_, state_);
     }
 
-    void Renderer::RenderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_,
+    void Renderer::renderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_,
                                        Texture2D *texture_, ShaderProgramState *state_) {
         // Check buffer types
         if (VBO_->Type != BufferType::Vertex || (IBO_ != nullptr && IBO_->Type != BufferType::Index))
             Console::Fail("Renderer", "Incorrect buffers provided to RenderBufferIndexed");
 
         // Configure the current framebuffer for rendering
-        m_graphicsDevice->SetupFramebuffer();
+        m_graphicsDevice->setupFramebuffer();
 
         // Set predefined uniforms (only if they are on the lowest level, i.e. not nested inside of another structure).
-        auto MVP = m_graphicsDevice->GetProjectionMatrix();
-        state_->SetUniform("NGINE_MATRIX_MVP", MVP.ToFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
+        auto MVP = m_graphicsDevice->getProjectionMatrix();
+        state_->setUniform("NGINE_MATRIX_MVP", MVP.toFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
         int texUnit = 0;
-        state_->SetUniform("NGINE_TEXTURE", &texUnit);
+        state_->setUniform("NGINE_TEXTURE", &texUnit);
 
         // Use layout
-        layout_->Use();
+        layout_->use();
 
         // Get graphics API
-        auto api = m_graphicsDevice->GetAPI();
+        auto api = m_graphicsDevice->getAPI();
 
         // Prepare for 2D
-        api->PrepareFor2D();
+        api->prepareFor2D();
 
         // Use shader
-        api->BindShaderProgramState(state_);
+        api->bindShaderProgramState(state_);
 
         // Bind texture TODO: Should we ever consider the possibility of multiple textures?
-        api->BindTexture(texture_);
+        api->bindTexture(texture_);
 
         // Draw all elements
         if (IBO_ != nullptr)
-            api->DrawIndexed(count_, 0);
+            api->drawIndexed(count_, 0);
         else
-            api->Draw(count_, 0);
+            api->draw(count_, 0);
 
         // Unbind buffers
-        m_layout->Stop();
+        m_layout->stop();
 
         // Unbind texture
-        api->BindTexture(nullptr);
+        api->bindTexture(nullptr);
 
         // Stop using shader
-        api->BindShaderProgram(nullptr);
+        api->bindShaderProgram(nullptr);
     }
 
-    void Renderer::PushMatrix() {
+    void Renderer::pushMatrix() {
         // Check limits
         if (m_matrixStackCounter + 1 >= MATRIX_STACK_SIZE)
             Console::Fail("Renderer", "Matrix stack overflow.");
@@ -359,35 +359,35 @@ namespace Ngine::Graphics {
         m_matrixStack[m_matrixStackCounter] = m_matrixStack[m_matrixStackCounter - 1];
     }
 
-    void Renderer::PopMatrix() {
+    void Renderer::popMatrix() {
         if (m_matrixStackCounter > 0) m_matrixStackCounter--;
     }
 
-    void Renderer::SetMatrix(const Matrix &mat_) {
+    void Renderer::setMatrix(const Matrix &mat_) {
         m_matrixStack[m_matrixStackCounter] = mat_;
     }
 
-    void Renderer::LoadIdentity() {
-        SetMatrix(Matrix::Identity);
+    void Renderer::loadIdentity() {
+        setMatrix(Matrix::Identity);
     }
 
-    void Renderer::MultiplyMatrix(const Matrix &mat_) {
+    void Renderer::multiplyMatrix(const Matrix &mat_) {
         m_matrixStack[m_matrixStackCounter] = mat_ * m_matrixStack[m_matrixStackCounter];
     }
 
-    void Renderer::Translate(const Vector3 &translation_) {
-        MultiplyMatrix(Matrix::Translate(translation_));
+    void Renderer::translate(const Vector3 &translation_) {
+        multiplyMatrix(Matrix::Translate(translation_));
     }
 
-    void Renderer::Rotate(const Angle &rotation_, const Vector3 &axis_) {
-        MultiplyMatrix(Matrix::Rotate(rotation_, axis_));
+    void Renderer::rotate(const Angle &rotation_, const Vector3 &axis_) {
+        multiplyMatrix(Matrix::Rotate(rotation_, axis_));
     }
 
-    void Renderer::Scale(const Vector3 &scale_) {
-        MultiplyMatrix(Matrix::Scale(scale_.X, scale_.Y, scale_.Z));
+    void Renderer::scale(const Vector3 &scale_) {
+        multiplyMatrix(Matrix::Scale(scale_.X, scale_.Y, scale_.Z));
     }
 
-    bool Renderer::WillFit(PrimitiveType type_, int elements_) {
+    bool Renderer::willFit(PrimitiveType type_, int elements_) {
         switch (type_) {
             case PrimitiveType::Triangles:
                 return elements_ < MAX_TRIANGLE_VERTICES;
@@ -401,7 +401,7 @@ namespace Ngine::Graphics {
         }
     }
 
-    GraphicsDevice *Renderer::GetGraphicsDevice() {
+    GraphicsDevice *Renderer::getGraphicsDevice() {
         return m_graphicsDevice;
     }
 }
