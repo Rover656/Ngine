@@ -1,7 +1,6 @@
 #include <Ngine.hpp>
 
-#include <Physics/Shapes/CircleShape.hpp>
-#include <Physics/Shapes/PolygonShape.hpp>
+#include <physics/shapes/PolygonShape.hpp>
 
 using namespace ngine;
 using namespace ngine::audio;
