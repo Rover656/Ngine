@@ -92,11 +92,11 @@
 #include "UWP/GameApp.hpp"
 #endif
 
-#include "Graphics/Buffer.hpp"
-#include "Graphics/Shader.hpp"
-#include "Graphics/ShaderProgram.hpp"
-#include "Graphics/RenderTarget.hpp"
-#include "Graphics/VertexLayout.hpp"
+#include "graphics/Buffer.hpp"
+#include "graphics/Shader.hpp"
+#include "graphics/ShaderProgram.hpp"
+#include "graphics/RenderTarget.hpp"
+#include "graphics/VertexLayout.hpp"
 #include "Console.hpp"
 
 #include <cstring>
