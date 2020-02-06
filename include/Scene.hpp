@@ -23,9 +23,9 @@
 
 #include "Config.hpp"
 
-#include "Graphics/Camera.hpp"
-#include "Filesystem/ResourceManager.hpp"
-#include "Physics/PhysicsWorld.hpp"
+#include "graphics/Camera.hpp"
+#include "filesystem/ResourceManager.hpp"
+#include "physics/PhysicsWorld.hpp"
 #include "EntityContainer.hpp"
 #include "Events.hpp"
 #include "Rectangle.hpp"

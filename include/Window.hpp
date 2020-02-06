@@ -38,7 +38,7 @@ typedef void *EGLContext;
 #include <fstream>
 #include <iostream>
 
-#include "Graphics/Image.hpp"
+#include "graphics/Image.hpp"
 #include "Events.hpp"
 
 namespace ngine {

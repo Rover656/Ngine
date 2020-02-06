@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../Graphics/Renderer.hpp"
+#include "../graphics/Renderer.hpp"
 #include "../Math.hpp"
 #include "PhysicsFixture.hpp"
 

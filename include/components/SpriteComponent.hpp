@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../Graphics/Sprite.hpp"
+#include "../graphics/Sprite.hpp"
 #include "../Component.hpp"
 #include "../Entity.hpp"
 #include "../Events.hpp"

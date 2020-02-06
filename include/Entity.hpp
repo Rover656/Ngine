@@ -23,8 +23,8 @@
 
 #include "Config.hpp"
 
-#include "Filesystem/ResourceManager.hpp"
-#include "Physics/PhysicsBody.hpp"
+#include "filesystem/ResourceManager.hpp"
+#include "physics/PhysicsBody.hpp"
 #include "EntityContainer.hpp"
 #include "Math.hpp"
 #include "Scene.hpp"

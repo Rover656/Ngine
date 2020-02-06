@@ -23,11 +23,11 @@
 
 #include "../Config.hpp"
 
-#include "../Audio/Music.hpp"
-#include "../Audio/Sound.hpp"
-#include "../Graphics/Font.hpp"
-#include "../Graphics/GraphicsDevice.hpp"
-#include "../Graphics/Texture2D.hpp"
+#include "../audio/Music.hpp"
+#include "../audio/Sound.hpp"
+#include "../graphics/Font.hpp"
+#include "../graphics/GraphicsDevice.hpp"
+#include "../graphics/Texture2D.hpp"
 #include "Filesystem.hpp"
 
 namespace ngine::filesystem {

@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../Filesystem/Filesystem.hpp"
+#include "../filesystem/Filesystem.hpp"
 #include "../Math.hpp"
 #include "../Rectangle.hpp"
 #include "../Resource.hpp"

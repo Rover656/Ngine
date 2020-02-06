@@ -23,8 +23,8 @@
 
 #include "Config.hpp"
 
-#include "Physics/BoundingBox.hpp"
-#include "Physics/Polygon.hpp"
+#include "physics/BoundingBox.hpp"
+#include "physics/Polygon.hpp"
 #include "Math.hpp"
 
 namespace ngine {

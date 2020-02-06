@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../Graphics/Camera.hpp"
+#include "../graphics/Camera.hpp"
 #include "../Component.hpp"
 #include "../Entity.hpp"
 #include "../Math.hpp"

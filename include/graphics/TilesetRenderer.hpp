@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../Physics/Polygon.hpp"
+#include "../physics/Polygon.hpp"
 #include "../Rectangle.hpp"
 #include "Tileset.hpp"
 

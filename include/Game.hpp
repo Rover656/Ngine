@@ -23,10 +23,10 @@
 
 #include "Config.hpp"
 
-#include "Graphics/Color.hpp"
-#include "Graphics/Renderer.hpp"
-#include "Graphics/RenderTarget.hpp"
-#include "Filesystem/ResourceManager.hpp"
+#include "graphics/Color.hpp"
+#include "graphics/Renderer.hpp"
+#include "graphics/RenderTarget.hpp"
+#include "filesystem/ResourceManager.hpp"
 #include "Events.hpp"
 #include "Math.hpp"
 #include "Scene.hpp"

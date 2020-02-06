@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "Shapes/PhysicsShape.hpp"
+#include "shapes/PhysicsShape.hpp"
 
 // Box2D forward declare
 class b2Fixture;

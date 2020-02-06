@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../Graphics/TilesetRenderer.hpp"
+#include "../graphics/TilesetRenderer.hpp"
 #include "../Entity.hpp"
 #include "../Component.hpp"
 
