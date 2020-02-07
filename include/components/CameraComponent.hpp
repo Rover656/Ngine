@@ -47,17 +47,18 @@ namespace ngine::components {
          * Update camera parameters.
          */
         void _updateCamera(EntityTransformChangedEventArgs e);
+
     public:
         /**
          * Create a camera component.
          *
-         * @param parent_ The parent we are attaching to.
-         * @param zoom_ The camera zoom level.
-         * @param origin_ The camera origin. (defines camera center).
-         * @param rotation_ The camera rotation in degrees.
+         * @param parent The parent we are attaching to.
+         * @param zoom The camera zoom level.
+         * @param origin The camera origin. (defines camera center).
+         * @param rotation The camera rotation in degrees.
          */
-        CameraComponent(Entity *parent_, float zoom_, Vector2 origin_ = Vector2::Zero,
-                        float rotation_ = 0);
+        CameraComponent(Entity *parent, float zoom, Vector2 origin = Vector2::Zero, float rotation = 0);
+
         virtual ~CameraComponent();
 
         /**
@@ -76,9 +77,9 @@ namespace ngine::components {
         /**
          * Set the camera origin.
          *
-         * @param origin_ New camera origin.
+         * @param origin New camera origin.
          */
-        void setOrigin(Vector2 origin_);
+        void setOrigin(Vector2 origin);
 
         /**
          * Get the camera rotation.
@@ -90,9 +91,9 @@ namespace ngine::components {
         /**
          * Set camera rotation.
          *
-         * @param rotation_ New camera rotation.
+         * @param rotation New camera rotation.
          */
-        void setRotation(float rotation_);
+        void setRotation(float rotation);
 
         /**
          * Get the camera zoom.
@@ -104,9 +105,9 @@ namespace ngine::components {
         /**
          * Set camera zoom.
          *
-         * @param zoom_ New camera zoom;
+         * @param zoom New camera zoom;
          */
-        void setZoom(float zoom_);
+        void setZoom(float zoom);
     };
 }
 

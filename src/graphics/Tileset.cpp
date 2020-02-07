@@ -25,22 +25,22 @@
 namespace ngine::graphics {
     // Public Constructor(s)
 
-    Tileset::Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_)
-            : Texture(texture_), TileWidth(tileWidth_), TileHeight(tileHeight_) {}
+    Tileset::Tileset(Texture2D *texture, float tileWidth, float tileHeight)
+            : Texture(texture), TileWidth(tileWidth), TileHeight(tileHeight) {}
 
     // Public Methods
 
-    void Tileset::drawTile(graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_, float rotation_, Vector2 origin_) {
+    void Tileset::drawTile(graphics::Renderer *renderer, Vector2 position, int tile, float scale, float rotation, Vector2 origin) {
         // Tile's start from 1 to allow 0 to mean nothing
-        tile_ -= 1;
+        tile -= 1;
 
         // Skip if negative
-        if (tile_ < 0) return;
+        if (tile < 0) return;
 
         // Get coords
         auto x = 0.0f;
         auto y = 0.0f;
-        for (auto i = 0; i < tile_; i++) {
+        for (auto i = 0; i < tile; i++) {
             x += TileWidth;
             if (x >= (float) Texture->Width) {
                 x = 0;
@@ -50,11 +50,11 @@ namespace ngine::graphics {
 
         // Draw
         Texture->draw(
-                renderer_,
+                renderer,
                 {
-                        position_,
-                        TileWidth * scale_,
-                        TileHeight * scale_
+                        position,
+                        TileWidth * scale,
+                        TileHeight * scale
                 },
                 {
                         x,
@@ -63,7 +63,7 @@ namespace ngine::graphics {
                         TileHeight
                 },
                 Color::White,
-                origin_,
-                rotation_);
+                origin,
+                rotation);
     }
 }

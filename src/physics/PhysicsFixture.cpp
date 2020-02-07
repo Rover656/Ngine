@@ -29,9 +29,9 @@
 namespace ngine::physics {
     // Public Constructor
 
-    PhysicsFixture::PhysicsFixture(b2Fixture *fixture_) {
+    PhysicsFixture::PhysicsFixture(b2Fixture *fixture) {
         // Save fixture
-        m_fixture = fixture_;
+        m_fixture = fixture;
 
         // Save ourselves
         m_fixture->SetUserData(this);
@@ -103,8 +103,8 @@ namespace ngine::physics {
         m_fixture->Refilter();
     }
 
-    void PhysicsFixture::setSensor(bool sensor_) {
-        m_fixture->SetSensor(sensor_);
+    void PhysicsFixture::setSensor(bool sensor) {
+        m_fixture->SetSensor(sensor);
     }
 
     bool PhysicsFixture::testPoint(const Vector2 &p) {

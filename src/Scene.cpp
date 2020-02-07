@@ -25,55 +25,55 @@
 #include "Console.hpp"
 
 namespace ngine {
-    void Scene::_addEntity(Entity *ent_) {
+    void Scene::_addEntity(Entity *ent) {
         // When an entity is added, mark as active
-        m_entityActivities.insert({ent_, true});
+        m_entityActivities.insert({ent, true});
 
         // Add entity and mark it's depth
-        if (m_entityDepths.find(ent_->m_depth) == m_entityDepths.end())
-            m_entityDepths.insert({ent_->m_depth, {}});
-        m_entityDepths[ent_->m_depth].push_back(ent_);
+        if (m_entityDepths.find(ent->m_depth) == m_entityDepths.end())
+            m_entityDepths.insert({ent->m_depth, {}});
+        m_entityDepths[ent->m_depth].push_back(ent);
 
         // Fire scene add event
-        ent_->OnInit();
+        ent->OnInit();
     }
 
-    void Scene::_removeEntity(Entity *ent_) {
+    void Scene::_removeEntity(Entity *ent) {
         for (auto vec : m_entityDepths) {
             for (auto ent : vec.second) {
-                if (ent == ent_) {
+                if (ent == ent) {
                     m_entityDepths[vec.first].erase(
-                            std::remove(m_entityDepths[vec.first].begin(), m_entityDepths[vec.first].end(), ent_),
+                            std::remove(m_entityDepths[vec.first].begin(), m_entityDepths[vec.first].end(), ent),
                             m_entityDepths[vec.first].end());
                 }
             }
         }
     }
 
-    void Scene::_updateEntityDepth(int newDepth_, Entity *ent_) {
-        if (ent_->m_depth == newDepth_)
+    void Scene::_updateEntityDepth(int newDepth, Entity *ent) {
+        if (ent->m_depth == newDepth)
             return; // Short circuit if depth's are the same because we don't want to remove and re-add
-        m_entityDepths[ent_->m_depth].erase(
-                std::remove(m_entityDepths[ent_->m_depth].begin(), m_entityDepths[ent_->m_depth].end(), ent_),
-                m_entityDepths[ent_->m_depth].end());
+        m_entityDepths[ent->m_depth].erase(
+                std::remove(m_entityDepths[ent->m_depth].begin(), m_entityDepths[ent->m_depth].end(), ent),
+                m_entityDepths[ent->m_depth].end());
 
-        if (m_entityDepths.find(newDepth_) == m_entityDepths.end())
-            m_entityDepths.insert({newDepth_, {}});
-        m_entityDepths[newDepth_].push_back(ent_);
+        if (m_entityDepths.find(newDepth) == m_entityDepths.end())
+            m_entityDepths.insert({newDepth, {}});
+        m_entityDepths[newDepth].push_back(ent);
     }
 
-    Scene::Scene(Game *parentGame_)
-            : m_parentGame(parentGame_), EntityContainer(EntityContainer::SCENE) {
+    Scene::Scene(Game *parentGame)
+            : m_parentGame(parentGame), EntityContainer(EntityContainer::SCENE) {
         // Check game
-        if (parentGame_ == nullptr)
+        if (parentGame == nullptr)
             Console::Fail("Scene", "Scene cannot have a null parent game.");
     }
 
-    Scene::Scene(Game *parentGame_, Vector2 grav_, float ppm_)
-            : Scene(parentGame_) {
+    Scene::Scene(Game *parentGame, Vector2 grav, float ppm)
+            : Scene(parentGame) {
         // Physics setup
         m_physicsEnabled = true;
-        m_physicsWorld = new physics::PhysicsWorld(grav_, ppm_);
+        m_physicsWorld = new physics::PhysicsWorld(grav, ppm);
     }
 
     Scene::~Scene() {
@@ -91,8 +91,8 @@ namespace ngine {
         return m_activeCamera;
     }
 
-    void Scene::setActiveCamera(graphics::Camera *camera_) {
-        m_activeCamera = camera_;
+    void Scene::setActiveCamera(graphics::Camera *camera) {
+        m_activeCamera = camera;
     }
 
     Rectangle Scene::getCullArea() const {
@@ -141,10 +141,10 @@ namespace ngine {
         return m_cullAreaHeight / scale;
     }
 
-    void Scene::setCullArea(float width_, float height_, bool centerInViewport_) {
-        m_cullAreaWidth = width_;
-        m_cullAreaHeight = height_;
-        m_cullAreaCenterInViewport = centerInViewport_;
+    void Scene::setCullArea(float width, float height, bool centerInViewport) {
+        m_cullAreaWidth = width;
+        m_cullAreaHeight = height;
+        m_cullAreaCenterInViewport = centerInViewport;
     }
 
     Rectangle Scene::getViewport() const {
@@ -225,15 +225,15 @@ namespace ngine {
         return m_paused;
     }
 
-    void Scene::draw(graphics::Renderer *renderer_) {
+    void Scene::draw(graphics::Renderer *renderer) {
         // Invoke draw calls
-        OnDraw(renderer_);
+        OnDraw(renderer);
 
         // Draw with camera
         if (m_activeCamera != nullptr)
-            m_activeCamera->beginCamera(renderer_->getGraphicsDevice());
+            m_activeCamera->beginCamera(renderer->getGraphicsDevice());
 
-        OnDrawCamera(renderer_);
+        OnDrawCamera(renderer);
 
         // Draw entities with camera
         for (auto pair : m_entityDepths) {
@@ -241,13 +241,13 @@ namespace ngine {
             for (auto ent : vec) {
                 if (ent != nullptr) {
                     if (m_entityActivities[ent] && ent->DrawWithCamera)
-                        ent->draw(renderer_);
+                        ent->draw(renderer);
                 }
             }
         }
 
         if (m_activeCamera != nullptr)
-            m_activeCamera->endCamera(renderer_->getGraphicsDevice());
+            m_activeCamera->endCamera(renderer->getGraphicsDevice());
 
         // Draw entities
         for (auto pair : m_entityDepths) {
@@ -258,7 +258,7 @@ namespace ngine {
                         m_entityActivities.insert({ent, true});
 
                     if (m_entityActivities[ent] && !ent->DrawWithCamera)
-                        ent->draw(renderer_);
+                        ent->draw(renderer);
                 }
             }
         }

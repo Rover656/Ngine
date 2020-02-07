@@ -47,10 +47,10 @@ namespace ngine {
         /**
          * Create a new entity transform event argument.
          *
-         * @param transform_ The new entity transform.
+         * @param transform The new entity transform.
          */
-        EntityTransformChangedEventArgs(Transform2D transform_)
-                : EntityTransformation(transform_) {}
+        EntityTransformChangedEventArgs(Transform2D transform)
+                : EntityTransformation(transform) {}
     };
 
     /**
@@ -115,7 +115,7 @@ namespace ngine {
         /**
          * Add to a new scene.
          */
-        void _addToScene(Scene *scene_);
+        void _addToScene(Scene *scene);
 
         /**
          * Remove from our current scene.
@@ -158,13 +158,13 @@ namespace ngine {
          * Create a new entity.
          *
          * @param parentScene_ The parent scene.
-         * @param position_ The initial position.
-         * @param rotation_ Initial rotation.
-         * @param depth_ The depth to be rendered at
-         * @param canCull_ Whether or not this can be culled.
-         * @param physicsEnabled_ Whether or not physics should be enabled for this entity.
+         * @param position The initial position.
+         * @param rotation Initial rotation.
+         * @param depth The depth to be rendered at
+         * @param canCull Whether or not this can be culled.
+         * @param physicsEnabled Whether or not physics should be enabled for this entity.
          */
-        Entity(Vector2 position_, float rotation_ = 0, int depth_ = 0, bool canCull_ = false, bool physicsEnabled_ = false);
+        Entity(Vector2 position, float rotation = 0, int depth = 0, bool canCull = false, bool physicsEnabled = false);
         virtual ~Entity();
 
         /**
@@ -178,34 +178,34 @@ namespace ngine {
          * Add a component to the entity.
          *
          * @tparam ComponentType The component type. This must be a class derived from `ngine::Component`
-         * @param name_ The name of the component.
-         * @param component_ The component.
+         * @param name The name of the component.
+         * @param component The component.
          * @return The component, so you may chain calls.
          */
         template <typename ComponentType = Component>
-        ComponentType *addComponent(const std::string &name_, ComponentType *component_) {
+        ComponentType *addComponent(const std::string &name, ComponentType *component) {
             // Check the name is not taken
-            if (hasComponent(name_))
+            if (hasComponent(name))
                 return nullptr;
 
             // Make sure the component isn't null
-            if (component_ == nullptr)
+            if (component == nullptr)
                 return nullptr;
 
             // Add to components list.
-            m_components.insert({name_, (Component *) component_});
+            m_components.insert({name, (Component *) component});
 
             // Send it back for call chaining.
-            return component_;
+            return component;
         }
 
         /**
          * Removes the component from the entity.
          *
-         * @param name_ The name of the component to remove.
+         * @param name The name of the component to remove.
          * @return Whether or not the component was removed.
          */
-        bool removeComponent(const std::string &name_);
+        bool removeComponent(const std::string &name);
 
         /**
          * Get all components.
@@ -217,10 +217,10 @@ namespace ngine {
         /**
          * Test if a component exists by a name.
          *
-         * @param name_ The name of the component to check for.
+         * @param name The name of the component to check for.
          * @return Whether or not the component exists.
          */
-        bool hasComponent(const std::string &name_) const;
+        bool hasComponent(const std::string &name) const;
 
         /**
          * Get a component by name.
@@ -228,10 +228,10 @@ namespace ngine {
          * @tparam ComponentType The component type to be returned.
          */
         template <typename ComponentType = Component>
-        ComponentType *getComponent(const std::string &name_) {
+        ComponentType *getComponent(const std::string &name) {
             // Try to find the component
-            if (hasComponent(name_)) {
-                return (ComponentType *) m_components.at(name_);
+            if (hasComponent(name)) {
+                return (ComponentType *) m_components.at(name);
             }
 
             return nullptr;
@@ -247,18 +247,18 @@ namespace ngine {
         /**
          * Set whether or not this entity can be culled
          *
-         * @param canCull_ Whether or not the entity can be culled.
+         * @param canCull Whether or not the entity can be culled.
          */
-        void setCanCull(bool canCull_);
+        void setCanCull(bool canCull);
 
         /**
          * This is used to determine if this entity should be culled.
          * This can be overridden for more accurate results.
          *
-         * @param cullArea_ The scene cull area.
+         * @param cullArea The scene cull area.
          * @return Whether or not this entity should be culled.
          */
-        virtual bool checkForCulling(Rectangle cullArea_);
+        virtual bool checkForCulling(Rectangle cullArea);
 
         /**
          * Get our parent container.
@@ -314,9 +314,9 @@ namespace ngine {
         /**
          * Set the entity depth
          *
-         * @param depth_ The depth to set the entity to.
+         * @param depth The depth to set the entity to.
          */
-        void setDepth(int depth_);
+        void setDepth(int depth);
 
         // MAJOR TODO: Add system for entity origin when not attached to physics body.
 
@@ -330,7 +330,7 @@ namespace ngine {
         /**
          * Set the entity transform (position and rotation).
          */
-        void setTransform(const Transform2D &transform_);
+        void setTransform(const Transform2D &transform);
 
         /**
          * Get the entity position
@@ -342,17 +342,17 @@ namespace ngine {
         /**
          * Set entity position
          *
-         * @param position_ The position to move to.
+         * @param position The position to move to.
          */
-        void setPosition(Vector2 position_);
+        void setPosition(Vector2 position);
 
         /**
          * Move an entity by a vector.
          *
          * @warning Use of this in a physics enabled entity is not recommended, add a velocity instead.
-         * @param moveBy_ The number of pixels to move in each direction.
+         * @param moveBy The number of pixels to move in each direction.
          */
-        void moveBy(Vector2 moveBy_);
+        void moveBy(Vector2 moveBy);
 
         /**
          * Get the entity rotation
@@ -364,9 +364,9 @@ namespace ngine {
         /**
          * Set entity rotation.
          *
-         * @param rotation_ The rotation, in degrees, to set our entity to.
+         * @param rotation The rotation, in degrees, to set our entity to.
          */
-        void setRotation(Angle rotation_);
+        void setRotation(Angle rotation);
 
         /**
          * Determine if this entity is affected by physics.
@@ -416,9 +416,9 @@ namespace ngine {
          * Set whether or not we update when the `Scene` is paused
          *
          * @note This will unsubscribe and resubscribe if the events are already bound.
-         * @param persistentUpdates_ Whether or not the entity can update during pauses.
+         * @param persistentUpdates Whether or not the entity can update during pauses.
          */
-        void setDoPersistentUpdates(bool persistentUpdates_);
+        void setDoPersistentUpdates(bool persistentUpdates);
 
         /**
          * Subscribe to update events in the scene.
@@ -443,9 +443,9 @@ namespace ngine {
         /**
          * Draw code for the entity.
          *
-         * @param renderer_ The game renderer.
+         * @param renderer The game renderer.
          */
-        virtual void draw(graphics::Renderer *renderer_);
+        virtual void draw(graphics::Renderer *renderer);
 
         /**
          * Update the entity.

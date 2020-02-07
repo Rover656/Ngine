@@ -56,25 +56,25 @@ namespace ngine::graphics {
         /**
          * Create a color using float values between 0 and 1.
          *
-         * @param r_ The red value.
-         * @param g_ The green value.
-         * @param b_ The blue value.
-         * @param a_ The alpha (transparency) value.
+         * @param r The red value.
+         * @param g The green value.
+         * @param b The blue value.
+         * @param a The alpha (transparency) value.
          */
-        Color(float r_, float g_, float b_, float a_ = 1);
+        Color(float r, float g, float b, float a = 1.0f);
 
         /**
          * Create a color using int values between 0 and 255.
          *
-         * @param r_ The red value.
-         * @param g_ The green value.
-         * @param b_ The blue value.
-         * @param a_ The alpha (transparency) value.
+         * @param r The red value.
+         * @param g The green value.
+         * @param b The blue value.
+         * @param a The alpha (transparency) value.
          */
-        Color(int r_, int g_, int b_, int a_ = 255);
+        Color(int r, int g, int b, int a = 255);
 
-        bool operator==(const Color &b_) const;
-        bool operator!=(const Color &b_) const;
+        bool operator==(const Color &b) const;
+        bool operator!=(const Color &b) const;
 
         static const Color Beige;
         static const Color Black;

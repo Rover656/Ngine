@@ -45,46 +45,47 @@ namespace ngine::graphics {
         /**
          * Create a shader program state for the given program.
          *
-         * @param program_ The program to create a state for.
+         * @param program The program to create a state for.
          */
-        ShaderProgramState(ShaderProgram *program_);
+        ShaderProgramState(ShaderProgram *program);
+
         ~ShaderProgramState();
 
         /**
          * Get uniform data (as void pointer.
          *
-         * @param name_ The uniform to get.
+         * @param name The uniform to get.
          * @return The pointer to the data in our buffer
          */
-        const void *getUniform(const std::string &name_);
+        const void *getUniform(const std::string &name);
 
         /**
          * Get a uniform as a given type.
          *
          * @tparam Type Type to cast to.
-         * @param name_ The name of the uniform to get.
+         * @param name The name of the uniform to get.
          * @return The uniform data as the desired type.
          */
         template<typename Type>
-        const Type *getUniformAs(const std::string &name_) {
-            return (Type *) getUniform(name_);
+        const Type *getUniformAs(const std::string &name) {
+            return (Type *) getUniform(name);
         }
 
         /**
          * Set data for the given uniform.
          *
-         * @param name_ Uniform for which to set the data.
-         * @param data_ The date to write for the uniform. This expects `data_` to be the same size as the target uniform.
+         * @param name Uniform for which to set the data.
+         * @param data The date to write for the uniform. This expects `data_` to be the same size as the target uniform.
          */
-        void setUniform(const std::string &name_, void *data_);
+        void setUniform(const std::string &name, void *data);
 
         /**
          * Set a uniform (advanced).
          *
-         * @param nameTree_ The tree of names to navigate. A number (in the form of a string) is expected if the target is an array. Ex. `{"TestArray", "5"}` to target `TestArray[5]`.
-         * @param data_ Data to write to the target.
+         * @param nameTree The tree of names to navigate. A number (in the form of a string) is expected if the target is an array. Ex. `{"TestArray", "5"}` to target `TestArray[5]`.
+         * @param data Data to write to the target.
          */
-        void setUniformEx(std::vector<std::string> nameTree_, void *data_);
+        void setUniformEx(std::vector<std::string> nameTree, void *data);
 
         /**
          * Get the data that is being stored.

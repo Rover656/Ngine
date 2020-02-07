@@ -221,9 +221,10 @@ namespace ngine {
         /**
          * Create a new Game
          *
-         * @param config_ The game configuration.
+         * @param config The game configuration.
          */
-        Game(WindowConfig windowConfig_, const GameConfig &config_);
+        Game(WindowConfig windowConfig, const GameConfig &config);
+
         virtual ~Game() = default;
 
         /**
@@ -291,31 +292,31 @@ namespace ngine {
         /**
          * Set the target FPS.
          *
-         * @param FPS_ The new target FPS.
+         * @param FPS The new target FPS.
          */
-        void setFPS(int FPS_);
+        void setFPS(int FPS);
 
         /**
          * Set the intended game size.
          * Will resize the framebuffer next frame.
          *
-         * @param size_ The new virtual resolution for the game.
+         * @param size The new virtual resolution for the game.
          */
-        void setIntendedSize(Vector2 size_);
+        void setIntendedSize(Vector2 size);
 
         /**
          * Set whether or not the game is running
          *
-         * @param running_ Whether or not the game should be running.
+         * @param running Whether or not the game should be running.
          */
-        void setIsRunning(bool running_);
+        void setIsRunning(bool running);
 
         /**
          * Set the current scene
          *
-         * @param scene_ The scene to use now.
+         * @param scene The scene to use now.
          */
-        void setScene(Scene *scene_);
+        void setScene(Scene *scene);
 
         /**
          * Get the game resource manager.

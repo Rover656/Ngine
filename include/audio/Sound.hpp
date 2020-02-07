@@ -67,18 +67,18 @@ namespace ngine::audio {
         /**
          * Load a sound from a file.
          *
-         * @param path_ The file to load sound from.
+         * @param path The file to load sound from.
          * @return The loaded sound.
          */
-        static Sound *LoadSound(const filesystem::Path &path_);
+        static Sound *LoadSound(const filesystem::Path &path);
 
         /**
          * Load sound from wave data.
          *
-         * @param wave_ Wave data to load sound with.
+         * @param wave Wave data to load sound with.
          * @return The loaded sound.
          */
-        static Sound *LoadSoundFromWave(Wave *wave_);
+        static Sound *LoadSoundFromWave(Wave *wave);
 
         /**
          * Pause sound.
@@ -98,16 +98,16 @@ namespace ngine::audio {
         /**
          * Set sound pitch.
          *
-         * @param pitch_ Sound pitch.
+         * @param pitch Sound pitch.
          */
-        void setPitch(float pitch_);
+        void setPitch(float pitch);
 
         /**
          * Set sound volume.
          *
-         * @param vol_ Sound volume.
+         * @param vol Sound volume.
          */
-        void setVolume(float vol_);
+        void setVolume(float vol);
 
         /**
          * Stop sound.

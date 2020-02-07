@@ -32,13 +32,13 @@ namespace ngine::components {
         m_transformChangeEvent.detach();
     }
 
-    CameraComponent::CameraComponent(Entity *parent_, const float zoom_, const Vector2 origin_,
-                                     const float rotation_)
-        : Component(parent_) {
+    CameraComponent::CameraComponent(Entity *parent, const float zoom, const Vector2 origin,
+                                     const float rotation)
+        : Component(parent) {
         auto par = getEntity<Entity>();
 
         // Setup camera
-        m_camera = graphics::Camera(par->getPosition(), rotation_, zoom_, origin_);;
+        m_camera = graphics::Camera(par->getPosition(), rotation, zoom, origin);;
 
         // Attach to on position changed
         m_transformChangeEvent = par->OnTransformChanged +=
@@ -54,23 +54,23 @@ namespace ngine::components {
         return m_camera.Origin;
     }
 
-    void CameraComponent::setOrigin(Vector2 origin_) {
-        m_camera.Origin = origin_;
+    void CameraComponent::setOrigin(Vector2 origin) {
+        m_camera.Origin = origin;
     }
 
     float CameraComponent::getRotation() {
         return m_camera.Rotation;
     }
 
-    void CameraComponent::setRotation(const float rotation_) {
-        m_camera.Rotation = rotation_;
+    void CameraComponent::setRotation(const float rotation) {
+        m_camera.Rotation = rotation;
     }
 
     float CameraComponent::getZoom() {
         return m_camera.Zoom;
     }
 
-    void CameraComponent::setZoom(const float zoom_) {
-        m_camera.Zoom = zoom_;
+    void CameraComponent::setZoom(const float zoom) {
+        m_camera.Zoom = zoom;
     }
 }

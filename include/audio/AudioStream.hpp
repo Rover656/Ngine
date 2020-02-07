@@ -53,10 +53,10 @@ namespace ngine::audio {
         /**
          * Update stream buffers with data.
          *
-         * @param data_ New buffer data.
-         * @param samplesCount_ The number of samples.
+         * @param data New buffer data.
+         * @param samplesCount The number of samples.
          */
-        void updateStream(const void* data_, int samplesCount_);
+        void updateStream(const void* data, int samplesCount);
     };
 }
 

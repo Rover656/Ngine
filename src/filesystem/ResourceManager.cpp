@@ -24,7 +24,7 @@
 #include <sstream>
 
 namespace ngine::filesystem {
-    ResourceManager::ResourceManager(graphics::GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {
+    ResourceManager::ResourceManager(graphics::GraphicsDevice *graphicsDevice) : m_graphicsDevice(graphicsDevice) {
         if (m_graphicsDevice == nullptr) throw std::runtime_error("Graphics device cannot be null.");
     }
 
@@ -42,63 +42,63 @@ namespace ngine::filesystem {
         m_textures.clear();
     }
 
-    void ResourceManager::deleteFont(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_fonts.find(name) != m_fonts.end()) {
-            delete m_fonts[name];
-            m_fonts.erase(name);
+    void ResourceManager::deleteFont(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_fonts.find(correctedName) != m_fonts.end()) {
+            delete m_fonts[correctedName];
+            m_fonts.erase(correctedName);
         }
     }
 
-    void ResourceManager::deleteMusic(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_music.find(name) != m_music.end()) {
-            delete m_music[name];
-            m_music.erase(name);
+    void ResourceManager::deleteMusic(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_music.find(correctedName) != m_music.end()) {
+            delete m_music[correctedName];
+            m_music.erase(correctedName);
         }
     }
 
-    void ResourceManager::deleteSound(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_sounds.find(name) != m_sounds.end()) {
-            delete m_sounds[name];
-            m_sounds.erase(name);
+    void ResourceManager::deleteSound(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_sounds.find(correctedName) != m_sounds.end()) {
+            delete m_sounds[correctedName];
+            m_sounds.erase(correctedName);
         }
     }
 
-    void ResourceManager::deleteTexture(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_textures.find(name) != m_textures.end()) {
-            delete m_textures[name];
-            m_textures.erase(name);
+    void ResourceManager::deleteTexture(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_textures.find(correctedName) != m_textures.end()) {
+            delete m_textures[correctedName];
+            m_textures.erase(correctedName);
         }
     }
 
-    graphics::Font *ResourceManager::getFont(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_fonts.find(name) != m_fonts.end())
-            return m_fonts[name];
+    graphics::Font *ResourceManager::getFont(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_fonts.find(correctedName) != m_fonts.end())
+            return m_fonts[correctedName];
         return nullptr;
     }
 
-    audio::Music *ResourceManager::getMusic(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_music.find(name) != m_music.end())
-            return m_music[name];
+    audio::Music *ResourceManager::getMusic(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_music.find(correctedName) != m_music.end())
+            return m_music[correctedName];
         return nullptr;
     }
 
-    audio::Sound *ResourceManager::getSound(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_sounds.find(name) != m_sounds.end())
-            return m_sounds[name];
+    audio::Sound *ResourceManager::getSound(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_sounds.find(correctedName) != m_sounds.end())
+            return m_sounds[correctedName];
         return nullptr;
     }
 
-    graphics::Texture2D *ResourceManager::getTexture(const std::string &name_) {
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
-        if (m_textures.find(name) != m_textures.end())
-            return m_textures[name];
+    graphics::Texture2D *ResourceManager::getTexture(const std::string &name) {
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
+        if (m_textures.find(correctedName) != m_textures.end())
+            return m_textures[correctedName];
         return nullptr;
     }
 
@@ -144,19 +144,19 @@ namespace ngine::filesystem {
         }
     }
 
-    bool ResourceManager::loadFont(const Path &inPath_, const std::string &name_, int baseSize_) {
+    bool ResourceManager::loadFont(const Path &inPath, const std::string &name, int baseSize) {
         // Fix base size
-        if (baseSize_ == -1) baseSize_ = Config.DefaultFontBaseSize;
+        if (baseSize == -1) baseSize = Config.DefaultFontBaseSize;
 
         // Get the name
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create font
-        auto fnt = graphics::Font::LoadTTFFont(m_graphicsDevice, inPath_, baseSize_);
+        auto fnt = graphics::Font::LoadTTFFont(m_graphicsDevice, inPath, baseSize);
 
         // Check if it is valid
         if (fnt->isValid()) {
-            m_fonts.insert({name, fnt});
+            m_fonts.insert({correctedName, fnt});
             return true;
         }
 
@@ -165,16 +165,16 @@ namespace ngine::filesystem {
         return false;
     }
 
-    bool ResourceManager::loadMusic(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::loadMusic(const Path &inPath, const std::string &name) {
         // Get the name
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create music
-        auto mus = audio::Music::LoadMusic(inPath_);
+        auto mus = audio::Music::LoadMusic(inPath);
 
         // Check if it is valid
         if (mus->isValid()) {
-            m_music.insert({name, mus});
+            m_music.insert({correctedName, mus});
             return true;
         }
 
@@ -183,16 +183,16 @@ namespace ngine::filesystem {
         return false;
     }
 
-    bool ResourceManager::loadSound(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::loadSound(const Path &inPath, const std::string &name) {
         // Get the name
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create sound
-        auto snd = audio::Sound::LoadSound(inPath_);
+        auto snd = audio::Sound::LoadSound(inPath);
 
         // Check if it is valid
         if (snd->isValid()) {
-            m_sounds.insert({name, snd});
+            m_sounds.insert({correctedName, snd});
             return true;
         }
 
@@ -201,16 +201,16 @@ namespace ngine::filesystem {
         return false;
     }
 
-    bool ResourceManager::loadTexture(const Path &inPath_, const std::string &name_) {
+    bool ResourceManager::loadTexture(const Path &inPath, const std::string &name) {
         // Get the name
-        auto name = std::regex_replace(name_, std::regex("\\\\"), "/");
+        auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create texture
-        auto tex = graphics::Texture2D::LoadTexture(m_graphicsDevice, inPath_);
+        auto tex = graphics::Texture2D::LoadTexture(m_graphicsDevice, inPath);
 
         // Check if it is valid.
         if (tex->isValid()) {
-            m_textures.insert({ name, tex});
+            m_textures.insert({correctedName, tex});
             return true;
         }
 

@@ -21,22 +21,22 @@
 #include "Rectangle.hpp"
 
 namespace ngine {
-    bool Rectangle::contains(Vector2 point_) const {
-        return X <= point_.X
-            && point_.X < X + Width
-            && Y <= point_.Y
-            && point_.Y < Y + Height;
+    bool Rectangle::contains(Vector2 point) const {
+        return X <= point.X
+               && point.X < X + Width
+               && Y <= point.Y
+               && point.Y < Y + Height;
     }
 
-    physics::BoundingBox Rectangle::toBoundingBox(float rotation_, Vector2 origin_) const {
+    physics::BoundingBox Rectangle::toBoundingBox(float rotation, Vector2 origin) const {
         // Fix origin
-        origin_ += {X, Y};
+        origin += {X, Y};
 
         // Get rectangle coords rotated
-        const auto tl = Vector2(X, Y).transform(origin_, rotation_);
-        const auto tr = Vector2(X + Width, Y).transform(origin_, rotation_);
-        const auto bl = Vector2(X, Y + Height).transform(origin_, rotation_);
-        const auto br = Vector2(X + Width, Y + Height).transform(origin_, rotation_);
+        const auto tl = Vector2(X, Y).transform(origin, rotation);
+        const auto tr = Vector2(X + Width, Y).transform(origin, rotation);
+        const auto bl = Vector2(X, Y + Height).transform(origin, rotation);
+        const auto br = Vector2(X + Width, Y + Height).transform(origin, rotation);
 
         // Find min and max
         auto minX = std::min(tl.X, std::min(tr.X, std::min(bl.X, br.X)));
@@ -51,34 +51,34 @@ namespace ngine {
         return box;
     }
 
-    physics::BoundingBox *Rectangle::toBoundingBoxPtr(float rotation_, Vector2 origin_) const {
-        auto valbbox = toBoundingBox(rotation_, origin_);
+    physics::BoundingBox *Rectangle::toBoundingBoxPtr(float rotation, Vector2 origin) const {
+        auto valbbox = toBoundingBox(rotation, origin);
         auto bbox = new physics::BoundingBox();
         bbox->Min = valbbox.Min;
         bbox->Max = valbbox.Max;
         return bbox;
     }
 
-    physics::Polygon Rectangle::toPolygon(float rotation_, Vector2 origin_) const {
+    physics::Polygon Rectangle::toPolygon(float rotation, Vector2 origin) const {
         // Fix origin
-        origin_ += {X, Y};
+        origin += {X, Y};
 
         // Make polygon
         std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
-            vertex = vertex.transform(origin_, rotation_);
+            vertex = vertex.transform(origin, rotation);
         }
         return physics::Polygon(vertices);
     }
 
-    physics::Polygon *Rectangle::toPolygonPtr(float rotation_, Vector2 origin_) const {
+    physics::Polygon *Rectangle::toPolygonPtr(float rotation, Vector2 origin) const {
         // Fix origin
-        origin_ += {X, Y};
+        origin += {X, Y};
 
         // Make polygon
         std::vector<Vector2> vertices = {{X, Y}, {X + Width, Y}, {X + Width, Y + Height}, {X, Y + Height}};
         for (auto &vertex : vertices) {
-            vertex = vertex.transform(origin_, rotation_);
+            vertex = vertex.transform(origin, rotation);
         }
         return new physics::Polygon(vertices);
     }

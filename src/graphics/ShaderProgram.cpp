@@ -25,8 +25,8 @@
 #include "Console.hpp"
 
 namespace ngine::graphics {
-    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderDataStructure> uniforms_)
-            : VertexShader(vertexShader_), FragmentShader(fragmentShader_) {
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, Shader *vertexShader, Shader *fragmentShader, std::vector<ShaderDataStructure> uniforms)
+            : VertexShader(vertexShader), FragmentShader(fragmentShader) {
         // Check shaders
         if (VertexShader->Type != ShaderType::Vertex)
             Console::Fail("ShaderProgram", "Vertex shader is not a vertex shader.");
@@ -35,13 +35,13 @@ namespace ngine::graphics {
             Console::Fail("ShaderProgram", "Fragment shader is not a fragment shader.");
 
         // Get API
-        m_API = graphicsDevice_->getAPI();
+        m_API = graphicsDevice->getAPI();
 
         // Create with API
         m_API->createShaderProgram(this);
 
         // Add uniforms
-        for (const auto& uniform : uniforms_) {
+        for (const auto& uniform : uniforms) {
             addUniform(uniform);
         }
     }
@@ -50,23 +50,23 @@ namespace ngine::graphics {
         free();
     }
 
-    void ShaderProgram::addUniform(ShaderDataStructure uniform_) {
+    void ShaderProgram::addUniform(ShaderDataStructure uniform) {
         // Verify
-        if (uniform_.Name.empty())
+        if (uniform.Name.empty())
             Console::Fail("ShaderProgram", "Uniform must have a name.");
-        if (uniform_.getSize() <= 0 || uniform_.Count <= 0)
+        if (uniform.getSize() <= 0 || uniform.Count <= 0)
             Console::Fail("ShaderProgram", "Uniform sizes are incorrect.");
-        if (uniform_.Offset != -1)
+        if (uniform.Offset != -1)
             Console::Warn("ShaderProgram", "Uniform offset has been set outside of the program, this value will be ignored.");
 
         // Get the current data size (total of previous offsets).
         auto size = getUniformDataSize();
 
         // Set offset
-        uniform_.Offset = size;
+        uniform.Offset = size;
 
         // Add
-        m_uniforms.push_back(uniform_);
+        m_uniforms.push_back(uniform);
     }
 
     int ShaderProgram::getUniformDataSize() const {

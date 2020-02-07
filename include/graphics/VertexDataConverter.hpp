@@ -36,7 +36,7 @@ namespace ngine::graphics {
          *
          * @warning Indices must be deleted afterwards using delete[].
          */
-        static int GetTriangleIndices(PrimitiveType currentType_, int vertexCount_, unsigned short **indices_);
+        static int GetTriangleIndices(PrimitiveType currentType, int vertexCount, unsigned short **indices);
     };
 }
 

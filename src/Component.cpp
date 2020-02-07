@@ -23,10 +23,10 @@
 #include "Entity.hpp"
 
 namespace ngine {
-    Component::Component(Entity *parent_)
-            : m_parentEntity(parent_) {
+    Component::Component(Entity *parent)
+            : m_parentEntity(parent) {
         // Check our parent is valid
-        if (parent_ == nullptr) {
+        if (parent == nullptr) {
             throw std::runtime_error("A valid parent must be attached to this component.");
         }
     }
@@ -62,7 +62,7 @@ namespace ngine {
         m_onUpdateRef.detach();
     }
 
-    void Component::draw(graphics::Renderer *renderer_) {}
+    void Component::draw(graphics::Renderer *renderer) {}
 
     void Component::update() {}
 }

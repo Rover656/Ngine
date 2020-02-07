@@ -25,54 +25,54 @@
 #include <Box2D/Box2D.h>
 
 namespace ngine::physics {
-    PhysicsBody::PhysicsBody(b2Body *body_) {
+    PhysicsBody::PhysicsBody(b2Body *body) {
         // Save body
-        m_b2Body = body_;
+        m_b2Body = body;
 
         // Get world
         m_world = ((PhysicsBody *) m_b2Body->GetUserData())->m_world;
     }
 
-    PhysicsBody::PhysicsBody(PhysicsWorld *world_, PhysicsBody::BodyInfo info_) {
+    PhysicsBody::PhysicsBody(PhysicsWorld *world, PhysicsBody::BodyInfo info) {
         // Save world
-        m_world = world_;
+        m_world = world;
 
         // Create body def
         b2BodyDef bodyDef;
 
         // Set fields
-        bodyDef.active = info_.Active;
-        bodyDef.allowSleep = info_.AllowSleep;
-        bodyDef.angularDamping = info_.AngularDamping;
-        bodyDef.angularVelocity = info_.AngularVelocity;
-        bodyDef.awake = info_.Awake;
-        bodyDef.bullet = info_.Bullet;
-        bodyDef.fixedRotation = info_.FixedRotation;
-        bodyDef.gravityScale = info_.GravityScale;
-        bodyDef.linearDamping = info_.LinearDamping;
-        bodyDef.linearVelocity.Set(info_.LinearVelocity.X, info_.LinearVelocity.Y);
-        bodyDef.position.Set(info_.Position.X / m_world->PixelsPerMeter, info_.Position.Y / m_world->PixelsPerMeter);
-        bodyDef.angle = DegToRad(info_.Rotation.getDegrees());
-        bodyDef.type = (b2BodyType) info_.Type;
+        bodyDef.active = info.Active;
+        bodyDef.allowSleep = info.AllowSleep;
+        bodyDef.angularDamping = info.AngularDamping;
+        bodyDef.angularVelocity = info.AngularVelocity;
+        bodyDef.awake = info.Awake;
+        bodyDef.bullet = info.Bullet;
+        bodyDef.fixedRotation = info.FixedRotation;
+        bodyDef.gravityScale = info.GravityScale;
+        bodyDef.linearDamping = info.LinearDamping;
+        bodyDef.linearVelocity.Set(info.LinearVelocity.X, info.LinearVelocity.Y);
+        bodyDef.position.Set(info.Position.X / m_world->PixelsPerMeter, info.Position.Y / m_world->PixelsPerMeter);
+        bodyDef.angle = DegToRad(info.Rotation.getDegrees());
+        bodyDef.type = (b2BodyType) info.Type;
 
         // Create the body
-        m_b2Body = world_->getB2World()->CreateBody(&bodyDef);
+        m_b2Body = world->getB2World()->CreateBody(&bodyDef);
 
         // Save our PhysicsBody in box2d for later.
         m_b2Body->SetUserData(this);
     }
 
-    PhysicsBody::PhysicsBody(PhysicsWorld *world_, PhysicsBody::BodyType type_, Vector2 position_) {
+    PhysicsBody::PhysicsBody(PhysicsWorld *world, PhysicsBody::BodyType type, Vector2 position) {
         // Save world
-        m_world = world_;
+        m_world = world;
 
         // Create body def
         b2BodyDef bodyDef;
-        bodyDef.type = (b2BodyType) type_;
-        bodyDef.position.Set(position_.X / m_world->PixelsPerMeter, position_.Y / m_world->PixelsPerMeter);
+        bodyDef.type = (b2BodyType) type;
+        bodyDef.position.Set(position.X / m_world->PixelsPerMeter, position.Y / m_world->PixelsPerMeter);
 
         // Create the body
-        m_b2Body = world_->getB2World()->CreateBody(&bodyDef);
+        m_b2Body = world->getB2World()->CreateBody(&bodyDef);
 
         // Save our PhysicsBody in box2d for later.
         m_b2Body->SetUserData(this);
@@ -91,19 +91,19 @@ namespace ngine::physics {
         }
     }
 
-    void PhysicsBody::set(PhysicsBody::BodyInfo info_) {
-        setIsActive(info_.Active);
-        setIsSleepingAllowed(info_.AllowSleep);
-        setAngularDamping(info_.AngularDamping);
-        setAngularVelocity(info_.AngularVelocity);
-        setIsAwake(info_.Awake);
-        setIsBullet(info_.Bullet);
-        setIsFixedRotation(info_.FixedRotation);
-        setGravityScale(info_.GravityScale);
-        setLinearDamping(info_.LinearDamping);
-        setLinearVelocity(info_.LinearVelocity);
-        setTransform({info_.Position, info_.Rotation});
-        setType(info_.Type);
+    void PhysicsBody::set(PhysicsBody::BodyInfo info) {
+        setIsActive(info.Active);
+        setIsSleepingAllowed(info.AllowSleep);
+        setAngularDamping(info.AngularDamping);
+        setAngularVelocity(info.AngularVelocity);
+        setIsAwake(info.Awake);
+        setIsBullet(info.Bullet);
+        setIsFixedRotation(info.FixedRotation);
+        setGravityScale(info.GravityScale);
+        setLinearDamping(info.LinearDamping);
+        setLinearVelocity(info.LinearVelocity);
+        setTransform({info.Position, info.Rotation});
+        setType(info.Type);
     }
 
     void PhysicsBody::destroy() {
@@ -114,8 +114,8 @@ namespace ngine::physics {
         return (BodyType) m_b2Body->GetType();
     }
 
-    void PhysicsBody::setType(PhysicsBody::BodyType type_) {
-        m_b2Body->SetType((b2BodyType) type_);
+    void PhysicsBody::setType(PhysicsBody::BodyType type) {
+        m_b2Body->SetType((b2BodyType) type);
     }
 
     float PhysicsBody::getMass() const {
@@ -130,8 +130,8 @@ namespace ngine::physics {
         return m_b2Body->IsBullet();
     }
 
-    void PhysicsBody::setIsBullet(bool flag_) {
-        m_b2Body->SetBullet(flag_);
+    void PhysicsBody::setIsBullet(bool flag) {
+        m_b2Body->SetBullet(flag);
     }
 
     b2Body *PhysicsBody::getB2Body() const {
@@ -146,8 +146,8 @@ namespace ngine::physics {
         return m_b2Body->GetGravityScale();
     }
 
-    void PhysicsBody::setGravityScale(float scale_) {
-        m_b2Body->SetGravityScale(scale_);
+    void PhysicsBody::setGravityScale(float scale) {
+        m_b2Body->SetGravityScale(scale);
     }
 
     Transform2D PhysicsBody::getTransform() const {
@@ -163,12 +163,12 @@ namespace ngine::physics {
                 }};
     }
 
-    void PhysicsBody::setTransform(const Transform2D &transform_) {
+    void PhysicsBody::setTransform(const Transform2D &transform) {
         m_b2Body->SetTransform({
-                                       transform_.Position.X / m_world->PixelsPerMeter,
-                                       transform_.Position.Y / m_world->PixelsPerMeter
+                                       transform.Position.X / m_world->PixelsPerMeter,
+                                       transform.Position.Y / m_world->PixelsPerMeter
                                },
-                               DegToRad(transform_.Rotation.getDegrees()));
+                               DegToRad(transform.Rotation.getDegrees()));
     }
 
     Vector2 PhysicsBody::getPosition() const {
@@ -179,10 +179,10 @@ namespace ngine::physics {
         return pos;
     }
 
-    void PhysicsBody::setPosition(Vector2 pos_) {
+    void PhysicsBody::setPosition(Vector2 pos) {
         m_b2Body->SetTransform({
-                                       pos_.X / m_world->PixelsPerMeter,
-                                       pos_.Y / m_world->PixelsPerMeter
+                                       pos.X / m_world->PixelsPerMeter,
+                                       pos.Y / m_world->PixelsPerMeter
                                }, m_b2Body->GetAngle());
     }
 
@@ -194,77 +194,77 @@ namespace ngine::physics {
         };
     }
 
-    void PhysicsBody::setLinearVelocity(Vector2 vel_) {
+    void PhysicsBody::setLinearVelocity(Vector2 vel) {
         m_b2Body->SetLinearVelocity(
                 {
-                        vel_.X / m_world->PixelsPerMeter,
-                        vel_.Y / m_world->PixelsPerMeter
+                        vel.X / m_world->PixelsPerMeter,
+                        vel.Y / m_world->PixelsPerMeter
                 });
     }
 
-    void PhysicsBody::applyForce(const Vector2 &force_, const Vector2 &point_, bool wake_) {
+    void PhysicsBody::applyForce(const Vector2 &force, const Vector2 &point, bool wake) {
         m_b2Body->ApplyForce(
                 {
-                        force_.X / m_world->PixelsPerMeter,
-                        force_.Y / m_world->PixelsPerMeter
+                        force.X / m_world->PixelsPerMeter,
+                        force.Y / m_world->PixelsPerMeter
                 },
                 {
-                        point_.X / m_world->PixelsPerMeter,
-                        point_.Y / m_world->PixelsPerMeter
-                }, wake_);
+                        point.X / m_world->PixelsPerMeter,
+                        point.Y / m_world->PixelsPerMeter
+                }, wake);
     }
 
-    void PhysicsBody::applyForceToCenter(const Vector2 &force_, bool wake_) {
+    void PhysicsBody::applyForceToCenter(const Vector2 &force, bool wake) {
         m_b2Body->ApplyForceToCenter(
                 {
-                        force_.X / m_world->PixelsPerMeter,
-                        force_.Y / m_world->PixelsPerMeter
-                }, wake_);
+                        force.X / m_world->PixelsPerMeter,
+                        force.Y / m_world->PixelsPerMeter
+                }, wake);
     }
 
-    void PhysicsBody::applyLinearImpulse(const Vector2 &impulse_, const Vector2 &point_, bool wake_) {
+    void PhysicsBody::applyLinearImpulse(const Vector2 &impulse, const Vector2 &point, bool wake) {
         m_b2Body->ApplyLinearImpulse(
                 {
-                        impulse_.X / m_world->PixelsPerMeter,
-                        impulse_.Y / m_world->PixelsPerMeter
+                        impulse.X / m_world->PixelsPerMeter,
+                        impulse.Y / m_world->PixelsPerMeter
                 },
                 {
-                        point_.X / m_world->PixelsPerMeter,
-                        point_.Y / m_world->PixelsPerMeter
-                }, wake_);
+                        point.X / m_world->PixelsPerMeter,
+                        point.Y / m_world->PixelsPerMeter
+                }, wake);
     }
 
-    void PhysicsBody::applyLinearImpulseToCenter(const Vector2 &impulse_, bool wake_) {
+    void PhysicsBody::applyLinearImpulseToCenter(const Vector2 &impulse, bool wake) {
         m_b2Body->ApplyLinearImpulseToCenter(
                 {
-                        impulse_.X / m_world->PixelsPerMeter,
-                        impulse_.Y / m_world->PixelsPerMeter
-                }, wake_);
+                        impulse.X / m_world->PixelsPerMeter,
+                        impulse.Y / m_world->PixelsPerMeter
+                }, wake);
     }
 
     float PhysicsBody::getLinearDamping() const {
         return m_b2Body->GetLinearDamping();
     }
 
-    void PhysicsBody::setLinearDamping(float damping_) {
-        m_b2Body->SetLinearDamping(damping_);
+    void PhysicsBody::setLinearDamping(float damping) {
+        m_b2Body->SetLinearDamping(damping);
     }
 
     Angle PhysicsBody::getRotation() const {
         return getTransform().Rotation;
     }
 
-    void PhysicsBody::setRotation(Angle angle_) {
-        auto d = angle_.getDegrees();
-        m_b2Body->SetTransform(m_b2Body->GetPosition(), DegToRad(angle_.getDegrees()));
+    void PhysicsBody::setRotation(Angle angle) {
+        auto d = angle.getDegrees();
+        m_b2Body->SetTransform(m_b2Body->GetPosition(), DegToRad(angle.getDegrees()));
     }
 
     bool PhysicsBody::isFixedRotation() const {
         return m_b2Body->IsFixedRotation();
     }
 
-    void PhysicsBody::setIsFixedRotation(bool flag_) {
-        m_b2Body->SetFixedRotation(flag_);
+    void PhysicsBody::setIsFixedRotation(bool flag) {
+        m_b2Body->SetFixedRotation(flag);
     }
 
     float PhysicsBody::getInertia() const {
@@ -276,62 +276,62 @@ namespace ngine::physics {
         return m_b2Body->GetAngularVelocity();
     }
 
-    void PhysicsBody::setAngularVelocity(float omega_) {
-        m_b2Body->SetAngularVelocity(DegToRad(omega_));
+    void PhysicsBody::setAngularVelocity(float omega) {
+        m_b2Body->SetAngularVelocity(DegToRad(omega));
     }
 
-    void PhysicsBody::applyTorque(float torque_, bool wake_) {
-        m_b2Body->ApplyTorque(torque_, wake_);
+    void PhysicsBody::applyTorque(float torque, bool wake) {
+        m_b2Body->ApplyTorque(torque, wake);
     }
 
-    void PhysicsBody::applyAngularImpulse(float impulse_, bool wake_) {
-        m_b2Body->ApplyAngularImpulse(impulse_, wake_);
+    void PhysicsBody::applyAngularImpulse(float impulse, bool wake) {
+        m_b2Body->ApplyAngularImpulse(impulse, wake);
     }
 
     float PhysicsBody::getAngularDamping() const {
         return m_b2Body->GetAngularDamping();
     }
 
-    void PhysicsBody::setAngularDamping(float damping_) {
-        m_b2Body->SetAngularDamping(damping_);
+    void PhysicsBody::setAngularDamping(float damping) {
+        m_b2Body->SetAngularDamping(damping);
     }
 
     // TODO: Rewrite fixtures and shapes once and for all!!!
-    PhysicsFixture *PhysicsBody::createFixture(shapes::PhysicsShape *shape_, float density_) {
-        auto fixture = m_b2Body->CreateFixture(shape_->getB2Shape(), density_);
+    PhysicsFixture *PhysicsBody::createFixture(shapes::PhysicsShape *shape, float density) {
+        auto fixture = m_b2Body->CreateFixture(shape->getB2Shape(), density);
         return new PhysicsFixture(fixture);
     }
 
-    void PhysicsBody::destroyFixture(PhysicsFixture *fixture_) {
-        m_b2Body->DestroyFixture(fixture_->getB2Fixture());
-        delete fixture_;
+    void PhysicsBody::destroyFixture(PhysicsFixture *fixture) {
+        m_b2Body->DestroyFixture(fixture->getB2Fixture());
+        delete fixture;
     }
 
     bool PhysicsBody::isActive() const {
         return m_b2Body->IsActive();
     }
 
-    void PhysicsBody::setIsActive(bool flag_) {
-        m_b2Body->SetActive(flag_);
+    void PhysicsBody::setIsActive(bool flag) {
+        m_b2Body->SetActive(flag);
     }
 
     bool PhysicsBody::isAwake() const {
         return m_b2Body->IsAwake();
     }
 
-    void PhysicsBody::setIsAwake(bool flag_) {
-        m_b2Body->SetAwake(flag_);
+    void PhysicsBody::setIsAwake(bool flag) {
+        m_b2Body->SetAwake(flag);
     }
 
     bool PhysicsBody::isSleepingAllowed() const {
         return m_b2Body->IsSleepingAllowed();
     }
 
-    void PhysicsBody::setIsSleepingAllowed(bool flag_) {
-        m_b2Body->SetSleepingAllowed(flag_);
+    void PhysicsBody::setIsSleepingAllowed(bool flag) {
+        m_b2Body->SetSleepingAllowed(flag);
     }
 
-    void PhysicsBody::debugDraw(graphics::Renderer *renderer_) {
+    void PhysicsBody::debugDraw(graphics::Renderer *renderer) {
         // Process fixtures
         auto next = m_b2Body->GetFixtureList();
         b2Fixture *current;
@@ -340,7 +340,7 @@ namespace ngine::physics {
             next = next->GetNext();
             if (current->GetUserData() != nullptr) {
                 auto fixture = (PhysicsFixture *) current->GetUserData();
-                fixture->getShape()->debugDraw(renderer_, m_world->PixelsPerMeter, getPosition(),
+                fixture->getShape()->debugDraw(renderer, m_world->PixelsPerMeter, getPosition(),
                                                getRotation().getDegrees());
             }
         }

@@ -35,12 +35,12 @@ namespace ngine::physics::shapes {
         old._Shape = nullptr;
     }
 
-    PhysicsShape::PhysicsShape(b2Shape *shape_) {
+    PhysicsShape::PhysicsShape(b2Shape *shape) {
         _ManagedByMe = false;
-        _Shape = shape_;
+        _Shape = shape;
     }
 
-    PhysicsShape::PhysicsShape(const PhysicsShape &shape_) {
+    PhysicsShape::PhysicsShape(const PhysicsShape &shape) {
         _ManagedByMe = true;
     }
 
@@ -82,8 +82,8 @@ namespace ngine::physics::shapes {
         return _Shape->m_radius;
     }
 
-    void PhysicsShape::setRadius(float radius_) {
-        _Shape->m_radius = radius_;
+    void PhysicsShape::setRadius(float radius) {
+        _Shape->m_radius = radius;
     }
 
     bool PhysicsShape::testPoint(const Transform2D &xf, const Vector2 &p) {

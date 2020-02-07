@@ -58,7 +58,7 @@ namespace ngine::input {
         return pos;
     }
 
-    Mouse::Mouse(Window *window_) : m_attachedWindow(window_) {
+    Mouse::Mouse(Window *window) : m_attachedWindow(window) {
 #if defined(PLATFORM_DESKTOP)
         // Register glfw callbacks
         glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow, Mouse::_GLFWMouseButtonCallback);
@@ -71,27 +71,27 @@ namespace ngine::input {
         m_UWPMouse = this;
 
         // Register UWP callbacks
-        auto window = CoreWindow::GetForCurrentThread();
-        window->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerWheelChanged);
-        window->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
-        window->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
-        window->PointerMoved += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerMovedEvent);
+        auto UWPwindow = CoreWindow::GetForCurrentThread();
+        UWPwindow->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerWheelChanged);
+        UWPwindow->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
+        UWPwindow->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
+        UWPwindow->PointerMoved += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerMovedEvent);
 #endif
     }
 
 #if defined(PLATFORM_DESKTOP)
 
-    void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_) {
-        if (button_ <= MOUSE_BUTTON_RIGHT) { // GLFW supports more than our 3 buttons
-            auto mouse = ((Window *) glfwGetWindowUserPointer(window_))->getMouse();
-            mouse->m_nextMouseState.ButtonsDown[button_] = (action_ == GLFW_PRESS);
+    void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+        if (button <= MOUSE_BUTTON_RIGHT) { // GLFW supports more than our 3 buttons
+            auto mouse = ((Window *) glfwGetWindowUserPointer(window))->getMouse();
+            mouse->m_nextMouseState.ButtonsDown[button] = (action == GLFW_PRESS);
         }
     }
 
-    void Mouse::_GLFWScrollCallback(GLFWwindow *window_, double x_, double y_) {
-        auto mouse = ((Window *) glfwGetWindowUserPointer(window_))->getMouse();
-        mouse->m_nextMouseState.MouseWheelXDelta = static_cast<int>(x_);
-        mouse->m_nextMouseState.MouseWheelYDelta = static_cast<int>(y_);
+    void Mouse::_GLFWScrollCallback(GLFWwindow *window, double x, double y) {
+        auto mouse = ((Window *) glfwGetWindowUserPointer(window))->getMouse();
+        mouse->m_nextMouseState.MouseWheelXDelta = static_cast<int>(x);
+        mouse->m_nextMouseState.MouseWheelYDelta = static_cast<int>(y);
     }
 
 #elif defined(PLATFORM_UWP)
@@ -128,9 +128,9 @@ namespace ngine::input {
         return w == nullptr ? nullptr : w->getMouse();
     }
 
-    void Mouse::cancelButton(MouseButton button_) {
-        m_currentMouseState.ButtonsDown[button_] = false;
-        m_nextMouseState.ButtonsDown[button_] = false;
+    void Mouse::cancelButton(MouseButton button) {
+        m_currentMouseState.ButtonsDown[button] = false;
+        m_nextMouseState.ButtonsDown[button] = false;
     }
 
     Vector2 Mouse::getMousePosition() {
@@ -151,16 +151,16 @@ namespace ngine::input {
         return m_currentMouseState.MouseWheelYDelta;
     }
 
-    bool Mouse::isButtonDown(MouseButton button_) {
-        return m_currentMouseState.ButtonsDown[button_];
+    bool Mouse::isButtonDown(MouseButton button) {
+        return m_currentMouseState.ButtonsDown[button];
     }
 
-    bool Mouse::isButtonPressed(MouseButton button_) {
-        return m_currentMouseState.ButtonsDown[button_] != m_previousMouseState.ButtonsDown[button_] && m_currentMouseState.ButtonsDown[button_] == true;
+    bool Mouse::isButtonPressed(MouseButton button) {
+        return m_currentMouseState.ButtonsDown[button] != m_previousMouseState.ButtonsDown[button] && m_currentMouseState.ButtonsDown[button] == true;
     }
 
-    bool Mouse::isButtonReleased(MouseButton button_) {
-        return m_currentMouseState.ButtonsDown[button_] != m_previousMouseState.ButtonsDown[button_] && m_currentMouseState.ButtonsDown[button_] == false;
+    bool Mouse::isButtonReleased(MouseButton button) {
+        return m_currentMouseState.ButtonsDown[button] != m_previousMouseState.ButtonsDown[button] && m_currentMouseState.ButtonsDown[button] == false;
     }
 
     void Mouse::pollInputs() {
@@ -202,11 +202,11 @@ namespace ngine::input {
         m_nextMouseState.MouseWheelXDelta = 0;
     }
 
-    void Mouse::setOffset(float ox_, float oy_) {
-        m_mouseOffset = {ox_, oy_};
+    void Mouse::setOffset(float xOffset, float yOffset) {
+        m_mouseOffset = {xOffset, yOffset};
     }
 
-    void Mouse::setScale(float sx_, float sy_) {
-        m_mouseScale = {sx_, sy_};
+    void Mouse::setScale(float xScale, float yScale) {
+        m_mouseScale = {xScale, yScale};
     }
 }

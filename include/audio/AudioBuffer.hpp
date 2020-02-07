@@ -140,16 +140,16 @@ namespace ngine::audio {
         /**
          * Set buffer pitch
          *
-         * @param pitch_ The pitch for the buffer.
+         * @param pitch The pitch for the buffer.
          */
-        void setPitch(float pitch_);
+        void setPitch(float pitch);
 
         /**
          * Set buffer volume
          *
-         * @param vol_ The volume for the buffer.
+         * @param vol The volume for the buffer.
          */
-        void setVolume(float vol_);
+        void setVolume(float vol);
 
         /**
          * Stop buffer

@@ -55,41 +55,41 @@ namespace ngine {
         Rectangle()
             : X(0), Y(0), Width(0), Height(0) {}
 
-        Rectangle(float x_, float y_, float width_, float height_)
-            : X(x_), Y(y_), Width(width_), Height(height_) {}
+        Rectangle(float x, float y, float width, float height)
+            : X(x), Y(y), Width(width), Height(height) {}
 
-        Rectangle(Vector2 position_, float width_, float height_)
-            : X(position_.X), Y(position_.Y), Width(width_), Height(height_) {}
+        Rectangle(Vector2 position, float width, float height)
+            : X(position.X), Y(position.Y), Width(width), Height(height) {}
 
-        Rectangle(Vector2 position_, Vector2 size_)
-            : X(position_.X), Y(position_.Y), Width(size_.X), Height(size_.Y) {}
+        Rectangle(Vector2 position, Vector2 size)
+            : X(position.X), Y(position.Y), Width(size.X), Height(size.Y) {}
 
         /*
          * Whether or not the rectangle contains the point
          */
-        bool contains(Vector2 point_) const;
+        bool contains(Vector2 point) const;
 
         /*
          * Convert rectangle to bounding box
          */
-        physics::BoundingBox toBoundingBox(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
+        physics::BoundingBox toBoundingBox(float rotation = 0, Vector2 origin = Vector2::Zero) const;
 
         /*
          * Convert rectangle to bounding box pointer.
          * Must be deleted
          */
-        physics::BoundingBox *toBoundingBoxPtr(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
+        physics::BoundingBox *toBoundingBoxPtr(float rotation = 0, Vector2 origin = Vector2::Zero) const;
 
         /*
          * Convert rectangle to polygon
          */
-        physics::Polygon toPolygon(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
+        physics::Polygon toPolygon(float rotation = 0, Vector2 origin = Vector2::Zero) const;
 
         /*
          * Convert rectangle to polygon pointer.
          * Must be deleted.
          */
-        physics::Polygon *toPolygonPtr(float rotation_ = 0, Vector2 origin_ = Vector2::Zero) const;
+        physics::Polygon *toPolygonPtr(float rotation = 0, Vector2 origin = Vector2::Zero) const;
     };
 }
 

@@ -238,44 +238,49 @@ namespace ngine::graphics {
         /**
          * Add triangles to the buffer.
          */
-        void _addTriangles(Vertex *vertices_, int count_, bool translate_ = false);
+        void _addTriangles(Vertex *vertices, int count, bool translate = false);
 
         /**
          * Add indexed triangles to the buffer (no matrix translation).
          */
-        void _addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_,
-                                  bool translate_ = false);
+        void
+        _addIndexedTriangles(Vertex *vertices, int vCount, unsigned short *indices, int iCount, bool translate = false);
 
     public:
-        Renderer(GraphicsDevice *graphicsDevice_);
+        /**
+         * Create a new renderer.
+         *
+         * @param graphicsDevice The graphics device to use.
+         */
+        Renderer(GraphicsDevice *graphicsDevice);
 
         ~Renderer();
 
         /**
          * Add triangle vertices to the current batch.
          *
-         * @param vertices_ Triangle vertices to add.
-         * @param count_ The number of vertices in the array.
+         * @param vertices Triangle vertices to add.
+         * @param count The number of vertices in the array.
          */
-        void addTriangles(Vertex *vertices_, int count_);
+        void addTriangles(Vertex *vertices, int count);
 
         /**
          * Add indexed triangle vertices and indices.
          *
-         * @param vertices_ Triangle vertices that are indexed by `indices_`
-         * @param vCount_ The number of vertices in the array.
-         * @param indices_ The indices for the vertex array.
-         * @param iCount_ The number of indices in the array.
+         * @param vertices Triangle vertices that are indexed by `indices_`
+         * @param vCount The number of vertices in the array.
+         * @param indices The indices for the vertex array.
+         * @param iCount The number of indices in the array.
          */
-        void addIndexedTriangles(Vertex *vertices_, int vCount_, unsigned short *indices_, int iCount_);
+        void addIndexedTriangles(Vertex *vertices, int vCount, unsigned short *indices, int iCount);
 
         /**
          * Begin pushing vertices.
          *
-         * @param type_ The vertex type. Will be converted by the `VertexDataTool`.
+         * @param type The vertex type. Will be converted by the `VertexDataTool`.
          * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
          */
-        void beginVertices(PrimitiveType type_);
+        void beginVertices(PrimitiveType type);
 
         /**
          * Finish pushing vertices and add to the render queue.
@@ -287,25 +292,25 @@ namespace ngine::graphics {
          * Add a vertex to the current vertex build.
          *
          * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
-         * @param vertex_ Vertex to add.
+         * @param vertex Vertex to add.
          */
-        void pushVertex(Vertex vertex_);
+        void pushVertex(Vertex vertex);
 
         /**
          * Set the current texture for rendering.
          *
          * @note Will force a draw of anything before this call if the texture is different.
-         * @param texture_ The texture to render with.
+         * @param texture The texture to render with.
          */
-        void setTexture(Texture2D *texture_);
+        void setTexture(Texture2D *texture);
 
         /**
          * Set the current shader for rendering.
          *
          * @note Will force a draw of anything before this call if the texture is different.
-         * @param state_ The shader program state to use.
+         * @param state The shader program state to use.
          */
-        void setShader(ShaderProgramState *state_);
+        void setShader(ShaderProgramState *state);
 
         /**
          * Push a matrix onto the stack (with the current matrix's value).
@@ -325,9 +330,9 @@ namespace ngine::graphics {
          * Set the value of the current Matrix.
          *
          * @warning Remember to push first, this could destroy critical existing data. General rule of thumb: Push if you modify something.
-         * @param mat_ The new value for the matrix.
+         * @param mat The new value for the matrix.
          */
-        void setMatrix(const Matrix &mat_);
+        void setMatrix(const Matrix &mat);
 
         /**
          * Load the identity matrix to the current matrix.
@@ -341,29 +346,29 @@ namespace ngine::graphics {
          *
          * @note Formula is as follows: Current Matrix = Matrix Provided * Current Matrix
          */
-        void multiplyMatrix(const Matrix &mat_);
+        void multiplyMatrix(const Matrix &mat);
 
         /**
          * Multiply the current matrix with a translation matrix.
          *
-         * @param translation_ The translation to apply.
+         * @param translation The translation to apply.
          */
-        void translate(const Vector3 &translation_);
+        void translate(const Vector3 &translation);
 
         /**
          * Multiply the current matrix with a rotation matrix.
          *
-         * @param rotation_ Rotation to apply
-         * @param axis_ Axis in which to apply rotation.
+         * @param rotation Rotation to apply
+         * @param axis Axis in which to apply rotation.
          */
-        void rotate(const Angle &rotation_, const Vector3 &axis_);
+        void rotate(const Angle &rotation, const Vector3 &axis);
 
         /**
          * Multiply the current matrix with a scale matrix.
          *
-         * @param scale_ The scale to apply.
+         * @param scale The scale to apply.
          */
-        void scale(const Vector3 &scale_);
+        void scale(const Vector3 &scale);
 
         /**
          * Trigger a render of the internal buffers.
@@ -373,34 +378,34 @@ namespace ngine::graphics {
         /**
          * Render a vertex buffer.
          *
-         * @param layout_ The vertex layout.
+         * @param layout The vertex layout.
          * @param VBO_ The vertex buffer.
-         * @param count_ Number of vertices to render.
-         * @param texture_ The texture to render with.
+         * @param count Number of vertices to render.
+         * @param texture The texture to render with.
          * @param shader_ The shader program state to render with.
          */
-        void renderBuffer(VertexLayout *layout_, Buffer *VBO_, int count_, Texture2D *texture_, ShaderProgramState *state_);
+        void renderBuffer(VertexLayout *layout, Buffer *VBO, int count, Texture2D *texture, ShaderProgramState *state);
 
         /**
          * Render an indexed vertex buffer.
          *
-         * @param layout_ The vertex layout.
-         * @param VBO_ The vertex buffer.
-         * @param IBO_ The index buffer.
-         * @param count_ The number of elements. I.e. triangle count * 3
-         * @param texture_ The texture to render with.
+         * @param layout The vertex layout.
+         * @param VBO The vertex buffer.
+         * @param IBO The index buffer.
+         * @param count The number of elements. I.e. triangle count * 3
+         * @param texture The texture to render with.
          * @param state_ The shader program state to render with.
          */
-        void renderBufferIndexed(VertexLayout *layout_, Buffer *VBO_, Buffer *IBO_, int count_, Texture2D *texture_,
-                                 ShaderProgramState *state_);
+        void renderBufferIndexed(VertexLayout *layout, Buffer *VBO, Buffer *IBO, int count, Texture2D *texture,
+                                 ShaderProgramState *state);
 
         /**
          * Check if n elements of type will fit in a buffer.
          *
-         * @param type_ The primitive type.
-         * @param elements_ The number of elements.
+         * @param type The primitive type.
+         * @param elements The number of elements.
          */
-        bool willFit(PrimitiveType type_, int elements_);
+        bool willFit(PrimitiveType type, int elements);
 
         /**
          * Get the graphics device attached to the renderer.

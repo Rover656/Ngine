@@ -47,41 +47,41 @@ namespace ngine::filesystem {
         /**
          * Create a reference to a path.
          *
-         * @param pathString_ The path in string form.
+         * @param pathString The path in string form.
          */
-        Path(const std::string &pathString_);
+        Path(const std::string &pathString);
 
         /**
          * Combine a two path strings.
          *
-         * @param path_ Path part A.
-         * @param path_ Path part B.
+         * @param path Path part A.
+         * @param path Path part B.
          */
-        Path(const std::string &path_, const std::string &pathB_);
+        Path(const std::string &path, const std::string &pathB);
 
         /**
          * Combine a path together.
          *
-         * @param path_ Path part A.
+         * @param path Path part A.
          * @param pathb_ Path part B.
          */
-        Path(const Path &path_, const Path &pathB_);
+        Path(const Path &path, const Path &pathB);
 
         /**
          * Combine a path together.
          *
-         * @param path_ Path part A.
-         * @param pathB_ Path part B.
+         * @param path Path part A.
+         * @param pathB Path part B.
          */
-        Path(const Path &path_, const std::string &pathB_);
+        Path(const Path &path, const std::string &pathB);
 
         /**
          * Combine a path together.
          *
-         * @param path_ Path part A.
-         * @param pathB_ Path part B.
+         * @param path Path part A.
+         * @param pathB Path part B.
          */
-        Path(const std::string &path_, const Path &pathB_);
+        Path(const std::string &path, const Path &pathB);
 
         /**
          * Get this as an absolute path.
@@ -141,10 +141,10 @@ namespace ngine::filesystem {
         /**
          * Get this path relative to a base.
          *
-         * @param base_ The base path.
+         * @param base The base path.
          * @return This path relative to the base.
          */
-        Path getRelativeTo(const Path &base_) const;
+        Path getRelativeTo(const Path &base) const;
 
         /**
          * Get the type of resource this points to.
@@ -184,20 +184,20 @@ namespace ngine::filesystem {
         /**
          * Combine two parts of a path.
          *
-         * @param pathA_ Path part A.
-         * @param pathB_ Path part B.
+         * @param pathA Path part A.
+         * @param pathB Path part B.
          * @return The joined path.
          */
-        static Path Join(const std::string &pathA_, const std::string &pathB_);
+        static Path Join(const std::string &pathA, const std::string &pathB);
 
         /**
          * Combine two parts of a path.
          *
-         * @param pathA_ Path part A.
-         * @param pathB_ Path part B.
+         * @param pathA Path part A.
+         * @param pathB Path part B.
          * @return The joined path.
          */
-        static Path Join(const Path &pathA_, const Path &pathB_);
+        static Path Join(const Path &pathA, const Path &pathB);
 
         /**
          * Whether the path is valid or not.
@@ -209,32 +209,32 @@ namespace ngine::filesystem {
         /*
          * Combine to paths
          */
-        friend NEAPI Path operator/(const std::string &path_, const std::string &pathB_);
+        friend NEAPI Path operator/(const std::string &path, const std::string &pathB);
 
         /*
          * Combine to paths
          */
-        friend NEAPI Path operator/(const Path &path_, const Path &pathB_);
+        friend NEAPI Path operator/(const Path &path, const Path &pathB);
 
         /*
          * Combine to paths
          */
-        friend NEAPI Path operator/(const std::string &path_, const Path &pathB_);
+        friend NEAPI Path operator/(const std::string &path, const Path &pathB);
 
         /*
          * Combine to paths
          */
-        friend NEAPI Path operator/(const Path &path_, const std::string &pathB_);
+        friend NEAPI Path operator/(const Path &path, const std::string &pathB);
 
         /*
          * Combine two paths
          */
-        void operator/=(const Path &pathB_);
+        void operator/=(const Path &pathB);
 
         /*
          * Combine two paths
          */
-        void operator/=(const std::string &pathB_);
+        void operator/=(const std::string &pathB);
 
         /*
          * Implicit conversion to string
@@ -259,9 +259,9 @@ namespace ngine::filesystem {
          * Clean a path on windows.
          * Converts Unicode name to usable name.
          *
-         * @param str_ The path to clean.
+         * @param str The path to clean.
          */
-        std::string _cleanPathString(const std::string &str_);
+        std::string _cleanPathString(const std::string &str);
 
         /**
          * Run correction checks on path strings.
@@ -305,16 +305,16 @@ namespace ngine::filesystem {
         /**
          * Move this object.
          *
-         * @param newPath_ The new path for the object.
+         * @param newPath The new path for the object.
          */
-        void move(const Path &newPath_);
+        void move(const Path &newPath);
 
         /**
          * Rename this object.
          *
-         * @param newName_ The new name for the object.
+         * @param newName The new name for the object.
          */
-        void rename(const std::string &newName_);
+        void rename(const std::string &newName);
 
         /**
          * Get the name of the object.
@@ -333,9 +333,9 @@ namespace ngine::filesystem {
         /**
          * Create a new filesystem object reference.
          *
-         * @param path_ The path of the object.
+         * @param path The path of the object.
          */
-        explicit FilesystemObject(const Path &path_);
+        explicit FilesystemObject(const Path &path);
 
         /**
          * The path of this object.
@@ -420,9 +420,9 @@ namespace ngine::filesystem {
         /**
          * Create a reference to a file.
          *
-         * @param path_ The path of the file.
+         * @param path The path of the file.
          */
-        File(const Path &path_);
+        File(const Path &path);
 
         ~File();
 
@@ -434,12 +434,12 @@ namespace ngine::filesystem {
         /**
          * Create a new file and optionally leave it open for read or write.
          *
-         * @param path_ Path of the new file.
-         * @param leaveOpen_ Whether to leave the file open or not.
-         * @param binary_ Whether or not this is a binary file.
+         * @param path Path of the new file.
+         * @param leaveOpen Whether to leave the file open or not.
+         * @param binary Whether or not this is a binary file.
          * @return The file.
          */
-        static File CreateNewFile(const Path &path_, bool leaveOpen_ = false, bool binary_ = true);
+        static File CreateNewFile(const Path &path, bool leaveOpen = false, bool binary = true);
 
         /**
          * Delete this object from the filesystem.
@@ -465,10 +465,10 @@ namespace ngine::filesystem {
         /**
          * Get a file from a path.
          *
-         * @param path_ The file path.
+         * @param path The file path.
          * @return The file from the path.
          */
-        static File GetFile(const Path &path_);
+        static File GetFile(const Path &path);
 
         /**
          * Get the file extension.
@@ -502,31 +502,31 @@ namespace ngine::filesystem {
          * Open the file in read or write mode.
          * Binary mode is for non-text files.
          *
-         * @param mode_ Open mode.
-         * @param binary_ Whether or not to open as a binary file.
+         * @param mode Open mode.
+         * @param binary Whether or not to open as a binary file.
          * @return Whetehr the file was opened or not.
          */
-        bool open(FileOpenMode mode_, bool binary_ = false);
+        bool open(FileOpenMode mode, bool binary = false);
 
         /**
          * Read a number of bytes from the file.
          * Size of -1 means all.
          *
-         * @param size_ The size of the data to read.
-         * @param offset_ Offset the read operation
+         * @param size The size of the data to read.
+         * @param offset Offset the read operation
          * @return The data from the file.
          */
-        unsigned char *readBytes(int size_ = -1, int offset_ = 0);
+        unsigned char *readBytes(int size = -1, int offset = 0);
 
         /**
          * Read a string from the file.
          * Size of -1 means all.
          *
-         * @param size_ The size of the data to read.
-         * @param offset_ Offset the read operation
+         * @param size The size of the data to read.
+         * @param offset Offset the read operation
          * @return The data from the file.
          */
-        std::string readString(int size_ = -1, int offset_ = 0);
+        std::string readString(int size = -1, int offset = 0);
 
         /**
          * Write bytes to the file.
@@ -535,7 +535,7 @@ namespace ngine::filesystem {
          * @param The size of the data.
          * @return Whether the data was written or not.
          */
-        bool writeBytes(unsigned char *data_, int size_);
+        bool writeBytes(unsigned char *data, int size);
 
         /**
          * Write a string to the file.
@@ -543,7 +543,7 @@ namespace ngine::filesystem {
          * @param The string to write.
          * @return Whether the string was written or not.
          */
-        bool writeString(const std::string &string_);
+        bool writeString(const std::string &string);
     };
 
     /**
@@ -559,9 +559,9 @@ namespace ngine::filesystem {
         /**
          * Create a reference to a directory.
          *
-         * @param path_ The path to the directory.
+         * @param path The path to the directory.
          */
-        Directory(const Path &path_);
+        Directory(const Path &path);
 
         /**
          * Create this directory.
@@ -573,10 +573,10 @@ namespace ngine::filesystem {
         /**
          * Create a new directory.
          *
-         * @param path_ The path to the directory to create.
+         * @param path The path to the directory to create.
          * @return A pair, first is the success, second is the Directory reference.
          */
-        static std::pair<bool, Directory> Create(const Path &path_);
+        static std::pair<bool, Directory> Create(const Path &path);
 
         /**
          * Delete this object from the filesystem.
@@ -643,10 +643,10 @@ namespace ngine::filesystem {
         /**
          * Get a directory.
          *
-         * @param path_ The path to the directory to get.
+         * @param path The path to the directory to get.
          * @return The directory requested.
          */
-        static Directory GetDirectory(const Path &path_);
+        static Directory GetDirectory(const Path &path);
 
         /**
          * Get the executable directory.

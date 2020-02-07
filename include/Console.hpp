@@ -35,16 +35,16 @@ namespace ngine {
      */
     class NEAPI Console {
         template <typename ...Args>
-        static std::string _getFormattedString(std::string format_, Args...args) {
+        static std::string _getFormattedString(std::string format, Args...args) {
             // Get the size
-            auto size = snprintf(nullptr, 0, format_.c_str(), args...);
+            auto size = snprintf(nullptr, 0, format.c_str(), args...);
 
             // Get the string
             std::string output(size + 1, '\0');
 #if defined(WIN32)
-            sprintf_s(&output[0], size + 1, format_.c_str(), args...);
+            sprintf_s(&output[0], size + 1, format.c_str(), args...);
 #else
-            sprintf(&output[0], format_.c_str(), args...);
+            sprintf(&output[0], format.c_str(), args...);
 #endif
 
             return output;
@@ -55,18 +55,18 @@ namespace ngine {
          *
          * @todo Write to log file if enabled.
          */
-        static void _write(std::string severity_, std::string moduleName_, std::string msg_) {
-            std::cout << "[" << severity_ << "] (" << moduleName_ << "): " << msg_ << std::endl;
+        static void _write(std::string severity, std::string moduleName, std::string msg) {
+            std::cout << "[" << severity << "] (" << moduleName << "): " << msg << std::endl;
         }
 
-        static void _showPopup(const std::string &msg_, const std::string &title_) {
+        static void _showPopup(const std::string &msg, const std::string &title) {
             // TODO: Support more platforms or even make a universal API for message boxes.
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
-            MessageBoxA(NULL, msg_.c_str(), title_.c_str(), MB_ICONERROR | MB_OK);
+            MessageBoxA(NULL, msg.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
 #elif defined(PLATFORM_UWP)
             // Create the message dialog and set its content
-            // std::wstring tmpMsg(msg_.begin(), msg_.end());
-            // std::wstring tmpTitle(title_.begin(), title_.end());
+            // std::wstring tmpMsg(msg.begin(), msg.end());
+            // std::wstring tmpTitle(title.begin(), title.end());
             // auto msg = ref new Windows::UI::Popups::MessageDialog(ref new Platform::String(tmpMsg.c_str()), ref new Platform::String(tmpTitle.c_str()));
             // TODO: Sync show
 #endif
@@ -76,26 +76,26 @@ namespace ngine {
          * Write a notice to the console.
          *
          * @tparam Args Parameter pack types.
-         * @param moduleName_ The module.
-         * @param format_ The string format.
+         * @param moduleName The module.
+         * @param format The string format.
          * @param args Anything extra.
          */
         template <typename ...Args>
-        static void Notice(std::string moduleName_, std::string format_, Args...args) {
-            _write("NOTICE", moduleName_, _getFormattedString(format_, args...));
+        static void Notice(std::string moduleName, std::string format, Args...args) {
+            _write("NOTICE", moduleName, _getFormattedString(format, args...));
         }
 
         /**
          * Write a warning to the console.
          *
          * @tparam Args Parameter pack types.
-         * @param moduleName_ The module.
-         * @param format_ The string format.
+         * @param moduleName The module.
+         * @param format The string format.
          * @param args Anything extra.
          */
         template <typename ...Args>
-        static void Warn(std::string moduleName_, std::string format_, Args...args) {
-            _write("WARN", moduleName_, _getFormattedString(format_, args...));
+        static void Warn(std::string moduleName, std::string format, Args...args) {
+            _write("WARN", moduleName, _getFormattedString(format, args...));
         }
 
         /**
@@ -103,28 +103,28 @@ namespace ngine {
          *
          * @todo Allow throwing if error occurs
          * @tparam Args Parameter pack types.
-         * @param moduleName_ The module.
-         * @param format_ The string format.
+         * @param moduleName The module.
+         * @param format The string format.
          * @param args Anything extra.
          */
         template <typename ...Args>
-        static void Error(std::string moduleName_, std::string format_, Args...args) {
-            _write("ERROR", moduleName_, _getFormattedString(format_, args...));
+        static void Error(std::string moduleName, std::string format, Args...args) {
+            _write("ERROR", moduleName, _getFormattedString(format, args...));
         }
 
         /**
          * Write a fatal error to the console, then throw std::runtime_error with the error message.
          *
          * @tparam Args Parameter pack types.
-         * @param moduleName_ The module.
-         * @param format_ The string format.
+         * @param moduleName The module.
+         * @param format The string format.
          * @param args Anything extra.
          */
         template<typename ...Args>
-        static void Fail(std::string moduleName_, std::string format_, Args... args) {
-            auto msg = _getFormattedString(format_, args...);
-            _write("FATAL", moduleName_, msg);
-            _showPopup(msg, "Fatal error occurred in \"" + moduleName_ + "\" module.");
+        static void Fail(std::string moduleName, std::string format, Args... args) {
+            auto msg = _getFormattedString(format, args...);
+            _write("FATAL", moduleName, msg);
+            _showPopup(msg, "Fatal error occurred in \"" + moduleName + "\" module.");
             throw std::runtime_error(msg); // TODO: Exception type tparam?
             exit(-1);
         }

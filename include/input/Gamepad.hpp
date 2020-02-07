@@ -218,18 +218,18 @@ namespace ngine::input {
         /**
          * Get an axis from a native name.
          *
-         * @param axis_ Native axis name.
+         * @param axis Native axis name.
          * @return Axis enum.
          */
-        static GamepadAxis _getAxis(int axis_);
+        static GamepadAxis _getAxis(int axis);
 
         /**
          * Get a button from a native name.
          *
-         * @param button_ Native button name.
+         * @param button Native button name.
          * @return Button enum.
          */
-        static GamepadButton _getButton(int button_);
+        static GamepadButton _getButton(int button);
 
 #if defined(PLATFORM_UWP)
         static void _UWPGamepadAdded(Platform::Object ^sender, Windows::Gaming::Input::Gamepad ^args);
@@ -244,46 +244,46 @@ namespace ngine::input {
         /**
          * Get the value for an axis.
          *
-         * @param pad_ Gamepad to use.
-         * @param axis_ Axis to get.
+         * @param pad Gamepad to use.
+         * @param axis Axis to get.
          * @return The axis value.
          */
-        static float GetAxisValue(GamepadNumber pad_, GamepadAxis axis_);
+        static float GetAxisValue(GamepadNumber pad, GamepadAxis axis);
 
         /**
          * Test if a the gamepad is available.
          *
-         * @param pad_ Gamepad to check.
+         * @param pad Gamepad to check.
          * @return Whether the gamepad is available or not.
          */
-        static bool IsAvailable(GamepadNumber pad_);
+        static bool IsAvailable(GamepadNumber pad);
 
         /**
          * Test if a button is down.
          *
-         * @param pad_ Gamepad to use.
-         * @param button_ Button to check
+         * @param pad Gamepad to use.
+         * @param button Button to check
          * @return Whether the button is down or not.
          */
-        static bool IsButtonDown(GamepadNumber pad_, GamepadButton button_);
+        static bool IsButtonDown(GamepadNumber pad, GamepadButton button);
 
         /**
          * Test if a button was pressed this frame.
          *
-         * @param pad_ Gamepad to use.
-         * @param button_ Button to check.
+         * @param pad Gamepad to use.
+         * @param button Button to check.
          * @return Whether the button was pressed this frame.
          */
-        static bool IsButtonPressed(GamepadNumber pad_, GamepadButton button_);
+        static bool IsButtonPressed(GamepadNumber pad, GamepadButton button);
 
         /**
          * Test if a button was released this frame.
          *
-         * @param pad_ Gamepad to use.
-         * @param button_ Button to check.
+         * @param pad Gamepad to use.
+         * @param button Button to check.
          * @return Whether the button was released this frame.
          */
-        static bool IsButtonReleased(GamepadNumber pad_, GamepadButton button_);
+        static bool IsButtonReleased(GamepadNumber pad, GamepadButton button);
 
         /**
          * Poll inputs.

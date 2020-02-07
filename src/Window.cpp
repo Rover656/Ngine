@@ -43,26 +43,26 @@ namespace ngine {
     int Window::m_UWPWindowCount = 0;
 #endif
 
-    void Window::_applyConfig(const WindowConfig &config_) {
+    void Window::_applyConfig(const WindowConfig &config) {
         if (!m_initialized) return;
 
         // Enable debug console
-        setEnableNativeConsole(config_.NativeDebugConsole);
+        setEnableNativeConsole(config.NativeDebugConsole);
 
         // Set fullscreen mode.
-        setFullscreen(config_.Fullscreen);
+        setFullscreen(config.Fullscreen);
 
         // Set the window icon.
-        setIcon(config_.Icon);
+        setIcon(config.Icon);
 
         // Set resizeable or not.
-        setResizable(config_.Resizable);
+        setResizable(config.Resizable);
 
         // Enable/disable V-Sync
-        setVSyncEnabled(config_.VSync);
+        setVSyncEnabled(config.VSync);
     }
 
-    Window::Window(const WindowConfig &config_) {
+    Window::Window(const WindowConfig &config) {
 #if defined(PLATFORM_UWP)
         if (m_UWPWindowCount > 0)
             throw std::runtime_error("Cannot open more than one window on UWP.");
@@ -80,7 +80,7 @@ namespace ngine {
         glfwDefaultWindowHints();
 
         // Apply MSAA
-        if (config_.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
+        if (config.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
 
         // Set version string
         auto targetAPI = graphics::GraphicsDevice::GetTargetAPI();
@@ -119,7 +119,7 @@ namespace ngine {
         });
 
         // Create window
-        m_GLFWWindow = glfwCreateWindow(config_.InitialWidth, config_.InitialHeight, config_.Title.c_str(), nullptr, nullptr);
+        m_GLFWWindow = glfwCreateWindow(config.InitialWidth, config.InitialHeight, config.Title.c_str(), nullptr, nullptr);
 
         // If creation failed
         if (!m_GLFWWindow) {
@@ -130,7 +130,7 @@ namespace ngine {
         Console::Notice("Window", "Successfully created GLFW window.");
 
         // Save title
-        m_windowTitle = config_.Title;
+        m_windowTitle = config.Title;
 
         // Save this as a user pointer
         glfwSetWindowUserPointer(m_GLFWWindow, this);
@@ -157,7 +157,7 @@ namespace ngine {
         // If we are using GLES, use the EGL API
         if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES) {
             // Get EGL surface size
-            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
         }
 #endif
 
@@ -170,7 +170,7 @@ namespace ngine {
         Console::Notice("Window", "Successfully opened keyboard and mouse APIs.");
 
         // Apply any after-creation config
-        _applyConfig(config_);
+        _applyConfig(config);
     }
 
     Window::~Window() {
@@ -190,7 +190,7 @@ namespace ngine {
 #elif defined(PLATFORM_UWP)
         // Make egl context current.
         if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
-            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->MakeEGLCurrent();
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->MakeEGLCurrent();
 #endif
 
         // Make current
@@ -217,38 +217,38 @@ namespace ngine {
         return m_currentHeight;
     }
 
-    void Window::setSize(int width_, int height_) {
+    void Window::setSize(int width, int height) {
 #if defined(PLATFORM_DESKTOP)
         // Set size
-        glfwSetWindowSize((GLFWwindow *)m_GLFWWindow, width_, height_);
+        glfwSetWindowSize((GLFWwindow *)m_GLFWWindow, width, height);
 #elif defined(PLATFORM_UWP)
         // Set size
-        Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryResizeView(Windows::Foundation::Size(width_, height_));
+        Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryResizeView(Windows::Foundation::Size(width, height));
 #endif
     }
 
-    void Window::setVSyncEnabled(bool flag_) {
+    void Window::setVSyncEnabled(bool flag) {
         // Make this window context current
         makeCurrent();
 
 #if defined(PLATFORM_DESKTOP)
-        glfwSwapInterval(flag_ ? 1 : 0);
+        glfwSwapInterval(flag ? 1 : 0);
 #else
         if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
-            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SetEGLSwapInterval(flag_ ? 1 : 0);
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->SetEGLSwapInterval(flag ? 1 : 0);
 #endif
     }
 
-    void Window::setIcon(graphics::Image *icon_) {
+    void Window::setIcon(graphics::Image *icon) {
 #if defined(PLATFORM_DESKTOP)
-        if (icon_ == nullptr) {
+        if (icon == nullptr) {
             glfwSetWindowIcon(m_GLFWWindow, 0, nullptr);
         } else {
-            GLFWimage icon;
-            icon.width = icon_->Width;
-            icon.height = icon_->Height;
-            icon.pixels = icon_->PixelData;
-            glfwSetWindowIcon(m_GLFWWindow, 1, &icon);
+            GLFWimage glfwIcon;
+            glfwIcon.width = icon->Width;
+            glfwIcon.height = icon->Height;
+            glfwIcon.pixels = icon->PixelData;
+            glfwSetWindowIcon(m_GLFWWindow, 1, &glfwIcon);
         }
 #endif
     }
@@ -261,7 +261,7 @@ namespace ngine {
         setFullscreen(!m_isFullscreen);
     }
 
-    void Window::setFullscreen(bool fullscreen_) {
+    void Window::setFullscreen(bool fullscreen) {
 #if defined(PLATFORM_DESKTOP)
         // TODO: This is very buggy.
 
@@ -270,7 +270,7 @@ namespace ngine {
         auto vidmode = glfwGetVideoMode(display);
 
         // Toggle fullscreen
-        if (fullscreen_ && !m_isFullscreen) {
+        if (fullscreen && !m_isFullscreen) {
             // Save info
             glfwGetWindowSize((GLFWwindow *)m_GLFWWindow, &m_preFullscreenSizeWidth, &m_preFullscreenSizeHeight);
             glfwGetWindowPos((GLFWwindow *)m_GLFWWindow, &m_preFullscreenPosX, &m_preFullscreenPosY);
@@ -287,13 +287,13 @@ namespace ngine {
         }
 #elif defined(PLATFORM_UWP)
         // Toggle fullscreen.
-        m_fullscreenSet = fullscreen_ ? 1 : 2;
+        m_fullscreenSet = fullscreen ? 1 : 2;
 #endif
     }
 
-    void Window::setResizable(bool resizable_) {
+    void Window::setResizable(bool resizable) {
 #if defined(PLATFORM_DESKTOP)
-        glfwSetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_RESIZABLE, resizable_ ? 1 : 0);
+        glfwSetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_RESIZABLE, resizable ? 1 : 0);
 #endif
     }
 
@@ -301,18 +301,18 @@ namespace ngine {
         return m_windowTitle;
     }
 
-    void Window::setTitle(const std::string& title_) {
+    void Window::setTitle(const std::string& title) {
 #if defined(PLATFORM_DESKTOP)
-        glfwSetWindowTitle(m_GLFWWindow, title_.c_str());
-        m_windowTitle = title_;
+        glfwSetWindowTitle(m_GLFWWindow, title.c_str());
+        m_windowTitle = title;
 #else
         Console::Notice("Window", "Window title was not changed as title changing is not enabled on this platform.");
 #endif
     }
 
-    void Window::setEnableNativeConsole(bool flag_) {
+    void Window::setEnableNativeConsole(bool flag) {
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
-        if (flag_ && !m_consoleAllocated) {
+        if (flag && !m_consoleAllocated) {
             // Add console
             AllocConsole();
             auto title = getTitle();
@@ -347,7 +347,7 @@ namespace ngine {
             // Mark as open
             m_consoleAllocated = true;
             Console::Notice("Window", "Allocated a console to the game window. Output logs forwarded.");
-        } else if (!flag_ && m_consoleAllocated) {
+        } else if (!flag && m_consoleAllocated) {
             // Close our buffers
             m_consoleIn.close();
             m_consoleOut.close();
@@ -413,7 +413,7 @@ namespace ngine {
 
         // Query dimensions
         if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
-            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
 
         // Toggle fullscreen if necessary
         if (m_fullscreenSet != 0) {
@@ -471,7 +471,7 @@ namespace ngine {
         glfwSwapBuffers((GLFWwindow *) m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
         if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
-            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->GetAPI())->SwapEGLBuffers();
+            ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->SwapEGLBuffers();
 #endif
     }
 }

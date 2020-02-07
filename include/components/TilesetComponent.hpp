@@ -47,10 +47,10 @@ namespace ngine::components {
          * Create a tileset component with a tileset renderer.
          *
          * @note The lifecycle of the tileset renderer will be managed by this component now.
-         * @param parent_ The entity we are attaching to.
-         * @param tileset_ The tileset renderer we will be using.
+         * @param parent The entity we are attaching to.
+         * @param tileset The tileset renderer we will be using.
          */
-        TilesetComponent(Entity *parent_, graphics::TilesetRenderer *tileset_);
+        TilesetComponent(Entity *parent, graphics::TilesetRenderer *tileset);
         virtual ~TilesetComponent();
 
         /**
@@ -78,14 +78,14 @@ namespace ngine::components {
          * Set whether or not we render tiles inside the cull area, or viewport
          *
          * @note Normally, rendering only in viewport is the best option, but if you have black-bars or something, cull area is better.
-         * @param flag_ true for rendering only in cull area, false for viewport.
+         * @param flag true for rendering only in cull area, false for viewport.
          */
-        void setCullAreaDraw(bool flag_);
+        void setCullAreaDraw(bool flag);
 
         /**
          * Draw the tileset (called by engine).
          */
-        void draw(graphics::Renderer *renderer_) override;
+        void draw(graphics::Renderer *renderer) override;
     };
 }
 

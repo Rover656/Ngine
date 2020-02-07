@@ -85,44 +85,45 @@ namespace ngine::graphics {
         /**
          * Create a sprite.
          *
-         * @param texture_ The texture to use.
+         * @param texture The texture to use.
          */
-        Sprite(Texture2D *texture_);
+        Sprite(Texture2D *texture);
 
         /**
          * Create an animated sprite sheet
          *
-         * @param texture_ The sprite sheet.
-         * @param frameWidth_ The width of each frame.
-         * @param frameHeight_ The height of each frame.
-         * @param drawWidth_ The width to draw with.
-         * @param drawHeight_ The height to draw with.
-         * @param imageSpeed_ The image speed.
+         * @param texture The sprite sheet.
+         * @param frameWidth The width of each frame.
+         * @param frameHeight The height of each frame.
+         * @param drawWidth The width to draw with.
+         * @param drawHeight The height to draw with.
+         * @param imageSpeed The image speed.
          * @param startingFrame The frame to start with.
          */
-        Sprite(Texture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
-               float imageSpeed_ = 30, int startingFrame = 0);
+        Sprite(Texture2D *texture, int frameWidth, int frameHeight, int drawWidth, int drawHeight,
+               float imageSpeed = 30, int startingFrame = 0);
 
         /**
          * Create an animated sequence of textures.
          *
-         * @param textures_ Texture sequence.
-         * @param imageSpeed_ The image speed.
-         * @param startingFrame_ The image to start with.
+         * @param textures Texture sequence.
+         * @param imageSpeed The image speed.
+         * @param startingFrame The image to start with.
          */
-        Sprite(const std::vector<Texture2D *> &textures_, float imageSpeed_ = 30, int startingFrame_ = 0);
+        Sprite(const std::vector<Texture2D *> &textures, float imageSpeed = 30, int startingFrame = 0);
 
         virtual ~Sprite() = default;
 
         /**
          * Draw the sprite.
          *
-         * @param position_ Position to draw at.
-         * @param scale_ Scale to draw with.
-         * @param rotation_ Rotation of the sprite.
-         * @param origin_ Origin of the sprite.
+         * @param position Position to draw at.
+         * @param scale Scale to draw with.
+         * @param rotation Rotation of the sprite.
+         * @param origin Origin of the sprite.
          */
-        void draw(graphics::Renderer *renderer_, Vector2 position_, float scale_ = 1, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void draw(graphics::Renderer *renderer, Vector2 position, float scale = 1, float rotation = 0,
+                  Vector2 origin = Vector2::Zero);
 
         /**
          * Update the sprite timer.
@@ -161,16 +162,16 @@ namespace ngine::graphics {
         /**
          * Set the sprite texture.
          *
-         * @param texture_ The texture to use.
+         * @param texture The texture to use.
          */
-        void setTexture(Texture2D *texture_);
+        void setTexture(Texture2D *texture);
 
         /**
          * Set the sprite textures.
          *
-         * @param textures_ The textures to use.
+         * @param textures The textures to use.
          */
-        void setTextures(const std::vector<Texture2D*> &textures_);
+        void setTextures(const std::vector<Texture2D *> &textures);
 
         /**
          * Get the source rectangle for drawing with.
@@ -180,6 +181,7 @@ namespace ngine::graphics {
         Rectangle getSourceRectangle();
 
         bool operator==(const Sprite &b);
+
         bool operator!=(const Sprite &b);
     };
 }

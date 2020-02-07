@@ -324,8 +324,8 @@ namespace ngine {
         Console::Notice("Game", "Deleted game window.");
     }
 
-    Game::Game(WindowConfig windowConfig_, const GameConfig &config_)
-            : m_gameWindowCreationConfig(std::move(windowConfig_)), Config(config_) {}
+    Game::Game(WindowConfig windowConfig, const GameConfig &config)
+            : m_gameWindowCreationConfig(std::move(windowConfig)), Config(config) {}
 
     Window *Game::getGameWindow() const {
         return m_gameWindow;
@@ -393,24 +393,24 @@ namespace ngine {
         m_running = false;
     }
 
-    void Game::setFPS(int FPS_) {
-        Config.UpdatesPerSecond = FPS_;
+    void Game::setFPS(int FPS) {
+        Config.UpdatesPerSecond = FPS;
     }
 
-    void Game::setIntendedSize(Vector2 size_) {
-        Config.TargetWidth = (int) size_.X;
-        Config.TargetHeight = (int) size_.Y;
+    void Game::setIntendedSize(Vector2 size) {
+        Config.TargetWidth = (int) size.X;
+        Config.TargetHeight = (int) size.Y;
     }
 
-    void Game::setIsRunning(bool running_) {
-        m_running = running_;
+    void Game::setIsRunning(bool running) {
+        m_running = running;
     }
 
-    void Game::setScene(Scene *scene_) {
+    void Game::setScene(Scene *scene) {
         if (m_currentScene != nullptr)
             m_currentScene->OnUnload({this});
 
-        m_currentScene = scene_;
+        m_currentScene = scene;
 
         if (m_currentScene != nullptr)
             m_currentScene->OnInit({this});

@@ -42,7 +42,7 @@ namespace ngine::physics::shapes {
         /*
          * Create a polygon shape from a Box2D polygon.
          */
-        explicit PolygonShape(b2PolygonShape *polygonShape_);
+        explicit PolygonShape(b2PolygonShape *polygonShape);
 
         /*
          * Move constructor
@@ -52,7 +52,7 @@ namespace ngine::physics::shapes {
         /*
          * Copy constructor
          */
-        PolygonShape(const PolygonShape &polygon_);
+        PolygonShape(const PolygonShape &polygon);
 
         // Public Methods
 
@@ -61,7 +61,7 @@ namespace ngine::physics::shapes {
          */
         static PolygonShape CreateAsBox(float hx, float hy);
 
-        void debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
+        void debugDraw(graphics::Renderer *renderer, float ppm, Vector2 pos, float angle) const override;
 
         Vector2 getCentroid() const;
 
@@ -79,22 +79,22 @@ namespace ngine::physics::shapes {
         /*
          * Build vertices to represent an oriented box.
          */
-        void setAsBox(float hx, float hy, const Vector2 &center_, float rotation_);
+        void setAsBox(float hx, float hy, const Vector2 &center, float rotation);
 
         /*
          * Set polygon centroid.
          */
-        void setCentroid(Vector2 centroid_);
+        void setCentroid(Vector2 centroid);
 
         /*
          * Set polygon normals. Must have the same number of normals as vertices.
          */
-        void setNormals(std::vector<Vector2> verts_);
+        void setNormals(std::vector<Vector2> norms);
 
         /*
          * Set polygon vertices.
          */
-        void setVertices(std::vector<Vector2> verts_);
+        void setVertices(std::vector<Vector2> verts);
     };
 }
 

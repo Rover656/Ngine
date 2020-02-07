@@ -32,7 +32,9 @@
 
 namespace ngine::graphics {
     class GraphicsDevice;
+
     class Renderer;
+
     class RenderTarget;
 
     class NewRenderer;
@@ -140,37 +142,39 @@ namespace ngine::graphics {
         /**
          * Copy constructor.
          */
-        Texture2D(const Texture2D &original_) = default;
+        Texture2D(const Texture2D &original) = default;
 
         /**
          * Create a texture from raw pixel data.
          *
          * @note The pixel data is copied.
-         * @param graphicsDevice_ The current graphics device.
-         * @param data_ Pixel data.
-         * @param width_ Width of the texture.
-         * @param height_ Height of the texture.
-         * @param format_ Data pixel format.
-         * @param mipmapCount_ Number of mipmaps to generate.
+         * @param graphicsDevice The current graphics device.
+         * @param data Pixel data.
+         * @param width Width of the texture.
+         * @param height Height of the texture.
+         * @param format Data pixel format.
+         * @param mipmapCount Number of mipmaps to generate.
          */
-        Texture2D(GraphicsDevice *graphicsDevice_, unsigned char *data_, unsigned int width_, unsigned height_, PixelFormat format_ = UNCOMPRESSED_R8G8B8A8, int mipmapCount_ = 1);
+        Texture2D(GraphicsDevice *graphicsDevice, unsigned char *data, unsigned int width, unsigned int height,
+                  PixelFormat format = UNCOMPRESSED_R8G8B8A8, int mipmapCount = 1);
 
         /**
          * Create a texture from an image.
          *
-         * @param graphicsDevice_ The current graphics device.
-         * @param img_ Image to load onto GPU.
+         * @param graphicsDevice The current graphics device.
+         * @param img Image to load onto GPU.
          */
-        Texture2D(GraphicsDevice *graphicsDevice_, const Image *img_);
+        Texture2D(GraphicsDevice *graphicsDevice, const Image *img);
+
         ~Texture2D();
 
         /**
          * Load a texture from a file.
          *
-         * @param graphicsDevice_ The current graphics device.
-         * @param path_ Texture file to load.
+         * @param graphicsDevice The current graphics device.
+         * @param path Texture file to load.
          */
-        static Texture2D *LoadTexture(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_);
+        static Texture2D *LoadTexture(GraphicsDevice *graphicsDevice, const filesystem::Path &path);
 
         /**
          * Get the texture pixel format.
@@ -187,16 +191,16 @@ namespace ngine::graphics {
         /**
          * Set the texture filter mode.
          *
-         * @param filterMode_ The filter mode to set.
+         * @param filterMode The filter mode to set.
          */
-        void setTextureFilter(TextureFilterMode filterMode_);
+        void setTextureFilter(TextureFilterMode filterMode);
 
         /**
          * Set the texture wrap mode.
          *
-         * @param wrapMode_ The texture wrap mode.
+         * @param wrapMode The texture wrap mode.
          */
-        void setTextureWrap(TextureWrapMode wrapMode_);
+        void setTextureWrap(TextureWrapMode wrapMode);
 
         /**
          * Is the texture valid and ready for use.
@@ -213,31 +217,34 @@ namespace ngine::graphics {
         /**
          * Draw the texture.
          *
-         * @param pos_ The position to draw at.
-         * @param col_ The color modifier.
-         * @param scale_ The scale modifier.
-         * @param origin_ The origin (for rotation).
-         * @param rotation_ Rotation (from origin).
+         * @param pos The position to draw at.
+         * @param col The color modifier.
+         * @param scale The scale modifier.
+         * @param origin The origin (for rotation).
+         * @param rotation Rotation (from origin).
          */
-        void draw(graphics::Renderer *renderer_, Vector2 pos_, Color col_ = Color::White, float scale_ = 1, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+        void draw(graphics::Renderer *renderer, Vector2 pos, Color col = Color::White, float scale = 1,
+                  Vector2 origin = Vector2::Zero, Angle rotation = 0);
 
         /**
          * Draw the texture.
          *
-         * @param destRect_ The destination rectangle.
-         * @param srcRect_ The source rectangle.
-         * @param origin_ The origin (for rotation).
-         * @param rotation_ Rotation (from origin).
+         * @param destRect The destination rectangle.
+         * @param srcRect The source rectangle.
+         * @param origin The origin (for rotation).
+         * @param rotation Rotation (from origin).
          */
-        void draw(graphics::Renderer *renderer_, Rectangle destRect_, Rectangle srcRect_, Color col_ = Color::White, Vector2 origin_ = Vector2::Zero, Angle rotation_ = 0);
+        void draw(graphics::Renderer *renderer, Rectangle destRect, Rectangle srcRect, Color col = Color::White,
+                  Vector2 origin = Vector2::Zero, Angle rotation = 0);
 
-        bool operator==(const Texture2D &tex_) const;
-        bool operator!=(const Texture2D &tex_) const;
+        bool operator==(const Texture2D &tex) const;
+
+        bool operator!=(const Texture2D &tex) const;
 
         /*
          * Copy a texture
          */
-        Texture2D &operator=(const Texture2D &tex_) = default;
+        Texture2D &operator=(const Texture2D &tex) = default;
     };
 }
 

@@ -151,17 +151,17 @@ namespace ngine::graphics {
         /**
          * Set the default font.
          *
-         * @param font_ The default font.
+         * @param font The default font.
          */
-        static void SetDefaultFont(Font *font_);
+        static void SetDefaultFont(Font *font);
 
         /**
          * Get a character glyph index.
          *
-         * @param char_ The character to get.
+         * @param character The character to get.
          * @return The glyph index within the character info.
          */
-        int getGlyphIndex(int char_) const;
+        int getGlyphIndex(int character) const;
 
         /**
          * Get the font texture.
@@ -181,13 +181,13 @@ namespace ngine::graphics {
          * Load a true type font with specified characters.
          *
          * @warning The higher the base size is set, the more memory each loaded font will use.
-         * @param path_ Path to font file.
-         * @param baseSize_ Base font size.
-         * @param fontChars_ The list of characters to add into the atlas. Leave empty for standard alpha-numeric characters
+         * @param path Path to font file.
+         * @param baseSize Base font size.
+         * @param fontChars The list of characters to add into the atlas. Leave empty for standard alpha-numeric characters
          * @return The loaded font.
          */
-        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_, int baseSize_ = 36,
-                                 std::vector<int> fontChars_ = std::vector<int>());
+        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice, const filesystem::Path &path, int baseSize = 36,
+                                 std::vector<int> fontChars = std::vector<int>());
 
         /**
          * Free the font.
@@ -197,54 +197,63 @@ namespace ngine::graphics {
         /**
          * Draw a string with this font at the given position.
          *
-         * @param renderer_ The renderer.
-         * @param string_ The string to render.
-         * @param position_ The position to render at.
-         * @param fontSize_ The font size to use.
-         * @param spacing_ Letter spacing.
+         * @param renderer The renderer.
+         * @param string The string to render.
+         * @param position The position to render at.
+         * @param fontSize The font size to use.
+         * @param spacing Letter spacing.
          */
-        void drawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
-                        float spacing_, const Color &color_, LineSpacing lineSpacing_ = LineSpacing::OnePointFive,
-                        const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
+        void drawString(Renderer *renderer, const std::string &string, const Vector2 &position, float fontSize,
+                        float spacing, const Color &color, LineSpacing lineSpacing = LineSpacing::OnePointFive,
+                        const Angle &rotation = 0, const Vector2 &origin = Vector2::Zero);
 
         /**
          * Draw a string within given bounds with options for alignment and wrapping.
          *
          * @warning Not implemented.
          */
-        void drawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
-                        float spacing_, const Color &color_, LineSpacing lineSpacing_ = LineSpacing::OnePointFive,
-                        TextAlignment alignment_ = TextAlignment::Left, TextWrap wrap_ = TextWrap::None,
-                        const Angle &rotation_ = 0, const Vector2 &origin_ = Vector2::Zero);
+        void drawString(Renderer *renderer, const std::string &string, const Rectangle &bounds, float fontSize,
+                        float spacing, const Color &color, LineSpacing lineSpacing = LineSpacing::OnePointFive,
+                        TextAlignment alignment = TextAlignment::Left, TextWrap wrap = TextWrap::None,
+                        const Angle &rotation = 0, const Vector2 &origin = Vector2::Zero);
 
         /**
          * Measure the size of a string if it was rendered without constraints.
          */
-        Vector2 measureString(const std::string &string_, float fontSize_, float spacing_,
-                              LineSpacing lineSpacing_ = LineSpacing::OnePointFive);
+        Vector2 measureString(const std::string &string, float fontSize, float spacing,
+                              LineSpacing lineSpacing = LineSpacing::OnePointFive);
 
         /**
          * Measure the size of a string if it was rendered with a maximum width.
          *
          * @warning Not implemented.
          */
-        Vector2 measureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
-                                         TextAlignment alignment_ = TextAlignment::Left,
-                                         TextWrap wrap_ = TextWrap::None);
+        Vector2 measureStringRestrictedW(const std::string &string, float fontSize, float spacing, float maxWidth,
+                                         TextAlignment alignment = TextAlignment::Left, TextWrap wrap = TextWrap::None);
 
         /**
          * Measure the size of a string if it was rendered with a maximum height.
          *
          * @warning Not implemented.
          */
-        Vector2 measureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
-                                         TextAlignment alignment_ = TextAlignment::Left,
-                                         TextWrap wrap_ = TextWrap::None);
+        Vector2 measureStringRestrictedH(const std::string &string, float fontSize, float spacing, float maxHeight,
+                                         TextAlignment alignment = TextAlignment::Left, TextWrap wrap = TextWrap::None);
 
     private:
-        void _generateAtlas(GraphicsDevice *graphicsDevice_);
+        /**
+         * Generate glyph atlas.
+         *
+         * @param graphicsDevice The graphics device.
+         */
+        void _generateAtlas(GraphicsDevice *graphicsDevice);
 
-        void _loadFontInfo(const filesystem::Path &path_, std::vector<int> chars_);
+        /**
+         * Load font info.
+         *
+         * @param path Font file to laod.
+         * @param characters The characters to generate with.
+         */
+        void _loadFontInfo(const filesystem::Path &path, std::vector<int> characters);
     };
 }
 

@@ -32,33 +32,33 @@ namespace ngine::physics::shapes {
         _Shape = new b2CircleShape();
     }
 
-    CircleShape::CircleShape(float radius_, Vector2 position_) : CircleShape() {
-        setRadius(radius_);
-        setPosition(position_);
+    CircleShape::CircleShape(float radius, Vector2 position) : CircleShape() {
+        setRadius(radius);
+        setPosition(position);
     }
 
-    CircleShape::CircleShape(b2CircleShape *circle_) : PhysicsShape(circle_) {}
+    CircleShape::CircleShape(b2CircleShape *circle) : PhysicsShape(circle) {}
 
     CircleShape::CircleShape(CircleShape &&old) : PhysicsShape(std::move(old)) {}
 
-    CircleShape::CircleShape(const CircleShape &circle_)
-            : PhysicsShape(circle_) {
+    CircleShape::CircleShape(const CircleShape &circle)
+            : PhysicsShape(circle) {
         // Create my shape
         _Shape = new b2CircleShape();
 
         // Copy data
-        setRadius(circle_.getRadius());
-        setPosition(circle_.getPosition());
+        setRadius(circle.getRadius());
+        setPosition(circle.getPosition());
     }
 
     // Public Methods
 
-    void CircleShape::debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float rotation_) const {
-        auto pos = getPosition();
-        pos *= ppm_;
-        pos += pos_;
+    void CircleShape::debugDraw(graphics::Renderer *renderer, float ppm, Vector2 pos, float angle) const {
+        auto p = getPosition();
+        p *= ppm;
+        p += pos;
 
-        graphics::ShapeRenderer::DrawCircle(renderer_, pos, getRadius() * ppm_, graphics::Color::Red, true);
+        graphics::ShapeRenderer::DrawCircle(renderer, p, getRadius() * ppm, graphics::Color::Red, true);
     }
 
     Vector2 CircleShape::getPosition() const {
@@ -66,7 +66,7 @@ namespace ngine::physics::shapes {
         return {p.x, p.y};
     }
 
-    void CircleShape::setPosition(Vector2 pos_) {
-        ((b2CircleShape *) _Shape)->m_p = {pos_.X, pos_.Y};
+    void CircleShape::setPosition(Vector2 pos) {
+        ((b2CircleShape *) _Shape)->m_p = {pos.X, pos.Y};
     }
 }

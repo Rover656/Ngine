@@ -48,9 +48,9 @@ namespace ngine {
         /**
          * Initialise the component.
          *
-         * @param parent_ The parent entity.
+         * @param parent The parent entity.
          */
-        Component(Entity *parent_);
+        Component(Entity *parent);
     public:
         /**
          * Fired when an entity destroys this component.
@@ -115,7 +115,7 @@ namespace ngine {
         /**
          * Component draw code.
          */
-        virtual void draw(graphics::Renderer *renderer_);
+        virtual void draw(graphics::Renderer *renderer);
 
         /**
          * Component update code.

@@ -23,13 +23,13 @@
 #include "Console.hpp"
 
 namespace ngine::graphics {
-    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_)
-            : Width(width_), Height(height_) {
+    RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice, unsigned int width, unsigned int height)
+            : Width(width), Height(height) {
         // Get API
-        m_API = graphicsDevice_->getAPI();
+        m_API = graphicsDevice->getAPI();
 
         // Create color attachment
-        m_texture = new Texture2D(graphicsDevice_, nullptr, width_, height_, UNCOMPRESSED_R8G8B8A8, 1);
+        m_texture = new Texture2D(graphicsDevice, nullptr, width, height, UNCOMPRESSED_R8G8B8A8, 1);
 
         // Verify texture
         if (!m_texture->isValid()) {

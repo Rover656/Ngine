@@ -24,7 +24,7 @@
 #include <cstring>
 
 namespace ngine::audio {
-    void AudioStream::updateStream(const void *data_, int samplesCount_) {
+    void AudioStream::updateStream(const void *data, int samplesCount) {
         if (Buffer != nullptr) {
             if (Buffer->IsSubBufferProcessed[0] || Buffer->IsSubBufferProcessed[1]) {
                 ma_uint32 subBufferToUpdate = 0;
@@ -41,14 +41,14 @@ namespace ngine::audio {
 
                 Buffer->TotalFramesProcessed += subBufferSizeInFrames;
 
-                if (subBufferSizeInFrames >= (ma_uint32)samplesCount_/Channels) {
+                if (subBufferSizeInFrames >= (ma_uint32)samplesCount / Channels) {
                     ma_uint32 framesToWrite = subBufferSizeInFrames;
 
-                    if (framesToWrite > ((ma_uint32) samplesCount_ / Channels))
-                        framesToWrite = (ma_uint32) samplesCount_ / Channels;
+                    if (framesToWrite > ((ma_uint32) samplesCount / Channels))
+                        framesToWrite = (ma_uint32) samplesCount / Channels;
 
                     ma_uint32 bytesToWrite = framesToWrite * Channels * (SampleSize / 8);
-                    memcpy(subBuffer, data_, bytesToWrite);
+                    memcpy(subBuffer, data, bytesToWrite);
 
                     // Any leftover, fill with zero
                     ma_uint32 leftoverFrameCount = subBufferSizeInFrames - framesToWrite;

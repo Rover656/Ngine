@@ -65,7 +65,7 @@ namespace ngine::physics::shapes {
         /*
          * Create a physics shape from a Box2D shape created by Box2D.
          */
-        explicit PhysicsShape(b2Shape *shape_);
+        explicit PhysicsShape(b2Shape *shape);
 
         /*
          * Move constructor
@@ -75,7 +75,7 @@ namespace ngine::physics::shapes {
         /*
          * Copy constructor
          */
-        PhysicsShape(const PhysicsShape &shape_);
+        PhysicsShape(const PhysicsShape &shape);
 
     public:
         // Destructor
@@ -88,7 +88,7 @@ namespace ngine::physics::shapes {
 
         // TODO: void ComputeMass()
 
-        virtual void debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const = 0;
+        virtual void debugDraw(graphics::Renderer *renderer, float ppm, Vector2 pos, float angle) const = 0;
 
         /*
          * Get the Box2D shape.
@@ -108,7 +108,7 @@ namespace ngine::physics::shapes {
         /*
          * Set shape radius.
          */
-        void setRadius(float radius_);
+        void setRadius(float radius);
 
         /*
          * Test a point for containment in this shape.

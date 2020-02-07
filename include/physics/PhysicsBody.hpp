@@ -52,9 +52,9 @@ namespace ngine::physics {
         /**
          * Create a physics body from a box2d body.
          *
-         * @param body_ The Box2D body to be created from.
+         * @param body The Box2D body to be created from.
          */
-        explicit PhysicsBody(b2Body *body_);
+        explicit PhysicsBody(b2Body *body);
 
     public:
         /**
@@ -142,28 +142,29 @@ namespace ngine::physics {
         /**
          * Create a new physics body.
          *
-         * @param world_ The parent world.
-         * @param info_ BodyInfo used to create the body.
+         * @param world The parent world.
+         * @param info BodyInfo used to create the body.
          */
-        PhysicsBody(PhysicsWorld *world_, BodyInfo info_);
+        PhysicsBody(PhysicsWorld *world, BodyInfo info);
 
         /**
          * Create a new physics body.
          *
-         * @param world_ The parent world.
-         * @param type_ The body type.
-         * @param position_ The initial position.
+         * @param world The parent world.
+         * @param type The body type.
+         * @param position The initial position.
          */
-        PhysicsBody(PhysicsWorld *world_, BodyType type_ = BODY_STATIC, Vector2 position_ = Vector2::Zero);
+        PhysicsBody(PhysicsWorld *world, BodyType type = BODY_STATIC, Vector2 position = Vector2::Zero);
+
         ~PhysicsBody();
 
         /**
          * Set body properties using the `BodyInfo` structure.
          *
          * @warning This will overwrite every property!!! If you want to change a single property, use the set method for it instead.
-         * @param info_ The properties to set.
+         * @param info The properties to set.
          */
-        void set(BodyInfo info_);
+        void set(BodyInfo info);
 
         /**
          * Destroy ourself.
@@ -180,9 +181,9 @@ namespace ngine::physics {
         /**
          * Set the physics body type.
          *
-         * @param type_ The new body type.
+         * @param type The new body type.
          */
-        void setType(BodyType type_);
+        void setType(BodyType type);
 
         /**
          * Get the mass of the body.
@@ -208,9 +209,9 @@ namespace ngine::physics {
         /**
          * Set whether or not the body is treated like a bullet.
          *
-         * @param flag_ Whether or not the body should be treated like a bullet.
+         * @param flag Whether or not the body should be treated like a bullet.
          */
-        void setIsBullet(bool flag_);
+        void setIsBullet(bool flag);
 
         /**
          * Get Box2D body.
@@ -236,9 +237,9 @@ namespace ngine::physics {
         /**
          * Set the body gravity scale.
          *
-         * @param scale_ The gravity scale for the body.
+         * @param scale The gravity scale for the body.
          */
-        void setGravityScale(float scale_);
+        void setGravityScale(float scale);
 
         /**
          * Get the body transform.
@@ -250,9 +251,9 @@ namespace ngine::physics {
         /**
          * Set the body transform.
          *
-         * @param transform_ The new body transform.
+         * @param transform The new body transform.
          */
-        void setTransform(const Transform2D &transform_);
+        void setTransform(const Transform2D &transform);
 
         /**
          * Get body position.
@@ -264,9 +265,9 @@ namespace ngine::physics {
         /**
          * Set body position.
          *
-         * @param pos_ The new body position.
+         * @param pos The new body position.
          */
-        void setPosition(Vector2 pos_);
+        void setPosition(Vector2 pos);
 
         /**
          * Get the body linear velocity.
@@ -278,43 +279,43 @@ namespace ngine::physics {
         /**
          * Set the body linear velocity.
          *
-         * @param vel_ The new body linear velocity.
+         * @param vel The new body linear velocity.
          */
-        void setLinearVelocity(Vector2 vel_);
+        void setLinearVelocity(Vector2 vel);
 
         /**
          * Apply a force at a point on the body.
          *
-         * @param force_ Force to apply.
-         * @param point_ Point to apply force.
-         * @param wake_ Whether or not to wake up the body.
+         * @param force Force to apply.
+         * @param point Point to apply force.
+         * @param wake Whether or not to wake up the body.
          */
-        void applyForce(const Vector2 &force_, const Vector2 &point_, bool wake_);
+        void applyForce(const Vector2 &force, const Vector2 &point, bool wake);
 
         /**
          * Apply a force to the center of the body.
          *
-         * @param force_ Force to apply.
-         * @param wake_ Whether or not to wake up the body.
+         * @param force Force to apply.
+         * @param wake Whether or not to wake up the body.
          */
-        void applyForceToCenter(const Vector2 &force_, bool wake_);
+        void applyForceToCenter(const Vector2 &force, bool wake);
 
         /**
         * Apply a linear impulse at a point on the body.
          *
-         * @param impulse_ Impulse to apply.
-         * @param point_ Point to apply impulse.
-         * @param wake_ Whether or not to wake up the body.
+         * @param impulse Impulse to apply.
+         * @param point Point to apply impulse.
+         * @param wake Whether or not to wake up the body.
         */
-        void applyLinearImpulse(const Vector2 &impulse_, const Vector2 &point_, bool wake_);
+        void applyLinearImpulse(const Vector2 &impulse, const Vector2 &point, bool wake);
 
         /**
          * Apply a linear impuse at the center of the body.
          *
-         * @param impulse_ The impulse to apply.
-         * @param wake_ Whether or not to wake up the body.
+         * @param impulse The impulse to apply.
+         * @param wake Whether or not to wake up the body.
          */
-        void applyLinearImpulseToCenter(const Vector2 &impulse_, bool wake_);
+        void applyLinearImpulseToCenter(const Vector2 &impulse, bool wake);
 
         /**
          * Get the linear damping value.
@@ -326,9 +327,9 @@ namespace ngine::physics {
         /**
          * Set the body's linear damping value.
          *
-         * @param damping_ The new damping value.
+         * @param damping The new damping value.
          */
-        void setLinearDamping(float damping_);
+        void setLinearDamping(float damping);
 
         /**
          * Get body rotation.
@@ -340,9 +341,9 @@ namespace ngine::physics {
         /**
          * Set body rotation.
          *
-         * @param angle_ The new body rotation.
+         * @param angle The new body rotation.
          */
-        void setRotation(Angle angle_);
+        void setRotation(Angle angle);
 
         /**
          * Should the body be able to rotate?
@@ -354,9 +355,9 @@ namespace ngine::physics {
         /**
          * Set whether or not the body can rotate.
          *
-         * @param flag_ Whether or not the body can rotate.
+         * @param flag Whether or not the body can rotate.
          */
-        void setIsFixedRotation(bool flag_);
+        void setIsFixedRotation(bool flag);
 
         /**
          * Get rotational inertia about the local origin.
@@ -375,25 +376,25 @@ namespace ngine::physics {
         /**
          * Set the body angular velocity.
          *
-         * @param omega_ The new angular velocity (in degrees).
+         * @param omega The new angular velocity (in degrees).
          */
-        void setAngularVelocity(float omega_);
+        void setAngularVelocity(float omega);
 
         /**
          * Apply a torque on the body.
          *
-         * @param torque_ The torque to apply.
-         * @param wake_ Whether or not to wake up the body.
+         * @param torque The torque to apply.
+         * @param wake Whether or not to wake up the body.
          */
-        void applyTorque(float torque_, bool wake_);
+        void applyTorque(float torque, bool wake);
 
         /**
          * Apply an angular impulse on the body.
          *
-         * @param impulse_ The impulse to apply.
-         * @param wake_ Whether or not to wake up the body.
+         * @param impulse The impulse to apply.
+         * @param wake Whether or not to wake up the body.
          */
-        void applyAngularImpulse(float impulse_, bool wake_);
+        void applyAngularImpulse(float impulse, bool wake);
 
         /**
          * Get the angular damping value.
@@ -405,21 +406,21 @@ namespace ngine::physics {
         /**
          * Set the angular damping value.
          *
-         * @param damping_ New damping value.
+         * @param damping New damping value.
          */
-        void setAngularDamping(float damping_);
+        void setAngularDamping(float damping);
 
         /**
          * Create a fixture.
          */
-        PhysicsFixture *createFixture(shapes::PhysicsShape *shape_, float density_);
+        PhysicsFixture *createFixture(shapes::PhysicsShape *shape, float density);
 
         /**
          * Destroy a fixture.
          *
-         * @param fixture_ The fixture to destroy.
+         * @param fixture The fixture to destroy.
          */
-        void destroyFixture(PhysicsFixture *fixture_);
+        void destroyFixture(PhysicsFixture *fixture);
 
         /**
          * Get whether or not the body is active.
@@ -431,9 +432,9 @@ namespace ngine::physics {
         /**
          * Set whether or not the body is active.
          *
-         * @param flag_ Whether or not the body should be active.
+         * @param flag Whether or not the body should be active.
          */
-        void setIsActive(bool flag_);
+        void setIsActive(bool flag);
 
         /**
          * Determine whether or not the body is awake.
@@ -445,9 +446,9 @@ namespace ngine::physics {
         /**
          * Set whether or not the body is awake.
          *
-         * @param flag_ Whether or not the body should be awake.
+         * @param flag Whether or not the body should be awake.
          */
-        void setIsAwake(bool flag_);
+        void setIsAwake(bool flag);
 
         /**
          * Determine if the body can sleep.
@@ -459,17 +460,17 @@ namespace ngine::physics {
         /**
          * Set whether or not sleeping is allowed.
          *
-         * @param flag_ Whether or not sleeping should be allowed.
+         * @param flag Whether or not sleeping should be allowed.
          */
-        void setIsSleepingAllowed(bool flag_);
+        void setIsSleepingAllowed(bool flag);
 
         /**
          * Draw debug geometry.
          *
          * @todo Rework the debug drawing system.
-         * @param renderer_ The game renderer.
+         * @param renderer The game renderer.
          */
-        void debugDraw(graphics::Renderer *renderer_);
+        void debugDraw(graphics::Renderer *renderer);
 
         // TODO: Get fixtures, joints and contacts
     };

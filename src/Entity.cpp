@@ -23,12 +23,12 @@
 #include "Component.hpp"
 
 namespace ngine {
-    void Entity::_addToScene(Scene *scene_) {
+    void Entity::_addToScene(Scene *scene) {
         if (m_parentScene != nullptr)
             throw std::runtime_error("Cannot add entity to more than one scene. Remove from current scene first.");
 
         // Set the parent scene
-        m_parentScene = scene_;
+        m_parentScene = scene;
 
         // TODO: Check scene is physics enabled too!!!
         // Create physics body if physics is enabled
@@ -85,9 +85,9 @@ namespace ngine {
     }
 
     // TODO: Remove position and rotation from this constructor???
-    Entity::Entity(const Vector2 position_, float rotation_, int depth_, bool canCull_, bool physicsEnabled_)
-            : m_canCull(canCull_), m_depth(depth_), m_transform(position_, rotation_),
-              m_physicsEnabled(physicsEnabled_),
+    Entity::Entity(const Vector2 position, float rotation, int depth, bool canCull, bool physicsEnabled)
+            : m_canCull(canCull), m_depth(depth), m_transform(position, rotation),
+              m_physicsEnabled(physicsEnabled),
               EntityContainer(EntityContainer::ENTITY) {}
 
     Entity::~Entity() {
@@ -112,12 +112,12 @@ namespace ngine {
         delete this;
     }
 
-    bool Entity::removeComponent(const std::string &name_) {
-        auto comp = getComponent<Component>(name_);
+    bool Entity::removeComponent(const std::string &name) {
+        auto comp = getComponent<Component>(name);
 
         if (comp != nullptr) {
             // Remove component from map
-            m_components.erase(name_);
+            m_components.erase(name);
 
             // Delete if we should
             delete comp;
@@ -139,20 +139,20 @@ namespace ngine {
         return vec;
     }
 
-    bool Entity::hasComponent(const std::string &name_) const {
-        return m_components.find(name_) != m_components.end();
+    bool Entity::hasComponent(const std::string &name) const {
+        return m_components.find(name) != m_components.end();
     }
 
     bool Entity::canCull() const {
         return m_canCull;
     }
 
-    void Entity::setCanCull(bool canCull_) {
-        m_canCull = canCull_;
+    void Entity::setCanCull(bool canCull) {
+        m_canCull = canCull;
     }
 
-    bool Entity::checkForCulling(Rectangle cullArea_) {
-        return !cullArea_.contains(getPosition());
+    bool Entity::checkForCulling(Rectangle cullArea) {
+        return !cullArea.contains(getPosition());
     }
 
     EntityContainer *Entity::getContainer() const {
@@ -177,10 +177,10 @@ namespace ngine {
         return m_depth;
     }
 
-    void Entity::setDepth(int depth_) {
+    void Entity::setDepth(int depth) {
         if (m_parentScene != nullptr)
-            m_parentScene->_updateEntityDepth(depth_, this);
-        m_depth = depth_;
+            m_parentScene->_updateEntityDepth(depth, this);
+        m_depth = depth;
     }
 
     Transform2D Entity::getTransform() const {
@@ -191,11 +191,11 @@ namespace ngine {
         }
     }
 
-    void Entity::setTransform(const Transform2D &transform_) {
+    void Entity::setTransform(const Transform2D &transform) {
         if (m_physicsEnabled) {
-            m_physicsBody->setTransform(transform_);
+            m_physicsBody->setTransform(transform);
         } else {
-            m_transform = transform_;
+            m_transform = transform;
         }
     }
 
@@ -207,24 +207,24 @@ namespace ngine {
         }
     }
 
-    void Entity::setPosition(Vector2 position_) {
+    void Entity::setPosition(Vector2 position) {
         if (m_physicsEnabled) {
-            m_physicsBody->setPosition(position_);
+            m_physicsBody->setPosition(position);
         } else {
-            m_transform.Position = position_;
+            m_transform.Position = position;
         }
 
         // Fire event
         OnTransformChanged(getTransform());
     }
 
-    void Entity::moveBy(Vector2 moveBy_) {
+    void Entity::moveBy(Vector2 moveBy) {
         if (m_physicsEnabled) {
             // Not recommended, read warning in docs.
             auto p = m_physicsBody->getPosition();
-            m_physicsBody->setPosition(p + moveBy_);
+            m_physicsBody->setPosition(p + moveBy);
         } else {
-            m_transform.Position += moveBy_;
+            m_transform.Position += moveBy;
         }
 
         // Fire event
@@ -239,13 +239,13 @@ namespace ngine {
         }
     }
 
-    void Entity::setRotation(Angle rotation_) {
+    void Entity::setRotation(Angle rotation) {
         if (m_physicsBody == nullptr) {
             // Set our rotation
-            m_transform.Rotation = rotation_;
+            m_transform.Rotation = rotation;
         } else {
             // Set the body rotation
-            m_physicsBody->setRotation(rotation_);
+            m_physicsBody->setRotation(rotation);
         }
 
         // Fire event
@@ -278,10 +278,10 @@ namespace ngine {
         return m_persistentUpdates;
     }
 
-    void Entity::setDoPersistentUpdates(bool persistentUpdates_) {
+    void Entity::setDoPersistentUpdates(bool persistentUpdates) {
         if (m_onUpdateRef.isAttached())
             throw std::runtime_error("This property cannot be changed once update has been subscribed.");
-        m_persistentUpdates = persistentUpdates_;
+        m_persistentUpdates = persistentUpdates;
     }
 
     bool Entity::subscribeToUpdate() {
@@ -312,16 +312,16 @@ namespace ngine {
         m_onUpdateRef.detach();
     }
 
-    void Entity::draw(graphics::Renderer *renderer_) {
+    void Entity::draw(graphics::Renderer *renderer) {
         // Draw components
         for (const auto &comp : m_components) {
-            comp.second->draw(renderer_);
+            comp.second->draw(renderer);
         }
 
         // Debug draw
         if (m_physicsBody != nullptr) {
             if (m_physicsBody->getWorld()->DebugDraw) {
-                m_physicsBody->debugDraw(renderer_);
+                m_physicsBody->debugDraw(renderer);
             }
         }
     }

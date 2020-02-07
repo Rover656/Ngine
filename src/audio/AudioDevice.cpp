@@ -110,14 +110,14 @@ namespace ngine::audio {
         Console::Error("AudioDevice - miniaudio", std::string(msg));
     }
 
-    void AudioDevice::_mixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_,
-                                      float localVolume_) {
-        for (ma_uint32 iFrame = 0; iFrame < frameCount_; ++iFrame) {
+    void AudioDevice::_mixAudioFrames(float *framesOut, const float *framesIn, ma_uint32 frameCount,
+                                      float localVolume) {
+        for (ma_uint32 iFrame = 0; iFrame < frameCount; ++iFrame) {
             for (ma_uint32 iChannel = 0; iChannel < m_device.playback.channels; ++iChannel) {
-                float *frameOut = framesOut_ + (iFrame * m_device.playback.channels);
-                const float *frameIn = framesIn_ + (iFrame * m_device.playback.channels);
+                float *frameOut = framesOut + (iFrame * m_device.playback.channels);
+                const float *frameIn = framesIn + (iFrame * m_device.playback.channels);
 
-                frameOut[iChannel] += (frameIn[iChannel] * m_masterVolume * localVolume_);
+                frameOut[iChannel] += (frameIn[iChannel] * m_masterVolume * localVolume);
             }
         }
     }
@@ -185,46 +185,46 @@ namespace ngine::audio {
         ma_mutex_unlock(&m_audioLock);
     }
 
-    void AudioDevice::_trackAudioBuffer(AudioBuffer *buffer_) {
+    void AudioDevice::_trackAudioBuffer(AudioBuffer *buffer) {
         if (!m_initialized) return;
         ma_mutex_lock(&m_audioLock);
         {
-            if (m_bufferFirst == nullptr) m_bufferFirst = buffer_;
+            if (m_bufferFirst == nullptr) m_bufferFirst = buffer;
             else {
-                m_bufferLast->Next = buffer_;
-                buffer_->Prev = m_bufferLast;
+                m_bufferLast->Next = buffer;
+                buffer->Prev = m_bufferLast;
             }
 
-            m_bufferLast = buffer_;
+            m_bufferLast = buffer;
         }
         ma_mutex_unlock(&m_audioLock);
     }
 
-    void AudioDevice::_untrackAudioBuffer(AudioBuffer *buffer_) {
+    void AudioDevice::_untrackAudioBuffer(AudioBuffer *buffer) {
         if (!m_initialized) return;
         ma_mutex_lock(&m_audioLock);
         {
-            if (buffer_->Prev == nullptr) m_bufferFirst = buffer_->Next;
-            else buffer_->Prev->Next = buffer_->Next;
+            if (buffer->Prev == nullptr) m_bufferFirst = buffer->Next;
+            else buffer->Prev->Next = buffer->Next;
 
-            if (buffer_->Next == nullptr) m_bufferLast = buffer_->Prev;
-            else buffer_->Next->Prev = buffer_->Prev;
+            if (buffer->Next == nullptr) m_bufferLast = buffer->Prev;
+            else buffer->Next->Prev = buffer->Prev;
 
-            buffer_->Prev = nullptr;
-            buffer_->Next = nullptr;
+            buffer->Prev = nullptr;
+            buffer->Next = nullptr;
         }
         ma_mutex_unlock(&m_audioLock);
     }
 
-    void AudioDevice::CloseAudioBuffer(AudioBuffer *buffer_) {
+    void AudioDevice::CloseAudioBuffer(AudioBuffer *buffer) {
         if (!m_initialized) return;
-        if (buffer_ != nullptr) {
+        if (buffer != nullptr) {
             // Untrack buffer
-            _untrackAudioBuffer(buffer_);
+            _untrackAudioBuffer(buffer);
 
             // Delete
-            free(buffer_->Buffer);
-            delete buffer_;
+            free(buffer->Buffer);
+            delete buffer;
         }
     }
 
@@ -241,12 +241,12 @@ namespace ngine::audio {
         } else Console::Warn("AudioDevice", "Could not close audio device as it is not open.");
     }
 
-    AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_,
-                                              ma_uint32 bufferSizeInFrames_, AudioBufferUsage usage_) {
+    AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sampleRate,
+                                              ma_uint32 bufferSizeInFrames, AudioBufferUsage usage) {
         if (!m_initialized) return nullptr;
         auto *buffer = new AudioBuffer();
 
-        buffer->Buffer = calloc(bufferSizeInFrames_ * channels_ * ma_get_bytes_per_sample(format_), 1);
+        buffer->Buffer = calloc(bufferSizeInFrames * channels * ma_get_bytes_per_sample(format), 1);
 
         if (buffer == nullptr || buffer->Buffer == nullptr) {
             Console::Error("AudioDevice", "Failed to allocate memory for audio buffer.");
@@ -258,11 +258,11 @@ namespace ngine::audio {
         // Audio data passes through a format converted
         ma_pcm_converter_config dspConfig;
         memset(&dspConfig, 0, sizeof(dspConfig));
-        dspConfig.formatIn = format_;
+        dspConfig.formatIn = format;
         dspConfig.formatOut = DEVICE_FORMAT;
-        dspConfig.channelsIn = channels_;
+        dspConfig.channelsIn = channels;
         dspConfig.channelsOut = DEVICE_CHANNELS;
-        dspConfig.sampleRateIn = sampleRate_;
+        dspConfig.sampleRateIn = sampleRate;
         dspConfig.sampleRateOut = DEVICE_SAMPLE_RATE;
         dspConfig.onRead = _audioBufferDSPRead;
         dspConfig.pUserData = buffer;
@@ -282,9 +282,9 @@ namespace ngine::audio {
         buffer->Playing = false;
         buffer->Paused = false;
         buffer->Looping = false;
-        buffer->Usage = usage_;
+        buffer->Usage = usage;
         buffer->FrameCursorPos = 0;
-        buffer->BufferSizeInFrames = bufferSizeInFrames_;
+        buffer->BufferSizeInFrames = bufferSizeInFrames;
 
         // Buffers should be marked as processed bu default so they call UpdateAudioStream
         buffer->IsSubBufferProcessed[0] = true;
@@ -297,12 +297,12 @@ namespace ngine::audio {
     }
 
     AudioStream
-    AudioDevice::InitAudioStream(unsigned int sampleRate_, unsigned int sampleSize_, unsigned int channels_) {
+    AudioDevice::InitAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels) {
         AudioStream stream;
 
-        stream.SampleRate = sampleRate_;
-        stream.SampleSize = sampleSize_;
-        stream.Channels = channels_;
+        stream.SampleRate = sampleRate;
+        stream.SampleSize = sampleSize;
+        stream.Channels = channels;
 
         ma_format formatIn = ((stream.SampleSize == 8) ? ma_format_u8 : ((stream.SampleSize == 16) ? ma_format_s16 : ma_format_f32));
 
@@ -384,8 +384,8 @@ namespace ngine::audio {
         return m_initialized;
     }
 
-    void AudioDevice::SetMasterVolume(float vol_) {
-        m_masterVolume = vol_;
+    void AudioDevice::SetMasterVolume(float vol) {
+        m_masterVolume = vol;
         if (m_masterVolume < 0.0f) m_masterVolume = 0.0f;
         if (m_masterVolume > 1.0f) m_masterVolume = 1.0f;
     }

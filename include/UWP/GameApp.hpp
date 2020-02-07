@@ -63,7 +63,7 @@ namespace ngine::UWP {
          *
          * @param game_ Game to execute.
          */
-        static void ExecuteGame(Game *game_);
+        static void ExecuteGame(Game *game);
     };
 
     ref class GameApp sealed : public Windows::ApplicationModel::Core::IFrameworkView {
@@ -134,7 +134,7 @@ namespace ngine::UWP {
         /**
          * Create the application source.
          */
-        GameApplicationSource(GameApp ^app_);
+        GameApplicationSource(GameApp ^app);
 
         /**
          * Create the app view (returns the app).

@@ -38,18 +38,18 @@ namespace ngine::physics {
      * Powered by Box2D Math.
      */
     struct NEAPI Polygon : public Shape {
-        static b2PolygonShape _createPolygonShape(std::vector<Vector2> verts_);
-        static b2PolygonShape _createPolygonShape(std::vector<Vector2> verts_, std::vector<Vector2> normals_);
+        static b2PolygonShape _createPolygonShape(std::vector<Vector2> verts);
+        static b2PolygonShape _createPolygonShape(std::vector<Vector2> verts, std::vector<Vector2> normals);
     public:
         Vector2 Vertices[MAX_POLY_VERTS];
         Vector2 Normals[MAX_POLY_VERTS];
         Vector2 Centroid;
         int Count;
 
-        Polygon(std::vector<Vector2> verts_);
-        Polygon(const b2PolygonShape &shape_);
+        Polygon(std::vector<Vector2> verts);
+        Polygon(const b2PolygonShape &shape);
 
-        void set(std::vector<Vector2> verts_);
+        void set(std::vector<Vector2> verts);
         void setAsBox(float hx, float hy);
     };
 }

@@ -49,9 +49,10 @@ namespace ngine::graphics {
          */
         float TileWidth;
 
-        Tileset(Texture2D *texture_, float tileWidth_, float tileHeight_);
+        Tileset(Texture2D *texture, float tileWidth, float tileHeight);
 
-        void drawTile(graphics::Renderer *renderer_, Vector2 position_, int tile_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void drawTile(graphics::Renderer *renderer, Vector2 position, int tile, float scale = 1.0f, float rotation = 0,
+                      Vector2 origin = Vector2::Zero);
     };
 }
 

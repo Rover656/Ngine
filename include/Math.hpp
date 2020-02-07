@@ -67,70 +67,70 @@ namespace ngine {
         /**
          * Create a vector with a single value for all components.
          *
-         * @param val_ The value for the X and Y components.
+         * @param val The value for the X and Y components.
          */
-        explicit Vector2(float val_) : X(val_), Y(val_) {}
+        explicit Vector2(float val) : X(val), Y(val) {}
 
         /**
          * Create a 2D vector
          *
-         * @param x_ The X component.
-         * @param y_ The Y component.
+         * @param x The X component.
+         * @param y The Y component.
          */
-        Vector2(float x_, float y_) : X(x_), Y(y_) {}
+        Vector2(float x, float y) : X(x), Y(y) {}
 
         /**
          * Clamp this vector.
          *
-         * @param min_ The minimum value.
-         * @param max_ The maximum value.
+         * @param min The minimum value.
+         * @param max The maximum value.
          * @return The clamped vector.
          */
-        Vector2 clamp(const Vector2 &min_, const Vector2 &max_);
+        Vector2 clamp(const Vector2 &min, const Vector2 &max);
 
         /**
          * Clamp a vector.
          *
-         * @param value_ The vector to clamp.
-         * @param min_ The minimum value.
-         * @param max_ The maximum value.
+         * @param value The vector to clamp.
+         * @param min The minimum value.
+         * @param max The maximum value.
          * @return The clamped vector.
          */
-        static Vector2 Clamp(const Vector2 &value_, const Vector2 &min_, const Vector2 &max_);
+        static Vector2 Clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max);
 
         /**
          * Find the dot (scalar) product between this and another vector.
          *
-         * @param b_ The other vector.
+         * @param b The other vector.
          * @return The dot (scalar) product.
          */
-        float dot(const Vector2 &b_) const;
+        float dot(const Vector2 &b) const;
 
         /**
          * Find the dot (scalar) product between two vectors.
          *
-         * @param a_ The first vector.
-         * @param b_ The seconds vector.
+         * @param a The first vector.
+         * @param b The seconds vector.
          * @return The dot (scalar) product.
          */
-        static float Dot(const Vector2 &a_, const Vector2 &b_);
+        static float Dot(const Vector2 &a, const Vector2 &b);
 
         /**
          * Find the distance between this and another vector.
          *
-         * @param b_ The other vector.
+         * @param b The other vector.
          * @return The distance between the vectors.
          */
-        float distance(const Vector2 &b_) const;
+        float distance(const Vector2 &b) const;
 
         /**
          * Find the distance between two vectors.
          *
-         * @param a_ The first vector.
-         * @param b_ The second vector.
+         * @param a The first vector.
+         * @param b The second vector.
          * @return The distance between the two vectors.
          */
-        static float Distance(const Vector2 &a_, const Vector2 &b_);
+        static float Distance(const Vector2 &a, const Vector2 &b);
 
         /**
          * Find the magnitude of this vector
@@ -151,32 +151,32 @@ namespace ngine {
         /**
          * Translate using a matrix.
          *
-         * @param matrix_ Matrix to transform with.
+         * @param matrix Matrix to transform with.
          * @return Transformed vector.
          */
-        Vector2 transform(Matrix matrix_) const;
+        Vector2 transform(Matrix matrix) const;
 
         /**
          * Translate this vector by an angle.
          *
-         * @param angle_ The angle to rotate by.
+         * @param angle The angle to rotate by.
          */
-        Vector2 transform(const Vector2 &origin_, const Angle &angle_) const;
+        Vector2 transform(const Vector2 &origin, const Angle &angle) const;
 
-        bool operator==(const Vector2 &b_) const;
-        bool operator!=(const Vector2 &b_) const;
-        friend Vector2 operator+(const Vector2 &a_, const Vector2 &b_);
-        void operator+=(const Vector2 &b_);
-        void operator+=(float b_);
-        friend Vector2 operator-(const Vector2 &a_, const Vector2 &b_);
-        void operator-=(const Vector2 &b_);
+        bool operator==(const Vector2 &b) const;
+        bool operator!=(const Vector2 &b) const;
+        friend Vector2 operator+(const Vector2 &a, const Vector2 &b);
+        void operator+=(const Vector2 &b);
+        void operator+=(float b);
+        friend Vector2 operator-(const Vector2 &a, const Vector2 &b);
+        void operator-=(const Vector2 &b);
         void operator-=(float b_);
-        friend Vector2 operator*(const Vector2 &a_, const Vector2 &b_);
-        void operator*=(const Vector2 &b_);
-        void operator*=(float b_);
-        friend Vector2 operator/(const Vector2 &a_, const Vector2 &b_);
-        void operator/=(const Vector2 &b_);
-        void operator/=(float b_);
+        friend Vector2 operator*(const Vector2 &a, const Vector2 &b);
+        void operator*=(const Vector2 &b);
+        void operator*=(float b);
+        friend Vector2 operator/(const Vector2 &a, const Vector2 &b);
+        void operator/=(const Vector2 &b);
+        void operator/=(float b);
     };
 
     /**
@@ -226,71 +226,71 @@ namespace ngine {
         /**
          * Create a vector with a single value.
          *
-         * @param val_ The value for the X, Y and Z components.
+         * @param val The value for the X, Y and Z components.
          */
-        explicit Vector3(float val_) : X(val_), Y(val_), Z(val_) {}
+        explicit Vector3(float val) : X(val), Y(val), Z(val) {}
 
         /**
          * Create a 3D vector.
          *
-         * @param x_ The X component.
-         * @param y_ The Y component.
-         * @param z_ The Z component.
+         * @param x The X component.
+         * @param y The Y component.
+         * @param z The Z component.
          */
-        Vector3(float x_, float y_, float z_) : X(x_), Y(y_), Z(z_) {}
+        Vector3(float x, float y, float z) : X(x), Y(y), Z(z) {}
 
         /**
          * Clamp this vector.
          *
-         * @param min_ The minimum value.
-         * @param max_ The maximum value.
+         * @param min The minimum value.
+         * @param max The maximum value.
          * @return The clamped vector.
          */
-        Vector3 clamp(const Vector3 &min_, const Vector3 &max_);
+        Vector3 clamp(const Vector3 &min, const Vector3 &max);
 
         /**
          * Clamp a vector.
          *
-         * @param value_ The vector to clamp.
-         * @param min_ The minimum value.
-         * @param max_ The maximum value.
+         * @param value The vector to clamp.
+         * @param min The minimum value.
+         * @param max The maximum value.
          * @return The clamped vector.
          */
-        static Vector3 Clamp(const Vector3 &value_, const Vector3 &min_, const Vector3 &max_);
+        static Vector3 Clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max);
 
         /**
          * Find the dot (scalar) product between this and another vector.
          *
-         * @param b_ The other vector.
+         * @param b The other vector.
          * @return The dot (scalar) product.
          */
-        float dot(const Vector3 &b_) const;
+        float dot(const Vector3 &b) const;
 
         /**
          * Find the dot (scalar) product between two vectors.
          *
-         * @param a_ The first vector.
-         * @param b_ The seconds vector.
+         * @param a The first vector.
+         * @param b The seconds vector.
          * @return The dot (scalar) product.
          */
-        static float Dot(const Vector3 &a_, const Vector3 &b_);
+        static float Dot(const Vector3 &a, const Vector3 &b);
 
         /**
          * Find the distance between this and another vector.
          *
-         * @param b_ The other vector.
+         * @param b The other vector.
          * @return The distance between the vectors.
          */
-        float distance(const Vector3 &b_);
+        float distance(const Vector3 &b);
 
         /**
          * Find the distance between two vectors.
          *
-         * @param a_ The first vector.
-         * @param b_ The second vector.
+         * @param a The first vector.
+         * @param b The second vector.
          * @return The distance between the two vectors.
          */
-        static float Distance(const Vector3 &a_, const Vector3 &b_);
+        static float Distance(const Vector3 &a, const Vector3 &b);
 
         /**
          * Find the magnitude of this vector
@@ -313,97 +313,97 @@ namespace ngine {
         /**
          * Translate using a matrix.
          *
-         * @param matrix_ Matrix to transform with.
+         * @param matrix Matrix to transform with.
          * @return Transformed vector.
          */
-        Vector3 transform(Matrix matrix_) const;
+        Vector3 transform(Matrix matrix) const;
 
-        bool operator==(const Vector3 &b_) const {
-            return X == b_.X && Y == b_.Y && Z == b_.Z;
+        bool operator==(const Vector3 &b) const {
+            return X == b.X && Y == b.Y && Z == b.Z;
         }
 
-        bool operator!=(const Vector3 &b_) const {
-            return X != b_.X || Y != b_.Y || Z != b_.Z;
+        bool operator!=(const Vector3 &b) const {
+            return X != b.X || Y != b.Y || Z != b.Z;
         }
 
-        friend Vector3 operator+(Vector3 a_, const Vector3 &b_) {
+        friend Vector3 operator+(const Vector3 &a, const Vector3 &b) {
             return {
-                    a_.X + b_.X,
-                    a_.Y + b_.Y,
-                    a_.Z + b_.Z
+                    a.X + b.X,
+                    a.Y + b.Y,
+                    a.Z + b.Z
             };
         }
 
-        void operator+=(const Vector3 &b_) {
-            X += b_.X;
-            Y += b_.Y;
-            Z += b_.Z;
+        void operator+=(const Vector3 &b) {
+            X += b.X;
+            Y += b.Y;
+            Z += b.Z;
         }
 
-        void operator+=(const float b_) {
-            X += b_;
-            Y += b_;
-            Z += b_;
+        void operator+=(float b) {
+            X += b;
+            Y += b;
+            Z += b;
         }
 
-        friend Vector3 operator-(Vector3 a_, const Vector3 &b_) {
+        friend Vector3 operator-(const Vector3 &a, const Vector3 &b) {
             return {
-                    a_.X - b_.X,
-                    a_.Y - b_.Y,
-                    a_.Z - b_.Z
+                    a.X - b.X,
+                    a.Y - b.Y,
+                    a.Z - b.Z
             };
         }
 
-        void operator-=(const Vector3 &b_) {
-            X -= b_.X;
-            Y -= b_.Y;
-            Z -= b_.Z;
+        void operator-=(const Vector3 &b) {
+            X -= b.X;
+            Y -= b.Y;
+            Z -= b.Z;
         }
 
-        void operator-=(const float b_) {
-            X -= b_;
-            Y -= b_;
-            Z -= b_;
+        void operator-=(float b) {
+            X -= b;
+            Y -= b;
+            Z -= b;
         }
 
-        friend Vector3 operator*(Vector3 a_, const Vector3 &b_) {
+        friend Vector3 operator*(const Vector3 &a, const Vector3 &b) {
             return {
-                    a_.X * b_.X,
-                    a_.Y * b_.Y,
-                    a_.Z * b_.Z
+                    a.X * b.X,
+                    a.Y * b.Y,
+                    a.Z * b.Z
             };
         }
 
-        void operator*=(const Vector3 &b_) {
-            X *= b_.X;
-            Y *= b_.Y;
-            Z *= b_.Z;
+        void operator*=(const Vector3 &b) {
+            X *= b.X;
+            Y *= b.Y;
+            Z *= b.Z;
         }
 
-        void operator*=(const float b_) {
-            X *= b_;
-            Y *= b_;
-            Z *= b_;
+        void operator*=(float b) {
+            X *= b;
+            Y *= b;
+            Z *= b;
         }
 
-        friend Vector3 operator/(Vector3 a_, const Vector3 &b_) {
+        friend Vector3 operator/(const Vector3 &a, const Vector3 &b) {
             return {
-                    a_.X / b_.X,
-                    a_.Y / b_.Y,
-                    a_.Z / b_.Z
+                    a.X / b.X,
+                    a.Y / b.Y,
+                    a.Z / b.Z
             };
         }
 
-        void operator/=(const Vector3 &b_) {
-            X /= b_.X;
-            Y /= b_.Y;
-            Z /= b_.Z;
+        void operator/=(const Vector3 &b) {
+            X /= b.X;
+            Y /= b.Y;
+            Z /= b.Z;
         }
 
-        void operator/=(const float b_) {
-            X /= b_;
-            Y /= b_;
-            Z /= b_;
+        void operator/=(float b) {
+            X /= b;
+            Y /= b;
+            Z /= b;
         }
 
         // TODO: Moar
@@ -422,15 +422,15 @@ namespace ngine {
 
         float Determinant() const;
 
-        static Matrix Orthographic(float left_, float right_, float bottom_, float top_, float near_, float far_);
+        static Matrix Orthographic(float left, float right, float bottom, float top, float near_, float far_);
 
-        static Matrix Rotate(const Angle &rotation_, const Vector3 &axis_);
+        static Matrix Rotate(const Angle &rotation, const Vector3 &axis);
 
-        static Matrix RotateX(const Angle &rotation_);
+        static Matrix RotateX(const Angle &rotation);
 
-        static Matrix RotateY(const Angle &rotation_);
+        static Matrix RotateY(const Angle &rotation);
 
-        static Matrix RotateZ(const Angle &rotation_);
+        static Matrix RotateZ(const Angle &rotation);
 
         static Matrix Scale(float x, float y, float z);
 
@@ -438,9 +438,9 @@ namespace ngine {
 
         float trace() const;
 
-        static Matrix Translate(Vector3 translation_);
+        static Matrix Translate(Vector3 translation);
 
-        static Matrix Translate(float x_, float y_, float z_);
+        static Matrix Translate(float x, float y, float z);
 
         Matrix transpose() const;
 
@@ -448,110 +448,110 @@ namespace ngine {
 
         Matrix normalize() const;
 
-        friend Matrix operator+(const Matrix left_, const Matrix right_) {
+        friend Matrix operator+(const Matrix &left, const Matrix &right) {
             auto result = Identity;
 
-            result.M0 = left_.M0 + right_.M0;
-            result.M1 = left_.M1 + right_.M1;
-            result.M2 = left_.M2 + right_.M2;
-            result.M3 = left_.M3 + right_.M3;
-            result.M4 = left_.M4 + right_.M4;
-            result.M5 = left_.M5 + right_.M5;
-            result.M6 = left_.M6 + right_.M6;
-            result.M7 = left_.M7 + right_.M7;
-            result.M8 = left_.M8 + right_.M8;
-            result.M9 = left_.M9 + right_.M9;
-            result.M10 = left_.M10 + right_.M10;
-            result.M11 = left_.M11 + right_.M11;
-            result.M12 = left_.M12 + right_.M12;
-            result.M13 = left_.M13 + right_.M13;
-            result.M14 = left_.M14 + right_.M14;
-            result.M15 = left_.M15 + right_.M15;
+            result.M0 = left.M0 + right.M0;
+            result.M1 = left.M1 + right.M1;
+            result.M2 = left.M2 + right.M2;
+            result.M3 = left.M3 + right.M3;
+            result.M4 = left.M4 + right.M4;
+            result.M5 = left.M5 + right.M5;
+            result.M6 = left.M6 + right.M6;
+            result.M7 = left.M7 + right.M7;
+            result.M8 = left.M8 + right.M8;
+            result.M9 = left.M9 + right.M9;
+            result.M10 = left.M10 + right.M10;
+            result.M11 = left.M11 + right.M11;
+            result.M12 = left.M12 + right.M12;
+            result.M13 = left.M13 + right.M13;
+            result.M14 = left.M14 + right.M14;
+            result.M15 = left.M15 + right.M15;
 
             return result;
         }
 
-        void operator+=(const Matrix right_) {
-            M0 += right_.M0;
-            M1 += right_.M1;
-            M2 += right_.M2;
-            M3 += right_.M3;
-            M4 += right_.M4;
-            M5 += right_.M5;
-            M6 += right_.M6;
-            M7 += right_.M7;
-            M8 += right_.M8;
-            M9 += right_.M9;
-            M10 += right_.M10;
-            M11 += right_.M11;
-            M12 += right_.M12;
-            M13 += right_.M13;
-            M14 += right_.M14;
-            M15 += right_.M15;
+        void operator+=(const Matrix &right) {
+            M0 += right.M0;
+            M1 += right.M1;
+            M2 += right.M2;
+            M3 += right.M3;
+            M4 += right.M4;
+            M5 += right.M5;
+            M6 += right.M6;
+            M7 += right.M7;
+            M8 += right.M8;
+            M9 += right.M9;
+            M10 += right.M10;
+            M11 += right.M11;
+            M12 += right.M12;
+            M13 += right.M13;
+            M14 += right.M14;
+            M15 += right.M15;
         }
 
-        friend Matrix operator-(const Matrix left_, const Matrix right_) {
+        friend Matrix operator-(const Matrix &left, const Matrix &right) {
             auto result = Identity;
 
-            result.M0 = left_.M0 - right_.M0;
-            result.M1 = left_.M1 - right_.M1;
-            result.M2 = left_.M2 - right_.M2;
-            result.M3 = left_.M3 - right_.M3;
-            result.M4 = left_.M4 - right_.M4;
-            result.M5 = left_.M5 - right_.M5;
-            result.M6 = left_.M6 - right_.M6;
-            result.M7 = left_.M7 - right_.M7;
-            result.M8 = left_.M8 - right_.M8;
-            result.M9 = left_.M9 - right_.M9;
-            result.M10 = left_.M10 - right_.M10;
-            result.M11 = left_.M11 - right_.M11;
-            result.M12 = left_.M12 - right_.M12;
-            result.M13 = left_.M13 - right_.M13;
-            result.M14 = left_.M14 - right_.M14;
-            result.M15 = left_.M15 - right_.M15;
+            result.M0 = left.M0 - right.M0;
+            result.M1 = left.M1 - right.M1;
+            result.M2 = left.M2 - right.M2;
+            result.M3 = left.M3 - right.M3;
+            result.M4 = left.M4 - right.M4;
+            result.M5 = left.M5 - right.M5;
+            result.M6 = left.M6 - right.M6;
+            result.M7 = left.M7 - right.M7;
+            result.M8 = left.M8 - right.M8;
+            result.M9 = left.M9 - right.M9;
+            result.M10 = left.M10 - right.M10;
+            result.M11 = left.M11 - right.M11;
+            result.M12 = left.M12 - right.M12;
+            result.M13 = left.M13 - right.M13;
+            result.M14 = left.M14 - right.M14;
+            result.M15 = left.M15 - right.M15;
 
             return result;
         }
 
-        void operator-=(const Matrix right_) {
-            M0 -= right_.M0;
-            M1 -= right_.M1;
-            M2 -= right_.M2;
-            M3 -= right_.M3;
-            M4 -= right_.M4;
-            M5 -= right_.M5;
-            M6 -= right_.M6;
-            M7 -= right_.M7;
-            M8 -= right_.M8;
-            M9 -= right_.M9;
-            M10 -= right_.M10;
-            M11 -= right_.M11;
-            M12 -= right_.M12;
-            M13 -= right_.M13;
-            M14 -= right_.M14;
-            M15 -= right_.M15;
+        void operator-=(const Matrix &right) {
+            M0 -= right.M0;
+            M1 -= right.M1;
+            M2 -= right.M2;
+            M3 -= right.M3;
+            M4 -= right.M4;
+            M5 -= right.M5;
+            M6 -= right.M6;
+            M7 -= right.M7;
+            M8 -= right.M8;
+            M9 -= right.M9;
+            M10 -= right.M10;
+            M11 -= right.M11;
+            M12 -= right.M12;
+            M13 -= right.M13;
+            M14 -= right.M14;
+            M15 -= right.M15;
         }
 
-        friend Matrix operator*(const Matrix left_, const Matrix right_) {
+        friend Matrix operator*(const Matrix &left, const Matrix &right) {
             Matrix result = {0};
 
-            result.M0 = left_.M0 * right_.M0 + left_.M1 * right_.M4 + left_.M2 * right_.M8 + left_.M3 * right_.M12;
-            result.M1 = left_.M0 * right_.M1 + left_.M1 * right_.M5 + left_.M2 * right_.M9 + left_.M3 * right_.M13;
-            result.M2 = left_.M0 * right_.M2 + left_.M1 * right_.M6 + left_.M2 * right_.M10 + left_.M3 * right_.M14;
-            result.M3 = left_.M0 * right_.M3 + left_.M1 * right_.M7 + left_.M2 * right_.M11 + left_.M3 * right_.M15;
-            result.M4 = left_.M4 * right_.M0 + left_.M5 * right_.M4 + left_.M6 * right_.M8 + left_.M7 * right_.M12;
-            result.M5 = left_.M4 * right_.M1 + left_.M5 * right_.M5 + left_.M6 * right_.M9 + left_.M7 * right_.M13;
-            result.M6 = left_.M4 * right_.M2 + left_.M5 * right_.M6 + left_.M6 * right_.M10 + left_.M7 * right_.M14;
-            result.M7 = left_.M4 * right_.M3 + left_.M5 * right_.M7 + left_.M6 * right_.M11 + left_.M7 * right_.M15;
-            result.M8 = left_.M8 * right_.M0 + left_.M9 * right_.M4 + left_.M10 * right_.M8 + left_.M11 * right_.M12;
-            result.M9 = left_.M8 * right_.M1 + left_.M9 * right_.M5 + left_.M10 * right_.M9 + left_.M11 * right_.M13;
-            result.M10 = left_.M8 * right_.M2 + left_.M9 * right_.M6 + left_.M10 * right_.M10 + left_.M11 * right_.M14;
-            result.M11 = left_.M8 * right_.M3 + left_.M9 * right_.M7 + left_.M10 * right_.M11 + left_.M11 * right_.M15;
-            result.M12 = left_.M12 * right_.M0 + left_.M13 * right_.M4 + left_.M14 * right_.M8 + left_.M15 * right_.M12;
-            result.M13 = left_.M12 * right_.M1 + left_.M13 * right_.M5 + left_.M14 * right_.M9 + left_.M15 * right_.M13;
-            result.M14 = left_.M12 * right_.M2 + left_.M13 * right_.M6 + left_.M14 * right_.M10 + left_.M15 * right_.
+            result.M0 = left.M0 * right.M0 + left.M1 * right.M4 + left.M2 * right.M8 + left.M3 * right.M12;
+            result.M1 = left.M0 * right.M1 + left.M1 * right.M5 + left.M2 * right.M9 + left.M3 * right.M13;
+            result.M2 = left.M0 * right.M2 + left.M1 * right.M6 + left.M2 * right.M10 + left.M3 * right.M14;
+            result.M3 = left.M0 * right.M3 + left.M1 * right.M7 + left.M2 * right.M11 + left.M3 * right.M15;
+            result.M4 = left.M4 * right.M0 + left.M5 * right.M4 + left.M6 * right.M8 + left.M7 * right.M12;
+            result.M5 = left.M4 * right.M1 + left.M5 * right.M5 + left.M6 * right.M9 + left.M7 * right.M13;
+            result.M6 = left.M4 * right.M2 + left.M5 * right.M6 + left.M6 * right.M10 + left.M7 * right.M14;
+            result.M7 = left.M4 * right.M3 + left.M5 * right.M7 + left.M6 * right.M11 + left.M7 * right.M15;
+            result.M8 = left.M8 * right.M0 + left.M9 * right.M4 + left.M10 * right.M8 + left.M11 * right.M12;
+            result.M9 = left.M8 * right.M1 + left.M9 * right.M5 + left.M10 * right.M9 + left.M11 * right.M13;
+            result.M10 = left.M8 * right.M2 + left.M9 * right.M6 + left.M10 * right.M10 + left.M11 * right.M14;
+            result.M11 = left.M8 * right.M3 + left.M9 * right.M7 + left.M10 * right.M11 + left.M11 * right.M15;
+            result.M12 = left.M12 * right.M0 + left.M13 * right.M4 + left.M14 * right.M8 + left.M15 * right.M12;
+            result.M13 = left.M12 * right.M1 + left.M13 * right.M5 + left.M14 * right.M9 + left.M15 * right.M13;
+            result.M14 = left.M12 * right.M2 + left.M13 * right.M6 + left.M14 * right.M10 + left.M15 * right.
                     M14;
-            result.M15 = left_.M12 * right_.M3 + left_.M13 * right_.M7 + left_.M14 * right_.M11 + left_.M15 * right_.
+            result.M15 = left.M12 * right.M3 + left.M13 * right.M7 + left.M14 * right.M11 + left.M15 * right.
                     M15;
 
             return result;
@@ -580,13 +580,13 @@ namespace ngine {
         /**
          * Create an angle.
          *
-         * @param theta_ Size of the angle in degrees
+         * @param theta Size of the angle in degrees
          */
-        Angle(float theta_);
+        Angle(float theta);
 
-        Angle(float sine_, float cos_);
+        Angle(float sine, float cos);
 
-        Angle &operator=(float theta_);
+        Angle &operator=(float theta);
 
         /**
          * Get this angle in degrees.
@@ -595,10 +595,10 @@ namespace ngine {
          */
         float getDegrees() const;
 
-        friend NEAPI Angle operator+(Angle angle_, float theta_);
-        friend NEAPI Angle operator-(Angle angle_, float theta_);
-        friend NEAPI Angle operator*(Angle angle_, float theta_);
-        friend NEAPI Angle operator/(Angle angle_, float theta_);
+        friend NEAPI Angle operator+(Angle angle, float theta);
+        friend NEAPI Angle operator-(Angle angle, float theta);
+        friend NEAPI Angle operator*(Angle angle, float theta);
+        friend NEAPI Angle operator/(Angle angle, float theta);
     };
 
     /**
@@ -623,7 +623,7 @@ namespace ngine {
         Vector2 Position;
 
         Transform2D();
-        Transform2D(const Vector2 &pos_, const Angle &rot_);
+        Transform2D(const Vector2 &pos, const Angle &rot);
     };
 }
 

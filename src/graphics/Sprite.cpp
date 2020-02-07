@@ -27,24 +27,24 @@
 #include "Rectangle.hpp"
 
 namespace ngine::graphics {
-    Sprite::Sprite(Texture2D *texture_) {
+    Sprite::Sprite(Texture2D *texture) {
         // Add texture
-        m_textures.push_back(texture_);
+        m_textures.push_back(texture);
 
         // Set draw dimensions
-        DrawHeight = texture_->Height;
-        DrawWidth = texture_->Width;
+        DrawHeight = texture->Height;
+        DrawWidth = texture->Width;
 
         // Mark as spritesheet
         m_spriteSheet = true;
     }
 
-    Sprite::Sprite(Texture2D *texture_, int frameWidth_, int frameHeight_, int drawWidth_, int drawHeight_,
-                   float imageSpeed_, int startingFrame)
-            : DrawHeight(drawHeight_), DrawWidth(drawWidth_), FrameWidth(frameWidth_), FrameHeight(frameHeight_),
-              FrameTime(imageSpeed_) {
+    Sprite::Sprite(Texture2D *texture, int frameWidth, int frameHeight, int drawWidth, int drawHeight,
+                   float imageSpeed, int startingFrame)
+            : DrawHeight(drawHeight), DrawWidth(drawWidth), FrameWidth(frameWidth), FrameHeight(frameHeight),
+              FrameTime(imageSpeed) {
         // Add texture
-        m_textures.push_back(texture_);
+        m_textures.push_back(texture);
 
         // Set frame
         CurrentFrame = startingFrame;
@@ -53,34 +53,34 @@ namespace ngine::graphics {
         m_spriteSheet = true;
     }
 
-    Sprite::Sprite(const std::vector<Texture2D *> &textures_, float imageSpeed_, int startingFrame_) {
+    Sprite::Sprite(const std::vector<Texture2D *> &textures, float imageSpeed, int startingFrame) {
         // Set textures
-        for (auto tex : textures_) {
+        for (auto tex : textures) {
             m_textures.push_back(tex);
         }
 
         // Set frame
-        CurrentFrame = startingFrame_;
+        CurrentFrame = startingFrame;
 
         // Mark as not spritesheet
         m_spriteSheet = false;
     }
 
-    void Sprite::draw(graphics::Renderer *renderer_, Vector2 position_, float scale_, float rotation_, Vector2 origin_) {
+    void Sprite::draw(graphics::Renderer *renderer, Vector2 position, float scale, float rotation, Vector2 origin) {
         if (m_textures.empty())
             return;
 
         getCurrentTexture()->draw(
-                renderer_,
+                renderer,
                 {
-                        position_,
-                        static_cast<float>(DrawWidth * scale_),
-                        static_cast<float>(DrawHeight * scale_)
+                        position,
+                        static_cast<float>(DrawWidth * scale),
+                        static_cast<float>(DrawHeight * scale)
                 },
                 getSourceRectangle(),
                 Color::White,
-                origin_,
-                rotation_);
+                origin,
+                rotation);
     }
 
     void Sprite::update() {
@@ -163,15 +163,15 @@ namespace ngine::graphics {
         return m_textures[CurrentFrame];
     }
 
-    void Sprite::setTexture(Texture2D *texture_) {
+    void Sprite::setTexture(Texture2D *texture) {
         m_textures.clear();
-        m_textures.push_back(texture_);
+        m_textures.push_back(texture);
     }
 
-    void Sprite::setTextures(const std::vector<Texture2D *> &textures_) {
+    void Sprite::setTextures(const std::vector<Texture2D *> &textures) {
         m_textures.clear();
 
-        for (auto t : textures_) {
+        for (auto t : textures) {
             // Look for existing shared pointer first.
             m_textures.push_back(t);
         }

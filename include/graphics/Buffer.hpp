@@ -55,11 +55,11 @@ namespace ngine::graphics {
         /**
          * Write data to the buffer (internal).
          *
-         * @param data_ The data array.
-         * @param count_ The amount of data.
-         * @param size_ The size of one element.
+         * @param data The data array.
+         * @param count The amount of data.
+         * @param size The size of one element.
          */
-        void _writeBuffer(void *data_, int count_, int size_, bool update_);
+        void _writeBuffer(void *data, int count, int size, bool update);
     public:
         union {
             /**
@@ -86,7 +86,7 @@ namespace ngine::graphics {
         /**
          * Create a new GPU buffer.
          */
-        Buffer(GraphicsDevice *graphicsDevice_, BufferType type_, BufferUsage usage_);
+        Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage);
         ~Buffer();
 
         /**
@@ -103,13 +103,13 @@ namespace ngine::graphics {
          * Write data to the buffer.
          *
          * @tparam Type The type that is stored in the data.
-         * @param data_ The data pointer.
-         * @param count_ The amount of data.
-         * @param update_ Whether or not this is an update. If the size of the buffer is not changed and the buffer is dynamic, then use this.
+         * @param data The data pointer.
+         * @param count The amount of data.
+         * @param update Whether or not this is an update. If the size of the buffer is not changed and the buffer is dynamic, then use this.
          */
         template <typename Type>
-        void write(Type *data_, int count_, bool update_ = false) {
-            _writeBuffer(data_, count_, sizeof(Type), update_);
+        void write(Type *data, int count, bool update = false) {
+            _writeBuffer(data, count, sizeof(Type), update);
         }
     };
 }

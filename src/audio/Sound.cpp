@@ -42,8 +42,8 @@ namespace ngine::audio {
         return Stream.Buffer != nullptr;
     }
 
-    Sound *Sound::LoadSound(const filesystem::Path &path_) {
-        auto wav = Wave::LoadWave(path_);
+    Sound *Sound::LoadSound(const filesystem::Path &path) {
+        auto wav = Wave::LoadWave(path);
 
         auto snd = LoadSoundFromWave(wav);
 
@@ -52,21 +52,21 @@ namespace ngine::audio {
         return snd;
     }
 
-    Sound *Sound::LoadSoundFromWave(Wave *wave_) {
-        if (wave_->isValid()) {
+    Sound *Sound::LoadSoundFromWave(Wave *wave) {
+        if (wave->isValid()) {
             auto snd = new Sound();
 
             // We convert every sound to be the same format.
-            ma_format formatIn = ((wave_->SampleSize == 8) ? ma_format_u8 : ((wave_->SampleSize == 16) ? ma_format_s16 : ma_format_f32));
-            ma_uint32 frameCountIn = wave_->SampleCount/wave_->Channels;
+            ma_format formatIn = ((wave->SampleSize == 8) ? ma_format_u8 : ((wave->SampleSize == 16) ? ma_format_s16 : ma_format_f32));
+            ma_uint32 frameCountIn = wave->SampleCount / wave->Channels;
 
-            ma_uint32 frameCount = (ma_uint32) ma_convert_frames(nullptr, DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, nullptr, formatIn, wave_->Channels, wave_->SampleRate, frameCountIn);
+            ma_uint32 frameCount = (ma_uint32) ma_convert_frames(nullptr, DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, nullptr, formatIn, wave->Channels, wave->SampleRate, frameCountIn);
             if (frameCount == 0) Console::Warn("Sound", "Failed to get frame count for format conversion!");
 
             auto audioBuffer = AudioDevice::InitAudioBuffer(DEVICE_FORMAT, DEVICE_CHANNELS, DEVICE_SAMPLE_RATE, frameCount, AudioBufferUsage::Static);
             if (audioBuffer == nullptr) Console::Warn("Sound", "Failed to create audio buffer!");
 
-            frameCount = (ma_uint32) ma_convert_frames(audioBuffer->Buffer, audioBuffer->DSP.formatConverterIn.config.formatIn, audioBuffer->DSP.formatConverterIn.config.channels, audioBuffer->DSP.src.config.sampleRateIn, wave_->Data, formatIn, wave_->Channels, wave_->SampleRate, frameCountIn);
+            frameCount = (ma_uint32) ma_convert_frames(audioBuffer->Buffer, audioBuffer->DSP.formatConverterIn.config.formatIn, audioBuffer->DSP.formatConverterIn.config.channels, audioBuffer->DSP.src.config.sampleRateIn, wave->Data, formatIn, wave->Channels, wave->SampleRate, frameCountIn);
             if (frameCount == 0) Console::Warn("Sound", "Format conversion failed!");
 
             snd->SampleCount = frameCount*DEVICE_CHANNELS;
@@ -93,12 +93,12 @@ namespace ngine::audio {
         Stream.Buffer->resume();
     }
 
-    void Sound::setPitch(float pitch_) {
-        Stream.Buffer->setPitch(pitch_);
+    void Sound::setPitch(float pitch) {
+        Stream.Buffer->setPitch(pitch);
     }
 
-    void Sound::setVolume(float vol_) {
-        Stream.Buffer->setVolume(vol_);
+    void Sound::setVolume(float vol) {
+        Stream.Buffer->setVolume(vol);
     }
 
     void Sound::stop() {

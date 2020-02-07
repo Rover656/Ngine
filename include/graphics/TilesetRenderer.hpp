@@ -60,14 +60,14 @@ namespace ngine::graphics {
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetRenderer(const Tileset& tileset_, int width_, int height_);
+        TilesetRenderer(const Tileset &tileset, int width, int height);
 
         /*
          * Create a tileset with data.
          * Width and height is in tile space.
          * Tiles indices start from 1, so tile one is index 1.
          */
-        TilesetRenderer(const Tileset& tileset_, int width_, int height_, std::vector<int> tiles_);
+        TilesetRenderer(const Tileset &tileset, int width, int height, std::vector<int> tiles);
 
         // Public Methods
 
@@ -75,7 +75,8 @@ namespace ngine::graphics {
          * Draw the tileset.
          * Origin is in tile coordinates.
          */
-        void draw(graphics::Renderer *renderer_, Vector2 pos_, float scale_ = 1.0f, float rotation_ = 0, Vector2 origin_ = Vector2::Zero);
+        void draw(graphics::Renderer *renderer, Vector2 pos, float scale = 1.0f, float rotation = 0,
+                  Vector2 origin = Vector2::Zero);
 
         /*
          * Draw the tileset. Does not currently support rotation.
@@ -83,26 +84,29 @@ namespace ngine::graphics {
          * renderFrom defines where to begin rendering. Normally the viewport position.
          * renderTo defines where to finish rendering. Normally the viewport position + dimensions.
          */
-        void draw(graphics::Renderer *renderer_, Vector2 pos_, Vector2 renderFrom_, Vector2 renderTo_, float scale_ = 1);
+        void draw(graphics::Renderer *renderer, Vector2 pos, Vector2 renderFrom, Vector2 renderTo, float scale = 1);
 
         /*
          * Get collision shapes for a tile in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<physics::Shape *> getCollisionShapesFor(int tile_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<physics::Shape *>
+        getCollisionShapesFor(int tile, Rectangle range, Vector2 tilesetPosition = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * All shapes must be deleted afterwards.
          */
-        std::vector<physics::Shape *> getCollisionShapesFor(std::vector<int> tiles_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<physics::Shape *>
+        getCollisionShapesFor(std::vector<int> tiles, Rectangle range, Vector2 tilesetPosition = Vector2::Zero);
 
         /*
          * Get collision shapes for tiles in a range.
          * min_ <= tile <= max_.
          * All shapes must be deleted afterwards.
          */
-        std::vector<physics::Shape *> getCollisionShapesFor(int min_, int max_, Rectangle range_, Vector2 tilesetPosition_ = Vector2::Zero);
+        std::vector<physics::Shape *>
+        getCollisionShapesFor(int min, int max, Rectangle range, Vector2 tilesetPosition = Vector2::Zero);
 
         /*
          * Get render area height in tile units
@@ -112,7 +116,7 @@ namespace ngine::graphics {
         /*
          * Get the tile value at the position (0,0 is first tile, 1,0 is second tile etc.).
          */
-        int getTileAt(Vector2 pos_);
+        int getTileAt(Vector2 pos);
 
         /*
          * Get the tileset being used
@@ -127,12 +131,12 @@ namespace ngine::graphics {
         /*
          * Set the tile value at a position.
          */
-        void setTileAt(Vector2 pos_, int tile_);
+        void setTileAt(Vector2 pos, int tile);
 
         /*
          * Set all tile data
          */
-        void setTileData(std::vector<int> data_);
+        void setTileData(std::vector<int> data);
     };
 }
 

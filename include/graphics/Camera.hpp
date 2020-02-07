@@ -54,44 +54,43 @@ namespace ngine::graphics {
         /**
          * Create a new camera.
          *
-         * @param position_ Camera position.
-         * @param rotation_ Camera rotation in degrees.
-         * @param zoom_ Camera zoom level.
-         * @param origin_ Camera origin.
+         * @param position Camera position.
+         * @param rotation Camera rotation in degrees.
+         * @param zoom Camera zoom level.
+         * @param origin Camera origin.
          */
-        Camera(Vector2 position_ = Vector2::Zero, float rotation_ = 0, float zoom_ = 1,
-               Vector2 origin_ = Vector2::Zero) : Position(position_), Rotation(rotation_), Zoom(zoom_),
-                                              Origin(origin_) {}
+        Camera(Vector2 position = Vector2::Zero, float rotation = 0, float zoom = 1, Vector2 origin = Vector2::Zero)
+                : Position(position), Rotation(rotation), Zoom(zoom), Origin(origin) {}
 
         /**
          * Begin using the camera (internal).
          *
          * @note Internally, this starts using the translation matrix for this camera.
          */
-        void beginCamera(GraphicsDevice *graphicsDevice_) const;
+        void beginCamera(GraphicsDevice *graphicsDevice) const;
 
         /**
          * Finish using the camera (internal).
          *
          * @note Internally, this pops the translation matrix for this camera.
          */
-        void endCamera(GraphicsDevice *graphicsDevice_) const;
+        void endCamera(GraphicsDevice *graphicsDevice) const;
 
         /**
          * Convert a screen/window position to a world position.
          *
-         * @param pos_ A screen position to be converted.
+         * @param pos A screen position to be converted.
          * @return The world coordinate (according to the camera).
          */
-        Vector2 screenToWorld(Vector2 pos_);
+        Vector2 screenToWorld(Vector2 pos);
 
         /**
          * Convert a world position to a screen/window position.
          *
-         * @param pos_ The world position to locate on the screen.
+         * @param pos The world position to locate on the screen.
          * @return The position on the screen.
          */
-        Vector2 worldToScreen(Vector2 pos_);
+        Vector2 worldToScreen(Vector2 pos);
 
         /**
          * Get the translation matrix.

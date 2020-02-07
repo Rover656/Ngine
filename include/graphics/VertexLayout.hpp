@@ -122,20 +122,20 @@ namespace ngine::graphics {
         /**
          * Create a vertex layout.
          *
-         * @param graphicsDevice_ The graphics device.
-         * @param vertexBuffer_ The vertex buffer to bind when using this layout.
-         * @param indexBuffer_ The index buffer to bind when using this layout or null.
+         * @param graphicsDevice The graphics device.
+         * @param vertexBuffer The vertex buffer to bind when using this layout.
+         * @param indexBuffer The index buffer to bind when using this layout or null.
          */
-        VertexLayout(GraphicsDevice *graphicsDevice_, Buffer *vertexBuffer_, Buffer *indexBuffer_);
+        VertexLayout(GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer);
         ~VertexLayout();
 
         /**
          * Add an element to the layout
          *
          * @warning Once `Configure` is called, this will throw as the layout cannot be modified at the moment.
-         * @param element_
+         * @param element
          */
-        void addElement(const VertexElement &element_);
+        void addElement(const VertexElement &element);
 
         /**
          * Get the list of vertex elements.

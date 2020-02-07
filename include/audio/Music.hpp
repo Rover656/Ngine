@@ -141,10 +141,10 @@ namespace ngine::audio {
         /**
          * Load music from a file.
          *
-         * @param path_ The music file to be loaded.
+         * @param path The music file to be loaded.
          * @return The Music.
          */
-        static Music *LoadMusic(const filesystem::Path &path_);
+        static Music *LoadMusic(const filesystem::Path &path);
 
         /**
          * pause music.
@@ -164,16 +164,16 @@ namespace ngine::audio {
         /**
          * Set music pitch.
          *
-         * @param pitch_ The pitch.
+         * @param pitch The pitch.
          */
-        void setPitch(float pitch_);
+        void setPitch(float pitch);
 
         /**
          * Set music volume.
          *
-         * @param vol_ The music volume.
+         * @param vol The music volume.
          */
-        void setVolume(float vol_);
+        void setVolume(float vol);
 
         /**
          * Stop music.

@@ -51,269 +51,269 @@ namespace ngine::graphics {
             /**
              * Actually use the vertex layout.
              *
-             * @param layout_ Layout to use.
+             * @param layout Layout to use.
              */
-            virtual void _useVertexLayout(VertexLayout *layout_) = 0;
+            virtual void _useVertexLayout(VertexLayout *layout) = 0;
 
             /**
              * Actually stop using the vertex layout.
              *
-             * @param layout_ Layout to stop.
+             * @param layout Layout to stop.
              */
-            virtual void _stopVertexLayout(VertexLayout *layout_) = 0;
+            virtual void _stopVertexLayout(VertexLayout *layout) = 0;
         public:
             /**
              * Create a platform API.
              *
-             * @param graphicsDevice_ The graphics device to attach to.
+             * @param graphicsDevice The graphics device to attach to.
              */
-            PlatformGraphicsAPI(GraphicsDevice *graphicsDevice_) : m_graphicsDevice(graphicsDevice_) {}
+            PlatformGraphicsAPI(GraphicsDevice *graphicsDevice) : m_graphicsDevice(graphicsDevice) {}
             virtual ~PlatformGraphicsAPI() = default;
 
             /**
              * Configure the viewport.
              *
-             * @param x_ X coordinate.
-             * @param y_ Y coordinate.
-             * @param width_ Width.
-             * @param height_ Height.
+             * @param x X coordinate.
+             * @param y Y coordinate.
+             * @param width Width.
+             * @param height Height.
              */
-            virtual void configureViewport(int x_, int y_, int width_, int height_) = 0;
+            virtual void configureViewport(int x, int y, int width, int height) = 0;
 
             /**
              * Clear the display.
              *
-             * @param color_ The color to clear with.
+             * @param color The color to clear with.
              */
-            virtual void clear(const Color &color_) = 0;
+            virtual void clear(const Color &color) = 0;
 
             /**
              * Create a texture on the GPU.
              *
-             * @param texture_ Texture object.
-             * @param data_ Pixel data (can be null).
+             * @param texture Texture object.
+             * @param data Pixel data (can be null).
              */
-            virtual void createTexture(Texture2D *texture_, unsigned char *data_) = 0;
+            virtual void createTexture(Texture2D *texture, unsigned char *data) = 0;
 
             /**
              * Delete a texture on the GPU.
              *
-             * @param texture_ Texture to delete.
+             * @param texture Texture to delete.
              */
-            virtual void deleteTexture(Texture2D *texture_) = 0;
+            virtual void deleteTexture(Texture2D *texture) = 0;
 
             /**
              * Bind a texture.
              *
-             * @param texture_ Texture to bind, null to unbind.
+             * @param texture Texture to bind, null to unbind.
              */
-            virtual void bindTexture(Texture2D *texture_) = 0;
+            virtual void bindTexture(Texture2D *texture) = 0;
 
             /**
              * Set the texture's filter mode.
              *
-             * @param texture_ Texture.
-             * @param mode_ Mode to use.
+             * @param texture Texture.
+             * @param mode Mode to use.
              */
-            virtual void setTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) = 0;
+            virtual void setTextureFilterMode(Texture2D *texture, TextureFilterMode mode) = 0;
 
             /**
              * Set the texture's wrap mode.
              *
-             * @param texture_ Texture.
-             * @param mode_ Mode to use.
+             * @param texture Texture.
+             * @param mode Mode to use.
              */
-            virtual void setTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) = 0;
+            virtual void setTextureWrapMode(Texture2D *texture, TextureWrapMode mode) = 0;
 
             /**
              * Determine if the texture is valid on the GPU.
              *
-             * @param texture_ Texture to check.
+             * @param texture Texture to check.
              * @return Whether or not the texture is valid.
              */
-            virtual bool isTextureValid(const Texture2D *texture_) = 0;
+            virtual bool isTextureValid(const Texture2D *texture) = 0;
 
             /**
              * Compare two textures.
              *
-             * @param a_ Texture A.
-             * @param b_ Texture B.
+             * @param a Texture A.
+             * @param b Texture B.
              * @returns Whether or not the textures are the same.
              */
-            virtual bool compareTextures(const Texture2D *a_, const Texture2D *b_) = 0;
+            virtual bool compareTextures(const Texture2D *a, const Texture2D *b) = 0;
 
             /**
              * Create a shader on the GPU.
              *
              * @note This will compile the shader too.
-             * @param shader_ Shader object.
-             * @param sourceData_ The source data, this will be a GLSL string for OpenGL, HLSL bytecode for DirectX and so on.
+             * @param shader Shader object.
+             * @param sourceData The source data, this will be a GLSL string for OpenGL, HLSL bytecode for DirectX and so on.
              */
-            virtual void createShader(Shader *shader_, void *sourceData_) = 0;
+            virtual void createShader(Shader *shader, void *sourceData) = 0;
 
             /**
              * Delete a shader.
              *
-             * @param shader_ Shader to delete.
+             * @param shader Shader to delete.
              */
-            virtual void deleteShader(Shader *shader_) = 0;
+            virtual void deleteShader(Shader *shader) = 0;
 
             /**
              * Check if a shader is valid.
              *
-             * @param shader_ Shader to check.
+             * @param shader Shader to check.
              */
-            virtual bool isShaderValid(const Shader *shader_) = 0;
+            virtual bool isShaderValid(const Shader *shader) = 0;
 
             /**
              * Create a shader program.
              *
              * @note DirectX does not use these, its just really for OGL.
              * @note This will also link the GL program.
-             * @param program_ Program object.
+             * @param program Program object.
              */
-            virtual void createShaderProgram(ShaderProgram *program_) = 0;
+            virtual void createShaderProgram(ShaderProgram *program) = 0;
 
             /**
              * Delete a shader program.
              *
-             * @param program_ Program to delete.
+             * @param program Program to delete.
              */
-            virtual void deleteShaderProgram(ShaderProgram *program_) = 0;
+            virtual void deleteShaderProgram(ShaderProgram *program) = 0;
 
             /**
              * Bind the provided shader program.
              *
-             * @param program_ Program to bind.
+             * @param program Program to bind.
              */
-            virtual void bindShaderProgram(const ShaderProgram *program_) = 0;
+            virtual void bindShaderProgram(const ShaderProgram *program) = 0;
 
             /**
              * Check if a shader program is valid.
              *
-             * @param program_ Program to check.
+             * @param program Program to check.
              */
-            virtual bool isShaderProgramValid(const ShaderProgram *program_) = 0;
+            virtual bool isShaderProgramValid(const ShaderProgram *program) = 0;
 
             /**
              * Bind a shader program's state.
              *
-             * @param state_ State to bind.
+             * @param state State to bind.
              */
-            virtual void bindShaderProgramState(ShaderProgramState *state_) = 0;
+            virtual void bindShaderProgramState(ShaderProgramState *state) = 0;
 
             /**
              * Create a render target on the GPU.
              *
-             * @param renderTarget_ Render target object.
+             * @param renderTarget Render target object.
              */
-            virtual bool createRenderTarget(RenderTarget *renderTarget_) = 0;
+            virtual bool createRenderTarget(RenderTarget *renderTarget) = 0;
 
             /**
              * Delete a render target from the GPU.
              *
-             * @param renderTarget_ Render target object.
+             * @param renderTarget Render target object.
              */
-            virtual void deleteRenderTarget(RenderTarget *renderTarget_) = 0;
+            virtual void deleteRenderTarget(RenderTarget *renderTarget) = 0;
 
             /**
              * Bind a render target.
              *
-             * @param renderTarget_ Target to bind or null.
+             * @param renderTarget Target to bind or null.
              */
-            virtual void bindRenderTarget(RenderTarget *renderTarget_) = 0;
+            virtual void bindRenderTarget(RenderTarget *renderTarget) = 0;
 
             /**
              * Test if a render target is valid.
              *
-             * @param renderTarget_ Render target to check.
+             * @param renderTarget Render target to check.
              * @return Whether or not the render target is valid.
              */
-            virtual bool isRenderTargetValid(const RenderTarget *renderTarget_) = 0;
+            virtual bool isRenderTargetValid(const RenderTarget *renderTarget) = 0;
 
             /**
              * Compare two render targets.
              *
-             * @param a_ Render target A.
-             * @param b_ Render target B.
+             * @param a Render target A.
+             * @param b Render target B.
              * @return Whether or not the targets are the same.
              */
-            virtual bool compareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) = 0;
+            virtual bool compareRenderTargets(const RenderTarget *a, const RenderTarget *b) = 0;
 
             /**
              * Bind a buffer.
              *
              * @warning Due to the nature of buffers, you must use `UnbindBuffer` instead of passing null.
-             * @param buffer_ The buffer to bind
+             * @param buffer The buffer to bind
              */
-            virtual void bindBuffer(Buffer *buffer_) = 0;
+            virtual void bindBuffer(Buffer *buffer) = 0;
 
             /**
              * Unbind a buffer
              *
-             * @param buffer_ Buffer to unbind.
+             * @param buffer Buffer to unbind.
              */
-            virtual void unbindBuffer(Buffer *buffer_) = 0;
+            virtual void unbindBuffer(Buffer *buffer) = 0;
 
             /**
              * Using a provided buffer, create it on the GPU.
              *
-             * @param buffer_ Buffer to initialize.
+             * @param buffer Buffer to initialize.
              */
-            virtual void createBuffer(Buffer *buffer_) = 0;
+            virtual void createBuffer(Buffer *buffer) = 0;
 
             /**
              * Cleanup buffer on GPU.
              *
-             * @param buffer_ Buffer to clean/remove.
+             * @param buffer Buffer to clean/remove.
              */
-            virtual void deleteBuffer(Buffer *buffer_) = 0;
+            virtual void deleteBuffer(Buffer *buffer) = 0;
 
             /**
              * Write the given data to the given buffer.
              *
-             * @param buffer_ The buffer to write to.
-             * @param data_ The data array
-             * @param count_ The number of array entries
-             * @param size_ The size of each entry
-             * @param update_ GL only, whether or not to use glBufferSubData
+             * @param buffer The buffer to write to.
+             * @param data The data array
+             * @param count The number of array entries
+             * @param size The size of each entry
+             * @param update GL only, whether or not to use glBufferSubData
              */
-            virtual void writeBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) = 0;
+            virtual void writeBuffer(Buffer *buffer, void *data, int count, int size, bool update) = 0;
 
             /**
              * Initialize a vertex layout on the GPU.
              *
-             * @param layout_ The layout to initialize
+             * @param layout The layout to initialize
              */
-            virtual void createVertexLayout(VertexLayout *layout_) = 0;
+            virtual void createVertexLayout(VertexLayout *layout) = 0;
 
             /**
              * Cleanup a vertex layout in the GPU.
              *
-             * @param layout_ Layout to clean.
+             * @param layout Layout to clean.
              */
-            virtual void deleteVertexLayout(VertexLayout *layout_) = 0;
+            virtual void deleteVertexLayout(VertexLayout *layout) = 0;
 
             /**
              * Configure/Finalize the vertex layout in the GPU.
              *
-             * @param layout_ Layout to configure.
+             * @param layout Layout to configure.
              */
-            virtual void configureVertexLayout(VertexLayout *layout_) = 0;
+            virtual void configureVertexLayout(VertexLayout *layout) = 0;
 
             /**
              * Use a vertex layout.
              *
-             * @param layout_ Layout to use.
+             * @param layout Layout to use.
              */
-            void useVertexLayout(VertexLayout *layout_);
+            void useVertexLayout(VertexLayout *layout);
 
             /**
              * Stop using a vertex layout.
              *
-             * @param layout_ Layout to stop.
+             * @param layout Layout to stop.
              */
-            void stopVertexLayout(VertexLayout *layout_);
+            void stopVertexLayout(VertexLayout *layout);
 
             /**
              * Prepare for rendering 2D
@@ -323,18 +323,18 @@ namespace ngine::graphics {
             /**
              * Draw the currently bound buffer array.
              *
-             * @param count_ Number of vertices (triangles * 3) to draw.
-             * @param start_ The starting index.
+             * @param count Number of vertices (triangles * 3) to draw.
+             * @param start The starting index.
              */
-            virtual void draw(int count_, int start_) = 0;
+            virtual void draw(int count, int start) = 0;
 
             /**
              * Draw the currently bound vertex buffer which is indexed by a bound index buffer.
              *
-             * @param count_ Number of vertices (triangles * 3) to draw.
-             * @param start_ The starting index.
+             * @param count Number of vertices (triangles * 3) to draw.
+             * @param start The starting index.
              */
-            virtual void drawIndexed(int count_, int start_) = 0;
+            virtual void drawIndexed(int count, int start) = 0;
         };
     }
 }

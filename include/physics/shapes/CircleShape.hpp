@@ -40,12 +40,12 @@ namespace ngine::physics::shapes {
         /*
          * Create a circle shape.
          */
-        explicit CircleShape(float radius_, Vector2 position_ = Vector2::Zero);
+        explicit CircleShape(float radius, Vector2 position = Vector2::Zero);
 
         /*
          * Create a circle shape from a Box2D owned circle.
          */
-        explicit CircleShape(b2CircleShape *circle_);
+        explicit CircleShape(b2CircleShape *circle);
 
         /*
          * Move constructor
@@ -55,11 +55,11 @@ namespace ngine::physics::shapes {
         /*
          * Copy constructor
          */
-        CircleShape(const CircleShape &circle_);
+        CircleShape(const CircleShape &circle);
 
         // Public Methods
 
-        void debugDraw(graphics::Renderer *renderer_, float ppm_, Vector2 pos_, float angle_) const override;
+        void debugDraw(graphics::Renderer *renderer, float ppm, Vector2 pos, float angle) const override;
 
         /*
          * Get circle position
@@ -69,7 +69,7 @@ namespace ngine::physics::shapes {
         /*
          * Set circle position
          */
-        void setPosition(Vector2 pos_);
+        void setPosition(Vector2 pos);
     };
 }
 

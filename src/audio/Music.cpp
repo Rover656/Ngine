@@ -57,15 +57,15 @@ namespace ngine::audio {
         return CTXData != nullptr;
     }
 
-    Music *Music::LoadMusic(const filesystem::Path &path_) {
+    Music *Music::LoadMusic(const filesystem::Path &path) {
         auto music = new Music();
         bool loaded = false;
 
-        if (path_.getFileExtension() == "mp3") {
+        if (path.getFileExtension() == "mp3") {
             auto ctxMp3 = (drmp3 *) malloc(sizeof(drmp3));
             music->CTXData = ctxMp3;
 
-            int result = drmp3_init_file(ctxMp3, path_.getString().c_str(), nullptr);
+            int result = drmp3_init_file(ctxMp3, path.getString().c_str(), nullptr);
 
             if (result > 0) {
                 music->CTXType = MusicContextType::MP3;
@@ -75,9 +75,9 @@ namespace ngine::audio {
                 music->LoopCount = 0;
                 loaded = true;
             }
-        } else if (path_.getFileExtension() == "ogg") {
+        } else if (path.getFileExtension() == "ogg") {
             // Open ogg audio stream
-            music->CTXData = stb_vorbis_open_filename(path_.getString().c_str(), nullptr, nullptr);
+            music->CTXData = stb_vorbis_open_filename(path.getString().c_str(), nullptr, nullptr);
 
             if (music->CTXData != nullptr) {
                 music->CTXType = MusicContextType::OGG;
@@ -90,8 +90,8 @@ namespace ngine::audio {
                 music->LoopCount = 0;
                 loaded = true;
             }
-        } else if (path_.getFileExtension() == "flac") {
-            music->CTXData = drflac_open_file(path_.getString().c_str());
+        } else if (path.getFileExtension() == "flac") {
+            music->CTXData = drflac_open_file(path.getString().c_str());
 
             if (music->CTXData != nullptr) {
                 music->CTXType = MusicContextType::FLAC;
@@ -150,12 +150,12 @@ namespace ngine::audio {
         Stream.Buffer->resume();
     }
 
-    void Music::setPitch(float pitch_) {
-        Stream.Buffer->setPitch(pitch_);
+    void Music::setPitch(float pitch) {
+        Stream.Buffer->setPitch(pitch);
     }
 
-    void Music::setVolume(float vol_) {
-        Stream.Buffer->setVolume(vol_);
+    void Music::setVolume(float vol) {
+        Stream.Buffer->setVolume(vol);
     }
 
     void Music::stop() {

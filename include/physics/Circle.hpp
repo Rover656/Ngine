@@ -50,8 +50,8 @@ namespace ngine::physics {
         /*
          * Create a circle
          */
-        Circle(const Vector2 center_, const float radius_)
-            : Center(center_), Radius(radius_) {}
+        Circle(const Vector2 center, float radius)
+            : Center(center), Radius(radius) {}
     };
 }
 

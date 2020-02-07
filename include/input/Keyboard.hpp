@@ -164,9 +164,9 @@ namespace ngine::input {
         /**
          * Create a key event argument.
          *
-         * @param key_ The key changed.
+         * @param key The key changed.
          */
-        KeyEventArgs(input::Key key_) : Key(key_) {}
+        KeyEventArgs(input::Key key) : Key(key) {}
     };
 
     /**
@@ -206,10 +206,10 @@ namespace ngine::input {
         Key m_latestKeyPress;
 
 #if defined(PLATFORM_DESKTOP)
-        static void _GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_);
+        static void _GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 #elif defined(PLATFORM_UWP)
         static Keyboard * m_UWPKeyboard;
-        static Key _keyFromVirtualKey(int key_);
+        static Key _keyFromVirtualKey(int key);
         static void _UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
         static void _UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
 #endif
@@ -217,9 +217,9 @@ namespace ngine::input {
         /**
          * Create a keyboard input manager.
          *
-         * @param window_ The window.
+         * @param window The window.
          */
-        Keyboard(Window *window_);
+        Keyboard(Window *window);
     public:
         /**
          * Key pressed.
@@ -248,34 +248,34 @@ namespace ngine::input {
         /**
          * Is the key down.
          *
-         * @param key_ Key to check
+         * @param key Key to check
          * @return Whether the key is down or not.
          */
-        bool isKeyDown(Key key_);
+        bool isKeyDown(Key key);
 
         /**
          * Has a key been pressed this tick.
          *
-         * @param key_ Key to check
+         * @param key Key to check
          * @return Whether the key is was pressed this frame.
          */
-        bool isKeyPressed(Key key_);
+        bool isKeyPressed(Key key);
 
         /**
          * Was the key released this frame.
          *
-         * @param key_ Key to check
+         * @param key Key to check
          * @return Whether the key was released this frame.
          */
-        bool isKeyReleased(Key key_);
+        bool isKeyReleased(Key key);
 
         /**
          * Is the key up.
          *
-         * @param key_ Key to check
+         * @param key Key to check
          * @return Whether the key is up or not.
          */
-        bool isKeyUp(Key key_);
+        bool isKeyUp(Key key);
 
         /**
          * Poll keyboard inputs.
@@ -287,9 +287,9 @@ namespace ngine::input {
          *
          * @note This is most useful for debugging.
          * @todo Move this to Game??
-         * @param key_ Set the key that can close the game.
+         * @param key Set the key that can close the game.
          */
-        void setExitKey(Key key_);
+        void setExitKey(Key key);
     };
 }
 

@@ -51,61 +51,61 @@ namespace ngine::graphics {
         m_dirty = false;
     }
 
-    void RenderSpace::addNode(RenderableNode *node_) {
+    void RenderSpace::addNode(RenderableNode *node) {
         // Add to the vector then asks for re-sort
-        m_nodes.push_back(node_);
+        m_nodes.push_back(node);
         m_dirty = true;
     }
 
-    void RenderSpace::removeNode(RenderableNode *node_) {
+    void RenderSpace::removeNode(RenderableNode *node) {
         // Remove from the vector (does not dirty as it doesnt break order)
-        m_nodes.erase(std::remove(m_nodes.begin(), m_nodes.end(), node_), m_nodes.end());
+        m_nodes.erase(std::remove(m_nodes.begin(), m_nodes.end(), node), m_nodes.end());
     }
 
-    Camera *RenderSpace::createCamera(const std::string &name_) {
-        if (getCamera(name_) == nullptr) {
-            m_cameras[name_] = Camera();
-            return &m_cameras[name_];
+    Camera *RenderSpace::createCamera(const std::string &name) {
+        if (getCamera(name) == nullptr) {
+            m_cameras[name] = Camera();
+            return &m_cameras[name];
         }
 
         // We already have a camera by this name TODO: Throw?
         return nullptr;
     }
 
-    Camera *RenderSpace::getCamera(const std::string &name_) {
-        auto it = m_cameras.find(name_);
+    Camera *RenderSpace::getCamera(const std::string &name) {
+        auto it = m_cameras.find(name);
         if (it != m_cameras.end()) {
-            return &m_cameras[name_];
+            return &m_cameras[name];
         }
         return nullptr;
     }
 
-    void RenderSpace::render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_) {
+    void RenderSpace::render(Renderer *renderer, const std::string &cameraName, RenderTarget *target) {
         // Check if we need to re-sort
         if (m_dirty) _sortNodes();
 
         // Get camera
-        auto camera = getCamera(camera_);
+        auto camera = getCamera(cameraName);
         if (camera == nullptr)
             Console::Fail("RenderSpace", "Camera does not exist.");
 
         // TODO: Camera based culling system.
 
         // Get graphics device and enable camera and target
-        auto graphicsDevice = renderer_->getGraphicsDevice();
+        auto graphicsDevice = renderer->getGraphicsDevice();
         camera->beginCamera(graphicsDevice);
-        if (target_ != nullptr)
-            graphicsDevice->pushTarget(target_);
+        if (target != nullptr)
+            graphicsDevice->pushTarget(target);
 
         // Render each node
         for (auto node : m_nodes) {
-            node->Render(renderer_);
+            node->Render(renderer);
         }
 
         // Clean
-        renderer_->renderBatch();
+        renderer->renderBatch();
         camera->endCamera(graphicsDevice);
-        if (target_ != nullptr)
+        if (target != nullptr)
             graphicsDevice->popTarget();
     }
 }

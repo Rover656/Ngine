@@ -48,6 +48,7 @@ namespace ngine {
 
     namespace input {
         class Mouse;
+
         class Keyboard;
     }
 
@@ -115,12 +116,13 @@ namespace ngine {
      */
     class NEAPI Window {
         friend class input::Mouse;
+
         friend class input::Keyboard;
 
         /**
          * The current window.
          */
-         static Window *m_currentWindow;
+        static Window *m_currentWindow;
 
 #if defined(PLATFORM_DESKTOP)
         /**
@@ -268,14 +270,16 @@ namespace ngine {
          * Apply the provided window config.
          * This only happens when the window is created.
          */
-        void _applyConfig(const WindowConfig &config_);
+        void _applyConfig(const WindowConfig &config);
+
     public:
         /**
          * Create a new window.
          *
-         * @param config_ The window config.
+         * @param config The window config.
          */
-        explicit Window(const WindowConfig &config_);
+        explicit Window(const WindowConfig &config);
+
         ~Window();
 
         /**
@@ -324,25 +328,25 @@ namespace ngine {
         /**
          * Resize the window
          *
-         * @param width_ New window width.
-         * @param height_ New window height.
+         * @param width New window width.
+         * @param height New window height.
          */
-        void setSize(int width_, int height_);
+        void setSize(int width, int height);
 
         /**
          * Set whether or not VSync is enabled
          *
          * @warning Makes this window's context current.
-         * @param flag_ Whether or not V-Sync should be enabled.
+         * @param flag Whether or not V-Sync should be enabled.
          */
-        void setVSyncEnabled(bool flag_);
+        void setVSyncEnabled(bool flag);
 
         /**
          * Set the window icon.
          *
-         * @param icon_ The new window icon.
+         * @param icon The new window icon.
          */
-        void setIcon(graphics::Image *icon_);
+        void setIcon(graphics::Image *icon);
 
         /**
          * Get whether or not the window is in fullscreen mode.
@@ -360,17 +364,17 @@ namespace ngine {
         /**
          * Set fullscreen.
          *
-         * @param fullscreen_ Whether the window should be fullscreen.
+         * @param fullscreen Whether the window should be fullscreen.
          */
-        void setFullscreen(bool fullscreen_);
+        void setFullscreen(bool fullscreen);
 
         /**
          * Set whether or not the window can be resized.
          *
          * @note This can only be enforced on the Desktop platform.
-         * @param resizable_ Whether the window can be resized.
+         * @param resizable Whether the window can be resized.
          */
-        void setResizable(bool resizable_);
+        void setResizable(bool resizable);
 
         /**
          * Get the window title.
@@ -384,17 +388,17 @@ namespace ngine {
          * Set window title.
          *
          * @note Only works on Desktop platform.
-         * @param title_ New window title.
+         * @param title New window title.
          */
-        void setTitle(const std::string& title_);
+        void setTitle(const std::string &title);
 
         /**
          * Set whether or not there should be a native debug console.
          *
          * @note This only works on Windows native.
-         * @param flag_ Whether or not the debug console should be attached.
+         * @param flag Whether or not the debug console should be attached.
          */
-        void setEnableNativeConsole(bool flag_);
+        void setEnableNativeConsole(bool flag);
 
         /**
          * Determine whether or not the window is focussed on.

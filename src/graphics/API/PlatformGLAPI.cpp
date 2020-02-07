@@ -109,74 +109,74 @@ static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
 
 namespace ngine::graphics::API {
     void
-    PlatformGLAPI::_getTextureFormats(PixelFormat format_, unsigned int *glInternalFormat_, unsigned int *glFormat_,
-                                      unsigned int *glType_) {
+    PlatformGLAPI::_getTextureFormats(PixelFormat format, unsigned int *glInternalFormat, unsigned int *glFormat,
+                                      unsigned int *glType) {
         // Set to -1 for error checking
-        *glInternalFormat_ = -1;
-        *glFormat_ = -1;
-        *glType_ = -1;
+        *glInternalFormat = -1;
+        *glFormat = -1;
+        *glType = -1;
 
 #if defined(API_OPENGLES_ENABLED)
         // GLES2 and 3 specific
         if (m_GLES2 || m_GLES3) {
-            switch (format_) {
+            switch (format) {
                 case UNCOMPRESSED_GRAYSCALE:
-                    *glInternalFormat_ = GL_LUMINANCE;
-                    *glFormat_ = GL_LUMINANCE;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_LUMINANCE;
+                    *glFormat = GL_LUMINANCE;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_GRAY_ALPHA:
-                    *glInternalFormat_ = GL_LUMINANCE_ALPHA;
-                    *glFormat_ = GL_LUMINANCE_ALPHA;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_LUMINANCE_ALPHA;
+                    *glFormat = GL_LUMINANCE_ALPHA;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_R5G6B5:
-                    *glInternalFormat_ = GL_RGB;
-                    *glFormat_ = GL_RGB;
-                    *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+                    *glInternalFormat = GL_RGB;
+                    *glFormat = GL_RGB;
+                    *glType = GL_UNSIGNED_SHORT_5_6_5;
                     return;
                 case UNCOMPRESSED_R8G8B8:
-                    *glInternalFormat_ = GL_RGB;
-                    *glFormat_ = GL_RGB;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_RGB;
+                    *glFormat = GL_RGB;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_R5G5B5A1:
-                    *glInternalFormat_ = GL_RGBA;
-                    *glFormat_ = GL_RGBA;
-                    *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+                    *glInternalFormat = GL_RGBA;
+                    *glFormat = GL_RGBA;
+                    *glType = GL_UNSIGNED_SHORT_5_5_5_1;
                     return;
                 case UNCOMPRESSED_R4G4B4A4:
-                    *glInternalFormat_ = GL_RGBA;
-                    *glFormat_ = GL_RGBA;
-                    *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+                    *glInternalFormat = GL_RGBA;
+                    *glFormat = GL_RGBA;
+                    *glType = GL_UNSIGNED_SHORT_4_4_4_4;
                     return;
                 case UNCOMPRESSED_R8G8B8A8:
-                    *glInternalFormat_ = GL_RGBA;
-                    *glFormat_ = GL_RGBA;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_RGBA;
+                    *glFormat = GL_RGBA;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_R32:
                     // Requires OES_texture_float
                     if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat_ = GL_LUMINANCE;
-                        *glFormat_ = GL_LUMINANCE;
-                        *glType_ = GL_FLOAT;
+                        *glInternalFormat = GL_LUMINANCE;
+                        *glFormat = GL_LUMINANCE;
+                        *glType = GL_FLOAT;
                     } else Console::Fail("PlatformGLAPI", "Format not supported.");
                     return;
                 case UNCOMPRESSED_R32G32B32:
                     // Requires OES_texture_float
                     if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat_ = GL_RGB;
-                        *glFormat_ = GL_RGB;
-                        *glType_ = GL_FLOAT;
+                        *glInternalFormat = GL_RGB;
+                        *glFormat = GL_RGB;
+                        *glType = GL_FLOAT;
                     }
                     return;
                 case UNCOMPRESSED_R32G32B32A32:
                     // Requires OES_texture_float
                     if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat_ = GL_RGBA;
-                        *glFormat_ = GL_RGBA;
-                        *glType_ = GL_FLOAT;
+                        *glInternalFormat = GL_RGBA;
+                        *glFormat = GL_RGBA;
+                        *glType = GL_FLOAT;
                     } else Console::Fail("PlatformGLAPI", "Format not supported.");
                     return;
             }
@@ -186,64 +186,64 @@ namespace ngine::graphics::API {
 #if defined(API_OPENGL_ENABLED)
         // GL specific
         if (!m_GLES2 && !m_GLES3) {
-            switch (format_) {
+            switch (format) {
                 case UNCOMPRESSED_GRAYSCALE:
-                    *glInternalFormat_ = GL_R8;
-                    *glFormat_ = GL_RED;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_R8;
+                    *glFormat = GL_RED;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_GRAY_ALPHA:
-                    *glInternalFormat_ = GL_RG8;
-                    *glFormat_ = GL_RG;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_RG8;
+                    *glFormat = GL_RG;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_R5G6B5:
-                    *glInternalFormat_ = GL_RGB565;
-                    *glFormat_ = GL_RGB;
-                    *glType_ = GL_UNSIGNED_SHORT_5_6_5;
+                    *glInternalFormat = GL_RGB565;
+                    *glFormat = GL_RGB;
+                    *glType = GL_UNSIGNED_SHORT_5_6_5;
                     return;
                 case UNCOMPRESSED_R8G8B8:
-                    *glInternalFormat_ = GL_RGB8;
-                    *glFormat_ = GL_RGB;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_RGB8;
+                    *glFormat = GL_RGB;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_R5G5B5A1:
-                    *glInternalFormat_ = GL_RGB5_A1;
-                    *glFormat_ = GL_RGBA;
-                    *glType_ = GL_UNSIGNED_SHORT_5_5_5_1;
+                    *glInternalFormat = GL_RGB5_A1;
+                    *glFormat = GL_RGBA;
+                    *glType = GL_UNSIGNED_SHORT_5_5_5_1;
                     return;
                 case UNCOMPRESSED_R4G4B4A4:
-                    *glInternalFormat_ = GL_RGBA4;
-                    *glFormat_ = GL_RGBA;
-                    *glType_ = GL_UNSIGNED_SHORT_4_4_4_4;
+                    *glInternalFormat = GL_RGBA4;
+                    *glFormat = GL_RGBA;
+                    *glType = GL_UNSIGNED_SHORT_4_4_4_4;
                     return;
                 case UNCOMPRESSED_R8G8B8A8:
-                    *glInternalFormat_ = GL_RGBA8;
-                    *glFormat_ = GL_RGBA;
-                    *glType_ = GL_UNSIGNED_BYTE;
+                    *glInternalFormat = GL_RGBA8;
+                    *glFormat = GL_RGBA;
+                    *glType = GL_UNSIGNED_BYTE;
                     return;
                 case UNCOMPRESSED_R32:
                     // Requires OES_texture_float
                     if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat_ = GL_R32F;
-                        *glFormat_ = GL_RED;
-                        *glType_ = GL_FLOAT;
+                        *glInternalFormat = GL_R32F;
+                        *glFormat = GL_RED;
+                        *glType = GL_FLOAT;
                     } else Console::Fail("PlatformGLAPI", "Format not supported.");
                     return;
                 case UNCOMPRESSED_R32G32B32:
                     // Requires OES_texture_float
                     if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat_ = GL_RGB32F;
-                        *glFormat_ = GL_RGB;
-                        *glType_ = GL_FLOAT;
+                        *glInternalFormat = GL_RGB32F;
+                        *glFormat = GL_RGB;
+                        *glType = GL_FLOAT;
                     } else Console::Fail("PlatformGLAPI", "Format not supported.");
                     return;
                 case UNCOMPRESSED_R32G32B32A32:
                     // Requires OES_texture_float
                     if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat_ = GL_RGBA32F;
-                        *glFormat_ = GL_RGBA;
-                        *glType_ = GL_FLOAT;
+                        *glInternalFormat = GL_RGBA32F;
+                        *glFormat = GL_RGBA;
+                        *glType = GL_FLOAT;
                     } else Console::Fail("PlatformGLAPI", "Format not supported.");
                     return;
             }
@@ -251,60 +251,60 @@ namespace ngine::graphics::API {
 #endif
 
         // General/Common
-        switch (format_) {
+        switch (format) {
             case COMPRESSED_DXT1_RGB:
                 if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat_ = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+                    *glInternalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_DXT1_RGBA:
                 if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+                    *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_DXT3_RGBA:
                 if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+                    *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_DXT5_RGBA:
                 if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+                    *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_ETC1_RGB:
                 if (m_featureFlags[EXT_COMP_ETC1])
-                    *glInternalFormat_ = GL_ETC1_RGB8_OES;
+                    *glInternalFormat = GL_ETC1_RGB8_OES;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
             case COMPRESSED_ETC2_RGB:
                 if (m_featureFlags[EXT_COMP_ETC2])
-                    *glInternalFormat_ = GL_COMPRESSED_RGB8_ETC2;
+                    *glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
             case COMPRESSED_ETC2_EAC_RGBA:
                 if (m_featureFlags[EXT_COMP_ETC2])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA8_ETC2_EAC;
+                    *glInternalFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
             case COMPRESSED_PVRT_RGB:
                 if (m_featureFlags[EXT_COMP_PVRT])
-                    *glInternalFormat_ = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+                    *glInternalFormat = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires PowerVR GPU
             case COMPRESSED_PVRT_RGBA:
                 if (m_featureFlags[EXT_COMP_PVRT])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+                    *glInternalFormat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires PowerVR GPU
             case COMPRESSED_ASTC_4x4_RGBA:
                 if (m_featureFlags[EXT_COMP_ASTC])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+                    *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             case COMPRESSED_ASTC_8x8_RGBA:
                 if (m_featureFlags[EXT_COMP_ASTC])
-                    *glInternalFormat_ = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
+                    *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
                 else Console::Fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             default:
@@ -313,10 +313,10 @@ namespace ngine::graphics::API {
         }
     }
 
-    int PlatformGLAPI::_calculatePixelDataSize(int width_, int height_, PixelFormat format_) {
+    int PlatformGLAPI::_calculatePixelDataSize(int width, int height, PixelFormat format) {
         auto bpp = 0;
 
-        switch (format_) {
+        switch (format) {
             case UNCOMPRESSED_GRAYSCALE:
                 bpp = 8;
                 break;
@@ -362,35 +362,35 @@ namespace ngine::graphics::API {
                 break;
         }
 
-        auto dataSize = width_ * height_ * bpp / 8;  // Total data size in bytes
+        auto dataSize = width * height * bpp / 8;  // Total data size in bytes
 
         // Most compressed formats works on 4x4 blocks,
         // if texture is smaller, minimum dataSize is 8 or 16
-        if ((width_ < 4) && (height_ < 4)) {
-            if ((format_ >= COMPRESSED_DXT1_RGB) && (format_ < COMPRESSED_DXT3_RGBA)) dataSize = 8;
-            else if ((format_ >= COMPRESSED_DXT3_RGBA) && (format_ < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
+        if ((width < 4) && (height < 4)) {
+            if ((format >= COMPRESSED_DXT1_RGB) && (format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
+            else if ((format >= COMPRESSED_DXT3_RGBA) && (format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
         }
 
         return dataSize;
     }
 
-    void PlatformGLAPI::_useVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::_useVertexLayout(VertexLayout *layout) {
         // Bind VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
             if (m_GLES2)
-                glBindVertexArrayOES(layout_->VAO);
+                glBindVertexArrayOES(layout->VAO);
             else
-                glBindVertexArray(layout_->VAO);
+                glBindVertexArray(layout->VAO);
         } else {
             // Bind buffers
-            auto vBuf = layout_->getVertexBuffer();
-            auto iBuf = layout_->getIndexBuffer();
+            auto vBuf = layout->getVertexBuffer();
+            auto iBuf = layout->getIndexBuffer();
             bindBuffer(vBuf);
             if (iBuf != nullptr)
                 bindBuffer(iBuf);
 
             // Setup layout
-            auto elements = layout_->getElements();
+            auto elements = layout->getElements();
             for (const auto &elm : elements) {
                 GLenum type;
                 switch (elm.Type) {
@@ -406,7 +406,7 @@ namespace ngine::graphics::API {
         }
     }
 
-    void PlatformGLAPI::_stopVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::_stopVertexLayout(VertexLayout *layout) {
         if (m_featureFlags[FEATURE_VAO]) {
             // Unbind VAO
             if (m_GLES2)
@@ -415,56 +415,56 @@ namespace ngine::graphics::API {
                 glBindVertexArray(0);
         } else {
             // Unbind buffers
-            auto vBuf = layout_->getVertexBuffer();
-            auto iBuf = layout_->getIndexBuffer();
+            auto vBuf = layout->getVertexBuffer();
+            auto iBuf = layout->getIndexBuffer();
             unbindBuffer(vBuf);
             if (iBuf != nullptr)
                 unbindBuffer(iBuf);
 
             // Unset layout
-            auto elements = layout_->getElements();
+            auto elements = layout->getElements();
             for (const auto &elm : elements) {
                 glDisableVertexAttribArray(elm.ElementIndex);
             }
         }
     }
 
-    void PlatformGLAPI::_setUniform(const ShaderProgram *program_, std::string name_, ShaderDataStructure structure_, const void *data_) {
+    void PlatformGLAPI::_setUniform(const ShaderProgram *program, std::string name, ShaderDataStructure structure, const void *data) {
         // Complete actions based on type.
-        switch (structure_.Type) {
+        switch (structure.Type) {
             case ShaderDataType::Int:
             case ShaderDataType::UnsignedInt:
             case ShaderDataType::Float:
             case ShaderDataType::Matrix:
                 // This could be separated again, but this looks better.
-                _writeSimpleUniform(program_, name_.c_str(), structure_.Type, structure_.Count, (char *)data_);
+                _writeSimpleUniform(program, name.c_str(), structure.Type, structure.Count, (char *)data);
                 break;
             case ShaderDataType::Struct: {
                 // Write each member
                 int offset = 0;
-                for (const auto& s : structure_.Members) {
-                    _setUniform(program_, name_ + "." + s.Name, s, (char *)data_ + offset);
+                for (const auto& s : structure.Members) {
+                    _setUniform(program, name + "." + s.Name, s, (char *)data + offset);
                     offset += s.getSize();
                 }
                 break;
             }
             case ShaderDataType::Array: {
                 // Write simple data for each bit
-                auto sizePerEntry = structure_.Members[0].getSize();
-                for (auto i = 0; i < structure_.Count; i++) {
-                    _setUniform(program_, name_ + "[" + std::to_string(i) + "]", structure_.Members[0], (char*)data_ + sizePerEntry * i);
+                auto sizePerEntry = structure.Members[0].getSize();
+                for (auto i = 0; i < structure.Count; i++) {
+                    _setUniform(program, name + "[" + std::to_string(i) + "]", structure.Members[0], (char*)data + sizePerEntry * i);
                 }
                 break;
             }
         }
     }
 
-    void PlatformGLAPI::_writeSimpleUniform(const ShaderProgram *program_, const char *name_, ShaderDataType type_, int count_, const void *data_) {
-        auto loc = glGetUniformLocation(program_->ID, name_);
-        switch (type_) {
+    void PlatformGLAPI::_writeSimpleUniform(const ShaderProgram *program, const char *name, ShaderDataType type, int count, const void *data) {
+        auto loc = glGetUniformLocation(program->ID, name);
+        switch (type) {
             case ShaderDataType::Int: {
-                auto ints = (int *)data_;
-                switch (count_) {
+                auto ints = (int *)data;
+                switch (count) {
                     case 1:
                         glUniform1i(loc, *ints);
                         break;
@@ -483,8 +483,8 @@ namespace ngine::graphics::API {
                 break;
             }
             case ShaderDataType::UnsignedInt: {
-                auto uints = (unsigned int *)data_;
-                switch (count_) {
+                auto uints = (unsigned int *)data;
+                switch (count) {
                     case 1:
                         glUniform1ui(loc, *uints);
                         break;
@@ -503,8 +503,8 @@ namespace ngine::graphics::API {
                 break;
             }
             case ShaderDataType::Float: {
-                auto floats = (float *)data_;
-                switch (count_) {
+                auto floats = (float *)data;
+                switch (count) {
                     case 1:
                         glUniform1f(loc, *floats);
                         break;
@@ -528,14 +528,14 @@ namespace ngine::graphics::API {
                 break;
             }
             case ShaderDataType::Matrix:
-                glUniformMatrix4fv(loc, count_, GL_FALSE, (float*)data_);
+                glUniformMatrix4fv(loc, count, GL_FALSE, (float*)data);
                 break;
             default: Console::Fail("PlatformGLAPI", "Non simple passed to simple write.");
         }
     }
 
-    PlatformGLAPI::PlatformGLAPI(GraphicsDevice *graphicsDevice_)
-            : PlatformGraphicsAPI(graphicsDevice_) {
+    PlatformGLAPI::PlatformGLAPI(GraphicsDevice *graphicsDevice)
+            : PlatformGraphicsAPI(graphicsDevice) {
         // Clear feature flags
         for (auto i = 0; i < EXT_TEX_NPOT; i++) m_featureFlags[i] = false;
 
@@ -929,43 +929,43 @@ namespace ngine::graphics::API {
 #endif
     }
 
-    void PlatformGLAPI::configureViewport(int x_, int y_, int width_, int height_) {
-        glViewport(x_, y_, width_, height_);
+    void PlatformGLAPI::configureViewport(int x, int y, int width, int height) {
+        glViewport(x, y, width, height);
     }
 
-    void PlatformGLAPI::clear(const Color &color_) {
-        glClearColor(color_.R, color_.G, color_.B, color_.A);
+    void PlatformGLAPI::clear(const Color &color) {
+        glClearColor(color.R, color.G, color.B, color.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void PlatformGLAPI::createTexture(Texture2D *texture_, unsigned char *data_) {
+    void PlatformGLAPI::createTexture(Texture2D *texture, unsigned char *data) {
         // Create texture
-        texture_->ID = 0;
+        texture->ID = 0;
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glGenTextures(1, &texture_->ID);
+        glGenTextures(1, &texture->ID);
 
         // Bind
-        glBindTexture(GL_TEXTURE_2D, texture_->ID);
+        glBindTexture(GL_TEXTURE_2D, texture->ID);
 
         // Generate mipmaps TODO: Just generate mipmaps through OGL instead?
-        int mipWidth = texture_->Width;
-        int mipHeight = texture_->Height;
+        int mipWidth = texture->Width;
+        int mipHeight = texture->Height;
         int mipOffset = 0;
 
-        auto format = texture_->getFormat();
+        auto format = texture->getFormat();
         unsigned int glInternalFormat = 0, glFormat = 0, glType = 0;
         _getTextureFormats(format, &glInternalFormat, &glFormat, &glType);
 
-        for (int i = 0; i < texture_->getMipmapCount(); i++) {
+        for (int i = 0; i < texture->getMipmapCount(); i++) {
             unsigned int mipSize = _calculatePixelDataSize(mipWidth, mipHeight, format);
 
             if (glInternalFormat != -1) {
                 if (format < COMPRESSED_DXT1_RGB)
                     glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType,
-                                 (unsigned char *) data_ + mipOffset);
+                                 (unsigned char *) data + mipOffset);
                 else
                     glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize,
-                                           (unsigned char *) data_ + mipOffset);
+                                           (unsigned char *) data + mipOffset);
 
 #if defined(API_OPENGL_ENABLED)
                 if (!m_GLES2 && !m_GLES3) {
@@ -993,27 +993,27 @@ namespace ngine::graphics::API {
         }
     }
 
-    void PlatformGLAPI::deleteTexture(Texture2D *texture_) {
-        glDeleteTextures(1, &texture_->ID);
-        texture_->ID = 0;
+    void PlatformGLAPI::deleteTexture(Texture2D *texture) {
+        glDeleteTextures(1, &texture->ID);
+        texture->ID = 0;
     }
 
-    void PlatformGLAPI::bindTexture(Texture2D *texture_) {
-        if (texture_ != m_currentTexture) {
-            glBindTexture(GL_TEXTURE_2D, texture_ != nullptr ? texture_->ID : 0);
-            m_currentTexture = texture_;
+    void PlatformGLAPI::bindTexture(Texture2D *texture) {
+        if (texture != m_currentTexture) {
+            glBindTexture(GL_TEXTURE_2D, texture != nullptr ? texture->ID : 0);
+            m_currentTexture = texture;
         }
     }
 
-    void PlatformGLAPI::setTextureFilterMode(Texture2D *texture_, TextureFilterMode mode_) {
+    void PlatformGLAPI::setTextureFilterMode(Texture2D *texture, TextureFilterMode mode) {
         // Bind
-        bindTexture(texture_);
+        bindTexture(texture);
 
         // Get variables
-        auto mipmapCount = texture_->getMipmapCount();
+        auto mipmapCount = texture->getMipmapCount();
 
         // Set filter mode
-        switch (mode_) {
+        switch (mode) {
             case TextureFilterMode::Point:
                 if (mipmapCount > 1) {
                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -1059,12 +1059,12 @@ namespace ngine::graphics::API {
         }
     }
 
-    void PlatformGLAPI::setTextureWrapMode(Texture2D *texture_, TextureWrapMode mode_) {
+    void PlatformGLAPI::setTextureWrapMode(Texture2D *texture, TextureWrapMode mode) {
         // Bind
-        bindTexture(texture_);
+        bindTexture(texture);
 
         // Set wrap mode
-        switch (mode_) {
+        switch (mode) {
             case TextureWrapMode::Repeat:
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -1080,34 +1080,34 @@ namespace ngine::graphics::API {
         }
     }
 
-    bool PlatformGLAPI::isTextureValid(const Texture2D *texture_) {
-        return texture_->ID > 0;
+    bool PlatformGLAPI::isTextureValid(const Texture2D *texture) {
+        return texture->ID > 0;
     }
 
-    bool PlatformGLAPI::compareTextures(const Texture2D *a_, const Texture2D *b_) {
-        return a_->ID == b_->ID;
+    bool PlatformGLAPI::compareTextures(const Texture2D *a, const Texture2D *b) {
+        return a->ID == b->ID;
     }
 
-    bool PlatformGLAPI::createRenderTarget(RenderTarget *renderTarget_) {
+    bool PlatformGLAPI::createRenderTarget(RenderTarget *renderTarget) {
         // Set initial IDs
-        renderTarget_->ID[0] = 0;
-        renderTarget_->ID[1] = 0;
+        renderTarget->ID[0] = 0;
+        renderTarget->ID[1] = 0;
 
         // Depth buffer
-        glGenRenderbuffers(1, &renderTarget_->ID[1]);
-        glBindRenderbuffer(GL_RENDERBUFFER, renderTarget_->ID[1]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, renderTarget_->Width, renderTarget_->Height);
+        glGenRenderbuffers(1, &renderTarget->ID[1]);
+        glBindRenderbuffer(GL_RENDERBUFFER, renderTarget->ID[1]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, renderTarget->Width, renderTarget->Height);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         // Create FBO
-        glGenFramebuffers(1, &renderTarget_->ID[0]);
+        glGenFramebuffers(1, &renderTarget->ID[0]);
 
         // Bind
-        glBindFramebuffer(GL_FRAMEBUFFER, renderTarget_->ID[0]);
+        glBindFramebuffer(GL_FRAMEBUFFER, renderTarget->ID[0]);
 
         // Set depth and color attachment
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTarget_->ID[1]);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget_->getTexture()->ID, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTarget->ID[1]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget->getTexture()->ID, 0);
 
         // Check framebuffer status
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -1118,55 +1118,55 @@ namespace ngine::graphics::API {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             // Delete depth buffer
-            glDeleteRenderbuffers(1, &renderTarget_->ID[1]);
-            renderTarget_->ID[1] = 0;
+            glDeleteRenderbuffers(1, &renderTarget->ID[1]);
+            renderTarget->ID[1] = 0;
 
             // Delete framebuffer
-            glDeleteFramebuffers(1, &renderTarget_->ID[0]);
-            renderTarget_->ID[0] = 0;
+            glDeleteFramebuffers(1, &renderTarget->ID[0]);
+            renderTarget->ID[0] = 0;
 
             return false;
         }
 
-        Console::Notice("PlatformGLAPI", "Successfully created framebuffer with ID %i", renderTarget_->ID[0]);
+        Console::Notice("PlatformGLAPI", "Successfully created framebuffer with ID %i", renderTarget->ID[0]);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         return true;
     }
 
-    void PlatformGLAPI::deleteRenderTarget(RenderTarget *renderTarget_) {
+    void PlatformGLAPI::deleteRenderTarget(RenderTarget *renderTarget) {
         // Delete depth buffer
-        if (renderTarget_->ID[1] > 0) {
-            glDeleteRenderbuffers(1, &renderTarget_->ID[1]);
-            renderTarget_->ID[1] = 0;
+        if (renderTarget->ID[1] > 0) {
+            glDeleteRenderbuffers(1, &renderTarget->ID[1]);
+            renderTarget->ID[1] = 0;
         }
 
         // Delete framebuffer
-        if (renderTarget_->ID[0] > 0) {
-            glDeleteFramebuffers(1, &renderTarget_->ID[0]);
-            renderTarget_->ID[0] = 0;
+        if (renderTarget->ID[0] > 0) {
+            glDeleteFramebuffers(1, &renderTarget->ID[0]);
+            renderTarget->ID[0] = 0;
         }
     }
 
-    void PlatformGLAPI::bindRenderTarget(RenderTarget *renderTarget_) {
-        if (renderTarget_ != m_currentRenderTarget) {
-            glBindFramebuffer(GL_FRAMEBUFFER, renderTarget_ != nullptr ? renderTarget_->ID[0] : 0);
-            m_currentRenderTarget = renderTarget_;
+    void PlatformGLAPI::bindRenderTarget(RenderTarget *renderTarget) {
+        if (renderTarget != m_currentRenderTarget) {
+            glBindFramebuffer(GL_FRAMEBUFFER, renderTarget != nullptr ? renderTarget->ID[0] : 0);
+            m_currentRenderTarget = renderTarget;
         }
     }
 
-    bool PlatformGLAPI::isRenderTargetValid(const RenderTarget *renderTarget_) {
-        return renderTarget_->ID[0] > 0;
+    bool PlatformGLAPI::isRenderTargetValid(const RenderTarget *renderTarget) {
+        return renderTarget->ID[0] > 0;
     }
 
-    bool PlatformGLAPI::compareRenderTargets(const RenderTarget *a_, const RenderTarget *b_) {
-        return a_->ID[0] == b_->ID[0] && a_->ID[1] == b_->ID[1];
+    bool PlatformGLAPI::compareRenderTargets(const RenderTarget *a, const RenderTarget *b) {
+        return a->ID[0] == b->ID[0] && a->ID[1] == b->ID[1];
     }
 
-    void PlatformGLAPI::createShader(Shader *shader_, void *sourceData_) {
+    void PlatformGLAPI::createShader(Shader *shader, void *sourceData) {
         // Get shader type
         GLenum type;
-        switch (shader_->Type) {
+        switch (shader->Type) {
             case ShaderType::Vertex:
                 type = GL_VERTEX_SHADER;
                 break;
@@ -1176,111 +1176,111 @@ namespace ngine::graphics::API {
         }
 
         // Create shader object
-        shader_->ID = glCreateShader(type);
+        shader->ID = glCreateShader(type);
 
         // Set source
-        const char *src = (const char *) sourceData_;
-        glShaderSource(shader_->ID, 1, &src, nullptr);
+        const char *src = (const char *) sourceData;
+        glShaderSource(shader->ID, 1, &src, nullptr);
 
         // Compile
-        glCompileShader(shader_->ID);
+        glCompileShader(shader->ID);
 
         // Test compile status
         GLint compiled;
-        glGetShaderiv(shader_->ID, GL_COMPILE_STATUS, &compiled);
+        glGetShaderiv(shader->ID, GL_COMPILE_STATUS, &compiled);
 
         if (compiled != GL_TRUE) // error in compilation occurred
         {
-            glDeleteShader(shader_->ID);
+            glDeleteShader(shader->ID);
             Console::Fail("PlatformGLAPI", "Failed to compile shader.");
         }
     }
 
-    void PlatformGLAPI::deleteShader(Shader *shader_) {
+    void PlatformGLAPI::deleteShader(Shader *shader) {
         // Delete
-        glDeleteShader(shader_->ID);
-        shader_->ID = 0;
+        glDeleteShader(shader->ID);
+        shader->ID = 0;
     }
 
-    bool PlatformGLAPI::isShaderValid(const Shader *shader_) {
-        return shader_->ID > 0;
+    bool PlatformGLAPI::isShaderValid(const Shader *shader) {
+        return shader->ID > 0;
     }
 
-    void PlatformGLAPI::createShaderProgram(ShaderProgram *program_) {
+    void PlatformGLAPI::createShaderProgram(ShaderProgram *program) {
         // Create
-        program_->ID = glCreateProgram();
+        program->ID = glCreateProgram();
 
         // Attach shaders
-        glAttachShader(program_->ID, program_->VertexShader->ID);
-        glAttachShader(program_->ID, program_->FragmentShader->ID);
+        glAttachShader(program->ID, program->VertexShader->ID);
+        glAttachShader(program->ID, program->FragmentShader->ID);
 
         // TODO: Develop a better system for this. (One that is universal across shader languages)
         //  Maybe do this as part of VertexLayout, whenever a shader or a vertex layout is bound, link these attrib locations up?
         // Bind attrib locations
-        glBindAttribLocation(program_->ID, 0, "NG_VertexPos");
-        glBindAttribLocation(program_->ID, 1, "NG_VertexColor");
-        glBindAttribLocation(program_->ID, 2, "NG_VertexTexCoord");
+        glBindAttribLocation(program->ID, 0, "NG_VertexPos");
+        glBindAttribLocation(program->ID, 1, "NG_VertexColor");
+        glBindAttribLocation(program->ID, 2, "NG_VertexTexCoord");
 
         // Link
-        glLinkProgram(program_->ID);
+        glLinkProgram(program->ID);
 
         // Get link status
         int linked = GL_TRUE;
-        glGetProgramiv(program_->ID, GL_LINK_STATUS, &linked);
+        glGetProgramiv(program->ID, GL_LINK_STATUS, &linked);
 
         if (linked != GL_TRUE) {
-            glDeleteProgram(program_->ID);
+            glDeleteProgram(program->ID);
             Console::Fail("PlatformGLAPI", "Failed to link shader program.");
             return;
         }
     }
 
-    void PlatformGLAPI::deleteShaderProgram(ShaderProgram *program_) {
-        glDeleteProgram(program_->ID);
-        program_->ID = 0;
+    void PlatformGLAPI::deleteShaderProgram(ShaderProgram *program) {
+        glDeleteProgram(program->ID);
+        program->ID = 0;
     }
 
-    void PlatformGLAPI::bindShaderProgram(const ShaderProgram *program_) {
-        glUseProgram(program_ != nullptr ? program_->ID : 0);
+    void PlatformGLAPI::bindShaderProgram(const ShaderProgram *program) {
+        glUseProgram(program != nullptr ? program->ID : 0);
     }
 
-    void PlatformGLAPI::bindShaderProgramState(ShaderProgramState *state_) {
+    void PlatformGLAPI::bindShaderProgramState(ShaderProgramState *state) {
         // Bind the program
-        bindShaderProgram(state_->AttachedProgram);
+        bindShaderProgram(state->AttachedProgram);
 
         // Apply each uniform
-        for (const auto &uniform : state_->AttachedProgram->getUniforms()) {
-            _setUniform(state_->AttachedProgram, uniform.Name, uniform, state_->getUniform(uniform.Name));
+        for (const auto &uniform : state->AttachedProgram->getUniforms()) {
+            _setUniform(state->AttachedProgram, uniform.Name, uniform, state->getUniform(uniform.Name));
         }
     }
 
-    bool PlatformGLAPI::isShaderProgramValid(const ShaderProgram *program_) {
-        return program_->ID > 0 && isShaderValid(program_->VertexShader) && isShaderValid(program_->FragmentShader);
+    bool PlatformGLAPI::isShaderProgramValid(const ShaderProgram *program) {
+        return program->ID > 0 && isShaderValid(program->VertexShader) && isShaderValid(program->FragmentShader);
     }
 
-    void PlatformGLAPI::bindBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::bindBuffer(Buffer *buffer) {
         // Check not null
-        if (buffer_ == nullptr)
+        if (buffer == nullptr)
             Console::Fail("PlatformGLAPI", "Cannot bind null buffer.");
 
         // Bind buffer
-        switch (buffer_->Type) {
+        switch (buffer->Type) {
             case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, buffer_->ID);
+                glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
                 break;
             case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer_->ID);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->ID);
                 break;
         }
     }
 
-    void PlatformGLAPI::unbindBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::unbindBuffer(Buffer *buffer) {
         // Check not null
-        if (buffer_ == nullptr)
+        if (buffer == nullptr)
             Console::Fail("PlatformGLAPI", "Cannot unbind null buffer.");
 
         // Bind buffer
-        switch (buffer_->Type) {
+        switch (buffer->Type) {
             case BufferType::Vertex:
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 break;
@@ -1290,31 +1290,31 @@ namespace ngine::graphics::API {
         }
     }
 
-    void PlatformGLAPI::createBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::createBuffer(Buffer *buffer) {
         // Create buffer
-        buffer_->ID = 0;
-        glGenBuffers(1, &buffer_->ID);
+        buffer->ID = 0;
+        glGenBuffers(1, &buffer->ID);
 
         // Bind
-        bindBuffer(buffer_);
+        bindBuffer(buffer);
     }
 
-    void PlatformGLAPI::deleteBuffer(Buffer *buffer_) {
+    void PlatformGLAPI::deleteBuffer(Buffer *buffer) {
         // Unbind buffer
-        unbindBuffer(buffer_);
+        unbindBuffer(buffer);
 
         // Delete
-        glDeleteBuffers(1, &buffer_->ID);
-        buffer_->ID = 0;
+        glDeleteBuffers(1, &buffer->ID);
+        buffer->ID = 0;
     }
 
-    void PlatformGLAPI::writeBuffer(Buffer *buffer_, void *data_, int count_, int size_, bool update_) {
+    void PlatformGLAPI::writeBuffer(Buffer *buffer, void *data, int count, int size, bool update) {
         // Bind
-        bindBuffer(buffer_);
+        bindBuffer(buffer);
 
         // Get type
         GLenum bufType = 0;
-        switch (buffer_->Type) {
+        switch (buffer->Type) {
             case BufferType::Vertex:
                 bufType = GL_ARRAY_BUFFER;
                 break;
@@ -1325,7 +1325,7 @@ namespace ngine::graphics::API {
 
         // Get usage
         GLenum bufUsage = 0;
-        switch (buffer_->Usage) {
+        switch (buffer->Usage) {
             case BufferUsage::Static:
                 bufUsage = GL_STATIC_DRAW;
                 break;
@@ -1335,39 +1335,39 @@ namespace ngine::graphics::API {
         }
 
         // Write
-        if (update_) {
-            glBufferSubData(bufType, 0, size_ * count_, data_);
+        if (update) {
+            glBufferSubData(bufType, 0, size * count, data);
         } else {
-            glBufferData(bufType, size_ * count_, data_, bufUsage);
+            glBufferData(bufType, size * count, data, bufUsage);
         }
     }
 
-    void PlatformGLAPI::createVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::createVertexLayout(VertexLayout *layout) {
         // Create VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
-            layout_->VAO = 0;
+            layout->VAO = 0;
             if (m_GLES2)
-                glGenVertexArraysOES(1, &layout_->VAO);
+                glGenVertexArraysOES(1, &layout->VAO);
             else
-                glGenVertexArrays(1, &layout_->VAO);
+                glGenVertexArrays(1, &layout->VAO);
         }
     }
 
-    void PlatformGLAPI::deleteVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::deleteVertexLayout(VertexLayout *layout) {
         // Delete VAO if enabled
         if (m_featureFlags[FEATURE_VAO]) {
             if (m_GLES2)
-                glDeleteVertexArraysOES(1, &layout_->VAO);
+                glDeleteVertexArraysOES(1, &layout->VAO);
             else
-                glDeleteVertexArrays(1, &layout_->VAO);
-            layout_->VAO = 0;
+                glDeleteVertexArrays(1, &layout->VAO);
+            layout->VAO = 0;
         }
     }
 
-    void PlatformGLAPI::configureVertexLayout(VertexLayout *layout_) {
+    void PlatformGLAPI::configureVertexLayout(VertexLayout *layout) {
         // Get buffers
-        auto vBuf = layout_->getVertexBuffer();
-        auto iBuf = layout_->getIndexBuffer();
+        auto vBuf = layout->getVertexBuffer();
+        auto iBuf = layout->getIndexBuffer();
 
         if (m_featureFlags[FEATURE_VAO]) {
             // Unbind any existing buffers
@@ -1376,9 +1376,9 @@ namespace ngine::graphics::API {
 
             // Bind VAO
             if (m_GLES2)
-                glBindVertexArrayOES(layout_->VAO);
+                glBindVertexArrayOES(layout->VAO);
             else
-                glBindVertexArray(layout_->VAO);
+                glBindVertexArray(layout->VAO);
 
             // Bind buffers
             bindBuffer(vBuf);
@@ -1386,7 +1386,7 @@ namespace ngine::graphics::API {
                 bindBuffer(iBuf);
         }
 
-        auto elements = layout_->getElements();
+        auto elements = layout->getElements();
         for (const auto &elm : elements) {
             GLenum type;
             switch (elm.Type) {
@@ -1417,12 +1417,12 @@ namespace ngine::graphics::API {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void PlatformGLAPI::draw(int count_, int start_) {
-        glDrawArrays(GL_TRIANGLES, start_, count_);
+    void PlatformGLAPI::draw(int count, int start) {
+        glDrawArrays(GL_TRIANGLES, start, count);
     }
 
-    void PlatformGLAPI::drawIndexed(int count_, int start_) {
-        glDrawElements(GL_TRIANGLES, count_, GL_UNSIGNED_SHORT, (GLvoid *) start_);
+    void PlatformGLAPI::drawIndexed(int count, int start) {
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (GLvoid *) start);
     }
 
 #if defined(EGL)
@@ -1439,9 +1439,9 @@ namespace ngine::graphics::API {
         return m_surface;
     }
 
-    void PlatformGLAPI::QueryEGLSurfaceSize(int *width_, int *height_) {
-        eglQuerySurface(m_display, m_surface, EGL_WIDTH, width_);
-        eglQuerySurface(m_display, m_surface, EGL_HEIGHT, height_);
+    void PlatformGLAPI::QueryEGLSurfaceSize(int *width, int *height) {
+        eglQuerySurface(m_display, m_surface, EGL_WIDTH, width);
+        eglQuerySurface(m_display, m_surface, EGL_HEIGHT, height);
     }
 
     void PlatformGLAPI::MakeEGLCurrent() {
@@ -1453,8 +1453,8 @@ namespace ngine::graphics::API {
         eglSwapBuffers(m_display, m_surface);
     }
 
-    void PlatformGLAPI::SetEGLSwapInterval(int interval_) {
-        eglSwapInterval(m_display, interval_);
+    void PlatformGLAPI::SetEGLSwapInterval(int interval) {
+        eglSwapInterval(m_display, interval);
     }
 #endif
 }

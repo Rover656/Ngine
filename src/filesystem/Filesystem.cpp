@@ -63,41 +63,41 @@ namespace ngine::filesystem {
         m_hasProperValue = false;
     }
 
-    Path::Path(const std::string &pathString_) {
+    Path::Path(const std::string &pathString) {
         // Set internal path
-        m_internalPath = pathString_;
+        m_internalPath = pathString;
 
         // Check path
         _correctPath();
     }
 
-    Path::Path(const std::string &path_, const std::string &pathB_) {
+    Path::Path(const std::string &path, const std::string &pathB) {
         // Set internal path
-        m_internalPath = path_ + _getJoinChar() + pathB_;
+        m_internalPath = path + _getJoinChar() + pathB;
 
         // Check path
         _correctPath();
     }
 
-    Path::Path(const Path& path_, const Path& pathB_) {
+    Path::Path(const Path& path, const Path& pathB) {
         // Set internal path
-        m_internalPath = path_.m_internalPath + _getJoinChar() + pathB_.m_internalPath;
+        m_internalPath = path.m_internalPath + _getJoinChar() + pathB.m_internalPath;
 
         // Check path
         _correctPath();
     }
 
-    Path::Path(const Path &path_, const std::string &pathB_) {
+    Path::Path(const Path &path, const std::string &pathB) {
         // Set internal path
-        m_internalPath = path_.m_internalPath + _getJoinChar() + pathB_;
+        m_internalPath = path.m_internalPath + _getJoinChar() + pathB;
 
         // Check path
         _correctPath();
     }
 
-    Path::Path(const std::string &path_, const Path &pathB_) {
+    Path::Path(const std::string &path, const Path &pathB) {
         // Set internal path
-        m_internalPath = path_ + _getJoinChar() + pathB_.m_internalPath;
+        m_internalPath = path + _getJoinChar() + pathB.m_internalPath;
 
         // Check path
         _correctPath();
@@ -262,9 +262,9 @@ namespace ngine::filesystem {
         else return Path();
     }
 
-    Path Path::getRelativeTo(const Path &base_) const {
+    Path Path::getRelativeTo(const Path &base) const {
         // The base must be absolute
-        auto basePath = base_;
+        auto basePath = base;
         if (!basePath.isAbsolute()) basePath = basePath.getAbsolute();
 
         // Base must be a directory
@@ -412,12 +412,12 @@ namespace ngine::filesystem {
         return false;
     }
 
-    Path Path::Join(const std::string &pathA_, const std::string &pathB_) {
-        return Path(pathA_, pathB_);
+    Path Path::Join(const std::string &pathA, const std::string &pathB) {
+        return Path(pathA, pathB);
     }
 
-    Path Path::Join(const Path &pathA_, const Path &pathB_) {
-        return Path(pathA_, pathB_);
+    Path Path::Join(const Path &pathA, const Path &pathB) {
+        return Path(pathA, pathB);
     }
 
     bool Path::isValid() const {
@@ -426,33 +426,33 @@ namespace ngine::filesystem {
 
     // Operators
 
-    Path operator/(const std::string &path_, const std::string &pathB_) {
-        return Path(path_, pathB_);
+    Path operator/(const std::string &path, const std::string &pathB) {
+        return Path(path, pathB);
     }
 
-    Path operator/(const Path &path_, const Path &pathB_) {
-        return Path(path_, pathB_);
+    Path operator/(const Path &path, const Path &pathB) {
+        return Path(path, pathB);
     }
 
-    Path operator/(const std::string &path_, const Path &pathB_) {
-        return Path(path_, pathB_);
+    Path operator/(const std::string &path, const Path &pathB) {
+        return Path(path, pathB);
     }
 
-    Path operator/(const Path &path_, const std::string &pathB_) {
-        return Path(path_, pathB_);
+    Path operator/(const Path &path, const std::string &pathB) {
+        return Path(path, pathB);
     }
 
-    void Path::operator/=(const Path &pathB_) {
+    void Path::operator/=(const Path &pathB) {
         // Set internal path
-        m_internalPath = m_internalPath + _getJoinChar() + pathB_.m_internalPath;
+        m_internalPath = m_internalPath + _getJoinChar() + pathB.m_internalPath;
 
         // Check path
         _correctPath();
     }
 
-    void Path::operator/=(const std::string &pathB_) {
+    void Path::operator/=(const std::string &pathB) {
         // Set internal path
-        m_internalPath = m_internalPath + _getJoinChar() + pathB_;
+        m_internalPath = m_internalPath + _getJoinChar() + pathB;
 
         // Check path
         _correctPath();
@@ -472,11 +472,11 @@ namespace ngine::filesystem {
 
     // Private Methods
 
-    std::string Path::_cleanPathString(const std::string &str_) {
+    std::string Path::_cleanPathString(const std::string &str) {
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
         // TODO: Another way to fix Unicode path names.
         // TODO: Basically Ngine needs better Unicode support in general
-        return str_;
+        return str;
 //        // Get path length
 //        auto len = GetShortPathNameA(str_.c_str(), nullptr, 0);
 //
@@ -510,7 +510,7 @@ namespace ngine::filesystem {
 //
 //        return string;
 #endif
-        return str_;
+        return str;
     }
 
     void Path::_correctPath() {
@@ -581,14 +581,14 @@ namespace ngine::filesystem {
 
     // Public Methods
 
-    void FilesystemObject::move(const Path &newPath_) {
+    void FilesystemObject::move(const Path &newPath) {
         // Move file
-        ::rename(m_objectPath.getString().c_str(), newPath_.getString().c_str());
+        ::rename(m_objectPath.getString().c_str(), newPath.getString().c_str());
     }
 
-    void FilesystemObject::rename(const std::string &newName_) {
+    void FilesystemObject::rename(const std::string &newName) {
         // Rename
-        move(m_objectPath / newName_);
+        move(m_objectPath / newName);
     }
 
     std::string FilesystemObject::getName() const {
@@ -601,7 +601,7 @@ namespace ngine::filesystem {
 
     // Protected Constructors
 
-    FilesystemObject::FilesystemObject(const Path &path_) : m_objectPath(path_) {}
+    FilesystemObject::FilesystemObject(const Path &path) : m_objectPath(path) {}
 
     ////////
     // File
@@ -622,9 +622,9 @@ namespace ngine::filesystem {
         m_internalHandle = std::make_shared<InternalFileHandler>();
     }
 
-    File::File(const Path &path_) : FilesystemObject(path_) {
+    File::File(const Path &path) : FilesystemObject(path) {
         // Check path is valid
-        if (!path_.isValid()) throw std::runtime_error("File must be given a valid path.");
+        if (!path.isValid()) throw std::runtime_error("File must be given a valid path.");
 
         // Create an empty handler
         m_internalHandle = std::make_shared<InternalFileHandler>();
@@ -650,10 +650,10 @@ namespace ngine::filesystem {
         m_internalOpenMode = FileOpenMode::Closed;
     }
 
-    File File::CreateNewFile(const Path &path_, bool leaveOpen_, bool binary_) {
-        File f(path_);
-        f.open(FileOpenMode::Write, binary_);
-        if (!leaveOpen_)
+    File File::CreateNewFile(const Path &path, bool leaveOpen, bool binary) {
+        File f(path);
+        f.open(FileOpenMode::Write, binary);
+        if (!leaveOpen)
             f.close();
         return f;
     }
@@ -683,8 +683,8 @@ namespace ngine::filesystem {
         return m_internalOpenMode;
     }
 
-    File File::GetFile(const Path &path_) {
-        return File(path_);
+    File File::GetFile(const Path &path) {
+        return File(path);
     }
 
     std::string File::getFileExtension() const {
@@ -719,49 +719,49 @@ namespace ngine::filesystem {
         return m_internalHandle->InternalHandle != nullptr;
     }
 
-    bool File::open(FileOpenMode mode_, bool binary_) {
+    bool File::open(FileOpenMode mode, bool binary) {
         // Check validity of path
         if (!m_objectPath.isValid()) throw std::runtime_error("This file's path is invalid");
 
         // Open with selected mode
-        switch(mode_) {
+        switch(mode) {
             case FileOpenMode::Read:
                 // Check this is actually a file
                 if (m_objectPath.getResourceType() != ResourceType::File) throw std::runtime_error("This path does not point to a file.");
 
                 // Open binary file for read
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary_ ? "rb" : "r");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "rb" : "r");
 
                 // Set mode
-                m_internalOpenMode = mode_;
+                m_internalOpenMode = mode;
                 break;
             case FileOpenMode::Write:
                 // Open binary file for write
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary_ ? "wb" : "w");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "wb" : "w");
 
                 // Set mode
-                m_internalOpenMode = mode_;
+                m_internalOpenMode = mode;
                 break;
             case FileOpenMode::Append:
                 // Open binary file for append
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary_ ? "ab" : "a");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "ab" : "a");
 
                 // Set mode
-                m_internalOpenMode = mode_;
+                m_internalOpenMode = mode;
                 break;
             case FileOpenMode::ReadWrite:
                 // Open binary file for read and write
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary_ ? "w+b" : "w+");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "w+b" : "w+");
 
                 // Set mode
-                m_internalOpenMode = mode_;
+                m_internalOpenMode = mode;
                 break;
             case FileOpenMode::ReadAppend:
                 // Open binary file for read and append
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary_ ? "a+b" : "a+");
+                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "a+b" : "a+");
 
                 // Set mode
-                m_internalOpenMode = mode_;
+                m_internalOpenMode = mode;
                 break;
             default:
                 Console::Warn("File", "File mode not supported.");
@@ -775,7 +775,7 @@ namespace ngine::filesystem {
         return isOpen();
     }
 
-    unsigned char *File::readBytes(int size_, int offset_) {
+    unsigned char *File::readBytes(int size, int offset) {
         if (!isOpen()) throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
@@ -787,34 +787,34 @@ namespace ngine::filesystem {
         // Determine file size if size is -1
         auto filesize_ = getSize();
 
-        if (size_ == -1) {
-            size_ = filesize_;
+        if (size == -1) {
+            size = filesize_;
         }
 
-        if (size_ <= 0) {
+        if (size <= 0) {
             throw std::runtime_error("Invalid read size.");
         }
 
-        if (offset_ >= filesize_ || offset_ < 0) {
+        if (offset >= filesize_ || offset < 0) {
             throw std::runtime_error("Invalid offset.");
         }
 
-        if (size_ + offset_ > filesize_) {
+        if (size + offset > filesize_) {
             throw std::runtime_error("Data out of bounds.");
         }
 
         // Seek to the offset
-        fseek(m_internalHandle->InternalHandle, offset_, SEEK_SET);
+        fseek(m_internalHandle->InternalHandle, offset, SEEK_SET);
 
         // Read bytes to array
-        auto *buffer = new unsigned char[size_];
-        fread(buffer, size_, 1, m_internalHandle->InternalHandle);
+        auto *buffer = new unsigned char[size];
+        fread(buffer, size, 1, m_internalHandle->InternalHandle);
 
         // Return data
         return buffer;
     }
 
-    std::string File::readString(int size_, int offset_) {
+    std::string File::readString(int size, int offset) {
         // Check we're open
         if (!isOpen()) throw std::runtime_error("Cannot read from closed file.");
 
@@ -827,28 +827,28 @@ namespace ngine::filesystem {
         // Determine file size if size is -1
         auto filesize_ = getSize();
 
-        if (size_ == -1) {
-            size_ = filesize_;
+        if (size == -1) {
+            size = filesize_;
         }
 
-        if (size_ <= 0) {
+        if (size <= 0) {
             throw std::runtime_error("Invalid read size.");
         }
 
-        if (offset_ >= filesize_ || offset_ < 0) {
+        if (offset >= filesize_ || offset < 0) {
             throw std::runtime_error("Invalid offset.");
         }
 
-        if (size_ + offset_ > filesize_) {
+        if (size + offset > filesize_) {
             throw std::runtime_error("Data out of bounds.");
         }
 
         // Seek to the offset
-        fseek(m_internalHandle->InternalHandle, offset_, SEEK_SET);
+        fseek(m_internalHandle->InternalHandle, offset, SEEK_SET);
 
         // Read to c string
-        auto buffer = new char[size_ + 1];
-        int r = fread(buffer, 1, size_, m_internalHandle->InternalHandle);
+        auto buffer = new char[size + 1];
+        int r = fread(buffer, 1, size, m_internalHandle->InternalHandle);
 
         // Null-terminate buffer
         buffer[r] = '\0';
@@ -862,7 +862,7 @@ namespace ngine::filesystem {
         return str;
     }
 
-    bool File::writeBytes(unsigned char *data_, int size_) {
+    bool File::writeBytes(unsigned char *data, int size) {
         // Check we're open
         if (!isOpen()) throw std::runtime_error("Cannot write to a closed file.");
 
@@ -874,10 +874,10 @@ namespace ngine::filesystem {
             throw std::runtime_error("File not opened for writing.");
 
         // Write
-        return fwrite(data_, 1, size_, m_internalHandle->InternalHandle) == 1;
+        return fwrite(data, 1, size, m_internalHandle->InternalHandle) == 1;
     }
 
-    bool File::writeString(const std::string &string_) {
+    bool File::writeString(const std::string &string) {
         // Check we're open
         if (!isOpen()) throw std::runtime_error("Cannot write to closed file.");
 
@@ -889,7 +889,7 @@ namespace ngine::filesystem {
             throw std::runtime_error("File not opened for writing.");
 
         // Write string
-        return fputs(string_.c_str(), m_internalHandle->InternalHandle) != EOF;
+        return fputs(string.c_str(), m_internalHandle->InternalHandle) != EOF;
     }
 
     ////////
@@ -898,9 +898,9 @@ namespace ngine::filesystem {
 
     Directory::Directory() : FilesystemObject(Path()) {}
 
-    Directory::Directory(const Path &path_) : FilesystemObject(path_) {
+    Directory::Directory(const Path &path) : FilesystemObject(path) {
         // Check for valid path
-        if (!path_.isValid()) throw std::runtime_error("Directory must be given a valid path.");
+        if (!path.isValid()) throw std::runtime_error("Directory must be given a valid path.");
     }
 
     bool Directory::create() {
@@ -915,8 +915,8 @@ namespace ngine::filesystem {
         return success;
     }
 
-    std::pair<bool, Directory> Directory::Create(const Path &path_) {
-        auto dir = Directory(path_);
+    std::pair<bool, Directory> Directory::Create(const Path &path) {
+        auto dir = Directory(path);
         return {dir.create(), dir};
     }
 
@@ -1126,8 +1126,8 @@ namespace ngine::filesystem {
         return files;
     }
 
-    Directory Directory::GetDirectory(const Path &path_) {
-        return Directory(path_);
+    Directory Directory::GetDirectory(const Path &path) {
+        return Directory(path);
     }
 
     Directory Directory::GetExecutableDirectory() {

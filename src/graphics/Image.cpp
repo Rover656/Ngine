@@ -24,43 +24,43 @@
 #include <stb_image.h>
 
 namespace ngine::graphics {
-    void Image::_create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
+    void Image::_create(unsigned char *pixelData, unsigned int width, unsigned int height, PixelFormat format) {
         // Bits per pixel
         int bpp = 0;
-        if (format_ == UNCOMPRESSED_GRAYSCALE) bpp = 1;
-        else if (format_ == UNCOMPRESSED_GRAY_ALPHA) bpp = 2;
-        else if (format_ == UNCOMPRESSED_R8G8B8) bpp = 3;
-        else if (format_ == UNCOMPRESSED_R8G8B8A8) bpp = 4;
+        if (format == UNCOMPRESSED_GRAYSCALE) bpp = 1;
+        else if (format == UNCOMPRESSED_GRAY_ALPHA) bpp = 2;
+        else if (format == UNCOMPRESSED_R8G8B8) bpp = 3;
+        else if (format == UNCOMPRESSED_R8G8B8A8) bpp = 4;
         else throw std::runtime_error("Incompatible format.");
 
         // Copy pixel data
-        PixelData = new unsigned char[width_*height_*bpp];
-        memcpy(PixelData, pixelData_, width_*height_*sizeof(unsigned char)*bpp);
+        PixelData = new unsigned char[width * height * bpp];
+        memcpy(PixelData, pixelData, width * height * sizeof(unsigned char) * bpp);
 
         // Set fields
-        Width = width_;
-        Height = height_;
-        Format = format_;
+        Width = width;
+        Height = height;
+        Format = format;
         MipmapCount = 1;
     }
 
     Image::Image() {}
 
-    Image::Image(Image &&old_) {
+    Image::Image(Image &&old) {
         // Copy data.
-        Width = old_.Width;
-        Height = old_.Height;
-        Format = old_.Format;
-        MipmapCount = old_.MipmapCount;
-        PixelData = old_.PixelData;
+        Width = old.Width;
+        Height = old.Height;
+        Format = old.Format;
+        MipmapCount = old.MipmapCount;
+        PixelData = old.PixelData;
 
         // Set pixel data to null so it is not deleted.
-        old_.PixelData = nullptr;
+        old.PixelData = nullptr;
     }
 
-    Image::Image(const filesystem::Path &path_) {
+    Image::Image(const filesystem::Path &path) {
         // Check format
-        auto ext = path_.getFileExtension();
+        auto ext = path.getFileExtension();
 
         if (ext == "png"
             || ext == "bmp"
@@ -70,7 +70,7 @@ namespace ngine::graphics {
             || ext == "pic"
             || ext == "psd") {
             // Open file
-            auto file = filesystem::File(path_);
+            auto file = filesystem::File(path);
             file.open(filesystem::FileOpenMode::Read, true);
 
             // Load data
@@ -86,8 +86,8 @@ namespace ngine::graphics {
         }
     }
 
-    Image::Image(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_) {
-        _create(pixelData_, width_, height_, format_);
+    Image::Image(unsigned char *pixelData, unsigned int width, unsigned int height, PixelFormat format) {
+        _create(pixelData, width, height, format);
     }
 
     Image::~Image() {

@@ -46,11 +46,11 @@ namespace ngine::components {
         /**
          * Create a sprite component.
          *
-         * @param parent_ The parent entity we will attach to.
-         * @param sprite_ The sprite to render with.
-         * @param origin_ The sprite render origin.
+         * @param parent The parent entity we will attach to.
+         * @param sprite The sprite to render with.
+         * @param origin The sprite render origin.
          */
-        SpriteComponent(Entity *parent_, const graphics::Sprite &sprite_, Vector2 origin_ = Vector2::Zero);
+        SpriteComponent(Entity *parent, const graphics::Sprite &sprite, Vector2 origin = Vector2::Zero);
 
         /**
          * Get the sprite render origin.
@@ -62,9 +62,9 @@ namespace ngine::components {
         /**
          * Set the sprite render origin.
          *
-         * @param origin_ The new rendering origin.
+         * @param origin The new rendering origin.
          */
-        void setOrigin(const Vector2 &origin_);
+        void setOrigin(const Vector2 &origin);
 
         /**
          * Get a pointer to the sprite.
@@ -83,14 +83,14 @@ namespace ngine::components {
         /**
          * Set the sprite.
          *
-         * @param sprite_ The new sprite to use.
+         * @param sprite The new sprite to use.
          */
-        void setSprite(const graphics::Sprite &sprite_);
+        void setSprite(const graphics::Sprite &sprite);
 
         /**
          * Draw the sprite (called by the engine).
          */
-        void draw(graphics::Renderer *renderer_) override;
+        void draw(graphics::Renderer *renderer) override;
 
         /**
          * Update the sprite (called by the engine).

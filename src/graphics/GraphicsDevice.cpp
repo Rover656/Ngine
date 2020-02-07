@@ -73,7 +73,7 @@ namespace ngine::graphics {
 
     bool GraphicsDevice::m_targetAccessed = false;
 
-    GraphicsDevice::GraphicsDevice(Window *window_) : m_attachedWindow(window_) {
+    GraphicsDevice::GraphicsDevice(Window *window) : m_attachedWindow(window) {
         // Check window
         if (m_attachedWindow == nullptr)
             throw std::runtime_error("Window cannot be null.");
@@ -130,12 +130,12 @@ namespace ngine::graphics {
         delete m_platformAPI;
     }
 
-    void GraphicsDevice::SetTargetAPI(GraphicsAPI api_, int majorVersion_, int minorVersion_) {
+    void GraphicsDevice::SetTargetAPI(GraphicsAPI api, int majorVersion, int minorVersion) {
         if (m_targetAccessed)
             Console::Fail("GraphicsDevice", "Cannot change target API once the target has been used.");
-        m_targetAPI = api_;
-        m_targetMajorVersion = majorVersion_;
-        m_targetMinorVersion = minorVersion_;
+        m_targetAPI = api;
+        m_targetMajorVersion = majorVersion;
+        m_targetMinorVersion = minorVersion;
     }
 
     GraphicsAPI GraphicsDevice::GetTargetAPI() {
@@ -157,8 +157,8 @@ namespace ngine::graphics {
         return m_attachedWindow;
     }
 
-    void GraphicsDevice::clear(Color color_) {
-        m_platformAPI->clear(color_);
+    void GraphicsDevice::clear(Color color) {
+        m_platformAPI->clear(color);
     }
 
     RenderTarget *GraphicsDevice::getCurrentTarget() {
@@ -167,7 +167,7 @@ namespace ngine::graphics {
         return nullptr;
     }
 
-    void GraphicsDevice::pushTarget(RenderTarget *target_) {
+    void GraphicsDevice::pushTarget(RenderTarget *target) {
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
             Console::Fail("GraphicsDevice", "Render target stack overflow.");
@@ -177,11 +177,11 @@ namespace ngine::graphics {
             renderer->renderBatch(); // TODO: Review this stuff now.
 
         // Add to stack
-        m_targetStack[m_targetCounter] = target_;
+        m_targetStack[m_targetCounter] = target;
         m_targetCounter++;
 
         // Bind
-        m_platformAPI->bindRenderTarget(target_);
+        m_platformAPI->bindRenderTarget(target);
     }
 
     void GraphicsDevice::popTarget() {
@@ -222,9 +222,9 @@ namespace ngine::graphics {
         m_viewMatrixStack[m_viewCounter - 1] = Matrix::Identity;
     }
 
-    void GraphicsDevice::multView(const Matrix &matrix_) {
+    void GraphicsDevice::multView(const Matrix &matrix) {
         if (m_viewCounter == 0) pushViewMatrix();
-        m_viewMatrixStack[m_viewCounter - 1] = m_viewMatrixStack[m_viewCounter - 1] * matrix_;
+        m_viewMatrixStack[m_viewCounter - 1] = m_viewMatrixStack[m_viewCounter - 1] * matrix;
     }
 
     void GraphicsDevice::setupFramebuffer() {

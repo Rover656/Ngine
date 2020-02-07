@@ -71,12 +71,12 @@ namespace ngine::physics {
         /*
          * Create a body
          */
-        PhysicsBody *createBody(PhysicsBody::BodyInfo info_);
+        PhysicsBody *createBody(PhysicsBody::BodyInfo info);
 
         /*
          * Destroy a body
          */
-        void destroyBody(PhysicsBody *body_);
+        void destroyBody(PhysicsBody *body);
 
         /*
          * Get is sleeping allowed
@@ -152,17 +152,17 @@ namespace ngine::physics {
         /*
          * Enable/Disable sleep
          */
-        void setAllowSleeping(bool flag_);
+        void setAllowSleeping(bool flag);
 
         /*
          * Enable/Disable automatic clearing of forces after each timestep.
          */
-        void setAutoClearForces(bool flag_);
+        void setAutoClearForces(bool flag);
 
         /*
          * Enable/disable continuous physics.
          */
-        void setContinuousPhysics(bool flag_);
+        void setContinuousPhysics(bool flag);
 
         /*
          * Set the gravity vector (meters).
@@ -172,12 +172,12 @@ namespace ngine::physics {
         /*
          * enable/disable single stepped continuous physics.
          */
-        void setSubStepping(bool flag_);
+        void setSubStepping(bool flag);
 
         /*
          * Enable/disable warm starting.
          */
-        void setWarmStarting(bool flag_);
+        void setWarmStarting(bool flag);
 
         /*
          * Take a time step

@@ -23,18 +23,18 @@
 namespace ngine::graphics {
     Color::Color() : R(1), G(1), B(1), A(1) {}
 
-    Color::Color(float r_, float g_, float b_, float a_)
-            : R(r_), G(g_), B(b_), A(a_) {}
+    Color::Color(float r, float g, float b, float a)
+            : R(r), G(g), B(b), A(a) {}
 
-    Color::Color(const int r_, const int g_, const int b_, const int a_)
-    : Color(r_ / 255.0f, g_ / 255.0f, b_ / 255.0f, a_ / 255.0f) {}
+    Color::Color(const int r, const int g, const int b, const int a)
+    : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) {}
 
-    bool Color::operator==(const Color &b_) const {
-        return R == b_.R && G == b_.G && B == b_.B && A == b_.A;
+    bool Color::operator==(const Color &b) const {
+        return R == b.R && G == b.G && B == b.B && A == b.A;
     }
 
-    bool Color::operator!=(const Color &b_) const {
-        return R != b_.R && G != b_.G && B != b_.B && A != b_.A;
+    bool Color::operator!=(const Color &b) const {
+        return R != b.R && G != b.G && B != b.B && A != b.A;
     }
 
     const Color Color::Beige = Color(245, 245, 220);

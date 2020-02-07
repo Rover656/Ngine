@@ -103,9 +103,10 @@ namespace ngine::filesystem {
          * Create a new resource manager.
          *
          * @warning The `Game` class provides a resource manager. Using more than one resource manager could get confusing in your implementation.
-         * @param graphicsDevice_ The graphics device for graphics resources.
+         * @param graphicsDevice The graphics device for graphics resources.
          */
-        ResourceManager(graphics::GraphicsDevice *graphicsDevice_);
+        ResourceManager(graphics::GraphicsDevice *graphicsDevice);
+
         ~ResourceManager() = default;
         /**
          * The resource manager config.
@@ -125,62 +126,62 @@ namespace ngine::filesystem {
         /**
          * Delete a named font.
          *
-         * @param name_ Font to be deleted.
+         * @param name Font to be deleted.
          */
-        void deleteFont(const std::string &name_);
+        void deleteFont(const std::string &name);
 
         /**
          * Delete a named music.
          *
-         * @param name_ Music to be deleted.
+         * @param name Music to be deleted.
          */
-        void deleteMusic(const std::string &name_);
+        void deleteMusic(const std::string &name);
 
         /**
          * Delete a named sound.
          *
-         * @param name_ Sound to be deleted.
+         * @param name Sound to be deleted.
          */
-        void deleteSound(const std::string &name_);
+        void deleteSound(const std::string &name);
 
         /**
          * Delete a named texture.
          *
-         * @param name_ Texture to be deleted.
+         * @param name Texture to be deleted.
          */
-        void deleteTexture(const std::string &name_);
+        void deleteTexture(const std::string &name);
 
         /**
          * Get a named font.
          *
-         * @param name_ Font to get.
+         * @param name Font to get.
          * @return Pointer to the font.
          */
-        graphics::Font *getFont(const std::string &name_);
+        graphics::Font *getFont(const std::string &name);
 
         /**
          * Get a named music.
          *
-         * @param name_ Music to get.
+         * @param name Music to get.
          * @return Pointer to the music.
          */
-        audio::Music *getMusic(const std::string &name_);
+        audio::Music *getMusic(const std::string &name);
 
         /**
          * Get a named sound.
          *
-         * @param name_ Sound to get.
+         * @param name Sound to get.
          * @return Pointer to the sound.
          */
-        audio::Sound *getSound(const std::string &name_);
+        audio::Sound *getSound(const std::string &name);
 
         /**
          * Get a named texture.
          *
-         * @param name_ Texture to get.
+         * @param name Texture to get.
          * @return Pointer to the texture.
          */
-        graphics::Texture2D *getTexture(const std::string &name_);
+        graphics::Texture2D *getTexture(const std::string &name);
 
         /**
          * Loads all data according to the Config.
@@ -191,39 +192,39 @@ namespace ngine::filesystem {
          * Load font from file.
          *
          * @note If base size == -1, default will be used.
-         * @param inPath_ Font file to load.
-         * @param name_ The font's name.
-         * @param baseSize_ The base size for the font.
+         * @param inPath Font file to load.
+         * @param name The font's name.
+         * @param baseSize The base size for the font.
          * @return Whether or not the font was loaded.
          */
-        bool loadFont(const Path &inPath_, const std::string &name_, int baseSize_ = -1);
+        bool loadFont(const Path &inPath, const std::string &name, int baseSize = -1);
 
         /**
          * Load music from file.
          *
-         * @param inPath_ Music file to load.
-         * @param name_ The music's name.
+         * @param inPath Music file to load.
+         * @param name The music's name.
          * @return Whether or not the music was loaded.
          */
-        bool loadMusic(const Path &inPath_, const std::string &name_);
+        bool loadMusic(const Path &inPath, const std::string &name);
 
         /**
          * Load sound from file.
          *
-         * @param inPath_ Sound file to load.
-         * @param name_ The sound's name.
+         * @param inPath Sound file to load.
+         * @param name The sound's name.
          * @return Whether or not the sound was loaded.
          */
-        bool loadSound(const Path &inPath_, const std::string &name_);
+        bool loadSound(const Path &inPath, const std::string &name);
 
         /**
          * Load texture from file.
          *
-         * @param inPath_ Texture file to load.
-         * @param name_ The texture's name.
+         * @param inPath Texture file to load.
+         * @param name The texture's name.
          * @return Whether or not the texture was loaded.
          */
-        bool loadTexture(const Path &inPath_, const std::string &name_);
+        bool loadTexture(const Path &inPath, const std::string &name);
     };
 }
 

@@ -35,27 +35,27 @@ namespace ngine::input {
     Windows::Gaming::Input::Gamepad ^Gamepad::m_UWPGamepads[4] = {nullptr, nullptr, nullptr, nullptr};
 #endif
 
-    GamepadAxis Gamepad::_getAxis(int axis_) {
-        GamepadAxis axis = GAMEPAD_AXIS_UNKNOWN;
+    GamepadAxis Gamepad::_getAxis(int axis) {
+        GamepadAxis axisEnum = GAMEPAD_AXIS_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
-        switch (axis_) {
-            case GLFW_GAMEPAD_AXIS_LEFT_X: axis = GAMEPAD_AXIS_LEFT_X; break;
-            case GLFW_GAMEPAD_AXIS_LEFT_Y: axis = GAMEPAD_AXIS_LEFT_Y; break;
-            case GLFW_GAMEPAD_AXIS_RIGHT_X: axis = GAMEPAD_AXIS_RIGHT_X; break;
-            case GLFW_GAMEPAD_AXIS_RIGHT_Y: axis = GAMEPAD_AXIS_RIGHT_Y; break;
-            case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER: axis = GAMEPAD_AXIS_LEFT_TRIGGER; break;
-            case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER: axis = GAMEPAD_AXIS_RIGHT_TRIGGER; break;
+        switch (axis) {
+            case GLFW_GAMEPAD_AXIS_LEFT_X: axisEnum = GAMEPAD_AXIS_LEFT_X; break;
+            case GLFW_GAMEPAD_AXIS_LEFT_Y: axisEnum = GAMEPAD_AXIS_LEFT_Y; break;
+            case GLFW_GAMEPAD_AXIS_RIGHT_X: axisEnum = GAMEPAD_AXIS_RIGHT_X; break;
+            case GLFW_GAMEPAD_AXIS_RIGHT_Y: axisEnum = GAMEPAD_AXIS_RIGHT_Y; break;
+            case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER: axisEnum = GAMEPAD_AXIS_LEFT_TRIGGER; break;
+            case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER: axisEnum = GAMEPAD_AXIS_RIGHT_TRIGGER; break;
         }
 #elif defined(PLATFORM_UWP)
-        axis = (GamepadAxis) axis_;     // UWP will provide the correct axis
+        axis = (GamepadAxis) axis;     // UWP will provide the correct axis
 #endif
-        return axis;
+        return axisEnum;
     }
 
-    GamepadButton Gamepad::_getButton(int button_) {
+    GamepadButton Gamepad::_getButton(int button) {
         GamepadButton btn = GAMEPAD_BUTTON_UNKNOWN;
 #if defined(PLATFORM_DESKTOP)
-        switch (button_) {
+        switch (button) {
             case GLFW_GAMEPAD_BUTTON_Y: btn = GAMEPAD_BUTTON_RIGHT_FACE_UP; break;
             case GLFW_GAMEPAD_BUTTON_B: btn = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT; break;
             case GLFW_GAMEPAD_BUTTON_A: btn = GAMEPAD_BUTTON_RIGHT_FACE_DOWN; break;
@@ -78,7 +78,7 @@ namespace ngine::input {
         }
 #elif defined(PLATFORM_UWP)
         // Provided correctly
-        btn = (GamepadButton) button_;
+        btn = (GamepadButton) button;
 #endif
         return btn;
     }
@@ -113,24 +113,24 @@ namespace ngine::input {
 #endif
     }
 
-    float Gamepad::GetAxisValue(GamepadNumber pad_, const GamepadAxis axis_) {
-        return m_currentAxisValue[pad_][axis_];
+    float Gamepad::GetAxisValue(GamepadNumber pad, const GamepadAxis axis) {
+        return m_currentAxisValue[pad][axis];
     }
 
-    bool Gamepad::IsAvailable(GamepadNumber pad_) {
-        return m_ready[pad_];
+    bool Gamepad::IsAvailable(GamepadNumber pad) {
+        return m_ready[pad];
     }
 
-    bool Gamepad::IsButtonDown(GamepadNumber pad_, const GamepadButton button_) {
-        return m_currentButtonState[pad_][button_];
+    bool Gamepad::IsButtonDown(GamepadNumber pad, const GamepadButton button) {
+        return m_currentButtonState[pad][button];
     }
 
-    bool Gamepad::IsButtonPressed(GamepadNumber pad_, const GamepadButton button_) {
-        return m_currentButtonState[pad_][button_] != m_previousButtonState[pad_][button_] && m_currentButtonState[pad_][button_];
+    bool Gamepad::IsButtonPressed(GamepadNumber pad, const GamepadButton button) {
+        return m_currentButtonState[pad][button] != m_previousButtonState[pad][button] && m_currentButtonState[pad][button];
     }
 
-    bool Gamepad::IsButtonReleased(GamepadNumber pad_, const GamepadButton button_) {
-        return m_currentButtonState[pad_][button_] != m_previousButtonState[pad_][button_] && !m_currentButtonState[pad_][button_];
+    bool Gamepad::IsButtonReleased(GamepadNumber pad, const GamepadButton button) {
+        return m_currentButtonState[pad][button] != m_previousButtonState[pad][button] && !m_currentButtonState[pad][button];
     }
 
     void Gamepad::PollInputs() {

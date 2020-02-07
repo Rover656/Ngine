@@ -68,9 +68,9 @@ namespace ngine::graphics {
          * Create a shader with source strings.
          *
          * @todo Universal constructor.
-         * @param src_ GLSL source
+         * @param src GLSL source
          */
-        Shader(GraphicsDevice *graphicsDevice_, ShaderType type_, const char *src_);
+        Shader(GraphicsDevice *graphicsDevice, ShaderType type, const char *src);
         ~Shader();
 
         /**

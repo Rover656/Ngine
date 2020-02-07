@@ -60,11 +60,11 @@ namespace ngine::input {
         /**
          * Create a mouse changed event argument.
          *
-         * @param button_ The button that has changed.
-         * @param pressed_ Whether it was pressed or not.
+         * @param button The button that has changed.
+         * @param pressed Whether it was pressed or not.
          */
-        MouseButtonEventArgs(const MouseButton button_, const bool pressed_)
-                : Button(button_), Pressed(pressed_) {}
+        MouseButtonEventArgs(const MouseButton button, bool pressed)
+                : Button(button), Pressed(pressed) {}
     };
 
     /**
@@ -84,11 +84,11 @@ namespace ngine::input {
         /**
          * Create a mouse moved event arg.
          *
-         * @param mousePosition_ The current position.
-         * @param deltaMousePosition_ The delta position relative to the last position.
+         * @param mousePosition The current position.
+         * @param deltaMousePosition The delta position relative to the last position.
          */
-        MouseMovedEventArgs(Vector2 mousePosition_, Vector2 deltaMousePosition_)
-                : MousePosition(mousePosition_), DeltaMousePosition(deltaMousePosition_) {}
+        MouseMovedEventArgs(Vector2 mousePosition, Vector2 deltaMousePosition)
+                : MousePosition(mousePosition), DeltaMousePosition(deltaMousePosition) {}
     };
 
     struct MouseScrollChangedEventArgs : EventArgs {
@@ -100,10 +100,10 @@ namespace ngine::input {
         /**
          * Create a scroll changed event argument.
          *
-         * @param value_ Scroll value.
+         * @param value Scroll value.
          */
-        MouseScrollChangedEventArgs(int value_)
-                : Value(value_) {}
+        MouseScrollChangedEventArgs(int value)
+                : Value(value) {}
     };
 
     /**
@@ -179,8 +179,8 @@ namespace ngine::input {
         Vector2 _internalGetMousePosition();
 
 #if defined(PLATFORM_DESKTOP)
-        static void _GLFWMouseButtonCallback(GLFWwindow *window_, int button_, int action_, int mods_);
-        static void _GLFWScrollCallback(GLFWwindow *window_, double x_, double y_);
+        static void _GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+        static void _GLFWScrollCallback(GLFWwindow *window, double x, double y);
 #elif defined(PLATFORM_UWP)
         static Mouse *m_UWPMouse;
         static void _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
@@ -191,7 +191,7 @@ namespace ngine::input {
         /**
          * Create a new mouse input handler.
          */
-        Mouse(Window *window_);
+        Mouse(Window *window);
     public:
         /**
          * On mouse button pressed.
@@ -230,9 +230,9 @@ namespace ngine::input {
         /**
          * Cancel button press (Prevents double event checks).
          *
-         * @param button_ The button to cancel.
+         * @param button The button to cancel.
          */
-        void cancelButton(MouseButton button_);
+        void cancelButton(MouseButton button);
 
         /**
          * Get mouse position.
@@ -258,10 +258,10 @@ namespace ngine::input {
         /**
          * Is button down.
          *
-         * @param button_ Button to check.
+         * @param button Button to check.
          * @return Whether or not the button is down.
          */
-        bool isButtonDown(MouseButton button_);
+        bool isButtonDown(MouseButton button);
 
         /**
          * Was button pushed this frame.
@@ -269,7 +269,7 @@ namespace ngine::input {
          * @param button_Button to check.
          * @return Whether or not the button was pushed this frame.
          */
-        bool isButtonPressed(MouseButton button_);
+        bool isButtonPressed(MouseButton button);
 
         /**
          * Was button released this frame.
@@ -277,7 +277,7 @@ namespace ngine::input {
          * @param button_Button to check.
          * @return Whether or not the button was released this frame.
          */
-        bool isButtonReleased(MouseButton button_);
+        bool isButtonReleased(MouseButton button);
 
         /**
          * Poll Mouse Inputs.
@@ -288,19 +288,19 @@ namespace ngine::input {
          * Set mouse offset.
          * This is used internally for fixing mouse input.
          *
-         * @param ox_ X offset.
-         * @param oy_ Y offset.
+         * @param xOffset X offset.
+         * @param yOffset Y offset.
          */
-        void setOffset(float ox_, float oy_);
+        void setOffset(float xOffset, float yOffset);
 
         /**
          * Set mouse scale.
          * This is used internally for fixing mouse input.
          *
-         * @param sx_ X scale.
-         * @param sy_ Y scale.
+         * @param xScale X scale.
+         * @param yScale Y scale.
          */
-        void setScale(float sx_, float sy_);
+        void setScale(float xScale, float yScale);
     };
 }
 

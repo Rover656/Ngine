@@ -64,12 +64,12 @@ namespace ngine::graphics {
         /**
          * Create the image with pixel data.
          *
-         * @param pixelData_ The data to use.
-         * @param width_
-         * @param height_
-         * @param format_
+         * @param pixelData The data to use.
+         * @param width
+         * @param height
+         * @param format
          */
-        void _create(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
+        void _create(unsigned char *pixelData, unsigned int width, unsigned int height, PixelFormat format);
     public:
         /**
          * Image width.
@@ -104,34 +104,34 @@ namespace ngine::graphics {
         /**
          * Copy constructor.
          *
-         * @param original_ The image to be copied
+         * @param original The image to be copied
          */
-        Image(const Image &original_) = default;
+        Image(const Image &original) = default;
 
         /**
          * Move constructor.
          *
-         * @param old_ The old image.
+         * @param old The old image.
          */
-        Image(Image &&old_);
+        Image(Image &&old);
 
         /**
          * Load an image file.
          *
-         * @param path_ Image file to load.
+         * @param path Image file to load.
          */
-        Image(const filesystem::Path &path_);
+        Image(const filesystem::Path &path);
 
         /**
          * Create an image from raw pixel data.
          *
          * @note The pixel data will be copied.
-         * @param pixelData_ The pixel date for the image.
-         * @param width_ The image width.
-         * @param height_ The image height.
-         * @param format_ The image pixel format.
+         * @param pixelData The pixel date for the image.
+         * @param width The image width.
+         * @param height The image height.
+         * @param format The image pixel format.
          */
-        Image(unsigned char *pixelData_, unsigned int width_, unsigned int height_, PixelFormat format_);
+        Image(unsigned char *pixelData, unsigned int width, unsigned int height, PixelFormat format);
 
         ~Image();
 

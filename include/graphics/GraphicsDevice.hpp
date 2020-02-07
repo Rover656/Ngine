@@ -153,7 +153,7 @@ namespace ngine::graphics {
         /**
          * Create a graphics device.
          */
-        explicit GraphicsDevice(Window *window_);
+        explicit GraphicsDevice(Window *window);
         ~GraphicsDevice();
     public:
 
@@ -166,12 +166,27 @@ namespace ngine::graphics {
          * Desktop | OpenGL   | 3.3
          * UWP     | OpenGLES | 2.0
          */
-        static void SetTargetAPI(GraphicsAPI api_, int majorVersion_, int minorVersion_);
+        static void SetTargetAPI(GraphicsAPI api, int majorVersion, int minorVersion);
 
+        /**
+         * Get the target API.
+         *
+         * @return Target graphics API.
+         */
         static GraphicsAPI GetTargetAPI();
 
+        /**
+         * Get the target API major version.
+         *
+         * @return Target API major version.
+         */
         static int GetTargetAPIMajorVersion();
 
+        /**
+         * Get the target API minor version.
+         *
+         * @return Target API minor version.
+         */
         static int GetTargetAPIMinorVersion();
 
         /**
@@ -182,7 +197,7 @@ namespace ngine::graphics {
         /**
          * Clear the current framebuffer with the given color.
          */
-        void clear(Color color_);
+        void clear(Color color);
 
         /**
          * Get the current render target.
@@ -196,9 +211,9 @@ namespace ngine::graphics {
          *
          * @warning Do not provide null, use `PopTarget` instead.
          * @warning This will force all renderers to draw.
-         * @param target_ The new target.
+         * @param target The new target.
          */
-        void pushTarget(RenderTarget *target_);
+        void pushTarget(RenderTarget *target);
 
         /**
          * Pop the current target off of the stack.
@@ -240,9 +255,9 @@ namespace ngine::graphics {
         /**
          * Multiply the current matrix.
          *
-         * @param matrix_ Multiplier.
+         * @param matrix Multiplier.
          */
-        void multView(const Matrix &matrix_);
+        void multView(const Matrix &matrix);
 
         /**
          * Setup the framebuffer.

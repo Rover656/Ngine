@@ -89,7 +89,8 @@ namespace ngine::audio {
          * @param pUserData Userdata.
          * @return The number of frames read.
          */
-        static ma_uint32 _audioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
+        static ma_uint32
+        _audioBufferDSPRead(ma_pcm_converter *pDSP, void *pFramesOut, ma_uint32 frameCount, void *pUserData);
 
         /**
          * Log miniaudio errors.
@@ -99,17 +100,18 @@ namespace ngine::audio {
          * @param logLevel Log/Error level.
          * @param msg Log message.
          */
-        static void _logCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char* msg);
+        static void _logCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char *msg);
 
         /**
          * Audio mixer.
          *
-         * @param framesOut_ Frame output.
-         * @param framesIn_ Frame input.
-         * @param frameCount_ Frame count.
-         * @param localVolume_ Local/Master volume.
+         * @param framesOut Frame output.
+         * @param framesIn Frame input.
+         * @param frameCount Frame count.
+         * @param localVolume Local/Master volume.
          */
-        static void _mixAudioFrames(float *framesOut_, const float *framesIn_, ma_uint32 frameCount_, float localVolume_);
+        static void
+        _mixAudioFrames(float *framesOut, const float *framesIn, ma_uint32 frameCount, float localVolume);
 
         /**
          * Send audio data to the audio device.
@@ -119,28 +121,30 @@ namespace ngine::audio {
          * @param pFramesInput Frames in.
          * @param frameCount Frame count.
          */
-        static void _sendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput, ma_uint32 frameCount);
+        static void
+        _sendAudioDataToDevice(ma_device *pDevice, void *pFramesOut, const void *pFramesInput, ma_uint32 frameCount);
 
         /**
          * Track an audio buffer.
          *
-         * @param buffer_ Buffer to track
+         * @param buffer Buffer to track
          */
-        static void _trackAudioBuffer(AudioBuffer *buffer_);
+        static void _trackAudioBuffer(AudioBuffer *buffer);
 
         /**
          * Untrack an audio buffer.
          *
-         * @param buffer_ Buffer to stop tracking.
+         * @param buffer Buffer to stop tracking.
          */
-        static void _untrackAudioBuffer(AudioBuffer *buffer_);
+        static void _untrackAudioBuffer(AudioBuffer *buffer);
+
     public:
         /**
          * Close an audio buffer
          *
-         * @param buffer_ Buffer to close.
+         * @param buffer Buffer to close.
          */
-        static void CloseAudioBuffer(AudioBuffer *buffer_);
+        static void CloseAudioBuffer(AudioBuffer *buffer);
 
         /**
          * Close the audio device.
@@ -152,24 +156,26 @@ namespace ngine::audio {
         /**
          * Init audio buffer.
          *
-         * @param format_ Audio format
-         * @param channels_ Channel number.
-         * @param sampleRate_ Sample rate.
-         * @param bufferSizeInFrames_ Buffer size (frames).
-         * @param usage_ Buffer usage.
+         * @param format Audio format
+         * @param channels Channel number.
+         * @param sampleRate Sample rate.
+         * @param bufferSizeInFrames Buffer size (frames).
+         * @param usage Buffer usage.
          * @return A new audio buffer.
          */
-        static AudioBuffer *InitAudioBuffer(ma_format format_, ma_uint32 channels_, ma_uint32 sampleRate_, ma_uint32 bufferSizeInFrames_, AudioBufferUsage usage_);
+        static AudioBuffer *
+        InitAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sampleRate, ma_uint32 bufferSizeInFrames,
+                        AudioBufferUsage usage);
 
         /**
          * Init audio stream.
          *
-         * @param sampleRate_ Sample rate.
-         * @param sampleSize_ Sample size.
-         * @param channels_ Channel count.
+         * @param sampleRate Sample rate.
+         * @param sampleSize Sample size.
+         * @param channels Channel count.
          * @return A new audio stream.
          */
-        static AudioStream InitAudioStream(unsigned int sampleRate_, unsigned int sampleSize_, unsigned int channels_);
+        static AudioStream InitAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels);
 
         /**
          * Init audio device.
@@ -188,9 +194,9 @@ namespace ngine::audio {
         /**
          * Set the master volume.
          *
-         * @param vol_ The new master volume.
+         * @param vol The new master volume.
          */
-        static void SetMasterVolume(float vol_);
+        static void SetMasterVolume(float vol);
 
         /**
          * Update.

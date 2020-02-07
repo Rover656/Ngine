@@ -25,37 +25,37 @@
 #include <cmath>
 
 namespace ngine::graphics {
-    int VertexDataConverter::GetTriangleIndices(PrimitiveType currentType_, int vertexCount_, unsigned short **indices_) {
-        switch (currentType_) {
+    int VertexDataConverter::GetTriangleIndices(PrimitiveType currentType, int vertexCount, unsigned short **indices) {
+        switch (currentType) {
             case PrimitiveType::TriangleFan: {
                 // Create array
-                *indices_ = new unsigned short[(vertexCount_ - 1) * 3];
+                *indices = new unsigned short[(vertexCount - 1) * 3];
 
-                for (auto i = 0; i + 2 < vertexCount_; i++) {
-                    (*indices_)[i * 3 + 0] = 0;
-                    (*indices_)[i * 3 + 1] = i + 1;
-                    (*indices_)[i * 3 + 2] = i + 2;
+                for (auto i = 0; i + 2 < vertexCount; i++) {
+                    (*indices)[i * 3 + 0] = 0;
+                    (*indices)[i * 3 + 1] = i + 1;
+                    (*indices)[i * 3 + 2] = i + 2;
                 }
 
                 // Return count.
-                return (vertexCount_ - 1) * 3;
+                return (vertexCount - 1) * 3;
             }
             case PrimitiveType::Quads: {
                 // Create array
-                *indices_ = new unsigned short[vertexCount_ / 4 * 6];
+                *indices = new unsigned short[vertexCount / 4 * 6];
 
                 // Generate indices
-                for (auto i = 0; i < floor(vertexCount_ / 4); i++) {
-                    (*indices_)[i * 6 + 0] = i * 4 + 0;
-                    (*indices_)[i * 6 + 1] = i * 4 + 1;
-                    (*indices_)[i * 6 + 2] = i * 4 + 3;
-                    (*indices_)[i * 6 + 3] = i * 4 + 1;
-                    (*indices_)[i * 6 + 4] = i * 4 + 2;
-                    (*indices_)[i * 6 + 5] = i * 4 + 3;
+                for (auto i = 0; i < floor(vertexCount / 4); i++) {
+                    (*indices)[i * 6 + 0] = i * 4 + 0;
+                    (*indices)[i * 6 + 1] = i * 4 + 1;
+                    (*indices)[i * 6 + 2] = i * 4 + 3;
+                    (*indices)[i * 6 + 3] = i * 4 + 1;
+                    (*indices)[i * 6 + 4] = i * 4 + 2;
+                    (*indices)[i * 6 + 5] = i * 4 + 3;
                 }
 
                 // Return count
-                return vertexCount_ / 4 * 6;
+                return vertexCount / 4 * 6;
             }
             default:
                 Console::Fail("VertexDataTool", "Conversion cannot be completed.");

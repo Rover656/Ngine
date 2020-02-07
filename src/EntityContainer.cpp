@@ -23,18 +23,18 @@
 #include "Entity.hpp"
 
 namespace ngine {
-    void EntityContainer::_addEntity(Entity *entity_) {
+    void EntityContainer::_addEntity(Entity *entity) {
         if (m_type == ENTITY) {
             auto meEnt = (Entity*) this;
-            entity_->m_parentEntity = meEnt;
-            entity_->_addToScene(meEnt->m_parentScene);
+            entity->m_parentEntity = meEnt;
+            entity->_addToScene(meEnt->m_parentScene);
         } else {
             auto meScene = (Scene*) this;
-            entity_->_addToScene(meScene);
+            entity->_addToScene(meScene);
         }
     }
 
-    EntityContainer::EntityContainer(EntityContainer::ContainerType type_) : m_type(type_) {}
+    EntityContainer::EntityContainer(EntityContainer::ContainerType type) : m_type(type) {}
 
     EntityContainer::~EntityContainer() {
         // Delete entities
@@ -44,30 +44,30 @@ namespace ngine {
         m_entities.clear();
     }
 
-    bool EntityContainer::removeChild(const std::string &name_, bool delete_) {
+    bool EntityContainer::removeChild(const std::string &name, bool deleteChild) {
         // Get the entity
-        const auto ent = getChild<Entity>(name_);
+        const auto ent = getChild<Entity>(name);
 
         if (ent != nullptr) {
             // Destroy the entity
             ent->_removeFromScene();
 
             // Remove entity from map
-            m_entities.erase(name_);
+            m_entities.erase(name);
 
             // Delete entity from memory
-            if (delete_) delete ent;
+            if (deleteChild) delete ent;
             return true;
         }
 
         return false;
     }
 
-    bool EntityContainer::removeChild(Entity *entity_, bool delete_) {
+    bool EntityContainer::removeChild(Entity *entity, bool deleteChild) {
         // Search for the entity
         for (const auto &ent : m_entities) {
-            if (ent.second == entity_)
-                return removeChild(ent.first, delete_);
+            if (ent.second == entity)
+                return removeChild(ent.first, deleteChild);
         }
 
         return false;

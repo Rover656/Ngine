@@ -48,7 +48,7 @@ namespace ngine::physics {
     public:
         // Public Constructor
 
-        PhysicsFixture(b2Fixture *fixture_);
+        PhysicsFixture(b2Fixture *fixture);
 
         // Destructor
 
@@ -114,7 +114,7 @@ namespace ngine::physics {
         /*
          * Set if this fixture is a sensor.
          */
-        void setSensor(bool sensor_);
+        void setSensor(bool sensor);
 
         /*
          * Test a point for containment in this fixture.

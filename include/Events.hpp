@@ -74,10 +74,10 @@ namespace ngine {
         /**
          * Create an event handler.
          *
-         * @param func_ The function to be used as the callback
+         * @param func The function to be used as the callback
          */
-        FunctionEventHandler(void(*func_)(ArgTypes...)) {
-            AttachedFunction = func_;
+        FunctionEventHandler(void(*func)(ArgTypes...)) {
+            AttachedFunction = func;
         }
 
         void invoke(ArgTypes... args) override {
@@ -112,12 +112,12 @@ namespace ngine {
         /**
          * Create a class method event handler.
          *
-         * @param obj_ The class whose member method we will use.
-         * @param func_ The class method we will use.
+         * @param obj The class whose member method we will use.
+         * @param func The class method we will use.
          */
-        ClassMethodEventHandler(Class *obj_, void (Class::*func_)(ArgTypes...)) {
-            AttachedClass = obj_;
-            AttachedMethod = func_;
+        ClassMethodEventHandler(Class *obj, void (Class::*func)(ArgTypes...)) {
+            AttachedClass = obj;
+            AttachedMethod = func;
         }
 
         void invoke(ArgTypes... args) override {
@@ -162,14 +162,14 @@ namespace ngine {
         /**
          * Create an event handler attachment.
          *
-         * @param event_ The event we are following attachment to.
-         * @param handler_ The handlerer we are following.
+         * @param event The event we are following attachment to.
+         * @param handler The handlerer we are following.
          */
-        EventAttachment(Event<ArgTypes...> * event_, AbstractEventHandler<ArgTypes...> *handler_) {
+        EventAttachment(Event<ArgTypes...> * event, AbstractEventHandler<ArgTypes...> *handler) {
             // Create attachment info
             AttachmentInfo = std::make_shared<InternalAttachmentInformation>();
-            AttachmentInfo->AttachedEvent = event_;
-            AttachmentInfo->Handler = handler_;
+            AttachmentInfo->AttachedEvent = event;
+            AttachmentInfo->Handler = handler;
         }
 
         /**
@@ -217,15 +217,15 @@ namespace ngine {
         /**
          * Attach the event handler
          *
-         * @param handler_ The event handler to be attached.
+         * @param handler The event handler to be attached.
          * @return The event attachment information.
          */
-        EventAttachment<ArgTypes...> attach(AbstractEventHandler<ArgTypes...> *handler_) {
+        EventAttachment<ArgTypes...> attach(AbstractEventHandler<ArgTypes...> *handler) {
             // Add
-            m_handlers.push_back(handler_);
+            m_handlers.push_back(handler);
 
             // Return attachment information
-            return {this, handler_};
+            return {this, handler};
         }
 
         /**
@@ -240,19 +240,19 @@ namespace ngine {
         /**
          * Detach an event handler from the event.
          *
-         * @param handler_ The handler to be detached.
+         * @param handler The handler to be detached.
          */
-        void detach(AbstractEventHandler<ArgTypes...> *handler_) {
+        void detach(AbstractEventHandler<ArgTypes...> *handler) {
             // Find in handler array
-            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler_);
+            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler);
             if (iterator == m_handlers.end())
                 throw std::runtime_error("This event handler is not attached to this event.");
 
             // Remove from handlers vector
-            m_handlers.erase(std::remove(m_handlers.begin(), m_handlers.end(), handler_), m_handlers.end());
+            m_handlers.erase(std::remove(m_handlers.begin(), m_handlers.end(), handler), m_handlers.end());
 
             // Delete handler
-            delete handler_;
+            delete handler;
         }
 
         /**
@@ -269,11 +269,11 @@ namespace ngine {
         /**
          * Whether or not the handler is attached to us.
          *
-         * @param handler_ The handler to check.
+         * @param handler The handler to check.
          * @return If the handler is attached.
          */
-        bool isAttached(AbstractEventHandler<ArgTypes...> *handler_) const {
-            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler_);
+        bool isAttached(AbstractEventHandler<ArgTypes...> *handler) const {
+            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler);
             return iterator != m_handlers.end();
         }
 
@@ -281,8 +281,8 @@ namespace ngine {
             invoke(args...);
         }
 
-        EventAttachment<ArgTypes...> operator+=(AbstractEventHandler<ArgTypes...> *handler_) {
-            return attach(handler_);
+        EventAttachment<ArgTypes...> operator+=(AbstractEventHandler<ArgTypes...> *handler) {
+            return attach(handler);
         }
     };
 }

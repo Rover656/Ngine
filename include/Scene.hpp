@@ -46,8 +46,8 @@ namespace ngine {
         /**
          * Create a new scene loaded event arg.
          */
-        SceneLoadEventArgs(Game *game_)
-                : ParentGame(game_) {}
+        SceneLoadEventArgs(Game *game)
+                : ParentGame(game) {}
     };
 
     /**
@@ -56,6 +56,7 @@ namespace ngine {
      */
     class NEAPI Scene : public EntityContainer {
         friend class EntityContainer;
+
         friend class Entity;
 
         /**
@@ -92,7 +93,7 @@ namespace ngine {
         /**
          * The parent game.
          */
-        Game* m_parentGame = nullptr;
+        Game *m_parentGame = nullptr;
 
         /**
          * Whether or not the scene is paused.
@@ -117,24 +118,25 @@ namespace ngine {
         /**
          * Add an entity for tracking.
          *
-         * @param ent_ The entity to track.
+         * @param ent The entity to track.
          */
-        void _addEntity(Entity *ent_);
+        void _addEntity(Entity *ent);
 
         /**
          * Remove an entity from tracking.
          *
-         * @param ent_ Entity to stop tracking.
+         * @param ent Entity to stop tracking.
          */
-        void _removeEntity(Entity *ent_);
+        void _removeEntity(Entity *ent);
 
         /**
          * Track an entity depth value update.
          *
-         * @param newDepth_ The entitiy's new depth.
-         * @param ent_ The entity.
+         * @param newDepth The entitiy's new depth.
+         * @param ent The entity.
          */
-        void _updateEntityDepth(int newDepth_, Entity *ent_);
+        void _updateEntityDepth(int newDepth, Entity *ent);
+
     public:
         /**
          * Fired when the game loads the scene.
@@ -172,19 +174,20 @@ namespace ngine {
         /**
          * Create a standard scene.
          *
-         * @param parentGame_ The current game.
+         * @param parentGame The current game.
          */
-        explicit Scene(Game *parentGame_);
+        explicit Scene(Game *parentGame);
 
         /**
          * Create a new Scene for physics use.
          *
-         * @param parentGame_ The current game.
+         * @param parentGame The current game.
          * @param physicsEnabled_ Whether or not the game has physics enabled.
-         * @param grav_ The physics gravity vector.
-         * @param ppm_ The physics pixel to meter ratio.
+         * @param grav The physics gravity vector.
+         * @param ppm The physics pixel to meter ratio.
          */
-        Scene(Game* parentGame_, Vector2 grav_, float ppm_ = 1);
+        Scene(Game *parentGame, Vector2 grav, float ppm = 1);
+
         virtual ~Scene();
 
         /**
@@ -197,9 +200,9 @@ namespace ngine {
         /**
          * Set the currently active camera.
          *
-         * @param camera_ The new camera.
+         * @param camera The new camera.
          */
-        void setActiveCamera(graphics::Camera *camera_);
+        void setActiveCamera(graphics::Camera *camera);
 
         /**
          * Get the culling area.
@@ -239,11 +242,11 @@ namespace ngine {
         /**
          * Set the entity culling area.
          *
-         * @param width_ The cull area width.
-         * @param height_ The cull area height.
-         * @param centerInViewport_ Whether or not to center the cull area in the viewport.
+         * @param width The cull area width.
+         * @param height The cull area height.
+         * @param centerInViewport Whether or not to center the cull area in the viewport.
          */
-        void setCullArea(float width_, float height_, bool centerInViewport_);
+        void setCullArea(float width, float height, bool centerInViewport);
 
         /**
          * Get the current viewport.
@@ -327,9 +330,9 @@ namespace ngine {
          * Draw the scene.
          *
          * @warning Should only be called by the game.
-         * @param renderer_ The game renderer.
+         * @param renderer The game renderer.
          */
-        void draw(graphics::Renderer *renderer_);
+        void draw(graphics::Renderer *renderer);
 
         /**
          * Update the scene.

@@ -55,13 +55,13 @@ namespace ngine::physics {
         _B2World->ClearForces();
     }
 
-    PhysicsBody *PhysicsWorld::createBody(PhysicsBody::BodyInfo info_) {
-        return new PhysicsBody(this, info_);
+    PhysicsBody *PhysicsWorld::createBody(PhysicsBody::BodyInfo info) {
+        return new PhysicsBody(this, info);
     }
 
-    void PhysicsWorld::destroyBody(PhysicsBody *body_) {
-        _B2World->DestroyBody(body_->getB2Body());
-        delete body_;
+    void PhysicsWorld::destroyBody(PhysicsBody *body) {
+        _B2World->DestroyBody(body->getB2Body());
+        delete body;
     }
 
     bool PhysicsWorld::getAllowSleeping() {
@@ -122,28 +122,28 @@ namespace ngine::physics {
         return _B2World->IsLocked();
     }
 
-    void PhysicsWorld::setAllowSleeping(bool flag_) {
-        _B2World->SetAllowSleeping(flag_);
+    void PhysicsWorld::setAllowSleeping(bool flag) {
+        _B2World->SetAllowSleeping(flag);
     }
 
-    void PhysicsWorld::setAutoClearForces(bool flag_) {
-        _B2World->SetAutoClearForces(flag_);
+    void PhysicsWorld::setAutoClearForces(bool flag) {
+        _B2World->SetAutoClearForces(flag);
     }
 
-    void PhysicsWorld::setContinuousPhysics(bool flag_) {
-        _B2World->SetContinuousPhysics(flag_);
+    void PhysicsWorld::setContinuousPhysics(bool flag) {
+        _B2World->SetContinuousPhysics(flag);
     }
 
     void PhysicsWorld::setGravity(const Vector2 &gravVector) {
         _B2World->SetGravity({gravVector.X, gravVector.Y});
     }
 
-    void PhysicsWorld::setSubStepping(bool flag_) {
-        _B2World->SetSubStepping(flag_);
+    void PhysicsWorld::setSubStepping(bool flag) {
+        _B2World->SetSubStepping(flag);
     }
 
-    void PhysicsWorld::setWarmStarting(bool flag_) {
-        _B2World->SetWarmStarting(flag_);
+    void PhysicsWorld::setWarmStarting(bool flag) {
+        _B2World->SetWarmStarting(flag);
     }
 
     void PhysicsWorld::step(float timeStep, int velocityIterations, int positionIterations) {

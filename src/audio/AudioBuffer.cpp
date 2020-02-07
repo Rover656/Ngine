@@ -40,8 +40,8 @@ namespace ngine::audio {
         Paused = false;
     }
 
-    void AudioBuffer::setPitch(float pitch_) {
-        float pitchMul = pitch_ / Pitch;
+    void AudioBuffer::setPitch(float pitch) {
+        float pitchMul = pitch / Pitch;
 
         auto newOutputSampleRate = (ma_uint32)((float)DSP.src.config.sampleRateOut/pitchMul);
         Pitch *= (float)DSP.src.config.sampleRateOut/newOutputSampleRate;
@@ -49,8 +49,8 @@ namespace ngine::audio {
         ma_pcm_converter_set_output_sample_rate(&DSP, newOutputSampleRate);
     }
 
-    void AudioBuffer::setVolume(float vol_) {
-        Volume = vol_;
+    void AudioBuffer::setVolume(float vol) {
+        Volume = vol;
     }
 
     void AudioBuffer::stop() {

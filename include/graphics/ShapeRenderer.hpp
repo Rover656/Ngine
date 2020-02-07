@@ -39,13 +39,13 @@ namespace ngine::graphics {
         /**
          * Add vertices for a line to the current batch.
          *
-         * @param renderer_ Renderer.
-         * @param v1_ From.
-         * @param v2_ To.
-         * @param color_ Line color.
-         * @param thickness_ Line thickness.
+         * @param renderer Renderer.
+         * @param v1 From.
+         * @param v2 To.
+         * @param color Line color.
+         * @param thickness Line thickness.
          */
-        static void _drawLine(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Color color_, float thickness_ = 1);
+        static void _drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness = 1);
 
     public:
         /**
@@ -65,73 +65,72 @@ namespace ngine::graphics {
         /**
          * Draw a line.
          *
-         * @param renderer_ The game renderer.
-         * @param v1_ Starting line position.
-         * @param v2_ Ending line position.
-         * @param color_ Line color.
-         * @param thickness_ The line thickness in pixels.
+         * @param renderer The game renderer.
+         * @param v1 Starting line position.
+         * @param v2 Ending line position.
+         * @param color Line color.
+         * @param thickness The line thickness in pixels.
          */
-        static void
-        DrawLine(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Color color_, float thickness_ = 1);
+        static void DrawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness = 1);
 
         /**
          * Draw a circle
          *
-         * @param renderer_ The game renderer.
-         * @param center_ The center point of the circle.
-         * @param radius_ The circle radius.
-         * @param color_ The circle color.
-         * @param outline_ Whether or not this should be an outline.
-         * @param lineThickness_ The thickness of the line (if drawing an outline).
+         * @param renderer The game renderer.
+         * @param center The center point of the circle.
+         * @param radius The circle radius.
+         * @param color The circle color.
+         * @param outline Whether or not this should be an outline.
+         * @param lineThickness The thickness of the line (if drawing an outline).
          */
-        static void DrawCircle(Renderer *renderer_, Vector2 center_, float radius_, Color color_, bool outline_ = false,
-                               float lineThickness_ = 1);
+        static void DrawCircle(Renderer *renderer, Vector2 center, float radius, Color color, bool outline = false,
+                               float lineThickness = 1);
 
         /**
          * Draw a rectangle.
          *
-         * @param renderer_ The game renderer.
-         * @param position_ The position (top-left) of the rectangle.
-         * @param width_ The rectangle width.
-         * @param height_ The rectangle height.
-         * @param color_ The rectangle color.
-         * @param rotation_ The rectangle rotation.
-         * @param origin_ The origin of the rectangle (where it rotates from).
-         * @param outline_ Whether or not to draw an outline.
-         * @param lineThickness_ The line thickness for the outline.
+         * @param renderer The game renderer.
+         * @param position The position (top-left) of the rectangle.
+         * @param width The rectangle width.
+         * @param height The rectangle height.
+         * @param color The rectangle color.
+         * @param rotation The rectangle rotation.
+         * @param origin The origin of the rectangle (where it rotates from).
+         * @param outline Whether or not to draw an outline.
+         * @param lineThickness The line thickness for the outline.
          */
-        static void DrawRectangle(Renderer *renderer_, Vector2 position_, float width_, float height_, Color color_,
-                                  Angle rotation_ = 0, Vector2 origin_ = Vector2::Zero, bool outline_ = false,
-                                  float lineThickness_ = 1);
+        static void
+        DrawRectangle(Renderer *renderer, Vector2 position, float width, float height, Color color, Angle rotation = 0,
+                      Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         /**
          * Draw a rectangle.
          *
-         * @param renderer_ The game renderer.
-         * @param rect_ The rectangle to draw.
-         * @param color_ The rectangle color.
-         * @param rotation_ The rectangle rotation.
-         * @param origin_ The origin of the rectangle (where it rotates from).
-         * @param outline_ Whether or not to draw an outline.
-         * @param lineThickness_ The line thickness for the outline.
+         * @param renderer The game renderer.
+         * @param rect The rectangle to draw.
+         * @param color The rectangle color.
+         * @param rotation The rectangle rotation.
+         * @param origin The origin of the rectangle (where it rotates from).
+         * @param outline Whether or not to draw an outline.
+         * @param lineThickness The line thickness for the outline.
          */
-        static void DrawRectangle(Renderer *renderer_, Rectangle rect_, Color color_, Angle rotation_ = 0,
-                                  Vector2 origin_ = Vector2::Zero, bool outline_ = false, float lineThickness_ = 1);
+        static void DrawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation = 0,
+                                  Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         /**
          * Draw a rectangle.
          *
-         * @param renderer_ The game renderer.
-         * @param v1_ The first point (the peak).
-         * @param v2_ The second point (the right base).
-         * @param v3_ The third point (the left base).
-         * @param color_ The color of the triangle.
-         * @param outline_ Whether or not to draw an outline.
-         * @param lineThickness_ The line thickness for the outline.
+         * @param renderer The game renderer.
+         * @param v1 The first point (the peak).
+         * @param v2 The second point (the right base).
+         * @param v3 The third point (the left base).
+         * @param color The color of the triangle.
+         * @param outline Whether or not to draw an outline.
+         * @param lineThickness The line thickness for the outline.
          */
-        static void DrawTriangle(Renderer *renderer_, Vector2 v1_, Vector2 v2_, Vector2 v3_, Color color_,
-                                 Angle rotation_ = 0, Vector2 origin_ = Vector2::Zero, bool outline_ = false,
-                                 float lineThickness_ = 1);
+        static void
+        DrawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color, Angle rotation = 0,
+                     Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         // TODO: Draw polygon once shape classes are final
         // TODO: Drawing circle sectors etc.

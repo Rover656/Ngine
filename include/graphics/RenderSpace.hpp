@@ -88,41 +88,41 @@ namespace ngine::graphics {
         /**
          * Add a renderable node to the space.
          *
-         * @param node_ The node to add.
+         * @param node The node to add.
          */
-        void addNode(RenderableNode *node_);
+        void addNode(RenderableNode *node);
 
         /**
          * Remove a renderable node from the space.
          *
-         * @param node_ The node to remove.
+         * @param node The node to remove.
          */
-        void removeNode(RenderableNode *node_);
+        void removeNode(RenderableNode *node);
 
         /**
          * Create a new named camera.
          *
-         * @param name_ The name of the camera.
+         * @param name The name of the camera.
          * @return The new camera.
          */
-        Camera *createCamera(const std::string &name_);
+        Camera *createCamera(const std::string &name);
 
         /**
          * Get a named camera.
          *
-         * @param name_ The camera to get.
+         * @param name The camera to get.
          * @return The camera or null if not found.
          */
-        Camera *getCamera(const std::string &name_);
+        Camera *getCamera(const std::string &name);
 
         /**
          * Render everything in this space with the given camera optionally to a render target.
          *
-         * @param renderer_ The renderer to use to put this into the target.
-         * @param camera_ The camera to use.
-         * @param target_ Texture to render to or null.
+         * @param renderer The renderer to use to put this into the target.
+         * @param cameraName The camera to use.
+         * @param target Texture to render to or null.
          */
-        void render(Renderer *renderer_, const std::string &camera_, RenderTarget *target_ = nullptr);
+        void render(Renderer *renderer, const std::string &cameraName, RenderTarget *target = nullptr);
     };
 }
 

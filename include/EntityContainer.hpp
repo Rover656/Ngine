@@ -59,14 +59,14 @@ namespace ngine {
         /**
          * Register entity in its parent.
          */
-        void _addEntity(Entity *entity_);
+        void _addEntity(Entity *entity);
     protected:
         /**
          * Initialize the entity container.
          *
-         * @param type_ The container type.
+         * @param type The container type.
          */
-        explicit EntityContainer(ContainerType type_);
+        explicit EntityContainer(ContainerType type);
     public:
         ~EntityContainer();
 
@@ -75,13 +75,13 @@ namespace ngine {
          *
          * @note The entity's lifecycle is now managed by this container.
          * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
-         * @param entity_ The entity to add.
+         * @param entity The entity to add.
          * @return An std::pair with first being name and second the entity
          */
         template <class EntityType = Entity>
-        std::pair<std::string, EntityType *> addChild(EntityType *entity_) {
+        std::pair<std::string, EntityType *> addChild(EntityType *entity) {
             // Get as base type
-            auto ent = (Entity *) entity_;
+            auto ent = (Entity *) entity;
 
             if (ent != nullptr) {
                 std::string name = "Unique" + std::to_string(m_counter);
@@ -91,7 +91,7 @@ namespace ngine {
                 // Setup entity
                 _addEntity(ent);
 
-                return std::make_pair(name, entity_);
+                return std::make_pair(name, entity);
             }
 
             return std::make_pair("", nullptr);
@@ -102,26 +102,26 @@ namespace ngine {
          *
          * @note The entity's lifecycle is now managed by this container.
          * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
-         * @param name_ The name of the entity.
-         * @param entity_ The entity to add.
+         * @param name The name of the entity.
+         * @param entity The entity to add.
          * @return The entity, for chaining commands.
          */
         template <class EntityType = Entity>
-        EntityType *addChild(std::string name_, EntityType *entity_) {
+        EntityType *addChild(std::string name, EntityType *entity) {
             // Check the name is not taken
-            if (hasChild(name_))
+            if (hasChild(name))
                 return nullptr;
 
             // Get as base type
-            auto ent = (Entity *) entity_;
+            auto ent = (Entity *) entity;
 
             if (ent != nullptr) {
-                m_entities.insert({name_, ent});
+                m_entities.insert({name, ent});
 
                 // Setup entity
                 _addEntity(ent);
 
-                return entity_;
+                return entity;
             }
 
             return nullptr;
@@ -130,33 +130,33 @@ namespace ngine {
         /**
          * Remove an entity by name.
          *
-         * @param name_ The name of the entity to remove.
+         * @param name The name of the entity to remove.
          * @param Whether or not to delete the entity from memory.
          * @return Whether the entity was removed or not.
          */
-        bool removeChild(const std::string &name_, bool delete_ = true);
+        bool removeChild(const std::string &name, bool deleteChild = true);
 
         /**
          * Remove entity by pointer.
          *
-         * @param entity_ The entity to be removed.
+         * @param entity The entity to be removed.
          * @param Whether or not to delete the entity from memory.
          * @return Whether the entity was removed or not.
          */
-        bool removeChild(Entity *entity_, bool delete_ = true);
+        bool removeChild(Entity *entity, bool deleteChild = true);
 
         /**
          * Get an entity by name.
          *
          * @tparam EntityType The entity type. Must be derrived from ngine::Entity.
-         * @param name_ The name of the entity to get.
+         * @param name The name of the entity to get.
          * @return The entity, or null if not found.
          */
         template <class EntityType = Entity>
-        EntityType *getChild(const std::string &name_) {
+        EntityType *getChild(const std::string &name) {
             // Try to find the entity
-            if (hasChild(name_)) {
-                return (EntityType *) m_entities.at(name_);
+            if (hasChild(name)) {
+                return (EntityType *) m_entities.at(name);
             }
 
             return nullptr;
@@ -201,16 +201,16 @@ namespace ngine {
         /**
          * Test whether there is an entity by this name.
          *
-         * @param name_ The entity to test for.
+         * @param name The entity to test for.
          * @return Whether the entity exists or not.
          */
         template<class EntityType = Entity>
-        bool hasChild(const std::string &name_) {
-            auto exists = m_entities.find(name_) != m_entities.end();
+        bool hasChild(const std::string &name) {
+            auto exists = m_entities.find(name) != m_entities.end();
             if (!exists) return false;
 
             // Dynamic cast to check type.
-            return dynamic_cast<EntityType *>(m_entities[name_]) != nullptr;
+            return dynamic_cast<EntityType *>(m_entities[name]) != nullptr;
         }
     };
 }

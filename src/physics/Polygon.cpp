@@ -23,49 +23,49 @@
 #include <Box2D/Box2D.h>
 
 namespace ngine::physics {
-    b2PolygonShape Polygon::_createPolygonShape(std::vector<Vector2> verts_) {
+    b2PolygonShape Polygon::_createPolygonShape(std::vector<Vector2> verts) {
         b2PolygonShape shp;
-        shp.Set((b2Vec2 *)verts_.data(), verts_.size());
+        shp.Set((b2Vec2 *)verts.data(), verts.size());
         return shp;
     }
 
-    b2PolygonShape Polygon::_createPolygonShape(std::vector<Vector2> verts_, std::vector<Vector2> normals_) {
+    b2PolygonShape Polygon::_createPolygonShape(std::vector<Vector2> verts, std::vector<Vector2> normals) {
         b2PolygonShape shp;
-        shp.Set((b2Vec2 *)verts_.data(), verts_.size());
-        for (auto i = 0; i < normals_.size(); i++)
-            shp.m_normals[i] = {normals_[i].X, normals_[i].Y};
+        shp.Set((b2Vec2 *)verts.data(), verts.size());
+        for (auto i = 0; i < normals.size(); i++)
+            shp.m_normals[i] = {normals[i].X, normals[i].Y};
         return shp;
     }
 
-    Polygon::Polygon(std::vector<Vector2> verts_) {
-        set(std::move(verts_));
+    Polygon::Polygon(std::vector<Vector2> verts) {
+        set(std::move(verts));
     }
 
-    Polygon::Polygon(const b2PolygonShape &shape_) {
+    Polygon::Polygon(const b2PolygonShape &shape) {
         // Get count
-        Count = shape_.m_count;
+        Count = shape.m_count;
 
         // Get centroid
-        Centroid = {shape_.m_centroid.x, shape_.m_centroid.y};
+        Centroid = {shape.m_centroid.x, shape.m_centroid.y};
 
         // Get vertices
-        auto verts = shape_.m_vertices;
-        for (auto i = 0 ; i < shape_.m_count; i++) {
+        auto verts = shape.m_vertices;
+        for (auto i = 0 ; i < shape.m_count; i++) {
             Vertices[i] = {verts[i].x, verts[i].y};
         }
         // Get normals
-        auto norms = shape_.m_normals;
-        for (auto i = 0 ; i < shape_.m_count; i++) {
+        auto norms = shape.m_normals;
+        for (auto i = 0 ; i < shape.m_count; i++) {
             Normals[i] = {norms[i].x, norms[i].y};
         }
     }
 
-    void Polygon::set(std::vector<Vector2> verts_) {
+    void Polygon::set(std::vector<Vector2> verts) {
         // Save count
-        Count = verts_.size();
+        Count = verts.size();
 
         // Get normals from b2d
-        auto shp = _createPolygonShape(verts_);
+        auto shp = _createPolygonShape(verts);
 
         // Get normals
         auto norms = shp.m_normals;

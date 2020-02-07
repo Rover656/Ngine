@@ -39,6 +39,9 @@ namespace ngine::graphics {
          */
         Texture2D *m_texture;
 
+        /**
+         * The graphics API.
+         */
         API::PlatformGraphicsAPI *m_API;
     public:
         union {
@@ -63,10 +66,10 @@ namespace ngine::graphics {
         /**
          * Create a render target.
          *
-         * @param width_ Render target width.
-         * @param height_ Render target height.
+         * @param width Render target width.
+         * @param height Render target height.
          */
-        RenderTarget(GraphicsDevice *graphicsDevice_, unsigned int width_, unsigned int height_);
+        RenderTarget(GraphicsDevice *graphicsDevice, unsigned int width, unsigned int height);
         ~RenderTarget();
 
         /**

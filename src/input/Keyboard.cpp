@@ -31,18 +31,18 @@
 namespace ngine::input {
 #if defined(PLATFORM_DESKTOP)
 
-    void Keyboard::_GLFWKeyCallback(GLFWwindow *window_, int key_, int scancode_, int action_, int mods_) {
-        auto kbd = ((Window *) glfwGetWindowUserPointer(window_))->getKeyboard();
-        kbd->m_nextKeyState[key_] = (action_ != GLFW_RELEASE);
-        kbd->m_latestKeyPress = (Key)key_;
+    void Keyboard::_GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+        auto kbd = ((Window *) glfwGetWindowUserPointer(window))->getKeyboard();
+        kbd->m_nextKeyState[key] = (action != GLFW_RELEASE);
+        kbd->m_latestKeyPress = (Key)key;
     }
 
 #elif defined(PLATFORM_UWP)
     Keyboard *Keyboard::m_UWPKeyboard = nullptr;
 
-    Key Keyboard::_keyFromVirtualKey(int key_) {
+    Key Keyboard::_keyFromVirtualKey(int key) {
         Key actualKey = KEY_NONE;
-        switch (key_)
+        switch (key)
         {
             case 0x08: actualKey = KEY_BACKSPACE; break;
             case 0x20: actualKey = KEY_SPACE; break;
@@ -124,10 +124,10 @@ namespace ngine::input {
     }
 #endif
 
-    Keyboard::Keyboard(Window *window_) {
+    Keyboard::Keyboard(Window *window) {
 #if defined(PLATFORM_DESKTOP)
         // Register events
-        glfwSetKeyCallback(window_->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
+        glfwSetKeyCallback(window->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
         // Throw error.
         if (m_UWPKeyboard != nullptr)
@@ -137,9 +137,9 @@ namespace ngine::input {
         m_UWPKeyboard = this;
 
         // UWP events
-        auto window = CoreWindow::GetForCurrentThread();
-        window->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyDown);
-        window->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyUp);
+        auto UWPwindow = CoreWindow::GetForCurrentThread();
+        UWPwindow->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyDown);
+        UWPwindow->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyUp);
 #endif
 
         // Set key states to default to prevent bugs
@@ -157,22 +157,22 @@ namespace ngine::input {
         return m_latestKeyPress;
     }
 
-    bool Keyboard::isKeyDown(Key key_) {
-        if (key_ == KEY_NONE) return false;
-        return m_currentKeyState[key_];
+    bool Keyboard::isKeyDown(Key key) {
+        if (key == KEY_NONE) return false;
+        return m_currentKeyState[key];
     }
 
-    bool Keyboard::isKeyPressed(Key key_) {
-        return m_currentKeyState[key_] != m_previousKeyState[key_] && m_currentKeyState[key_];
+    bool Keyboard::isKeyPressed(Key key) {
+        return m_currentKeyState[key] != m_previousKeyState[key] && m_currentKeyState[key];
     }
 
-    bool Keyboard::isKeyReleased(Key key_) {
-        return m_currentKeyState[key_] != m_previousKeyState[key_] && !m_currentKeyState[key_];
+    bool Keyboard::isKeyReleased(Key key) {
+        return m_currentKeyState[key] != m_previousKeyState[key] && !m_currentKeyState[key];
     }
 
-    bool Keyboard::isKeyUp(Key key_) {
-        if (key_ == KEY_NONE) return true;
-        return !isKeyDown(key_);
+    bool Keyboard::isKeyUp(Key key) {
+        if (key == KEY_NONE) return true;
+        return !isKeyDown(key);
     }
 
     void Keyboard::pollInputs() {
@@ -193,7 +193,7 @@ namespace ngine::input {
         }
     }
 
-    void Keyboard::setExitKey(Key key_) {
-        m_exitKey = key_;
+    void Keyboard::setExitKey(Key key) {
+        m_exitKey = key;
     }
 }

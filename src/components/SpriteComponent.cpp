@@ -21,8 +21,8 @@
 #include "components/SpriteComponent.hpp"
 
 namespace ngine::components {
-    SpriteComponent::SpriteComponent(Entity *parent_, const graphics::Sprite &sprite_, Vector2 origin_)
-            : Component(parent_), m_origin(origin_), m_sprite(sprite_) {
+    SpriteComponent::SpriteComponent(Entity *parent, const graphics::Sprite &sprite, Vector2 origin)
+            : Component(parent), m_origin(origin), m_sprite(sprite) {
         subscribeToUpdate();
     }
 
@@ -30,8 +30,8 @@ namespace ngine::components {
         return Vector2();
     }
 
-    void SpriteComponent::setOrigin(const Vector2 &origin_) {
-        m_origin = origin_;
+    void SpriteComponent::setOrigin(const Vector2 &origin) {
+        m_origin = origin;
     }
 
     graphics::Sprite *SpriteComponent::getSprite() {
@@ -42,15 +42,15 @@ namespace ngine::components {
         return &m_sprite;
     }
 
-    void SpriteComponent::setSprite(const graphics::Sprite &sprite_) {
-        if (m_sprite != sprite_)
-            m_sprite = sprite_;
+    void SpriteComponent::setSprite(const graphics::Sprite &sprite) {
+        if (m_sprite != sprite)
+            m_sprite = sprite;
     }
 
-    void SpriteComponent::draw(graphics::Renderer *renderer_) {
-        Component::draw(renderer_);
+    void SpriteComponent::draw(graphics::Renderer *renderer) {
+        Component::draw(renderer);
         const auto par = getEntity<Entity>();
-        m_sprite.draw(renderer_, par->getPosition(), 1, par->getRotation().getDegrees(), m_origin);
+        m_sprite.draw(renderer, par->getPosition(), 1, par->getRotation().getDegrees(), m_origin);
     }
 
     void SpriteComponent::update() {

@@ -25,8 +25,8 @@
 #include <cstring>
 
 namespace ngine::graphics {
-    ShaderProgramState::ShaderProgramState(ShaderProgram *program_)
-            : AttachedProgram(program_) {
+    ShaderProgramState::ShaderProgramState(ShaderProgram *program)
+            : AttachedProgram(program) {
         // Check program
         if (!AttachedProgram->isFinal())
             Console::Fail("ShaderProgramState", "Shader program must be marked as final before use.");
@@ -48,11 +48,11 @@ namespace ngine::graphics {
         m_data = nullptr;
     }
 
-    const void *ShaderProgramState::getUniform(const std::string &name_) {
+    const void *ShaderProgramState::getUniform(const std::string &name) {
         // Find the uniform
         ShaderDataStructure uniformDesc;
         for (const auto& uniform : AttachedProgram->getUniforms()) {
-            if (uniform.Name == name_) {
+            if (uniform.Name == name) {
                 uniformDesc = uniform;
                 break;
             }
@@ -66,14 +66,14 @@ namespace ngine::graphics {
         return &dat[uniformDesc.Offset];
     }
 
-    void ShaderProgramState::setUniform(const std::string &name_, void *data_) {
+    void ShaderProgramState::setUniform(const std::string &name, void *data) {
         if (m_data == nullptr)
             Console::Fail("ShaderUniformData", "Memory not allocated. Call Allocate() first.");
 
         // Find the uniform
         ShaderDataStructure uniformDesc;
         for (const auto& uniform : AttachedProgram->getUniforms()) {
-            if (uniform.Name == name_) {
+            if (uniform.Name == name) {
                 uniformDesc = uniform;
                 break;
             }
@@ -84,15 +84,15 @@ namespace ngine::graphics {
 
         // Copy data in
         char *dat = (char *) m_data;
-        memcpy(&dat[uniformDesc.Offset], data_, uniformDesc.getSize() * uniformDesc.Count);
+        memcpy(&dat[uniformDesc.Offset], data, uniformDesc.getSize() * uniformDesc.Count);
     }
 
-    void ShaderProgramState::setUniformEx(std::vector<std::string> nameTree_, void *data_) {
+    void ShaderProgramState::setUniformEx(std::vector<std::string> nameTree, void *data) {
         ShaderDataStructure target;
 
         // Find initial structure
         for (const auto& uniform : AttachedProgram->getUniforms()) {
-            if (uniform.Name == nameTree_[0]) {
+            if (uniform.Name == nameTree[0]) {
                 target = uniform;
                 break;
             }
@@ -103,7 +103,7 @@ namespace ngine::graphics {
 
         // Navigate name tree
         int dataOffset = target.Offset;
-        for (auto i = 1; i < nameTree_.size(); i++) {
+        for (auto i = 1; i < nameTree.size(); i++) {
             switch (target.Type) {
                 case ShaderDataType::Int:
                 case ShaderDataType::UnsignedInt:
@@ -114,7 +114,7 @@ namespace ngine::graphics {
                 case ShaderDataType::Struct:
                     // Find target within this struct
                     for (const auto& member : target.Members) {
-                        if (member.Name == nameTree_[i]) {
+                        if (member.Name == nameTree[i]) {
                             target = member;
                             dataOffset += target.Offset;
                             goto found;
@@ -123,7 +123,7 @@ namespace ngine::graphics {
                     break;
                 case ShaderDataType::Array:
                     auto mem = target.Members[0];
-                    auto index = std::stoi(nameTree_[i]);
+                    auto index = std::stoi(nameTree[i]);
                     if (index < target.Count) {
                         target = mem;
                         dataOffset += target.getSize() * index;
@@ -137,7 +137,7 @@ namespace ngine::graphics {
 
         // Copy data in
         char *dat = (char *) m_data;
-        memcpy(&dat[dataOffset], data_, target.getSize() * target.Count);
+        memcpy(&dat[dataOffset], data, target.getSize() * target.Count);
     }
 
     const void *ShaderProgramState::getData() const {

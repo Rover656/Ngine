@@ -23,13 +23,13 @@
 #include "graphics/API/PlatformGraphicsAPI.hpp"
 
 namespace ngine::graphics {
-    Shader::Shader(GraphicsDevice *graphicsDevice_, ShaderType type_, const char *src_)
-            : Type(type_) {
+    Shader::Shader(GraphicsDevice *graphicsDevice, ShaderType type, const char *src)
+            : Type(type) {
         // Get API
-        m_API = graphicsDevice_->getAPI();
+        m_API = graphicsDevice->getAPI();
 
         // Create
-        m_API->createShader(this, (void *) src_);
+        m_API->createShader(this, (void *) src);
     }
 
     Shader::~Shader() {

@@ -43,9 +43,9 @@ namespace ngine::graphics {
         return m_defaultFont;
     }
 
-    int Font::getGlyphIndex(int char_) const {
+    int Font::getGlyphIndex(int character) const {
         for (auto i = 0; i < m_characterCount; i++) {
-            if (m_characters[i].Character == char_) return i;
+            if (m_characters[i].Character == character) return i;
         }
 
         // Fail.
@@ -60,23 +60,23 @@ namespace ngine::graphics {
         return m_texture->isValid();
     }
 
-    Font *Font::LoadTTFFont(GraphicsDevice *graphicsDevice_, const filesystem::Path &path_, int baseSize_,
-                            std::vector<int> fontChars_) {
+    Font *Font::LoadTTFFont(GraphicsDevice *graphicsDevice, const filesystem::Path &path, int baseSize,
+                            std::vector<int> fontChars) {
         // Check size
-        if (baseSize_ < 1) throw std::runtime_error("Invalid base size.");
+        if (baseSize < 1) throw std::runtime_error("Invalid base size.");
 
         // Initialize font
         auto font = new Font();
 
         // Set default info
-        font->m_baseSize = baseSize_;
+        font->m_baseSize = baseSize;
 
         // Load font info
-        font->_loadFontInfo(path_, std::move(fontChars_));
+        font->_loadFontInfo(path, std::move(fontChars));
 
         if (!font->m_characters.empty()) {
             // Generate font atals
-            font->_generateAtlas(graphicsDevice_);
+            font->_generateAtlas(graphicsDevice);
 
             // Free individual character images
             for (auto i = 0; i < font->m_characterCount; i++) {
@@ -89,8 +89,8 @@ namespace ngine::graphics {
         return font;
     }
 
-    void Font::SetDefaultFont(Font *font_) {
-        m_defaultFont = font_;
+    void Font::SetDefaultFont(Font *font) {
+        m_defaultFont = font;
     }
 
     void Font::free() {
@@ -104,55 +104,55 @@ namespace ngine::graphics {
         m_characters.clear();
     }
 
-    void Font::drawString(Renderer *renderer_, const std::string &string_, const Vector2 &position_, float fontSize_,
-                          float spacing_, const Color &color_, LineSpacing lineSpacing_, const Angle &rotation_,
-                          const Vector2 &origin_) {
+    void Font::drawString(Renderer *renderer, const std::string &string, const Vector2 &position, float fontSize,
+                          float spacing, const Color &color, LineSpacing lineSpacing, const Angle &rotation,
+                          const Vector2 &origin) {
         // Check if a single batch will fit:
-        auto willFit = renderer_->willFit(PrimitiveType::Quads, string_.length());
+        auto willFit = renderer->willFit(PrimitiveType::Quads, string.length());
         if (!willFit) // TODO: Automatically batch text for the developer
             Console::Fail("Font", "Too much text for a single buffer, please split your draw calls up.");
 
         // Transform to get it in the right place and orientation
-        renderer_->pushMatrix();
-        renderer_->translate({position_.X, position_.Y, 0});
-        renderer_->rotate(rotation_, {0, 0, 1});
-        renderer_->translate({-origin_.X, -origin_.Y, 0});
+        renderer->pushMatrix();
+        renderer->translate({position.X, position.Y, 0});
+        renderer->rotate(rotation, {0, 0, 1});
+        renderer->translate({-origin.X, -origin.Y, 0});
 
         // Ready our texture
-        renderer_->setTexture(m_texture);
-        renderer_->beginVertices(PrimitiveType::Quads);
+        renderer->setTexture(m_texture);
+        renderer->beginVertices(PrimitiveType::Quads);
 
         // Get ready to render text
-        float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize_ / m_baseSize;
+        float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize / m_baseSize;
 
         // Get line spacing as float
-        float lineSpacing = 1.5f;
-        switch (lineSpacing_) {
+        float lineSpacingf = 1.5f;
+        switch (lineSpacing) {
             case LineSpacing::One:
-                lineSpacing = 1.0f;
+                lineSpacingf = 1.0f;
                 break;
             case LineSpacing::OnePointFive:
-                lineSpacing = 1.5f;
+                lineSpacingf = 1.5f;
                 break;
             case LineSpacing::Two:
-                lineSpacing = 2.0f;
+                lineSpacingf = 2.0f;
                 break;
         }
 
         // Cycle over each character
-        for (auto i = 0; i < string_.length(); i++) {
-            auto letter = string_[i]; // TODO: Unicode support
+        for (auto i = 0; i < string.length(); i++) {
+            auto letter = string[i]; // TODO: Unicode support
             auto index = getGlyphIndex(letter);
 
             if (letter == '\n') {
                 // New line
-                textY += ((float) m_baseSize * lineSpacing) * scaleFactor;
+                textY += ((float) m_baseSize * lineSpacingf) * scaleFactor;
                 textX = 0;
             } else {
                 if (letter != ' ') {
                     // Translate to correct position
-                    renderer_->pushMatrix();
-                    renderer_->translate({textX + m_characters[index].OffsetX * scaleFactor,
+                    renderer->pushMatrix();
+                    renderer->translate({textX + m_characters[index].OffsetX * scaleFactor,
                                           textY + m_characters[index].OffsetY * scaleFactor, 0});
 
                     // Push vertices
@@ -161,76 +161,76 @@ namespace ngine::graphics {
                     auto height = m_characters[index].Rectangle.Height * scaleFactor;
                     auto atlasWidth = m_texture->Width;
                     auto atlasHeight = m_texture->Height;
-                    renderer_->pushVertex({
-                                                  {0, 0, 0},
-                                                  {
+                    renderer->pushVertex({
+                                                 {0, 0, 0},
+                                                 {
                                                           (srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Y) / (float) atlasHeight
-                                                  }, color_});
-                    renderer_->pushVertex({
-                                                  {0, height, 0},
-                                                  {
+                                                  }, color});
+                    renderer->pushVertex({
+                                                 {0, height, 0},
+                                                 {
                                                           (srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Height + srcRect.Y) / (float) atlasHeight
-                                                  }, color_});
-                    renderer_->pushVertex({
-                                                  {width, height, 0},
-                                                  {
+                                                  }, color});
+                    renderer->pushVertex({
+                                                 {width, height, 0},
+                                                 {
                                                           (srcRect.Width + srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Height + srcRect.Y) / (float) atlasHeight
-                                                  }, color_});
-                    renderer_->pushVertex({
-                                                  {width, 0, 0},
-                                                  {
+                                                  }, color});
+                    renderer->pushVertex({
+                                                 {width, 0, 0},
+                                                 {
                                                           (srcRect.Width + srcRect.X) / (float) atlasWidth,
                                                           (srcRect.Y) / (float) atlasHeight
-                                                  }, color_});
+                                                  }, color});
 
                     // Pop matrix
-                    renderer_->popMatrix();
+                    renderer->popMatrix();
                 }
 
                 if (m_characters[index].AdvanceX == 0)
-                    textX += ((float) m_characters[index].Rectangle.Width * scaleFactor + spacing_);
-                else textX += ((float) m_characters[index].AdvanceX * scaleFactor + spacing_);
+                    textX += ((float) m_characters[index].Rectangle.Width * scaleFactor + spacing);
+                else textX += ((float) m_characters[index].AdvanceX * scaleFactor + spacing);
             }
         }
 
         // End renderer
-        renderer_->endVertices();
-        renderer_->popMatrix();
+        renderer->endVertices();
+        renderer->popMatrix();
     }
 
-    void Font::drawString(Renderer *renderer_, const std::string &string_, const Rectangle &bounds_, float fontSize_,
-                          float spacing_, const Color &color_, LineSpacing lineSpacing_, TextAlignment alignment_,
-                          TextWrap wrap_, const Angle &rotation_, const Vector2 &origin_) {
+    void Font::drawString(Renderer *renderer, const std::string &string, const Rectangle &bounds, float fontSize,
+                          float spacing, const Color &color, LineSpacing lineSpacing, TextAlignment alignment,
+                          TextWrap wrap, const Angle &rotation, const Vector2 &origin) {
         Console::Fail("Font", "This version of DrawString is not yet implemented.");
     }
 
-    Vector2 Font::measureString(const std::string &string_, float fontSize_, float spacing_, LineSpacing lineSpacing_) {
+    Vector2 Font::measureString(const std::string &string, float fontSize, float spacing, LineSpacing lineSpacing) {
         // Get ready to process text
-        float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize_ / (float) m_baseSize, maxX = 0.0f;
+        float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize / (float) m_baseSize, maxX = 0.0f;
 
         // We are starting off by measuring height.
         textY = (float) m_baseSize * scaleFactor;
 
         // Get line spacing as float
-        float lineSpacing = 1.5f;
-        switch (lineSpacing_) {
+        float lineSpacingf = 1.5f;
+        switch (lineSpacing) {
             case LineSpacing::One:
-                lineSpacing = 1.0f;
+                lineSpacingf = 1.0f;
                 break;
             case LineSpacing::OnePointFive:
-                lineSpacing = 1.5f;
+                lineSpacingf = 1.5f;
                 break;
             case LineSpacing::Two:
-                lineSpacing = 2.0f;
+                lineSpacingf = 2.0f;
                 break;
         }
 
         // Cycle over each character
-        for (auto i = 0; i < string_.length(); i++) {
-            auto letter = string_[i]; // TODO: Unicode support
+        for (auto i = 0; i < string.length(); i++) {
+            auto letter = string[i]; // TODO: Unicode support
             auto index = getGlyphIndex(letter);
 
             if (letter == '\n') {
@@ -238,12 +238,12 @@ namespace ngine::graphics {
                 if (textX > maxX) maxX = textX;
 
                 // New line
-                textY += ((float) m_baseSize * lineSpacing) * scaleFactor;
+                textY += ((float) m_baseSize * lineSpacingf) * scaleFactor;
                 textX = 0;
             } else {
                 if (m_characters[index].AdvanceX == 0)
-                    textX += ((float) m_characters[index].Rectangle.Width * scaleFactor + spacing_);
-                else textX += ((float) m_characters[index].AdvanceX * scaleFactor + spacing_);
+                    textX += ((float) m_characters[index].Rectangle.Width * scaleFactor + spacing);
+                else textX += ((float) m_characters[index].AdvanceX * scaleFactor + spacing);
             }
         }
         if (textX > maxX) maxX = textX;
@@ -252,21 +252,21 @@ namespace ngine::graphics {
     }
 
     Vector2
-    Font::measureStringRestrictedW(const std::string &string_, float fontSize_, float spacing_, float maxWidth_,
-                                   TextAlignment alignment_, TextWrap wrap_) {
+    Font::measureStringRestrictedW(const std::string &string, float fontSize, float spacing, float maxWidth,
+                                   TextAlignment alignment, TextWrap wrap) {
         Console::Fail("Font", "MeasureStringRestrictedW is not yet implemented.");
         return {};
     }
 
     Vector2
-    Font::measureStringRestrictedH(const std::string &string_, float fontSize_, float spacing_, float maxHeight_,
-                                   TextAlignment alignment_, TextWrap wrap_) {
+    Font::measureStringRestrictedH(const std::string &string, float fontSize, float spacing, float maxHeight,
+                                   TextAlignment alignment, TextWrap wrap) {
         Console::Fail("Font", "MeasureStringRestrictedH is not yet implemented.");
         return {};
     }
 
 
-    void Font::_generateAtlas(GraphicsDevice *graphicsDevice_) {
+    void Font::_generateAtlas(GraphicsDevice *graphicsDevice) {
         // Generate atlas texture.
         auto atlas = new Image();
 
@@ -349,20 +349,20 @@ namespace ngine::graphics {
         atlas->Format = UNCOMPRESSED_GRAY_ALPHA;
 
         // Create texture
-        m_texture = new Texture2D(graphicsDevice_, atlas);
+        m_texture = new Texture2D(graphicsDevice, atlas);
 
         // Delete atlas
         delete atlas;
     }
 
-    void Font::_loadFontInfo(const filesystem::Path &path_, std::vector<int> chars_) {
+    void Font::_loadFontInfo(const filesystem::Path &path, std::vector<int> characters) {
         // Characters
-        std::vector<CharInfo> characters;
+        std::vector<CharInfo> chars;
 
         // TODO: Support for bitmap fonts something to consider?
 
         // Load font file
-        auto fontFile = filesystem::File(path_);
+        auto fontFile = filesystem::File(path);
         if (fontFile.open(filesystem::FileOpenMode::Read, true)) {
             // Get font data
             auto size = fontFile.getSize();
@@ -385,12 +385,12 @@ namespace ngine::graphics {
             m_characterCount = (m_characterCount > 0) ? m_characterCount : 95;
 
             // Set characters if empty
-            if (chars_.empty()) {
+            if (characters.empty()) {
                 // Set size
-                chars_.resize(m_characterCount);
+                characters.resize(m_characterCount);
 
                 // Fill
-                std::iota(chars_.begin(), chars_.end(), 32); //32 = space
+                std::iota(characters.begin(), characters.end(), 32); //32 = space
             }
 
             // Reserve space for character info
@@ -399,7 +399,7 @@ namespace ngine::graphics {
             // Fetch character data
             for (auto i = 0; i < m_characterCount; i++) {
                 int chw = 0, chh = 0; // Character w and h.
-                int ch = chars_[i]; // Character value
+                int ch = characters[i]; // Character value
                 m_characters[i].Character = ch;
 
                 // Get image data

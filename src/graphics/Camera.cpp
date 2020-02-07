@@ -23,24 +23,24 @@
 namespace ngine::graphics {
     // Public Methods
 
-    void Camera::beginCamera(GraphicsDevice *graphicsDevice_) const {
+    void Camera::beginCamera(GraphicsDevice *graphicsDevice) const {
         // Load matrix
-        graphicsDevice_->pushViewMatrix();
-        graphicsDevice_->loadViewIdentity();
-        graphicsDevice_->multView(getTranslationMatrix());
+        graphicsDevice->pushViewMatrix();
+        graphicsDevice->loadViewIdentity();
+        graphicsDevice->multView(getTranslationMatrix());
     }
 
-    void Camera::endCamera(GraphicsDevice *graphicsDevice_) const {
+    void Camera::endCamera(GraphicsDevice *graphicsDevice) const {
         // Reload matrix
-        graphicsDevice_->popViewMatrix();
+        graphicsDevice->popViewMatrix();
     }
 
-    Vector2 Camera::screenToWorld(Vector2 pos_) {
-        return pos_.transform(getTranslationMatrix().invert());
+    Vector2 Camera::screenToWorld(Vector2 pos) {
+        return pos.transform(getTranslationMatrix().invert());
     }
 
-    Vector2 Camera::worldToScreen(Vector2 pos_) {
-        return pos_.transform(getTranslationMatrix());
+    Vector2 Camera::worldToScreen(Vector2 pos) {
+        return pos.transform(getTranslationMatrix());
     }
 
     Matrix Camera::getTranslationMatrix() const {

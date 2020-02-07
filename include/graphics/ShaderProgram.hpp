@@ -103,9 +103,9 @@ namespace ngine::graphics {
         /**
          * Add a member.
          */
-        void addMember(ShaderDataStructure member_) {
-            member_.Offset = getSize();
-            Members.push_back(member_);
+        void addMember(ShaderDataStructure member) {
+            member.Offset = getSize();
+            Members.push_back(member);
         }
 
         /**
@@ -113,7 +113,7 @@ namespace ngine::graphics {
          */
         int getSize() const {
             int s = 0;
-            switch(Type) {
+            switch (Type) {
                 case ShaderDataType::Int:
                     s = sizeof(int) * Count;
                     break;
@@ -200,20 +200,22 @@ namespace ngine::graphics {
          *
          * @todo Rework this constructor if we want to support more kinds of shader.
          * @warning Uniforms must be passed in the correct order as they are defined, this is soley for Direct X.
-         * @param graphicsDevice_ The graphics device.
-         * @param vertexShader_ The vertex shader.
-         * @param fragmentShader_ The fragment shader.
-         * @param uniforms_ The uniform definitions for the program.
+         * @param graphicsDevice The graphics device.
+         * @param vertexShader The vertex shader.
+         * @param fragmentShader The fragment shader.
+         * @param uniforms The uniform definitions for the program.
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice_, Shader *vertexShader_, Shader *fragmentShader_, std::vector<ShaderDataStructure> uniforms_ = {});
+        ShaderProgram(GraphicsDevice *graphicsDevice, Shader *vertexShader, Shader *fragmentShader,
+                      std::vector<ShaderDataStructure> uniforms = {});
+
         ~ShaderProgram();
 
         /**
          * Add a uniform to the shader program so that it can be given a value.
          *
-         * @param uniform_ The uniform to add.
+         * @param uniform The uniform to add.
          */
-        void addUniform(ShaderDataStructure uniform_);
+        void addUniform(ShaderDataStructure uniform);
 
         /**
          * Get the list of uniforms.

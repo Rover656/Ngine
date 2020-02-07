@@ -23,13 +23,13 @@
 #include "graphics/API/PlatformGraphicsAPI.hpp"
 
 namespace ngine::graphics {
-    void Buffer::_writeBuffer(void *data_, int count_, int size_, bool update_) {
+    void Buffer::_writeBuffer(void *data, int count, int size, bool update) {
         // Use API
-        m_API->writeBuffer(this, data_, count_, size_, update_);
+        m_API->writeBuffer(this, data, count, size, update);
     }
 
-    Buffer::Buffer(GraphicsDevice *graphicsDevice_, BufferType type_, BufferUsage usage_)
-            : m_API(graphicsDevice_->getAPI()), Type(type_), Usage(usage_) {
+    Buffer::Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage)
+            : m_API(graphicsDevice->getAPI()), Type(type), Usage(usage) {
         // Get API and create buffer.
         m_API->createBuffer(this);
     }

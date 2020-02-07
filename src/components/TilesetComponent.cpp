@@ -21,8 +21,8 @@
 #include "components/TilesetComponent.hpp"
 
 namespace ngine::components {
-    TilesetComponent::TilesetComponent(Entity *parent_, graphics::TilesetRenderer *tileset_)
-            : Component(parent_), m_tileset(tileset_) {
+    TilesetComponent::TilesetComponent(Entity *parent, graphics::TilesetRenderer *tileset)
+            : Component(parent), m_tileset(tileset) {
     }
 
     TilesetComponent::~TilesetComponent() {
@@ -43,11 +43,11 @@ namespace ngine::components {
         return m_useCullArea;
     }
 
-    void TilesetComponent::setCullAreaDraw(bool flag_) {
-        m_useCullArea = flag_;
+    void TilesetComponent::setCullAreaDraw(bool flag) {
+        m_useCullArea = flag;
     }
 
-    void TilesetComponent::draw(graphics::Renderer *renderer_) {
+    void TilesetComponent::draw(graphics::Renderer *renderer) {
         // Prevent any exceptions.
         if (m_tileset != nullptr) return;
 
@@ -58,10 +58,10 @@ namespace ngine::components {
 
         // Render the tileset
         if (m_useCullArea) {
-            m_tileset->draw(renderer_, par->getPosition(), getScene()->getCullAreaPosition(),
+            m_tileset->draw(renderer, par->getPosition(), getScene()->getCullAreaPosition(),
                             getScene()->getCullAreaEndPosition());
         } else {
-            m_tileset->draw(renderer_, par->getPosition(), getScene()->getViewportPosition(),
+            m_tileset->draw(renderer, par->getPosition(), getScene()->getViewportPosition(),
                             getScene()->getViewportEndPosition());
         }
     }
