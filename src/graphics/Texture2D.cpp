@@ -123,9 +123,9 @@ namespace ngine::graphics {
 
         // Push transformation matrix
         renderer->pushMatrix();
-        renderer->translate({destRect.X, destRect.Y, 0});
-        renderer->rotate(rotation, {0, 0, 1});
         renderer->translate({-origin.X, -origin.Y, 0});
+        renderer->rotate(rotation, {0, 0, 1});
+        renderer->translate({destRect.X, destRect.Y, 0});
 
         // Push vertices
         renderer->setTexture(this);

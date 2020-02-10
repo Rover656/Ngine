@@ -97,7 +97,7 @@ namespace ngine::graphics {
          *
          * @return The translation matrix for the camera.
          */
-        Matrix getTranslationMatrix() const;
+        Matrix getViewMatrix() const;
     };
 }
 

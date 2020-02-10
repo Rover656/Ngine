@@ -224,7 +224,7 @@ namespace ngine::graphics {
 
     void GraphicsDevice::multView(const Matrix &matrix) {
         if (m_viewCounter == 0) pushViewMatrix();
-        m_viewMatrixStack[m_viewCounter - 1] = m_viewMatrixStack[m_viewCounter - 1] * matrix;
+        m_viewMatrixStack[m_viewCounter - 1] = matrix * m_viewMatrixStack[m_viewCounter - 1];
     }
 
     void GraphicsDevice::setupFramebuffer() {

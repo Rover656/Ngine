@@ -38,7 +38,7 @@ namespace ngine::graphics {
             m_vertexArray[m_vertexCount + i] = vertices[i];
             if (translate) {
                 m_vertexArray[m_vertexCount + i].Position = vertices[i].Position.transform(
-                        m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->getViewMatrix());
+                        m_graphicsDevice->getViewMatrix() * m_matrixStack[m_matrixStackCounter]);
             }
             m_indexArray[m_indexCount + i] = m_vertexCount + i;
         }
@@ -67,7 +67,7 @@ namespace ngine::graphics {
             m_vertexArray[m_vertexCount + i] = vertices[i];
             if (translate) {
                 m_vertexArray[m_vertexCount + i].Position = vertices[i].Position.transform(
-                        m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->getViewMatrix());
+                        m_graphicsDevice->getViewMatrix() * m_matrixStack[m_matrixStackCounter]);
             }
         }
 
@@ -261,7 +261,7 @@ namespace ngine::graphics {
 
         // Translate right now
         m_builtVertices[m_builtVertexCount].Position = vertex.Position.transform(
-                m_matrixStack[m_matrixStackCounter] * m_graphicsDevice->getViewMatrix());
+                m_graphicsDevice->getViewMatrix() * m_matrixStack[m_matrixStackCounter]);
 
         m_builtVertexCount++;
     }
@@ -278,6 +278,12 @@ namespace ngine::graphics {
             renderBatch();
             m_currentShaderState = state;
         }
+    }
+
+    void Renderer::setModelViewMatrix(Matrix modelView) {
+        // TODO: Comparing of matrices
+        renderBatch();
+        m_currentModelView = modelView;
     }
 
     void Renderer::renderBatch() {
@@ -313,7 +319,7 @@ namespace ngine::graphics {
         m_graphicsDevice->setupFramebuffer();
 
         // Set predefined uniforms (only if they are on the lowest level, i.e. not nested inside of another structure).
-        auto MVP = m_graphicsDevice->getProjectionMatrix();
+        auto MVP = m_graphicsDevice->getProjectionMatrix() * m_currentModelView;
         state_->setUniform("NGINE_MATRIX_MVP", MVP.toFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
         int texUnit = 0;
         state_->setUniform("NGINE_TEXTURE", &texUnit);

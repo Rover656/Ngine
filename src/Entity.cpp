@@ -21,318 +21,379 @@
 #include "Entity.hpp"
 
 #include "Component.hpp"
+#include "Console.hpp"
+#include "Entity.hpp"
+#include "Game.hpp"
 
 namespace ngine {
-    void Entity::_addToScene(Scene *scene) {
-        if (m_parentScene != nullptr)
-            throw std::runtime_error("Cannot add entity to more than one scene. Remove from current scene first.");
-
-        // Set the parent scene
-        m_parentScene = scene;
-
-        // TODO: Check scene is physics enabled too!!!
-        // Create physics body if physics is enabled
-        if (m_physicsEnabled) {
-            // Create body
-            m_physicsBody = new physics::PhysicsBody(m_parentScene->getPhysicsWorld());
-
-            // Send initial position and rotation to body (TODO: body center system too!)
-            m_physicsBody->setTransform(m_transform);
-        }
-
-        // Add to scene
-        m_parentScene->_addEntity(this);
+    bool Entity::_SortChildrenPredicate(Entity *a, Entity *b) {
+        return a->m_zIndex < b->m_zIndex;
     }
 
-    void Entity::_removeFromScene() {
-        // Unbind update event
-        unsubscribeFromUpdate();
-
-        // Delete physics body
-        if (m_physicsEnabled) {
-            // Delete body
-            delete m_physicsBody;
-            m_physicsBody = nullptr;
-        }
-
-        // Remove from scene (and therefore unset entity parent too)
-        m_parentEntity = nullptr;
-        m_parentScene = nullptr;
+    void Entity::_sortChildren() {
+        // Sort
+        std::sort(m_children.begin(), m_children.end(), &_SortChildrenPredicate);
     }
 
-    void Entity::_doDestroy() {
-        // Fire event
-        OnDestroy();
+    void Entity::_updateModelView() {
+        // We use relative stuff as modelview will already consist of parent's input.
+        auto pos = getPosition();
+        auto rot = getRotation();
+        auto origin = m_origin;
 
-        // Delete components
-        for (const auto &c : m_components)
-            delete c.second;
-        m_components.clear();
+        // Build modelview
+        m_modelView = Matrix::Translate({pos.X, pos.Y, 0})
+                      * Matrix::Scale(m_scale.X, m_scale.Y, 1)
+                      * Matrix::RotateZ(rot)
+                      * Matrix::Translate(-origin.X, -origin.Y, 0);
 
-        // Destroy physics body
-        if (m_physicsBody != nullptr) m_physicsBody->destroy();
-
-        // Detach all events
-        OnTransformChanged.clear();
-        OnUpdate.clear();
-
-        // Unsubscribe from update
-        unsubscribeFromUpdate();
-
-        // Make our parents are null
-        m_parentEntity = nullptr;
-        m_parentScene = nullptr;
+        // Mark as clean
+        m_modelViewDirty = false;
     }
 
-    // TODO: Remove position and rotation from this constructor???
-    Entity::Entity(const Vector2 position, float rotation, int depth, bool canCull, bool physicsEnabled)
-            : m_canCull(canCull), m_depth(depth), m_transform(position, rotation),
-              m_physicsEnabled(physicsEnabled),
-              EntityContainer(EntityContainer::ENTITY) {}
+    Entity::Entity() = default;
 
     Entity::~Entity() {
-        // Remove from parent (if not already)
-        if (m_parentEntity != nullptr || m_parentScene != nullptr)
-            getContainer()->removeChild(this);
+        // Mark as destroyed (so no infinite recursion happens)
+        m_destroyed = true;
 
-        // Destroy everything (being thorough).
-        _doDestroy();
+        // Get list of children to destroy
+        std::vector<Entity *> ents;
+        ents = m_children;
+
+        // Destroy children first
+        for (auto e : ents) {
+            delete e;
+        }
+
+        // Get list of components to destroy
+        std::vector<Component *> comps;
+        for (const auto &c : m_components) {
+            comps.push_back(c.second);
+        }
+
+        // Destroy components
+        for (auto c : comps) {
+            delete c;
+        }
+
+        // Remove from our parent
+        if (m_parent != nullptr)
+            m_parent->removeChild(this);
+        else if (m_scene != nullptr)
+            m_scene->removeChild(this);
+    }
+
+    void Entity::initialize(Scene *scene) {
+        // Check we aren't initialized already
+        if (m_initialized)
+            Console::Fail("Entity", "Do not call initialize ever, unless you have to!");
+
+        // Mark as initialized
+        m_initialized = true;
+
+        // Save scene
+        m_scene = scene;
+
+        // Pass on to children
+        for (const auto &e : m_children) {
+            e->initialize(scene);
+        }
+    }
+
+    void Entity::cleanup() {
+        if (!m_initialized)
+            Console::Fail("Entity", "Cannot cleanup before initialization");
+        m_initialized = false;
     }
 
     void Entity::destroy() {
-        if (getContainer() != nullptr) {
-            // We have a container, so we detach from it
-            getContainer()->removeChild(this);
-        } else {
-            // We don't have a container, so we we do this ourselves
-            _doDestroy();
-        }
-
-        // Delete ourselves
         delete this;
     }
 
-    bool Entity::removeComponent(const std::string &name) {
-        auto comp = getComponent<Component>(name);
-
-        if (comp != nullptr) {
-            // Remove component from map
-            m_components.erase(name);
-
-            // Delete if we should
-            delete comp;
-
-            return true;
-        }
-
-        // We don't have this component
-        return false;
+    Entity *Entity::getParent() const {
+        return m_parent;
     }
 
-    std::vector<Component *> Entity::getComponents() {
-        std::vector<Component *> vec;
-
-        for (auto &_Component : m_components) {
-            vec.push_back(_Component.second);
-        }
-
-        return vec;
-    }
-
-    bool Entity::hasComponent(const std::string &name) const {
-        return m_components.find(name) != m_components.end();
-    }
-
-    bool Entity::canCull() const {
-        return m_canCull;
-    }
-
-    void Entity::setCanCull(bool canCull) {
-        m_canCull = canCull;
-    }
-
-    bool Entity::checkForCulling(Rectangle cullArea) {
-        return !cullArea.contains(getPosition());
-    }
-
-    EntityContainer *Entity::getContainer() const {
-        if (m_parentEntity != nullptr)
-            return static_cast<EntityContainer *>(m_parentEntity);
-        else if (m_parentScene != nullptr)
-            return static_cast<EntityContainer *>(m_parentScene);
-        return nullptr;
+    Scene *Entity::getScene() const {
+        return m_scene;
     }
 
     Game *Entity::getGame() const {
-        if (m_parentScene == nullptr) return nullptr;
-        return m_parentScene->getGame();
+        return m_scene->getGame();
     }
 
     filesystem::ResourceManager *Entity::getResourceManager() const {
-        if (m_parentScene == nullptr) return nullptr;
-        return m_parentScene->getResourceManager();
-    }
-
-    int Entity::getDepth() const {
-        return m_depth;
-    }
-
-    void Entity::setDepth(int depth) {
-        if (m_parentScene != nullptr)
-            m_parentScene->_updateEntityDepth(depth, this);
-        m_depth = depth;
-    }
-
-    Transform2D Entity::getTransform() const {
-        if (m_physicsEnabled) {
-            return m_physicsBody->getTransform();
-        } else {
-            return m_transform;
-        }
-    }
-
-    void Entity::setTransform(const Transform2D &transform) {
-        if (m_physicsEnabled) {
-            m_physicsBody->setTransform(transform);
-        } else {
-            m_transform = transform;
-        }
+        return m_scene->getResourceManager();
     }
 
     Vector2 Entity::getPosition() const {
-        if (m_physicsEnabled) {
-            return m_physicsBody->getPosition();
-        } else {
-            return m_transform.Position;
-        }
+        return m_position;
     }
 
     void Entity::setPosition(Vector2 position) {
-        if (m_physicsEnabled) {
-            m_physicsBody->setPosition(position);
-        } else {
-            m_transform.Position = position;
-        }
-
-        // Fire event
-        OnTransformChanged(getTransform());
-    }
-
-    void Entity::moveBy(Vector2 moveBy) {
-        if (m_physicsEnabled) {
-            // Not recommended, read warning in docs.
-            auto p = m_physicsBody->getPosition();
-            m_physicsBody->setPosition(p + moveBy);
-        } else {
-            m_transform.Position += moveBy;
-        }
-
-        // Fire event
-        OnTransformChanged(getTransform());
+        m_position = position;
+        m_modelViewDirty = true;
     }
 
     Angle Entity::getRotation() const {
-        if (m_physicsBody == nullptr) {
-            return m_transform.Rotation;
-        } else {
-            return m_physicsBody->getTransform().Rotation;
-        }
+        return m_rotation;
     }
 
     void Entity::setRotation(Angle rotation) {
-        if (m_physicsBody == nullptr) {
-            // Set our rotation
-            m_transform.Rotation = rotation;
-        } else {
-            // Set the body rotation
-            m_physicsBody->setRotation(rotation);
+        m_rotation = rotation;
+        m_modelViewDirty = true;
+    }
+
+    Vector2 Entity::getOrigin() {
+        return m_origin;
+    }
+
+    void Entity::setOrigin(Vector2 origin) {
+        m_origin = origin;
+        m_modelViewDirty = true;
+    }
+
+    Vector2 Entity::getScale() const {
+        return m_scale;
+    }
+
+    void Entity::setScale(Vector2 scale) {
+        m_scale = scale;
+        m_modelViewDirty = true;
+    }
+
+    int Entity::getZIndex() const {
+        return m_zIndex;
+    }
+
+    void Entity::setZIndex(int zIndex) {
+        m_zIndex = zIndex;
+    }
+
+    void Entity::addComponent(const std::string &name, Component *component) {
+        // Check we are initialized
+        if (!m_initialized)
+            Console::Fail("Entity",
+                          "Cannot add components until initialized, use the initialize method to add components!");
+
+        // Check that the component has no parent
+        if (component->m_parent != nullptr)
+            Console::Fail("Entity", "Component already has a parent.");
+
+        // See if we already have this component
+        for (const auto &c : m_components) {
+            if (c.second == component)
+                Console::Fail("Entity", "Component is already a child of this entity.");
+            if (c.first == name)
+                Console::Fail("Entity", "Component name has been used.");
         }
 
-        // Fire event
-        OnTransformChanged(getTransform());
+        // Add
+        m_components.insert({name, component});
+
+        // Setup
+        component->initialize(this);
     }
 
-    bool Entity::isPhysicsEnabled() const {
-        return m_physicsBody != nullptr;
+    void Entity::removeComponent(const std::string &name) {
+        if (m_components.find(name) == m_components.end())
+            Console::Fail("Entity", "Cannot find component.");
+
+        // Get component pointer
+        auto comp = m_components[name];
+
+        // Remove from list
+        m_components.erase(name);
+        comp->m_parent = nullptr;
+
+        // Run cleanup if initialized
+        if (comp->m_initialized)
+            comp->cleanup();
+
+        // Delete component
+        if (!comp->m_destroyed)
+            delete comp;
     }
 
-    physics::PhysicsBody *Entity::getPhysicsBody() {
-        return m_physicsBody;
-    }
-
-    const physics::PhysicsBody *Entity::getPhysicsBody() const {
-        return m_physicsBody;
-    }
-
-    physics::PhysicsWorld *Entity::getPhysicsWorld() {
-        if (m_physicsBody == nullptr) return nullptr;
-        return m_physicsBody->getWorld();
-    }
-
-    const physics::PhysicsWorld *Entity::getPhysicsWorld() const {
-        if (m_physicsBody == nullptr) return nullptr;
-        return m_physicsBody->getWorld();
-    }
-
-    bool Entity::getDoPersistentUpdates() const {
-        return m_persistentUpdates;
-    }
-
-    void Entity::setDoPersistentUpdates(bool persistentUpdates) {
-        if (m_onUpdateRef.isAttached())
-            throw std::runtime_error("This property cannot be changed once update has been subscribed.");
-        m_persistentUpdates = persistentUpdates;
-    }
-
-    bool Entity::subscribeToUpdate() {
-        if (m_parentScene != nullptr) {
-            if (!m_onUpdateRef.isAttached()) {
-                if (m_persistentUpdates)
-                    m_onUpdateRef = m_parentScene->OnPersistentUpdate
-                            += new ClassMethodEventHandler<Entity>(this, &Entity::update);
-                else
-                    m_onUpdateRef = m_parentScene->OnUpdate
-                            += new ClassMethodEventHandler<Entity>(this, &Entity::update);
-                return true;
-            } else {
-                // The event already exists, so return true anyway to avoid errors.
-                return true;
+    void Entity::removeComponent(Component *component) {
+        // Find component and remove.
+        for (const auto &c : m_components) {
+            if (c.second == component) {
+                removeComponent(c.first);
+                return;
             }
         }
-        return false;
+
+        Console::Fail("Entity", "Cannot find component.");
     }
 
-    bool Entity::subscribedToUpdate() const {
-        if (m_parentScene == nullptr) return false;
-        return m_onUpdateRef.isAttached();
+    Component *Entity::getComponent(const std::string &name) {
+        if (m_components.find(name) != m_components.end())
+            return m_components[name];
+        return nullptr;
     }
 
-    void Entity::unsubscribeFromUpdate() {
-        // Detach using the reference.
-        m_onUpdateRef.detach();
+    bool Entity::isAsleep() {
+        return m_asleep;
     }
 
-    void Entity::draw(graphics::Renderer *renderer) {
-        // Draw components
-        for (const auto &comp : m_components) {
-            comp.second->draw(renderer);
+    void Entity::setIsAsleep(bool asleep) {
+        m_asleep = asleep;
+    }
+
+    bool Entity::isVisible() {
+        return m_visible;
+    }
+
+    void Entity::setIsVisible(bool visible) {
+        m_visible = visible;
+    }
+
+    std::string Entity::getName() {
+        return m_name;
+    }
+
+    void Entity::setName(const std::string &name) {
+        m_name = name;
+        m_nameHash = std::hash<std::string>{}(name);
+    }
+
+    void Entity::addChild(Entity *entity) {
+        // Ensure the child has no parent
+        if (entity->m_parent != nullptr)
+            Console::Fail("Entity", "Entity already has a parent!");
+
+        // Check the child is not a member of a scene
+        if (entity->m_scene != nullptr)
+            Console::Fail("Entity", "Entity is already a member of a scene.");
+
+        // Ensure the child is not us
+        if (entity == this)
+            Console::Fail("Entity", "Cannot add an entity to itself!");
+
+        // Add to map
+        m_children.push_back(entity);
+
+        // Set parent.
+        entity->m_parent = this;
+
+        // Initialize entity if we are already initialized
+        // If we aren't, this will be done once we ourselves are ready.
+        if (m_initialized)
+            entity->initialize(m_scene);
+    }
+
+    void Entity::removeChild(Entity *entity) {
+        // Check we own this child.
+        if (entity->m_parent != this)
+            Console::Fail("Entity", "Entity is not parented by me!");
+
+        // Remove
+        m_children.erase(std::remove(m_children.begin(), m_children.end(), entity), m_children.end());
+
+        // If the entity is still initialized, cleanup now
+        if (entity->m_initialized)
+            entity->cleanup();
+
+        // Unset parents
+        entity->m_parent = nullptr;
+        entity->m_scene = nullptr;
+
+        // If the entity isn't destroyed yet, delete it
+        if (!entity->m_destroyed)
+            delete entity;
+    }
+
+    Entity *Entity::getChildByName(const std::string &name) {
+        auto nHash = std::hash<std::string>{}(name);
+        for (const auto &e : m_children) {
+            if (e->m_nameHash == nHash && e->m_name == name)
+                return e;
         }
+        return nullptr;
+    }
 
-        // Debug draw
-        if (m_physicsBody != nullptr) {
-            if (m_physicsBody->getWorld()->DebugDraw) {
-                m_physicsBody->debugDraw(renderer);
+    std::vector<Entity *> Entity::getChildren() {
+        return m_children;
+    }
+
+    std::vector<Entity *> Entity::getChildrenByName(const std::string &name) {
+        std::vector<Entity *> ents;
+        auto nHash = std::hash<std::string>{}(name);
+        for (const auto &e : m_children) {
+            if (e->m_nameHash == nHash && e->m_name == name)
+                ents.push_back(e);
+        }
+        return ents;
+    }
+
+    bool Entity::isVisibleInCamera(graphics::Camera *camera) {
+        // TODO: Implement.
+        return true;
+    }
+
+    void Entity::render(graphics::Renderer *renderer, Matrix modelView, graphics::Camera *currentCamera) {
+        // Skip if not visible.
+        if (!m_visible)
+            return;
+
+        // Test if we are visible
+        bool visibleInCamera = true;
+        if (currentCamera != nullptr)
+            visibleInCamera = isVisibleInCamera(currentCamera);
+
+        // TODO: Camera flags??
+
+        // Update model view if dirty
+        if (m_modelViewDirty)
+            _updateModelView();
+
+        // Mix modelView with our own
+        modelView = modelView * m_modelView;
+
+        if (!m_children.empty()) {
+            // Sort children
+            _sortChildren();
+
+            int i = 0;
+            for (; i < m_children.size() && m_children[i]->m_zIndex < 0; i++)
+                m_children[i]->render(renderer, modelView, currentCamera);
+
+            // Render self
+            if (visibleInCamera) {
+                renderer->setModelViewMatrix(modelView);
+                draw(renderer, modelView);
+                renderer->setModelViewMatrix(Matrix::Identity);
             }
+
+            // Render children
+            for (; i < m_children.size(); i++)
+                m_children[i]->render(renderer, modelView, currentCamera);
+        } else if (visibleInCamera) {
+            // Render self.
+            renderer->setModelViewMatrix(modelView);
+            draw(renderer, modelView);
+            renderer->setModelViewMatrix(Matrix::Identity);
+        }
+    }
+
+    void Entity::draw(graphics::Renderer *renderer, Matrix modelView) {
+        for (const auto &c : m_components) {
+            c.second->draw(renderer);
         }
     }
 
     void Entity::update() {
-        // Fire update event
-        OnUpdate();
+        // Update components
+        for (const auto &c : m_components) {
+            c.second->update();
+        }
 
-        if (m_physicsBody != nullptr) {
-            // As we are a physics entity, fire this each frame
-            OnTransformChanged(getTransform());
+        // Update children
+        for (const auto &e : m_children) {
+            if (!e->m_asleep)
+                e->update();
         }
     }
 }

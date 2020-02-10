@@ -43,8 +43,8 @@ namespace ngine::graphics {
 
         // Build translation
         renderer->pushMatrix();
-        renderer->translate({v1.X, v1.Y, 0});
         renderer->rotate(RadToDeg(angle), {0, 0, 1});
+        renderer->translate({v1.X, v1.Y, 0});
         if (flipped)
             renderer->translate({thickness / 2.0f, -thickness / 2.0f, 0});
         else renderer->translate({-thickness / 2.0f, -thickness / 2.0f, 0});
@@ -92,7 +92,7 @@ namespace ngine::graphics {
             float twoPi = 2.0f * PI;
 
             // Render using triangle fan primitive type (NEW!!!)
-            renderer->beginVertices(PrimitiveType::TriangleFan);
+            renderer->beginVertices(PrimitiveType::TriangleFan); // TODO: theres a strange bug, see renderdoc.
             renderer->pushVertex({{center.X, center.Y, 0}, {0, 0}, color});
             for (auto i = 1; i <= TRIANGLES_PER_CIRCLE + 1; i++) {
                 renderer->pushVertex({{
@@ -115,9 +115,9 @@ namespace ngine::graphics {
         // Push a matrix and set up our transform/rotation
         renderer->setTexture(nullptr);
         renderer->pushMatrix();
-        renderer->translate({rect.X, rect.Y, 0});
-        renderer->rotate(rotation, {0, 0, 1});
         renderer->translate({-origin.X, -origin.Y, 0});
+        renderer->rotate(rotation, {0, 0, 1});
+        renderer->translate({rect.X, rect.Y, 0});
 
         if (outline) {
             // Draw lines
@@ -143,9 +143,9 @@ namespace ngine::graphics {
         // Push matrix (for rotation)
         renderer->setTexture(nullptr);
         renderer->pushMatrix();
-        renderer->translate({v1.X, v1.Y, 0});
-        renderer->rotate(rotation, {0, 0, 1});
         renderer->translate({-origin.X, -origin.Y, 0});
+        renderer->rotate(rotation, {0, 0, 1});
+        renderer->translate({v1.X, v1.Y, 0});
 
         Vector2 a = {0, 0};
         auto b = v2 - v1;

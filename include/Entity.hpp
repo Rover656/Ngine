@@ -23,432 +23,400 @@
 
 #include "Config.hpp"
 
+#include "graphics/Renderer.hpp"
 #include "filesystem/ResourceManager.hpp"
-#include "physics/PhysicsBody.hpp"
-#include "EntityContainer.hpp"
-#include "Math.hpp"
 #include "Scene.hpp"
 
-// TODO: Proper way to handle rotation from a components point of view. Need to have entity centers and ways to rotate both with the entity and independently.
-
 namespace ngine {
-    // Forward declare
     class Component;
 
     /**
-     * Event arguments for when an entity changes position and/or rotation.
+     * This is the basic unit for the entity-component system.
      */
-    struct EntityTransformChangedEventArgs : EventArgs {
-        /**
-         * The new entity transformation.
-         */
-        Transform2D EntityTransformation;
-
-        /**
-         * Create a new entity transform event argument.
-         *
-         * @param transform The new entity transform.
-         */
-        EntityTransformChangedEventArgs(Transform2D transform)
-                : EntityTransformation(transform) {}
-    };
-
-    /**
-     * An entity within a scene.
-     */
-    class NEAPI Entity : public EntityContainer {
-        // Make the EntityContainer a friend so parenting can be done
-        friend class EntityContainer;
+    class NEAPI Entity {
         friend class Scene;
 
         /**
-         * This entity's transformation.
+         * Weak ref to parent entity.
          */
-        Transform2D m_transform;
+        Entity *m_parent = nullptr;
 
         /**
-         * Whether or not this entity can be culled
+         * The scene that the entity is a member of.
          */
-        bool m_canCull = false;
+        Scene *m_scene = nullptr;
 
         /**
-         * The list of all components.
-         * All components are given a name for easy identification.
+         * The child entities.
          */
-        std::map<std::string, Component *> m_components;
+        std::vector<Entity *> m_children;
 
         /**
-         * Depth index.
+         * Entity components.
          */
-        int m_depth = 0;
+        std::unordered_map<std::string, Component *> m_components;
 
         /**
-         * On update event reference
+         * Entity Z-index in parent.
          */
-        EventAttachment<> m_onUpdateRef;
+        int m_zIndex = 0;
 
         /**
-         * The parent entity.
+         * The entity name.
          */
-        Entity *m_parentEntity = nullptr;
+        std::string m_name = "";
 
         /**
-         * Parent Scene.
+         * The entity name hash (for quick searching).
          */
-        Scene *m_parentScene = nullptr;
+        size_t m_nameHash = 0;
 
         /**
-         * Whether or not we update when paused
+         * Whether or not the entity is updating.
          */
-        bool m_persistentUpdates = false;
+        bool m_asleep = false;
 
         /**
-         * Whether or not the entity has physics enabled.
+         * Whether or not the entity should render.
          */
-        bool m_physicsEnabled = false;
+        bool m_visible = true;
 
         /**
-         * The current physics body.
+         * Whether or not the entity has been destroyed yet.
          */
-        physics::PhysicsBody *m_physicsBody = nullptr;
+        bool m_destroyed = false;
 
         /**
-         * Add to a new scene.
+         * Entity position relative to parent.
          */
-        void _addToScene(Scene *scene);
+        Vector2 m_position = Vector2::Zero;
 
         /**
-         * Remove from our current scene.
+         * Entity scale.
          */
-        void _removeFromScene();
+        Vector2 m_scale = {1, 1};
+
+        /**
+         * Entity rotation.
+         */
+        Angle m_rotation = 0;
+
+        /**
+         * Origin for rotation.
+         */
+        Vector2 m_origin = Vector2::Zero;
+
+        /**
+         * The model view matrix to render with.
+         */
+        Matrix m_modelView = Matrix::Identity;
+
+        /**
+         * Whether or not the model view is dirty.
+         */
+        bool m_modelViewDirty = true;
+
+        /**
+         * Whether or not the entity is ready to be used.
+         */
+        bool m_initialized = false;
+
+        /**
+         * Sort entities by z-index.
+         *
+         * @param a The first entity.
+         * @param b The second entity.
+         * @return Whether or not a should be before b.
+         */
+        static bool _SortChildrenPredicate(Entity *a, Entity *b);
+
+        /**
+         * Sort all children into Z order for rendering.
+         */
+        void _sortChildren();
+
+        /**
+         * Update our model view.
+         */
+        void _updateModelView();
+    public:
+        /**
+         * Create a new entity.
+         */
+        Entity();
+
+        virtual ~Entity();
+
+        /**
+         * Initialize the entity.
+         *
+         * @warning If you override this, you **MUST** call to base first.
+         * @param scene The scene we were added to.
+         */
+        virtual void initialize(Scene *scene);
+
+        /**
+         * Cleanup the entity.
+         *
+         * @warning If you override this, you **MUST** call to base first.
+         */
+        virtual void cleanup();
 
         /**
          * Destroy this entity.
          */
-        void _doDestroy();
-    public:
-        /**
-         * Whether or not this entity is drawn with the camera
-         */
-        bool DrawWithCamera = true;
-
-        /**
-         * Fires when added to a scene.
-         * Entity can be initialized once this is fired, much like Game.
-         */
-        Event<> OnInit;
-
-        /**
-         * Fires when the entity is destroyed.
-         */
-        Event<> OnDestroy;
-
-        /**
-         * On position changed event
-         */
-        Event<EntityTransformChangedEventArgs> OnTransformChanged;
-
-        /**
-         * Fired when the entity updates.
-         * This should be used by components.
-         */
-        Event<> OnUpdate;
-
-        /**
-         * Create a new entity.
-         *
-         * @param parentScene_ The parent scene.
-         * @param position The initial position.
-         * @param rotation Initial rotation.
-         * @param depth The depth to be rendered at
-         * @param canCull Whether or not this can be culled.
-         * @param physicsEnabled Whether or not physics should be enabled for this entity.
-         */
-        Entity(Vector2 position, float rotation = 0, int depth = 0, bool canCull = false, bool physicsEnabled = false);
-        virtual ~Entity();
-
-        /**
-         * Remove from our parent and delete ourselves.
-         *
-         * @warning No more calls must be made to the entity following this.
-         */
         void destroy();
-
-        /**
-         * Add a component to the entity.
-         *
-         * @tparam ComponentType The component type. This must be a class derived from `ngine::Component`
-         * @param name The name of the component.
-         * @param component The component.
-         * @return The component, so you may chain calls.
-         */
-        template <typename ComponentType = Component>
-        ComponentType *addComponent(const std::string &name, ComponentType *component) {
-            // Check the name is not taken
-            if (hasComponent(name))
-                return nullptr;
-
-            // Make sure the component isn't null
-            if (component == nullptr)
-                return nullptr;
-
-            // Add to components list.
-            m_components.insert({name, (Component *) component});
-
-            // Send it back for call chaining.
-            return component;
-        }
-
-        /**
-         * Removes the component from the entity.
-         *
-         * @param name The name of the component to remove.
-         * @return Whether or not the component was removed.
-         */
-        bool removeComponent(const std::string &name);
-
-        /**
-         * Get all components.
-         *
-         * @return An vector containing all components.
-         */
-        std::vector<Component*> getComponents();
-
-        /**
-         * Test if a component exists by a name.
-         *
-         * @param name The name of the component to check for.
-         * @return Whether or not the component exists.
-         */
-        bool hasComponent(const std::string &name) const;
-
-        /**
-         * Get a component by name.
-         *
-         * @tparam ComponentType The component type to be returned.
-         */
-        template <typename ComponentType = Component>
-        ComponentType *getComponent(const std::string &name) {
-            // Try to find the component
-            if (hasComponent(name)) {
-                return (ComponentType *) m_components.at(name);
-            }
-
-            return nullptr;
-        }
-
-        /**
-         * Check if this entity can be culled
-         *
-         * @return Whether or not this entity can be culled.
-         */
-        bool canCull() const;
-
-        /**
-         * Set whether or not this entity can be culled
-         *
-         * @param canCull Whether or not the entity can be culled.
-         */
-        void setCanCull(bool canCull);
-
-        /**
-         * This is used to determine if this entity should be culled.
-         * This can be overridden for more accurate results.
-         *
-         * @param cullArea The scene cull area.
-         * @return Whether or not this entity should be culled.
-         */
-        virtual bool checkForCulling(Rectangle cullArea);
-
-        /**
-         * Get our parent container.
-         * This will either be another entity or the scene
-         *
-         * @return The parent container.
-         */
-        EntityContainer *getContainer() const;
 
         /**
          * Get the parent entity.
          *
-         * @tparam EntityType The type to cast the parent to (Default: `Entity`)
-         * @return The parent entity, null if none.
+         * @return Our parent.
          */
-        template <typename EntityType = Entity>
-        Entity *getParentEntity() const {
-            return (EntityType *)(m_parentEntity);
-        }
+        Entity *getParent() const;
 
         /**
-         * Get the parent scene.
+         * Get the scene we are a member of.
          *
-         * @tparam SceneType The type we want the scene as.
-         * @return The parent scene.
+         * @return The scene.
          */
-        template <class SceneType = Scene>
-        SceneType *getScene() const {
-            return (SceneType *) m_parentScene;
-        }
+        Scene *getScene() const;
 
         /**
-         * Get the parent game.
+         * Get the game our scene is a member of.
          *
-         * @return The parent game.
+         * @return The game.
          */
         Game *getGame() const;
 
         /**
          * Get the game resource manager.
          *
-         * @return The game resource manager.
+         * @return The resource manager.
          */
         filesystem::ResourceManager *getResourceManager() const;
 
         /**
-         * Get the entity depth.
+         * Get the entity position taking into account its parents.
          *
-         * @return The depth of the entity.
-         */
-        int getDepth() const;
-
-        /**
-         * Set the entity depth
-         *
-         * @param depth The depth to set the entity to.
-         */
-        void setDepth(int depth);
-
-        // MAJOR TODO: Add system for entity origin when not attached to physics body.
-
-        /**
-         * Get the entity transform (position and rotation).
-         *
-         * @return The entity transform.
-         */
-        Transform2D getTransform() const;
-
-        /**
-         * Set the entity transform (position and rotation).
-         */
-        void setTransform(const Transform2D &transform);
-
-        /**
-         * Get the entity position
-         *
-         * @return The position of the entity in world coordinates.
+         * @param Position relative to (0, 0).
          */
         Vector2 getPosition() const;
 
         /**
-         * Set entity position
+         * Set the entity position relative to the parent.
          *
-         * @param position The position to move to.
+         * @param position Desired position relative to parent.
          */
         void setPosition(Vector2 position);
 
         /**
-         * Move an entity by a vector.
+         * Get the current entity rotation.
          *
-         * @warning Use of this in a physics enabled entity is not recommended, add a velocity instead.
-         * @param moveBy The number of pixels to move in each direction.
-         */
-        void moveBy(Vector2 moveBy);
-
-        /**
-         * Get the entity rotation
-         *
-         * @return The entity rotation, in degrees.
+         * @return The entity's rotation.
          */
         Angle getRotation() const;
 
         /**
-         * Set entity rotation.
+         * Set the entity's rotation.
          *
-         * @param rotation The rotation, in degrees, to set our entity to.
+         * @param rotation The new rotation.
          */
         void setRotation(Angle rotation);
 
         /**
-         * Determine if this entity is affected by physics.
-         * This is determined by the physicsEnabled_ parameter in the entity constructor.
+         * Get origin/anchor point.
          *
-         * @note Once an entity is created, this property *can not* be changed.
-         * @return Whether or not this entity has a physics body attached.
+         * @return Entity origin.
          */
-        bool isPhysicsEnabled() const;
+        Vector2 getOrigin();
 
         /**
-         * Get the attached physics body.
+         * Set entity origin/anchor point.
          *
-         * @return The physics body. If none, null.
+         * @param origin New origin.
          */
-        physics::PhysicsBody *getPhysicsBody();
+        void setOrigin(Vector2 origin);
 
         /**
-         * Get the attached physics body.
+         * Get the entity scale.
          *
-         * @return The physics body. If none, null.
+         * @return The entity X and Y scales.
          */
-        const physics::PhysicsBody *getPhysicsBody() const;
+        Vector2 getScale() const;
 
         /**
-         * Get the world our body is a member of.
+         * Set the entity scale.
          *
-         * @return The world the physics body is attached to, if any.
+         * @note This scale also applies to children.
+         * @param scale The new scale to apply.
          */
-        physics::PhysicsWorld *getPhysicsWorld();
+        void setScale(Vector2 scale);
 
         /**
-         * Get the world our body is a member of.
+         * Get the z-index of the entity.
          *
-         * @return The world the physics body is attached to, if any.
+         * @return The z-index.
          */
-        const physics::PhysicsWorld *getPhysicsWorld() const;
+        int getZIndex() const;
 
         /**
-         * Test if we update when the scene is paused.
+         * Set the z-index of the entity.
          *
-         * @return Whether or not we will update even when the scene is paused.
+         * @param zIndex The new z-index.
          */
-        bool getDoPersistentUpdates() const;
+        void setZIndex(int zIndex);
 
         /**
-         * Set whether or not we update when the `Scene` is paused
+         * Add a component to the entity.
          *
-         * @note This will unsubscribe and resubscribe if the events are already bound.
-         * @param persistentUpdates Whether or not the entity can update during pauses.
+         * @param name Component name.
+         * @param component Component to add.
          */
-        void setDoPersistentUpdates(bool persistentUpdates);
+        void addComponent(const std::string &name, Component *component);
 
         /**
-         * Subscribe to update events in the scene.
+         * Remove a component from the entity.
          *
-         * @warning If the entity changes parent this will need to be called again.
-         * @return Whether or the entity now listens to updates.
+         * @param name Component to remove.
          */
-        bool subscribeToUpdate();
+        void removeComponent(const std::string &name);
 
         /**
-         * Determine if the entity is subscribed to the `Scene` update events.
+         * Remove a component from the entity by pointer.
          *
-         * @return Whether or not the entity is subscribed to `Scene` updates.
+         * @param component Component to remove.
          */
-        bool subscribedToUpdate() const;
+        void removeComponent(Component *component);
 
         /**
-         * Unsubscribe from update events in the scene.
-         */
-        void unsubscribeFromUpdate();
-
-        /**
-         * Draw code for the entity.
+         * Get a component by name.
          *
-         * @param renderer The game renderer.
+         * @param name Component to get.
+         * @return The component or null.
          */
-        virtual void draw(graphics::Renderer *renderer);
+        Component *getComponent(const std::string &name);
 
         /**
-         * Update the entity.
+         * Get a component by name casted to the required type.
+         *
+         * @tparam TComponent The type wanted.
+         * @param Component to get.
+         * @return The component or null.
+         */
+        template <class TComponent>
+        TComponent *getComponentAs(const std::string &name) {
+            return (TComponent *)getComponent(name);
+        }
+
+        /**
+         * Whether or not the entity is asleep (not running updates).
+         *
+         * @note This will also make the physics body sleep.
+         * @return Whether or not the entity is sleeping.
+         */
+        bool isAsleep();
+
+        /**
+         * Set whether or not the entity is asleep.
+         *
+         * @param asleep Whether or not the entity should sleep.
+         */
+        void setIsAsleep(bool asleep);
+
+        /**
+         * Determine if the entity is visible.
+         *
+         * @return Whether or not the entity is drawn.
+         */
+        bool isVisible();
+
+        /**
+         * Set whether or not the entity should be visible/drawn.
+         *
+         * @param visible Whether or not the entity should draw.
+         */
+        void setIsVisible(bool visible);
+
+        /**
+         * Get the entity name.
+         *
+         * @return Entity name.
+         */
+        std::string getName();
+
+        /**
+         * Set the entity name.
+         *
+         * @param name Entity name.
+         */
+        void setName(const std::string &name);
+
+        /**
+         * Add a child.
+         *
+         * @param entity Entity to add as a child.
+         */
+        void addChild(Entity *entity);
+
+        /**
+         * Remove the given child from this entity.
+         *
+         * @param entity The entity to remove.
+         */
+        void removeChild(Entity *entity);
+
+        /**
+         * Get the first child of name.
+         *
+         * @param name The child name to find.
+         * @return The first child found with the given name.
+         */
+        Entity *getChildByName(const std::string &name);
+
+        /**
+         * Get all children.
+         *
+         * @return All children.
+         */
+        std::vector<Entity *> getChildren();
+
+        /**
+         * Get all children with the given name.
+         *
+         * @param name Name to search for.
+         * @return All children with the given name.
+         */
+        std::vector<Entity *> getChildrenByName(const std::string &name);
+
+        /**
+         * Detemine if this entity is visible in the given camera.
+         *
+         * @note By default, this will check the size fields for a non-physics shape, and the physics body's AABB for a physics shape.
+         * @param camera Camera we are checking with.
+         * @return Whether or not we are visible in the camera.
+         */
+        virtual bool isVisibleInCamera(graphics::Camera *camera);
+
+        /**
+         * Render this entity and its children with the given renderer and model view matrix.
+         *
+         * @param renderer The renderer.
+         * @param modelView The current modelview (if the scene calls this, it'll be the camera's view matrix).
+         * @param currentCamera The current camera or null if a camera is not used.
+         */
+        void render(graphics::Renderer *renderer, Matrix modelView, graphics::Camera *currentCamera = nullptr);
+
+        /**
+         * Draw the contents of the entity.
+         *
+         * @note All rendering in this method is ***RELATIVE*** to the entity already. So rendering something at (0, 0) will render at the entity itself.
+         * @param renderer The renderer.
+         * @param modelView The currently applied modelview, should only be used for reference/converting of coordinates.
+         */
+        virtual void draw(graphics::Renderer *renderer, Matrix modelView);
+
+        /**
+         * Run update logic for the entity's components and children.
          */
         virtual void update();
     };

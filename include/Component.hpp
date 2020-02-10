@@ -23,102 +23,92 @@
 
 #include "Config.hpp"
 
-#include "Events.hpp"
-#include "Scene.hpp"
+#include "graphics/Renderer.hpp"
+#include "filesystem/ResourceManager.hpp"
 
 namespace ngine {
     class Entity;
+    class Game;
+    class Scene;
 
-    /**
-     * A component is an object that is attached to an entity and manipulates/defines its behaviour.
-     */
     class NEAPI Component {
-        /**
-         * The parent entity.
-         *
-         * @note Should *NEVER* be null, if it is something is very wrong.
-         */
-        Entity *m_parentEntity = nullptr;
+        friend class Entity;
 
         /**
-         * Entity OnUpdate reference.
+         * The entity we are attached to.
          */
-        EventAttachment<> m_onUpdateRef;
+        Entity *m_parent = nullptr;
+
+        /**
+         * Whether or not we are initializsed.
+         */
+        bool m_initialized = false;
+
+        /**
+         * Whether or not delete has been called yet.
+         */
+        bool m_destroyed = false;
     protected:
         /**
-         * Initialise the component.
-         *
-         * @param parent The parent entity.
+         * Create a new component
          */
-        Component(Entity *parent);
+        Component();
     public:
-        /**
-         * Fired when an entity destroys this component.
-         */
-        Event<> OnDestroy;
-
         virtual ~Component();
 
         /**
-         * Get the parent entity as a type
+         * Initialize the component
          *
-         * @tparam EntityType The type to get the entity as.
-         * @return The entity casted to the provided type.
+         * @warning If you override this, you **MUST** call to base first.
+         * @param parent The parent entity.
          */
-        template <typename EntityType = Entity>
-        EntityType *getEntity() const {
-            return (EntityType *) m_parentEntity;
-        }
+        virtual void initialize(Entity *parent);
 
         /**
-         * Get the parent scene
+         * Cleanup/deinitialize the component.
          *
-         * @tparam SceneType The type we want the scene as.
-         * @return The parent entity's parent scene.
+         * @warning If you override this, you **MUST** call to base first.
          */
-        template <class SceneType = Scene>
-        SceneType *getScene() const {
-            return (SceneType *) m_parentEntity->getScene();
-        }
+        virtual void cleanup();
 
         /**
-         * Get the parent game.
+         * Get the component's parent entity.
          *
-         * @return The game that we are a part of.
+         * @return The parent entity.
+         */
+        Entity *getParent() const;
+
+        /**
+         * Get the scene our parent is a member of.
+         *
+         * @return The scene.
+         */
+        Scene *getScene() const;
+
+        /**
+         * Get the game our member's scene is a member of.
+         *
+         * @return The scene.
          */
         Game *getGame() const;
 
         /**
-         * Get the game resource manager.
+         * Return the game's resource manager.
          *
-         * @return The game resource manager.
+         * @return The resource manager.
          */
         filesystem::ResourceManager *getResourceManager() const;
 
         /**
-         * Subscribe to the entity's update event.
-         */
-        void subscribeToUpdate();
-
-        /**
-         * Determine if the component is subscribed to the update event.
+         * Draw the component
          *
-         * @return Whether or not the component is subscribed to update.
-         */
-        bool subscribedToUpdate() const;
-
-        /**
-         * Unsubscribe from the entity's update event.
-         */
-        void unsubscribeFromUpdate();
-
-        /**
-         * Component draw code.
+         * @note Remember, drawing happens relative to the entity, so drawing a circle at (0, 0) draws it right on the entity!
+         * @param renderer Renderer to draw with.
          */
         virtual void draw(graphics::Renderer *renderer);
 
         /**
-         * Component update code.
+         * Run update logic for the component.
          */
         virtual void update();
     };

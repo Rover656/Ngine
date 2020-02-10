@@ -170,6 +170,11 @@ namespace ngine::graphics {
         ShaderProgramState *m_currentShaderState = nullptr;
 
         /**
+         * The current model view matrix.
+         */
+        Matrix m_currentModelView = Matrix::Identity;
+
+        /**
          * The vertex array for the current batch.
          */
         Vertex m_vertexArray[MAX_TRIANGLE_VERTICES];
@@ -311,6 +316,14 @@ namespace ngine::graphics {
          * @param state The shader program state to use.
          */
         void setShader(ShaderProgramState *state);
+
+        /**
+         * Set the current mode view matrix.
+         *
+         * @note Will force a draw, use this sparingly.
+         * @param modelView The new modelview matrix.
+         */
+        void setModelViewMatrix(Matrix modelView);
 
         /**
          * Push a matrix onto the stack (with the current matrix's value).

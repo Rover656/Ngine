@@ -143,13 +143,13 @@ namespace ngine {
             // Clear with clear color
             graphicsDevice->clear(ClearColor);
 
-            // Render scene
-            if (m_currentScene != nullptr) {
-                m_currentScene->draw(m_renderer);
-            }
-
             // OnDraw event
             OnDraw(m_renderer);
+
+            // Render scene
+            if (m_currentScene != nullptr) {
+                m_currentScene->onRender(m_renderer);
+            }
 
             // If using a target, draw target
             if (Config.MaintainResolution && m_renderTarget->isValid()) {
@@ -246,7 +246,7 @@ namespace ngine {
 
             // TODO: Detect if we are behind on updates.
 
-            // Poll inputs if window is visible and if we're going to update this frame
+            // Poll inputs if we'd update
             if (m_lag >= m_timestep) {
                 input::Gamepad::PollInputs();
                 mouse->pollInputs();
@@ -264,6 +264,7 @@ namespace ngine {
                 // Update the current scene.
                 if (m_currentScene != nullptr) {
                     m_currentScene->update();
+                    m_currentScene->updateUI();
                 }
 
                 // AudioDevice update
@@ -407,13 +408,13 @@ namespace ngine {
     }
 
     void Game::setScene(Scene *scene) {
-        if (m_currentScene != nullptr)
-            m_currentScene->OnUnload({this});
+        //if (m_currentScene != nullptr)
+        //    m_currentScene->OnUnload({this});
 
         m_currentScene = scene;
 
-        if (m_currentScene != nullptr)
-            m_currentScene->OnInit({this});
+        //if (m_currentScene != nullptr)
+        //    m_currentScene->OnInit({this});
 
         Console::Notice("Game", "A new scene has been loaded.");
     }

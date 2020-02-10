@@ -4,283 +4,134 @@
 
 using namespace ngine;
 using namespace ngine::audio;
-using namespace ngine::components;
+//using namespace ngine::components;
 using namespace ngine::filesystem;
 using namespace ngine::graphics;
 using namespace ngine::input;
 using namespace ngine::physics;
 using namespace ngine::physics::shapes;
 
-class KeyboardMovementComponent2D : public Component {
+class SpriteComponentTest : public Component {
+    Sprite *m_sprite;
+
 public:
-    float MoveSpeed = 32;
+    SpriteComponentTest(Sprite *sprite)
+            : m_sprite(sprite) {}
 
-    KeyboardMovementComponent2D(Entity *parent_) : Component(parent_) {
-        subscribeToUpdate();
-    }
-
-    void update() override {
-        auto par = getEntity<Entity>();
-        Vector2 velocity;
-
-        if (par->isPhysicsEnabled()) {
-            velocity = par->getPhysicsWorld()->getGravityPixels();
-        }
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_W)) {
-            velocity.Y -= MoveSpeed;
-        }
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_S)) {
-            velocity.Y += MoveSpeed;
-        }
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_A)) {
-            velocity.X -= MoveSpeed;
-        }
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_D)) {
-            velocity.X += MoveSpeed;
-        }
-
-        if (par->isPhysicsEnabled()) {
-            par->getPhysicsBody()->setLinearVelocity(velocity);
-        } else {
-            par->moveBy(velocity);
-        }
-
-        // Test
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_LEFT)) {
-            par->setRotation(par->getRotation() - 5);
-        }
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_RIGHT)) {
-            auto rot = par->getRotation() + 5;
-            auto rotDeg = rot.getDegrees();
-            par->setRotation(par->getRotation() + 5);
-        }
-
-        if (Keyboard::GetCurrent()->isKeyDown(KEY_ZERO)) {
-            par->setRotation(0);
-        }
+    void draw(Renderer *renderer) override {
+        m_sprite->draw(renderer, {0, 0});
     }
 };
 
-class PlayerEntity : public Entity {
+class TestEntity : public Entity {
 public:
-    PlayerEntity(Vector2 position_)
-            : Entity(position_, 0, 0, false, true) {
-        OnInit += new ClassMethodEventHandler<PlayerEntity>(this, &PlayerEntity::Init);
-    }
+    TestEntity() {}
 
-    void Init() {
-        // Subscribe to updates.
-        subscribeToUpdate();
+    void initialize(Scene *scene) override {
+        // Call to base first.
+        Entity::initialize(scene);
 
-        // Get physics body
-        auto body = getPhysicsBody();
+        // Set defaults
+        setPosition({0, 0});
+        setRotation(0);
+        setOrigin({16, 16});
+        setScale({2, 2});
 
-        // Set initial info
-        PhysicsBody::BodyInfo bi;
-        bi.Type = PhysicsBody::BODY_DYNAMIC;
-        bi.Position = getPosition();
-        bi.FixedRotation = true;
-        body->set(bi);
+        // Set name
+        setName("TestEntity");
 
-        // Add fixtures (WIP)
-        //auto shape = CircleShape(1);
-        auto shape = PolygonShape();
-        shape.setAsBox(16 / 16, 16 / 16);
-        body->createFixture(&shape, 1);
-        //auto shapeb = PolygonShape::CreateAsBox(16, 16);
-        //body->CreateFixture(&shapeb, 1);
-
-        // Apply test velocity
-        //body->SetAngularVelocity(5);
-
-        auto s = addComponent("Sprite", new SpriteComponent(this,
-                                                            Sprite(getResourceManager()->getTexture("test_spritesheet"),
-                                                                   16, 16, 32, 32, 30, 0)));
-        s->setOrigin({16, 16});
-
-        addComponent("Movement", new KeyboardMovementComponent2D(this));
-        addComponent("Camera", new CameraComponent(this, 1, {1280 / 2.0f, 768 / 2.0f}))->activate();
+        // Add component.
+        auto sprite = new Sprite(getResourceManager()->getTexture("test_spritesheet"), 16, 16, 32, 32);
+        addComponent("Sprite", new SpriteComponentTest(sprite));
     }
 
     void update() override {
         Entity::update();
-        auto cam = getComponent<CameraComponent>("Camera");
-        auto scene = getScene();
 
-        auto w = scene->getViewportWidth();
-        auto h = scene->getViewportHeight();
-        cam->setOrigin({w / 2.0f, h / 2.0f});
-    }
-};
+        auto keyboard = Keyboard::GetCurrent();
+        Vector2 vel;
 
-class Floor : public Entity {
-public:
-    Floor(Vector2 position_) : Entity(position_, 0, 0, false, true) {
-        OnInit += new ClassMethodEventHandler<Floor>(this, &Floor::Init);
-    }
-
-    void Init() {
-        // Get physics body
-        auto body = getPhysicsBody();
-
-        // Set initial body info
-        PhysicsBody::BodyInfo bi;
-        bi.Type = PhysicsBody::BODY_STATIC;
-        bi.Position = getPosition();
-        body->set(bi);
-
-        // Add fixture
-        auto box = PolygonShape::CreateAsBox(5, 5);
-        body->createFixture(&box, 0);
-    }
-};
-
-class TestScene : public Scene {
-public:
-    //TestWidget widg;
-
-    TilesetRenderer *testTiles;
-
-    TestScene(Game* game) : Scene(game, {0, 0}, 16) {//, widg(Vector2(120, 120)) {
-        OnInit += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::Init);
-        OnUnload += new ClassMethodEventHandler<TestScene, SceneLoadEventArgs>(this, &TestScene::UnInit);
-    }
-
-    void Init(SceneLoadEventArgs e) {
-        // Bind events
-        OnDraw += new ClassMethodEventHandler<TestScene, graphics::Renderer *>(this, &TestScene::draw);
-        OnUpdate += new ClassMethodEventHandler<TestScene>(this, &TestScene::update);
-        OnDrawCamera += new ClassMethodEventHandler<TestScene, graphics::Renderer *>(this, &TestScene::DrawCam);
-
-        // Add entities
-        addChild("Player", new PlayerEntity({100, 100}));
-        addChild("Floor", new Floor({100, 500}));
-
-        // Configure physics
-        getPhysicsWorld()->DebugDraw = true;
-
-        // Setup cull area
-        setCullArea(1280 - 50, 768 - 50, true);
-
-        // Audio tests
-        // ResourceManager::GetMusic("test_music")->Play();
-        AudioDevice::SetMasterVolume(0.25);
-
-        // Tileset tests
-        std::vector<int> tileData;
-        tileData.reserve(100);
-        for (auto i = 0; i < 50; i++) {
-            tileData.push_back(1);
-        }
-        for (auto i = 50; i < 100; i++) {
-            tileData.push_back(2);
+        if (keyboard->isKeyDown(Key::KEY_W)) {
+            vel.Y -= 5;
         }
 
-        testTiles = new TilesetRenderer(Tileset(getResourceManager()->getTexture("test_tiles"), 32, 32), 10, 10, tileData);
-        testTiles->setTileAt({5, 5}, 13);
-    }
+        if (keyboard->isKeyDown(Key::KEY_S)) {
+            vel.Y += 5;
+        }
 
-    void UnInit(SceneLoadEventArgs e) {
-        // Clear events
-        OnDrawCamera.clear();
-        OnUpdate.clear();
-        OnDrawCamera.clear();
+        if (keyboard->isKeyDown(Key::KEY_A)) {
+            vel.X -= 5;
+        }
 
-        // Delete tilesets
-        delete testTiles;
-    }
+        if (keyboard->isKeyDown(Key::KEY_D)) {
+            vel.X += 5;
+        }
 
-    int rot = 0;
+        auto rot = getRotation();
 
-    void draw(graphics::Renderer *renderer_) {
-        // ShapeRenderer::DrawCircle(renderer_, {50, 50}, 50, Color::Red, true, 1);
-        // ShapeRenderer::DrawLine(renderer_, {10, 10}, {100, 100}, Color::Green, 5);
-        // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color::Red, 15, {});
-        // ShapeRenderer::DrawRectangle(renderer_, {10, 10, 100, 100}, Color(0.0f, 1.0f, 0.0f, 0.5f), 15, {}, true, 15);
-        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
-        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color(1.0f, 0.0f, 1.0f, 0.5f), 0, {}, true, 5);
-        
-        ShapeRenderer::DrawCircle(renderer_, Mouse::GetCurrent()->getMousePosition(), 15, Color::Blue);
-    }
+        if (keyboard->isKeyDown(Key::KEY_LEFT)) {
+            rot = rot + 5;
+        }
 
-    void DrawCam(graphics::Renderer *renderer_) {
-        //Renderer::DrawRectangleLines(GetCullArea(), Color::Green, 1);
-        ShapeRenderer::DrawRectangle(renderer_, getCullArea(), Color::Green, 0, Vector2::Zero, true);
-        testTiles->draw(renderer_, {0, 0}, getCullAreaPosition(), getCullAreaEndPosition(), 2.0f);
+        if (keyboard->isKeyDown(Key::KEY_RIGHT)) {
+            rot = rot - 5;
+        }
 
-        auto text = "Hello World.\nGood day.";
-        auto spacing = 0;
-        auto fontSize = 32;
-        auto lSpacing = LineSpacing::OnePointFive;
-        auto rotation = 126;
-        auto fnt = Font::GetDefaultFont();
-        auto s = fnt->measureString(text, fontSize, spacing, lSpacing);
-        ShapeRenderer::DrawRectangle(renderer_, {150, 150, s.X, s.Y}, Color::Green, rotation);
-        fnt->drawString(renderer_, text, {150, 150}, fontSize, spacing, Color::Orange, lSpacing, rotation);
-    }
+        auto scale = getScale();
 
-    void update() {
-        //widg.Update();
+        if (keyboard->isKeyPressed(Key::KEY_UP)) {
+            scale.X += 0.25;
+            scale.Y += 0.25;
+        }
 
-        if (Keyboard::GetCurrent()->isKeyPressed(KEY_F11)) {
-            getGame()->getGameWindow()->toggleFullscreen();
+        if (keyboard->isKeyPressed(Key::KEY_DOWN)) {
+            scale.X -= 0.25;
+            scale.Y -= 0.25;
+        }
+
+        // Move
+        auto pos = getPosition();
+        setPosition(pos + vel);
+        setRotation(rot);
+        setScale(scale);
+
+        if (keyboard->isKeyPressed(Key::KEY_SPACE)) {
+            setPosition({0, 0});
+        }
+
+        if (keyboard->isKeyPressed(Key::KEY_ZERO)) {
+            setRotation(0);
         }
     }
 };
 
-class TestNode : public RenderableNode {
-    Texture2D *m_texture;
+class ParentEntity : public Entity {
 public:
-    TestNode(Texture2D *texture_) {
-        m_texture = texture_;
+    void initialize(Scene *scene) override {
+        Entity::initialize(scene);
+        setPosition({150, 150});
+        setRotation(45);
     }
 
-    void Render(Renderer *renderer_) override {
-        //m_texture->Draw(renderer_, {0, 0});
-        renderer_->setTexture(m_texture);
-        renderer_->pushMatrix();
-        renderer_->translate({0, 0, 0});
-
-        renderer_->beginVertices(PrimitiveType::Quads);
-        renderer_->pushVertex({
-                                      {0, 0, 0},
-                                      {0, 0},
-                                      Color::White
-                              });
-        renderer_->pushVertex({
-                                      {0, 64, 0},
-                                      {0, 1},
-                                      Color::White
-                              });
-        renderer_->pushVertex({
-                                      {64, 64, 0},
-                                      {1, 1},
-                                      Color::White
-                              });
-        renderer_->pushVertex({
-                                      {64, 0, 0},
-                                      {1, 0},
-                                      Color::White
-                              });
-        renderer_->endVertices();
-
-        renderer_->popMatrix();
-
+    void draw(Renderer *renderer, Matrix modelView) override {
+        Entity::draw(renderer, modelView);
+        ShapeRenderer::DrawCircle(renderer, {0, 0}, 15, Color::Blue);
     }
 };
 
-#include <graphics/ShaderProgramState.hpp>
+// TESTING
+class NewTestScene : public Scene {
+public:
+    NewTestScene(Game *game) : Scene(game) {
+//        auto par = new ParentEntity();
+//        par->addChild(new TestEntity());
+//        addChild(par);
+        addChild(new TestEntity());
+    }
+};
 
 class TestGame : public Game {
-    TestScene *m_scene;
-
-    RenderSpace *m_space;
+    NewTestScene *m_scene;
 public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
@@ -301,9 +152,9 @@ public:
 
     void Draw(graphics::Renderer *renderer_) {
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
+        ShapeRenderer::DrawRectangle(renderer_, {0, 0, 1280, 768}, Color::Blue, 0, {}, true, 5);
 
-        // Test new renderer capabilities
-        //m_space->Render(renderer_, "defaultCamera");
+        ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
     }
 
     void Init() {
@@ -317,20 +168,8 @@ public:
         // Load arial as default font
         Font::SetDefaultFont(resMan->getFont("Upheaval"));
 
-        // Create test render space
-        m_space = new RenderSpace();
-
-        // Add a camera
-        auto cam = m_space->createCamera("defaultCamera");
-        //cam->Zoom = 2;
-
-        // Add a node
-        m_space->addNode(new TestNode(resMan->getTexture("test_spritesheet")));
-
-        // Create scene
-        m_scene = new TestScene(this);
-
-        // Set scene
+        // Create and enable scene.
+        m_scene = new NewTestScene(this);
         setScene(m_scene);
     }
 };
@@ -342,7 +181,6 @@ NGINE_GAME_ENTRY {
     // Set graphics API
 #if defined(PLATFORM_DESKTOP)
 #if defined(_WIN32)
-    //GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 3, 1);
     GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
 #else
     GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 3, 3);
@@ -361,8 +199,8 @@ NGINE_GAME_ENTRY {
     windowConfig.Resizable = true;
     //windowConfig.MSAA_4X = true;
     //windowConfig.VSync = true;
-    windowConfig.InitialWidth = 1920/2;
-    windowConfig.InitialHeight = 1080/2;
+    windowConfig.InitialWidth = 1920 / 2;
+    windowConfig.InitialHeight = 1080 / 2;
     windowConfig.Title = "Test Game";
     windowConfig.Icon = &icon;
     //windowConfig.NativeDebugConsole = true;

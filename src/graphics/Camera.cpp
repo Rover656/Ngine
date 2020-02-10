@@ -27,7 +27,7 @@ namespace ngine::graphics {
         // Load matrix
         graphicsDevice->pushViewMatrix();
         graphicsDevice->loadViewIdentity();
-        graphicsDevice->multView(getTranslationMatrix());
+        graphicsDevice->multView(getViewMatrix());
     }
 
     void Camera::endCamera(GraphicsDevice *graphicsDevice) const {
@@ -36,19 +36,19 @@ namespace ngine::graphics {
     }
 
     Vector2 Camera::screenToWorld(Vector2 pos) {
-        return pos.transform(getTranslationMatrix().invert());
+        return pos.transform(getViewMatrix().invert());
     }
 
     Vector2 Camera::worldToScreen(Vector2 pos) {
-        return pos.transform(getTranslationMatrix());
+        return pos.transform(getViewMatrix());
     }
 
-    Matrix Camera::getTranslationMatrix() const {
+    Matrix Camera::getViewMatrix() const {
         Matrix ret = Matrix::Identity;
-        ret = ret * Matrix::Translate(-Position.X, -Position.Y, 0);
-        ret = ret * Matrix::RotateZ(Rotation);
-        ret = ret * Matrix::Scale(Zoom, Zoom, 1);
-        ret = ret * Matrix::Translate(Origin.X, Origin.Y, 0);
+        ret = Matrix::Translate(-Position.X, -Position.Y, 0) * ret;
+        ret = Matrix::RotateZ(Rotation) * ret;
+        ret = Matrix::Scale(Zoom, Zoom, 1) * ret;
+        ret = Matrix::Translate(Origin.X, Origin.Y, 0) * ret;
         return ret;
     }
 }

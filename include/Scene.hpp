@@ -24,322 +24,183 @@
 #include "Config.hpp"
 
 #include "graphics/Camera.hpp"
+#include "graphics/Renderer.hpp"
 #include "filesystem/ResourceManager.hpp"
-#include "physics/PhysicsWorld.hpp"
-#include "EntityContainer.hpp"
-#include "Events.hpp"
-#include "Rectangle.hpp"
 
 namespace ngine {
-    // Forward declare
+    class Entity;
     class Game;
 
-    /**
-     * Scene loaded event args.
-     */
-    struct SceneLoadEventArgs : EventArgs {
+    class NEAPI Scene {
         /**
-         * The game that the scene has been loaded into.
+         * The entities within the scene.
          */
-        Game *ParentGame;
+        std::vector<Entity *> m_entities;
 
         /**
-         * Create a new scene loaded event arg.
+         * The game we are a part of.
          */
-        SceneLoadEventArgs(Game *game)
-                : ParentGame(game) {}
-    };
-
-    /**
-     * A scene controls every entity.
-     * This also contains the active camera, cull areas and manages the overall lifecycle.
-     */
-    class NEAPI Scene : public EntityContainer {
-        friend class EntityContainer;
-
-        friend class Entity;
+        Game *m_game;
 
         /**
-         * Currently active camera which controls the viewport
+         * Cameras that are a part of the scene.
          */
-        graphics::Camera *m_activeCamera = nullptr;
+        std::unordered_map<std::string, graphics::Camera> m_cameras;
+
+        std::string m_currentCamera;
 
         /**
-         * The culling area width.
+         * Sort the entities.
          */
-        float m_cullAreaWidth;
-
-        /**
-         * The culling area height.
-         */
-        float m_cullAreaHeight;
-
-        /**
-         * Whether or not to center the cull area in the viewport.
-         */
-        bool m_cullAreaCenterInViewport = true;
-
-        /**
-         * Whether or not an entity is active.
-         */
-        std::unordered_map<Entity *, bool> m_entityActivities;
-
-        /**
-         * Depth key list containing entities.
-         * This is used for drawing.
-         */
-        std::map<int, std::vector<Entity *>> m_entityDepths;
-
-        /**
-         * The parent game.
-         */
-        Game *m_parentGame = nullptr;
-
-        /**
-         * Whether or not the scene is paused.
-         */
-        bool m_paused = false;
-
-        /**
-         * Whether or not physics is enabled.
-         */
-        bool m_physicsEnabled = false;
-
-        /**
-         * The physics world, if enabled.
-         */
-        physics::PhysicsWorld *m_physicsWorld;
-
-        /**
-         * The update counter.
-         */
-        int m_updateCounter = 0;
-
-        /**
-         * Add an entity for tracking.
-         *
-         * @param ent The entity to track.
-         */
-        void _addEntity(Entity *ent);
-
-        /**
-         * Remove an entity from tracking.
-         *
-         * @param ent Entity to stop tracking.
-         */
-        void _removeEntity(Entity *ent);
-
-        /**
-         * Track an entity depth value update.
-         *
-         * @param newDepth The entitiy's new depth.
-         * @param ent The entity.
-         */
-        void _updateEntityDepth(int newDepth, Entity *ent);
-
+        void _sortEntities();
     public:
-        /**
-         * Fired when the game loads the scene.
-         * All scene setup should be done here.
-         */
-        Event<SceneLoadEventArgs> OnInit;
-
-        /**
-         * Fired when the game unloads the scene.
-         * All scene cleanup should be done here.
-         */
-        Event<SceneLoadEventArgs> OnUnload;
-
-        /**
-         * On draw event.
-         */
-        Event<graphics::Renderer *> OnDraw;
-
-        /**
-         * On draw with the camera.
-         */
-        Event<graphics::Renderer *> OnDrawCamera;
-
-        /**
-         * On update event.
-         */
-        Event<> OnUpdate;
-
-        /**
-         * On persistent update event.
-         * This means updates will run through pauses.
-         */
-        Event<> OnPersistentUpdate;
-
-        /**
-         * Create a standard scene.
-         *
-         * @param parentGame The current game.
-         */
-        explicit Scene(Game *parentGame);
-
-        /**
-         * Create a new Scene for physics use.
-         *
-         * @param parentGame The current game.
-         * @param physicsEnabled_ Whether or not the game has physics enabled.
-         * @param grav The physics gravity vector.
-         * @param ppm The physics pixel to meter ratio.
-         */
-        Scene(Game *parentGame, Vector2 grav, float ppm = 1);
-
+        Scene(Game *game);
         virtual ~Scene();
 
         /**
-         * Get the currently active camera.
+         * Get the game we are a member of.
          *
-         * @return A pointer to the currently active camera
+         * @return The game.
          */
-        graphics::Camera *getActiveCamera() const;
+        Game *getGame() const;
+
+        /**
+         * Get the game's resource manager.
+         *
+         * @return The game resource manager.
+         */
+        filesystem::ResourceManager *getResourceManager();
+
+        /**
+         * Create a new camera with the given name.
+         *
+         * @param name Name of the new camera.
+         * @return A weak reference to the new camera.
+         */
+        graphics::Camera *createCamera(const std::string &name);
+
+        /**
+         * Get a weak reference to the requested camera.
+         *
+         * @param name The camera to get.
+         * @return A weak reference to the camera or null if the camera doesn't exist.
+         */
+        graphics::Camera *getCamera(const std::string &name);
+
+        /**
+         * Remove/delete the given camera.
+         *
+         * @param name The camera to remove.
+         */
+        void removeCamera(const std::string &name);
 
         /**
          * Set the currently active camera.
          *
-         * @param camera The new camera.
+         * @param name The name of the camera to use for main render.
          */
-        void setActiveCamera(graphics::Camera *camera);
+        void setCurrentCamera(const std::string &name);
 
         /**
-         * Get the culling area.
+         * Add a child entity to the scene.
          *
-         * @return The cull area rectangle.
+         * @param entity Entity to add.
          */
-        Rectangle getCullArea() const;
+        void addChild(Entity *entity);
 
         /**
-         * Get the top-left coordinate of the cull area. (Same as viewport).
+         * Remove a child entity from the scene.
+         */
+        void removeChild(Entity *entity);
+
+        /**
+         * Get the first child of name.
          *
-         * @return The top-left coordinate of the cull area.
+         * @param name The child name to find.
+         * @return The first child found with the given name.
          */
-        Vector2 getCullAreaPosition() const;
+        Entity *getChildByName(const std::string &name);
 
         /**
-         * Get the bottom-right coordinate of the cull area.
+         * Get all children.
          *
-         * @return The bottom-right coordinate of the cull area.
+         * @return All children.
          */
-        Vector2 getCullAreaEndPosition() const;
+        std::vector<Entity *> getChildren();
 
         /**
-         * Get cull area width.
+         * Get all children with the given name.
          *
-         * @return The width of the cull area.
+         * @param name Name to search for.
+         * @return All children with the given name.
          */
-        float getCullAreaWidth() const;
+        std::vector<Entity *> getChildrenByName(const std::string &name);
 
         /**
-         * Get cull area height.
+         * Pre-render event.
+         * This enables the developer to use render targets and have them drawn before the scene is, allowing entities to use these targets in game.
          *
-         * @return The height of the cull area.
-         */
-        float getCullAreaHeight() const;
-
-        /**
-         * Set the entity culling area.
+         * This is called (in the default onRender) before everything.
          *
-         * @param width The cull area width.
-         * @param height The cull area height.
-         * @param centerInViewport Whether or not to center the cull area in the viewport.
+         * @param renderer The renderer to use.
          */
-        void setCullArea(float width, float height, bool centerInViewport);
+        virtual void preRender(graphics::Renderer *renderer);
 
         /**
-         * Get the current viewport.
+         * On-render event.
+         * This defines what happens when the scene is to be rendered.
          *
-         * @return The current viewport taking into account the camera.
-         */
-        Rectangle getViewport() const;
-
-        /**
-         * Get the current viewport position.
+         * By default this will call `preRender()`, `render()`, `postRender()` and `renderUI()`.
+         * This could be overridden and instead render two render targets created in preRender which constitute split screen.
          *
-         * @return The top left coordinate of the viewport.
+         * @param renderer Renderer to use.
          */
-        Vector2 getViewportPosition() const;
+        virtual void onRender(graphics::Renderer *renderer);
 
         /**
-         * Get the bottom right coordinate of the viewport.
+         * Post-render event.
+         * This enables the developer to apply post-processing effects or something else.
          *
-         * @return The bottom right coordinate of the viewport.
-         */
-        Vector2 getViewportEndPosition() const;
-
-        /**
-         * Get the width of the current viewport.
+         * This is called (in the default `onRender`) after `render()` and before `postRender()`.
          *
-         * @return The width of the viewport.
+         * @param renderer Renderer to use.
          */
-        float getViewportWidth() const;
+        virtual void postRender(graphics::Renderer *renderer);
 
         /**
-         * Get the height of the current viewport.
+         * Render the scene contents in the current/main camera.
          *
-         * @return The height of the viewport.
-         */
-        float getViewportHeight() const;
-
-        /**
-         * Get the parent game.
-         */
-        Game *getGame();
-
-        /**
-         * Get the game resource manager.
+         * This is called (in the default `onRender`) after `preRender()` and before `postRender()`.
          *
-         * @return The game resource manager.
+         * @param renderer The renderer to use.
          */
-        filesystem::ResourceManager *getResourceManager() const;
+        void render(graphics::Renderer *renderer);
 
         /**
-         * Get the current physics world.
+         * Render the scene contents with the given camera.
+         * This is useful for rendering to rendertargets.
          *
-         * @return The current physics world.
+         * @param renderer The renderer to use.
+         * @param camera The name of the camera to use.
          */
-        physics::PhysicsWorld *getPhysicsWorld();
+        void renderWith(graphics::Renderer *renderer, const std::string &camera);
 
         /**
-         * Get the current physics world (read-only).
+         * Render all UI active in the scene.
          *
-         * @return (Read-only) The current physics world.
+         * @param renderer The renderer to use.
          */
-        const physics::PhysicsWorld *getPhysicsWorld() const;
+        void renderUI(graphics::Renderer *renderer);
 
         /**
-         * Pause the scene.
-         */
-        void pause();
-
-        /**
-         * Unpause the scene.
-         */
-        void resume();
-
-        /**
-         * Is the scene paused.
-         *
-         * @return Whether or not the scene is paused.
-         */
-        bool isPaused();
-
-        /**
-         * Draw the scene.
-         *
-         * @warning Should only be called by the game.
-         * @param renderer The game renderer.
-         */
-        void draw(graphics::Renderer *renderer);
-
-        /**
-         * Update the scene.
-         *
-         * @warning Should only be called by the game.
+         * Update all entities in the scene.
          */
         void update();
+
+        /**
+         * Run update logic for UI.
+         */
+        void updateUI();
     };
 }
 

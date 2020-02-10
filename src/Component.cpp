@@ -20,46 +20,52 @@
 
 #include "Component.hpp"
 
+#include "Console.hpp"
 #include "Entity.hpp"
 
 namespace ngine {
-    Component::Component(Entity *parent)
-            : m_parentEntity(parent) {
-        // Check our parent is valid
-        if (parent == nullptr) {
-            throw std::runtime_error("A valid parent must be attached to this component.");
-        }
-    }
+    Component::Component() = default;
 
     Component::~Component() {
-        // Fire OnDestroy
-        OnDestroy();
+        // Mark as deleted so no recursion occurs
+        m_destroyed = true;
 
-        // Detach events
-        unsubscribeFromUpdate();
+        // Remove from parent if we still have one.
+        if (m_parent != nullptr)
+            m_parent->removeComponent(this);
+    }
+
+    void Component::initialize(Entity *parent) {
+        // Check we aren't already initialized.
+        if (m_initialized)
+            Console::Fail("Component", "Do not call initialize ever, unless you have to!");
+
+        // Mark as initialized
+        m_initialized = true;
+
+        // Save parent
+        m_parent = parent;
+    }
+
+    void Component::cleanup() {
+        // Mark as not initialized
+        m_initialized = false;
+    }
+
+    Entity *Component::getParent() const {
+        return m_parent;
+    }
+
+    Scene *Component::getScene() const {
+        return m_parent->getScene();
     }
 
     Game *Component::getGame() const {
-        return m_parentEntity->getGame();
+        return m_parent->getGame();
     }
 
     filesystem::ResourceManager *Component::getResourceManager() const {
-        return m_parentEntity->getResourceManager();
-    }
-
-    void Component::subscribeToUpdate() {
-        // Ensure the entity is subscribed to updates.
-        if (m_parentEntity->subscribeToUpdate()) {
-            m_onUpdateRef = m_parentEntity->OnUpdate += new ClassMethodEventHandler<Component>(this, &Component::update);
-        }
-    }
-
-    bool Component::subscribedToUpdate() const {
-        return m_onUpdateRef.isAttached();
-    }
-
-    void Component::unsubscribeFromUpdate() {
-        m_onUpdateRef.detach();
+        return m_parent->getResourceManager();
     }
 
     void Component::draw(graphics::Renderer *renderer) {}

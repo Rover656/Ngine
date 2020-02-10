@@ -20,287 +20,176 @@
 
 #include "Scene.hpp"
 
+#include "Console.hpp"
 #include "Entity.hpp"
 #include "Game.hpp"
-#include "Console.hpp"
 
 namespace ngine {
-    void Scene::_addEntity(Entity *ent) {
-        // When an entity is added, mark as active
-        m_entityActivities.insert({ent, true});
-
-        // Add entity and mark it's depth
-        if (m_entityDepths.find(ent->m_depth) == m_entityDepths.end())
-            m_entityDepths.insert({ent->m_depth, {}});
-        m_entityDepths[ent->m_depth].push_back(ent);
-
-        // Fire scene add event
-        ent->OnInit();
+    void Scene::_sortEntities() {
+        std::sort(m_entities.begin(), m_entities.end(), &Entity::_SortChildrenPredicate);
     }
 
-    void Scene::_removeEntity(Entity *ent) {
-        for (auto vec : m_entityDepths) {
-            for (auto ent : vec.second) {
-                if (ent == ent) {
-                    m_entityDepths[vec.first].erase(
-                            std::remove(m_entityDepths[vec.first].begin(), m_entityDepths[vec.first].end(), ent),
-                            m_entityDepths[vec.first].end());
-                }
-            }
-        }
-    }
-
-    void Scene::_updateEntityDepth(int newDepth, Entity *ent) {
-        if (ent->m_depth == newDepth)
-            return; // Short circuit if depth's are the same because we don't want to remove and re-add
-        m_entityDepths[ent->m_depth].erase(
-                std::remove(m_entityDepths[ent->m_depth].begin(), m_entityDepths[ent->m_depth].end(), ent),
-                m_entityDepths[ent->m_depth].end());
-
-        if (m_entityDepths.find(newDepth) == m_entityDepths.end())
-            m_entityDepths.insert({newDepth, {}});
-        m_entityDepths[newDepth].push_back(ent);
-    }
-
-    Scene::Scene(Game *parentGame)
-            : m_parentGame(parentGame), EntityContainer(EntityContainer::SCENE) {
-        // Check game
-        if (parentGame == nullptr)
-            Console::Fail("Scene", "Scene cannot have a null parent game.");
-    }
-
-    Scene::Scene(Game *parentGame, Vector2 grav, float ppm)
-            : Scene(parentGame) {
-        // Physics setup
-        m_physicsEnabled = true;
-        m_physicsWorld = new physics::PhysicsWorld(grav, ppm);
+    Scene::Scene(Game *game)
+            : m_game(game) {
+        // Add default camera
+        createCamera("default");
+        setCurrentCamera("default");
     }
 
     Scene::~Scene() {
-        Console::Notice("Scene", "Deleting scene.");
+        std::vector<Entity *> ents;
+        ents = m_entities;
 
-        // Delete physics world
-        delete m_physicsWorld;
-
-        // Clear vectors
-        m_entityActivities.clear();
-        m_entityDepths.clear();
-    }
-
-    graphics::Camera *Scene::getActiveCamera() const {
-        return m_activeCamera;
-    }
-
-    void Scene::setActiveCamera(graphics::Camera *camera) {
-        m_activeCamera = camera;
-    }
-
-    Rectangle Scene::getCullArea() const {
-        return {getCullAreaPosition(), getCullAreaWidth(), getCullAreaHeight()};
-    }
-
-    Vector2 Scene::getCullAreaPosition() const {
-        // Get viewport position
-        auto pos = getViewportPosition();
-
-        // Get center of viewport
-        pos.X += getViewportWidth() / 2.0f;
-        pos.Y += getViewportHeight() / 2.0f;
-
-        if (m_cullAreaCenterInViewport) {
-            // Offset from cull area size
-            pos.X -= getCullAreaWidth() / 2.0f;
-            pos.Y -= getCullAreaHeight() / 2.0f;
-        }
-
-        return pos;
-    }
-
-    Vector2 Scene::getCullAreaEndPosition() const {
-        auto pos = getCullAreaPosition();
-        pos.X += m_cullAreaWidth;
-        pos.Y += m_cullAreaHeight;
-        return pos;
-    }
-
-    float Scene::getCullAreaWidth() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        return m_cullAreaWidth / scale;
-    }
-
-    float Scene::getCullAreaHeight() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        return m_cullAreaHeight / scale;
-    }
-
-    void Scene::setCullArea(float width, float height, bool centerInViewport) {
-        m_cullAreaWidth = width;
-        m_cullAreaHeight = height;
-        m_cullAreaCenterInViewport = centerInViewport;
-    }
-
-    Rectangle Scene::getViewport() const {
-        return {getViewportPosition(), getViewportWidth(), getViewportHeight()};
-    }
-
-    Vector2 Scene::getViewportPosition() const {
-        if (m_activeCamera != nullptr) {
-            // Top left coordinate of camera is screen 0,0
-            auto pos = m_activeCamera->screenToWorld({0, 0});
-            return pos;
-        }
-        return {0, 0};
-    }
-
-    Vector2 Scene::getViewportEndPosition() const {
-        auto pos = getViewportPosition();
-        pos.X += getViewportWidth();
-        pos.Y += getViewportHeight();
-        return pos;
-    }
-
-    float Scene::getViewportWidth() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
-        }
-
-        if (m_parentGame->Config.MaintainResolution) {
-            // Virtual size
-            return m_parentGame->Config.TargetWidth / scale;
-        } else {
-            // Window size
-            return m_parentGame->getGameWindow()->getWidth() / scale;
+        for (auto e : ents) {
+            delete e;
         }
     }
 
-    float Scene::getViewportHeight() const {
-        float scale = 1;
-        if (m_activeCamera != nullptr) {
-            scale = m_activeCamera->Zoom;
+    Game *Scene::getGame() const {
+        return m_game;
+    }
+
+    filesystem::ResourceManager *Scene::getResourceManager() {
+        return m_game->getResourceManager();
+    }
+
+    graphics::Camera *Scene::createCamera(const std::string &name) {
+        if (m_cameras.find(name) != m_cameras.end())
+            return &m_cameras[name];
+        m_cameras.insert({name, {}});
+        return &m_cameras[name];
+    }
+
+    graphics::Camera *Scene::getCamera(const std::string &name) {
+        if (m_cameras.find(name) != m_cameras.end())
+            return &m_cameras[name];
+        return nullptr;
+    }
+
+    void Scene::removeCamera(const std::string &name) {
+        m_cameras.erase(name);
+    }
+
+    void Scene::setCurrentCamera(const std::string &name) {
+        if (m_cameras.find(name) != m_cameras.end())
+            m_currentCamera = name;
+        else Console::Fail("Scene", "Camera does not exist.");
+    }
+
+    void Scene::addChild(Entity *entity) {
+        // Ensure the child has no parent
+        if (entity->m_parent != nullptr)
+            Console::Fail("Scene", "Entity already has a parent elsewhere.");
+
+        // Check the child is not a member of a scene
+        if (entity->m_scene != nullptr)
+            Console::Fail("Scene", "Entity is already a member of a scene.");
+
+        // Add to our list.
+        m_entities.push_back(entity);
+
+        // Fire event
+        entity->initialize(this);
+    }
+
+    void Scene::removeChild(Entity *entity) {
+        // Check we actually own the entity.
+        if (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end())
+            Console::Fail("Scene", "This entity is not parented by this scene.");
+
+        // Remove
+        m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());
+
+        // If the entity is still initialized, cleanup now
+        if (entity->m_initialized)
+            entity->cleanup();
+
+        // Unset parents
+        entity->m_parent = nullptr;
+        entity->m_scene = nullptr;
+
+        // If the entity isn't destroyed yet, delete it
+        if (!entity->m_destroyed)
+            delete entity;
+    }
+
+    Entity *Scene::getChildByName(const std::string &name) {
+        auto nHash = std::hash<std::string>{}(name);
+        for (const auto &e : m_entities) {
+            if (e->m_nameHash == nHash && e->m_name == name)
+                return e;
         }
+        return nullptr;
+    }
 
-        if (m_parentGame->Config.MaintainResolution) {
-            // Virtual size
-            return m_parentGame->Config.TargetHeight / scale;
-        } else {
-            // Window size
-            return m_parentGame->getGameWindow()->getHeight() / scale;
+    std::vector<Entity *> Scene::getChildren() {
+        return m_entities;
+    }
+
+    std::vector<Entity *> Scene::getChildrenByName(const std::string &name) {
+        std::vector<Entity *> ents;
+        auto nHash = std::hash<std::string>{}(name);
+        for (const auto &e : m_entities) {
+            if (e->m_nameHash == nHash && e->m_name == name)
+                ents.push_back(e);
         }
+        return ents;
     }
 
-    Game *Scene::getGame() {
-        return m_parentGame;
+    void Scene::preRender(graphics::Renderer *renderer) {}
+
+    void Scene::onRender(graphics::Renderer *renderer) {
+        // Pre-render
+        preRender(renderer);
+
+        // Render the scene with the current camera.
+        render(renderer);
+
+        // Post-render
+        postRender(renderer);
+
+        // Render UI layer.
+        renderUI(renderer);
     }
 
-    filesystem::ResourceManager *Scene::getResourceManager() const {
-        return m_parentGame->getResourceManager();
+    void Scene::postRender(graphics::Renderer *renderer) {}
+
+    void Scene::render(graphics::Renderer *renderer) {
+        renderWith(renderer, m_currentCamera);
     }
 
-    physics::PhysicsWorld *Scene::getPhysicsWorld() {
-        return m_physicsWorld;
+    void Scene::renderWith(graphics::Renderer *renderer, const std::string &camera) {
+        // Exit if empty
+        if (m_entities.empty())
+            return;
+
+        // Sort children
+        _sortEntities();
+
+        // Get the current camera
+        auto cam = getCamera(camera);
+        if (cam == nullptr)
+            Console::Fail("Scene", "Failed to get camera.");
+
+        // Get camera translation
+        auto view = cam->getViewMatrix();
+
+        // Render all entities
+        for (const auto &e : m_entities) e->render(renderer, view, cam);
     }
 
-    const physics::PhysicsWorld *Scene::getPhysicsWorld() const {
-        return m_physicsWorld;
-    }
-
-    void Scene::pause() {
-        m_paused = true;
-    }
-
-    void Scene::resume() {
-        m_paused = false;
-    }
-
-    bool Scene::isPaused() {
-        return m_paused;
-    }
-
-    void Scene::draw(graphics::Renderer *renderer) {
-        // Invoke draw calls
-        OnDraw(renderer);
-
-        // Draw with camera
-        if (m_activeCamera != nullptr)
-            m_activeCamera->beginCamera(renderer->getGraphicsDevice());
-
-        OnDrawCamera(renderer);
-
-        // Draw entities with camera
-        for (auto pair : m_entityDepths) {
-            auto vec = pair.second;
-            for (auto ent : vec) {
-                if (ent != nullptr) {
-                    if (m_entityActivities[ent] && ent->DrawWithCamera)
-                        ent->draw(renderer);
-                }
-            }
-        }
-
-        if (m_activeCamera != nullptr)
-            m_activeCamera->endCamera(renderer->getGraphicsDevice());
-
-        // Draw entities
-        for (auto pair : m_entityDepths) {
-            auto vec = pair.second;
-            for (auto ent : vec) {
-                if (ent != nullptr) {
-                    if (m_entityActivities.find(ent) == m_entityActivities.end())
-                        m_entityActivities.insert({ent, true});
-
-                    if (m_entityActivities[ent] && !ent->DrawWithCamera)
-                        ent->draw(renderer);
-                }
-            }
-        }
+    void Scene::renderUI(graphics::Renderer *renderer) {
+        // TODO: A UI system.
     }
 
     void Scene::update() {
-        if (m_paused) {
-            OnPersistentUpdate();
-            return;
+        for (const auto &e : m_entities) {
+            if (!e->m_asleep)
+                e->update();
         }
+    }
 
-        auto fps = m_parentGame->getTargetFPS();
-
-        m_updateCounter++;
-
-        // Every quarter second
-        if (m_updateCounter % fps / 4 == 0) {
-            // Check culling
-
-            for (auto ent : getChildren()) {
-                if (ent != nullptr) {
-                    // Check if we can cull
-                    if (ent->canCull()) {
-                        auto area = getCullArea();
-                        if (m_entityActivities.find(ent) == m_entityActivities.end())
-                            m_entityActivities.insert({ent, true});
-                        m_entityActivities[ent] = !ent->checkForCulling(area);
-                    }
-                }
-            }
-        }
-
-        if (m_updateCounter > fps)
-            m_updateCounter -= fps;
-
-        // Invoke updates
-        OnUpdate();
-        OnPersistentUpdate();
-
-        // Physics
-        if (m_physicsWorld != nullptr) {
-            m_physicsWorld->step(1.0f / m_parentGame->getTargetFPS(), 6, 2); // TODO: Proper values
-        }
+    void Scene::updateUI() {
+        // TODO: A UI system.
     }
 }
