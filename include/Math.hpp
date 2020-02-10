@@ -554,26 +554,6 @@ namespace ngine {
             result.M13 = left.M1 * right.M12 + left.M5 * right.M13 + left.M9  * right.M14 + left.M13 * right.M15;
             result.M14 = left.M2 * right.M12 + left.M6 * right.M13 + left.M10 * right.M14 + left.M14 * right.M15;
             result.M15 = left.M3 * right.M12 + left.M7 * right.M13 + left.M11 * right.M14 + left.M15 * right.M15;
-
-//            result.M0 = left.M0 * right.M0 + left.M1 * right.M4 + left.M2 * right.M8 + left.M3 * right.M12;
-//            result.M1 = left.M0 * right.M1 + left.M1 * right.M5 + left.M2 * right.M9 + left.M3 * right.M13;
-//            result.M2 = left.M0 * right.M2 + left.M1 * right.M6 + left.M2 * right.M10 + left.M3 * right.M14;
-//            result.M3 = left.M0 * right.M3 + left.M1 * right.M7 + left.M2 * right.M11 + left.M3 * right.M15;
-//            result.M4 = left.M4 * right.M0 + left.M5 * right.M4 + left.M6 * right.M8 + left.M7 * right.M12;
-//            result.M5 = left.M4 * right.M1 + left.M5 * right.M5 + left.M6 * right.M9 + left.M7 * right.M13;
-//            result.M6 = left.M4 * right.M2 + left.M5 * right.M6 + left.M6 * right.M10 + left.M7 * right.M14;
-//            result.M7 = left.M4 * right.M3 + left.M5 * right.M7 + left.M6 * right.M11 + left.M7 * right.M15;
-//            result.M8 = left.M8 * right.M0 + left.M9 * right.M4 + left.M10 * right.M8 + left.M11 * right.M12;
-//            result.M9 = left.M8 * right.M1 + left.M9 * right.M5 + left.M10 * right.M9 + left.M11 * right.M13;
-//            result.M10 = left.M8 * right.M2 + left.M9 * right.M6 + left.M10 * right.M10 + left.M11 * right.M14;
-//            result.M11 = left.M8 * right.M3 + left.M9 * right.M7 + left.M10 * right.M11 + left.M11 * right.M15;
-//            result.M12 = left.M12 * right.M0 + left.M13 * right.M4 + left.M14 * right.M8 + left.M15 * right.M12;
-//            result.M13 = left.M12 * right.M1 + left.M13 * right.M5 + left.M14 * right.M9 + left.M15 * right.M13;
-//            result.M14 = left.M12 * right.M2 + left.M13 * right.M6 + left.M14 * right.M10 + left.M15 * right.
-//                    M14;
-//            result.M15 = left.M12 * right.M3 + left.M13 * right.M7 + left.M14 * right.M11 + left.M15 * right.
-//                    M15;
-
             return result;
         }
     };
