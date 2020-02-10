@@ -24,7 +24,6 @@
 #include "Config.hpp"
 
 #include "physics/BoundingBox.hpp"
-#include "physics/Polygon.hpp"
 #include "Math.hpp"
 
 namespace ngine {
@@ -68,28 +67,6 @@ namespace ngine {
          * Whether or not the rectangle contains the point
          */
         bool contains(Vector2 point) const;
-
-        /*
-         * Convert rectangle to bounding box
-         */
-        physics::BoundingBox toBoundingBox(float rotation = 0, Vector2 origin = Vector2::Zero) const;
-
-        /*
-         * Convert rectangle to bounding box pointer.
-         * Must be deleted
-         */
-        physics::BoundingBox *toBoundingBoxPtr(float rotation = 0, Vector2 origin = Vector2::Zero) const;
-
-        /*
-         * Convert rectangle to polygon
-         */
-        physics::Polygon toPolygon(float rotation = 0, Vector2 origin = Vector2::Zero) const;
-
-        /*
-         * Convert rectangle to polygon pointer.
-         * Must be deleted.
-         */
-        physics::Polygon *toPolygonPtr(float rotation = 0, Vector2 origin = Vector2::Zero) const;
     };
 }
 

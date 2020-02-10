@@ -39,7 +39,7 @@ namespace ngine {
         // We use relative stuff as modelview will already consist of parent's input.
         auto pos = getPosition();
         auto rot = getRotation();
-        auto origin = m_origin;
+        auto origin = getOrigin();
 
         // Build modelview
         m_modelView = Matrix::Translate({pos.X, pos.Y, 0})

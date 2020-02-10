@@ -1,7 +1,5 @@
 #include <Ngine.hpp>
 
-#include <physics/shapes/PolygonShape.hpp>
-
 using namespace ngine;
 using namespace ngine::audio;
 //using namespace ngine::components;
@@ -9,7 +7,6 @@ using namespace ngine::filesystem;
 using namespace ngine::graphics;
 using namespace ngine::input;
 using namespace ngine::physics;
-using namespace ngine::physics::shapes;
 
 class SpriteComponentTest : public Component {
     Sprite *m_sprite;
@@ -122,7 +119,7 @@ public:
 // TESTING
 class NewTestScene : public Scene {
 public:
-    NewTestScene(Game *game) : Scene(game) {
+    NewTestScene(Game *game) : Scene(game, true) {
 //        auto par = new ParentEntity();
 //        par->addChild(new TestEntity());
 //        addChild(par);

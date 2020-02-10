@@ -75,15 +75,15 @@ endif ()
 target_link_libraries(Ngine
         PRIVATE
         ${_NGINE_LIBRARIES}
-        Box2D-cmake)
+        chipmunk_static)
 target_include_directories(Ngine
         PUBLIC
             "${Ngine_SOURCE_DIR}/include"
         PRIVATE
             "${Ngine_SOURCE_DIR}/src"
             "${Ngine_SOURCE_DIR}/third-party/stb"
-            "${Ngine_SOURCE_DIR}/third-party/Box2D-cmake/Box2D"
-            "${Ngine_SOURCE_DIR}/third-party/miniaudio")
+            "${Ngine_SOURCE_DIR}/third-party/miniaudio"
+            "${Ngine_SOURCE_DIR}/third-party/Chipmunk2D/include")
 
 # GLFW
 if (${PLATFORM} MATCHES "Desktop")

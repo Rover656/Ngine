@@ -24,13 +24,12 @@
 #include "../Config.hpp"
 
 #include "../Math.hpp"
-#include "Shape.hpp"
 
 namespace ngine::physics {
     /*
      * A 2D Bounding Box
      */
-    struct NEAPI BoundingBox : public Shape {
+    struct NEAPI BoundingBox {
         /*
          * Maximum coordinate
          */
