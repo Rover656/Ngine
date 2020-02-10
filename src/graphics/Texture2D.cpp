@@ -92,8 +92,8 @@ namespace ngine::graphics {
                          Angle rotation) {
         draw(renderer,
              {
-                     0,
-                     0,
+                     pos.X,
+                     pos.Y,
                      (float) Width * scale,
                      (float) Height * scale
              },
