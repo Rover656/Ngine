@@ -545,12 +545,12 @@ namespace ngine::graphics::API {
         EGLint sampleBuffer = 0;
 
         // TODO: Get window config.
-        //if (config_.MSAA_4X) {
+        if (graphicsDevice->getWindow()->getCreationConfig().MSAA_4X) {
 #if !defined(PLATFORM_UWP) // Seems to crash UWP, so don't
-            //samples = 4;
-            //sampleBuffer = 1;
+            samples = 4;
+            sampleBuffer = 1;
 #endif
-        //}
+        }
 
         const EGLint framebufferAttribs[] = {
             // Type of context support -> Required on RPI?
@@ -735,7 +735,7 @@ namespace ngine::graphics::API {
 #endif
 
         // Make the attached window current so our GL context is active
-#if !defined(EGL) // EGL uses this API, which is still being created. TODO: Make this into an Init function instead to tidy this
+#if !defined(EGL) // EGL uses this API, which is still being created.
         m_graphicsDevice->getWindow()->makeCurrent();
 #else
         MakeEGLCurrent();

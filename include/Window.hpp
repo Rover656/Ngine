@@ -170,6 +170,11 @@ namespace ngine {
 #endif
 
         /**
+         * The config the window was created with.
+         */
+        const WindowConfig m_creationConfig;
+
+        /**
          * The mouse input manager for this window.
          */
         input::Mouse *m_mouseInput = nullptr;
@@ -279,8 +284,14 @@ namespace ngine {
          * @param config The window config.
          */
         explicit Window(const WindowConfig &config);
-
         ~Window();
+
+        /**
+         * Get the config as it was when the window was created.
+         *
+         * @return The creation config.
+         */
+        const WindowConfig getCreationConfig() const;
 
         /**
          * Get the graphics device for the window context.
