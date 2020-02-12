@@ -1,15 +1,12 @@
 #include <Ngine.hpp>
 
-#include <physics/shapes/PolygonShape.hpp>
-
 using namespace ngine;
 using namespace ngine::audio;
 //using namespace ngine::components;
 using namespace ngine::filesystem;
 using namespace ngine::graphics;
 using namespace ngine::input;
-using namespace ngine::physics;
-using namespace ngine::physics::shapes;
+//using namespace ngine::physics;
 
 class SpriteComponentTest : public Component {
     Sprite *m_sprite;
