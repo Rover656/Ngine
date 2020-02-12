@@ -18,35 +18,40 @@
 *
 **********************************************************************************************/
 
-#ifndef BOUNDINGBOX2D_H
-#define BOUNDINGBOX2D_H
+#ifndef POLYGON_HPP
+#define POLYGON_HPP
 
 #include "../Config.hpp"
 
 #include "../Math.hpp"
 #include "Shape.hpp"
 
+#define MAX_POLY_VERTS 8
+
+struct b2Shape;
+struct b2PolygonShape;
+
 namespace ngine::physics {
-    /*
-     * A 2D Bounding Box
+    /**
+     * A Polygon shape.
+     *
+     * Powered by Box2D Math.
      */
-    struct NEAPI BoundingBox : public Shape {
-        /*
-         * Maximum coordinate
-         */
-        Vector2 Max;
+    struct NEAPI Polygon : public Shape {
+        static b2PolygonShape _createPolygonShape(std::vector<Vector2> verts);
+        static b2PolygonShape _createPolygonShape(std::vector<Vector2> verts, std::vector<Vector2> normals);
+    public:
+        Vector2 Vertices[MAX_POLY_VERTS];
+        Vector2 Normals[MAX_POLY_VERTS];
+        Vector2 Centroid;
+        int Count;
 
-        /*
-         * Minimum coordinate
-         */
-        Vector2 Min;
+        Polygon(std::vector<Vector2> verts);
+        Polygon(const b2PolygonShape &shape);
 
-        /*
-         * Create a default bounding box
-         */
-        BoundingBox()
-            : Max({}), Min({}) {}
+        void set(std::vector<Vector2> verts);
+        void setAsBox(float hx, float hy);
     };
 }
 
-#endif
+#endif //POLYGON_HPP

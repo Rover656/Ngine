@@ -26,7 +26,6 @@
 #include "graphics/Camera.hpp"
 #include "graphics/Renderer.hpp"
 #include "filesystem/ResourceManager.hpp"
-#include "physics/PhysicsSpace.hpp"
 
 namespace ngine {
     class Entity;
@@ -48,49 +47,15 @@ namespace ngine {
          */
         std::unordered_map<std::string, graphics::Camera> m_cameras;
 
-        /**
-         * The currently enabled camera
-         */
-        std::string m_currentCamera = "default";
-
-        /**
-         * The scene physics space.
-         */
-        physics::PhysicsSpace *m_space = nullptr;
+        std::string m_currentCamera;
 
         /**
          * Sort the entities.
          */
         void _sortEntities();
     public:
-        /**
-         * Create a new scene.
-         * Adds a camera named `default`.
-         *
-         * @param game Parent game.
-         * @param physicsEnabled Whether or not physics is enabled.
-         */
-        Scene(Game *game, bool physicsEnabled = false);
+        Scene(Game *game);
         virtual ~Scene();
-
-        /**
-         * Determine if physics is enabled
-         */
-        bool isPhysicsEnabled() const;
-
-        /**
-         * Get the scene physics space.
-         *
-         * @return The physics space.
-         */
-        physics::PhysicsSpace *getSpace();
-
-        /**
-         * Get the scene physics space.
-         *
-         * @return The physics space.
-         */
-        const physics::PhysicsSpace *getSpace() const;
 
         /**
          * Get the game we are a member of.

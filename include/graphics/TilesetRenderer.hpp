@@ -23,6 +23,7 @@
 
 #include "../Config.hpp"
 
+#include "../physics/Polygon.hpp"
 #include "../Rectangle.hpp"
 #include "Tileset.hpp"
 
@@ -84,6 +85,28 @@ namespace ngine::graphics {
          * renderTo defines where to finish rendering. Normally the viewport position + dimensions.
          */
         void draw(graphics::Renderer *renderer, Vector2 pos, Vector2 renderFrom, Vector2 renderTo, float scale = 1);
+
+        /*
+         * Get collision shapes for a tile in a range.
+         * All shapes must be deleted afterwards.
+         */
+        std::vector<physics::Shape *>
+        getCollisionShapesFor(int tile, Rectangle range, Vector2 tilesetPosition = Vector2::Zero);
+
+        /*
+         * Get collision shapes for tiles in a range.
+         * All shapes must be deleted afterwards.
+         */
+        std::vector<physics::Shape *>
+        getCollisionShapesFor(std::vector<int> tiles, Rectangle range, Vector2 tilesetPosition = Vector2::Zero);
+
+        /*
+         * Get collision shapes for tiles in a range.
+         * min_ <= tile <= max_.
+         * All shapes must be deleted afterwards.
+         */
+        std::vector<physics::Shape *>
+        getCollisionShapesFor(int min, int max, Rectangle range, Vector2 tilesetPosition = Vector2::Zero);
 
         /*
          * Get render area height in tile units

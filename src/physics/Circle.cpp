@@ -18,35 +18,10 @@
 *
 **********************************************************************************************/
 
-#ifndef BOUNDINGBOX2D_H
-#define BOUNDINGBOX2D_H
+#include "physics/Circle.hpp"
 
-#include "../Config.hpp"
-
-#include "../Math.hpp"
-#include "Shape.hpp"
+#include "physics/BoundingBox.hpp"
 
 namespace ngine::physics {
-    /*
-     * A 2D Bounding Box
-     */
-    struct NEAPI BoundingBox : public Shape {
-        /*
-         * Maximum coordinate
-         */
-        Vector2 Max;
 
-        /*
-         * Minimum coordinate
-         */
-        Vector2 Min;
-
-        /*
-         * Create a default bounding box
-         */
-        BoundingBox()
-            : Max({}), Min({}) {}
-    };
 }
-
-#endif

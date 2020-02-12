@@ -18,8 +18,8 @@
 *
 **********************************************************************************************/
 
-#ifndef BOUNDINGBOX2D_H
-#define BOUNDINGBOX2D_H
+#ifndef CIRCLE_HPP
+#define CIRCLE_HPP
 
 #include "../Config.hpp"
 
@@ -28,25 +28,31 @@
 
 namespace ngine::physics {
     /*
-     * A 2D Bounding Box
+     * A circle shape
      */
-    struct NEAPI BoundingBox : public Shape {
+    struct NEAPI Circle : public Shape {
         /*
-         * Maximum coordinate
+         * Circle center
          */
-        Vector2 Max;
+        Vector2 Center;
 
         /*
-         * Minimum coordinate
+         * Circle radius
          */
-        Vector2 Min;
+        float Radius;
 
         /*
-         * Create a default bounding box
+         * Create a circle
          */
-        BoundingBox()
-            : Max({}), Min({}) {}
+        Circle()
+            : Center(Vector2::Zero), Radius(0) {}
+
+        /*
+         * Create a circle
+         */
+        Circle(const Vector2 center, float radius)
+            : Center(center), Radius(radius) {}
     };
 }
 
-#endif
+#endif //CIRCLE_HPP

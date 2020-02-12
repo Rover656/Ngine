@@ -20,189 +20,329 @@
 
 #include "physics/PhysicsBody.hpp"
 
-#include "physics/PhysicsSpace.hpp"
-#include "Console.hpp"
+#include "physics/PhysicsWorld.hpp"
 
-#include <chipmunk/chipmunk.h>
+#include <Box2D/Box2D.h>
 
 namespace ngine::physics {
-    PhysicsBody::PhysicsBody(cpBody *body) {
+    PhysicsBody::PhysicsBody(b2Body *body) {
         // Save body
-        m_body = body;
+        m_b2Body = body;
 
-        // Save ourselves within the body
-        cpBodySetUserData(m_body, this);
+        // Get world
+        m_world = ((PhysicsBody *) m_b2Body->GetUserData())->m_world;
+    }
+
+    PhysicsBody::PhysicsBody(PhysicsWorld *world, PhysicsBody::BodyInfo info) {
+        // Save world
+        m_world = world;
+
+        // Create body def
+        b2BodyDef bodyDef;
+
+        // Set fields
+        bodyDef.active = info.Active;
+        bodyDef.allowSleep = info.AllowSleep;
+        bodyDef.angularDamping = info.AngularDamping;
+        bodyDef.angularVelocity = info.AngularVelocity;
+        bodyDef.awake = info.Awake;
+        bodyDef.bullet = info.Bullet;
+        bodyDef.fixedRotation = info.FixedRotation;
+        bodyDef.gravityScale = info.GravityScale;
+        bodyDef.linearDamping = info.LinearDamping;
+        bodyDef.linearVelocity.Set(info.LinearVelocity.X, info.LinearVelocity.Y);
+        bodyDef.position.Set(info.Position.X / m_world->PixelsPerMeter, info.Position.Y / m_world->PixelsPerMeter);
+        bodyDef.angle = DegToRad(info.Rotation.getDegrees());
+        bodyDef.type = (b2BodyType) info.Type;
+
+        // Create the body
+        m_b2Body = world->getB2World()->CreateBody(&bodyDef);
+
+        // Save our PhysicsBody in box2d for later.
+        m_b2Body->SetUserData(this);
+    }
+
+    PhysicsBody::PhysicsBody(PhysicsWorld *world, PhysicsBody::BodyType type, Vector2 position) {
+        // Save world
+        m_world = world;
+
+        // Create body def
+        b2BodyDef bodyDef;
+        bodyDef.type = (b2BodyType) type;
+        bodyDef.position.Set(position.X / m_world->PixelsPerMeter, position.Y / m_world->PixelsPerMeter);
+
+        // Create the body
+        m_b2Body = world->getB2World()->CreateBody(&bodyDef);
+
+        // Save our PhysicsBody in box2d for later.
+        m_b2Body->SetUserData(this);
     }
 
     PhysicsBody::~PhysicsBody() {
-        // TODO: Get list of shapes and remove.
-        if (m_body != nullptr) {
-            cpBodyFree(m_body);
-            m_body = nullptr;
+        // Delete fixtures
+        auto next = m_b2Body->GetFixtureList();
+        b2Fixture *current;
+        while (next != nullptr) {
+            current = next;
+            next = next->GetNext();
+            if (current->GetUserData() != nullptr) {
+                delete (PhysicsFixture *) current->GetUserData();
+            }
         }
     }
 
-    PhysicsBody *PhysicsBody::CreateDynamicBody(float mass, float moment) {
-        // Create new body
-        return new PhysicsBody(cpBodyNew(mass, moment));
+    void PhysicsBody::set(PhysicsBody::BodyInfo info) {
+        setIsActive(info.Active);
+        setIsSleepingAllowed(info.AllowSleep);
+        setAngularDamping(info.AngularDamping);
+        setAngularVelocity(info.AngularVelocity);
+        setIsAwake(info.Awake);
+        setIsBullet(info.Bullet);
+        setIsFixedRotation(info.FixedRotation);
+        setGravityScale(info.GravityScale);
+        setLinearDamping(info.LinearDamping);
+        setLinearVelocity(info.LinearVelocity);
+        setTransform({info.Position, info.Rotation});
+        setType(info.Type);
     }
 
-    PhysicsBody *PhysicsBody::CreateKinematicBody() {
-        return new PhysicsBody(cpBodyNewKinematic());
+    void PhysicsBody::destroy() {
+        m_world->destroyBody(this);
     }
 
-    PhysicsBody *PhysicsBody::CreateStaticBody() {
-        return new PhysicsBody(cpBodyNewStatic());
+    PhysicsBody::BodyType PhysicsBody::getType() const {
+        return (BodyType) m_b2Body->GetType();
     }
 
-    PhysicsBodyType PhysicsBody::getType() const {
-        switch (cpBodyGetType(m_body)) {
-            case CP_BODY_TYPE_DYNAMIC:
-                return PhysicsBodyType::Dynamic;
-            case CP_BODY_TYPE_KINEMATIC:
-                return PhysicsBodyType::Kinematic;
-            case CP_BODY_TYPE_STATIC:
-                return PhysicsBodyType::Static;
-        }
+    void PhysicsBody::setType(PhysicsBody::BodyType type) {
+        m_b2Body->SetType((b2BodyType) type);
     }
 
-    void PhysicsBody::setType(PhysicsBodyType type) {
-        switch (type) {
-            case PhysicsBodyType::Static:
-                cpBodySetType(m_body, CP_BODY_TYPE_STATIC);
-                break;
-            case PhysicsBodyType::Kinematic:
-                cpBodySetType(m_body, CP_BODY_TYPE_KINEMATIC);
-                break;
-            case PhysicsBodyType::Dynamic:
-                cpBodySetType(m_body, CP_BODY_TYPE_DYNAMIC);
-                break;
-        }
+    float PhysicsBody::getMass() const {
+        return m_b2Body->GetMass();
     }
 
-    PhysicsSpace *PhysicsBody::getSpace() {
-        auto space = cpBodyGetSpace(m_body);
-        if (space != nullptr)
-            return (PhysicsSpace *) cpSpaceGetUserData(space);
-        return nullptr;
+    void PhysicsBody::resetMassData() {
+        m_b2Body->ResetMassData();
     }
 
-    void PhysicsBody::addShape(PhysicsShape *shape) {
-        // Get space.
-        auto space = getSpace();
-        if (space == nullptr)
-            Console::Fail("PhysicsBody", "Body must be a member of a space before having shapes added to it!");
-
-        // Check body is attached to us
-        if (shape->getBody() != this)
-            shape->setBody(this);
-
-        // Add shape to space
-        cpSpaceAddShape(space->m_space, shape->m_shape);
-
-        // TODO: Track.
+    bool PhysicsBody::isBullet() const {
+        return m_b2Body->IsBullet();
     }
 
-    void PhysicsBody::removeShape(PhysicsShape *shape, bool free) {
-        // Get space.
-        auto space = getSpace();
-        if (space == nullptr)
-            Console::Fail("PhysicsBody", "Body is not attached to a space!");
-
-        // Remove from space
-        cpSpaceRemoveShape(space->m_space, shape->m_shape);
-
-        // TODO: Stop tracking
-
-        // If we are told to free this, do so.
-        // TODO: Just delete anyway??
-        if (free)
-            delete shape;
+    void PhysicsBody::setIsBullet(bool flag) {
+        m_b2Body->SetBullet(flag);
     }
 
-    float PhysicsBody::getMass() {
-        return cpBodyGetMass(m_body);
+    b2Body *PhysicsBody::getB2Body() const {
+        return m_b2Body;
     }
 
-    void PhysicsBody::setMass(float mass) {
-        cpBodySetMass(m_body, mass);
+    PhysicsWorld *PhysicsBody::getWorld() const {
+        return m_world;
     }
 
-    float PhysicsBody::getMoment() {
-        return cpBodyGetMoment(m_body);
+    float PhysicsBody::getGravityScale() const {
+        return m_b2Body->GetGravityScale();
     }
 
-    void PhysicsBody::setMoment(float moment) {
-        cpBodySetMoment(m_body, moment);
+    void PhysicsBody::setGravityScale(float scale) {
+        m_b2Body->SetGravityScale(scale);
     }
 
-    Vector2 PhysicsBody::getCenterOfGravity() {
-        auto c = cpBodyGetCenterOfGravity(m_body);
-        return {(float)c.x, (float)c.y};
+    Transform2D PhysicsBody::getTransform() const {
+        auto t = m_b2Body->GetTransform();
+        return {
+                {
+                        t.p.x * m_world->PixelsPerMeter,
+                        t.p.y * m_world->PixelsPerMeter
+                },
+                {
+                        t.q.s,
+                        t.q.c
+                }};
     }
 
-    void PhysicsBody::setCenterOfGravity(const Vector2 &center) {
-        cpBodySetCenterOfGravity(m_body, {(double)center.X, (double)center.Y});
+    void PhysicsBody::setTransform(const Transform2D &transform) {
+        m_b2Body->SetTransform({
+                                       transform.Position.X / m_world->PixelsPerMeter,
+                                       transform.Position.Y / m_world->PixelsPerMeter
+                               },
+                               DegToRad(transform.Rotation.getDegrees()));
     }
 
-    Vector2 PhysicsBody::getPosition() {
-        auto v = cpBodyGetPosition(m_body);
-        return {(float)v.x, (float)v.y};
+    Vector2 PhysicsBody::getPosition() const {
+        auto p = m_b2Body->GetPosition();
+        Vector2 pos(
+                p.x * m_world->PixelsPerMeter,
+                p.y * m_world->PixelsPerMeter);
+        return pos;
     }
 
-    void PhysicsBody::setPosition(const Vector2 &position) {
-        cpBodySetPosition(m_body, {(double)position.X, (double)position.Y});
-
-        if (getType() == PhysicsBodyType::Static) {
-            reindexShapes();
-        }
+    void PhysicsBody::setPosition(Vector2 pos) {
+        m_b2Body->SetTransform({
+                                       pos.X / m_world->PixelsPerMeter,
+                                       pos.Y / m_world->PixelsPerMeter
+                               }, m_b2Body->GetAngle());
     }
 
-    Vector2 PhysicsBody::getVelocity() {
-        auto v = cpBodyGetVelocity(m_body);
-        return {(float)v.x, (float)v.y};
+    Vector2 PhysicsBody::getLinearVelocity() const {
+        auto vel = m_b2Body->GetLinearVelocity();
+        return {
+                vel.x * m_world->PixelsPerMeter,
+                vel.y * m_world->PixelsPerMeter
+        };
     }
 
-    void PhysicsBody::setVelocity(const Vector2 &vel) {
-        cpBodySetVelocity(m_body, {(double)vel.X, (double)vel.Y});
+    void PhysicsBody::setLinearVelocity(Vector2 vel) {
+        m_b2Body->SetLinearVelocity(
+                {
+                        vel.X / m_world->PixelsPerMeter,
+                        vel.Y / m_world->PixelsPerMeter
+                });
     }
 
-    Vector2 PhysicsBody::getForce() {
-        auto f = cpBodyGetForce(m_body);
-        return {(float)f.x, (float)f.y};
+    void PhysicsBody::applyForce(const Vector2 &force, const Vector2 &point, bool wake) {
+        m_b2Body->ApplyForce(
+                {
+                        force.X / m_world->PixelsPerMeter,
+                        force.Y / m_world->PixelsPerMeter
+                },
+                {
+                        point.X / m_world->PixelsPerMeter,
+                        point.Y / m_world->PixelsPerMeter
+                }, wake);
     }
 
-    void PhysicsBody::setForce(const Vector2 &force) {
-        cpBodySetForce(m_body, {(double)force.X, (double)force.Y});
+    void PhysicsBody::applyForceToCenter(const Vector2 &force, bool wake) {
+        m_b2Body->ApplyForceToCenter(
+                {
+                        force.X / m_world->PixelsPerMeter,
+                        force.Y / m_world->PixelsPerMeter
+                }, wake);
     }
 
-    Angle PhysicsBody::getRotation() {
-        return Angle(RadToDeg(cpBodyGetAngle(m_body)));
+    void PhysicsBody::applyLinearImpulse(const Vector2 &impulse, const Vector2 &point, bool wake) {
+        m_b2Body->ApplyLinearImpulse(
+                {
+                        impulse.X / m_world->PixelsPerMeter,
+                        impulse.Y / m_world->PixelsPerMeter
+                },
+                {
+                        point.X / m_world->PixelsPerMeter,
+                        point.Y / m_world->PixelsPerMeter
+                }, wake);
+    }
+
+    void PhysicsBody::applyLinearImpulseToCenter(const Vector2 &impulse, bool wake) {
+        m_b2Body->ApplyLinearImpulseToCenter(
+                {
+                        impulse.X / m_world->PixelsPerMeter,
+                        impulse.Y / m_world->PixelsPerMeter
+                }, wake);
+    }
+
+    float PhysicsBody::getLinearDamping() const {
+        return m_b2Body->GetLinearDamping();
+    }
+
+    void PhysicsBody::setLinearDamping(float damping) {
+        m_b2Body->SetLinearDamping(damping);
+    }
+
+    Angle PhysicsBody::getRotation() const {
+        return getTransform().Rotation;
     }
 
     void PhysicsBody::setRotation(Angle angle) {
-        cpBodySetAngle(m_body, DegToRad(angle.getDegrees()));
+        auto d = angle.getDegrees();
+        m_b2Body->SetTransform(m_b2Body->GetPosition(), DegToRad(angle.getDegrees()));
     }
 
-    float PhysicsBody::getAngularVelocity() {
-        return cpBodyGetAngularVelocity(m_body);
+    bool PhysicsBody::isFixedRotation() const {
+        return m_b2Body->IsFixedRotation();
     }
 
-    void PhysicsBody::setAngularVelocity(float vel) {
-        cpBodySetAngularVelocity(m_body, vel);
+    void PhysicsBody::setIsFixedRotation(bool flag) {
+        m_b2Body->SetFixedRotation(flag);
     }
 
-    float PhysicsBody::getTorque() {
-        return cpBodyGetTorque(m_body);
+    float PhysicsBody::getInertia() const {
+        return m_b2Body->GetInertia();
     }
 
-    void PhysicsBody::setTorque(float torque) {
-        cpBodySetTorque(m_body, torque);
+    // TODO: Use Angle class...
+    float PhysicsBody::getAngularVelocity() const {
+        return m_b2Body->GetAngularVelocity();
     }
 
-    void PhysicsBody::reindexShapes() {
-        auto space = cpBodyGetSpace(m_body);
-        if (space == nullptr) return;
-        cpSpaceReindexShapesForBody(space, m_body);
+    void PhysicsBody::setAngularVelocity(float omega) {
+        m_b2Body->SetAngularVelocity(DegToRad(omega));
+    }
+
+    void PhysicsBody::applyTorque(float torque, bool wake) {
+        m_b2Body->ApplyTorque(torque, wake);
+    }
+
+    void PhysicsBody::applyAngularImpulse(float impulse, bool wake) {
+        m_b2Body->ApplyAngularImpulse(impulse, wake);
+    }
+
+    float PhysicsBody::getAngularDamping() const {
+        return m_b2Body->GetAngularDamping();
+    }
+
+    void PhysicsBody::setAngularDamping(float damping) {
+        m_b2Body->SetAngularDamping(damping);
+    }
+
+    // TODO: Rewrite fixtures and shapes once and for all!!!
+    PhysicsFixture *PhysicsBody::createFixture(shapes::PhysicsShape *shape, float density) {
+        auto fixture = m_b2Body->CreateFixture(shape->getB2Shape(), density);
+        return new PhysicsFixture(fixture);
+    }
+
+    void PhysicsBody::destroyFixture(PhysicsFixture *fixture) {
+        m_b2Body->DestroyFixture(fixture->getB2Fixture());
+        delete fixture;
+    }
+
+    bool PhysicsBody::isActive() const {
+        return m_b2Body->IsActive();
+    }
+
+    void PhysicsBody::setIsActive(bool flag) {
+        m_b2Body->SetActive(flag);
+    }
+
+    bool PhysicsBody::isAwake() const {
+        return m_b2Body->IsAwake();
+    }
+
+    void PhysicsBody::setIsAwake(bool flag) {
+        m_b2Body->SetAwake(flag);
+    }
+
+    bool PhysicsBody::isSleepingAllowed() const {
+        return m_b2Body->IsSleepingAllowed();
+    }
+
+    void PhysicsBody::setIsSleepingAllowed(bool flag) {
+        m_b2Body->SetSleepingAllowed(flag);
+    }
+
+    void PhysicsBody::debugDraw(graphics::Renderer *renderer) {
+        // Process fixtures
+        auto next = m_b2Body->GetFixtureList();
+        b2Fixture *current;
+        while (next != nullptr) {
+            current = next;
+            next = next->GetNext();
+            if (current->GetUserData() != nullptr) {
+                auto fixture = (PhysicsFixture *) current->GetUserData();
+                fixture->getShape()->debugDraw(renderer, m_world->PixelsPerMeter, getPosition(),
+                                               getRotation().getDegrees());
+            }
+        }
     }
 }

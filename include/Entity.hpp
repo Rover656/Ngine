@@ -248,7 +248,6 @@ namespace ngine {
          * Set the entity scale.
          *
          * @note This scale also applies to children.
-         * @warning Physics entities cannot be scaled.
          * @param scale The new scale to apply.
          */
         void setScale(Vector2 scale);

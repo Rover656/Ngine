@@ -24,52 +24,25 @@
 #include "Entity.hpp"
 #include "Game.hpp"
 
-// TODO: I had an idea, maybe we could put an "AudioEnvironment" in the scene...
-//  This would be for things like directional sound etc.
-
 namespace ngine {
     void Scene::_sortEntities() {
         std::sort(m_entities.begin(), m_entities.end(), &Entity::_SortChildrenPredicate);
     }
 
-    Scene::Scene(Game *game, bool physicsEnabled)
+    Scene::Scene(Game *game)
             : m_game(game) {
         // Add default camera
         createCamera("default");
         setCurrentCamera("default");
-
-        // Create physics space if enabled
-        if (physicsEnabled) {
-            m_space = new physics::PhysicsSpace();
-        }
     }
 
     Scene::~Scene() {
-        // Delete space if enabled
-        if (m_space != nullptr) {
-            delete m_space;
-            m_space = nullptr;
-        }
-
-        // Delete entities
         std::vector<Entity *> ents;
         ents = m_entities;
 
         for (auto e : ents) {
             delete e;
         }
-    }
-
-    bool Scene::isPhysicsEnabled() const {
-        return m_space != nullptr;
-    }
-
-    physics::PhysicsSpace *Scene::getSpace() {
-        return m_space;
-    }
-
-    const physics::PhysicsSpace *Scene::getSpace() const {
-        return m_space;
     }
 
     Game *Scene::getGame() const {
@@ -166,10 +139,16 @@ namespace ngine {
     void Scene::preRender(graphics::Renderer *renderer) {}
 
     void Scene::onRender(graphics::Renderer *renderer) {
-        // Default render actons.
+        // Pre-render
         preRender(renderer);
+
+        // Render the scene with the current camera.
         render(renderer);
+
+        // Post-render
         postRender(renderer);
+
+        // Render UI layer.
         renderUI(renderer);
     }
 
@@ -204,16 +183,9 @@ namespace ngine {
     }
 
     void Scene::update() {
-        // Update entities
         for (const auto &e : m_entities) {
             if (!e->m_asleep)
                 e->update();
-        }
-
-        // Physics step
-        if (isPhysicsEnabled()) {
-            auto timestep = 1/getGame()->getTargetFPS();
-            m_space->step(timestep);
         }
     }
 
