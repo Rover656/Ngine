@@ -40,11 +40,11 @@
  * Linux only supports the OpenGL graphics API.
  *
  * @subsection platform_linux_build Building
- * To build on linux, it is recommended to use GCC 7 or later.
+ * To build on linux, follow the following instructions.
  * The following packages need installed (example here is for linux):
  * @code
  * sudo apt-get update
- * sudo apt-get install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+ * sudo apt-get install build-essential libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev
  * @endcode
  * Ngine can then be built with the following command:
  * @code
