@@ -66,7 +66,7 @@ namespace ngine::graphics {
         m_spriteSheet = false;
     }
 
-    void Sprite::draw(graphics::Renderer *renderer, Vector2 position, float scale, float rotation, Vector2 origin) {
+    void Sprite::draw(graphics::Renderer *renderer, Vector2 position, float rotation, Vector2 origin) {
         if (m_textures.empty())
             return;
 
@@ -74,8 +74,8 @@ namespace ngine::graphics {
                 renderer,
                 {
                         position,
-                        static_cast<float>(DrawWidth * scale),
-                        static_cast<float>(DrawHeight * scale)
+                        (float) DrawWidth,
+                        (float) DrawHeight
                 },
                 getSourceRectangle(),
                 Color::White,

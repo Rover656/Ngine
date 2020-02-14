@@ -220,22 +220,22 @@ namespace ngine::graphics {
          * @param pos The position to draw at.
          * @param col The color modifier.
          * @param scale The scale modifier.
-         * @param origin The origin (for rotation).
+         * @param origin The origin (in percentages (0 -> 1)).
          * @param rotation Rotation (from origin).
          */
         void draw(graphics::Renderer *renderer, Vector2 pos, Color col = Color::White, float scale = 1,
-                  Vector2 origin = Vector2::Zero, Angle rotation = 0);
+                  Vector2 origin = {0.5f, 0.5f}, Angle rotation = 0);
 
         /**
          * Draw the texture.
          *
          * @param destRect The destination rectangle.
          * @param srcRect The source rectangle.
-         * @param origin The origin (for rotation).
+         * @param origin The origin (in percentages (0 -> 1)).
          * @param rotation Rotation (from origin).
          */
         void draw(graphics::Renderer *renderer, Rectangle destRect, Rectangle srcRect, Color col = Color::White,
-                  Vector2 origin = Vector2::Zero, Angle rotation = 0);
+                  Vector2 origin = {0.5f, 0.5f}, Angle rotation = 0);
 
         bool operator==(const Texture2D &tex) const;
 

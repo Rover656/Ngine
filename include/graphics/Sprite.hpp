@@ -120,10 +120,10 @@ namespace ngine::graphics {
          * @param position Position to draw at.
          * @param scale Scale to draw with.
          * @param rotation Rotation of the sprite.
-         * @param origin Origin of the sprite.
+         * @param origin Origin of the sprite (in percentages (0 -> 1))
          */
-        void draw(graphics::Renderer *renderer, Vector2 position, float scale = 1, float rotation = 0,
-                  Vector2 origin = Vector2::Zero);
+        void draw(graphics::Renderer *renderer, Vector2 position, float rotation = 0,
+                  Vector2 origin = {0.5f, 0.5f});
 
         /**
          * Update the sprite timer.

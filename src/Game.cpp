@@ -168,7 +168,7 @@ namespace ngine {
                                 static_cast<float>(m_renderTarget->Width),
                                 static_cast<float>(m_renderTarget->Height) * -1
                         },
-                        graphics::Color::White);
+                        graphics::Color::White, {0, 0});
             }
 
             // Render final buffers

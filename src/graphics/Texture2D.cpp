@@ -121,11 +121,15 @@ namespace ngine::graphics {
             srcRect.Y -= srcRect.Height;
         }
 
+        // Get origin in pixel coords
+        Vector2 pixelOrigin = {origin.X * srcRect.Width, origin.Y * srcRect.Height};
+
         // Push transformation matrix
         renderer->pushMatrix();
-        renderer->translate({-origin.X, -origin.Y, 0});
+        renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
         renderer->rotate(rotation, {0, 0, 1});
         renderer->translate({destRect.X, destRect.Y, 0});
+        renderer->scale({destRect.Width / srcRect.Width, destRect.Height / srcRect.Height, 1.0f});
 
         // Push vertices
         renderer->setTexture(this);
@@ -138,19 +142,19 @@ namespace ngine::graphics {
                                                   (srcRect.Y) / (float) Height
                                           }, col_});
             renderer->pushVertex({
-                                          {0, destRect.Height, 0},
+                                          {0, srcRect.Height, 0},
                                           {
                                                   (srcRect.Width + srcRect.X) / (float) Width,
                                                   (srcRect.Height + srcRect.Y) / (float) Height
                                           }, col_});
             renderer->pushVertex({
-                                          {destRect.Width, destRect.Height, 0},
+                                          {srcRect.Width, srcRect.Height, 0},
                                           {
                                                   (srcRect.X) / (float) Width,
                                                   (srcRect.Height + srcRect.Y) / (float) Height
                                           }, col_});
             renderer->pushVertex({
-                                          {destRect.Width, 0, 0},
+                                          {srcRect.Width, 0, 0},
                                           {
                                                   (srcRect.X) / (float) Width,
                                                   (srcRect.Y) / (float) Height
@@ -163,19 +167,19 @@ namespace ngine::graphics {
                                                   (srcRect.Y) / (float) Height
                                           }, col_});
             renderer->pushVertex({
-                                          {0, destRect.Height, 0},
+                                          {0, srcRect.Height, 0},
                                           {
                                                   (srcRect.X) / (float) Width,
                                                   (srcRect.Height + srcRect.Y) / (float) Height
                                           }, col_});
             renderer->pushVertex({
-                                          {destRect.Width, destRect.Height, 0},
+                                          {srcRect.Width, srcRect.Height, 0},
                                           {
                                                   (srcRect.Width + srcRect.X) / (float) Width,
                                                   (srcRect.Height + srcRect.Y) / (float) Height
                                           }, col_});
             renderer->pushVertex({
-                                          {destRect.Width, 0, 0},
+                                          {srcRect.Width, 0, 0},
                                           {
                                                   (srcRect.Width + srcRect.X) / (float) Width,
                                                   (srcRect.Y) / (float) Height

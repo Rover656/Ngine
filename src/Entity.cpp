@@ -39,13 +39,11 @@ namespace ngine {
         // We use relative stuff as modelview will already consist of parent's input.
         auto pos = getPosition();
         auto rot = getRotation();
-        auto origin = m_origin;
 
         // Build modelview
         m_modelView = Matrix::Translate({pos.X, pos.Y, 0})
                       * Matrix::Scale(m_scale.X, m_scale.Y, 1)
-                      * Matrix::RotateZ(rot)
-                      * Matrix::Translate(-origin.X, -origin.Y, 0);
+                      * Matrix::RotateZ(rot);
 
         // Mark as clean
         m_modelViewDirty = false;
@@ -142,15 +140,6 @@ namespace ngine {
 
     void Entity::setRotation(Angle rotation) {
         m_rotation = rotation;
-        m_modelViewDirty = true;
-    }
-
-    Vector2 Entity::getOrigin() {
-        return m_origin;
-    }
-
-    void Entity::setOrigin(Vector2 origin) {
-        m_origin = origin;
         m_modelViewDirty = true;
     }
 

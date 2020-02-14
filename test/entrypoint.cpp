@@ -31,7 +31,6 @@ public:
         // Set defaults
         setPosition({0, 0});
         setRotation(0);
-        setOrigin({16, 16});
         setScale({2, 2});
 
         // Set name
@@ -48,20 +47,22 @@ public:
         auto keyboard = Keyboard::GetCurrent();
         Vector2 vel;
 
+        auto ms = 5;
+
         if (keyboard->isKeyDown(Key::KEY_W)) {
-            vel.Y -= 5;
+            vel.Y -= ms;
         }
 
         if (keyboard->isKeyDown(Key::KEY_S)) {
-            vel.Y += 5;
+            vel.Y += ms;
         }
 
         if (keyboard->isKeyDown(Key::KEY_A)) {
-            vel.X -= 5;
+            vel.X -= ms;
         }
 
         if (keyboard->isKeyDown(Key::KEY_D)) {
-            vel.X += 5;
+            vel.X += ms;
         }
 
         auto rot = getRotation();

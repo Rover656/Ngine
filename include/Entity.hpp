@@ -102,11 +102,6 @@ namespace ngine {
         Angle m_rotation = 0;
 
         /**
-         * Origin for rotation.
-         */
-        Vector2 m_origin = Vector2::Zero;
-
-        /**
          * The model view matrix to render with.
          */
         Matrix m_modelView = Matrix::Identity;
@@ -196,14 +191,14 @@ namespace ngine {
         filesystem::ResourceManager *getResourceManager() const;
 
         /**
-         * Get the entity position taking into account its parents.
+         * Get the entity center position taking into account its parents.
          *
          * @param Position relative to (0, 0).
          */
         Vector2 getPosition() const;
 
         /**
-         * Set the entity position relative to the parent.
+         * Set the entity center position relative to the parent.
          *
          * @param position Desired position relative to parent.
          */
@@ -222,20 +217,6 @@ namespace ngine {
          * @param rotation The new rotation.
          */
         void setRotation(Angle rotation);
-
-        /**
-         * Get origin/anchor point.
-         *
-         * @return Entity origin.
-         */
-        Vector2 getOrigin();
-
-        /**
-         * Set entity origin/anchor point.
-         *
-         * @param origin New origin.
-         */
-        void setOrigin(Vector2 origin);
 
         /**
          * Get the entity scale.
