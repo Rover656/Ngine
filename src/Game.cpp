@@ -219,14 +219,12 @@ namespace ngine {
             }
 
             // Get the time since the last frame
-            auto deltaTime = std::chrono::high_resolution_clock::now() - m_started;
-            m_started = std::chrono::high_resolution_clock::now();
+            auto now = std::chrono::high_resolution_clock::now();
+            auto deltaTime = now - m_started;
+            m_started = now;
 
             // Increment lag
             m_lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
-
-            // Get the time that we begin (for timing)
-            auto frameBegin = std::chrono::high_resolution_clock::now();
 
             // Get input managers
             auto mouse = getMouse();
@@ -247,7 +245,11 @@ namespace ngine {
                 mouse->setOffset(-offsetX, -offsetY);
             }
 
-            // TODO: Detect if we are behind on updates.
+            // Check if we are behind by 15+ frames.
+            if (m_lag >= m_timestep * 15) {
+                Console::Warn("Game", "Running behind by %i frame(s), skipping...", (int)(m_lag / m_timestep));
+                m_lag = std::chrono::nanoseconds(0);
+            }
 
             // Poll inputs if we'd update
             if (m_lag >= m_timestep) {
@@ -280,13 +282,8 @@ namespace ngine {
             // If we need to quit, don't render
             if (!m_running) return;
 
-            // Wait for remaining frame time if we were too quick
-            auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
-            auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
-
-            if (frameTimeMS < m_timestep) {
-                std::this_thread::sleep_for(m_timestep - frameTimeMS);
-            }
+            // Release thread for others.
+            std::this_thread::sleep_for(std::chrono::milliseconds(0));
         }
     }
 
