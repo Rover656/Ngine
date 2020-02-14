@@ -352,6 +352,12 @@ namespace ngine {
         return {(float) Config.TargetWidth, (float) Config.TargetHeight};
     }
 
+    Rectangle Game::getGameViewport() {
+        if (Config.MaintainResolution) {
+            return {0, 0, (float)Config.TargetWidth, (float)Config.TargetHeight};
+        } else return {0, 0, (float) m_gameWindow->getWidth(), (float) m_gameWindow->getHeight()};
+    }
+
     int Game::getTargetFPS() const {
         return Config.UpdatesPerSecond;
     }

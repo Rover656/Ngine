@@ -23,9 +23,10 @@
 
 #include "Config.hpp"
 
+#include "filesystem/ResourceManager.hpp"
 #include "graphics/Camera.hpp"
 #include "graphics/Renderer.hpp"
-#include "filesystem/ResourceManager.hpp"
+#include "physics/PhysicsWorld.hpp"
 
 namespace ngine {
     class Entity;
@@ -47,14 +48,42 @@ namespace ngine {
          */
         std::unordered_map<std::string, graphics::Camera> m_cameras;
 
+        /**
+         * The current camera for `render`
+         */
         std::string m_currentCamera;
+
+        /**
+         * The current viewport.
+         */
+        Rectangle m_currentViewport;
+
+        /**
+         * The scene physics world.
+         */
+        physics::PhysicsWorld *m_physicsWorld = nullptr;
 
         /**
          * Sort the entities.
          */
         void _sortEntities();
     public:
+        /**
+         * Create a new scene.
+         *
+         * @param game Parent game.
+         */
         Scene(Game *game);
+
+        /**
+         * Create a new physics-enabled scene.
+         *
+         * @param game Parent game.
+         * @param gravity Gravity vector.
+         * @param ppm Pixels per meter.
+         */
+        Scene(Game *game, Vector2 gravity, int ppm);
+
         virtual ~Scene();
 
         /**
@@ -70,6 +99,20 @@ namespace ngine {
          * @return The game resource manager.
          */
         filesystem::ResourceManager *getResourceManager();
+
+        /**
+         * Determine if physics is enabled.
+         *
+         * @return Whether or not physics is enabled in this scene.
+         */
+        bool isPhysicsEnabled() const;
+
+        /**
+         * Get the physics world.
+         *
+         * @return The physics world or null if not enabled.
+         */
+        physics::PhysicsWorld *getPhysicsWorld() const;
 
         /**
          * Create a new camera with the given name.
@@ -135,6 +178,13 @@ namespace ngine {
          * @return All children with the given name.
          */
         std::vector<Entity *> getChildrenByName(const std::string &name);
+
+        /**
+         * Get the current viewport.
+         *
+         * This will return the camera viewport, virtual viewport or finally the window viewport.
+         */
+        Rectangle getCurrentViewport();
 
         /**
          * Pre-render event.

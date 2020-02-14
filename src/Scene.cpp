@@ -36,6 +36,12 @@ namespace ngine {
         setCurrentCamera("default");
     }
 
+    Scene::Scene(Game *game, Vector2 gravity, int ppm)
+            : Scene(game) {
+        // Create physics world
+        m_physicsWorld = new physics::PhysicsWorld(gravity, ppm);
+    }
+
     Scene::~Scene() {
         std::vector<Entity *> ents;
         ents = m_entities;
@@ -51,6 +57,14 @@ namespace ngine {
 
     filesystem::ResourceManager *Scene::getResourceManager() {
         return m_game->getResourceManager();
+    }
+
+    bool Scene::isPhysicsEnabled() const {
+        return m_physicsWorld != nullptr;
+    }
+
+    physics::PhysicsWorld *Scene::getPhysicsWorld() const {
+        return m_physicsWorld;
     }
 
     graphics::Camera *Scene::createCamera(const std::string &name) {
@@ -136,7 +150,14 @@ namespace ngine {
         return ents;
     }
 
-    void Scene::preRender(graphics::Renderer *renderer) {}
+    Rectangle Scene::getCurrentViewport() {
+        return m_currentViewport;
+    }
+
+    void Scene::preRender(graphics::Renderer *renderer) {
+        // Get the viewport.
+        m_currentViewport = m_game->getGameViewport();
+    }
 
     void Scene::onRender(graphics::Renderer *renderer) {
         // Pre-render

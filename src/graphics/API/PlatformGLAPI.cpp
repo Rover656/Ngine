@@ -779,8 +779,10 @@ namespace ngine::graphics::API {
             m_GLES3 = major == 3;
         }
 #else
-        m_GLES2 =
-                GLAD_GL_ES_VERSION_2_0 && !GLAD_GL_ES_VERSION_3_0 && !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
+        m_GLES2 = GLAD_GL_ES_VERSION_2_0
+                && !GLAD_GL_ES_VERSION_3_0
+                && !GLAD_GL_ES_VERSION_3_1
+                && !GLAD_GL_ES_VERSION_3_2;
         m_GLES3 = GLAD_GL_ES_VERSION_3_0;
 #endif
 

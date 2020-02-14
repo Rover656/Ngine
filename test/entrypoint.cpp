@@ -150,7 +150,7 @@ public:
 
     void Draw(graphics::Renderer *renderer_) {
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
-        ShapeRenderer::DrawRectangle(renderer_, {0, 0, 1280, 768}, Color::Blue, 0, {}, true, 5);
+        ShapeRenderer::DrawRectangle(renderer_, getGameViewport(), Color::Blue, 0, {}, true, 5);
 
         ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
     }
@@ -181,7 +181,7 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
     gameConfig.FPSCap = 60;
-    //gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
+    // gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

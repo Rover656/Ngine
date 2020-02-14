@@ -266,6 +266,13 @@ namespace ngine {
         Vector2 getDimensions() const;
 
         /**
+         * Get the size of the root viewport.
+         *
+         * This will either be the virtual viewport or the window viewport.
+         */
+        Rectangle getGameViewport();
+
+        /**
          * Get the target FPS.
          *
          * @return The game target FPS.

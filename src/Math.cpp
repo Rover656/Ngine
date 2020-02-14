@@ -109,11 +109,6 @@ namespace ngine {
         Y += b.Y;
     }
 
-    void Vector2::operator+=(float b) {
-        X += b;
-        Y += b;
-    }
-
     Vector2 operator-(const Vector2 &a, const Vector2 &b) {
         return {
                 a.X - b.X,
@@ -124,11 +119,6 @@ namespace ngine {
     void Vector2::operator-=(const Vector2 &b) {
         X -= b.X;
         Y -= b.Y;
-    }
-
-    void Vector2::operator-=(float b_) {
-        X -= b_;
-        Y -= b_;
     }
 
     Vector2 operator*(const Vector2 &a, const Vector2 &b) {
@@ -143,11 +133,6 @@ namespace ngine {
         Y *= b.Y;
     }
 
-    void Vector2::operator*=(float b) {
-        X *= b;
-        Y *= b;
-    }
-
     Vector2 operator/(const Vector2 &a, const Vector2 &b) {
         return {
                 a.X / b.X,
@@ -158,11 +143,6 @@ namespace ngine {
     void Vector2::operator/=(const Vector2 &b) {
         X /= b.X;
         Y /= b.Y;
-    }
-
-    void Vector2::operator/=(float b) {
-        X /= b;
-        Y /= b;
     }
 
     const Vector3 Vector3::UnitX = {1, 0, 0};

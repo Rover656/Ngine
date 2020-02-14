@@ -114,9 +114,6 @@
  * @namespace ngine::physics
  * Ngine Physics module.
  *
- * @namespace ngine::physics::shapes
- * Physics shapes.
- *
  * @namespace ngine::UWP
  * This namespace contains UWP specific code.
  */

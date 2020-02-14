@@ -164,19 +164,68 @@ namespace ngine {
         Vector2 transform(const Vector2 &origin, const Angle &angle) const;
 
         bool operator==(const Vector2 &b) const;
+
         bool operator!=(const Vector2 &b) const;
+
         friend Vector2 operator+(const Vector2 &a, const Vector2 &b);
+
+        template <typename T>
+        friend Vector2 operator+(const Vector2 &a, T b) {
+            return {a.X + b, a.Y + b};
+        }
+
         void operator+=(const Vector2 &b);
-        void operator+=(float b);
+
+        template <typename T>
+        void operator+=(T b) {
+            X += b;
+            Y += b;
+        }
+
         friend Vector2 operator-(const Vector2 &a, const Vector2 &b);
+
+        template <typename T>
+        friend Vector2 operator-(const Vector2 &a, T b) {
+            return {a.X - b, a.Y - b};
+        }
+
         void operator-=(const Vector2 &b);
-        void operator-=(float b_);
+
+        template <typename T>
+        void operator-=(T b) {
+            X -= b;
+            Y -= b;
+        }
+
         friend Vector2 operator*(const Vector2 &a, const Vector2 &b);
+
+        template <typename T>
+        friend Vector2 operator*(const Vector2 &a, T b) {
+            return {a.X * b, a.Y * b};
+        }
+
         void operator*=(const Vector2 &b);
-        void operator*=(float b);
+
+        template <typename T>
+        void operator*=(T b) {
+            X *= b;
+            Y *= b;
+        }
+
         friend Vector2 operator/(const Vector2 &a, const Vector2 &b);
+
+        template <typename T>
+        friend Vector2 operator/(const Vector2 &a, T b) {
+            return {a.X / b, a.Y / b};
+        }
+
         void operator/=(const Vector2 &b);
-        void operator/=(float b);
+
+        template <typename T>
+        void operator/=(T b) {
+            X /= b;
+            Y /= b;
+        }
     };
 
     /**
