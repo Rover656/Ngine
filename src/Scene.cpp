@@ -43,6 +43,10 @@ namespace ngine {
     }
 
     Scene::~Scene() {
+        // Delete physics world
+        delete m_physicsWorld;
+
+        // Delete entities
         std::vector<Entity *> ents;
         ents = m_entities;
 
