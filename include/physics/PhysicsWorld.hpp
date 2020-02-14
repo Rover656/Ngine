@@ -153,16 +153,46 @@ namespace ngine::physics {
          */
         void setAllowSleeping(bool flag);
 
+        /**
+         * Is warm starting enabled?
+         *
+         * @return Whether or not warm starting is enabled.
+         */
         bool getWarmStarting() const;
 
+        /**
+         * Enable or disable warm starting.
+         *
+         * @param flag Warm starting enabled or disabled.
+         */
         void setWarmStarting(bool flag);
 
+        /**
+         * Determine if continuous physics is enabled
+         *
+         * @return Whether or not continuous physics is enabled.
+         */
         bool getContinuousPhysics() const;
 
+        /**
+         * Enable or disable continuous physics.
+         *
+         * @param flag Continuous physics enabled or disabled.
+         */
         void setContinuousPhysics(bool flag);
 
+        /**
+         * Determine if single stepped continuous physics is enabled.
+         *
+         * @return Whether or not single stepped continuous physics is enabled.
+         */
         bool getSubStepping() const;
 
+        /**
+         * Enable or disable single stepped continuous physics.
+         *
+         * @param flag Single stepped continuous physics enabled or disabled.
+         */
         void setSubStepping(bool flag);
 
         /**
