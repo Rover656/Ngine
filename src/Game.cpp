@@ -179,12 +179,15 @@ namespace ngine {
         }
 
         // FPS limiter
-        auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
-        auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
-        auto timestep = std::chrono::milliseconds((int)(1000.0f / (float) Config.FPSCap));
+        if (!m_gameWindow->getVSyncEnabled()) {
+            auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
+            auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
+            auto timestep = std::chrono::milliseconds ((int)((float) 1e+3f / (float) Config.FPSCap));
 
-        if (frameTimeMS < timestep) {
-            std::this_thread::sleep_for(timestep - frameTimeMS);
+            // If we were too quick.
+            if (frameTimeMS < timestep) {
+                std::this_thread::sleep_for(timestep - frameTimeMS);
+            }
         }
     }
 

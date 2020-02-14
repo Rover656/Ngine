@@ -84,30 +84,51 @@ namespace ngine {
         // Apply MSAA
         if (config.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
 
-        // Set version string
-        auto targetAPI = graphics::GraphicsDevice::GetTargetAPI();
-        auto targetMajor = graphics::GraphicsDevice::GetTargetAPIMajorVersion();
-        auto targetMinor = graphics::GraphicsDevice::GetTargetAPIMinorVersion();
+        // Get API versions
+        m_targetAPI = config.TargetAPI;
+        m_targetMajor = config.TargetAPIMajorVersion;
+        m_targetMinor = config.TargetAPIMinorVersion;
+
+        if (m_targetAPI == graphics::GraphicsAPI::Default) {
+#if defined(PLATFORM_DESKTOP)
+#if defined(_WIN32)
+            // Prefer ANGLE (DX) on Windows
+            m_targetAPI = graphics::GraphicsAPI::OpenGLES;
+            m_targetMajor = 2;
+            m_targetMinor = 0;
+#else
+            m_targetAPI = graphics::GraphicsAPI::OpenGl;
+            m_targetMajor = 3;
+            m_targetMinor = 3;
+#endif
+#elif defined(PLATFORM_UWP)
+            m_targetAPI = graphics::GraphicsAPI::OpenGLES;
+            m_targetMajor = 2;
+            m_targetMinor = 0;
+#else
+            Console::Fail("GraphicsDevice", "Unable to determine default graphics API.");
+#endif
+        }
 
         // OpenGL Core
-        if (targetAPI == graphics::GraphicsAPI::OpenGL) {
+        if (m_targetAPI == graphics::GraphicsAPI::OpenGL) {
             // Set core profile for GL 3.2 or greater
-            if (targetMajor >= 3 && targetMinor >= 2) {
+            if (m_targetMajor >= 3 && m_targetMinor >= 2) {
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             }
 
             // Set target version
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, targetMajor);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, targetMinor);
-        } else if (targetAPI == graphics::GraphicsAPI::OpenGLES) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_targetMajor);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_targetMinor);
+        } else if (m_targetAPI == graphics::GraphicsAPI::OpenGLES) {
             // Setup for GLES
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
             glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
 
             // Set target version
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, targetMajor);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, targetMinor);
-        } else if (targetAPI == graphics::GraphicsAPI::DirectX) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_targetMajor);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_targetMinor);
+        } else if (m_targetAPI == graphics::GraphicsAPI::DirectX) {
             // No API
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         }
@@ -185,6 +206,18 @@ namespace ngine {
         return m_creationConfig;
     }
 
+    graphics::GraphicsAPI Window::getContextAPI() const {
+        return m_targetAPI;
+    }
+
+    int Window::getContextAPIMajorVersion() const {
+        return m_targetMajor;
+    }
+
+    int Window::getContextAPIMinorVersion() const {
+        return m_targetMinor;
+    }
+
     graphics::GraphicsDevice *Window::getGraphicsDevice() {
         return m_graphicsDevice;
     }
@@ -234,9 +267,16 @@ namespace ngine {
 #endif
     }
 
+    bool Window::getVSyncEnabled() {
+        return m_vsync;
+    }
+
     void Window::setVSyncEnabled(bool flag) {
         // Make this window context current
         makeCurrent();
+
+        // Save for getting
+        m_vsync = flag;
 
 #if defined(PLATFORM_DESKTOP)
         glfwSwapInterval(flag ? 1 : 0);

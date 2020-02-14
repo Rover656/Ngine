@@ -175,32 +175,28 @@ NGINE_GAME_ENTRY {
     // Load icon (must remain in scope until NGINE_RUN_GAME happens)
     graphics::Image icon(Path::GetExecutableDirectory() / "content" / "test_icon.png");
 
-    // Set graphics API
-#if defined(PLATFORM_DESKTOP)
-#if defined(_WIN32)
-    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 4, 6);
-#else
-    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGL, 3, 3);
-#endif
-#elif defined(PLATFORM_UWP)
-    GraphicsDevice::SetTargetAPI(GraphicsAPI::OpenGLES, 2, 0);
-#endif
-
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
-    gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
+    gameConfig.FPSCap = 60;
+    //gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;
-    //windowConfig.MSAA_4X = true;
-    //windowConfig.VSync = true;
+    windowConfig.MSAA_4X = true;
+    windowConfig.VSync = true;
     windowConfig.InitialWidth = 1920 / 2;
     windowConfig.InitialHeight = 1080 / 2;
     windowConfig.Title = "Test Game";
     windowConfig.Icon = &icon;
     //windowConfig.NativeDebugConsole = true;
+
+#if defined(_WIN32) && defined(PLATFORM_DESKTOP)
+    windowConfig.TargetAPI = GraphicsAPI::OpenGL;
+    windowConfig.TargetAPIMajorVersion = 4;
+    windowConfig.TargetAPIMinorVersion = 6;
+#endif
 
     // Create game
     auto game = TestGame(windowConfig, gameConfig);

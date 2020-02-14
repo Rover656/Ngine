@@ -98,6 +98,7 @@
 #include "graphics/RenderTarget.hpp"
 #include "graphics/VertexLayout.hpp"
 #include "Console.hpp"
+#include "Window.hpp"
 
 #include <cstring>
 
@@ -745,7 +746,7 @@ namespace ngine::graphics::API {
         // Init GLAD loader
         auto status = false;
 
-        if (GraphicsDevice::GetTargetAPI() == GraphicsAPI::OpenGLES) {
+        if (m_graphicsDevice->getWindow()->getContextAPI() == GraphicsAPI::OpenGLES) {
 #if defined(GLFW)
             status = gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress);
 #elif defined(EGL)
@@ -766,6 +767,9 @@ namespace ngine::graphics::API {
         }
         Console::Notice("PlatformGLAPI", "Successfully initialized GLAD.");
 #endif
+
+        // Broadcast GL version
+        Console::Notice("OpenGL", "%s", glGetString(GL_VERSION));
 
         // Determine if we're running GLES
 #if !defined(GLAD)

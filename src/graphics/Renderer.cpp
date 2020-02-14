@@ -22,6 +22,7 @@
 
 #include "graphics/VertexDataConverter.hpp"
 #include "Console.hpp"
+#include "Window.hpp"
 
 namespace ngine::graphics {
     void Renderer::_addTriangles(Vertex *vertices, int count, bool translate) {
@@ -125,14 +126,15 @@ namespace ngine::graphics {
                              });
         m_layout->configure();
 
-        // Create default shader
-
+        // Init shader sources
         const char *vSrc = nullptr;
         const char *fSrc = nullptr;
 
-        auto major = GraphicsDevice::GetTargetAPIMajorVersion();
-        auto minor = GraphicsDevice::GetTargetAPIMinorVersion();
-        switch (GraphicsDevice::GetTargetAPI()) {
+        // Determine shader
+        auto window = m_graphicsDevice->getWindow();
+        auto major = window->getContextAPIMajorVersion();
+        auto minor = window->getContextAPIMinorVersion();
+        switch (window->getContextAPI()) {
             case GraphicsAPI::OpenGL:
                 if (major >= 3) {
                     vSrc = GL33_V_SHADER;

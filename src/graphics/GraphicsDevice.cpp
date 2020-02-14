@@ -24,53 +24,11 @@
 #include "graphics/Renderer.hpp"
 #include "graphics/RenderTarget.hpp"
 #include "Console.hpp"
+#include "Window.hpp"
 
 #include <cstring>
 
 namespace ngine::graphics {
-    // The default APIs are set here.
-    GraphicsAPI GraphicsDevice::m_targetAPI
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(PLATFORM_DESKTOP) && defined(API_OPENGL_ENABLED)
-            = GraphicsAPI::OpenGL
-#elif defined(PLATFORM_DESKTOP) && defined(API_OPENGLES_ENABLED)
-            = GraphicsAPI::OpenGLES
-#elif defined(PLATFORM_UWP) && defined(API_OPENGLES_ENABLED)
-            = GraphicsAPI::OpenGLES
-#else
-#error "Cannot determine default API."
-#endif
-#endif
-    ;
-
-    int GraphicsDevice::m_targetMajorVersion
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(PLATFORM_DESKTOP) && defined(API_OPENGL_ENABLED)
-            = 3
-#elif defined(PLATFORM_DESKTOP) && defined(API_OPENGLES_ENABLED)
-            = 2
-#elif defined(PLATFORM_UWP) && defined(API_OPENGLES_ENABLED)
-            = 2
-#else
-#error "Cannot determine default API."
-#endif
-#endif
-    ;
-
-    int GraphicsDevice::m_targetMinorVersion
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#if defined(PLATFORM_DESKTOP) && defined(API_OPENGL_ENABLED)
-            = 3
-#elif defined(PLATFORM_DESKTOP) && defined(API_OPENGLES_ENABLED)
-            = 0
-#elif defined(PLATFORM_UWP) && defined(API_OPENGLES_ENABLED)
-            = 0
-#else
-#error "Cannot determine default API."
-#endif
-#endif
-    ;
-
     bool GraphicsDevice::m_targetAccessed = false;
 
     GraphicsDevice::GraphicsDevice(Window *window) : m_attachedWindow(window) {
@@ -78,16 +36,38 @@ namespace ngine::graphics {
         if (m_attachedWindow == nullptr)
             throw std::runtime_error("Window cannot be null.");
 
+        // Get context version
+        auto targetAPI = window->getContextAPI();
+        auto major = window->getContextAPIMajorVersion();
+        auto minor = window->getContextAPIMinorVersion();
+
+        // Fix default versions
+        if (major == -1 && minor == -1) {
+            switch (targetAPI) {
+                case GraphicsAPI::OpenGL:
+                    major = 3;
+                    minor = 3;
+                    break;
+                case GraphicsAPI::OpenGLES:
+                    major = 2;
+                    minor = 0;
+                    break;
+                case GraphicsAPI::DirectX:
+                    // TODO
+                    break;
+            }
+        }
+
         // Check API minimum versions
-        switch (m_targetAPI) {
+        switch (targetAPI) {
             case GraphicsAPI::OpenGL:
 #if defined(API_OPENGL_ENABLED)
 #if !defined(PLATFORM_DESKTOP)
                 Console::Fail("GraphicsDevice", "OpenGL is not supported on this platform.");
 #endif
-                if (m_targetMajorVersion < 2 && (m_targetMajorVersion == 3 && m_targetMinorVersion < 0))
+                if (major < 2 && (major == 3 && minor < 0))
                     Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 3.0");
-                if (m_targetMajorVersion == 4 && m_targetMinorVersion > 6)
+                if (major == 4 && minor > 6)
                     Console::Fail("GraphicsDevice", "OpenGL 4.6 is the latest Ngine supports.");
 #else
                 Console::Fail("GraphicsDevice", "OpenGL not supported as Ngine was not built with it enabled.");
@@ -95,9 +75,9 @@ namespace ngine::graphics {
                 break;
             case GraphicsAPI::OpenGLES:
 #if defined(API_OPENGLES_ENABLED)
-                if (m_targetMajorVersion < 2)
+                if (major < 2)
                     Console::Fail("GraphicsDevice", "OpenGL ES 2.0+ required.");
-                if (m_targetMajorVersion == 3 && m_targetMinorVersion > 1)
+                if (major == 3 && minor > 1)
                     Console::Fail("GraphicsDevice", "OpenGL ES 3.1 is the latest Ngine supports.");
 #else
                 Console::Fail("GraphicsDevice", "OpenGL ES not supported as Ngine was not built with it enabled.");
@@ -106,7 +86,7 @@ namespace ngine::graphics {
         }
 
         // Create API (If context is created by the API, it should be made current.)
-        switch (m_targetAPI) {
+        switch (targetAPI) {
             case GraphicsAPI::OpenGL:
             case GraphicsAPI::OpenGLES:
 #if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
@@ -128,29 +108,6 @@ namespace ngine::graphics {
 
     GraphicsDevice::~GraphicsDevice() {
         delete m_platformAPI;
-    }
-
-    void GraphicsDevice::SetTargetAPI(GraphicsAPI api, int majorVersion, int minorVersion) {
-        if (m_targetAccessed)
-            Console::Fail("GraphicsDevice", "Cannot change target API once the target has been used.");
-        m_targetAPI = api;
-        m_targetMajorVersion = majorVersion;
-        m_targetMinorVersion = minorVersion;
-    }
-
-    GraphicsAPI GraphicsDevice::GetTargetAPI() {
-        if (!m_targetAccessed) m_targetAccessed = true;
-        return m_targetAPI;
-    }
-
-    int GraphicsDevice::GetTargetAPIMajorVersion() {
-        if (!m_targetAccessed) m_targetAccessed = true;
-        return m_targetMajorVersion;
-    }
-
-    int GraphicsDevice::GetTargetAPIMinorVersion() {
-        if (!m_targetAccessed) m_targetAccessed = true;
-        return m_targetMinorVersion;
     }
 
     Window *GraphicsDevice::getWindow() {

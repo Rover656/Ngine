@@ -38,6 +38,7 @@ typedef void *EGLContext;
 #include <fstream>
 #include <iostream>
 
+#include "graphics/API/PlatformGraphicsAPI.hpp"
 #include "graphics/Image.hpp"
 #include "Events.hpp"
 
@@ -109,6 +110,25 @@ namespace ngine {
          * This will lock the framerate of your game to the monitors refresh rate.
          */
         bool VSync = false;
+
+        /**
+         * The target graphics API for the window context.
+         */
+        graphics::GraphicsAPI TargetAPI;
+
+        /**
+         * Target major API version.
+         *
+         * Set to -1 for default.
+         */
+        int TargetAPIMajorVersion = -1;
+
+        /**
+         * Target minor API version.
+         *
+         * Set to -1 for default.
+         */
+        int TargetAPIMinorVersion = -1;
     };
 
     /**
@@ -174,6 +194,12 @@ namespace ngine {
          */
         const WindowConfig m_creationConfig;
 
+        graphics::GraphicsAPI m_targetAPI;
+
+        int m_targetMajor;
+
+        int m_targetMinor;
+
         /**
          * The mouse input manager for this window.
          */
@@ -233,6 +259,11 @@ namespace ngine {
          * The graphics device attached to the window context.
          */
         graphics::GraphicsDevice *m_graphicsDevice;
+
+        /**
+         * Whether or not Vsync is currently enabled.
+         */
+        bool m_vsync = false;
 
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
@@ -294,6 +325,27 @@ namespace ngine {
         const WindowConfig getCreationConfig() const;
 
         /**
+         * Get the API our context is targeting.
+         *
+         * @return The context API.
+         */
+        graphics::GraphicsAPI getContextAPI() const;
+
+        /**
+         * Get the API major version our context is targeting.
+         *
+         * @return The context major version.
+         */
+        int getContextAPIMajorVersion() const;
+
+        /**
+         * Get the API minor version our context is targeting.
+         *
+         * @return The context minor version.
+         */
+        int getContextAPIMinorVersion() const;
+
+        /**
          * Get the graphics device for the window context.
          *
          * @return The graphics device.
@@ -343,6 +395,14 @@ namespace ngine {
          * @param height New window height.
          */
         void setSize(int width, int height);
+
+        /**
+         * Get whether or not VSync has been enabled.
+         *
+         * @warning Will not check if VSync is supported.
+         * @return Whether or not VSync has been enabled.
+         */
+        bool getVSyncEnabled();
 
         /**
          * Set whether or not VSync is enabled
