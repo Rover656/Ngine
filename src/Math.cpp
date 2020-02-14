@@ -246,25 +246,24 @@ namespace ngine {
     Matrix Matrix::Orthographic(float left, float right, float bottom, float top, float near_, float far_) {
         Matrix result = {0};
 
-        const auto rl = right - left;
-        const auto tb = top - bottom;
-        const auto fn = far_ - near_;
-
-        result.M0 = 2.0f / rl;
+        result.M0 = 2.0f / (right - left);
         result.M1 = 0.0f;
         result.M2 = 0.0f;
         result.M3 = 0.0f;
+
         result.M4 = 0.0f;
-        result.M5 = 2.0f / tb;
+        result.M5 = 2.0f / (top - bottom);
         result.M6 = 0.0f;
         result.M7 = 0.0f;
+
         result.M8 = 0.0f;
         result.M9 = 0.0f;
-        result.M10 = -2.0f / fn;
+        result.M10 = -2.0f / (far_ - near_);
         result.M11 = 0.0f;
-        result.M12 = -(left + right) / rl;
-        result.M13 = -(top + bottom) / tb;
-        result.M14 = -(far_ + near_) / fn;
+
+        result.M12 = -1.0f * (right + left) / (right - left);
+        result.M13 = -1.0f * (top + bottom) / (top - bottom);
+        result.M14 = -1.0f * (far_ + near_) / (far_ - near_);
         result.M15 = 1.0f;
 
         return result;
@@ -355,6 +354,7 @@ namespace ngine {
 
     std::vector<float> Matrix::toFloatArray() const {
         auto buffer = std::vector<float>(16);
+
         buffer[0] = M0;
         buffer[1] = M1;
         buffer[2] = M2;
