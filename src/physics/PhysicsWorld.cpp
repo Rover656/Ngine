@@ -35,6 +35,11 @@ namespace ngine::physics {
     }
 
     PhysicsWorld::~PhysicsWorld() {
+        // Delete bodies
+        for (auto b : m_bodies) {
+            delete b;
+        }
+
         // Delete world
         delete m_world;
         m_world = nullptr;
@@ -45,6 +50,15 @@ namespace ngine::physics {
         b2BodyDef def;
         def.position = {pos.X, pos.Y};
         return new PhysicsBody(this, m_world->CreateBody(&def));
+    }
+
+    void PhysicsWorld::destroyBody(PhysicsBody *body) {
+        // Destroy body's fixtures
+        body->_destroy();
+
+        // Destroy and delete body
+        m_world->DestroyBody(body->m_body);
+        delete body;
     }
 
     int PhysicsWorld::getBodyCount() const {

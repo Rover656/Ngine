@@ -34,10 +34,16 @@ namespace ngine::physics {
         m_body->SetUserData(this);
     }
 
-    PhysicsBody::~PhysicsBody() {
-        // Remove from world
-        m_body->GetWorld()->DestroyBody(m_body);
-        m_body = nullptr;
+    void PhysicsBody::_destroy() {
+        // Destroy fixtures
+        for (auto f : m_fixtures) {
+            destroyFixture(f);
+        }
+    }
+
+    void PhysicsBody::destroyFixture(PhysicsFixture *fixture) {
+        m_body->DestroyFixture(fixture->m_fixture);
+        delete fixture;
     }
 
     PhysicsWorld *PhysicsBody::getWorld() {
@@ -71,6 +77,34 @@ namespace ngine::physics {
     void PhysicsBody::setTransform(Transform2D transform) {
         auto pos = m_world->convertPixelsToMeters(transform.Position);
         m_body->SetTransform({pos.X, pos.Y}, DegToRad(transform.Rotation.getDegrees()));
+    }
+
+    Vector2 PhysicsBody::getWorldCenter() {
+        auto c = m_body->GetWorldCenter();
+        return m_world->convertMetersToPixels(Vector2(c.x, c.y));
+    }
+
+    Vector2 PhysicsBody::getLocalCenter() {
+        auto c = m_body->GetLocalCenter();
+        return m_world->convertMetersToPixels(Vector2(c.x, c.y));
+    }
+
+    Vector2 PhysicsBody::getLinearVelocity() {
+        auto v = m_body->GetLinearVelocity();
+        return m_world->convertMetersToPixels(Vector2(v.x, v.y));
+    }
+
+    void PhysicsBody::setLinearVelocity(Vector2 velocity) {
+        auto v = m_world->convertPixelsToMeters(velocity);
+        m_body->SetLinearVelocity({v.X, v.Y});
+    }
+
+    float PhysicsBody::getAngularVelocity() {
+        return RadToDeg(m_body->GetAngularVelocity());
+    }
+
+    void PhysicsBody::setAngularVelocity(float velocity) {
+        m_body->SetAngularVelocity(DegToRad(velocity));
     }
 
     float PhysicsBody::getMass() {

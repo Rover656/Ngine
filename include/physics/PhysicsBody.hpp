@@ -24,6 +24,7 @@
 #include "../Config.hpp"
 
 #include "../Math.hpp"
+#include "PhysicsFixture.hpp"
 
 // Forward declaring Box2D
 class b2Body;
@@ -51,14 +52,25 @@ namespace ngine::physics {
         PhysicsWorld *m_world = nullptr;
 
         /**
+         * List of fixtures.
+         * This is soley for memory management when Box2D forgets us...
+         */
+        std::vector<PhysicsFixture *> m_fixtures;
+
+        /**
          * Create a physics body.
          */
         PhysicsBody(PhysicsWorld *world, b2Body *body);
-    public:
+
         /**
-         * Delete the physics body inside of the world.
+         * Destroy fixtures.
          */
-        ~PhysicsBody();
+        void _destroy();
+    public:
+
+        // PhysicsFixture *createFixture();
+
+        void destroyFixture(PhysicsFixture *fixture);
 
         /**
          * Get the attached physics world.
@@ -76,6 +88,18 @@ namespace ngine::physics {
         Transform2D getTransform();
 
         void setTransform(Transform2D transform);
+
+        Vector2 getWorldCenter();
+
+        Vector2 getLocalCenter();
+
+        Vector2 getLinearVelocity();
+
+        void setLinearVelocity(Vector2 velocity);
+
+        float getAngularVelocity();
+
+        void setAngularVelocity(float velocity);
 
         float getMass();
 

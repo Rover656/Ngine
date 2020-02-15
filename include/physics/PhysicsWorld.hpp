@@ -62,6 +62,11 @@ namespace ngine::physics {
          * Position iterations for the step call.
          */
         int m_positionIterations = 3;
+
+        /**
+         * Track physics bodies for deletion.
+         */
+        std::vector<PhysicsBody *> m_bodies;
     public:
         /**
          *
@@ -74,8 +79,19 @@ namespace ngine::physics {
 
         /**
          * Create a new physics body.
+         *
+         * @param type Body type.
+         * @param position Body position (avoid setting to origin then setting elsewhere).
          */
         PhysicsBody *createBody(PhysicsBodyType type, Vector2 position);
+
+        /**
+         * Destroy a physics body.
+         *
+         * @warning This will delete body.
+         * @param body Body to destroy.
+         */
+        void destroyBody(PhysicsBody *body);
 
         /**
          * Get the number of bodies.

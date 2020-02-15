@@ -77,7 +77,9 @@ namespace ngine {
         }
 
         // Destroy physics body
-        delete m_physicsBody;
+        if (m_physicsBody != nullptr) {
+            m_scene->getPhysicsWorld()->destroyBody(m_physicsBody);
+        }
 
         // Remove from our parent
         if (m_parent != nullptr)
@@ -191,7 +193,20 @@ namespace ngine {
     }
 
     void Entity::setPhysicsBody(physics::PhysicsBody *body) {
-        // TODO Passing in coordinates etc.
+        // TODO Passing in/saving coordinates etc.
+
+        // Check physics enabled in scene
+        if (!m_scene->isPhysicsEnabled())
+            Console::Fail("Entity", "Scene does not have physics enabled!");
+
+        // Check body is a member of the scene's world
+        if (body->getWorld() != m_scene->getPhysicsWorld())
+            Console::Fail("Entity", "Body must be a member of the scene's physics world!");
+
+        // Delete current body if we have one
+        if (m_physicsBody != nullptr) {
+            m_scene->getPhysicsWorld()->destroyBody(m_physicsBody);
+        }
         m_physicsBody = body;
     }
 
