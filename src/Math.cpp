@@ -488,6 +488,10 @@ namespace ngine {
         return RadToDeg(atan2f(Sin, Cos));
     }
 
+    Angle Angle::operator-() const {
+        return Angle(-getDegrees());
+    }
+
     Angle operator+(Angle angle, float theta) {
         auto d = angle.getDegrees();
         return Angle(angle.getDegrees() + theta);

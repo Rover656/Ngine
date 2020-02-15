@@ -83,7 +83,7 @@ namespace ngine::physics {
     }
 
     Angle PhysicsBody::getRotation() const {
-        return Angle(RadToDeg(m_body->GetAngle()));
+        return Angle(-RadToDeg(m_body->GetAngle()));
     }
 
     void PhysicsBody::setRotation(const Angle &rotation) {
@@ -92,14 +92,14 @@ namespace ngine::physics {
 
     Transform2D PhysicsBody::getTransform() const {
         auto tr = m_body->GetTransform();
-        auto rot = RadToDeg(tr.q.GetAngle());
+        auto rot = -RadToDeg(tr.q.GetAngle());
         auto pos = m_context->convertMetersToPixels(Vector2(tr.p.x, tr.p.y));
         return Transform2D(pos, rot);
     }
 
     void PhysicsBody::setTransform(const Transform2D &transform) {
         auto pos = m_context->convertPixelsToMeters(transform.Position);
-        m_body->SetTransform({pos.X, pos.Y}, DegToRad(transform.Rotation.getDegrees()));
+        m_body->SetTransform({pos.X, pos.Y}, -DegToRad(transform.Rotation.getDegrees()));
     }
 
     Vector2 PhysicsBody::getWorldCenter() const {
@@ -123,11 +123,11 @@ namespace ngine::physics {
     }
 
     float PhysicsBody::getAngularVelocity() const {
-        return RadToDeg(m_body->GetAngularVelocity());
+        return -RadToDeg(m_body->GetAngularVelocity());
     }
 
     void PhysicsBody::setAngularVelocity(float velocity) {
-        m_body->SetAngularVelocity(DegToRad(velocity));
+        m_body->SetAngularVelocity(-DegToRad(velocity));
     }
 
     float PhysicsBody::getMass() const {

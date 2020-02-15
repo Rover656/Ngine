@@ -212,7 +212,12 @@ namespace ngine {
         // Render all entities
         for (const auto &e : m_entities) e->render(renderer, view, cam);
 
-        // TODO: Physics world debug draw with camera.
+        // Physics debug draw
+        if (m_physicsWorld != nullptr && m_physicsWorld->isDebugDrawEnabled()) {
+            renderer->setModelViewMatrix(view);
+            m_physicsWorld->debugDraw(renderer);
+            renderer->setModelViewMatrix(Matrix::Identity);
+        }
     }
 
     void Scene::renderUI(graphics::Renderer *renderer) {

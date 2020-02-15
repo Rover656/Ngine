@@ -34,6 +34,17 @@ class b2World;
 
 namespace ngine::physics {
     /**
+     * Physics debug draw flags
+     */
+    enum PhysicsDebugDrawFlag {
+        DRAW_SHAPE				= 0x0001,	///< draw shapes
+        DRAW_JOINT				= 0x0002,	///< draw joint connections
+        DRAW_AABB				= 0x0004,	///< draw axis aligned bounding boxes
+        DRAW_PAIR				= 0x0008,	///< draw broad-phase pairs
+        DRAW_CENTER_OF_MASS		= 0x0010	///< draw center of mass frame
+    };
+
+    /**
      * This contains all of the physics bodies.
      *
      * This only deals with units in pixels, it accepts a pixel per meter ratio for internal conversions for Box2D.
@@ -227,6 +238,13 @@ namespace ngine::physics {
         void setSubStepping(bool flag);
 
         /**
+         * Determine if debug drawing is enabled.
+         *
+         * @return If debug drawing is enabled.
+         */
+        bool isDebugDrawEnabled() const;
+
+        /**
          * Enable debug draw.
          */
         void enableDebugDraw();
@@ -235,6 +253,16 @@ namespace ngine::physics {
          * Disable debug draw.
          */
         void disableDebugDraw();
+
+        /**
+         * Set debug draw flags
+         */
+        void setDebugDrawFlags(unsigned int flags);
+
+        /**
+         * Get debug draw flags
+         */
+        unsigned int getDebugDrawFlags() const;
 
         /**
          * Draw debug geometry.

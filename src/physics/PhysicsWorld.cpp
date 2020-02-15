@@ -159,10 +159,14 @@ namespace ngine::physics {
         m_world->SetSubStepping(flag);
     }
 
+    bool PhysicsWorld::isDebugDrawEnabled() const {
+        return m_debugDraw != nullptr;
+    }
+
     void PhysicsWorld::enableDebugDraw() {
         // Create debug drawer
-        if (m_debugDraw != nullptr)
-            m_debugDraw = new PhysicsDebugDraw(this);
+        if (m_debugDraw != nullptr) return;
+        m_debugDraw = new PhysicsDebugDraw(this);
 
         // Set debug drawer
         m_world->SetDebugDraw(m_debugDraw);
@@ -175,6 +179,17 @@ namespace ngine::physics {
             delete m_debugDraw;
             m_debugDraw = nullptr;
         }
+    }
+
+    void PhysicsWorld::setDebugDrawFlags(unsigned int flags) {
+        if (m_debugDraw != nullptr)
+            m_debugDraw->SetFlags(flags);
+    }
+
+    unsigned int PhysicsWorld::getDebugDrawFlags() const {
+        if (m_debugDraw != nullptr)
+            return m_debugDraw->GetFlags();
+        return 0;
     }
 
     void PhysicsWorld::debugDraw(graphics::Renderer *renderer) {

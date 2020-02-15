@@ -104,6 +104,8 @@ public:
 
         // Move
         auto pos = getPosition();
+        //Console::Notice("", "%f, %f", pos.X, pos.Y);
+
         setPosition(pos + vel);
         setRotation(rot);
         //setScale(scale);
@@ -135,11 +137,13 @@ public:
 // TESTING
 class NewTestScene : public Scene {
 public:
-    NewTestScene(Game *game) : Scene(game, {0, -16}, 16) {
+    NewTestScene(Game *game) : Scene(game, {0, 1.0f}, 16) {
 //        auto par = new ParentEntity();
 //        par->addChild(new TestEntity());
 //        addChild(par);
         addChild(new TestEntity());
+        getPhysicsWorld()->enableDebugDraw();
+        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
     }
 };
 

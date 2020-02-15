@@ -54,8 +54,10 @@
 #include "input/Gamepad.hpp"
 #include "input/Keyboard.hpp"
 #include "input/Mouse.hpp"
-// TODO: Physics once we have finished the API in this branch
 #include "physics/PhysicsBody.hpp"
+#include "physics/PhysicsContext.hpp"
+#include "physics/PhysicsFixture.hpp"
+#include "physics/PhysicsShape.hpp"
 #include "physics/PhysicsWorld.hpp"
 // TODO: UI once the API is finished
 #include "Component.hpp"

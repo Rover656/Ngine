@@ -51,8 +51,8 @@ namespace ngine::physics {
     PhysicsDebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
         auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_context->convertMetersToPixels(radius);
-        graphics::ShapeRenderer::DrawCircle(m_renderer, {center.x, center.y}, r,
-                                            graphics::Color(color.r, color.g, color.b, color.a));
+        graphics::Color fill = {color.r * 0.5f, color.g * 0.5f, color.b * 0.5f, color.a * 0.5f};
+        graphics::ShapeRenderer::DrawCircle(m_renderer, c, r, fill);
 
         // Axis line
         auto p = c + Vector2(axis.x, axis.y) * r;
@@ -66,10 +66,23 @@ namespace ngine::physics {
     }
 
     void PhysicsDebugDraw::DrawTransform(const b2Transform &xf) {
+        b2Vec2 p1 = xf.p, p2;
+        const float32 k_axisScale = 1;
 
+        p2 = p1 + k_axisScale * xf.q.GetXAxis();
+        DrawSegment(p1, p2, b2Color(1,0,0));
+
+        auto y = xf.q.GetYAxis();
+
+        p2 = p1 + k_axisScale * xf.q.GetYAxis();
+        DrawSegment(p1,p2,b2Color(0,1,0));
     }
 
     void PhysicsDebugDraw::DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color) {
-        // TODO: We don't actually have a function for this.
+        // Just draw a rectangle
+        auto pos = m_context->convertMetersToPixels(Vector2(p.x, p.y));
+        auto s = m_context->convertMetersToPixels(size);
+        Rectangle rect(pos - s / 2.0f, s, s);
+        graphics::ShapeRenderer::DrawRectangle(m_renderer, rect, {color.r, color.g, color.b, color.a});
     }
 }

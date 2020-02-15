@@ -644,6 +644,7 @@ namespace ngine {
          */
         float getDegrees() const;
 
+        Angle operator-() const;
         friend NEAPI Angle operator+(Angle angle, float theta);
         friend NEAPI Angle operator-(Angle angle, float theta);
         friend NEAPI Angle operator*(Angle angle, float theta);
