@@ -132,6 +132,8 @@ namespace ngine::graphics {
         DrawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color, Angle rotation = 0,
                      Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
+        static void DrawPolygon(Renderer *renderer, const std::vector<Vector2> &vertices, Color color, bool outline = false, float lineThickness = 1);
+
         // TODO: Draw polygon once shape classes are final
         // TODO: Drawing circle sectors etc.
     };

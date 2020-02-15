@@ -33,11 +33,24 @@ namespace ngine::physics {
     }
 
     void PhysicsDebugDraw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {
-        // TODO.
+        // Draw segments
+        DrawSegment(vertices[vertexCount - 1], vertices[0], color);
+        for (auto i = 0; i < vertexCount - 1; i++) {
+            DrawSegment(vertices[i], vertices[i + 1], color);
+        }
     }
 
     void PhysicsDebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2Color &color) {
-        // TODO.
+        // Convert vertices
+        std::vector<Vector2> verts;
+        verts.reserve(vertexCount);
+        for (auto i = 0; i < vertexCount; i++) {
+            verts.push_back(m_context->convertMetersToPixels(Vector2(vertices[i].x, vertices[i].y)));
+        }
+
+        // Draw
+        graphics::Color fill = {color.r * 0.5f, color.g * 0.5f, color.b * 0.5f, color.a * 0.5f};
+        graphics::ShapeRenderer::DrawPolygon(m_renderer, verts, fill);
     }
 
     void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color) {

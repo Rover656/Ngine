@@ -72,14 +72,9 @@ namespace ngine::physics {
         // Mark as manually allocated
         m_allocatedByUs = true;
 
-        // Conversions
-        auto p = m_context->convertPixelsToMeters(position);
-        auto r = m_context->convertPixelsToMeters(radius);
-
         // Setup
-        auto c = ((b2CircleShape *) m_shape);
-        c->m_radius = r;
-        c->m_p = {p.X, p.Y};
+        setRadius(radius);
+        setPosition(position);
     }
 
     float CirclePhysicsShape::getRadius() {
@@ -98,5 +93,69 @@ namespace ngine::physics {
     void CirclePhysicsShape::setPosition(const Vector2 &position) {
         auto p = m_context->convertPixelsToMeters(position);
         ((b2CircleShape *) m_shape)->m_p = {p.X, p.Y};
+    }
+
+    PolygonPhysicsShape::PolygonPhysicsShape(const PhysicsContext *context, b2PolygonShape *polygon)
+            : PhysicsShape(context, polygon) {}
+
+    PolygonPhysicsShape::PolygonPhysicsShape(const PhysicsContext *context, float width, float height)
+            : PhysicsShape(context, new b2PolygonShape()) {
+        // Mark as manually allocated
+        m_allocatedByUs = true;
+
+        // Set vertices
+        setAsBox(width, height);
+    }
+
+    PolygonPhysicsShape::PolygonPhysicsShape(const PhysicsContext *context, const std::vector<Vector2> &vertices)
+            : PhysicsShape(context, new b2PolygonShape()) {
+        // Mark as manually allocated
+        m_allocatedByUs = true;
+
+        // Set vertices
+        setVertices(vertices);
+    }
+
+    Vector2 PolygonPhysicsShape::getCentroid() {
+        auto c = ((b2PolygonShape *) m_shape)->m_centroid;
+        return m_context->convertMetersToPixels(Vector2(c.x, c.y));
+    }
+
+    void PolygonPhysicsShape::setCentroid(const Vector2 &centroid) {
+        auto c = m_context->convertPixelsToMeters(centroid);
+        ((b2PolygonShape *) m_shape)->m_centroid = {c.X, c.Y};
+    }
+
+    std::vector<Vector2> PolygonPhysicsShape::getVertices() {
+        auto poly = (b2PolygonShape *) m_shape;
+        std::vector<Vector2> vertices(poly->m_count);
+        for (auto i = 0; i < poly->m_count; i++) {
+            vertices.push_back(m_context->convertMetersToPixels(Vector2(poly->m_vertices[i].x, poly->m_vertices[i].y)));
+        }
+        return vertices;
+    }
+
+    void PolygonPhysicsShape::setVertices(const std::vector<Vector2> &vertices) {
+        // Convert
+        auto verts = new b2Vec2[vertices.size()];
+        for (auto i = 0; i < vertices.size(); i++) {
+            auto pos = m_context->convertPixelsToMeters(vertices[i]);
+            verts[i] = {pos.X, pos.Y};
+        }
+
+        // Send
+        ((b2PolygonShape *) m_shape)->Set(verts, vertices.size());
+
+        // Delete
+        delete[] verts;
+    }
+
+    void PolygonPhysicsShape::setAsBox(float width, float height) {
+        // Convert
+        auto w = m_context->convertPixelsToMeters(width);
+        auto h = m_context->convertPixelsToMeters(height);
+
+        // Send
+        ((b2PolygonShape *) m_shape)->SetAsBox(w / 2.0f, h / 2.0f);
     }
 }

@@ -29,6 +29,7 @@
 // Box2D declarations
 class b2Shape;
 class b2CircleShape;
+class b2PolygonShape;
 
 namespace ngine::physics {
     /**
@@ -86,7 +87,7 @@ namespace ngine::physics {
     /**
      * Defines a circle shape.
      */
-    class CirclePhysicsShape final : public PhysicsShape {
+    class NEAPI CirclePhysicsShape final : public PhysicsShape {
         friend class PhysicsFixture;
 
         /**
@@ -133,6 +134,43 @@ namespace ngine::physics {
          * @param position New circle position.
          */
         void setPosition(const Vector2 &position);
+    };
+
+    class NEAPI PolygonPhysicsShape : public PhysicsShape {
+        friend class PhysicsFixture;
+
+        PolygonPhysicsShape(const PhysicsContext *context, b2PolygonShape *polygon);
+    public:
+        /**
+         * Create a polygon physics shape as a box.
+         */
+        PolygonPhysicsShape(const PhysicsContext *context, float width, float height);
+
+        /**
+         * Create a polygon physics shape with vertices.
+         */
+        PolygonPhysicsShape(const PhysicsContext *context, const std::vector<Vector2> &vertices);
+
+        Vector2 getCentroid();
+
+        void setCentroid(const Vector2 &centroid);
+
+        std::vector<Vector2> getVertices();
+
+        /**
+         *
+         * @warning It is not recommended to change the number of vertices.
+         */
+        void setVertices(const std::vector<Vector2> &vertices);
+
+        /**
+         * Make this a box positioned at its center.
+         *
+         * @param context Physics context.
+         * @param width Width of box.
+         * @param height Height of box.
+         */
+        void setAsBox(float width, float height);
     };
 }
 

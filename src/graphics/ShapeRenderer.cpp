@@ -170,4 +170,26 @@ namespace ngine::graphics {
         // Pop
         renderer->popMatrix();
     }
+
+    void ShapeRenderer::DrawPolygon(Renderer *renderer, const std::vector<Vector2> &vertices, Color color, bool outline,
+                                    float lineThickness) {
+        renderer->setTexture(nullptr);
+        if (outline) {
+            // TODO: Check vertex count!!
+            renderer->beginVertices(PrimitiveType::Quads);
+            _drawLine(renderer, vertices[vertices.size() - 1], vertices[0], color, lineThickness);
+            for (auto i = 0; i < vertices.size() - 1; i++)
+                _drawLine(renderer, vertices[i], vertices[i + 1], color, lineThickness);
+            renderer->endVertices();
+        } else {
+            // TODO: Check vertex count!!
+            renderer->beginVertices(PrimitiveType::TriangleFan);
+            renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
+            for (auto i = 1; i < vertices.size() - 1; i++) {
+                renderer->pushVertex({{vertices[i].X, vertices[i].Y, 0}, {}, color});
+                renderer->pushVertex({{vertices[i + 1].X, vertices[i + 1].Y, 0}, {}, color});
+            }
+            renderer->endVertices();
+        }
+    }
 }

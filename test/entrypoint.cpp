@@ -21,7 +21,7 @@ public:
 };
 
 class TestEntity : public Entity {
-    PhysicsFixture *m_circleFixture = nullptr;
+    PhysicsFixture *m_fixture = nullptr;
 public:
     TestEntity() {}
 
@@ -36,8 +36,10 @@ public:
             auto body = world->createBody(PhysicsBody::Type::Dynamic, {0, 0});
 
             // Add a fixture
-            CirclePhysicsShape shape(scene->getPhysicsContext(), 32);
-            m_circleFixture = body->createFixture(&shape, 1);
+            //CirclePhysicsShape shape(scene->getPhysicsContext(), 32);
+            //m_fixture = body->createFixture(&shape, 1);
+            PolygonPhysicsShape shape(scene->getPhysicsContext(), 32, 32);
+            m_fixture = body->createFixture(&shape, 1);
 
             // Set body
             setPhysicsBody(body);
@@ -143,7 +145,7 @@ public:
 //        addChild(par);
         addChild(new TestEntity());
         getPhysicsWorld()->enableDebugDraw();
-        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
+        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_CENTER_OF_MASS);
     }
 };
 
