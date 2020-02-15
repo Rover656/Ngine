@@ -22,6 +22,8 @@
 
 #include "graphics/ShapeRenderer.hpp"
 
+#include <Box2D/Box2D.h>
+
 namespace ngine::physics {
     PhysicsDebugDraw::PhysicsDebugDraw(PhysicsWorld *world)
             : m_world(world) {}
