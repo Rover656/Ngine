@@ -132,6 +132,15 @@ namespace ngine::graphics {
         DrawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color, Angle rotation = 0,
                      Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
+        /**
+         * Draw a polygon (convex).
+         *
+         * @param renderer The renderer.
+         * @param vertices Polygon vertices.
+         * @param color Color to render.
+         * @param outline Whether or not to draw an outline.
+         * @param lineThickness The line thickness for the outline.
+         */
         static void DrawPolygon(Renderer *renderer, const std::vector<Vector2> &vertices, Color color, bool outline = false, float lineThickness = 1);
 
         // TODO: Draw polygon once shape classes are final

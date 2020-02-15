@@ -85,9 +85,7 @@ namespace ngine::physics {
         p2 = p1 + k_axisScale * xf.q.GetXAxis();
         DrawSegment(p1, p2, b2Color(1,0,0));
 
-        auto y = xf.q.GetYAxis();
-
-        p2 = p1 + k_axisScale * xf.q.GetYAxis();
+        p2 = p1 + k_axisScale * -xf.q.GetYAxis(); // Negate as our direction is different to box2d
         DrawSegment(p1,p2,b2Color(0,1,0));
     }
 
