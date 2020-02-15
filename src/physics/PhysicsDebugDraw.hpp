@@ -34,6 +34,7 @@ namespace ngine::physics {
     class PhysicsDebugDraw : public b2Draw {
         graphics::Renderer *m_renderer = nullptr;
         PhysicsWorld *m_world = nullptr;
+        const PhysicsContext *m_context = nullptr;
     public:
         PhysicsDebugDraw(PhysicsWorld *world);
 

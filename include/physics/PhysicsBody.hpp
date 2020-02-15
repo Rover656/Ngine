@@ -24,19 +24,15 @@
 #include "../Config.hpp"
 
 #include "../Math.hpp"
+#include "PhysicsContext.hpp"
 #include "PhysicsFixture.hpp"
+#include "PhysicsShape.hpp"
 
 // Forward declaring Box2D
 class b2Body;
 
 namespace ngine::physics {
     class PhysicsWorld;
-
-    enum class PhysicsBodyType {
-        Static,
-        Kinematic,
-        Dynamic
-    };
 
     class NEAPI PhysicsBody final {
         friend class PhysicsWorld;
@@ -52,6 +48,11 @@ namespace ngine::physics {
         PhysicsWorld *m_world = nullptr;
 
         /**
+         * Our physics context.
+         */
+        const PhysicsContext *m_context = nullptr;
+
+        /**
          * List of fixtures.
          * This is soley for memory management when Box2D forgets us...
          */
@@ -60,59 +61,78 @@ namespace ngine::physics {
         /**
          * Create a physics body.
          */
-        PhysicsBody(PhysicsWorld *world, b2Body *body);
+        PhysicsBody(const PhysicsContext *context, PhysicsWorld *world, b2Body *body);
 
         /**
          * Destroy fixtures.
          */
         void _destroy();
     public:
+        /**
+         * Physics body type.
+         */
+        enum class Type {
+            Static,
+            Kinematic,
+            Dynamic
+        };
 
-        // PhysicsFixture *createFixture();
+        /**
+         * Create a fixture for the body.
+         *
+         * @param shape The shape for the fixture.
+         * @param density Fixture density, 0 for static shapes.
+         */
+        PhysicsFixture *createFixture(PhysicsShape *shape, float density);
 
+        /**
+         * Destroy a fixture. This deletes the fixture parameter.
+         *
+         * @param fixture Fixture to destroy.
+         */
         void destroyFixture(PhysicsFixture *fixture);
 
         /**
          * Get the attached physics world.
          */
-        PhysicsWorld *getWorld();
+        PhysicsWorld *getWorld() const;
 
-        Vector2 getPosition();
+        Vector2 getPosition() const;
 
-        void setPosition(Vector2 position);
+        void setPosition(const Vector2 &position);
 
-        Angle getRotation();
+        Angle getRotation() const;
 
-        void setRotation(Angle rotation);
+        void setRotation(const Angle &rotation);
 
-        Transform2D getTransform();
+        Transform2D getTransform() const;
 
-        void setTransform(Transform2D transform);
+        void setTransform(const Transform2D &transform);
 
-        Vector2 getWorldCenter();
+        Vector2 getWorldCenter() const;
 
-        Vector2 getLocalCenter();
+        Vector2 getLocalCenter() const;
 
-        Vector2 getLinearVelocity();
+        Vector2 getLinearVelocity() const;
 
-        void setLinearVelocity(Vector2 velocity);
+        void setLinearVelocity(const Vector2 &velocity);
 
-        float getAngularVelocity();
+        float getAngularVelocity() const;
 
         void setAngularVelocity(float velocity);
 
-        float getMass();
+        float getMass() const;
 
         /**
          * Get inertia in kgpixels^2.
          */
-        float getInertia();
+        float getInertia() const;
 
         void resetMassData();
 
-        PhysicsBodyType getType();
+        Type getType() const;
 
-        void setType(PhysicsBodyType type);
+        void setType(Type type);
     };
 }
 

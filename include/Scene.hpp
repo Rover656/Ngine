@@ -59,6 +59,11 @@ namespace ngine {
         Rectangle m_currentViewport;
 
         /**
+         * The internal physics context.
+         */
+        physics::PhysicsContext *m_physicsContext = nullptr;
+
+        /**
          * The scene physics world.
          */
         physics::PhysicsWorld *m_physicsWorld = nullptr;
@@ -106,6 +111,13 @@ namespace ngine {
          * @return Whether or not physics is enabled in this scene.
          */
         bool isPhysicsEnabled() const;
+
+        /**
+         * Get the physics context used for unit conversions.
+         *
+         * @return Physics context or null if not enabled.
+         */
+        const physics::PhysicsContext *getPhysicsContext() const;
 
         /**
          * Get the physics world.

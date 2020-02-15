@@ -21,11 +21,13 @@
 #include "physics/PhysicsBody.hpp"
 
 #include "physics/PhysicsWorld.hpp"
+#include "Console.hpp"
 
 #include <Box2D/Box2D.h>
 
 namespace ngine::physics {
-    PhysicsBody::PhysicsBody(PhysicsWorld *world, b2Body *body) {
+    PhysicsBody::PhysicsBody(const PhysicsContext *context, PhysicsWorld *world, b2Body *body)
+            : m_context(context) {
         // Save body and world
         m_body = body;
         m_world = world;
@@ -36,70 +38,91 @@ namespace ngine::physics {
 
     void PhysicsBody::_destroy() {
         // Destroy fixtures
-        for (auto f : m_fixtures) {
+        std::vector<PhysicsFixture *> fixtures;
+        fixtures = m_fixtures;
+        for (auto f : fixtures) {
             destroyFixture(f);
         }
     }
 
+    PhysicsFixture *PhysicsBody::createFixture(PhysicsShape *shape, float density) {
+        // Check shape context
+        if (shape->m_context != m_context)
+            Console::Fail("PhysicsBody", "Shape must be same context as body to create a fixture!");
+
+        // Create
+        auto f = new PhysicsFixture(m_context, m_body->CreateFixture(shape->m_shape, density));
+
+        // Track
+        m_fixtures.push_back(f);
+        return f;
+    }
+
     void PhysicsBody::destroyFixture(PhysicsFixture *fixture) {
+        // Destroy
         m_body->DestroyFixture(fixture->m_fixture);
+
+        // Stop tracking
+        m_fixtures.erase(std::remove(m_fixtures.begin(), m_fixtures.end(), fixture), m_fixtures.end());
+
+        // Delete
         delete fixture;
     }
 
-    PhysicsWorld *PhysicsBody::getWorld() {
+    PhysicsWorld *PhysicsBody::getWorld() const {
         return m_world;
     }
 
-    Vector2 PhysicsBody::getPosition() {
+    Vector2 PhysicsBody::getPosition() const {
         auto p = m_body->GetPosition();
-        return m_world->convertMetersToPixels(Vector2(p.x, p.y));
+        return m_context->convertMetersToPixels(Vector2(p.x, p.y));
     }
 
-    void PhysicsBody::setPosition(Vector2 position) {
+    void PhysicsBody::setPosition(const Vector2 &position) {
         setTransform({position, getRotation()});
     }
 
-    Angle PhysicsBody::getRotation() {
+    Angle PhysicsBody::getRotation() const {
         return Angle(RadToDeg(m_body->GetAngle()));
     }
 
-    void PhysicsBody::setRotation(Angle rotation) {
+    void PhysicsBody::setRotation(const Angle &rotation) {
         setTransform({getPosition(), rotation});
     }
 
-    Transform2D PhysicsBody::getTransform() {
+    Transform2D PhysicsBody::getTransform() const {
         auto tr = m_body->GetTransform();
         auto rot = RadToDeg(tr.q.GetAngle());
-        auto pos = m_world->convertMetersToPixels(Vector2(tr.p.x, tr.p.y));
+        auto pos = m_context->convertMetersToPixels(Vector2(tr.p.x, tr.p.y));
         return Transform2D(pos, rot);
     }
 
-    void PhysicsBody::setTransform(Transform2D transform) {
-        auto pos = m_world->convertPixelsToMeters(transform.Position);
+    void PhysicsBody::setTransform(const Transform2D &transform) {
+        auto pos = m_context->convertPixelsToMeters(transform.Position);
         m_body->SetTransform({pos.X, pos.Y}, DegToRad(transform.Rotation.getDegrees()));
     }
 
-    Vector2 PhysicsBody::getWorldCenter() {
+    Vector2 PhysicsBody::getWorldCenter() const {
         auto c = m_body->GetWorldCenter();
-        return m_world->convertMetersToPixels(Vector2(c.x, c.y));
+        return m_context->convertMetersToPixels(Vector2(c.x, c.y));
     }
 
-    Vector2 PhysicsBody::getLocalCenter() {
+    Vector2 PhysicsBody::getLocalCenter() const {
         auto c = m_body->GetLocalCenter();
-        return m_world->convertMetersToPixels(Vector2(c.x, c.y));
+        return m_context->convertMetersToPixels(Vector2(c.x, c.y));
     }
 
-    Vector2 PhysicsBody::getLinearVelocity() {
+    Vector2 PhysicsBody::getLinearVelocity() const {
         auto v = m_body->GetLinearVelocity();
-        return m_world->convertMetersToPixels(Vector2(v.x, v.y));
+        return m_context->convertMetersToPixels(Vector2(v.x, v.y));
     }
 
-    void PhysicsBody::setLinearVelocity(Vector2 velocity) {
-        auto v = m_world->convertPixelsToMeters(velocity);
+    void PhysicsBody::setLinearVelocity(const Vector2 &velocity) {
+        auto v = m_context->convertPixelsToMeters(velocity);
         m_body->SetLinearVelocity({v.X, v.Y});
     }
 
-    float PhysicsBody::getAngularVelocity() {
+    float PhysicsBody::getAngularVelocity() const {
         return RadToDeg(m_body->GetAngularVelocity());
     }
 
@@ -107,13 +130,13 @@ namespace ngine::physics {
         m_body->SetAngularVelocity(DegToRad(velocity));
     }
 
-    float PhysicsBody::getMass() {
+    float PhysicsBody::getMass() const {
         return m_body->GetMass();
     }
 
-    float PhysicsBody::getInertia() {
+    float PhysicsBody::getInertia() const {
         // TODO: Verify unit conversion
-        auto oneM = m_world->convertMetersToPixels(1);
+        auto oneM = m_context->convertMetersToPixels(1);
         return m_body->GetInertia() * oneM * oneM;
     }
 
@@ -121,26 +144,26 @@ namespace ngine::physics {
         m_body->ResetMassData();
     }
 
-    PhysicsBodyType PhysicsBody::getType() {
+    PhysicsBody::Type PhysicsBody::getType() const {
         switch (m_body->GetType()) {
             case b2_staticBody:
-                return PhysicsBodyType::Static;
+                return Type::Static;
             case b2_kinematicBody:
-                return PhysicsBodyType::Kinematic;
+                return Type::Kinematic;
             case b2_dynamicBody:
-                return PhysicsBodyType::Dynamic;
+                return Type::Dynamic;
         }
     }
 
-    void PhysicsBody::setType(PhysicsBodyType type) {
+    void PhysicsBody::setType(PhysicsBody::Type type) {
         switch (type) {
-            case PhysicsBodyType::Static:
+            case Type::Static:
                 m_body->SetType(b2_staticBody);
                 break;
-            case PhysicsBodyType::Kinematic:
+            case Type::Kinematic:
                 m_body->SetType(b2_kinematicBody);
                 break;
-            case PhysicsBodyType::Dynamic:
+            case Type::Dynamic:
                 m_body->SetType(b2_dynamicBody);
                 break;
         }

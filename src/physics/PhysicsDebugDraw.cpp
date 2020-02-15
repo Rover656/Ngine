@@ -26,7 +26,7 @@
 
 namespace ngine::physics {
     PhysicsDebugDraw::PhysicsDebugDraw(PhysicsWorld *world)
-            : m_world(world) {}
+            : m_world(world), m_context(m_world->getContext()) {}
 
     void PhysicsDebugDraw::setRenderer(graphics::Renderer *renderer) {
         m_renderer = renderer;
@@ -41,16 +41,16 @@ namespace ngine::physics {
     }
 
     void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color) {
-        auto c = m_world->convertMetersToPixels(Vector2(center.x, center.y));
-        auto r = m_world->convertMetersToPixels(radius);
+        auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
+        auto r = m_context->convertMetersToPixels(radius);
         graphics::ShapeRenderer::DrawCircle(m_renderer, c, r,
                                             graphics::Color(color.r, color.g, color.b, color.a), true);
     }
 
     void
     PhysicsDebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
-        auto c = m_world->convertMetersToPixels(Vector2(center.x, center.y));
-        auto r = m_world->convertMetersToPixels(radius);
+        auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
+        auto r = m_context->convertMetersToPixels(radius);
         graphics::ShapeRenderer::DrawCircle(m_renderer, {center.x, center.y}, r,
                                             graphics::Color(color.r, color.g, color.b, color.a));
 
@@ -60,8 +60,8 @@ namespace ngine::physics {
     }
 
     void PhysicsDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color) {
-        auto v1 = m_world->convertMetersToPixels(Vector2(p1.x, p1.y));
-        auto v2 = m_world->convertMetersToPixels(Vector2(p2.x, p2.y));
+        auto v1 = m_context->convertMetersToPixels(Vector2(p1.x, p1.y));
+        auto v2 = m_context->convertMetersToPixels(Vector2(p2.x, p2.y));
         graphics::ShapeRenderer::DrawLine(m_renderer, v1, v2, {color.r, color.g, color.b, color.a});
     }
 

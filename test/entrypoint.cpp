@@ -21,6 +21,7 @@ public:
 };
 
 class TestEntity : public Entity {
+    PhysicsFixture *m_circleFixture = nullptr;
 public:
     TestEntity() {}
 
@@ -30,8 +31,15 @@ public:
 
         // If physics is enabled, create body
         if (scene->isPhysicsEnabled()) {
+            // Create body
             auto world = scene->getPhysicsWorld();
-            auto body = world->createBody(PhysicsBodyType::Kinematic, {0, 0});
+            auto body = world->createBody(PhysicsBody::Type::Dynamic, {0, 0});
+
+            // Add a fixture
+            CirclePhysicsShape shape(scene->getPhysicsContext(), 32);
+            m_circleFixture = body->createFixture(&shape, 1);
+
+            // Set body
             setPhysicsBody(body);
         }
 
@@ -127,7 +135,7 @@ public:
 // TESTING
 class NewTestScene : public Scene {
 public:
-    NewTestScene(Game *game) : Scene(game, {0, 0}, 16) {
+    NewTestScene(Game *game) : Scene(game, {0, -16}, 16) {
 //        auto par = new ParentEntity();
 //        par->addChild(new TestEntity());
 //        addChild(par);

@@ -23,7 +23,7 @@
 #include <Box2D/Box2D.h>
 
 namespace ngine::physics {
-    PhysicsFixture::PhysicsFixture(b2Fixture *fixture) {
+    PhysicsFixture::PhysicsFixture(const PhysicsContext *context, b2Fixture *fixture) {
         // Save fixture
         m_fixture = fixture;
 
@@ -32,5 +32,30 @@ namespace ngine::physics {
 
         // Save ourselves
         m_fixture->SetUserData(this);
+
+        // Grab shape
+        auto s = m_fixture->GetShape();
+        switch (s->GetType()) {
+            case b2Shape::e_circle:
+                m_shape = new CirclePhysicsShape(m_context, (b2CircleShape *) s);
+                break;
+            case b2Shape::e_edge:
+                break;
+            case b2Shape::e_polygon:
+                break;
+            case b2Shape::e_chain:
+                break;
+            case b2Shape::e_typeCount:
+                break;
+        }
+    }
+
+    PhysicsFixture::~PhysicsFixture() {
+        // Delete shape
+        delete m_shape;
+    }
+
+    PhysicsShape *PhysicsFixture::getShape() const {
+        return m_shape;
     }
 }

@@ -25,10 +25,9 @@
 #include <Box2D/Box2D.h>
 
 namespace ngine::physics {
-    PhysicsWorld::PhysicsWorld(Vector2 gravity, int ppm)
-            : m_pixelsPerMeter(ppm) {
+    PhysicsWorld::PhysicsWorld(PhysicsContext *context, const Vector2 &gravity) : m_context(context) {
         // Convert gravity
-        auto grav = convertPixelsToMeters(gravity);
+        auto grav = m_context->convertPixelsToMeters(gravity);
 
         // Create Box2D world
         m_world = new b2World({grav.X, grav.Y});
@@ -36,7 +35,9 @@ namespace ngine::physics {
 
     PhysicsWorld::~PhysicsWorld() {
         // Delete bodies
-        for (auto b : m_bodies) {
+        std::vector<PhysicsBody *> bodies;
+        bodies = m_bodies;
+        for (auto b : bodies) {
             delete b;
         }
 
@@ -45,11 +46,33 @@ namespace ngine::physics {
         m_world = nullptr;
     }
 
-    PhysicsBody *PhysicsWorld::createBody(PhysicsBodyType type, Vector2 position) {
-        auto pos = convertPixelsToMeters(position);
+    const PhysicsContext *PhysicsWorld::getContext() const {
+        return m_context;
+    }
+
+    PhysicsBody *PhysicsWorld::createBody(PhysicsBody::Type type, const Vector2 &position) {
+        // Build params
+        auto pos = m_context->convertPixelsToMeters(position);
         b2BodyDef def;
         def.position = {pos.X, pos.Y};
-        return new PhysicsBody(this, m_world->CreateBody(&def));
+        switch (type) {
+            case PhysicsBody::Type::Static:
+                def.type = b2_staticBody;
+                break;
+            case PhysicsBody::Type::Kinematic:
+                def.type = b2_kinematicBody;
+                break;
+            case PhysicsBody::Type::Dynamic:
+                def.type = b2_dynamicBody;
+                break;
+        }
+
+        // Create
+        auto body = new PhysicsBody(m_context, this, m_world->CreateBody(&def));
+
+        // Track
+        m_bodies.push_back(body);
+        return body;
     }
 
     void PhysicsWorld::destroyBody(PhysicsBody *body) {
@@ -58,6 +81,11 @@ namespace ngine::physics {
 
         // Destroy and delete body
         m_world->DestroyBody(body->m_body);
+
+        // Stop tracking
+        m_bodies.erase(std::remove(m_bodies.begin(), m_bodies.end(), body), m_bodies.end());
+
+        // Delete
         delete body;
     }
 
@@ -79,11 +107,11 @@ namespace ngine::physics {
 
     Vector2 PhysicsWorld::getGravity() const {
         auto g = m_world->GetGravity();
-        return convertMetersToPixels(Vector2(g.x, g.y));
+        return m_context->convertMetersToPixels(Vector2(g.x, g.y));
     }
 
-    void PhysicsWorld::setGravity(Vector2 gravity) {
-        auto g = convertPixelsToMeters(gravity);
+    void PhysicsWorld::setGravity(const Vector2 &gravity) {
+        auto g = m_context->convertPixelsToMeters(gravity);
         m_world->SetGravity(b2Vec2(g.X, g.Y));
     }
 
@@ -151,8 +179,10 @@ namespace ngine::physics {
 
     void PhysicsWorld::debugDraw(graphics::Renderer *renderer) {
         // Set renderer and draw
-        m_debugDraw->setRenderer(renderer);
-        m_world->DrawDebugData();
+        if (m_debugDraw != nullptr) {
+            m_debugDraw->setRenderer(renderer);
+            m_world->DrawDebugData();
+        }
     }
 
     int PhysicsWorld::getVelocityIterations() const {

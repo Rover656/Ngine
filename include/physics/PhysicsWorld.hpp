@@ -27,6 +27,7 @@
 #include "../graphics/Renderer.hpp"
 #include "../Math.hpp"
 #include "PhysicsBody.hpp"
+#include "PhysicsContext.hpp"
 
 // Forward declare
 class b2World;
@@ -44,9 +45,9 @@ namespace ngine::physics {
         b2World *m_world;
 
         /**
-         * Pixels per meter unit.
+         * Physics context for conversions.
          */
-        const int m_pixelsPerMeter;
+        const PhysicsContext *m_context = nullptr;
 
         /**
          * The internal debug draw class.
@@ -69,13 +70,21 @@ namespace ngine::physics {
         std::vector<PhysicsBody *> m_bodies;
     public:
         /**
+         * Create a new physics world.
          *
+         * @param context Physics context used for conversions. Managed by you.
          * @param gravity The gravity vector.
-         * @param ppm The number of pixels per meter (for internal calculations). Normally the pixel height of your 2D character.
          */
-        PhysicsWorld(Vector2 gravity, int ppm);
+        PhysicsWorld(PhysicsContext *context, const Vector2 &gravity);
 
         ~PhysicsWorld();
+
+        /**
+         * Get the world physics context.
+         *
+         * @return The physics context.
+         */
+        const PhysicsContext *getContext() const;
 
         /**
          * Create a new physics body.
@@ -83,7 +92,7 @@ namespace ngine::physics {
          * @param type Body type.
          * @param position Body position (avoid setting to origin then setting elsewhere).
          */
-        PhysicsBody *createBody(PhysicsBodyType type, Vector2 position);
+        PhysicsBody *createBody(PhysicsBody::Type type, const Vector2 &position);
 
         /**
          * Destroy a physics body.
@@ -135,7 +144,7 @@ namespace ngine::physics {
          *
          * @param gravity The new gravity vector.
          */
-        void setGravity(Vector2 gravity);
+        void setGravity(const Vector2 &gravity);
 
         /**
          * Determine whether or not forces are cleared after each step.
@@ -268,30 +277,6 @@ namespace ngine::physics {
          * @param timestep The amount of time to simulate (should not vary).
          */
         void step(float timestep);
-
-        /**
-         * Convert a dimension in pixels to meters.
-         *
-         * @tparam T Type to convert.
-         * @param pixels Dimension in pixels.
-         * @return The dimension in meters.
-         */
-        template <typename T>
-        T convertPixelsToMeters(T pixels) const {
-            return pixels / m_pixelsPerMeter;
-        }
-
-        /**
-         * Convert a dimension in meters to pixels.
-         *
-         * @tparam T Type to convert.
-         * @param pixels Dimension in meters.
-         * @return The dimension in pixels.
-         */
-        template <typename T>
-        T convertMetersToPixels(T meters) const {
-            return meters * m_pixelsPerMeter;
-        }
     };
 }
 

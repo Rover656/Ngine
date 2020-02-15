@@ -18,56 +18,49 @@
 *
 **********************************************************************************************/
 
-#ifndef PHYSICSFIXTURE_HPP
-#define PHYSICSFIXTURE_HPP
+#ifndef PHYSICSCONTEXT_HPP
+#define PHYSICSCONTEXT_HPP
 
 #include "../Config.hpp"
 
-#include "PhysicsShape.hpp"
-
-// Box2D declare
-class b2Fixture;
-
 namespace ngine::physics {
-    class PhysicsBody;
-
-    class NEAPI PhysicsFixture {
-        friend class PhysicsBody;
-
+    class NEAPI PhysicsContext {
         /**
-         * The Box2D fixture.
+         * Pixels per meter unit.
          */
-        b2Fixture *m_fixture = nullptr;
-
-        /**
-         * The body we are attached to.
-         */
-        PhysicsBody *m_body = nullptr;
-
-        /**
-         * Our shape.
-         */
-        PhysicsShape *m_shape = nullptr;
-
-        /**
-         * Context for unit conversions.
-         */
-        PhysicsContext *m_context = nullptr;
-
-        /**
-         * Create a new fixture.
-         */
-        PhysicsFixture(const PhysicsContext *context, b2Fixture *fixture);
+        const int m_pixelsPerMeter;
     public:
-        ~PhysicsFixture();
+        /**
+         * Create a new physics context.
+         *
+         * @param ppm Pixels per meter.
+         */
+        PhysicsContext(int ppm);
 
         /**
-         * Get a reference to the shape.
+         * Convert a dimension in pixels to meters.
          *
-         * @return The shape. (Use its type to determine how to cast it).
+         * @tparam T Type to convert.
+         * @param pixels Dimension in pixels.
+         * @return The dimension in meters.
          */
-        PhysicsShape *getShape() const;
+        template <typename T>
+        T convertPixelsToMeters(T pixels) const {
+            return pixels / m_pixelsPerMeter;
+        }
+
+        /**
+         * Convert a dimension in meters to pixels.
+         *
+         * @tparam T Type to convert.
+         * @param pixels Dimension in meters.
+         * @return The dimension in pixels.
+         */
+        template <typename T>
+        T convertMetersToPixels(T meters) const {
+            return meters * m_pixelsPerMeter;
+        }
     };
 }
 
-#endif //PHYSICSFIXTURE_HPP
+#endif //PHYSICSCONTEXT_HPP

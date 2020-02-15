@@ -38,8 +38,11 @@ namespace ngine {
 
     Scene::Scene(Game *game, Vector2 gravity, int ppm)
             : Scene(game) {
+        // Create context
+        m_physicsContext = new physics::PhysicsContext(ppm);
+
         // Create physics world
-        m_physicsWorld = new physics::PhysicsWorld(gravity, ppm);
+        m_physicsWorld = new physics::PhysicsWorld(m_physicsContext, gravity);
     }
 
     Scene::~Scene() {
@@ -53,6 +56,9 @@ namespace ngine {
 
         // Delete physics world
         delete m_physicsWorld;
+
+        // Delete context
+        delete m_physicsContext;
     }
 
     Game *Scene::getGame() const {
@@ -65,6 +71,10 @@ namespace ngine {
 
     bool Scene::isPhysicsEnabled() const {
         return m_physicsWorld != nullptr;
+    }
+
+    const physics::PhysicsContext *Scene::getPhysicsContext() const {
+        return m_physicsContext;
     }
 
     physics::PhysicsWorld *Scene::getPhysicsWorld() const {
@@ -201,6 +211,8 @@ namespace ngine {
 
         // Render all entities
         for (const auto &e : m_entities) e->render(renderer, view, cam);
+
+        // TODO: Physics world debug draw with camera.
     }
 
     void Scene::renderUI(graphics::Renderer *renderer) {
@@ -208,9 +220,16 @@ namespace ngine {
     }
 
     void Scene::update() {
+        // Update entities
         for (const auto &e : m_entities) {
             if (!e->m_asleep)
                 e->update();
+        }
+
+        // Step world
+        if (m_physicsWorld != nullptr) {
+            float timestep = 1.0f / (float) m_game->getTargetFPS();
+            m_physicsWorld->step(timestep);
         }
     }
 
