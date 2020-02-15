@@ -6,7 +6,7 @@ using namespace ngine::audio;
 using namespace ngine::filesystem;
 using namespace ngine::graphics;
 using namespace ngine::input;
-//using namespace ngine::physics;
+using namespace ngine::physics;
 
 class SpriteComponentTest : public Component {
     Sprite *m_sprite;
@@ -27,6 +27,13 @@ public:
     void initialize(Scene *scene) override {
         // Call to base first.
         Entity::initialize(scene);
+
+        // If physics is enabled, create body
+        if (scene->isPhysicsEnabled()) {
+            auto world = scene->getPhysicsWorld();
+            auto body = world->createBody(PhysicsBodyType::Kinematic, {0, 0});
+            setPhysicsBody(body);
+        }
 
         // Set defaults
         setPosition({0, 0});
@@ -91,7 +98,7 @@ public:
         auto pos = getPosition();
         setPosition(pos + vel);
         setRotation(rot);
-        setScale(scale);
+        //setScale(scale);
 
         if (keyboard->isKeyPressed(Key::KEY_SPACE)) {
             setPosition({0, 0});
@@ -120,7 +127,7 @@ public:
 // TESTING
 class NewTestScene : public Scene {
 public:
-    NewTestScene(Game *game) : Scene(game) {
+    NewTestScene(Game *game) : Scene(game, {0, 0}, 16) {
 //        auto par = new ParentEntity();
 //        par->addChild(new TestEntity());
 //        addChild(par);

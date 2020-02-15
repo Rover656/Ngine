@@ -39,6 +39,7 @@ namespace ngine {
         // We use relative stuff as modelview will already consist of parent's input.
         auto pos = getPosition();
         auto rot = getRotation();
+        //auto ori = getOrigin();
 
         // Build modelview
         m_modelView = Matrix::Translate({pos.X, pos.Y, 0})
@@ -74,6 +75,9 @@ namespace ngine {
         for (auto c : comps) {
             delete c;
         }
+
+        // Destroy physics body
+        delete m_physicsBody;
 
         // Remove from our parent
         if (m_parent != nullptr)
@@ -126,30 +130,69 @@ namespace ngine {
     }
 
     Vector2 Entity::getPosition() const {
+        if (m_physicsBody != nullptr) {
+            if (m_parent != nullptr) {
+                // Must fix by removing parent's position
+                return m_physicsBody->getPosition() - m_parent->getPosition();
+            }
+            return m_physicsBody->getPosition();
+        }
         return m_position;
     }
 
     void Entity::setPosition(Vector2 position) {
-        m_position = position;
-        m_modelViewDirty = true;
+        if (m_physicsBody != nullptr) {
+            if (m_parent != nullptr) {
+                // Must fix by accounting for parent's position
+                m_physicsBody->setPosition(position + m_parent->getPosition());
+            } else {
+                m_physicsBody->setPosition(position);
+            }
+        } else {
+            m_position = position;
+            m_modelViewDirty = true;
+        }
     }
 
     Angle Entity::getRotation() const {
+        if (m_physicsBody != nullptr) {
+            return m_physicsBody->getRotation();
+        }
         return m_rotation;
     }
 
     void Entity::setRotation(Angle rotation) {
-        m_rotation = rotation;
-        m_modelViewDirty = true;
+        if (m_physicsBody != nullptr) {
+            m_physicsBody->setRotation(rotation);
+        } else {
+            m_rotation = rotation;
+            m_modelViewDirty = true;
+        }
     }
 
     Vector2 Entity::getScale() const {
+        if (m_physicsBody != nullptr) {
+            return {1, 1}; // TEMP
+        }
         return m_scale;
     }
 
     void Entity::setScale(Vector2 scale) {
-        m_scale = scale;
-        m_modelViewDirty = true;
+        if (m_physicsBody != nullptr) {
+            Console::Warn("Entity", "Scale was not set as scaling physics entities is not implemented.");
+        } else {
+            m_scale = scale;
+            m_modelViewDirty = true;
+        }
+    }
+
+    physics::PhysicsBody *Entity::getPhysicsBody() {
+        return m_physicsBody;
+    }
+
+    void Entity::setPhysicsBody(physics::PhysicsBody *body) {
+        // TODO Passing in coordinates etc.
+        m_physicsBody = body;
     }
 
     int Entity::getZIndex() const {
@@ -335,7 +378,7 @@ namespace ngine {
         // TODO: Camera flags??
 
         // Update model view if dirty
-        if (m_modelViewDirty)
+        if (m_modelViewDirty || m_physicsBody != nullptr)
             _updateModelView();
 
         // Mix modelView with our own

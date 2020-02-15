@@ -26,6 +26,7 @@
 
 #include "../graphics/Renderer.hpp"
 #include "../Math.hpp"
+#include "PhysicsBody.hpp"
 
 // Forward declare
 class b2World;
@@ -70,6 +71,11 @@ namespace ngine::physics {
         PhysicsWorld(Vector2 gravity, int ppm);
 
         ~PhysicsWorld();
+
+        /**
+         * Create a new physics body.
+         */
+        PhysicsBody *createBody(PhysicsBodyType type, Vector2 position);
 
         /**
          * Get the number of bodies.

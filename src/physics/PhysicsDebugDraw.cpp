@@ -43,7 +43,7 @@ namespace ngine::physics {
     void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color) {
         auto c = m_world->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_world->convertMetersToPixels(radius);
-        graphics::ShapeRenderer::DrawCircle(m_renderer, c, radius,
+        graphics::ShapeRenderer::DrawCircle(m_renderer, c, r,
                                             graphics::Color(color.r, color.g, color.b, color.a), true);
     }
 
@@ -51,10 +51,12 @@ namespace ngine::physics {
     PhysicsDebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
         auto c = m_world->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_world->convertMetersToPixels(radius);
-        graphics::ShapeRenderer::DrawCircle(m_renderer, {center.x, center.y}, radius,
-                                            graphics::Color(color.r, color.g, color.b, color.a), true);
+        graphics::ShapeRenderer::DrawCircle(m_renderer, {center.x, center.y}, r,
+                                            graphics::Color(color.r, color.g, color.b, color.a));
 
-        // TODO: Axis line.
+        // Axis line
+        auto p = c + Vector2(axis.x, axis.y) * r;
+        graphics::ShapeRenderer::DrawLine(m_renderer, c, p, {color.r, color.g, color.b, color.a});
     }
 
     void PhysicsDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color) {

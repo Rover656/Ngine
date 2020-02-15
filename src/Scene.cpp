@@ -43,9 +43,6 @@ namespace ngine {
     }
 
     Scene::~Scene() {
-        // Delete physics world
-        delete m_physicsWorld;
-
         // Delete entities
         std::vector<Entity *> ents;
         ents = m_entities;
@@ -53,6 +50,9 @@ namespace ngine {
         for (auto e : ents) {
             delete e;
         }
+
+        // Delete physics world
+        delete m_physicsWorld;
     }
 
     Game *Scene::getGame() const {

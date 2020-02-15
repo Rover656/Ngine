@@ -241,4 +241,4 @@ namespace ngine {
     }
 }
 
-#endif //GRAPHICSDEVICE_HPP
+#endif // GRAPHICSDEVICE_HPP

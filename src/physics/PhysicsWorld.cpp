@@ -40,6 +40,13 @@ namespace ngine::physics {
         m_world = nullptr;
     }
 
+    PhysicsBody *PhysicsWorld::createBody(PhysicsBodyType type, Vector2 position) {
+        auto pos = convertPixelsToMeters(position);
+        b2BodyDef def;
+        def.position = {pos.X, pos.Y};
+        return new PhysicsBody(this, m_world->CreateBody(&def));
+    }
+
     int PhysicsWorld::getBodyCount() const {
         return m_world->GetBodyCount();
     }

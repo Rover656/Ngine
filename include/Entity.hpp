@@ -23,8 +23,9 @@
 
 #include "Config.hpp"
 
-#include "graphics/Renderer.hpp"
 #include "filesystem/ResourceManager.hpp"
+#include "graphics/Renderer.hpp"
+#include "physics/PhysicsBody.hpp"
 #include "Scene.hpp"
 
 namespace ngine {
@@ -115,6 +116,11 @@ namespace ngine {
          * Whether or not the entity is ready to be used.
          */
         bool m_initialized = false;
+
+        /**
+         * The physics body.
+         */
+        physics::PhysicsBody *m_physicsBody = nullptr;
 
         /**
          * Sort entities by z-index.
@@ -218,6 +224,22 @@ namespace ngine {
          */
         void setRotation(Angle rotation);
 
+        // TODO: Work out how this works in Box2D, then implement accordingly
+//        /**
+//         * Get the rotational origin of the entity.
+//         *
+//         * @return The rotational origin.
+//         */
+//        Vector2 getOrigin();
+//
+//        /**
+//         * Set the rotational origin of the entity.
+//         *
+//         * @warning Cannot be set if a physics body is attached.
+//         * @param origin New origin.
+//         */
+//        void setOrigin(Vector2 origin);
+
         /**
          * Get the entity scale.
          *
@@ -232,6 +254,10 @@ namespace ngine {
          * @param scale The new scale to apply.
          */
         void setScale(Vector2 scale);
+
+        physics::PhysicsBody *getPhysicsBody();
+
+        void setPhysicsBody(physics::PhysicsBody *body);
 
         /**
          * Get the z-index of the entity.
