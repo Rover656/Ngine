@@ -268,7 +268,7 @@ namespace ngine::physics {
          */
         template <typename T>
         T convertMetersToPixels(T meters) const {
-            return meters / m_pixelsPerMeter;
+            return meters * m_pixelsPerMeter;
         }
     };
 }
