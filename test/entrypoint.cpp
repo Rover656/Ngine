@@ -16,7 +16,13 @@ public:
             : m_sprite(sprite) {}
 
     void draw(Renderer *renderer) override {
-        m_sprite->draw(renderer, {0, 0});
+        //ShapeRenderer::DrawCircle(renderer, {0, 0}, 5, Color::LightGray);
+        ShapeRenderer::DrawRectangle(renderer, {0, 0, 32, 32}, Color::Blue, 0, {0, 0});
+        m_sprite->draw(renderer, {0, 0}, 0, {0.5f, 0.5f});
+
+        ShapeRenderer::DrawLine(renderer, {0,0}, {50, 50}, Color::Orange);
+
+        //ShapeRenderer::DrawRectangle(renderer, {100, 100, 25, 25}, Color::Pink, 90, {25.0f/2.0f, 25.0f/2.0f}, true);
     }
 };
 
@@ -46,7 +52,7 @@ public:
         }
 
         // Set defaults
-        setPosition({0, 0});
+        setPosition({50, 0});
         setRotation(0);
         setScale({2, 2});
 
@@ -85,11 +91,11 @@ public:
         auto rot = getRotation();
 
         if (keyboard->isKeyDown(Key::KEY_LEFT)) {
-            rot = rot + 5;
+            rot = rot - 5;
         }
 
         if (keyboard->isKeyDown(Key::KEY_RIGHT)) {
-            rot = rot - 5;
+            rot = rot + 5;
         }
 
         auto scale = getScale();
@@ -105,10 +111,14 @@ public:
         }
 
         // Move
-        auto pos = getPosition();
-        //Console::Notice("", "%f, %f", pos.X, pos.Y);
+//        if (getScene()->isPhysicsEnabled()) {
+//            // * 60 because normally we're doing this once a frame but velocities are once per second
+//            getPhysicsBody()->setLinearVelocity(vel * 60);
+//        } else {
+            auto pos = getPosition();
+            setPosition(pos + vel);
+//        }
 
-        setPosition(pos + vel);
         setRotation(rot);
         //setScale(scale);
 
@@ -139,13 +149,13 @@ public:
 // TESTING
 class NewTestScene : public Scene {
 public:
-    NewTestScene(Game *game) : Scene(game, {0, 1.0f}, 16) {
+    NewTestScene(Game *game) : Scene(game, {0, 0.0f}, 16) {
 //        auto par = new ParentEntity();
 //        par->addChild(new TestEntity());
 //        addChild(par);
         addChild(new TestEntity());
-        getPhysicsWorld()->enableDebugDraw();
-        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_CENTER_OF_MASS);
+        //getPhysicsWorld()->enableDebugDraw();
+        //getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
     }
 };
 
@@ -171,7 +181,8 @@ public:
 
     void Draw(graphics::Renderer *renderer_) {
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
-        ShapeRenderer::DrawRectangle(renderer_, getGameViewport(), Color::Blue, 0, {}, true, 5);
+        auto viewport = getGameViewport();
+        ShapeRenderer::DrawRectangle(renderer_, {0, 0, viewport.Width, viewport.Height}, Color::Blue, 0, {}, true, 5);
 
         ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
     }
@@ -202,7 +213,7 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
     gameConfig.FPSCap = 60;
-    // gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
+    //gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

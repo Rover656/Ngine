@@ -153,7 +153,13 @@ namespace ngine {
 
             // If using a target, draw target
             if (Config.MaintainResolution && m_renderTarget->isValid()) {
+                // Remove target from stack
                 graphicsDevice->popTarget();
+
+                // Ensure coordinates are correct
+                m_renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
+
+                // Draw render target.
                 m_renderTarget->getTexture()->draw(
                         m_renderer,
                         {
@@ -326,7 +332,7 @@ namespace ngine {
     }
 
     Game::Game(WindowConfig windowConfig, const GameConfig &config)
-            : m_gameWindowCreationConfig(std::move(windowConfig)), Config(config) {}
+            : m_gameWindowCreationConfig(std::move(windowConfig)), Config(config), m_virtualViewport(0, 0, config.TargetWidth, config.TargetHeight) {}
 
     Window *Game::getGameWindow() const {
         return m_gameWindow;

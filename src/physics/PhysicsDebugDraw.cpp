@@ -50,7 +50,7 @@ namespace ngine::physics {
 
         // Draw
         graphics::Color fill = {color.r * 0.5f, color.g * 0.5f, color.b * 0.5f, color.a * 0.5f};
-        graphics::ShapeRenderer::DrawPolygon(m_renderer, verts, fill);
+        graphics::ShapeRenderer::DrawPolygon(m_renderer, Vector2::Zero, verts, fill);
     }
 
     void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color) {
@@ -73,6 +73,7 @@ namespace ngine::physics {
     }
 
     void PhysicsDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color) {
+        // Correct
         auto v1 = m_context->convertMetersToPixels(Vector2(p1.x, p1.y));
         auto v2 = m_context->convertMetersToPixels(Vector2(p2.x, p2.y));
         graphics::ShapeRenderer::DrawLine(m_renderer, v1, v2, {color.r, color.g, color.b, color.a});
@@ -85,7 +86,7 @@ namespace ngine::physics {
         p2 = p1 + k_axisScale * xf.q.GetXAxis();
         DrawSegment(p1, p2, b2Color(1,0,0));
 
-        p2 = p1 + k_axisScale * -xf.q.GetYAxis(); // Negate as our direction is different to box2d
+        p2 = p1 + k_axisScale * xf.q.GetYAxis();
         DrawSegment(p1,p2,b2Color(0,1,0));
     }
 

@@ -34,6 +34,7 @@
 #include "ShaderProgramState.hpp"
 #include "Texture2D.hpp"
 #include "VertexLayout.hpp"
+#include "Viewport.hpp"
 
 namespace ngine::graphics {
     /**
@@ -53,7 +54,7 @@ namespace ngine::graphics {
         /**
          * Render the vertices as triangles.
          */
-        Triangles = 0,
+                Triangles = 0,
 
         /**
          * Draw a fan of triangles.
@@ -61,12 +62,12 @@ namespace ngine::graphics {
          * A triangle is formed for each *adjacent* vertex pair.
          * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
          */
-         TriangleFan,
+                TriangleFan,
 
         /**
          * Render the vertices as quads.
          */
-        Quads
+                Quads
     };
 
     /**
@@ -241,6 +242,11 @@ namespace ngine::graphics {
         int m_builtVertexCount = 0;
 
         /**
+         * The current coordinate system we are using.
+         */
+        CoordinateSystem m_currentCoordSystem = CoordinateSystem::Screen;
+
+        /**
          * Add triangles to the buffer.
          */
         void _addTriangles(Vertex *vertices, int count, bool translate = false);
@@ -300,6 +306,21 @@ namespace ngine::graphics {
          * @param vertex Vertex to add.
          */
         void pushVertex(Vertex vertex);
+
+        /**
+         * Set the coordinate system.
+         *
+         * @warning Don't touch this unless you are going to reset the value and not call anything that depends on a different system. It can seriously break stuff.
+         * @param system The new system to use.
+         */
+        void setCoordinateSystem(CoordinateSystem system);
+
+        /**
+         * Get the current coordinate system.
+         *
+         * @return The current coordinate system.
+         */
+        CoordinateSystem getCoordinateSystem();
 
         /**
          * Set the current texture for rendering.
@@ -384,7 +405,7 @@ namespace ngine::graphics {
         void scale(const Vector3 &scale);
 
         /**
-         * Trigger a render of the internal buffers.
+         * Trigger a render of the internal buffers with the graphics device's coordinate system.
          */
         void renderBatch();
 
@@ -397,7 +418,9 @@ namespace ngine::graphics {
          * @param texture The texture to render with.
          * @param shader_ The shader program state to render with.
          */
-        void renderBuffer(VertexLayout *layout, Buffer *VBO, int count, Texture2D *texture, ShaderProgramState *state);
+        void
+        renderBuffer(const Viewport *viewport, CoordinateSystem coordSys, VertexLayout *layout, Buffer *VBO, int count,
+                     Texture2D *texture, ShaderProgramState *state);
 
         /**
          * Render an indexed vertex buffer.
@@ -409,8 +432,8 @@ namespace ngine::graphics {
          * @param texture The texture to render with.
          * @param state_ The shader program state to render with.
          */
-        void renderBufferIndexed(VertexLayout *layout, Buffer *VBO, Buffer *IBO, int count, Texture2D *texture,
-                                 ShaderProgramState *state);
+        void renderBufferIndexed(const Viewport *viewport, CoordinateSystem coordSys, VertexLayout *layout, Buffer *VBO,
+                                 Buffer *IBO, int count, Texture2D *texture, ShaderProgramState *state);
 
         /**
          * Check if n elements of type will fit in a buffer.

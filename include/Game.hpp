@@ -143,6 +143,11 @@ namespace ngine {
         filesystem::ResourceManager *m_resourceManager = nullptr;
 
         /**
+         * The virtual viewport.
+         */
+        graphics::Viewport m_virtualViewport;
+
+        /**
          * Initialize the game ready to process frames.
          */
         void _init();

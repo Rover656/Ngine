@@ -26,6 +26,7 @@
 #include "../Math.hpp"
 #include "Color.hpp"
 #include "Image.hpp"
+#include "Viewport.hpp"
 
 namespace ngine {
     class Window;
@@ -152,7 +153,6 @@ namespace ngine {
             ~GraphicsDevice();
 
         public:
-
             /**
              * Get the window attached to this device.
              */
@@ -169,6 +169,11 @@ namespace ngine {
              * @return The current render target or null if rendering straight to window.
              */
             RenderTarget *getCurrentTarget();
+
+            /**
+             * Get the current viewport.
+             */
+            const Viewport *getCurrentViewport();
 
             /**
              * Set the current render target.
@@ -222,14 +227,6 @@ namespace ngine {
              * @param matrix Multiplier.
              */
             void multView(const Matrix &matrix);
-
-            /**
-             * Setup the framebuffer.
-             *
-             * This will create an orthographic projection matrix.
-             * This will be created for the framebuffer if there is no render target attached, otherwise it will be for the render target.
-             */
-            void setupFramebuffer();
 
             /**
              * Get the graphics API.

@@ -64,8 +64,8 @@
 // Angle maths
 #define PI 3.1415
 
-#define RadToDeg(rad) rad * 180/PI
-#define DegToRad(deg) deg * PI/180
+#define RadToDeg(rad) (rad) * 180/PI
+#define DegToRad(deg) (deg) * PI/180
 
 //----------------------------------------------------------------------------------
 // Platform Identification

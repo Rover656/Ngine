@@ -194,10 +194,19 @@ namespace ngine {
          */
         const WindowConfig m_creationConfig;
 
+        /**
+         * This windows context API type.
+         */
         graphics::GraphicsAPI m_targetAPI;
 
+        /**
+         * This windows context API major version.
+         */
         int m_targetMajor;
 
+        /**
+         * This windows context API minor version.
+         */
         int m_targetMinor;
 
         /**
@@ -259,6 +268,11 @@ namespace ngine {
          * The graphics device attached to the window context.
          */
         graphics::GraphicsDevice *m_graphicsDevice;
+
+        /**
+         * This window's viewport.
+         */
+        graphics::Viewport m_windowViewport;
 
         /**
          * Whether or not Vsync is currently enabled.
@@ -395,6 +409,13 @@ namespace ngine {
          * @param height New window height.
          */
         void setSize(int width, int height);
+
+        /**
+         * Get this window's viewport.
+         *
+         * @return The window viewport.
+         */
+        const graphics::Viewport *getWindowViewport();
 
         /**
          * Get whether or not VSync has been enabled.

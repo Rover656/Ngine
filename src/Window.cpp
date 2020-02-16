@@ -64,7 +64,7 @@ namespace ngine {
         setVSyncEnabled(config.VSync);
     }
 
-    Window::Window(const WindowConfig &config) : m_creationConfig(config) {
+    Window::Window(const WindowConfig &config) : m_creationConfig(config), m_windowViewport(0, 0, config.InitialWidth, config.InitialHeight) {
 #if defined(PLATFORM_UWP)
         if (m_UWPWindowCount > 0)
             throw std::runtime_error("Cannot open more than one window on UWP.");
@@ -185,6 +185,9 @@ namespace ngine {
         }
 #endif
 
+        // Ensure viewport is up to date
+        m_windowViewport.update(0, 0, m_currentWidth, m_currentHeight);
+
         // Make this window current
         makeCurrent();
 
@@ -265,6 +268,10 @@ namespace ngine {
         // Set size
         Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->TryResizeView(Windows::Foundation::Size(width, height));
 #endif
+    }
+
+    const graphics::Viewport *Window::getWindowViewport() {
+        return &m_windowViewport;
     }
 
     bool Window::getVSyncEnabled() {
@@ -477,6 +484,9 @@ namespace ngine {
             m_fullscreenSet = 0;
         }
 #endif
+
+        // Ensure viewport is up to date
+        m_windowViewport.update(0, 0, m_currentWidth, m_currentHeight);
     }
 
     void Window::close() {

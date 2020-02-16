@@ -43,8 +43,11 @@ namespace ngine::graphics {
 
         // Build translation
         renderer->pushMatrix();
-        renderer->rotate(RadToDeg(angle), {0, 0, 1});
+
         renderer->translate({v1.X, v1.Y, 0});
+
+        renderer->rotate(t, {0, 0, 1});
+
         if (flipped)
             renderer->translate({thickness / 2.0f, -thickness / 2.0f, 0});
         else renderer->translate({-thickness / 2.0f, -thickness / 2.0f, 0});
@@ -63,7 +66,14 @@ namespace ngine::graphics {
                                            float thickness) {
         renderer->setTexture(nullptr);
         renderer->beginVertices(PrimitiveType::Quads);
-        _drawLine(renderer, v1, v2, color, thickness);
+
+        // Flip Ys if needed
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+            _drawLine(renderer, {v1.X, v1.Y}, {v2.X, v2.Y}, color, thickness);
+        } else {
+            _drawLine(renderer, {v1.X, -v1.Y}, {v2.X, -v2.Y}, color, thickness);
+        }
+
         renderer->endVertices();
     }
 
@@ -78,7 +88,7 @@ namespace ngine::graphics {
             float step = DegToRad(360.0f / LINES_PER_CIRCLE);
 
             // Render lines.
-            renderer->beginVertices(PrimitiveType::Quads);
+            renderer->beginVertices(PrimitiveType::Quads);  // TODO: This is also janky...
             for (auto i = 0; i < LINES_PER_CIRCLE; i++) {
                 _drawLine(renderer,
                           {center.X + sinf((float) i * step) * radius, center.Y + cosf((float) i * step) * radius},
@@ -98,7 +108,7 @@ namespace ngine::graphics {
                 renderer->pushVertex({{
                                               center.X + (radius * cosf(i * twoPi / TRIANGLES_PER_CIRCLE)),
                                               center.Y + (radius * sinf(i * twoPi / TRIANGLES_PER_CIRCLE)), 0
-                                       }, {0, 0}, color});
+                                      }, {0, 0}, color});
             }
             renderer->endVertices();
         }
@@ -112,27 +122,57 @@ namespace ngine::graphics {
 
     void graphics::ShapeRenderer::DrawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation,
                                                 Vector2 origin, bool outline, float lineThickness) {
+        // Get origin in pixel units
+        auto pixelOrigin = Vector2(origin.X * rect.Width, origin.Y * rect.Height);
+
         // Push a matrix and set up our transform/rotation
         renderer->setTexture(nullptr);
         renderer->pushMatrix();
-        renderer->translate({-origin.X, -origin.Y, 0});
-        renderer->rotate(rotation, {0, 0, 1});
+
+        // Move to destination
         renderer->translate({rect.X, rect.Y, 0});
+
+        // Apply rotation (this fixes issues with different Y stuffs)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->rotate(rotation, {0, 0, 1});
+        else renderer->rotate(rotation, {0, 0, -1});
+
+        // Fix origin (Flipping Y for bottom-origin renders)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
+        else renderer->translate({-pixelOrigin.X, pixelOrigin.Y, 0});
+
+        // Get correct dimensions
+        float x1, y1, x2, y2;
+
+        // Set common values
+        x1 = 0;
+        x2 = rect.Width;
+
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+            // Normal Y
+            y1 = 0;
+            y2 = rect.Height;
+        } else {
+            // Flip Y
+            y1 = -rect.Height;
+            y2 = 0;
+        }
 
         if (outline) {
             // Draw lines
             renderer->beginVertices(PrimitiveType::Quads);
-            _drawLine(renderer, {0, 0}, {rect.Width, 0}, color, lineThickness);
-            _drawLine(renderer, {rect.Width, 0}, {rect.Width, rect.Height}, color, lineThickness);
-            _drawLine(renderer, {rect.Width, rect.Height}, {0, rect.Height}, color, lineThickness);
-            _drawLine(renderer, {0, rect.Height}, {0, 0}, color, lineThickness);
+            _drawLine(renderer, {x1, y1}, {x2, y1}, color, lineThickness);
+            _drawLine(renderer, {x2, y1}, {x2, y2}, color, lineThickness);
+            _drawLine(renderer, {x2, y2}, {x1, y2}, color, lineThickness);
+            _drawLine(renderer, {x1, y2}, {x1, y1}, color, lineThickness);
             renderer->endVertices();
         } else {
             renderer->beginVertices(PrimitiveType::Quads);
-            renderer->pushVertex({{0, 0, 0}, {0, 0}, color});
-            renderer->pushVertex({{rect.Width, 0, 0}, {1, 0}, color});
-            renderer->pushVertex({{rect.Width, rect.Height, 0}, {1, 1}, color});
-            renderer->pushVertex({{0, rect.Height, 0}, {0, 1}, color});
+            renderer->pushVertex({{x1, y1, 0}, {0, 0}, color});
+            renderer->pushVertex({{x2, y1, 0}, {1, 0}, color});
+            renderer->pushVertex({{x2, y2, 0}, {1, 1}, color});
+            renderer->pushVertex({{x1, y2, 0}, {0, 1}, color});
             renderer->endVertices();
         }
         renderer->popMatrix();
@@ -151,19 +191,38 @@ namespace ngine::graphics {
         auto b = v2 - v1;
         auto c = v3 - v1;
 
+        // Correct dimensions
+        float x1, y1, x2, y2, x3, y3;
+
+        // Common values
+        x1 = v1.X;
+        x2 = v2.X;
+        x3 = v3.X;
+
+        // Get Y
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+            y1 = v1.Y;
+            y2 = v2.Y;
+            y3 = v3.Y;
+        } else {
+            y1 = -v1.Y;
+            y2 = -v2.Y;
+            y3 = -v3.Y;
+        }
+
         if (outline) {
             // Render with lines
             renderer->beginVertices(PrimitiveType::Quads);
-            _drawLine(renderer, a, b, color, lineThickness);
-            _drawLine(renderer, b, c, color, lineThickness);
-            _drawLine(renderer, c, a, color, lineThickness);
+            _drawLine(renderer, {x1, y1}, {x2, y2}, color, lineThickness);
+            _drawLine(renderer, {x2, y2}, {x3, y3}, color, lineThickness);
+            _drawLine(renderer, {x3, y3}, {x1, y1}, color, lineThickness);
             renderer->endVertices();
         } else {
             // Render it.
             renderer->beginVertices(PrimitiveType::Triangles);
-            renderer->pushVertex({{a.X, a.Y, 0}, {}, color});
-            renderer->pushVertex({{b.X, b.Y, 0}, {}, color});
-            renderer->pushVertex({{c.X, c.Y, 0}, {}, color});
+            renderer->pushVertex({{x1, y1, 0}, {}, color});
+            renderer->pushVertex({{x2, y2, 0}, {}, color});
+            renderer->pushVertex({{x3, y3, 0}, {}, color});
             renderer->endVertices();
         }
 
@@ -171,21 +230,88 @@ namespace ngine::graphics {
         renderer->popMatrix();
     }
 
-    void ShapeRenderer::DrawPolygon(Renderer *renderer, const std::vector<Vector2> &vertices, Color color, bool outline,
-                                    float lineThickness) {
+    void
+    ShapeRenderer::DrawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color,
+                               Angle rotation, Vector2 origin, bool outline, float lineThickness) {
         renderer->setTexture(nullptr);
+
+        // Move into position (not top left yet!!!)
+        renderer->translate({position.X, position.Y, 0});
+
+        // Apply rotation (this fixes issues with different Y stuffs)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->rotate(rotation, {0, 0, 1});
+        else renderer->rotate(rotation, {0, 0, -1});
+
+        // Fix origin (Flipping Y for bottom-origin renders)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->translate({-origin.X, -origin.Y, 0});
+        else renderer->translate({-origin.X, origin.Y, 0});
+
         if (outline) {
             // TODO: Check vertex count!!
             renderer->beginVertices(PrimitiveType::Quads);
-            _drawLine(renderer, vertices[vertices.size() - 1], vertices[0], color, lineThickness);
-            for (auto i = 0; i < vertices.size() - 1; i++)
-                _drawLine(renderer, vertices[i], vertices[i + 1], color, lineThickness);
+
+            for (auto i = -1; i < vertices.size() - 1; i++) {
+                // Get vertices
+                Vector2 v1;
+                Vector2 v2;
+                if (i == -1) {
+                    v1 = vertices[vertices.size() - 1];
+                    v2 = vertices[0];
+                } else {
+                    v1 = vertices[i];
+                    v2 = vertices[i + 1];
+                }
+
+                // Convert
+                float x1, y1, x2, y2;
+
+                // Common
+                x1 = v1.X;
+                x2 = v2.X;
+
+                // Get Y
+                if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+                    y1 = v1.Y;
+                    y2 = v2.Y;
+                } else {
+                    y1 = -v1.Y;
+                    y2 = -v2.Y;
+                }
+
+                // Draw
+                _drawLine(renderer, {x1, y1}, {x2, y2}, color, lineThickness);
+            }
+
             renderer->endVertices();
         } else {
             // TODO: Check vertex count!!
             renderer->beginVertices(PrimitiveType::TriangleFan);
-            renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
+
+            // Push center
+            if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+                renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
+            } else {
+                renderer->pushVertex({{vertices[0].X, -vertices[0].Y, 0}, {}, color});
+            }
+
             for (auto i = 1; i < vertices.size() - 1; i++) {
+                for (auto i = 0; i < vertices.size() - 1; i++) {
+                    // Get vertices
+                    auto v1 = vertices[i];
+                    auto v2 = vertices[i + 1];;
+
+                    // Push
+                    if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+                        renderer->pushVertex({{v1.X, v1.Y, 0}, {}, color});
+                        renderer->pushVertex({{v2.X, v2.Y, 0}, {}, color});
+                    } else {
+                        renderer->pushVertex({{v1.X, -v1.Y, 0}, {}, color});
+                        renderer->pushVertex({{v2.X, -v2.Y, 0}, {}, color});
+                    }
+                }
+
                 renderer->pushVertex({{vertices[i].X, vertices[i].Y, 0}, {}, color});
                 renderer->pushVertex({{vertices[i + 1].X, vertices[i + 1].Y, 0}, {}, color});
             }

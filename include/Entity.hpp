@@ -100,7 +100,7 @@ namespace ngine {
         /**
          * Entity rotation.
          */
-        Angle m_rotation = 0;
+        float m_rotation = 0;
 
         /**
          * The model view matrix to render with.
@@ -111,6 +111,8 @@ namespace ngine {
          * Whether or not the model view is dirty.
          */
         bool m_modelViewDirty = true;
+
+        // TODO: Track what coordinate system was used
 
         /**
          * Whether or not the entity is ready to be used.
@@ -139,7 +141,7 @@ namespace ngine {
         /**
          * Update our model view.
          */
-        void _updateModelView();
+        void _updateModelView(graphics::CoordinateSystem coordSys);
     public:
         /**
          * Create a new entity.
@@ -215,14 +217,14 @@ namespace ngine {
          *
          * @return The entity's rotation.
          */
-        Angle getRotation() const;
+        float getRotation() const;
 
         /**
          * Set the entity's rotation.
          *
          * @param rotation The new rotation.
          */
-        void setRotation(Angle rotation);
+        void setRotation(float rotation);
 
         // TODO: Work out how this works in Box2D, then implement accordingly
 //        /**

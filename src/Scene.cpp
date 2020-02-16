@@ -209,6 +209,9 @@ namespace ngine {
         // Get camera translation
         auto view = cam->getViewMatrix();
 
+        // Set coordinate system for scene contents.
+        renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
+
         // Render all entities
         for (const auto &e : m_entities) e->render(renderer, view, cam);
 
@@ -221,6 +224,9 @@ namespace ngine {
     }
 
     void Scene::renderUI(graphics::Renderer *renderer) {
+        // Set coordinate system for GUI contents.
+        renderer->setCoordinateSystem(graphics::CoordinateSystem::GUI);
+
         // TODO: A UI system.
     }
 

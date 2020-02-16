@@ -268,6 +268,18 @@ namespace ngine::graphics {
         m_builtVertexCount++;
     }
 
+    void Renderer::setCoordinateSystem(CoordinateSystem system) {
+        if (m_currentCoordSystem != system) {
+            // Force render
+            renderBatch();
+            m_currentCoordSystem = system;
+        }
+    }
+
+    CoordinateSystem Renderer::getCoordinateSystem() {
+        return m_currentCoordSystem;
+    }
+
     void Renderer::setTexture(Texture2D *texture) {
         if (m_currentTexture != texture) {
             renderBatch();
@@ -297,8 +309,8 @@ namespace ngine::graphics {
         m_IBO->write<unsigned short>(m_indexArray, m_indexCount, true);
 
         // Render our batch buffers
-        renderBufferIndexed(m_layout, m_VBO, m_IBO, m_indexCount,
-                            m_currentTexture != nullptr ? m_currentTexture : m_whiteTexture,
+        renderBufferIndexed(m_graphicsDevice->getCurrentViewport(), m_currentCoordSystem, m_layout, m_VBO, m_IBO,
+                            m_indexCount, m_currentTexture != nullptr ? m_currentTexture : m_whiteTexture,
                             m_currentShaderState != nullptr ? m_currentShaderState : m_defaultShaderState);
 
         // Clear data
@@ -306,31 +318,38 @@ namespace ngine::graphics {
         m_indexCount = 0;
     }
 
-    void Renderer::renderBuffer(VertexLayout *layout, Buffer *VBO_, int count, Texture2D *texture,
-                                ShaderProgramState *state) {
-        renderBufferIndexed(layout, VBO_, nullptr, count, texture, state);
+    void
+    Renderer::renderBuffer(const Viewport *viewport, CoordinateSystem coordSys, VertexLayout *layout, Buffer *VBO_,
+                           int count, Texture2D *texture, ShaderProgramState *state) {
+        renderBufferIndexed(viewport, coordSys, layout, VBO_, nullptr, count, texture, state);
     }
 
-    void Renderer::renderBufferIndexed(VertexLayout *layout, Buffer *VBO, Buffer *IBO, int count,
-                                       Texture2D *texture, ShaderProgramState *state_) {
+    void Renderer::renderBufferIndexed(const Viewport *viewport, CoordinateSystem coordSys, VertexLayout *layout,
+                                       Buffer *VBO, Buffer *IBO, int count, Texture2D *texture,
+                                       ShaderProgramState *state_) {
         // Check buffer types
         if (VBO->Type != BufferType::Vertex || (IBO != nullptr && IBO->Type != BufferType::Index))
             Console::Fail("Renderer", "Incorrect buffers provided to RenderBufferIndexed");
 
-        // Configure the current framebuffer for rendering
-        m_graphicsDevice->setupFramebuffer();
+        // Check viewport
+        if (viewport == nullptr)
+            Console::Fail("Renderer", "Viewport cannot be null!");
+
+        // Get graphics API
+        auto api = m_graphicsDevice->getAPI();
+
+        // Configure viewport
+        api->configureViewport(viewport->getX(), viewport->getY(), viewport->getWidth(), viewport->getHeight());
 
         // Set predefined uniforms (only if they are on the lowest level, i.e. not nested inside of another structure).
-        auto MVP = m_graphicsDevice->getProjectionMatrix() * m_currentModelView;
-        state_->setUniform("NGINE_MATRIX_MVP", MVP.toFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
+        auto MVP = viewport->getProjection(coordSys) * m_currentModelView;
+        state_->setUniform("NGINE_MATRIX_MVP",
+                           MVP.toFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
         int texUnit = 0;
         state_->setUniform("NGINE_TEXTURE", &texUnit);
 
         // Use layout
         layout->use();
-
-        // Get graphics API
-        auto api = m_graphicsDevice->getAPI();
 
         // Prepare for 2D
         api->prepareFor2D();
@@ -380,7 +399,7 @@ namespace ngine::graphics {
     }
 
     void Renderer::multiplyMatrix(const Matrix &mat) {
-        m_matrixStack[m_matrixStackCounter] = mat * m_matrixStack[m_matrixStackCounter];
+        m_matrixStack[m_matrixStackCounter] = m_matrixStack[m_matrixStackCounter] * mat;
     }
 
     void Renderer::translate(const Vector3 &translation) {

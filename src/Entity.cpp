@@ -35,16 +35,20 @@ namespace ngine {
         std::sort(m_children.begin(), m_children.end(), &_SortChildrenPredicate);
     }
 
-    void Entity::_updateModelView() {
+    void Entity::_updateModelView(graphics::CoordinateSystem coordSys) {
         // We use relative stuff as modelview will already consist of parent's input.
         auto pos = getPosition();
         auto rot = getRotation();
-        //auto ori = getOrigin();
+        auto rotAxis = Vector3(0, 0, 1);
+
+        // Fix rotation
+        if (coordSys != graphics::CoordinateSystem::GUI)
+            rotAxis.Z = -1;
 
         // Build modelview
         m_modelView = Matrix::Translate({pos.X, pos.Y, 0})
-                      * Matrix::Scale(m_scale.X, m_scale.Y, 1)
-                      * Matrix::RotateZ(rot);
+                      * Matrix::Rotate(rot, rotAxis)
+                      * Matrix::Scale(m_scale.X, m_scale.Y, 1);
 
         // Mark as clean
         m_modelViewDirty = false;
@@ -156,14 +160,14 @@ namespace ngine {
         }
     }
 
-    Angle Entity::getRotation() const {
+    float Entity::getRotation() const {
         if (m_physicsBody != nullptr) {
             return m_physicsBody->getRotation();
         }
         return m_rotation;
     }
 
-    void Entity::setRotation(Angle rotation) {
+    void Entity::setRotation(float rotation) {
         if (m_physicsBody != nullptr) {
             m_physicsBody->setRotation(rotation);
         } else {
@@ -394,7 +398,7 @@ namespace ngine {
 
         // Update model view if dirty
         if (m_modelViewDirty || m_physicsBody != nullptr)
-            _updateModelView();
+            _updateModelView(renderer->getCoordinateSystem());
 
         // Mix modelView with our own
         modelView = modelView * m_modelView;

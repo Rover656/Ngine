@@ -124,6 +124,12 @@ namespace ngine::graphics {
         return nullptr;
     }
 
+    const Viewport *GraphicsDevice::getCurrentViewport() {
+        if (m_targetCounter > 0)
+            return nullptr; // TODO
+        return m_attachedWindow->getWindowViewport();
+    }
+
     void GraphicsDevice::pushTarget(RenderTarget *target) {
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
@@ -182,27 +188,6 @@ namespace ngine::graphics {
     void GraphicsDevice::multView(const Matrix &matrix) {
         if (m_viewCounter == 0) pushViewMatrix();
         m_viewMatrixStack[m_viewCounter - 1] = matrix * m_viewMatrixStack[m_viewCounter - 1];
-    }
-
-    void GraphicsDevice::setupFramebuffer() {
-        // Bind render target, just to be sure it is done.
-        m_platformAPI->bindRenderTarget(m_targetCounter > 0 ? m_targetStack[m_targetCounter - 1] : nullptr);
-
-        // Get viewport width and height.
-        int w, h;
-        if (m_targetCounter > 0 && m_targetStack[m_targetCounter - 1] != nullptr) {
-            w = m_targetStack[m_targetCounter - 1]->Width;
-            h = m_targetStack[m_targetCounter - 1]->Height;
-        } else {
-            w = m_attachedWindow->getWidth();
-            h = m_attachedWindow->getHeight();
-        }
-
-        // Configure viewport
-        m_platformAPI->configureViewport(0, 0, w, h);
-
-        // Create new matrix
-        m_projectionMatrix = Matrix::Orthographic(0, (float) w, (float) h, 0, -1, 1);
     }
 
     API::PlatformGraphicsAPI *GraphicsDevice::getAPI() {

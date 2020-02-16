@@ -79,15 +79,15 @@ namespace ngine::physics {
     }
 
     void PhysicsBody::setPosition(const Vector2 &position) {
-        setTransform({position, getRotation()});
+        setTransform(position, getRotation());
     }
 
-    Angle PhysicsBody::getRotation() const {
-        return Angle(-RadToDeg(m_body->GetAngle()));
+    float PhysicsBody::getRotation() const {
+        return -RadToDeg(m_body->GetAngle());
     }
 
-    void PhysicsBody::setRotation(const Angle &rotation) {
-        setTransform({getPosition(), rotation});
+    void PhysicsBody::setRotation(float rotation) {
+        setTransform(getPosition(), rotation);
     }
 
     Transform2D PhysicsBody::getTransform() const {
@@ -97,9 +97,10 @@ namespace ngine::physics {
         return Transform2D(pos, rot);
     }
 
-    void PhysicsBody::setTransform(const Transform2D &transform) {
-        auto pos = m_context->convertPixelsToMeters(transform.Position);
-        m_body->SetTransform({pos.X, pos.Y}, -DegToRad(transform.Rotation.getDegrees()));
+    void PhysicsBody::setTransform(const Vector2 &position, float angle) {
+        auto pos = m_context->convertPixelsToMeters(position);
+        auto rad = DegToRad(-angle);
+        m_body->SetTransform({pos.X, pos.Y}, rad);
     }
 
     Vector2 PhysicsBody::getWorldCenter() const {

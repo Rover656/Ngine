@@ -95,7 +95,7 @@ namespace ngine::graphics {
          * @param height The rectangle height.
          * @param color The rectangle color.
          * @param rotation The rectangle rotation.
-         * @param origin The origin of the rectangle (where it rotates from).
+         * @param origin The origin of the rectangle (as a percentage of width and height).
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
@@ -110,7 +110,7 @@ namespace ngine::graphics {
          * @param rect The rectangle to draw.
          * @param color The rectangle color.
          * @param rotation The rectangle rotation.
-         * @param origin The origin of the rectangle (where it rotates from).
+         * @param origin The origin of the rectangle (as a percentage of width and height).
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
@@ -118,7 +118,7 @@ namespace ngine::graphics {
                                   Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         /**
-         * Draw a rectangle.
+         * Draw a triangle.
          *
          * @param renderer The game renderer.
          * @param v1 The first point (the peak).
@@ -135,15 +135,18 @@ namespace ngine::graphics {
         /**
          * Draw a polygon (convex).
          *
+         * @warning Do not rotate the polygon yourself! This will result in unexpected behaviour switching between different coordinate systems.
          * @param renderer The renderer.
+         * @param position Position to render (if your vertices account for this, pass zero). TODO: Ensure this is top-left all the time.
          * @param vertices Polygon vertices.
          * @param color Color to render.
+         * @param rotation Rotation to apply.
+         * @param origin Origin to apply (IN PIXELS)
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void DrawPolygon(Renderer *renderer, const std::vector<Vector2> &vertices, Color color, bool outline = false, float lineThickness = 1);
-
-        // TODO: Draw polygon once shape classes are final
+        static void DrawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color, Angle rotation = 0, Vector2 origin = {0, 0}, bool outline = false, float lineThickness = 1);
+        
         // TODO: Drawing circle sectors etc.
     };
 }

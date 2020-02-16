@@ -101,13 +101,13 @@ namespace ngine::physics {
 
         void setPosition(const Vector2 &position);
 
-        Angle getRotation() const;
+        float getRotation() const;
 
-        void setRotation(const Angle &rotation);
+        void setRotation(float rotation);
 
         Transform2D getTransform() const;
 
-        void setTransform(const Transform2D &transform);
+        void setTransform(const Vector2 &position, float angle);
 
         Vector2 getWorldCenter() const;
 

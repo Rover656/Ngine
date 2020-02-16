@@ -110,81 +110,60 @@ namespace ngine::graphics {
     void
     Texture2D::draw(graphics::Renderer *renderer, Rectangle destRect, Rectangle srcRect, Color col_, Vector2 origin,
                     Angle rotation) {
-        // Fix parameters
-        bool flipX = false;
-        if (srcRect.Width < 0) {
-            srcRect.Width *= -1;
-            flipX = true;
-        }
-
-        if (srcRect.Height < 0) {
-            srcRect.Y -= srcRect.Height;
-        }
-
         // Get origin in pixel coords
-        Vector2 pixelOrigin = {origin.X * srcRect.Width, origin.Y * srcRect.Height};
+        //Vector2 pixelOrigin = {origin.X * destRect.Width, origin.Y * destRect.Height};
+        Vector2 pixelOrigin = {origin.X * destRect.Width, origin.Y * destRect.Height};
 
         // Push transformation matrix
         renderer->pushMatrix();
-        renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
-        renderer->rotate(rotation, {0, 0, 1});
+
+        // Move to destination
         renderer->translate({destRect.X, destRect.Y, 0});
-        renderer->scale({destRect.Width / srcRect.Width, destRect.Height / srcRect.Height, 1.0f});
+
+        // Apply rotation (this fixes issues with different Y stuffs)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->rotate(rotation, {0, 0, 1});
+        else renderer->rotate(rotation, {0, 0, -1}); // Flip by 180 too.
+
+        // Fix origin (Flipping Y for bottom-origin renders)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
+        else renderer->translate({-pixelOrigin.X, pixelOrigin.Y, 0});
 
         // Push vertices
         renderer->setTexture(this);
         renderer->beginVertices(PrimitiveType::Quads);
-        if (flipX) {
-            renderer->pushVertex({
-                                          {0, 0, 0},
-                                          {
-                                                  (srcRect.Width + srcRect.X) / (float) Width,
-                                                  (srcRect.Y) / (float) Height
-                                          }, col_});
-            renderer->pushVertex({
-                                          {0, srcRect.Height, 0},
-                                          {
-                                                  (srcRect.Width + srcRect.X) / (float) Width,
-                                                  (srcRect.Height + srcRect.Y) / (float) Height
-                                          }, col_});
-            renderer->pushVertex({
-                                          {srcRect.Width, srcRect.Height, 0},
-                                          {
-                                                  (srcRect.X) / (float) Width,
-                                                  (srcRect.Height + srcRect.Y) / (float) Height
-                                          }, col_});
-            renderer->pushVertex({
-                                          {srcRect.Width, 0, 0},
-                                          {
-                                                  (srcRect.X) / (float) Width,
-                                                  (srcRect.Y) / (float) Height
-                                          }, col_});
+
+        // Get correct dimensions
+        float x1,y1,x2,y2,srcX1,srcY1,srcX2,srcY2;
+
+        // Set common values
+        x1 = 0;
+        x2 = destRect.Width;
+        srcX1 = srcRect.X / Width;
+        srcX2 = (srcRect.X + srcRect.Width) / Width;
+
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
+            // Normal Y
+            y1 = 0;
+            y2 = destRect.Height;
+            srcY1 = srcRect.Y / Height;
+            srcY2 = (srcRect.Y + srcRect.Height) / Height;
         } else {
-            renderer->pushVertex({
-                                          {0, 0, 0},
-                                          {
-                                                  (srcRect.X) / (float) Width,
-                                                  (srcRect.Y) / (float) Height
-                                          }, col_});
-            renderer->pushVertex({
-                                          {0, srcRect.Height, 0},
-                                          {
-                                                  (srcRect.X) / (float) Width,
-                                                  (srcRect.Height + srcRect.Y) / (float) Height
-                                          }, col_});
-            renderer->pushVertex({
-                                          {srcRect.Width, srcRect.Height, 0},
-                                          {
-                                                  (srcRect.Width + srcRect.X) / (float) Width,
-                                                  (srcRect.Height + srcRect.Y) / (float) Height
-                                          }, col_});
-            renderer->pushVertex({
-                                          {srcRect.Width, 0, 0},
-                                          {
-                                                  (srcRect.Width + srcRect.X) / (float) Width,
-                                                  (srcRect.Y) / (float) Height
-                                          }, col_});
+            // Flip Y
+            y1 = -destRect.Height;
+            y2 = 0;
+            srcY1 = (srcRect.Y + srcRect.Height) / Height;
+            srcY2 = srcRect.Y / Height;
         }
+
+        // Push vertices
+        renderer->pushVertex({{x1, y1, 0}, {srcX1, srcY1}, col_});
+        renderer->pushVertex({{x1, y2, 0}, {srcX1, srcY2}, col_});
+        renderer->pushVertex({{x2, y2, 0}, {srcX2, srcY2}, col_});
+        renderer->pushVertex({{x2, y1, 0}, {srcX2, srcY1}, col_});
+
+        // Finish
         renderer->endVertices();
 
         // Pop matrix

@@ -250,40 +250,39 @@ namespace ngine {
     }
 
     Matrix Matrix::Rotate(const Angle &rotation, const Vector3 &axis) {
-        Matrix result = {0};
+        // Gather data
+        float a = DegToRad(rotation.getDegrees());
+        float c = rotation.Cos;
+        float s = rotation.Sin;
 
-        auto x = axis.X, y = axis.Y, z = axis.Z;
-
-        auto length = sqrtf(x * x + y * y + z * z);
-
+        // Normalize axis
+        Vector3 nAxis = axis;
+        auto length = sqrtf(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
         if ((length != 1.0f) && (length != 0.0f)) {
             length = 1.0f / length;
-            x *= length;
-            y *= length;
-            z *= length;
+            nAxis *= length;
         }
 
-        const auto t = 1.0f - rotation.Cos;
+        // Build temp axis
+        Vector3 temp;
+        temp.X = nAxis.X * (1 - c);
+        temp.Y = nAxis.Y * (1 - c);
+        temp.Z = nAxis.Z * (1 - c);
 
-        result.M0 = x * x * t + rotation.Cos;
-        result.M1 = y * x * t + z * rotation.Sin;
-        result.M2 = z * x * t - y * rotation.Sin;
-        result.M3 = 0.0f;
+        // Build result
+        Matrix result = Matrix::Identity;
 
-        result.M4 = x * y * t - z * rotation.Sin;
-        result.M5 = y * y * t + rotation.Cos;
-        result.M6 = z * y * t + x * rotation.Sin;
-        result.M7 = 0.0f;
+        result.M0 = c + temp.X * nAxis.X;
+        result.M1 = temp.X * nAxis.Y + s * nAxis.Z;
+        result.M2 = temp.X * nAxis.Z - s * nAxis.Y;
 
-        result.M8 = x * z * t + y * rotation.Sin;
-        result.M9 = y * z * t - x * rotation.Sin;
-        result.M10 = z * z * t + rotation.Cos;
-        result.M11 = 0.0f;
+        result.M4 = temp.Y * nAxis.X - s * nAxis.Z;
+        result.M5 = c + temp.Y * nAxis.Y;
+        result.M6 = temp.Y * nAxis.Z + s * nAxis.X;
 
-        result.M12 = 0.0f;
-        result.M13 = 0.0f;
-        result.M14 = 0.0f;
-        result.M15 = 1.0f;
+        result.M8 = temp.Z * nAxis.X + s * nAxis.Y;
+        result.M9 = temp.Z * nAxis.Y - s * nAxis.X;
+        result.M10 = c + temp.Z * nAxis.Z;
 
         return result;
     }
