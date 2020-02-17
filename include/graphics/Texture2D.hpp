@@ -217,7 +217,7 @@ namespace ngine::graphics {
         /**
          * Draw the texture.
          *
-         * @param pos The position to draw at.
+         * @param pos The position to draw at (top-left).
          * @param col The color modifier.
          * @param scale The scale modifier.
          * @param origin The origin (in percentages (0 -> 1)).
@@ -229,7 +229,7 @@ namespace ngine::graphics {
         /**
          * Draw the texture.
          *
-         * @param destRect The destination rectangle.
+         * @param destRect The destination rectangle (Position refers to top left).
          * @param srcRect The source rectangle.
          * @param origin The origin (in percentages (0 -> 1)).
          * @param rotation Rotation (from origin).

@@ -24,7 +24,7 @@
 
 namespace ngine::graphics {
     RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice, unsigned int width, unsigned int height)
-            : Width(width), Height(height) {
+            : Width(width), Height(height), m_viewport(0, 0, width, height) {
         // Get API
         m_API = graphicsDevice->getAPI();
 
@@ -46,6 +46,10 @@ namespace ngine::graphics {
             delete m_texture;
             m_texture = nullptr;
         }
+    }
+
+    const Viewport *RenderTarget::getViewport() const {
+        return &m_viewport;
     }
 
     RenderTarget::~RenderTarget() {

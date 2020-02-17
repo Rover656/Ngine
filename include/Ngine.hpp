@@ -33,6 +33,7 @@
 #include "audio/Music.hpp"
 #include "audio/Sound.hpp"
 #include "audio/Wave.hpp"
+#include "components/SpriteComponent.hpp"
 #include "filesystem/Filesystem.hpp"
 #include "filesystem/ResourceManager.hpp"
 #include "graphics/Buffer.hpp"

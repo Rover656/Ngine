@@ -60,7 +60,7 @@ namespace ngine {
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
             m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
+            //m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         }
 
         // Create resource manager
@@ -107,13 +107,13 @@ namespace ngine {
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
             m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
+            //m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         } else if (Config.MaintainResolution && (!m_renderTarget->isValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
             delete m_renderTarget;
             m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
+            //m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         }
 
         if (Config.MaintainResolution && m_renderTarget != nullptr)
@@ -143,6 +143,9 @@ namespace ngine {
             // Clear with clear color
             graphicsDevice->clear(ClearColor);
 
+            // Ensure coordinates are correct for OnDraw
+            m_renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
+
             // OnDraw event
             OnDraw(m_renderer);
 
@@ -156,7 +159,7 @@ namespace ngine {
                 // Remove target from stack
                 graphicsDevice->popTarget();
 
-                // Ensure coordinates are correct
+                // We use Screen coordinates to put our internal framebuffer up, but any'll do.
                 m_renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
 
                 // Draw render target.

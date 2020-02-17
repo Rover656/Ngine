@@ -68,11 +68,7 @@ namespace ngine::graphics {
         renderer->beginVertices(PrimitiveType::Quads);
 
         // Flip Ys if needed
-        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
-            _drawLine(renderer, {v1.X, v1.Y}, {v2.X, v2.Y}, color, thickness);
-        } else {
-            _drawLine(renderer, {v1.X, -v1.Y}, {v2.X, -v2.Y}, color, thickness);
-        }
+        _drawLine(renderer, {v1.X, v1.Y}, {v2.X, v2.Y}, color, thickness);
 
         renderer->endVertices();
     }
@@ -137,7 +133,7 @@ namespace ngine::graphics {
             renderer->rotate(rotation, {0, 0, 1});
         else renderer->rotate(rotation, {0, 0, -1});
 
-        // Fix origin (Flipping Y for bottom-origin renders)
+        // Fix origin (Y flip if necessary)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
         else renderer->translate({-pixelOrigin.X, pixelOrigin.Y, 0});
@@ -147,16 +143,13 @@ namespace ngine::graphics {
 
         // Set common values
         x1 = 0;
+        y1 = 0;
         x2 = rect.Width;
+        y2 = rect.Height;
 
-        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
-            // Normal Y
-            y1 = 0;
-            y2 = rect.Height;
-        } else {
+        if (renderer->getCoordinateSystem() != CoordinateSystem::GUI) {
             // Flip Y
-            y1 = -rect.Height;
-            y2 = 0;
+            y2 *= -1;
         }
 
         if (outline) {
@@ -235,6 +228,9 @@ namespace ngine::graphics {
                                Angle rotation, Vector2 origin, bool outline, float lineThickness) {
         renderer->setTexture(nullptr);
 
+        // Push matrix
+        renderer->pushMatrix();
+
         // Move into position (not top left yet!!!)
         renderer->translate({position.X, position.Y, 0});
 
@@ -247,6 +243,8 @@ namespace ngine::graphics {
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->translate({-origin.X, -origin.Y, 0});
         else renderer->translate({-origin.X, origin.Y, 0});
+
+        // TODO: Deal with different rotations etc.
 
         if (outline) {
             // TODO: Check vertex count!!
@@ -293,29 +291,22 @@ namespace ngine::graphics {
             if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
                 renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
             } else {
-                renderer->pushVertex({{vertices[0].X, -vertices[0].Y, 0}, {}, color});
+                renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
             }
 
             for (auto i = 1; i < vertices.size() - 1; i++) {
-                for (auto i = 0; i < vertices.size() - 1; i++) {
-                    // Get vertices
-                    auto v1 = vertices[i];
-                    auto v2 = vertices[i + 1];;
+                // Get vertices
+                auto v1 = vertices[i];
+                auto v2 = vertices[i + 1];;
 
-                    // Push
-                    if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
-                        renderer->pushVertex({{v1.X, v1.Y, 0}, {}, color});
-                        renderer->pushVertex({{v2.X, v2.Y, 0}, {}, color});
-                    } else {
-                        renderer->pushVertex({{v1.X, -v1.Y, 0}, {}, color});
-                        renderer->pushVertex({{v2.X, -v2.Y, 0}, {}, color});
-                    }
-                }
-
-                renderer->pushVertex({{vertices[i].X, vertices[i].Y, 0}, {}, color});
-                renderer->pushVertex({{vertices[i + 1].X, vertices[i + 1].Y, 0}, {}, color});
+                // Push
+                renderer->pushVertex({{v1.X, v1.Y, 0}, {}, color});
+                renderer->pushVertex({{v2.X, v2.Y, 0}, {}, color});
             }
             renderer->endVertices();
         }
+
+        // Pop
+        renderer->popMatrix();
     }
 }

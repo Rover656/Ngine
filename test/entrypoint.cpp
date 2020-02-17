@@ -1,30 +1,32 @@
+/**********************************************************************************************
+*
+*   Ngine - A 2D game engine.
+*
+*   Copyright 2020 NerdThings (Reece Mackie)
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*       http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+**********************************************************************************************/
+
 #include <Ngine.hpp>
 
 using namespace ngine;
 using namespace ngine::audio;
-//using namespace ngine::components;
+using namespace ngine::components;
 using namespace ngine::filesystem;
 using namespace ngine::graphics;
 using namespace ngine::input;
 using namespace ngine::physics;
-
-class SpriteComponentTest : public Component {
-    Sprite *m_sprite;
-
-public:
-    SpriteComponentTest(Sprite *sprite)
-            : m_sprite(sprite) {}
-
-    void draw(Renderer *renderer) override {
-        //ShapeRenderer::DrawCircle(renderer, {0, 0}, 5, Color::LightGray);
-        ShapeRenderer::DrawRectangle(renderer, {0, 0, 32, 32}, Color::Blue, 0, {0, 0});
-        m_sprite->draw(renderer, {0, 0}, 0, {0.5f, 0.5f});
-
-        ShapeRenderer::DrawLine(renderer, {0,0}, {50, 50}, Color::Orange);
-
-        //ShapeRenderer::DrawRectangle(renderer, {100, 100, 25, 25}, Color::Pink, 90, {25.0f/2.0f, 25.0f/2.0f}, true);
-    }
-};
 
 class TestEntity : public Entity {
     PhysicsFixture *m_fixture = nullptr;
@@ -61,7 +63,7 @@ public:
 
         // Add component.
         auto sprite = new Sprite(getResourceManager()->getTexture("test_spritesheet"), 16, 16, 32, 32);
-        addComponent("Sprite", new SpriteComponentTest(sprite));
+        addComponent("Sprite", new SpriteComponent(sprite));
     }
 
     void update() override {
@@ -73,11 +75,11 @@ public:
         auto ms = 5;
 
         if (keyboard->isKeyDown(Key::KEY_W)) {
-            vel.Y -= ms;
+            vel.Y += ms;
         }
 
         if (keyboard->isKeyDown(Key::KEY_S)) {
-            vel.Y += ms;
+            vel.Y -= ms;
         }
 
         if (keyboard->isKeyDown(Key::KEY_A)) {
@@ -154,8 +156,8 @@ public:
 //        par->addChild(new TestEntity());
 //        addChild(par);
         addChild(new TestEntity());
-        //getPhysicsWorld()->enableDebugDraw();
-        //getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
+        getPhysicsWorld()->enableDebugDraw();
+        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
     }
 };
 
@@ -182,7 +184,7 @@ public:
     void Draw(graphics::Renderer *renderer_) {
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
         auto viewport = getGameViewport();
-        ShapeRenderer::DrawRectangle(renderer_, {0, 0, viewport.Width, viewport.Height}, Color::Blue, 0, {}, true, 5);
+        ShapeRenderer::DrawRectangle(renderer_, {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height}, Color::Blue, 0, {0.5f, 0.5f}, true, 5);
 
         ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
     }

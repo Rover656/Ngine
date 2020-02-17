@@ -111,7 +111,6 @@ namespace ngine::graphics {
     Texture2D::draw(graphics::Renderer *renderer, Rectangle destRect, Rectangle srcRect, Color col_, Vector2 origin,
                     Angle rotation) {
         // Get origin in pixel coords
-        //Vector2 pixelOrigin = {origin.X * destRect.Width, origin.Y * destRect.Height};
         Vector2 pixelOrigin = {origin.X * destRect.Width, origin.Y * destRect.Height};
 
         // Push transformation matrix
@@ -125,7 +124,7 @@ namespace ngine::graphics {
             renderer->rotate(rotation, {0, 0, 1});
         else renderer->rotate(rotation, {0, 0, -1}); // Flip by 180 too.
 
-        // Fix origin (Flipping Y for bottom-origin renders)
+        // Fix origin (Y flip if necessary)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
         else renderer->translate({-pixelOrigin.X, pixelOrigin.Y, 0});
@@ -139,29 +138,24 @@ namespace ngine::graphics {
 
         // Set common values
         x1 = 0;
+        y1 = 0;
         x2 = destRect.Width;
+        y2 = destRect.Height;
         srcX1 = srcRect.X / Width;
+        srcY1 = srcRect.Y / Height;
         srcX2 = (srcRect.X + srcRect.Width) / Width;
+        srcY2 = (srcRect.Y + srcRect.Height) / Height;
 
-        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
-            // Normal Y
-            y1 = 0;
-            y2 = destRect.Height;
-            srcY1 = srcRect.Y / Height;
-            srcY2 = (srcRect.Y + srcRect.Height) / Height;
-        } else {
+        if (renderer->getCoordinateSystem() != CoordinateSystem::GUI) {
             // Flip Y
-            y1 = -destRect.Height;
-            y2 = 0;
-            srcY1 = (srcRect.Y + srcRect.Height) / Height;
-            srcY2 = srcRect.Y / Height;
+            y2 *= -1;
         }
 
         // Push vertices
         renderer->pushVertex({{x1, y1, 0}, {srcX1, srcY1}, col_});
-        renderer->pushVertex({{x1, y2, 0}, {srcX1, srcY2}, col_});
-        renderer->pushVertex({{x2, y2, 0}, {srcX2, srcY2}, col_});
         renderer->pushVertex({{x2, y1, 0}, {srcX2, srcY1}, col_});
+        renderer->pushVertex({{x2, y2, 0}, {srcX2, srcY2}, col_});
+        renderer->pushVertex({{x1, y2, 0}, {srcX1, srcY2}, col_});
 
         // Finish
         renderer->endVertices();

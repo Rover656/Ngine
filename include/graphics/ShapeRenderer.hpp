@@ -65,6 +65,7 @@ namespace ngine::graphics {
         /**
          * Draw a line.
          *
+         * @warning Ensure you are familiar with the coordinate system you are targeting. Inputs do not work across different systems.
          * @param renderer The game renderer.
          * @param v1 Starting line position.
          * @param v2 Ending line position.
@@ -135,9 +136,9 @@ namespace ngine::graphics {
         /**
          * Draw a polygon (convex).
          *
-         * @warning Do not rotate the polygon yourself! This will result in unexpected behaviour switching between different coordinate systems.
+         * @warning Ensure you are aware of your coordinate system as polygons will NOT render the same across them.
          * @param renderer The renderer.
-         * @param position Position to render (if your vertices account for this, pass zero). TODO: Ensure this is top-left all the time.
+         * @param position Position to render (if your vertices account for this, pass zero).
          * @param vertices Polygon vertices.
          * @param color Color to render.
          * @param rotation Rotation to apply.

@@ -126,7 +126,7 @@ namespace ngine::graphics {
 
     const Viewport *GraphicsDevice::getCurrentViewport() {
         if (m_targetCounter > 0)
-            return nullptr; // TODO
+            return m_targetStack[m_targetCounter - 1]->getViewport();
         return m_attachedWindow->getWindowViewport();
     }
 
@@ -154,6 +154,11 @@ namespace ngine::graphics {
 
         // If target counter greater than 0, decrease
         if (m_targetCounter > 0) m_targetCounter--;
+
+        // Start using next target, or unbind
+        if (m_targetCounter > 0)
+            m_platformAPI->bindRenderTarget(m_targetStack[m_targetCounter - 1]);
+        else m_platformAPI->bindRenderTarget(nullptr);
     }
 
     Matrix GraphicsDevice::getProjectionMatrix() const {

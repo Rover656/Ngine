@@ -37,12 +37,17 @@ namespace ngine::graphics {
         /**
          * The texture that the render target renders to.
          */
-        Texture2D *m_texture;
+        Texture2D *m_texture = nullptr;
 
         /**
          * The graphics API.
          */
-        API::PlatformGraphicsAPI *m_API;
+        API::PlatformGraphicsAPI *m_API = nullptr;
+
+        /**
+         * The viewport for this target.
+         */
+        Viewport m_viewport;
     public:
         union {
             /**
@@ -71,6 +76,11 @@ namespace ngine::graphics {
          */
         RenderTarget(GraphicsDevice *graphicsDevice, unsigned int width, unsigned int height);
         ~RenderTarget();
+
+        /**
+         * Get the render target viewport.
+         */
+        const Viewport *getViewport() const;
 
         /**
          * Get rendered texture.
