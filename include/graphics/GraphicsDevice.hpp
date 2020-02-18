@@ -141,10 +141,6 @@ namespace ngine {
              */
             int m_targetCounter = 0;
 
-            Matrix m_viewMatrixStack[MAX_MATRICES];
-
-            int m_viewCounter = 0;
-
             /**
              * Create a graphics device.
              */
@@ -197,36 +193,6 @@ namespace ngine {
              * @return The current projection matrix.
              */
             Matrix getProjectionMatrix() const;
-
-            /**
-             * Get the current model view matrix.
-             *
-             * @note This is basically just for camera support.
-             * @return The current model view matrix.
-             */
-            Matrix getViewMatrix() const;
-
-            /**
-             * Push a view matrix onto the stack.
-             */
-            void pushViewMatrix();
-
-            /**
-             * Pop a view matrix off the stack.
-             */
-            void popViewMatrix();
-
-            /**
-             * Load identity onto the current view matrix.
-             */
-            void loadViewIdentity();
-
-            /**
-             * Multiply the current matrix.
-             *
-             * @param matrix Multiplier.
-             */
-            void multView(const Matrix &matrix);
 
             /**
              * Get the graphics API.

@@ -165,36 +165,6 @@ namespace ngine::graphics {
         return m_projectionMatrix;
     }
 
-    Matrix GraphicsDevice::getViewMatrix() const {
-        if (m_viewCounter > 0)
-            return m_viewMatrixStack[m_viewCounter - 1];
-        return Matrix::Identity;
-    }
-
-    void GraphicsDevice::pushViewMatrix() {
-        if (m_viewCounter >= MAX_MATRICES)
-            Console::Fail("GraphicsDevice", "ModelView Matrix stack overflow.");
-
-        // Add to stack
-        m_viewMatrixStack[m_viewCounter] = getViewMatrix();
-        m_viewCounter++;
-    }
-
-    void GraphicsDevice::popViewMatrix() {
-        // If target counter greater than 0, decrease
-        if (m_viewCounter > 0) m_viewCounter--;
-    }
-
-    void GraphicsDevice::loadViewIdentity() {
-        if (m_viewCounter == 0) pushViewMatrix();
-        m_viewMatrixStack[m_viewCounter - 1] = Matrix::Identity;
-    }
-
-    void GraphicsDevice::multView(const Matrix &matrix) {
-        if (m_viewCounter == 0) pushViewMatrix();
-        m_viewMatrixStack[m_viewCounter - 1] = matrix * m_viewMatrixStack[m_viewCounter - 1];
-    }
-
     API::PlatformGraphicsAPI *GraphicsDevice::getAPI() {
         return m_platformAPI;
     }

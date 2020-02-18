@@ -56,30 +56,87 @@ namespace ngine::components {
         /**
          * Create a new sprite component.
          *
+         * @warning Lifecycle of the sprite will be managed by this component.
          * @param sprite Sprite to render.
          */
         SpriteComponent(graphics::Sprite *sprite);
 
+        /**
+         * Get the sprite rendered by the component
+         *
+         * @return The sprite.
+         */
         graphics::Sprite *getSprite() const;
 
+        /**
+         * Set the sprite to be rendered.
+         *
+         * @warning Lifecycle of the sprite will be managed by this component. This deletes the current sprite.
+         * @param sprite Sprite to be rendered.
+         */
         void setSprite(graphics::Sprite *sprite);
 
+        /**
+         * Get the positional offset from the entity applied.
+         *
+         * @return The positional offset.
+         */
         Vector2 getOffset() const;
 
+        /**
+         * Set the positional offset from the entity.
+         *
+         * @param offset New offset.
+         */
         void setOffset(Vector2 offset);
 
+        /**
+         * Get the rotation applied to the sprite.
+         *
+         * @return The rotation applied.
+         */
         float getRotation() const;
 
+        /**
+         * Set the rotation for the sprite.
+         *
+         * @param rotation New rotation.
+         */
         void setRotation(float rotation);
 
+        /**
+         * Get the sprite origin.
+         *
+         * @return Sprite origin.
+         */
         Vector2 getOrigin() const;
 
+        /**
+         * Set the sprite origin.
+         *
+         * @param origin New origin.
+         */
         void setOrigin(Vector2 origin);
 
+        /**
+         * Get the color modifier.
+         *
+         * @return Color modifier.
+         */
         graphics::Color getColor() const;
 
+        /**
+         * Set the color modifier
+         *
+         * @param color New color modifier.
+         */
         void setColor(graphics::Color color);
 
+        /**
+         * Component draw event.
+         *
+         * @param renderer Renderer used to draw.
+         */
         void draw(graphics::Renderer *renderer);
     };
 }

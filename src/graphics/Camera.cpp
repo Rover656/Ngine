@@ -21,20 +21,6 @@
 #include "graphics/Camera.hpp"
 
 namespace ngine::graphics {
-    // Public Methods
-
-    void Camera::beginCamera(GraphicsDevice *graphicsDevice) const {
-        // Load matrix
-        graphicsDevice->pushViewMatrix();
-        graphicsDevice->loadViewIdentity();
-        graphicsDevice->multView(getViewMatrix());
-    }
-
-    void Camera::endCamera(GraphicsDevice *graphicsDevice) const {
-        // Reload matrix
-        graphicsDevice->popViewMatrix();
-    }
-
     Vector2 Camera::screenToWorld(Vector2 pos) {
         return pos.transform(getViewMatrix().invert());
     }

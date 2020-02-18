@@ -39,7 +39,7 @@ namespace ngine::graphics {
             m_vertexArray[m_vertexCount + i] = vertices[i];
             if (translate) {
                 m_vertexArray[m_vertexCount + i].Position = vertices[i].Position.transform(
-                        m_graphicsDevice->getViewMatrix() * m_matrixStack[m_matrixStackCounter]);
+                        m_matrixStack[m_matrixStackCounter]);
             }
             m_indexArray[m_indexCount + i] = m_vertexCount + i;
         }
@@ -68,7 +68,7 @@ namespace ngine::graphics {
             m_vertexArray[m_vertexCount + i] = vertices[i];
             if (translate) {
                 m_vertexArray[m_vertexCount + i].Position = vertices[i].Position.transform(
-                        m_graphicsDevice->getViewMatrix() * m_matrixStack[m_matrixStackCounter]);
+                        m_matrixStack[m_matrixStackCounter]);
             }
         }
 
@@ -262,8 +262,7 @@ namespace ngine::graphics {
         m_builtVertices[m_builtVertexCount] = vertex;
 
         // Translate right now
-        m_builtVertices[m_builtVertexCount].Position = vertex.Position.transform(
-                m_graphicsDevice->getViewMatrix() * m_matrixStack[m_matrixStackCounter]);
+        m_builtVertices[m_builtVertexCount].Position = vertex.Position.transform(m_matrixStack[m_matrixStackCounter]);
 
         m_builtVertexCount++;
     }

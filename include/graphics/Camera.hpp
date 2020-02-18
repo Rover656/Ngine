@@ -63,20 +63,6 @@ namespace ngine::graphics {
                 : Position(position), Rotation(rotation), Zoom(zoom), Origin(origin) {}
 
         /**
-         * Begin using the camera (internal).
-         *
-         * @note Internally, this starts using the translation matrix for this camera.
-         */
-        void beginCamera(GraphicsDevice *graphicsDevice) const;
-
-        /**
-         * Finish using the camera (internal).
-         *
-         * @note Internally, this pops the translation matrix for this camera.
-         */
-        void endCamera(GraphicsDevice *graphicsDevice) const;
-
-        /**
          * Convert a screen/window position to a world position.
          *
          * @param pos A screen position to be converted.
