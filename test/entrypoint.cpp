@@ -215,7 +215,7 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
     gameConfig.FPSCap = 60;
-    gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
+    gameConfig.MaintainResolution = true;
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;

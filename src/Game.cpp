@@ -201,6 +201,11 @@ namespace ngine {
     }
 
     void Game::_runUpdate() {
+        // Start timing here so if updates don't happen, frame skips don't either.
+        auto now = std::chrono::high_resolution_clock::now();
+        auto deltaTime = now - m_started;
+        m_started = now;
+
         // Check if we are/should be suspended
         if (!m_gameWindow->isVisible() && !Config.RunWhileHidden) {
             // If told to quit, quit
@@ -226,11 +231,6 @@ namespace ngine {
                 m_timestep = std::chrono::milliseconds(int(1000.0f / (float) Config.UpdatesPerSecond));
                 Console::Notice("Game", "Timestep updated to match updates per second.");
             }
-
-            // Get the time since the last frame
-            auto now = std::chrono::high_resolution_clock::now();
-            auto deltaTime = now - m_started;
-            m_started = now;
 
             // Increment lag
             m_lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
