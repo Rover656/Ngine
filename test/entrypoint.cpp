@@ -215,7 +215,7 @@ NGINE_GAME_ENTRY {
     gameConfig.TargetHeight = 768;
     gameConfig.RunWhileHidden = false; // For testing suspension.
     gameConfig.FPSCap = 60;
-    //gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
+    gameConfig.MaintainResolution = true; // TODO: Make it easier to manage when this is disabled.
 
     WindowConfig windowConfig;
     windowConfig.Resizable = true;
@@ -231,6 +231,11 @@ NGINE_GAME_ENTRY {
     windowConfig.TargetAPI = GraphicsAPI::OpenGL;
     windowConfig.TargetAPIMajorVersion = 4;
     windowConfig.TargetAPIMinorVersion = 6;
+
+    // TODO: OGLES 3.X doesn't work with GLFW...
+//    windowConfig.TargetAPI = GraphicsAPI::OpenGLES;
+//    windowConfig.TargetAPIMajorVersion = 3;
+//    windowConfig.TargetAPIMinorVersion = 1;
 #endif
 
     // Create game

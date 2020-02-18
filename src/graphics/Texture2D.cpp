@@ -124,10 +124,8 @@ namespace ngine::graphics {
             renderer->rotate(rotation, {0, 0, 1});
         else renderer->rotate(rotation, {0, 0, -1}); // Flip by 180 too.
 
-        // Fix origin (Y flip if necessary)
-        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
-            renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
-        else renderer->translate({-pixelOrigin.X, pixelOrigin.Y, 0});
+        // Fix origin
+        renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
 
         // Push vertices
         renderer->setTexture(this);
@@ -138,17 +136,19 @@ namespace ngine::graphics {
 
         // Set common values
         x1 = 0;
-        y1 = 0;
         x2 = destRect.Width;
-        y2 = destRect.Height;
         srcX1 = srcRect.X / Width;
         srcY1 = srcRect.Y / Height;
         srcX2 = (srcRect.X + srcRect.Width) / Width;
         srcY2 = (srcRect.Y + srcRect.Height) / Height;
 
         if (renderer->getCoordinateSystem() != CoordinateSystem::GUI) {
-            // Flip Y
-            y2 *= -1;
+            // Start in top-left
+            y1 = destRect.Height;
+            y2 = 0;
+        } else {
+            y1 = 0;
+            y2 = destRect.Height;
         }
 
         // Push vertices

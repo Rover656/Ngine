@@ -133,23 +133,23 @@ namespace ngine::graphics {
             renderer->rotate(rotation, {0, 0, 1});
         else renderer->rotate(rotation, {0, 0, -1});
 
-        // Fix origin (Y flip if necessary)
-        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
-            renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
-        else renderer->translate({-pixelOrigin.X, pixelOrigin.Y, 0});
+        // Fix origin
+        renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
 
         // Get correct dimensions
         float x1, y1, x2, y2;
 
         // Set common values
         x1 = 0;
-        y1 = 0;
         x2 = rect.Width;
-        y2 = rect.Height;
 
         if (renderer->getCoordinateSystem() != CoordinateSystem::GUI) {
-            // Flip Y
-            y2 *= -1;
+            // Start in top-left
+            y1 = rect.Height;
+            y2 = 0;
+        } else {
+            y1 = 0;
+            y2 = rect.Height;
         }
 
         if (outline) {
@@ -191,17 +191,11 @@ namespace ngine::graphics {
         x1 = v1.X;
         x2 = v2.X;
         x3 = v3.X;
+        y1 = v1.Y;
+        y2 = v2.Y;
+        y3 = v3.Y;
 
-        // Get Y
-        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
-            y1 = v1.Y;
-            y2 = v2.Y;
-            y3 = v3.Y;
-        } else {
-            y1 = -v1.Y;
-            y2 = -v2.Y;
-            y3 = -v3.Y;
-        }
+        // TODO: Do we make this coordinate system aware?
 
         if (outline) {
             // Render with lines
