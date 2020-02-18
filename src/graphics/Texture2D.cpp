@@ -122,7 +122,7 @@ namespace ngine::graphics {
         // Apply rotation (this fixes issues with different Y stuffs)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->rotate(rotation, {0, 0, 1});
-        else renderer->rotate(rotation, {0, 0, -1}); // Flip by 180 too.
+        else renderer->rotate(rotation, {0, 0, -1});
 
         // Fix origin
         renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});

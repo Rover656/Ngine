@@ -115,7 +115,12 @@ namespace ngine::graphics {
         // Transform to get it in the right place and orientation
         renderer->pushMatrix();
         renderer->translate({position.X, position.Y, 0});
-        renderer->rotate(rotation, {0, 0, 1});
+
+        // Apply rotation (this fixes issues with different Y stuffs)
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->rotate(rotation, {0, 0, 1});
+        else renderer->rotate(rotation, {0, 0, -1});
+
         renderer->translate({-origin.X, -origin.Y, 0});
 
         // Ready our texture
@@ -153,7 +158,7 @@ namespace ngine::graphics {
                     // Translate to correct position
                     renderer->pushMatrix();
                     renderer->translate({textX + m_characters[index].OffsetX * scaleFactor,
-                                          textY + m_characters[index].OffsetY * scaleFactor, 0});
+                                         (textY + m_characters[index].OffsetY * scaleFactor), 0});
 
                     // Push vertices
                     auto srcRect = m_characters[index].Rectangle;
@@ -161,29 +166,52 @@ namespace ngine::graphics {
                     auto height = m_characters[index].Rectangle.Height * scaleFactor;
                     auto atlasWidth = m_texture->Width;
                     auto atlasHeight = m_texture->Height;
+
+                    // Get correct dimensions
+                    float x1,y1,x2,y2,srcX1,srcY1,srcX2,srcY2;
+
+                    // TODO: Hmmm... fullstops are floating when in Screen coords... Because Y is too big?
+
+                    // Set common values
+                    x1 = 0;
+                    x2 = width;
+                    srcX1 = (srcRect.X) / (float) atlasWidth;
+                    srcY1 = (srcRect.Y) / (float) atlasHeight;
+                    srcX2 = (srcRect.Width + srcRect.X) / (float) atlasWidth;
+                    srcY2 = (srcRect.Height + srcRect.Y) / (float) atlasHeight;
+
+                    if (renderer->getCoordinateSystem() != CoordinateSystem::GUI) {
+                        // Start in top-left
+                        y1 = height;
+                        y2 = 0;
+                    } else {
+                        y1 = 0;
+                        y2 = height;
+                    }
+
                     renderer->pushVertex({
-                                                 {0, 0, 0},
+                                                 {x1, y1, 0},
                                                  {
-                                                          (srcRect.X) / (float) atlasWidth,
-                                                          (srcRect.Y) / (float) atlasHeight
+                                                          srcX1,
+                                                          srcY1
                                                   }, color});
                     renderer->pushVertex({
-                                                 {0, height, 0},
+                                                 {x1, y2, 0},
                                                  {
-                                                          (srcRect.X) / (float) atlasWidth,
-                                                          (srcRect.Height + srcRect.Y) / (float) atlasHeight
+                                                          srcX1,
+                                                          srcY2
                                                   }, color});
                     renderer->pushVertex({
-                                                 {width, height, 0},
+                                                 {x2, y2, 0},
                                                  {
-                                                          (srcRect.Width + srcRect.X) / (float) atlasWidth,
-                                                          (srcRect.Height + srcRect.Y) / (float) atlasHeight
+                                                          srcX2,
+                                                          srcY2
                                                   }, color});
                     renderer->pushVertex({
-                                                 {width, 0, 0},
+                                                 {x2, y1, 0},
                                                  {
-                                                          (srcRect.Width + srcRect.X) / (float) atlasWidth,
-                                                          (srcRect.Y) / (float) atlasHeight
+                                                          srcX2,
+                                                          srcY1
                                                   }, color});
 
                     // Pop matrix

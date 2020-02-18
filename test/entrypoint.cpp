@@ -187,6 +187,8 @@ public:
         ShapeRenderer::DrawRectangle(renderer_, {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height}, Color::Blue, 0, {0.5f, 0.5f}, true, 5);
 
         ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
+
+        getResourceManager()->getFont("Upheaval")->drawString(renderer_, "Hello world.", {150, 150}, 36, 2, Color::Orange);
     }
 
     void Init() {
