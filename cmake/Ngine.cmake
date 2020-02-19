@@ -109,7 +109,7 @@ function(add_game)
     endif()
 
     if (NOT GAME_INCLUDE_ANGLE OR "${GAME_INCLUDE_ANGLE}" STREQUAL "")
-        if (${GAME_TARGET_PLATFORM} MATCHES "Desktop" AND (DEFINED ${ENABLE_OPENGLES} AND ${ENABLE_OPENGLES}))
+        if (${GAME_TARGET_PLATFORM} STREQUAL "Desktop" AND ${ENABLE_OPENGLES})
             set(GAME_INCLUDE_ANGLE ON)
         else()
             set(GAME_INCLUDE_ANGLE OFF)

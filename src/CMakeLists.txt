@@ -52,9 +52,10 @@ if (${ENABLE_OPENGLES})
 endif ()
 
 # Depend on docs if enabled and we are able to say we're building release
-if (${BUILD_DOCS} AND (DEFINED ${CMAKE_BUILD_TYPE} AND ${CMAKE_BUILD_TYPE} MATCHES "Release"))
+if (${BUILD_DOCS} AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
     find_package(Doxygen)
-    if (DOXYGEN_FOUND)
+    if (${DOXYGEN_FOUND})
+        message(STATUS "Building docs...")
         add_dependencies(Ngine Ngine_Docs)
     endif ()
 endif ()
