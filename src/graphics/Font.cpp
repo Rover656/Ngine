@@ -112,9 +112,18 @@ namespace ngine::graphics {
         if (!willFit) // TODO: Automatically batch text for the developer
             Console::Fail("Font", "Too much text for a single buffer, please split your draw calls up.");
 
+        // We need to know how big this will be
+        auto size = measureString(string, fontSize, spacing, lineSpacing);
+
+        // Determine scaling
+        float scaleFactor = fontSize / m_baseSize;
+        float lineHeight = (float) m_baseSize * scaleFactor;
+
         // Transform to get it in the right place and orientation
         renderer->pushMatrix();
-        renderer->translate({position.X, position.Y, 0});
+        if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+            renderer->translate({position.X, position.Y, 0});
+        else renderer->translate({position.X, position.Y - lineHeight, 0});
 
         // Apply rotation (this fixes issues with different Y stuffs)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
@@ -126,9 +135,6 @@ namespace ngine::graphics {
         // Ready our texture
         renderer->setTexture(m_texture);
         renderer->beginVertices(PrimitiveType::Quads);
-
-        // Get ready to render text
-        float textX = 0.0f, textY = 0.0f, scaleFactor = fontSize / m_baseSize;
 
         // Get line spacing as float
         float lineSpacingf = 1.5f;
@@ -144,6 +150,9 @@ namespace ngine::graphics {
                 break;
         }
 
+        // Loop variables
+        float textX = 0.0f, textY = 0.0f;
+
         // Cycle over each character
         for (auto i = 0; i < string.length(); i++) {
             auto letter = string[i]; // TODO: Unicode support
@@ -151,14 +160,20 @@ namespace ngine::graphics {
 
             if (letter == '\n') {
                 // New line
-                textY += ((float) m_baseSize * lineSpacingf) * scaleFactor;
+                if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+                    textY += lineHeight * lineSpacingf;
+                else textY -= lineHeight * lineSpacingf;
                 textX = 0;
             } else {
                 if (letter != ' ') {
                     // Translate to correct position
                     renderer->pushMatrix();
-                    renderer->translate({textX + m_characters[index].OffsetX * scaleFactor,
-                                         (textY + m_characters[index].OffsetY * scaleFactor), 0});
+
+                    if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
+                        renderer->translate({textX + m_characters[index].OffsetX * scaleFactor,
+                                             textY + m_characters[index].OffsetY * scaleFactor, 0});
+                    else renderer->translate({textX + m_characters[index].OffsetX * scaleFactor,
+                                             textY, 0});
 
                     // Push vertices
                     auto srcRect = m_characters[index].Rectangle;

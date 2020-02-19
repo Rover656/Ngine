@@ -188,7 +188,7 @@ public:
 
         ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
 
-        getResourceManager()->getFont("Upheaval")->drawString(renderer_, "Hello world.", {150, 150}, 36, 2, Color::Orange);
+        getResourceManager()->getFont("Upheaval")->drawString(renderer_, "Hello world.\nHow be you?", {150, 150}, 36, 2, Color::Orange);
     }
 
     void Init() {
