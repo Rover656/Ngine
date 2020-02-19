@@ -12,6 +12,13 @@ Ngine is a C++ 17 library for producing 2D games.
     <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/NerdThings/Ngine/develop?label=Last%20Commit%20%28develop%29&logo=github&style=for-the-badge">
 </p>
 
+## Features
+
+- Ngine supports Windows, Linux and UWP.
+- Ngine has a comprehensive renderer which is consistent across graphics APIs.
+- Ngine provides a simple to use, feature filled entity-component system, allowing complete control over your scenes.
+- Ngine exposes the rendering process to the developer with virtual methods, allowing complete control over how your scenes are rendered.
+
 ## Installation
 
 You must build Ngine from source, Ngine uses [CMake](https://cmake.org/download/) (3.12 minimum) to generate project files. Use this to generate build files for the default target. See the [Wiki](https://github.com/NerdThings/Ngine/wiki/) for more detailed instructions for your platform/target.
