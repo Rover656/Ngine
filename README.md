@@ -32,18 +32,22 @@ cmake ..
 
 This shows you how to launch your game class (which you have to write I'm afraid)...
 
+If you want more comprehensive usage examples, we're working on some right now, see the examples directory for some!
+
 ```c++
 #include <Ngine.hpp>
 
 NGINE_GAME_ENTRY {
     // Game config
-    GameConfig gameConfig;
+    ngine::GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
     gameConfig.TargetHeight = 768;
     
     // Window config
-    WindowConfig windowConfig;
+    ngine::WindowConfig windowConfig;
     windowConfig.Resizable = true;
+    windowConfig.InitialWidth = 1280;
+    windowConfig.InitialHeight = 768;
     
     // Create game
     auto game = YourGameClass(gameConfig, windowConfig);
