@@ -19,7 +19,8 @@ include(EnumOption)
 
 # Options
 option(BUILD_TEST "Build the test program." ON)
-option(BUILD_DOCS "Build documentation" ON)
+option(BUILD_DOCS "Build documentation." ON)
+option(BUILD_EXAMPLES "Build examples." OFF)
 
 option(BUILD_NGINE_SHARED "Build Ngine as a shared library. Will build instead of shared." OFF)
 
@@ -83,4 +84,6 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     endif ()
 endif ()
 
-add_subdirectory(examples)
+if (${BUILD_EXAMPLES})
+    add_subdirectory(examples)
+endif()
