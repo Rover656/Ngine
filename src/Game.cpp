@@ -69,8 +69,8 @@ namespace ngine {
 
         // DEV: If anything new is added to the Game class, its initialization should occur here (Before OnInit())
 
-        // Invoke OnRun
-        OnInit();
+        // Initialize
+        initialize();
 
         // Init Timing
         m_lag = std::chrono::nanoseconds(0);
@@ -307,10 +307,10 @@ namespace ngine {
         m_renderTarget = nullptr;
 
         // Call the suspend event.
-        OnSuspend();
+        OnSuspend(); // TODO: Maybe remove use of events like this completely?
 
-        // Call the cleanup event
-        OnCleanup();
+        // Cleanup
+        cleanup();
 
         // Delete resource manager
         delete m_resourceManager;
@@ -336,6 +336,10 @@ namespace ngine {
 
     Game::Game(WindowConfig windowConfig, const GameConfig &config)
             : m_gameWindowCreationConfig(std::move(windowConfig)), Config(config), m_virtualViewport(0, 0, config.TargetWidth, config.TargetHeight) {}
+
+    void Game::initialize() { }
+
+    void Game::cleanup() { }
 
     Window *Game::getGameWindow() const {
         return m_gameWindow;

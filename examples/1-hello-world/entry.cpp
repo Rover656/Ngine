@@ -22,14 +22,20 @@
 
 class HelloWorldEntity : public ngine::Entity {
     ngine::graphics::Font *m_font = nullptr;
+    ngine::Vector2 m_offset = ngine::Vector2::Zero;
 public:
     void initialize(ngine::Scene *scene) {
         ngine::Entity::initialize(scene);
         m_font = getResourceManager()->getFont("Upheaval");
+
+        // Calculate offset
+        m_offset = m_font->measureString("Hello World!", 36, 1) / -2.0f;
+
+        // TODO: This might still not be in the middle...
     }
 
     void draw(ngine::graphics::Renderer *renderer, ngine::Matrix modelView) {
-        m_font->drawString(renderer, "Hello World!", {0, 0}, 36, 1, ngine::graphics::Color::Blue);
+        m_font->drawString(renderer, "Hello World!", m_offset, 36, 1, ngine::graphics::Color::Blue);
     }
 };
 
@@ -48,10 +54,16 @@ class ExampleGame : public ngine::Game {
     ExampleScene *m_scene = nullptr;
 public:
     ExampleGame(ngine::GameConfig gameConfig, ngine::WindowConfig windowConfig)
-     : Game(windowConfig, gameConfig) { // TODO: Swap fields in API
+     : Game(windowConfig, gameConfig) {} // TODO: Swap fields in API
+
+    void initialize() override {
+        // Load all content (using default resource manager config).
+        auto resMan = getResourceManager();
+        resMan->loadResources();
+
         // Create scene
-        //        m_scene = new ExampleScene(this);
-        //        setScene(m_scene);
+        m_scene = new ExampleScene(this);
+        setScene(m_scene);
     }
 };
 

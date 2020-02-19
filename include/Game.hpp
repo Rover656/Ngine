@@ -183,18 +183,6 @@ namespace ngine {
         GameConfig Config;
 
         /**
-         * On init event.
-         */
-        Event<> OnInit;
-
-        /**
-         * On cleanup event.
-         *
-         * @note This should delete all game resources.
-         */
-        Event<> OnCleanup;
-
-        /**
          * On resume event.
          * 
          * @note This event should be used to load game data after suspension (i.e. being maximized).
@@ -231,6 +219,16 @@ namespace ngine {
         Game(WindowConfig windowConfig, const GameConfig &config);
 
         virtual ~Game() = default;
+
+        /**
+         * Initialize the game, allocating any resources needed.
+         */
+        virtual void initialize();
+
+        /**
+         * Cleanup the game, deleting any resources created.
+         */
+        virtual void cleanup();
 
         /**
          * Get the game's window.

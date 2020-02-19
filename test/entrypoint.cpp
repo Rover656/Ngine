@@ -167,10 +167,25 @@ public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
         // Hook events
-        OnInit += new ClassMethodEventHandler<TestGame>(this, &TestGame::Init);
         OnDraw += new ClassMethodEventHandler<TestGame, graphics::Renderer *>(this, &TestGame::Draw);
         OnSuspend += new ClassMethodEventHandler<TestGame>(this, &TestGame::Save);
         OnResume += new ClassMethodEventHandler<TestGame>(this, &TestGame::Load);
+    }
+
+    void initialize() override {
+        // Set exit key
+        Keyboard::GetCurrent()->setExitKey(KEY_ESCAPE);
+
+        // Load all content (using default resource manager config).
+        auto resMan = getResourceManager();
+        resMan->loadResources();
+
+        // Load arial as default font
+        Font::SetDefaultFont(resMan->getFont("Upheaval"));
+
+        // Create and enable scene.
+        m_scene = new NewTestScene(this);
+        setScene(m_scene);
     }
 
     void Save() {
@@ -189,22 +204,6 @@ public:
         ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
 
         getResourceManager()->getFont("Upheaval")->drawString(renderer_, "Hello world.\nHow be you?", {150, 150}, 36, 2, Color::Orange);
-    }
-
-    void Init() {
-        // Set exit key
-        Keyboard::GetCurrent()->setExitKey(KEY_ESCAPE);
-
-        // Load all content (using default resource manager config).
-        auto resMan = getResourceManager();
-        resMan->loadResources();
-
-        // Load arial as default font
-        Font::SetDefaultFont(resMan->getFont("Upheaval"));
-
-        // Create and enable scene.
-        m_scene = new NewTestScene(this);
-        setScene(m_scene);
     }
 };
 

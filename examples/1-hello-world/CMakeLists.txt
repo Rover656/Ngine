@@ -9,5 +9,5 @@ add_game(
         TARGET_NAME ${PROJECT_NAME}
         SOURCE_FILES entry.cpp
         PUBLISHER_NAME "NerdThings"
-        CONTENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../assets"
+        CONTENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../content"
 )
