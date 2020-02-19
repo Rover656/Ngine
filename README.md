@@ -6,12 +6,11 @@ Ngine is a C++ 17 library for producing 2D games.
 
 <p align="center">
     <a href="https://travis-ci.org/NerdThings/Ngine"><img alt="Travis (.org)" src="https://img.shields.io/travis/NerdThings/Ngine?label=Linux%20%28master%29&logo=travis&style=for-the-badge"></a>
-    <a href="https://ci.appveyor.com/project/Rover656/ngine/branch/master"><img alt="AppVeyor" src="https://img.shields.io/appveyor/build/Rover656/ngine?label=Windows%20%28master%29&logo=appveyor&style=for-the-badge"></a>
+    <a href="https://ci.appveyor.com/project/Rover656/ngine/branch/master"><img alt="AppVeyor" src="https://img.shields.io/appveyor/build/Rover656/ngine/master?label=Windows%20%28master%29&logo=appveyor&style=for-the-badge"></a>
     <a href="https://discord.nerdthings.dev"><img alt="Discord" src="https://img.shields.io/discord/452810843852374016?label=Discord&logo=discord&style=for-the-badge"></a>
     <a href="https://choosealicense.com/licenses/apache-2.0/"><img alt="GitHub" src="https://img.shields.io/github/license/NerdThings/Ngine?logo=apache&style=for-the-badge"></a>
     <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/NerdThings/Ngine/develop?label=Last%20Commit%20%28develop%29&logo=github&style=for-the-badge">
 </p>
-
 ## Features
 
 - Ngine supports Windows, Linux and UWP.
