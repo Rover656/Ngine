@@ -20,7 +20,7 @@
 
 #include "physics/PhysicsShape.hpp"
 
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 namespace ngine::physics {
     PhysicsShape::PhysicsShape(const PhysicsContext *context, b2Shape *shape)

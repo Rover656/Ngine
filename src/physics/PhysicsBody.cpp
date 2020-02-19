@@ -23,7 +23,7 @@
 #include "physics/PhysicsWorld.hpp"
 #include "Console.hpp"
 
-#include <Box2D/Box2D.h>
+#include <box2d/box2d.h>
 
 namespace ngine::physics {
     PhysicsBody::PhysicsBody(const PhysicsContext *context, PhysicsWorld *world, b2Body *body)

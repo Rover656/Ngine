@@ -53,7 +53,7 @@ namespace ngine::physics {
         graphics::ShapeRenderer::DrawPolygon(m_renderer, Vector2::Zero, verts, fill);
     }
 
-    void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &color) {
+    void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color) {
         auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_context->convertMetersToPixels(radius);
         graphics::ShapeRenderer::DrawCircle(m_renderer, c, r,
@@ -61,7 +61,7 @@ namespace ngine::physics {
     }
 
     void
-    PhysicsDebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Vec2 &axis, const b2Color &color) {
+    PhysicsDebugDraw::DrawSolidCircle(const b2Vec2 &center, float radius, const b2Vec2 &axis, const b2Color &color) {
         auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_context->convertMetersToPixels(radius);
         graphics::Color fill = {color.r * 0.5f, color.g * 0.5f, color.b * 0.5f, color.a * 0.5f};
@@ -81,7 +81,7 @@ namespace ngine::physics {
 
     void PhysicsDebugDraw::DrawTransform(const b2Transform &xf) {
         b2Vec2 p1 = xf.p, p2;
-        const float32 k_axisScale = 1;
+        const float k_axisScale = 1;
 
         p2 = p1 + k_axisScale * xf.q.GetXAxis();
         DrawSegment(p1, p2, b2Color(1,0,0));
@@ -90,7 +90,7 @@ namespace ngine::physics {
         DrawSegment(p1,p2,b2Color(0,1,0));
     }
 
-    void PhysicsDebugDraw::DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color) {
+    void PhysicsDebugDraw::DrawPoint(const b2Vec2 &p, float size, const b2Color &color) {
         // Just draw a rectangle
         auto pos = m_context->convertMetersToPixels(Vector2(p.x, p.y));
         auto s = m_context->convertMetersToPixels(size);
