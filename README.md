@@ -4,12 +4,12 @@
 Ngine is a C++ 17 library for producing 2D games.
 </p>
 
-<p align="center" markdown="1">
-[![Build Status](https://travis-ci.org/NerdThings/Ngine.svg?branch=master)](https://travis-ci.org/NerdThings/Ngine)
-[![Build status](https://ci.appveyor.com/api/projects/status/b02ab82sngs1m7ri/branch/master?svg=true)](https://ci.appveyor.com/project/Rover656/ngine/branch/master)
-[![Chat on Discord](https://img.shields.io/discord/452810843852374016.svg?logo=discord)](https://discord.nerdthings.co.uk)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/NerdThings/Ngine/blob/master/LICENSE)
-[![BCH compliance](https://bettercodehub.com/edge/badge/NerdThings/Ngine?branch=master)](https://bettercodehub.com/)
+<p align="center">
+    <a href="https://travis-ci.org/NerdThings/Ngine"><img alt="Travis (.org)" src="https://img.shields.io/travis/NerdThings/Ngine?label=Linux%20%28master%29&logo=travis&style=for-the-badge"></a>
+    <a href="https://ci.appveyor.com/project/Rover656/ngine/branch/master"><img alt="AppVeyor" src="https://img.shields.io/appveyor/build/Rover656/ngine?label=Windows%20%28master%29&logo=appveyor&style=for-the-badge"></a>
+    <a href="https://discord.nerdthings.dev"><img alt="Discord" src="https://img.shields.io/discord/452810843852374016?label=Discord&logo=discord&style=for-the-badge"></a>
+    <a href="https://choosealicense.com/licenses/apache-2.0/"><img alt="GitHub" src="https://img.shields.io/github/license/NerdThings/Ngine?logo=apache&style=for-the-badge"></a>
+    <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/NerdThings/Ngine/develop?label=Last%20Commit%20%28develop%29&logo=github&style=for-the-badge">
 </p>
 
 ## Installation
@@ -46,6 +46,14 @@ NGINE_GAME_ENTRY {
     return 0;
 }
 ```
+
+## Built with
+
+- [ANGLE](https://chromium.googlesource.com/angle/angle) - DirectX support through OpenGL translation.
+- [Box2D](https://github.com/erincatto/box2d) - The 2D physics engine.
+- [glad](https://glad.dav1d.de/) - OpenGL extension loading.
+- [miniaudio](https://github.com/dr-soft/miniaudio) - Cross platform audio library.
+- [stb](https://github.com/nothings/stb) - stb_image for image loading and stb_truetype for font handling.
 
 ## Contributing
 Pull requests are welcome. For major changes, check if it is an approved feature on the projects tab. If it isn't, please open an issue or chat with us on Discord.
