@@ -246,7 +246,8 @@ function(add_game)
 
     # Visual Studio Source Groups
     if(MSVC)
-        source_group(TREE ${GAME_CONTENT_DIR} PREFIX "\\Content" FILES ${GAME_CONTENT_FILES})
+        ## TODO: Deal with content outwith source directory.
+        #source_group(TREE ${GAME_CONTENT_DIR} PREFIX "\\Content" FILES ${GAME_CONTENT_FILES})
         source_group("Assets" FILES ${GAME_RESOURCE_FILES})
     endif()
 

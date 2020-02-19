@@ -114,7 +114,7 @@ namespace ngine {
         /**
          * The target graphics API for the window context.
          */
-        graphics::GraphicsAPI TargetAPI;
+        graphics::GraphicsAPI TargetAPI = graphics::GraphicsAPI::Default;
 
         /**
          * Target major API version.
@@ -197,17 +197,17 @@ namespace ngine {
         /**
          * This windows context API type.
          */
-        graphics::GraphicsAPI m_targetAPI;
+        graphics::GraphicsAPI m_targetAPI = graphics::GraphicsAPI::Default;
 
         /**
          * This windows context API major version.
          */
-        int m_targetMajor;
+        int m_targetMajor = -1;
 
         /**
          * This windows context API minor version.
          */
-        int m_targetMinor;
+        int m_targetMinor = -1;
 
         /**
          * The mouse input manager for this window.

@@ -198,12 +198,12 @@ namespace ngine::input {
         /**
          * The key used to exit the game.
          */
-        Key m_exitKey;
+        Key m_exitKey = Key::KEY_NONE;
 
         /**
          * The latest key pressed.
          */
-        Key m_latestKeyPress;
+        Key m_latestKeyPress = Key::KEY_NONE;
 
 #if defined(PLATFORM_DESKTOP)
         static void _GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
