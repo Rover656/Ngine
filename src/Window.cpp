@@ -97,7 +97,7 @@ namespace ngine {
             m_targetMajor = 2;
             m_targetMinor = 0;
 #else
-            m_targetAPI = graphics::GraphicsAPI::OpenGl;
+            m_targetAPI = graphics::GraphicsAPI::OpenGL;
             m_targetMajor = 3;
             m_targetMinor = 3;
 #endif
