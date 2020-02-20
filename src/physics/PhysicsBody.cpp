@@ -137,8 +137,34 @@ namespace ngine::physics {
 
     float PhysicsBody::getInertia() const {
         // TODO: Verify unit conversion
-        auto oneM = m_context->convertMetersToPixels(1);
+        auto oneM = m_context->convertMetersToPixels(1.0f);
         return m_body->GetInertia() * oneM * oneM;
+    }
+
+    MassData PhysicsBody::getMassData() const {
+        auto oneM = m_context->convertMetersToPixels(1.0f);
+
+        b2MassData d;
+        m_body->GetMassData(&d);
+
+        MassData data;
+        data.Center = m_context->convertMetersToPixels(Vector2(d.center.x, d.center.y));
+        data.Mass = d.mass;
+        data.Inertia = d.I * oneM * oneM;
+
+        return data;
+    }
+
+    void PhysicsBody::setMassData(const MassData &data) {
+        auto c = m_context->convertPixelsToMeters(data.Center);
+        auto oneM = m_context->convertMetersToPixels(1.0f);
+
+        b2MassData dat;
+        dat.center = {c.X, c.Y};
+        dat.I = data.Inertia / (oneM * oneM);
+        dat.mass = data.Mass;
+
+        m_body->SetMassData(&dat);
     }
 
     void PhysicsBody::resetMassData() {
@@ -168,5 +194,19 @@ namespace ngine::physics {
                 m_body->SetType(b2_dynamicBody);
                 break;
         }
+    }
+
+    PhysicsBody *PhysicsBody::getNext() {
+        auto nxt = m_body->GetNext();
+        if (nxt == nullptr)
+            return nullptr;
+        return (PhysicsBody *) nxt->GetUserData();
+    }
+
+    const PhysicsBody *PhysicsBody::getNext() const {
+        auto nxt = m_body->GetNext();
+        if (nxt == nullptr)
+            return nullptr;
+        return (PhysicsBody *) nxt->GetUserData();
     }
 }

@@ -32,6 +32,23 @@ class b2CircleShape;
 class b2PolygonShape;
 
 namespace ngine::physics {
+    struct MassData {
+        /**
+         * The mass of the shape, usually in kilograms.
+         */
+        float Mass;
+
+        /**
+         * The position of the shape's centroid relative to the shape's origin.
+         */
+        Vector2 Center;
+
+        /**
+         * The rotational inertia of the shape about the local origin.
+         */
+        float Inertia;
+    };
+
     /**
      * Root physics shape class.
      */
@@ -82,6 +99,8 @@ namespace ngine::physics {
         int getChildCount() const;
 
         bool testPoint(const Transform2D &transform, const Vector2 &pos);
+
+        MassData computeMass(float density) const;
     };
 
     /**

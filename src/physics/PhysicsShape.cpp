@@ -64,6 +64,17 @@ namespace ngine::physics {
         return m_shape->TestPoint(t, {p.X, p.Y});
     }
 
+    MassData PhysicsShape::computeMass(float density) const {
+        auto oneM = m_context->convertMetersToPixels(1);
+        b2MassData dat;
+        m_shape->ComputeMass(&dat, density);
+        MassData data;
+        data.Center = m_context->convertMetersToPixels(Vector2(dat.center.x, dat.center.y));
+        data.Inertia = dat.I * oneM * oneM;
+        data.Mass = dat.mass;
+        return data;
+    }
+
     CirclePhysicsShape::CirclePhysicsShape(const PhysicsContext *context, b2CircleShape *circle)
             : PhysicsShape(context, circle) {}
 
