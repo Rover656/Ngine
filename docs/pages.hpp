@@ -75,6 +75,18 @@
  * If a platform is not listed, it means it has not been considered yet, feel free to ask about this on the GitHub page.
  * It is planned to add easier platform porting in the future (allowing community ports to be made easily).
  *
+ * @section cmake_options CMake Options
+ *
+ * | Option             | Description                                      | Default |
+ * | ------------------ | ------------------------------------------------ | ------- |
+ * | BUILD_TEST         | Build the test program                           | ON      |
+ * | BUILD_DOCS         | Build the documentation (release only)           | ON      |
+ * | BUILD_EXAMPLES     | Build example code                               | OFF     |
+ * | BUILD_NGINE_SHARED | Build Ngine as a shared library                  | OFF     |
+ * | PLATFORM           | The platform to build for (Desktop or UWP)       | Desktop |
+ * | ENABLE_OPENGL      | Enable use of OpenGL (On supported platforms)    | ON      |
+ * | ENABLE_OPENGLES    | Enable use of OpenGL ES (On suported platforms)  | ON      |
+ *
  * @page helpful_macros Helpful Macros
  * @tableofcontents
  *
