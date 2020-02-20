@@ -1,4 +1,4 @@
-<h1 align="center">Ngine</h1>
+<h1 align="center"><a href="https://github.com/NerdThings/Ngine"><img src="https://directus.nerdthings.dev/uploads/nerdthings/originals/62f51205-2704-4c0e-be5e-071fb4f4ac67.svg" height="200px"/></a></h1>
 
 <p align="center">
 Ngine is a C++ 17 library for producing 2D games.
