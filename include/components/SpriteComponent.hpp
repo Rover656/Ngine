@@ -27,6 +27,9 @@
 #include "../Component.hpp"
 
 namespace ngine::components {
+    /**
+     * The sprite component displays a single sprite on an `Entity`.
+     */
     class NEAPI SpriteComponent : public Component {
         /**
          * The sprite to render with.

@@ -34,6 +34,9 @@ class b2Body;
 namespace ngine::physics {
     class PhysicsWorld;
 
+    /**
+     * A physics rigidbody. This is created through `PhysicsWorld::createBody`.
+     */
     class NEAPI PhysicsBody final {
         friend class PhysicsWorld;
 

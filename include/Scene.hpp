@@ -32,6 +32,10 @@ namespace ngine {
     class Entity;
     class Game;
 
+    /**
+     * A scene contains all of your Entities and Cameras and handles the sorting, updating and rendering of them.
+     * A scene can represent a level in a game.
+     */
     class NEAPI Scene {
         /**
          * The entities within the scene.

@@ -31,6 +31,9 @@ namespace ngine {
     class Game;
     class Scene;
 
+    /**
+     * A component attaches to an Entity and defines/manipulates its behaviour and appearance.
+     */
     class NEAPI Component {
         friend class Entity;
 

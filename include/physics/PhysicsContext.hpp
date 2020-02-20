@@ -24,6 +24,9 @@
 #include "../Config.hpp"
 
 namespace ngine::physics {
+    /**
+     * The physics context defines how units are handled in the underlying physics engine.
+     */
     class NEAPI PhysicsContext {
         /**
          * Pixels per meter unit.

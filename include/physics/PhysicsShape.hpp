@@ -155,6 +155,9 @@ namespace ngine::physics {
         void setPosition(const Vector2 &position);
     };
 
+    /**
+     * This describes a polygon shape.
+     */
     class NEAPI PolygonPhysicsShape : public PhysicsShape {
         friend class PhysicsFixture;
 

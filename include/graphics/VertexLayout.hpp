@@ -40,6 +40,9 @@ namespace ngine::graphics {
             Float
         };
 
+        /**
+         * This defines an element in a vertex layout.
+         */
         struct VertexElement {
             /**
              * The name of the element.

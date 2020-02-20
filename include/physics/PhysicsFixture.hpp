@@ -31,6 +31,9 @@ class b2Fixture;
 namespace ngine::physics {
     class PhysicsBody;
 
+    /**
+     * A physics fixture attaches a `PhysicsShape` to a `PhysicsBody`.
+     */
     class NEAPI PhysicsFixture {
         friend class PhysicsBody;
 
