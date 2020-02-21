@@ -181,7 +181,9 @@ class TestGame : public Game {
     NewTestScene *m_scene;
 public:
 
-    TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
+    TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {}
+
+    void initialize() override {
         // Hook events
         EventDispatcher::bind<Game::SuspendEvent>(std::bind(&TestGame::Save, this, std::placeholders::_1), this);
         EventDispatcher::bind<Game::ResumeEvent>(std::bind(&TestGame::Load, this, std::placeholders::_1), this);
@@ -192,10 +194,12 @@ public:
             } else {
                 Console::Notice("DEBUG", "The left didnt do it!");
             }
-        });
-    }
+        }, getGameWindow()->getMouse());
 
-    void initialize() override {
+        EventDispatcher::bind<Keyboard::KeyPressEvent>([] (const Keyboard::KeyPressEvent &e) {
+            Console::Notice("DEBUG", "A key was pressed.");
+        }, getGameWindow()->getKeyboard());
+
         // Set exit key
         Keyboard::GetCurrent()->setExitKey(KEY_ESCAPE);
 
