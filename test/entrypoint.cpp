@@ -186,6 +186,14 @@ public:
         // Create and enable scene.
         m_scene = new NewTestScene(this);
         setScene(m_scene);
+
+        // TESTING NEW EVENTS
+        auto ref = newEvents::EventDispatcher::bind<newEvents::Event>([] (const newEvents::Event &e) {
+            Console::Notice("TEST", "Test pass");
+        });
+        newEvents::EventDispatcher::fire(newEvents::Event(this));
+        ref.remove();
+        newEvents::EventDispatcher::fire(newEvents::Event(this));
     }
 
     void Save() {

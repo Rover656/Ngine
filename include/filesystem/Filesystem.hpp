@@ -30,7 +30,7 @@ namespace ngine::filesystem {
      * Resource type.
      */
     enum class ResourceType {
-        Invalid,
+        Invalid = 0,
         File,
         Directory
     };

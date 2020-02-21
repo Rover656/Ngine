@@ -54,7 +54,7 @@ namespace ngine::graphics {
         /**
          * Render the vertices as triangles.
          */
-                Triangles = 0,
+        Triangles = 0,
 
         /**
          * Draw a fan of triangles.
@@ -62,12 +62,12 @@ namespace ngine::graphics {
          * A triangle is formed for each *adjacent* vertex pair.
          * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
          */
-                TriangleFan,
+        TriangleFan,
 
         /**
          * Render the vertices as quads.
          */
-                Quads
+        Quads
     };
 
     /**

@@ -24,12 +24,106 @@
 #include "Config.hpp"
 
 #include <functional>
+#include <utility>
 
 namespace ngine {
+    namespace newEvents {
+        class EventRef;
+
+        /**
+         * An event describes the content of a fired event.
+         * Events do not support polymorphism, only hooking the exact type will work.
+         */
+        class Event {
+        public:
+            /**
+             * The sender of the event.
+             */
+            void *Sender = nullptr;
+
+            /**
+             * Create a new base event.
+             */
+            Event(void *sender) : Sender(sender) {}
+        };
+
+        /**
+         * Event reference map.
+         */
+        typedef std::multimap<const std::type_info *, const std::function<void(const Event &e)>> EventMap;
+
+        class EventDispatcher {
+        public:
+            /**
+             * Attach an event handler to an event.
+             *
+             * @tparam TargetEvent The event to listen for.
+             * @param fn The function to fire.
+             * @return A reference to the event binding.
+             */
+            template<typename TargetEvent>
+            static EventRef bind(const std::function<void(const Event &e)> &fn) {
+                auto it = m_events.emplace(&typeid(TargetEvent), fn);
+                return EventRef(std::bind(_unbind, std::move(it)));
+            }
+
+            /**
+             * Fire an event.
+             *
+             * @param e Event to fire.
+             */
+            static void fire(const Event &e);
+
+        private:
+            /**
+             * The events map.
+             */
+            static EventMap m_events;
+
+            /**
+             * Unbind an event if you still have the function, otherwise use the `EventRef`.
+             *
+             * @param fn The function to remove
+             */
+            static void _unbind(EventMap::iterator it);
+        };
+
+        class EventRef {
+            friend class EventDispatcher;
+        public:
+            /**
+             * Remove event from dispatcher.
+             *
+             * @warning If this is not called and the `EventRef` is destroyed, you cannot remove the function from the dispatcher.
+             */
+            void remove();
+
+        private:
+            /**
+             * Function to call to remove the referenced handler.
+             */
+            std::function<void()> m_removeFunction;
+
+            /**
+             * Whether or not this has already been removed.
+             */
+            bool m_removed = false;
+
+            /**
+             * Create a new event reference.
+             *
+             * @param removeFunc Function to call on removal.
+             */
+            explicit EventRef(std::function<void()> removeFunc);
+        };
+    }
+
+
     /**
      * Base structure for event arguments.
      */
-    struct EventArgs { };
+    struct EventArgs {
+    };
 
     // Forward declare
     template<typename... ArgTypes>
@@ -64,7 +158,7 @@ namespace ngine {
         /**
          * The function attached to to the handler.
          */
-        void(*AttachedFunction)(ArgTypes...) = nullptr;
+        void (*AttachedFunction)(ArgTypes...) = nullptr;
 
         /**
          * Create an empty event handler.
@@ -165,7 +259,7 @@ namespace ngine {
          * @param event The event we are following attachment to.
          * @param handler The handlerer we are following.
          */
-        EventAttachment(Event<ArgTypes...> * event, AbstractEventHandler<ArgTypes...> *handler) {
+        EventAttachment(Event<ArgTypes...> *event, AbstractEventHandler<ArgTypes...> *handler) {
             // Create attachment info
             AttachmentInfo = std::make_shared<InternalAttachmentInformation>();
             AttachmentInfo->AttachedEvent = event;
