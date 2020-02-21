@@ -46,6 +46,39 @@ namespace ngine {
         Event(void *sender) : Sender(sender) {}
     };
 
+    /**
+     * This holds a reference to an event hook so it can be removed.
+     */
+    class EventRef {
+        friend class EventDispatcher;
+
+    public:
+        /**
+         * Remove event from dispatcher.
+         *
+         * @warning If this is not called and the `EventRef` is destroyed, you cannot remove the function from the dispatcher.
+         */
+        void remove();
+
+    private:
+        /**
+         * Function to call to remove the referenced handler.
+         */
+        std::function<void()> m_removeFunction;
+
+        /**
+         * Whether or not this has already been removed.
+         */
+        bool m_removed = false;
+
+        /**
+         * Create a new event reference.
+         *
+         * @param removeFunc Function to call on removal.
+         */
+        explicit EventRef(std::function<void()> removeFunc);
+    };
+
     class EventDispatcher {
     public:
         /**
@@ -149,36 +182,6 @@ namespace ngine {
          * @param fn The function to remove
          */
         static void _unbind(EventRouteMap::iterator it);
-    };
-
-    class EventRef {
-        friend class EventDispatcher;
-
-    public:
-        /**
-         * Remove event from dispatcher.
-         *
-         * @warning If this is not called and the `EventRef` is destroyed, you cannot remove the function from the dispatcher.
-         */
-        void remove();
-
-    private:
-        /**
-         * Function to call to remove the referenced handler.
-         */
-        std::function<void()> m_removeFunction;
-
-        /**
-         * Whether or not this has already been removed.
-         */
-        bool m_removed = false;
-
-        /**
-         * Create a new event reference.
-         *
-         * @param removeFunc Function to call on removal.
-         */
-        explicit EventRef(std::function<void()> removeFunc);
     };
 }
 
