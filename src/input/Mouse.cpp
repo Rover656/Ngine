@@ -82,7 +82,7 @@ namespace ngine::input {
 #if defined(PLATFORM_DESKTOP)
 
     void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-        if (button <= MOUSE_BUTTON_RIGHT) { // GLFW supports more than our 3 buttons
+        if (button <= static_cast<int>(MouseButton::Middle)) { // GLFW supports more than our 3 buttons
             auto mouse = ((Window *) glfwGetWindowUserPointer(window))->getMouse();
             mouse->m_nextMouseState.ButtonsDown[button] = (action == GLFW_PRESS);
         }
@@ -129,8 +129,8 @@ namespace ngine::input {
     }
 
     void Mouse::cancelButton(MouseButton button) {
-        m_currentMouseState.ButtonsDown[button] = false;
-        m_nextMouseState.ButtonsDown[button] = false;
+        m_currentMouseState.ButtonsDown[static_cast<int>(button)] = false;
+        m_nextMouseState.ButtonsDown[static_cast<int>(button)] = false;
     }
 
     Vector2 Mouse::getMousePosition() {
@@ -152,15 +152,15 @@ namespace ngine::input {
     }
 
     bool Mouse::isButtonDown(MouseButton button) {
-        return m_currentMouseState.ButtonsDown[button];
+        return m_currentMouseState.ButtonsDown[static_cast<int>(button)];
     }
 
     bool Mouse::isButtonPressed(MouseButton button) {
-        return m_currentMouseState.ButtonsDown[button] != m_previousMouseState.ButtonsDown[button] && m_currentMouseState.ButtonsDown[button] == true;
+        return m_currentMouseState.ButtonsDown[static_cast<int>(button)] != m_previousMouseState.ButtonsDown[static_cast<int>(button)] && m_currentMouseState.ButtonsDown[static_cast<int>(button)] == true;
     }
 
     bool Mouse::isButtonReleased(MouseButton button) {
-        return m_currentMouseState.ButtonsDown[button] != m_previousMouseState.ButtonsDown[button] && m_currentMouseState.ButtonsDown[button] == false;
+        return m_currentMouseState.ButtonsDown[static_cast<int>(button)] != m_previousMouseState.ButtonsDown[static_cast<int>(button)] && m_currentMouseState.ButtonsDown[static_cast<int>(button)] == false;
     }
 
     void Mouse::pollInputs() {

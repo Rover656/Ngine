@@ -37,12 +37,10 @@ namespace ngine::input {
     /**
      * Mouse button
      */
-    enum MouseButton {
-        MOUSE_BUTTON_LEFT = 0,
-        MOUSE_BUTTON_RIGHT,
-        MOUSE_BUTTON_MIDDLE
-    };
-
+    enum class MouseButton : int {
+        Left = 0,
+        Right = 1,
+        Middle = 2
     };
 
     /**
