@@ -27,357 +27,127 @@
 #include <utility>
 
 namespace ngine {
-    namespace newEvents {
-        class EventRef;
+    class EventRef;
+
+    /**
+     * An event describes the content of a fired event.
+     * Events do not support polymorphism, only hooking the exact type will work.
+     */
+    class Event {
+    public:
+        /**
+         * The sender of the event.
+         */
+        void *Sender = nullptr;
 
         /**
-         * An event describes the content of a fired event.
-         * Events do not support polymorphism, only hooking the exact type will work.
+         * Create a new base event.
          */
-        class Event {
-        public:
-            /**
-             * The sender of the event.
-             */
-            void *Sender = nullptr;
+        Event(void *sender) : Sender(sender) {}
+    };
 
-            /**
-             * Create a new base event.
-             */
-            Event(void *sender) : Sender(sender) {}
-        };
+    class BaseEventHook {
+    public:
+        void *Filter;
+
+        BaseEventHook(void *senderFilter) : Filter(senderFilter) {}
+
+        virtual ~BaseEventHook() = default;
+
+        virtual void invoke(const Event &e) = 0;
+    };
+
+    template<typename TargetEvent>
+    class EventHook : public BaseEventHook {
+        std::function<void(const TargetEvent &)> m_func;
+    public:
+        EventHook(std::function<void(const TargetEvent &)> fn, void *senderFilter)
+                : m_func(fn), BaseEventHook(senderFilter) {}
+
+        void invoke(const Event &e) {
+            m_func(static_cast<const TargetEvent &>(e));
+        }
+    };
+
+    /**
+     * Event reference map.
+     */
+    typedef std::multimap<const std::type_info *, std::shared_ptr<BaseEventHook>> EventRouteMap;
+
+    class EventDispatcher {
+    public:
+        /**
+         * Attach an event handler to an event.
+         *
+         * @tparam TargetEvent The event to listen for.
+         * @param fn The function to fire.
+         * @param senderFilter Filter for senders, this will allow you to only recieve events for a given sender.
+         * @return A reference to the event binding.
+         */
+        template<typename TargetEvent>
+        static EventRef bind(const std::function<void(const TargetEvent &e)> &fn, void *senderFilter = nullptr) {
+            auto it = m_routes.emplace(&typeid(TargetEvent),
+                                       std::static_pointer_cast<BaseEventHook>(
+                                               std::make_shared<EventHook<TargetEvent>>(fn, senderFilter)));
+            return EventRef(std::bind(_unbind, std::move(it)));
+        }
 
         /**
-         * Event reference map.
+         * Fire an event.
+         *
+         * @param e Event to fire.
          */
-        typedef std::multimap<const std::type_info *, const std::function<void(const Event &e)>> EventMap;
-
-        class EventDispatcher {
-        public:
-            /**
-             * Attach an event handler to an event.
-             *
-             * @tparam TargetEvent The event to listen for.
-             * @param fn The function to fire.
-             * @return A reference to the event binding.
-             */
-            template<typename TargetEvent>
-            static EventRef bind(const std::function<void(const Event &e)> &fn) {
-                auto it = m_events.emplace(&typeid(TargetEvent), fn);
-                return EventRef(std::bind(_unbind, std::move(it)));
+        template <typename EventType>
+        static void fire(const EventType &e) {
+            auto range = m_routes.equal_range(&typeid(EventType));
+            for (auto it = range.first; it != range.second; it++) {
+                if (it->second->Filter == nullptr || it->second->Filter == e.Sender)
+                    it->second->invoke(static_cast<const Event &>(e));
             }
-
-            /**
-             * Fire an event.
-             *
-             * @param e Event to fire.
-             */
-            static void fire(const Event &e);
-
-        private:
-            /**
-             * The events map.
-             */
-            static EventMap m_events;
-
-            /**
-             * Unbind an event if you still have the function, otherwise use the `EventRef`.
-             *
-             * @param fn The function to remove
-             */
-            static void _unbind(EventMap::iterator it);
-        };
-
-        class EventRef {
-            friend class EventDispatcher;
-        public:
-            /**
-             * Remove event from dispatcher.
-             *
-             * @warning If this is not called and the `EventRef` is destroyed, you cannot remove the function from the dispatcher.
-             */
-            void remove();
-
-        private:
-            /**
-             * Function to call to remove the referenced handler.
-             */
-            std::function<void()> m_removeFunction;
-
-            /**
-             * Whether or not this has already been removed.
-             */
-            bool m_removed = false;
-
-            /**
-             * Create a new event reference.
-             *
-             * @param removeFunc Function to call on removal.
-             */
-            explicit EventRef(std::function<void()> removeFunc);
-        };
-    }
-
-
-    /**
-     * Base structure for event arguments.
-     */
-    struct EventArgs {
-    };
-
-    // Forward declare
-    template<typename... ArgTypes>
-    class Event;
-
-    /**
-     * Abstract event handler.
-     *
-     * @tparam ArgTypes The argument types the event will pass to the handler.
-     */
-    template<typename... ArgTypes>
-    struct AbstractEventHandler {
-        /**
-         * Invoke the event handler.
-         *
-         * @param args Arguments to be passed to the callback
-         */
-        virtual void invoke(ArgTypes... args) = 0;
-
-        void operator()(ArgTypes... args) {
-            invoke(args...);
-        }
-    };
-
-    /**
-     * An event handler that uses a static function as a callback.
-     *
-     * @tparam ArgTypes The argument types the event will pass to the handler.
-     */
-    template<typename... ArgTypes>
-    struct FunctionEventHandler : public AbstractEventHandler<ArgTypes...> {
-        /**
-         * The function attached to to the handler.
-         */
-        void (*AttachedFunction)(ArgTypes...) = nullptr;
-
-        /**
-         * Create an empty event handler.
-         */
-        FunctionEventHandler() {}
-
-        /**
-         * Create an event handler.
-         *
-         * @param func The function to be used as the callback
-         */
-        FunctionEventHandler(void(*func)(ArgTypes...)) {
-            AttachedFunction = func;
         }
 
-        void invoke(ArgTypes... args) override {
-            if (AttachedFunction != nullptr)
-                AttachedFunction(args...);
-        }
-    };
-
-    /**
-     * An event handler that uses a class method as a callback.
-     *
-     * @tparam Class The class the callback method is a member of.
-     * @tparam ArgTypes The argument types the event will pass to the handler.
-     */
-    template<typename Class, typename... ArgTypes>
-    struct ClassMethodEventHandler : public AbstractEventHandler<ArgTypes...> {
-        /**
-         * The attached class.
-         */
-        Class *AttachedClass = nullptr;
-
-        /**
-         * The attached method
-         */
-        void (Class::*AttachedMethod)(ArgTypes...) = nullptr;
-
-        /**
-         * Initialize an empty event handler.
-         */
-        ClassMethodEventHandler() {}
-
-        /**
-         * Create a class method event handler.
-         *
-         * @param obj The class whose member method we will use.
-         * @param func The class method we will use.
-         */
-        ClassMethodEventHandler(Class *obj, void (Class::*func)(ArgTypes...)) {
-            AttachedClass = obj;
-            AttachedMethod = func;
-        }
-
-        void invoke(ArgTypes... args) override {
-            if (AttachedClass != nullptr && AttachedMethod != nullptr)
-                (AttachedClass->*AttachedMethod)(args...);
-        }
-    };
-
-    /**
-     * Contains persistent information about the attachment of an event handler.
-     *
-     * @tparam ArgTypes The argument types the event will pass to the handler.
-     */
-    template<typename... ArgTypes>
-    struct EventAttachment {
     private:
         /**
-         * The structure that contains information about the attachment.
+         * The events map.
          */
-        struct InternalAttachmentInformation {
-            /**
-             * The attached event.
-             */
-            Event<ArgTypes...> *AttachedEvent;
-
-            /**
-             * The handler this attachment is referring to.
-             */
-            AbstractEventHandler<ArgTypes...> *Handler;
-        };
-    public:
-        /**
-         * Information regarding the attachment.
-         */
-        std::shared_ptr<InternalAttachmentInformation> AttachmentInfo;
+        static EventRouteMap m_routes;
 
         /**
-         * Create an empty event handler attachment.
-         */
-        EventAttachment() {}
-
-        /**
-         * Create an event handler attachment.
+         * Unbind an event if you still have the function, otherwise use the `EventRef`.
          *
-         * @param event The event we are following attachment to.
-         * @param handler The handlerer we are following.
+         * @param fn The function to remove
          */
-        EventAttachment(Event<ArgTypes...> *event, AbstractEventHandler<ArgTypes...> *handler) {
-            // Create attachment info
-            AttachmentInfo = std::make_shared<InternalAttachmentInformation>();
-            AttachmentInfo->AttachedEvent = event;
-            AttachmentInfo->Handler = handler;
-        }
-
-        /**
-         * Detach the handler.
-         */
-        void detach() {
-            if (AttachmentInfo != nullptr) {
-                if (AttachmentInfo->AttachedEvent != nullptr && AttachmentInfo->Handler != nullptr) {
-                    // Detach from event
-                    AttachmentInfo->AttachedEvent->detach(AttachmentInfo->Handler);
-
-                    // Delete internal attachment info
-                    AttachmentInfo = nullptr;
-                }
-            }
-        }
-
-        /**
-         * Determine if the event is attached.
-         *
-         * @return Whether or not the event handler is still attached to the event.
-         */
-        bool isAttached() const {
-            if (AttachmentInfo != nullptr) {
-                if (AttachmentInfo->AttachedEvent != nullptr && AttachmentInfo->Handler != nullptr) {
-                    return AttachmentInfo->AttachedEvent->isAttached(AttachmentInfo->Handler);
-                }
-            }
-            return false;
-        }
+        static void _unbind(EventRouteMap::iterator it);
     };
 
-    /**
-     * An event can be fired at any time. Handlers will be called with appropriate arguments when fired.
-     *
-     * @tparam ArgTypes The argument types the event will pass to the handler.
-     */
-    template<typename... ArgTypes>
-    class Event {
-        /**
-         * All the attached handlers
-         */
-        std::vector<AbstractEventHandler<ArgTypes...> *> m_handlers;
+    class EventRef {
+        friend class EventDispatcher;
+
     public:
         /**
-         * Attach the event handler
+         * Remove event from dispatcher.
          *
-         * @param handler The event handler to be attached.
-         * @return The event attachment information.
+         * @warning If this is not called and the `EventRef` is destroyed, you cannot remove the function from the dispatcher.
          */
-        EventAttachment<ArgTypes...> attach(AbstractEventHandler<ArgTypes...> *handler) {
-            // Add
-            m_handlers.push_back(handler);
+        void remove();
 
-            // Return attachment information
-            return {this, handler};
-        }
+    private:
+        /**
+         * Function to call to remove the referenced handler.
+         */
+        std::function<void()> m_removeFunction;
 
         /**
-         * Clear the entire event.
+         * Whether or not this has already been removed.
          */
-        void clear() {
-            for (auto handler : m_handlers) {
-                detach(handler);
-            }
-        }
+        bool m_removed = false;
 
         /**
-         * Detach an event handler from the event.
+         * Create a new event reference.
          *
-         * @param handler The handler to be detached.
+         * @param removeFunc Function to call on removal.
          */
-        void detach(AbstractEventHandler<ArgTypes...> *handler) {
-            // Find in handler array
-            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler);
-            if (iterator == m_handlers.end())
-                throw std::runtime_error("This event handler is not attached to this event.");
-
-            // Remove from handlers vector
-            m_handlers.erase(std::remove(m_handlers.begin(), m_handlers.end(), handler), m_handlers.end());
-
-            // Delete handler
-            delete handler;
-        }
-
-        /**
-         * Invoke the handlers attached to the event
-         *
-         * @param args The arguments to pass to the handlers.
-         */
-        void invoke(ArgTypes... args) {
-            for (auto handler : m_handlers) {
-                handler->invoke(args...);
-            }
-        }
-
-        /**
-         * Whether or not the handler is attached to us.
-         *
-         * @param handler The handler to check.
-         * @return If the handler is attached.
-         */
-        bool isAttached(AbstractEventHandler<ArgTypes...> *handler) const {
-            auto iterator = std::find(m_handlers.begin(), m_handlers.end(), handler);
-            return iterator != m_handlers.end();
-        }
-
-        void operator()(ArgTypes... args) {
-            invoke(args...);
-        }
-
-        EventAttachment<ArgTypes...> operator+=(AbstractEventHandler<ArgTypes...> *handler) {
-            return attach(handler);
-        }
+        explicit EventRef(std::function<void()> removeFunc);
     };
 }
 

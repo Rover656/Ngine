@@ -21,7 +21,9 @@
 #include "input/Keyboard.hpp"
 
 #if defined(PLATFORM_DESKTOP)
+
 #include <GLFW/glfw3.h>
+
 #elif defined(PLATFORM_UWP)
 #include "UWP/GameApp.hpp"
 #endif
@@ -34,7 +36,7 @@ namespace ngine::input {
     void Keyboard::_GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto kbd = ((Window *) glfwGetWindowUserPointer(window))->getKeyboard();
         kbd->m_nextKeyState[key] = (action != GLFW_RELEASE);
-        kbd->m_latestKeyPress = (Key)key;
+        kbd->m_latestKeyPress = (Key) key;
     }
 
 #elif defined(PLATFORM_UWP)
@@ -124,10 +126,10 @@ namespace ngine::input {
     }
 #endif
 
-    Keyboard::Keyboard(Window *window) {
+    Keyboard::Keyboard(Window *window) : m_window(window) {
 #if defined(PLATFORM_DESKTOP)
         // Register events
-        glfwSetKeyCallback(window->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
+        glfwSetKeyCallback(m_window->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
         // Throw error.
         if (m_UWPKeyboard != nullptr)
@@ -184,11 +186,11 @@ namespace ngine::input {
 
         // Fire events
         for (auto i = 0; i <= KEY_MAX; i++) {
-            auto k = (Key)i;
+            auto k = (Key) i;
             if (isKeyPressed(k)) {
-                KeyPressed({k});
+                EventDispatcher::fire(KeyPressEvent(this, m_window, k));
             } else if (isKeyReleased(k)) {
-                KeyReleased({k});
+                EventDispatcher::fire(KeyReleaseEvent(this, m_window, k));
             }
         }
     }

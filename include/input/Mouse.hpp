@@ -43,67 +43,6 @@ namespace ngine::input {
         MOUSE_BUTTON_MIDDLE
     };
 
-    /**
-     * Mouse button down event args
-     */
-    struct MouseButtonEventArgs : EventArgs {
-        /**
-         * The mouse button.
-         */
-        MouseButton Button;
-
-        /**
-         * Whether or not the button is pressed.
-         */
-        bool Pressed;
-
-        /**
-         * Create a mouse changed event argument.
-         *
-         * @param button The button that has changed.
-         * @param pressed Whether it was pressed or not.
-         */
-        MouseButtonEventArgs(const MouseButton button, bool pressed)
-                : Button(button), Pressed(pressed) {}
-    };
-
-    /**
-     * Mouse moved event args.
-     */
-    struct MouseMovedEventArgs : EventArgs {
-        /**
-         * The current mouse position
-         */
-        Vector2 MousePosition;
-
-        /**
-         * The change in mouse position
-         */
-        Vector2 DeltaMousePosition;
-
-        /**
-         * Create a mouse moved event arg.
-         *
-         * @param mousePosition The current position.
-         * @param deltaMousePosition The delta position relative to the last position.
-         */
-        MouseMovedEventArgs(Vector2 mousePosition, Vector2 deltaMousePosition)
-                : MousePosition(mousePosition), DeltaMousePosition(deltaMousePosition) {}
-    };
-
-    struct MouseScrollChangedEventArgs : EventArgs {
-        /**
-         * Scroll wheel value.
-         */
-        int Value;
-
-        /**
-         * Create a scroll changed event argument.
-         *
-         * @param value Scroll value.
-         */
-        MouseScrollChangedEventArgs(int value)
-                : Value(value) {}
     };
 
     /**
@@ -179,8 +118,11 @@ namespace ngine::input {
         Vector2 _internalGetMousePosition();
 
 #if defined(PLATFORM_DESKTOP)
+
         static void _GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+
         static void _GLFWScrollCallback(GLFWwindow *window, double x, double y);
+
 #elif defined(PLATFORM_UWP)
         static Mouse *m_UWPMouse;
         static void _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
@@ -192,31 +134,151 @@ namespace ngine::input {
          * Create a new mouse input handler.
          */
         Mouse(Window *window);
+
     public:
         /**
-         * On mouse button pressed.
+         * Mouse button pressed event.
          */
-        Event<MouseButtonEventArgs> OnMouseButtonPressed;
+        class ButtonPressedEvent : public Event {
+        public:
+            /**
+             * The window this event was fired for.
+             */
+            ngine::Window *Window;
+
+            /**
+             * The button pressed.
+             */
+            MouseButton Button;
+
+            /**
+             * Create a button pressed event.
+             *
+             * @param sender The sender.
+             * @param window The window this was fired for.
+             * @param button The button pressed.
+             */
+            ButtonPressedEvent(Mouse *sender, ngine::Window *window, MouseButton button) : Window(window),
+                                                                                           Button(button),
+                                                                                           Event(sender) {}
+        };
 
         /**
-         * On mouse button released.
+         * Mouse button released event.
          */
-        Event<MouseButtonEventArgs> OnMouseButtonReleased;
+        class ButtonReleasedEvent : public Event {
+        public:
+            /**
+             * The window this event was fired for.
+             */
+            ngine::Window *Window;
+
+            /**
+             * The button released.
+             */
+            MouseButton Button;
+
+            /**
+             * Create a button pressed event.
+             *
+             * @param sender The sender.
+             * @param window The window this was fired for.
+             * @param button The button released.
+             */
+            ButtonReleasedEvent(Mouse *sender, ngine::Window *window, MouseButton button) : Window(window),
+                                                                                            Button(button),
+                                                                                            Event(sender) {}
+        };
 
         /**
-         * On mouse moved event.
+         * Mouse moved event.
          */
-        Event<MouseMovedEventArgs> OnMouseMoved;
+        class MovedEvent : public Event {
+        public:
+            /**
+             * The window this event was fired for.
+             */
+            ngine::Window *Window;
+
+            /**
+             * The mouse position.
+             */
+            Vector2 CurrentPosition;
+
+            /**
+             * The mouse delta position.
+             */
+            Vector2 DeltaPosition;
+
+            /**
+             * Create a button pressed event.
+             *
+             * @param sender The sender.
+             * @param window The window this was fired for.
+             * @param pos The current mouse position.
+             * @param delta The delta mouse position.
+             */
+            MovedEvent(Mouse *sender, ngine::Window *window, Vector2 pos, Vector2 delta) : Window(window),
+                                                                                           CurrentPosition(pos),
+                                                                                           DeltaPosition(delta),
+                                                                                           Event(sender) {}
+        };
 
         /**
-         * On mouse scroll X changed.
+         * Mouse wheel Y changed event.
          */
-        Event<MouseScrollChangedEventArgs> OnMouseScrollXChanged;
+        class WheelYChangedEvent : public Event {
+        public:
+            /**
+             * The window this event was fired for.
+             */
+            ngine::Window *Window;
+
+            /**
+             * The scroll value.
+             */
+            int Value;
+
+            /**
+             * Create a button pressed event.
+             *
+             * @param sender The sender.
+             * @param window The window this was fired for.
+             * @param pos The current mouse position.
+             * @param delta The delta mouse position.
+             */
+            WheelYChangedEvent(Mouse *sender, ngine::Window *window, float value) : Window(window),
+                                                                                    Value(value),
+                                                                                    Event(sender) {}
+        };
 
         /**
-         * On mouse scroll Y changed.
+         * Mouse wheel X changed event.
          */
-        Event<MouseScrollChangedEventArgs> OnMouseScrollYChanged;
+        class WheelXChangedEvent : public Event {
+        public:
+            /**
+             * The window this event was fired for.
+             */
+            ngine::Window *Window;
+
+            /**
+             * The scroll value.
+             */
+            int Value;
+
+            /**
+             * Create a button pressed event.
+             *
+             * @param sender The sender.
+             * @param window The window this was fired for.
+             * @param pos The current mouse position.
+             * @param delta The delta mouse position.
+             */
+            WheelXChangedEvent(Mouse *sender, ngine::Window *window, float value) : Window(window),
+                                                                                    Value(value),
+                                                                                    Event(sender) {}
+        };
 
         // TODO: CLEAN ORDER
 

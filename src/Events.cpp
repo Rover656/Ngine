@@ -21,29 +21,20 @@
 #include "Events.hpp"
 
 namespace ngine {
-    namespace newEvents {
-        EventMap EventDispatcher::m_events;
+    EventRouteMap EventDispatcher::m_routes;
 
-        void EventDispatcher::fire(const Event &e) {
-            auto range = m_events.equal_range(&typeid(e));
-            for (auto it = range.first; it != range.second; it++) {
-                it->second(e);
-            }
-        }
+    void EventDispatcher::_unbind(EventRouteMap::iterator it) {
+        m_routes.erase(it);
+    }
 
-        void EventDispatcher::_unbind(EventMap::iterator it) {
-            m_events.erase(it);
+    void EventRef::remove() {
+        if (!m_removed) {
+            m_removeFunction();
+            m_removed = true;
         }
+    }
 
-        void EventRef::remove() {
-            if (!m_removed) {
-                m_removeFunction();
-                m_removed = true;
-            }
-        }
-
-        EventRef::EventRef(std::function<void()> removeFunc) {
-            m_removeFunction = std::move(removeFunc);
-        }
+    EventRef::EventRef(std::function<void()> removeFunc) {
+        m_removeFunction = std::move(removeFunc);
     }
 }

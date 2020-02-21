@@ -143,12 +143,6 @@ namespace ngine {
             // Clear with clear color
             graphicsDevice->clear(ClearColor);
 
-            // Ensure coordinates are correct for OnDraw
-            m_renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
-
-            // OnDraw event
-            OnDraw(m_renderer);
-
             // Render scene
             if (m_currentScene != nullptr) {
                 m_currentScene->onRender(m_renderer);
@@ -213,7 +207,7 @@ namespace ngine {
 
             // Suspend if we haven't
             if (!m_suspended) {
-                OnSuspend();
+                EventDispatcher::fire(SuspendEvent(this));
                 m_suspended = true;
             }
 
@@ -222,7 +216,7 @@ namespace ngine {
         } else {
             // Resume if we had suspended
             if (m_suspended) {
-                OnResume();
+                EventDispatcher::fire(ResumeEvent(this));
                 m_suspended = false;
             }
 
@@ -272,9 +266,6 @@ namespace ngine {
                 // Run a single update
                 m_lag -= m_timestep;
 
-                // Run an update
-                OnUpdate();
-
                 // Update the current scene.
                 if (m_currentScene != nullptr) {
                     m_currentScene->update();
@@ -307,7 +298,7 @@ namespace ngine {
         m_renderTarget = nullptr;
 
         // Call the suspend event.
-        OnSuspend(); // TODO: Maybe remove use of events like this completely?
+        EventDispatcher::fire(SuspendEvent(this));
 
         // Cleanup
         cleanup();

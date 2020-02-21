@@ -166,24 +166,24 @@ namespace ngine::input {
     void Mouse::pollInputs() {
         // Mouse position events
         if (m_previousMouseState.Position != m_currentMouseState.Position) {
-            OnMouseMoved({m_currentMouseState.Position, m_currentMouseState.Position - m_previousMouseState.Position});
+            EventDispatcher::fire(MovedEvent(this, m_attachedWindow, m_currentMouseState.Position, m_currentMouseState.Position - m_previousMouseState.Position));
         }
 
         // Mouse button events
         for (auto i = 0; i < 3; i++) {
             if (isButtonPressed((MouseButton) i)) {
-                OnMouseButtonPressed({static_cast<MouseButton>(i), true});
+                EventDispatcher::fire(ButtonPressedEvent(this, m_attachedWindow, (MouseButton) i));
             } else if (isButtonReleased((MouseButton) i)) {
-                OnMouseButtonReleased({static_cast<MouseButton>(i), false});
+                EventDispatcher::fire(ButtonReleasedEvent(this, m_attachedWindow, (MouseButton) i));
             }
         }
 
         // Scroll wheel events
         if (m_currentMouseState.MouseWheelXDelta != m_previousMouseState.MouseWheelXDelta) {
-            OnMouseScrollXChanged({m_currentMouseState.MouseWheelXDelta});
+            EventDispatcher::fire(WheelXChangedEvent(this, m_attachedWindow, m_currentMouseState.MouseWheelXDelta));
         }
         if (m_currentMouseState.MouseWheelYDelta != m_previousMouseState.MouseWheelYDelta) {
-            OnMouseScrollYChanged({m_currentMouseState.MouseWheelYDelta});
+            EventDispatcher::fire(WheelYChangedEvent(this, m_attachedWindow, m_currentMouseState.MouseWheelYDelta));
         }
 
         // Update last frame state

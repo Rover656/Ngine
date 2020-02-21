@@ -34,7 +34,7 @@ namespace ngine {
     namespace graphics {
         class Renderer;
 
-        struct RenderTarget;
+        class RenderTarget;
 
         namespace API {
             class PlatformGraphicsAPI;

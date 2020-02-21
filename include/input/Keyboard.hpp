@@ -153,23 +153,6 @@ namespace ngine::input {
 #define KEY_MAX 348
 
     /**
-     * Key event args
-     */
-    struct KeyEventArgs : public EventArgs {
-        /**
-         * The key this event is fore
-         */
-        input::Key Key;
-
-        /**
-         * Create a key event argument.
-         *
-         * @param key The key changed.
-         */
-        KeyEventArgs(input::Key key) : Key(key) {}
-    };
-
-    /**
      * Keyboard input provider.
      *
      * @todo Need to have support for keymods.
@@ -178,6 +161,11 @@ namespace ngine::input {
     class NEAPI Keyboard {
         // Make window a friend so it can use our constructor
         friend class ngine::Window;
+
+        /**
+         * The window we are attached to.
+         */
+        Window *m_window;
 
         /**
          * Last frame's key state
@@ -206,7 +194,9 @@ namespace ngine::input {
         Key m_latestKeyPress = Key::KEY_NONE;
 
 #if defined(PLATFORM_DESKTOP)
+
         static void _GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+
 #elif defined(PLATFORM_UWP)
         static Keyboard * m_UWPKeyboard;
         static Key _keyFromVirtualKey(int key);
@@ -220,16 +210,57 @@ namespace ngine::input {
          * @param window The window.
          */
         Keyboard(Window *window);
+
     public:
         /**
-         * Key pressed.
+         * Event fired whenever a key is pressed.
          */
-        Event<KeyEventArgs> KeyPressed;
+        class KeyPressEvent : public Event {
+        public:
+            /**
+             * The window that fired this event
+             */
+            ngine::Window *Window;
+
+            /**
+             * The key this event is fired for.
+             */
+            input::Key Key;
+
+            /**
+             * Create a key press event
+             * @param sender The keyboard that fired this
+             * @param window The window the keyboard is attached to
+             * @param key The key that has been pressed
+             */
+            KeyPressEvent(Keyboard *sender, ngine::Window *window, input::Key key) : Window(window), Key(key),
+                                                                                     Event(sender) {}
+        };
 
         /**
-         * Key released.
+         * Event fired whenever a key is released.
          */
-        Event<KeyEventArgs> KeyReleased;
+        class KeyReleaseEvent : public Event {
+        public:
+            /**
+             * The window that fired this event
+             */
+            ngine::Window *Window;
+
+            /**
+             * The key this event is fired for.
+             */
+            input::Key Key;
+
+            /**
+             * Create a key release event
+             * @param sender The keyboard that fired this
+             * @param window The window the keyboard is attached to
+             * @param key The key that has been released
+             */
+            KeyReleaseEvent(Keyboard *sender, ngine::Window *window, input::Key key) : Window(window), Key(key),
+                                                                                     Event(sender) {}
+        };
 
         /**
          * Get the current window's keyboard input manager.

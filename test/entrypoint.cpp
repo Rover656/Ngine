@@ -159,6 +159,22 @@ public:
         getPhysicsWorld()->enableDebugDraw();
         getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
     }
+
+    void onRender(graphics::Renderer *renderer) override {
+        Scene::onRender(renderer);
+
+        // Setup coordinate mode
+        renderer->setCoordinateSystem(CoordinateSystem::Screen);
+
+        // Render debug stuffs
+        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
+        auto viewport = getGame()->getGameViewport();
+        ShapeRenderer::DrawRectangle(renderer, {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height}, Color::Blue, 0, {0.5f, 0.5f}, true, 5);
+
+        ShapeRenderer::DrawCircle(renderer, {150, 150}, 2, Color::Red);
+
+        getResourceManager()->getFont("Upheaval")->drawString(renderer, "Hello world.\nHow be you?", {150, 150}, 36, 2, Color::Orange);
+    }
 };
 
 class TestGame : public Game {
@@ -167,9 +183,16 @@ public:
 
     TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {
         // Hook events
-        OnDraw += new ClassMethodEventHandler<TestGame, graphics::Renderer *>(this, &TestGame::Draw);
-        OnSuspend += new ClassMethodEventHandler<TestGame>(this, &TestGame::Save);
-        OnResume += new ClassMethodEventHandler<TestGame>(this, &TestGame::Load);
+        EventDispatcher::bind<Game::SuspendEvent>(std::bind(&TestGame::Save, this, std::placeholders::_1), this);
+        EventDispatcher::bind<Game::ResumeEvent>(std::bind(&TestGame::Load, this, std::placeholders::_1), this);
+
+        EventDispatcher::bind<Mouse::ButtonPressedEvent>([] (const Mouse::ButtonPressedEvent &e) {
+            if (e.Button == MouseButton::Left) {
+                Console::Notice("DEBUG", "Left mouse button pressed.");
+            } else {
+                Console::Notice("DEBUG", "The left didnt do it!");
+            }
+        });
     }
 
     void initialize() override {
@@ -186,32 +209,14 @@ public:
         // Create and enable scene.
         m_scene = new NewTestScene(this);
         setScene(m_scene);
-
-        // TESTING NEW EVENTS
-        auto ref = newEvents::EventDispatcher::bind<newEvents::Event>([] (const newEvents::Event &e) {
-            Console::Notice("TEST", "Test pass");
-        });
-        newEvents::EventDispatcher::fire(newEvents::Event(this));
-        ref.remove();
-        newEvents::EventDispatcher::fire(newEvents::Event(this));
     }
 
-    void Save() {
+    void Save(const Game::SuspendEvent &e) {
         Console::Notice("TestGame", "The game would have saved here.");
     }
 
-    void Load() {
+    void Load(const Game::ResumeEvent &e) {
         Console::Notice("TestGame", "The game would have loaded here.");
-    }
-
-    void Draw(graphics::Renderer *renderer_) {
-        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
-        auto viewport = getGameViewport();
-        ShapeRenderer::DrawRectangle(renderer_, {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height}, Color::Blue, 0, {0.5f, 0.5f}, true, 5);
-
-        ShapeRenderer::DrawCircle(renderer_, {150, 150}, 2, Color::Red);
-
-        getResourceManager()->getFont("Upheaval")->drawString(renderer_, "Hello world.\nHow be you?", {150, 150}, 36, 2, Color::Orange);
     }
 };
 

@@ -173,6 +173,28 @@ namespace ngine {
         void _cleanup();
     public:
         /**
+         * The game suspend event fires whenever the game suspends.
+         */
+        class SuspendEvent : public Event {
+        public:
+            /**
+             * Create a new game suspend event.
+             */
+            SuspendEvent(Game *sender) : Event(sender) {}
+        };
+
+        /**
+         * The game resume event fires whenever the game resumes.
+         */
+        class ResumeEvent : public Event {
+        public:
+            /**
+             * Create a new game suspend event.
+             */
+            ResumeEvent(Game *sender) : Event(sender) {}
+        };
+
+        /**
          * Background clear color.
          */
         graphics::Color ClearColor = graphics::Color::Black;
@@ -181,30 +203,6 @@ namespace ngine {
          * Game config.
          */
         GameConfig Config;
-
-        /**
-         * On resume event.
-         * 
-         * @note This event should be used to load game data after suspension (i.e. being maximized).
-         */
-        Event<> OnResume;
-
-        /**
-         * On suspension event.
-         * 
-         * @note This event should be used to save game data. It may mean either the game is closing *or* the game is suspending (For example when the game is minimized).
-         */
-        Event<> OnSuspend;
-
-        /**
-         * On update event
-         */
-        Event<graphics::Renderer *> OnDraw;
-
-        /**
-         * On update event
-         */
-        Event<> OnUpdate;
 
         /**
          * Filter mode for scaling render target
