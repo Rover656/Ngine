@@ -46,34 +46,6 @@ namespace ngine {
         Event(void *sender) : Sender(sender) {}
     };
 
-    class BaseEventHook {
-    public:
-        void *Filter;
-
-        BaseEventHook(void *senderFilter) : Filter(senderFilter) {}
-
-        virtual ~BaseEventHook() = default;
-
-        virtual void invoke(const Event &e) = 0;
-    };
-
-    template<typename TargetEvent>
-    class EventHook : public BaseEventHook {
-        std::function<void(const TargetEvent &)> m_func;
-    public:
-        EventHook(std::function<void(const TargetEvent &)> fn, void *senderFilter)
-                : m_func(fn), BaseEventHook(senderFilter) {}
-
-        void invoke(const Event &e) {
-            m_func(static_cast<const TargetEvent &>(e));
-        }
-    };
-
-    /**
-     * Event reference map.
-     */
-    typedef std::multimap<const std::type_info *, std::shared_ptr<BaseEventHook>> EventRouteMap;
-
     class EventDispatcher {
     public:
         /**
@@ -88,7 +60,8 @@ namespace ngine {
         static EventRef bind(const std::function<void(const TargetEvent &e)> &fn, void *senderFilter = nullptr) {
             auto it = m_routes.emplace(&typeid(TargetEvent),
                                        std::static_pointer_cast<BaseEventHook>(
-                                               std::make_shared<EventHook<TargetEvent>>(fn, senderFilter)));
+            std::make_shared<EventHook < TargetEvent>>
+            (fn, senderFilter)));
             return EventRef(std::bind(_unbind, std::move(it)));
         }
 
@@ -97,7 +70,7 @@ namespace ngine {
          *
          * @param e Event to fire.
          */
-        template <typename EventType>
+        template<typename EventType>
         static void fire(const EventType &e) {
             auto range = m_routes.equal_range(&typeid(EventType));
             for (auto it = range.first; it != range.second; it++) {
@@ -107,6 +80,64 @@ namespace ngine {
         }
 
     private:
+        /**
+         * The base event hook helps us deal with tricky template stuff.
+         */
+        class BaseEventHook {
+        public:
+            /**
+             * The sender filter
+             */
+            void *Filter;
+
+            /**
+             * Create a new base event hook.
+             *
+             * @param senderFilter The sender filter
+             */
+            BaseEventHook(void *senderFilter) : Filter(senderFilter) {}
+
+            virtual ~BaseEventHook() = default;
+
+            /**
+             * Invoke the hook
+             *
+             * @param e Event fired.
+             */
+            virtual void invoke(const Event &e) = 0;
+        };
+
+        /**
+         * The actual main event hook, deals with calling the target.
+         *
+         * @tparam TargetEvent The event we aim for
+         */
+        template<typename TargetEvent>
+        class EventHook : public BaseEventHook {
+            std::function<void(const TargetEvent &)> m_func;
+        public:
+            /**
+             * Create a new event hook
+             *
+             * @param fn Function to be called
+             * @param senderFilter The sender filter
+             */
+            EventHook(std::function<void(const TargetEvent &)> fn, void *senderFilter)
+                    : m_func(fn), BaseEventHook(senderFilter) {}
+
+            /**
+             * Invoke the event hook and convert the parameter correctly.
+             */
+            void invoke(const Event &e) {
+                m_func(static_cast<const TargetEvent &>(e));
+            }
+        };
+
+        /**
+         * Event reference map.
+         */
+        typedef std::multimap<const std::type_info *, std::shared_ptr<BaseEventHook>> EventRouteMap;
+
         /**
          * The events map.
          */

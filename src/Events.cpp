@@ -21,7 +21,7 @@
 #include "Events.hpp"
 
 namespace ngine {
-    EventRouteMap EventDispatcher::m_routes;
+    EventDispatcher::EventRouteMap EventDispatcher::m_routes;
 
     void EventDispatcher::_unbind(EventRouteMap::iterator it) {
         m_routes.erase(it);
