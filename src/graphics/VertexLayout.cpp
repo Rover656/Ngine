@@ -28,7 +28,7 @@ namespace ngine::graphics {
             : m_API(graphicsDevice->getAPI()) {
         // Check buffers
         if (vertexBuffer->Type != BufferType::Vertex || (indexBuffer != nullptr && indexBuffer->Type != BufferType::Index) )
-            Console::Fail("VertexLayout", "Buffers are not correct type.");
+            Console::fail("VertexLayout", "Buffers are not correct type.");
 
         // Save buffers
         m_vertexBuffer = vertexBuffer;
@@ -45,7 +45,7 @@ namespace ngine::graphics {
 
     void VertexLayout::addElement(const VertexLayout::VertexElement &element) {
         if (m_locked)
-            Console::Fail("VertexLayout", "Cannot change layout once configured.");
+            Console::fail("VertexLayout", "Cannot change layout once configured.");
         m_elements.push_back(element);
     }
 

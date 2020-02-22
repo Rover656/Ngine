@@ -96,7 +96,7 @@ namespace ngine {
          * @param max The maximum value.
          * @return The clamped vector.
          */
-        static Vector2 Clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max);
+        static Vector2 clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max);
 
         /**
          * Find the dot (scalar) product between this and another vector.
@@ -113,7 +113,7 @@ namespace ngine {
          * @param b The seconds vector.
          * @return The dot (scalar) product.
          */
-        static float Dot(const Vector2 &a, const Vector2 &b);
+        static float dot(const Vector2 &a, const Vector2 &b);
 
         /**
          * Find the distance between this and another vector.
@@ -130,7 +130,7 @@ namespace ngine {
          * @param b The second vector.
          * @return The distance between the two vectors.
          */
-        static float Distance(const Vector2 &a, const Vector2 &b);
+        static float distance(const Vector2 &a, const Vector2 &b);
 
         /**
          * Find the magnitude of this vector
@@ -305,7 +305,7 @@ namespace ngine {
          * @param max The maximum value.
          * @return The clamped vector.
          */
-        static Vector3 Clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max);
+        static Vector3 clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max);
 
         /**
          * Find the dot (scalar) product between this and another vector.
@@ -322,7 +322,7 @@ namespace ngine {
          * @param b The seconds vector.
          * @return The dot (scalar) product.
          */
-        static float Dot(const Vector3 &a, const Vector3 &b);
+        static float dot(const Vector3 &a, const Vector3 &b);
 
         /**
          * Find the distance between this and another vector.
@@ -339,7 +339,7 @@ namespace ngine {
          * @param b The second vector.
          * @return The distance between the two vectors.
          */
-        static float Distance(const Vector3 &a, const Vector3 &b);
+        static float distance(const Vector3 &a, const Vector3 &b);
 
         /**
          * Find the magnitude of this vector
@@ -469,27 +469,27 @@ namespace ngine {
 
         static const Matrix Identity;
 
-        float Determinant() const;
+        float determinant() const;
 
-        static Matrix Orthographic(float left, float right, float bottom, float top, float near_, float far_);
+        static Matrix orthographic(float left, float right, float bottom, float top, float near_, float far_);
 
-        static Matrix Rotate(const Angle &rotation, const Vector3 &axis);
+        static Matrix rotate(const Angle &rotation, const Vector3 &axis);
 
-        static Matrix RotateX(const Angle &rotation);
+        static Matrix rotateX(const Angle &rotation);
 
-        static Matrix RotateY(const Angle &rotation);
+        static Matrix rotateY(const Angle &rotation);
 
-        static Matrix RotateZ(const Angle &rotation);
+        static Matrix rotateZ(const Angle &rotation);
 
-        static Matrix Scale(float x, float y, float z);
+        static Matrix scale(float x, float y, float z);
 
         std::vector<float> toFloatArray() const;
 
         float trace() const;
 
-        static Matrix Translate(Vector3 translation);
+        static Matrix translate(Vector3 translation);
 
-        static Matrix Translate(float x, float y, float z);
+        static Matrix translate(float x, float y, float z);
 
         Matrix transpose() const;
 

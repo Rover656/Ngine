@@ -70,7 +70,7 @@ namespace ngine::audio {
          * @param path The file to load sound from.
          * @return The loaded sound.
          */
-        static Sound *LoadSound(const filesystem::Path &path);
+        static Sound *loadSound(const filesystem::Path &path);
 
         /**
          * Load sound from wave data.
@@ -78,7 +78,7 @@ namespace ngine::audio {
          * @param wave Wave data to load sound with.
          * @return The loaded sound.
          */
-        static Sound *LoadSoundFromWave(Wave *wave);
+        static Sound *loadSoundFromWave(Wave *wave);
 
         /**
          * Pause sound.

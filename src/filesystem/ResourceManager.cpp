@@ -152,7 +152,7 @@ namespace ngine::filesystem {
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create font
-        auto fnt = graphics::Font::LoadTTFFont(m_graphicsDevice, inPath, baseSize);
+        auto fnt = graphics::Font::loadTTFFont(m_graphicsDevice, inPath, baseSize);
 
         // Check if it is valid
         if (fnt->isValid()) {
@@ -170,7 +170,7 @@ namespace ngine::filesystem {
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create music
-        auto mus = audio::Music::LoadMusic(inPath);
+        auto mus = audio::Music::loadMusic(inPath);
 
         // Check if it is valid
         if (mus->isValid()) {
@@ -188,7 +188,7 @@ namespace ngine::filesystem {
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create sound
-        auto snd = audio::Sound::LoadSound(inPath);
+        auto snd = audio::Sound::loadSound(inPath);
 
         // Check if it is valid
         if (snd->isValid()) {
@@ -206,7 +206,7 @@ namespace ngine::filesystem {
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create texture
-        auto tex = graphics::Texture2D::LoadTexture(m_graphicsDevice, inPath);
+        auto tex = graphics::Texture2D::loadTexture(m_graphicsDevice, inPath);
 
         // Check if it is valid.
         if (tex->isValid()) {

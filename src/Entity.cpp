@@ -46,9 +46,9 @@ namespace ngine {
             rotAxis.Z = -1;
 
         // Build modelview
-        m_modelView = Matrix::Translate({pos.X, pos.Y, 0})
-                      * Matrix::Rotate(rot, rotAxis)
-                      * Matrix::Scale(m_scale.X, m_scale.Y, 1);
+        m_modelView = Matrix::translate({pos.X, pos.Y, 0})
+                      * Matrix::rotate(rot, rotAxis)
+                      * Matrix::scale(m_scale.X, m_scale.Y, 1);
 
         // Mark as clean
         m_modelViewDirty = false;
@@ -95,7 +95,7 @@ namespace ngine {
     void Entity::initialize(Scene *scene) {
         // Check we aren't initialized already
         if (m_initialized)
-            Console::Fail("Entity", "Do not call initialize ever, unless you have to!");
+            Console::fail("Entity", "Do not call initialize ever, unless you have to!");
 
         // Mark as initialized
         m_initialized = true;
@@ -111,7 +111,7 @@ namespace ngine {
 
     void Entity::cleanup() {
         if (!m_initialized)
-            Console::Fail("Entity", "Cannot cleanup before initialization");
+            Console::fail("Entity", "Cannot cleanup before initialization");
         m_initialized = false;
     }
 
@@ -185,7 +185,7 @@ namespace ngine {
 
     void Entity::setScale(Vector2 scale) {
         if (m_physicsBody != nullptr) {
-            Console::Warn("Entity", "Scale was not set as scaling physics entities is not implemented.");
+            Console::warn("Entity", "Scale was not set as scaling physics entities is not implemented.");
         } else {
             m_scale = scale;
             m_modelViewDirty = true;
@@ -201,11 +201,11 @@ namespace ngine {
 
         // Check physics enabled in scene
         if (!m_scene->isPhysicsEnabled())
-            Console::Fail("Entity", "Scene does not have physics enabled!");
+            Console::fail("Entity", "Scene does not have physics enabled!");
 
         // Check body is a member of the scene's world
         if (body->getWorld() != m_scene->getPhysicsWorld())
-            Console::Fail("Entity", "Body must be a member of the scene's physics world!");
+            Console::fail("Entity", "Body must be a member of the scene's physics world!");
 
         // Delete current body if we have one
         if (m_physicsBody != nullptr) {
@@ -225,19 +225,19 @@ namespace ngine {
     void Entity::addComponent(const std::string &name, Component *component) {
         // Check we are initialized
         if (!m_initialized)
-            Console::Fail("Entity",
+            Console::fail("Entity",
                           "Cannot add components until initialized, use the initialize method to add components!");
 
         // Check that the component has no parent
         if (component->m_parent != nullptr)
-            Console::Fail("Entity", "Component already has a parent.");
+            Console::fail("Entity", "Component already has a parent.");
 
         // See if we already have this component
         for (const auto &c : m_components) {
             if (c.second == component)
-                Console::Fail("Entity", "Component is already a child of this entity.");
+                Console::fail("Entity", "Component is already a child of this entity.");
             if (c.first == name)
-                Console::Fail("Entity", "Component name has been used.");
+                Console::fail("Entity", "Component name has been used.");
         }
 
         // Add
@@ -249,7 +249,7 @@ namespace ngine {
 
     void Entity::removeComponent(const std::string &name) {
         if (m_components.find(name) == m_components.end())
-            Console::Fail("Entity", "Cannot find component.");
+            Console::fail("Entity", "Cannot find component.");
 
         // Get component pointer
         auto comp = m_components[name];
@@ -276,7 +276,7 @@ namespace ngine {
             }
         }
 
-        Console::Fail("Entity", "Cannot find component.");
+        Console::fail("Entity", "Cannot find component.");
     }
 
     Component *Entity::getComponent(const std::string &name) {
@@ -313,15 +313,15 @@ namespace ngine {
     void Entity::addChild(Entity *entity) {
         // Ensure the child has no parent
         if (entity->m_parent != nullptr)
-            Console::Fail("Entity", "Entity already has a parent!");
+            Console::fail("Entity", "Entity already has a parent!");
 
         // Check the child is not a member of a scene
         if (entity->m_scene != nullptr)
-            Console::Fail("Entity", "Entity is already a member of a scene.");
+            Console::fail("Entity", "Entity is already a member of a scene.");
 
         // Ensure the child is not us
         if (entity == this)
-            Console::Fail("Entity", "Cannot add an entity to itself!");
+            Console::fail("Entity", "Cannot add an entity to itself!");
 
         // Add to map
         m_children.push_back(entity);
@@ -338,7 +338,7 @@ namespace ngine {
     void Entity::removeChild(Entity *entity) {
         // Check we own this child.
         if (entity->m_parent != this)
-            Console::Fail("Entity", "Entity is not parented by me!");
+            Console::fail("Entity", "Entity is not parented by me!");
 
         // Remove
         m_children.erase(std::remove(m_children.begin(), m_children.end(), entity), m_children.end());
@@ -394,7 +394,7 @@ namespace ngine {
         if (currentCamera != nullptr)
             visibleInCamera = isVisibleInCamera(currentCamera);
 
-        // TODO: Camera flags??
+        // TODO: Camera flags, these will allow some entities to hide from certain cameras.
 
         // Update model view if dirty
         if (m_modelViewDirty || m_physicsBody != nullptr)

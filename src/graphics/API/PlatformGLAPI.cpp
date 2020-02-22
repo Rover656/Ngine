@@ -162,7 +162,7 @@ namespace ngine::graphics::API {
                         *glInternalFormat = GL_LUMINANCE;
                         *glFormat = GL_LUMINANCE;
                         *glType = GL_FLOAT;
-                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    } else Console::fail("PlatformGLAPI", "Format not supported.");
                     return;
                 case UNCOMPRESSED_R32G32B32:
                     // Requires OES_texture_float
@@ -178,7 +178,7 @@ namespace ngine::graphics::API {
                         *glInternalFormat = GL_RGBA;
                         *glFormat = GL_RGBA;
                         *glType = GL_FLOAT;
-                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    } else Console::fail("PlatformGLAPI", "Format not supported.");
                     return;
             }
         }
@@ -229,7 +229,7 @@ namespace ngine::graphics::API {
                         *glInternalFormat = GL_R32F;
                         *glFormat = GL_RED;
                         *glType = GL_FLOAT;
-                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    } else Console::fail("PlatformGLAPI", "Format not supported.");
                     return;
                 case UNCOMPRESSED_R32G32B32:
                     // Requires OES_texture_float
@@ -237,7 +237,7 @@ namespace ngine::graphics::API {
                         *glInternalFormat = GL_RGB32F;
                         *glFormat = GL_RGB;
                         *glType = GL_FLOAT;
-                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    } else Console::fail("PlatformGLAPI", "Format not supported.");
                     return;
                 case UNCOMPRESSED_R32G32B32A32:
                     // Requires OES_texture_float
@@ -245,7 +245,7 @@ namespace ngine::graphics::API {
                         *glInternalFormat = GL_RGBA32F;
                         *glFormat = GL_RGBA;
                         *glType = GL_FLOAT;
-                    } else Console::Fail("PlatformGLAPI", "Format not supported.");
+                    } else Console::fail("PlatformGLAPI", "Format not supported.");
                     return;
             }
         }
@@ -256,60 +256,60 @@ namespace ngine::graphics::API {
             case COMPRESSED_DXT1_RGB:
                 if (m_featureFlags[EXT_COMP_DXT])
                     *glInternalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_DXT1_RGBA:
                 if (m_featureFlags[EXT_COMP_DXT])
                     *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_DXT3_RGBA:
                 if (m_featureFlags[EXT_COMP_DXT])
                     *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_DXT5_RGBA:
                 if (m_featureFlags[EXT_COMP_DXT])
                     *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return;
             case COMPRESSED_ETC1_RGB:
                 if (m_featureFlags[EXT_COMP_ETC1])
                     *glInternalFormat = GL_ETC1_RGB8_OES;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
             case COMPRESSED_ETC2_RGB:
                 if (m_featureFlags[EXT_COMP_ETC2])
                     *glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
             case COMPRESSED_ETC2_EAC_RGBA:
                 if (m_featureFlags[EXT_COMP_ETC2])
                     *glInternalFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
             case COMPRESSED_PVRT_RGB:
                 if (m_featureFlags[EXT_COMP_PVRT])
                     *glInternalFormat = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires PowerVR GPU
             case COMPRESSED_PVRT_RGBA:
                 if (m_featureFlags[EXT_COMP_PVRT])
                     *glInternalFormat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires PowerVR GPU
             case COMPRESSED_ASTC_4x4_RGBA:
                 if (m_featureFlags[EXT_COMP_ASTC])
                     *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             case COMPRESSED_ASTC_8x8_RGBA:
                 if (m_featureFlags[EXT_COMP_ASTC])
                     *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
-                else Console::Fail("PlatformGLAPI", "Format not supported.");
+                else Console::fail("PlatformGLAPI", "Format not supported.");
                 return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
             default:
-                Console::Fail("PlatformGLAPI", "Format not supported.");
+                Console::fail("PlatformGLAPI", "Format not supported.");
                 return;
         }
     }
@@ -479,7 +479,7 @@ namespace ngine::graphics::API {
                         glUniform4i(loc, *ints, *(ints + 1), *(ints + 2), *(ints + 3));
                         break;
                     default:
-                        Console::Fail("PlatformGLAPI", "Invalid count for int type.");
+                        Console::fail("PlatformGLAPI", "Invalid count for int type.");
                 }
                 break;
             }
@@ -499,7 +499,7 @@ namespace ngine::graphics::API {
                         glUniform4ui(loc, *uints, *(uints + 1), *(uints + 2), *(uints + 3));
                         break;
                     default:
-                        Console::Fail("PlatformGLAPI", "Invalid count for uint type.");
+                        Console::fail("PlatformGLAPI", "Invalid count for uint type.");
                 }
                 break;
             }
@@ -524,14 +524,15 @@ namespace ngine::graphics::API {
                         break;
                     }
                     default:
-                        Console::Fail("PlatformGLAPI", "Invalid count for float type.");
+                        Console::fail("PlatformGLAPI", "Invalid count for float type.");
                 }
                 break;
             }
             case ShaderDataType::Matrix:
                 glUniformMatrix4fv(loc, count, GL_FALSE, (float*)data);
                 break;
-            default: Console::Fail("PlatformGLAPI", "Non simple passed to simple write.");
+            default:
+                Console::fail("PlatformGLAPI", "Non simple passed to simple write.");
         }
     }
 
@@ -545,7 +546,7 @@ namespace ngine::graphics::API {
         EGLint samples = 0;
         EGLint sampleBuffer = 0;
 
-        // TODO: Get window config.
+        // Enable MSAA x4 if enabled.
         if (graphicsDevice->getWindow()->getCreationConfig().MSAA_4X) {
 #if !defined(PLATFORM_UWP) // Seems to crash UWP, so don't
             samples = 4;
@@ -731,7 +732,7 @@ namespace ngine::graphics::API {
             throw std::runtime_error("Failed to create EGL context");
         }
 
-        // TODO: For other EGL platforms, initialize window surface
+        // DEV: For other EGL platforms, initialize window surface
 #endif
 #endif
 
@@ -763,13 +764,13 @@ namespace ngine::graphics::API {
 #if defined(GLFW)
             glfwTerminate();
 #endif
-            Console::Fail("PlatformGLAPI", "Failed to init GLAD.");
+            Console::fail("PlatformGLAPI", "Failed to init GLAD.");
         }
-        Console::Notice("PlatformGLAPI", "Successfully initialized GLAD.");
+        Console::notice("PlatformGLAPI", "Successfully initialized GLAD.");
 #endif
 
         // Broadcast GL version
-        Console::Notice("OpenGL", "%s", glGetString(GL_VERSION));
+        Console::notice("OpenGL", "%s", glGetString(GL_VERSION));
 
         // Determine if we're running GLES
 #if !defined(GLAD)
@@ -1118,7 +1119,7 @@ namespace ngine::graphics::API {
         // Check framebuffer status
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE) {
-            Console::Error("PlatformGLAPI", "Failed to create framebuffer.");
+            Console::error("PlatformGLAPI", "Failed to create framebuffer.");
 
             // Unbind
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1134,7 +1135,7 @@ namespace ngine::graphics::API {
             return false;
         }
 
-        Console::Notice("PlatformGLAPI", "Successfully created framebuffer with ID %i", renderTarget->ID[0]);
+        Console::notice("PlatformGLAPI", "Successfully created framebuffer with ID %i", renderTarget->ID[0]);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         return true;
@@ -1198,7 +1199,7 @@ namespace ngine::graphics::API {
         if (compiled != GL_TRUE) // error in compilation occurred
         {
             glDeleteShader(shader->ID);
-            Console::Fail("PlatformGLAPI", "Failed to compile shader.");
+            Console::fail("PlatformGLAPI", "Failed to compile shader.");
         }
     }
 
@@ -1236,7 +1237,7 @@ namespace ngine::graphics::API {
 
         if (linked != GL_TRUE) {
             glDeleteProgram(program->ID);
-            Console::Fail("PlatformGLAPI", "Failed to link shader program.");
+            Console::fail("PlatformGLAPI", "Failed to link shader program.");
             return;
         }
     }
@@ -1267,7 +1268,7 @@ namespace ngine::graphics::API {
     void PlatformGLAPI::bindBuffer(Buffer *buffer) {
         // Check not null
         if (buffer == nullptr)
-            Console::Fail("PlatformGLAPI", "Cannot bind null buffer.");
+            Console::fail("PlatformGLAPI", "Cannot bind null buffer.");
 
         // Bind buffer
         switch (buffer->Type) {
@@ -1283,7 +1284,7 @@ namespace ngine::graphics::API {
     void PlatformGLAPI::unbindBuffer(Buffer *buffer) {
         // Check not null
         if (buffer == nullptr)
-            Console::Fail("PlatformGLAPI", "Cannot unbind null buffer.");
+            Console::fail("PlatformGLAPI", "Cannot unbind null buffer.");
 
         // Bind buffer
         switch (buffer->Type) {

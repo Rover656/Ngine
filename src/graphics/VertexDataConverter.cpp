@@ -25,7 +25,7 @@
 #include <cmath>
 
 namespace ngine::graphics {
-    int VertexDataConverter::GetTriangleIndices(PrimitiveType currentType, int vertexCount, unsigned short **indices) {
+    int VertexDataConverter::getTriangleIndices(PrimitiveType currentType, int vertexCount, unsigned short **indices) {
         switch (currentType) {
             case PrimitiveType::TriangleFan: {
                 // Create array
@@ -58,7 +58,7 @@ namespace ngine::graphics {
                 return vertexCount / 4 * 6;
             }
             default:
-                Console::Fail("VertexDataTool", "Conversion cannot be completed.");
+                Console::fail("VertexDataTool", "Conversion cannot be completed.");
                 return 0;
         }
     }

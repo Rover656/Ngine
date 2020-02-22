@@ -74,9 +74,9 @@ namespace ngine {
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW
         if (!glfwInit()) {
-            Console::Fail("Window", "Failed to init GLFW.");
+            Console::fail("Window", "Failed to init GLFW.");
         }
-        Console::Notice("Window", "Initialized GLFW.");
+        Console::notice("Window", "Initialized GLFW.");
 
         // Set defaults
         glfwDefaultWindowHints();
@@ -138,7 +138,7 @@ namespace ngine {
 #if defined(PLATFORM_DESKTOP)
         // Set callback
         glfwSetErrorCallback([](int, const char *msg) {
-            Console::Error("GLFW", "%s", msg);
+            Console::error("GLFW", "%s", msg);
         });
 
         // Create window
@@ -148,10 +148,10 @@ namespace ngine {
         // If creation failed
         if (!m_GLFWWindow) {
             glfwTerminate();
-            Console::Fail("Window", "Failed to create window with GLFW.");
+            Console::fail("Window", "Failed to create window with GLFW.");
         }
 
-        Console::Notice("Window", "Successfully created GLFW window.");
+        Console::notice("Window", "Successfully created GLFW window.");
 
         // Save title
         m_windowTitle = config.Title;
@@ -194,7 +194,7 @@ namespace ngine {
         // Create Input APIs
         m_mouseInput = new input::Mouse(this);
         m_keyboardInput = new input::Keyboard(this);
-        Console::Notice("Window", "Successfully opened keyboard and mouse APIs.");
+        Console::notice("Window", "Successfully opened keyboard and mouse APIs.");
 
         // Apply any after-creation config
         _applyConfig(config);
@@ -402,7 +402,7 @@ namespace ngine {
 
             // Mark as open
             m_consoleAllocated = true;
-            Console::Notice("Window", "Allocated a console to the game window. Output logs forwarded.");
+            Console::notice("Window", "Allocated a console to the game window. Output logs forwarded.");
         } else if (!flag && m_consoleAllocated) {
             // Close our buffers
             m_consoleIn.close();
@@ -423,7 +423,7 @@ namespace ngine {
 
             // Mark as deallocated
             m_consoleAllocated = false;
-            Console::Notice("Window", "Deallocated the console from the game window. Output logs restored.");
+            Console::notice("Window", "Deallocated the console from the game window. Output logs restored.");
         }
 #endif
     }
@@ -509,7 +509,7 @@ namespace ngine {
         setEnableNativeConsole(false);
 
         // Inform of closure
-        Console::Notice("Window", "Closed window.");
+        Console::notice("Window", "Closed window.");
 
         // Unset width and height as the window is closed
         m_currentWidth = 0;

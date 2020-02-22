@@ -146,14 +146,14 @@ namespace ngine::graphics {
          *
          * @return The default font (set by you).
          */
-        static Font *GetDefaultFont();
+        static Font *getDefaultFont();
 
         /**
          * Set the default font.
          *
          * @param font The default font.
          */
-        static void SetDefaultFont(Font *font);
+        static void setDefaultFont(Font *font);
 
         /**
          * Get a character glyph index.
@@ -186,7 +186,7 @@ namespace ngine::graphics {
          * @param fontChars The list of characters to add into the atlas. Leave empty for standard alpha-numeric characters
          * @return The loaded font.
          */
-        static Font *LoadTTFFont(GraphicsDevice *graphicsDevice, const filesystem::Path &path, int baseSize = 36,
+        static Font *loadTTFFont(GraphicsDevice *graphicsDevice, const filesystem::Path &path, int baseSize = 36,
                                  std::vector<int> fontChars = std::vector<int>());
 
         /**

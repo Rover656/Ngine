@@ -239,7 +239,7 @@ namespace ngine::input {
         /**
          * Init Gamepad APIs.
          */
-        static void Init();
+        static void initialize();
 
         /**
          * Get the value for an axis.
@@ -248,7 +248,7 @@ namespace ngine::input {
          * @param axis Axis to get.
          * @return The axis value.
          */
-        static float GetAxisValue(GamepadNumber pad, GamepadAxis axis);
+        static float getAxisValue(GamepadNumber pad, GamepadAxis axis);
 
         /**
          * Test if a the gamepad is available.
@@ -256,7 +256,7 @@ namespace ngine::input {
          * @param pad Gamepad to check.
          * @return Whether the gamepad is available or not.
          */
-        static bool IsAvailable(GamepadNumber pad);
+        static bool isAvailable(GamepadNumber pad);
 
         /**
          * Test if a button is down.
@@ -265,7 +265,7 @@ namespace ngine::input {
          * @param button Button to check
          * @return Whether the button is down or not.
          */
-        static bool IsButtonDown(GamepadNumber pad, GamepadButton button);
+        static bool isButtonDown(GamepadNumber pad, GamepadButton button);
 
         /**
          * Test if a button was pressed this frame.
@@ -274,7 +274,7 @@ namespace ngine::input {
          * @param button Button to check.
          * @return Whether the button was pressed this frame.
          */
-        static bool IsButtonPressed(GamepadNumber pad, GamepadButton button);
+        static bool isButtonPressed(GamepadNumber pad, GamepadButton button);
 
         /**
          * Test if a button was released this frame.
@@ -283,12 +283,12 @@ namespace ngine::input {
          * @param button Button to check.
          * @return Whether the button was released this frame.
          */
-        static bool IsButtonReleased(GamepadNumber pad, GamepadButton button);
+        static bool isButtonReleased(GamepadNumber pad, GamepadButton button);
 
         /**
          * Poll inputs.
          */
-        static void PollInputs();
+        static void pollInputs();
     };
 }
 

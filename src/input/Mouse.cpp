@@ -123,7 +123,7 @@ namespace ngine::input {
 
 #endif
 
-    Mouse *Mouse::GetCurrent() {
+    Mouse *Mouse::getCurrent() {
         auto w = Window::GetCurrent();
         return w == nullptr ? nullptr : w->getMouse();
     }

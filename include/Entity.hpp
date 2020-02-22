@@ -226,22 +226,6 @@ namespace ngine {
          */
         void setRotation(float rotation);
 
-        // TODO: Work out how this works in Box2D, then implement accordingly
-//        /**
-//         * Get the rotational origin of the entity.
-//         *
-//         * @return The rotational origin.
-//         */
-//        Vector2 getOrigin();
-//
-//        /**
-//         * Set the rotational origin of the entity.
-//         *
-//         * @warning Cannot be set if a physics body is attached.
-//         * @param origin New origin.
-//         */
-//        void setOrigin(Vector2 origin);
-
         /**
          * Get the entity scale.
          *
@@ -257,8 +241,18 @@ namespace ngine {
          */
         void setScale(Vector2 scale);
 
+        /**
+         * Get the entity's physics body.
+         *
+         * @return The physics body or null if one is not present.
+         */
         physics::PhysicsBody *getPhysicsBody();
 
+        /**
+         * Set the entity's physics body.
+         *
+         * @param body The new physics body.
+         */
         void setPhysicsBody(physics::PhysicsBody *body);
 
         /**

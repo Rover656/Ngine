@@ -101,17 +101,17 @@ namespace ngine {
     void Scene::setCurrentCamera(const std::string &name) {
         if (m_cameras.find(name) != m_cameras.end())
             m_currentCamera = name;
-        else Console::Fail("Scene", "Camera does not exist.");
+        else Console::fail("Scene", "Camera does not exist.");
     }
 
     void Scene::addChild(Entity *entity) {
         // Ensure the child has no parent
         if (entity->m_parent != nullptr)
-            Console::Fail("Scene", "Entity already has a parent elsewhere.");
+            Console::fail("Scene", "Entity already has a parent elsewhere.");
 
         // Check the child is not a member of a scene
         if (entity->m_scene != nullptr)
-            Console::Fail("Scene", "Entity is already a member of a scene.");
+            Console::fail("Scene", "Entity is already a member of a scene.");
 
         // Add to our list.
         m_entities.push_back(entity);
@@ -123,7 +123,7 @@ namespace ngine {
     void Scene::removeChild(Entity *entity) {
         // Check we actually own the entity.
         if (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end())
-            Console::Fail("Scene", "This entity is not parented by this scene.");
+            Console::fail("Scene", "This entity is not parented by this scene.");
 
         // Remove
         m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());
@@ -204,7 +204,7 @@ namespace ngine {
         // Get the current camera
         auto cam = getCamera(camera);
         if (cam == nullptr)
-            Console::Fail("Scene", "Failed to get camera.");
+            Console::fail("Scene", "Failed to get camera.");
 
         // Get camera translation
         auto view = cam->getViewMatrix();

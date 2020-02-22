@@ -25,6 +25,8 @@
 
 #include "Math.hpp"
 
+// TODO: Merge into math library.
+
 namespace ngine {
     /*
      * A rectangle

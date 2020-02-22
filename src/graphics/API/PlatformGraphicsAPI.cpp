@@ -25,14 +25,14 @@
 namespace ngine::graphics::API {
     void PlatformGraphicsAPI::useVertexLayout(VertexLayout *layout) {
         if (m_currentLayout != nullptr)
-            Console::Fail("PlatformGraphicsAPI", "Cannot start another vertex layout without stopping the last one!");
+            Console::fail("PlatformGraphicsAPI", "Cannot start another vertex layout without stopping the last one!");
         _useVertexLayout(layout);
         m_currentLayout = layout;
     }
 
     void PlatformGraphicsAPI::stopVertexLayout(VertexLayout *layout) {
         if (m_currentLayout == nullptr)
-            Console::Fail("PlatformGraphicsAPI", "There is no vertex layout to stop.");
+            Console::fail("PlatformGraphicsAPI", "There is no vertex layout to stop.");
         _stopVertexLayout(layout);
         m_currentLayout = nullptr;
     }

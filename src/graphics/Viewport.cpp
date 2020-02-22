@@ -35,8 +35,8 @@ namespace ngine::graphics {
             m_height = height;
 
             // Recreate matrices
-            m_guiProjection = Matrix::Orthographic(x, width, height, y, -1, 1);
-            m_screenProjection = Matrix::Orthographic(x, width, y, height, -1, 1);
+            m_guiProjection = Matrix::orthographic(x, width, height, y, -1, 1);
+            m_screenProjection = Matrix::orthographic(x, width, y, height, -1, 1);
             // TODO: World3d... will we ever add this even?
         }
     }

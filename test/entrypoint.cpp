@@ -69,7 +69,7 @@ public:
     void update() override {
         Entity::update();
 
-        auto keyboard = Keyboard::GetCurrent();
+        auto keyboard = Keyboard::getCurrent();
         Vector2 vel;
 
         auto ms = 5;
@@ -144,7 +144,7 @@ public:
 
     void draw(Renderer *renderer, Matrix modelView) override {
         Entity::draw(renderer, modelView);
-        ShapeRenderer::DrawCircle(renderer, {0, 0}, 15, Color::Blue);
+        ShapeRenderer::drawCircle(renderer, {0, 0}, 15, Color::Blue);
     }
 };
 
@@ -169,9 +169,11 @@ public:
         // Render debug stuffs
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
         auto viewport = getGame()->getGameViewport();
-        ShapeRenderer::DrawRectangle(renderer, {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height}, Color::Blue, 0, {0.5f, 0.5f}, true, 5);
+        ShapeRenderer::drawRectangle(renderer,
+                                     {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height},
+                                     Color::Blue, 0, {0.5f, 0.5f}, true, 5);
 
-        ShapeRenderer::DrawCircle(renderer, {150, 150}, 2, Color::Red);
+        ShapeRenderer::drawCircle(renderer, {150, 150}, 2, Color::Red);
 
         getResourceManager()->getFont("Upheaval")->drawString(renderer, "Hello world.\nHow be you?", {150, 150}, 36, 2, Color::Orange);
     }
@@ -190,25 +192,25 @@ public:
 
         EventDispatcher::bind<Mouse::ButtonPressedEvent>([] (const Mouse::ButtonPressedEvent &e) {
             if (e.Button == MouseButton::Left) {
-                Console::Notice("DEBUG", "Left mouse button pressed.");
+                Console::notice("DEBUG", "Left mouse button pressed.");
             } else {
-                Console::Notice("DEBUG", "The left didnt do it!");
+                Console::notice("DEBUG", "The left didnt do it!");
             }
         }, getGameWindow()->getMouse());
 
         EventDispatcher::bind<Keyboard::KeyPressEvent>([] (const Keyboard::KeyPressEvent &e) {
-            Console::Notice("DEBUG", "A key was pressed.");
+            Console::notice("DEBUG", "A key was pressed.");
         }, getGameWindow()->getKeyboard());
 
         // Set exit key
-        Keyboard::GetCurrent()->setExitKey(KEY_ESCAPE);
+        Keyboard::getCurrent()->setExitKey(KEY_ESCAPE);
 
         // Load all content (using default resource manager config).
         auto resMan = getResourceManager();
         resMan->loadResources();
 
         // Load arial as default font
-        Font::SetDefaultFont(resMan->getFont("Upheaval"));
+        Font::setDefaultFont(resMan->getFont("Upheaval"));
 
         // Create and enable scene.
         m_scene = new NewTestScene(this);
@@ -216,17 +218,17 @@ public:
     }
 
     void Save(const Game::SuspendEvent &e) {
-        Console::Notice("TestGame", "The game would have saved here.");
+        Console::notice("TestGame", "The game would have saved here.");
     }
 
     void Load(const Game::ResumeEvent &e) {
-        Console::Notice("TestGame", "The game would have loaded here.");
+        Console::notice("TestGame", "The game would have loaded here.");
     }
 };
 
 NGINE_GAME_ENTRY {
     // Load icon (must remain in scope until NGINE_RUN_GAME happens)
-    graphics::Image icon(Path::GetExecutableDirectory() / "content" / "test_icon.png");
+    graphics::Image icon(Path::getExecutableDirectory() / "content" / "test_icon.png");
 
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
@@ -246,14 +248,12 @@ NGINE_GAME_ENTRY {
     //windowConfig.NativeDebugConsole = true;
 
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
-    windowConfig.TargetAPI = GraphicsAPI::OpenGL;
-    windowConfig.TargetAPIMajorVersion = 4;
-    windowConfig.TargetAPIMinorVersion = 6;
-
-    // TODO: OGLES 3.X doesn't work with GLFW...
-//    windowConfig.TargetAPI = GraphicsAPI::OpenGLES;
-//    windowConfig.TargetAPIMajorVersion = 3;
-//    windowConfig.TargetAPIMinorVersion = 1;
+//    windowConfig.TargetAPI = GraphicsAPI::OpenGL;
+//    windowConfig.TargetAPIMajorVersion = 4;
+//    windowConfig.TargetAPIMinorVersion = 6;
+    windowConfig.TargetAPI = GraphicsAPI::OpenGLES;
+    windowConfig.TargetAPIMajorVersion = 3;
+    windowConfig.TargetAPIMinorVersion = 1;
 #endif
 
     // Create game

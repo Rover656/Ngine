@@ -43,7 +43,7 @@ namespace ngine::audio {
         auto currentSubBufferIndex = buffer->FrameCursorPos/subBufferSizeInFrames;
 
         if (currentSubBufferIndex > 1) {
-            Console::Warn("AudioDevice", "Frame cursor position moved too far forward in audio stream.");
+            Console::warn("AudioDevice", "Frame cursor position moved too far forward in audio stream.");
             return 0;
         }
 
@@ -107,7 +107,7 @@ namespace ngine::audio {
     }
 
     void AudioDevice::_logCallback(ma_context *pContext, ma_device *pDevice, ma_uint32 logLevel, const char *msg) {
-        Console::Error("AudioDevice - miniaudio", std::string(msg));
+        Console::error("AudioDevice - miniaudio", std::string(msg));
     }
 
     void AudioDevice::_mixAudioFrames(float *framesOut, const float *framesIn, ma_uint32 frameCount,
@@ -139,7 +139,7 @@ namespace ngine::audio {
 
                 while(true) {
                     if (framesRead > frameCount) {
-                        Console::Warn("AudioDevice", "Mixed too many frames from audio buffer.");
+                        Console::warn("AudioDevice", "Mixed too many frames from audio buffer.");
                         break;
                     }
 
@@ -216,7 +216,7 @@ namespace ngine::audio {
         ma_mutex_unlock(&m_audioLock);
     }
 
-    void AudioDevice::CloseAudioBuffer(AudioBuffer *buffer) {
+    void AudioDevice::closeAudioBuffer(AudioBuffer *buffer) {
         if (!m_initialized) return;
         if (buffer != nullptr) {
             // Untrack buffer
@@ -228,7 +228,7 @@ namespace ngine::audio {
         }
     }
 
-    void AudioDevice::Close() {
+    void AudioDevice::close() {
         if (m_initialized) {
             m_initialized = false;
 
@@ -236,12 +236,12 @@ namespace ngine::audio {
             ma_device_uninit(&m_device);
             ma_context_uninit(&m_context);
 
-            Console::Notice("AudioDevice", "Audio device closed successfully.");
+            Console::notice("AudioDevice", "Audio device closed successfully.");
 
-        } else Console::Warn("AudioDevice", "Could not close audio device as it is not open.");
+        } else Console::warn("AudioDevice", "Could not close audio device as it is not open.");
     }
 
-    AudioBuffer *AudioDevice::InitAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sampleRate,
+    AudioBuffer *AudioDevice::initAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sampleRate,
                                               ma_uint32 bufferSizeInFrames, AudioBufferUsage usage) {
         if (!m_initialized) return nullptr;
         auto *buffer = new AudioBuffer();
@@ -249,7 +249,7 @@ namespace ngine::audio {
         buffer->Buffer = calloc(bufferSizeInFrames * channels * ma_get_bytes_per_sample(format), 1);
 
         if (buffer == nullptr || buffer->Buffer == nullptr) {
-            Console::Error("AudioDevice", "Failed to allocate memory for audio buffer.");
+            Console::error("AudioDevice", "Failed to allocate memory for audio buffer.");
             free(buffer->Buffer);
             delete buffer;
             return nullptr;
@@ -270,7 +270,7 @@ namespace ngine::audio {
 
         ma_result result = ma_pcm_converter_init(&dspConfig, &buffer->DSP);
         if (result != MA_SUCCESS) {
-            Console::Error("AudioDevice", "Failed to create data conversion pipeline.");
+            Console::error("AudioDevice", "Failed to create data conversion pipeline.");
             free(buffer->Buffer);
             delete buffer;
             return nullptr;
@@ -297,7 +297,7 @@ namespace ngine::audio {
     }
 
     AudioStream
-    AudioDevice::InitAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels) {
+    AudioDevice::initAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels) {
         AudioStream stream;
 
         stream.SampleRate = sampleRate;
@@ -312,17 +312,18 @@ namespace ngine::audio {
 
         if (subBufferSize < periodSize) subBufferSize = periodSize;
 
-        stream.Buffer = InitAudioBuffer(formatIn, stream.Channels, stream.SampleRate, subBufferSize*2, AudioBufferUsage::Stream);
+        stream.Buffer = initAudioBuffer(formatIn, stream.Channels, stream.SampleRate, subBufferSize * 2,
+                                        AudioBufferUsage::Stream);
         
         if (stream.Buffer != nullptr) {
             stream.Buffer->Looping = true; // Always loop streams
-            Console::Notice("AudioDevice", "Audio stream loaded successfully.");
-        } else Console::Error("AudioDevice", "Failed to create audio buffer.");
+            Console::notice("AudioDevice", "Audio stream loaded successfully.");
+        } else Console::error("AudioDevice", "Failed to create audio buffer.");
 
         return stream;
     }
 
-    void AudioDevice::Initialize() {
+    void AudioDevice::initialize() {
         // Cant run twice
         if (m_initialized) return;
 
@@ -332,7 +333,7 @@ namespace ngine::audio {
 
         ma_result result = ma_context_init(nullptr, 0, &contextConfig, &m_context);
         if (result != MA_SUCCESS) {
-            Console::Error("AudioDevice", "Failed to initialize audio context.");
+            Console::error("AudioDevice", "Failed to initialize audio context.");
             return;
         }
 
@@ -350,7 +351,7 @@ namespace ngine::audio {
 
         result = ma_device_init(&m_context, &config, &m_device);
         if (result != MA_SUCCESS) {
-            Console::Error("AudioDevice", "Failed to initialize audio playback device.");
+            Console::error("AudioDevice", "Failed to initialize audio playback device.");
             ma_context_uninit(&m_context);
             return;
         }
@@ -358,7 +359,7 @@ namespace ngine::audio {
         // Keep device running all the time.
         result = ma_device_start(&m_device);
         if (result != MA_SUCCESS) {
-            Console::Error("AudioDevice", "Failed to start audio playback device.");
+            Console::error("AudioDevice", "Failed to start audio playback device.");
             ma_device_uninit(&m_device);
             ma_context_uninit(&m_context);
             return;
@@ -367,31 +368,32 @@ namespace ngine::audio {
         // Thread mixer
         result = ma_mutex_init(&m_context, &m_audioLock);
         if (result != MA_SUCCESS) {
-            Console::Error("AudioDevice", "Failed to create mutex for audio mixing.");
+            Console::error("AudioDevice", "Failed to create mutex for audio mixing.");
             ma_device_uninit(&m_device);
             ma_context_uninit(&m_context);
             return;
         }
 
-        Console::Notice("AudioDevice", "Audio device initialized successfully!");
-        Console::Notice("AudioDevice", "Audio backend: miniaudio/%s", ma_get_backend_name(m_context.backend));
-        Console::Notice("AudioDevice", "Audio format: %s -> %s", ma_get_format_name(m_device.playback.format), ma_get_format_name(m_device.playback.internalFormat));
+        Console::notice("AudioDevice", "Audio device initialized successfully!");
+        Console::notice("AudioDevice", "Audio backend: miniaudio/%s", ma_get_backend_name(m_context.backend));
+        Console::notice("AudioDevice", "Audio format: %s -> %s", ma_get_format_name(m_device.playback.format),
+                        ma_get_format_name(m_device.playback.internalFormat));
 
         m_initialized = true;
     }
 
-    bool AudioDevice::IsReady() {
+    bool AudioDevice::isReady() {
         return m_initialized;
     }
 
-    void AudioDevice::SetMasterVolume(float vol) {
+    void AudioDevice::setMasterVolume(float vol) {
         m_masterVolume = vol;
         if (m_masterVolume < 0.0f) m_masterVolume = 0.0f;
         if (m_masterVolume > 1.0f) m_masterVolume = 1.0f;
     }
 
-    void AudioDevice::Update() {
+    void AudioDevice::update() {
         // We update here so we can add any future stuff
-        Music::Update();
+        Music::update();
     }
 }

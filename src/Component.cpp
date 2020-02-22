@@ -38,7 +38,7 @@ namespace ngine {
     void Component::initialize(Entity *parent) {
         // Check we aren't already initialized.
         if (m_initialized)
-            Console::Fail("Component", "Do not call initialize ever, unless you have to!");
+            Console::fail("Component", "Do not call initialize ever, unless you have to!");
 
         // Mark as initialized
         m_initialized = true;

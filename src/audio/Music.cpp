@@ -57,7 +57,7 @@ namespace ngine::audio {
         return CTXData != nullptr;
     }
 
-    Music *Music::LoadMusic(const filesystem::Path &path) {
+    Music *Music::loadMusic(const filesystem::Path &path) {
         auto music = new Music();
         bool loaded = false;
 
@@ -70,7 +70,7 @@ namespace ngine::audio {
             if (result > 0) {
                 music->CTXType = MusicContextType::MP3;
 
-                music->Stream = AudioDevice::InitAudioStream(ctxMp3->sampleRate, 32, ctxMp3->channels);
+                music->Stream = AudioDevice::initAudioStream(ctxMp3->sampleRate, 32, ctxMp3->channels);
                 music->SampleCount = drmp3_get_pcm_frame_count(ctxMp3) * ctxMp3->channels;
                 music->LoopCount = 0;
                 loaded = true;
@@ -85,7 +85,7 @@ namespace ngine::audio {
                 auto ctxOgg = (stb_vorbis *)music->CTXData;
 
                 // OGG bit rate defaults to 16 bit, its enough for this compressed format
-                music->Stream = AudioDevice::InitAudioStream(info.sample_rate, 16, info.channels);
+                music->Stream = AudioDevice::initAudioStream(info.sample_rate, 16, info.channels);
                 music->SampleCount = (unsigned int)stb_vorbis_stream_length_in_samples(ctxOgg)*info.channels;
                 music->LoopCount = 0;
                 loaded = true;
@@ -97,7 +97,8 @@ namespace ngine::audio {
                 music->CTXType = MusicContextType::FLAC;
                 auto ctxFlac = (drflac *)music->CTXData;
 
-                music->Stream = AudioDevice::InitAudioStream(ctxFlac->sampleRate, ctxFlac->bitsPerSample, ctxFlac->channels);
+                music->Stream = AudioDevice::initAudioStream(ctxFlac->sampleRate, ctxFlac->bitsPerSample,
+                                                             ctxFlac->channels);
                 music->SampleCount = (unsigned int)ctxFlac->totalSampleCount;
                 music->LoopCount = 0;
                 loaded = true;
@@ -123,10 +124,10 @@ namespace ngine::audio {
             music->CTXData = nullptr;
             delete music;
 
-            Console::Warn("Music", "Could not load music file.");
+            Console::warn("Music", "Could not load music file.");
             return nullptr;
         } else {
-            Console::Notice("Music", "Successfully loaded music file.");
+            Console::notice("Music", "Successfully loaded music file.");
             return music;
         }
     }
@@ -180,7 +181,7 @@ namespace ngine::audio {
     }
 
     void Music::free() {
-        AudioDevice::CloseAudioBuffer(Stream.Buffer);
+        AudioDevice::closeAudioBuffer(Stream.Buffer);
 
         switch(CTXType) {
             case MusicContextType::MP3: {
@@ -198,10 +199,10 @@ namespace ngine::audio {
         }
 
         CTXData = nullptr;
-        Console::Notice("Music", "Unloaded music stream.");
+        Console::notice("Music", "Unloaded music stream.");
     }
 
-    void Music::Update() {
+    void Music::update() {
         for (auto mus : m_activeMusic) {
             mus->_update();
         }

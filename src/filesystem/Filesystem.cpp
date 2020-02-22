@@ -110,10 +110,10 @@ namespace ngine::filesystem {
         if (isAbsolute()) return *this;
 
         // Get relative to executable dir
-        return GetExecutableDirectory() / *this;
+        return getExecutableDirectory() / *this;
     }
 
-    Path Path::GetAppDataDirectory() {
+    Path Path::getAppDataDirectory() {
 #if defined(PLATFORM_DESKTOP)
 #if defined(_WIN32)
         // %APPDATA%
@@ -135,7 +135,7 @@ namespace ngine::filesystem {
 #endif
     }
 
-    Path Path::GetExecutableDirectory() {
+    Path Path::getExecutableDirectory() {
 #if defined(PLATFORM_UWP)
         auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
         std::wstring tmp(installed->Begin());
@@ -143,11 +143,11 @@ namespace ngine::filesystem {
 
         return installedPath;
 #else
-        return GetExecutablePath().getParent();
+        return getExecutablePath().getParent();
 #endif
     }
 
-    Path Path::GetExecutablePath() {
+    Path Path::getExecutablePath() {
         // https://github.com/cginternals/cpplocate/blob/master/source/liblocate/source/liblocate.c#L39
         // I trust this works as there are no issues about it...
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
@@ -361,7 +361,7 @@ namespace ngine::filesystem {
         return m_internalPath;
     }
 
-    Path Path::GetWorkingDirectory() {
+    Path Path::getWorkingDirectory() {
 #if defined(_WIN32)
         // Create buffer
         DWORD bufferLen = MAX_PATH;
@@ -412,11 +412,11 @@ namespace ngine::filesystem {
         return false;
     }
 
-    Path Path::Join(const std::string &pathA, const std::string &pathB) {
+    Path Path::join(const std::string &pathA, const std::string &pathB) {
         return Path(pathA, pathB);
     }
 
-    Path Path::Join(const Path &pathA, const Path &pathB) {
+    Path Path::join(const Path &pathA, const Path &pathB) {
         return Path(pathA, pathB);
     }
 
@@ -650,7 +650,7 @@ namespace ngine::filesystem {
         m_internalOpenMode = FileOpenMode::Closed;
     }
 
-    File File::CreateNewFile(const Path &path, bool leaveOpen, bool binary) {
+    File File::createNewFile(const Path &path, bool leaveOpen, bool binary) {
         File f(path);
         f.open(FileOpenMode::Write, binary);
         if (!leaveOpen)
@@ -683,7 +683,7 @@ namespace ngine::filesystem {
         return m_internalOpenMode;
     }
 
-    File File::GetFile(const Path &path) {
+    File File::getFile(const Path &path) {
         return File(path);
     }
 
@@ -693,7 +693,7 @@ namespace ngine::filesystem {
 
     FILE *File::getFileHandle() const {
         if (!isOpen()) {
-            Console::Warn("File", "Cannot get handle of file that is not open.");
+            Console::warn("File", "Cannot get handle of file that is not open.");
             return nullptr;
         }
 
@@ -702,7 +702,7 @@ namespace ngine::filesystem {
 
     int File::getSize() const {
         if (!isOpen()) {
-            Console::Warn("File", "Cannot determine size of file that is not open.");
+            Console::warn("File", "Cannot determine size of file that is not open.");
             return 0;
         }
 
@@ -764,7 +764,7 @@ namespace ngine::filesystem {
                 m_internalOpenMode = mode;
                 break;
             default:
-                Console::Warn("File", "File mode not supported.");
+                Console::warn("File", "File mode not supported.");
 
                 // Set mode
                 m_internalOpenMode = FileOpenMode::Closed;
@@ -915,7 +915,7 @@ namespace ngine::filesystem {
         return success;
     }
 
-    std::pair<bool, Directory> Directory::Create(const Path &path) {
+    std::pair<bool, Directory> Directory::create(const Path &path) {
         auto dir = Directory(path);
         return {dir.create(), dir};
     }
@@ -997,7 +997,7 @@ namespace ngine::filesystem {
     }
 
     Directory Directory::getAppDataDirectory() {
-        return Directory(Path::GetAppDataDirectory());
+        return Directory(Path::getAppDataDirectory());
     }
 
     std::vector<Directory> Directory::getDirectories() const {
@@ -1130,12 +1130,12 @@ namespace ngine::filesystem {
         return Directory(path);
     }
 
-    Directory Directory::GetExecutableDirectory() {
-        return Directory(Path::GetExecutableDirectory());
+    Directory Directory::getExecutableDirectory() {
+        return Directory(Path::getExecutableDirectory());
     }
 
-    Directory Directory::GetWorkingDirectory() {
-        return Directory(Path::GetWorkingDirectory());
+    Directory Directory::getWorkingDirectory() {
+        return Directory(Path::getWorkingDirectory());
     }
 
     // Private Fields

@@ -265,9 +265,10 @@ namespace ngine::input {
         /**
          * Get the current window's keyboard input manager.
          *
+         * @deprecated This will be removed before Ngine 1.0
          * @return The current window's keyboard input manager.
          */
-        static Keyboard *GetCurrent();
+        static Keyboard *getCurrent();
 
         /**
          * Get the latest keypress.

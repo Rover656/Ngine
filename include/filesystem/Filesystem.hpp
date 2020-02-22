@@ -100,14 +100,14 @@ namespace ngine::filesystem {
          * @note UWP: Will return the correct path, with no worry of overwriting data.
          * @return The app data directory,
          */
-        static Path GetAppDataDirectory();
+        static Path getAppDataDirectory();
 
         /**
          * Get the executable directory.
          *
          * @return The executable directory.
          */
-        static Path GetExecutableDirectory();
+        static Path getExecutableDirectory();
 
         /**
          * Get the executable path.
@@ -115,7 +115,7 @@ namespace ngine::filesystem {
          * @throws std::runtime_error when UWP. Cannot get a path to the EXE.
          * @return The path to the executable file.
          */
-        static Path GetExecutablePath();
+        static Path getExecutablePath();
 
         /**
          * Get the file extension if present.
@@ -172,7 +172,7 @@ namespace ngine::filesystem {
          *
          * @return The working directory (path the game was launched from).
          */
-        static Path GetWorkingDirectory();
+        static Path getWorkingDirectory();
 
         /**
          * Whether or not the path is absolute.
@@ -188,7 +188,7 @@ namespace ngine::filesystem {
          * @param pathB Path part B.
          * @return The joined path.
          */
-        static Path Join(const std::string &pathA, const std::string &pathB);
+        static Path join(const std::string &pathA, const std::string &pathB);
 
         /**
          * Combine two parts of a path.
@@ -197,7 +197,7 @@ namespace ngine::filesystem {
          * @param pathB Path part B.
          * @return The joined path.
          */
-        static Path Join(const Path &pathA, const Path &pathB);
+        static Path join(const Path &pathA, const Path &pathB);
 
         /**
          * Whether the path is valid or not.
@@ -207,22 +207,22 @@ namespace ngine::filesystem {
         bool isValid() const;
 
         /*
-         * Combine to paths
+         * Combine two paths
          */
         friend NEAPI Path operator/(const std::string &path, const std::string &pathB);
 
         /*
-         * Combine to paths
+         * Combine two paths
          */
         friend NEAPI Path operator/(const Path &path, const Path &pathB);
 
         /*
-         * Combine to paths
+         * Combine two paths
          */
         friend NEAPI Path operator/(const std::string &path, const Path &pathB);
 
         /*
-         * Combine to paths
+         * Combine two paths
          */
         friend NEAPI Path operator/(const Path &path, const std::string &pathB);
 
@@ -439,7 +439,7 @@ namespace ngine::filesystem {
          * @param binary Whether or not this is a binary file.
          * @return The file.
          */
-        static File CreateNewFile(const Path &path, bool leaveOpen = false, bool binary = true);
+        static File createNewFile(const Path &path, bool leaveOpen = false, bool binary = true);
 
         /**
          * Delete this object from the filesystem.
@@ -468,7 +468,7 @@ namespace ngine::filesystem {
          * @param path The file path.
          * @return The file from the path.
          */
-        static File GetFile(const Path &path);
+        static File getFile(const Path &path);
 
         /**
          * Get the file extension.
@@ -576,7 +576,7 @@ namespace ngine::filesystem {
          * @param path The path to the directory to create.
          * @return A pair, first is the success, second is the Directory reference.
          */
-        static std::pair<bool, Directory> Create(const Path &path);
+        static std::pair<bool, Directory> create(const Path &path);
 
         /**
          * Delete this object from the filesystem.
@@ -654,7 +654,7 @@ namespace ngine::filesystem {
          * @return The executable directory.
          * @sa ngine::filesystem::Path::GetExecutableDirectory().
          */
-        static Directory GetExecutableDirectory();
+        static Directory getExecutableDirectory();
 
         /**
          * Get the working directory.
@@ -662,7 +662,7 @@ namespace ngine::filesystem {
          * @return The working directory (path the game was launched from).
          * @sa ngine::filesystem::Path::GetWorkingDirectory().
          */
-        static Directory GetWorkingDirectory();
+        static Directory getWorkingDirectory();
 
     private:
         /**

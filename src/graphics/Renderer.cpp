@@ -28,7 +28,7 @@ namespace ngine::graphics {
     void Renderer::_addTriangles(Vertex *vertices, int count, bool translate) {
         // Check array size
         if (count > MAX_TRIANGLE_VERTICES)
-            Console::Fail("Renderer", "Too many vertices for one batch.");
+            Console::fail("Renderer", "Too many vertices for one batch.");
 
         // Check if the batch will be full
         if (m_vertexCount + count >= MAX_TRIANGLE_VERTICES || m_indexCount + count >= MAX_TRIANGLE_VERTICES)
@@ -56,7 +56,7 @@ namespace ngine::graphics {
                                         bool translate) {
         // Check array sizes
         if (vCount > MAX_TRIANGLE_VERTICES || iCount > MAX_TRIANGLE_VERTICES) {
-            Console::Fail("Renderer", "Too many vertices and/or indices for one batch.");
+            Console::fail("Renderer", "Too many vertices and/or indices for one batch.");
         }
 
         // Check if the batch will be full
@@ -98,7 +98,7 @@ namespace ngine::graphics {
         // Write null data
         m_IBO->write<unsigned short>(nullptr, MAX_TRIANGLE_VERTICES);
 
-        // Create vertex layout TODO: Tidy API a little
+        // Create vertex layout
         m_layout = new VertexLayout(m_graphicsDevice, m_VBO, m_IBO);
         m_layout->addElement({
                                      "", // DX
@@ -136,7 +136,10 @@ namespace ngine::graphics {
         auto minor = window->getContextAPIMinorVersion();
         switch (window->getContextAPI()) {
             case GraphicsAPI::OpenGL:
-                if (major >= 3) {
+                if (major == 3 && minor < 3) {
+                    vSrc = GL3X_V_SHADER;
+                    fSrc = GL3X_F_SHADER;
+                } else if (major > 3 || (major == 3 && minor > 3)) {
                     vSrc = GL33_V_SHADER;
                     fSrc = GL33_F_SHADER;
                 }
@@ -146,8 +149,8 @@ namespace ngine::graphics {
                     vSrc = GLES2_V_SHADER;
                     fSrc = GLES2_F_SHADER;
                 } else if (major == 3) {
-                    vSrc = GL33_V_SHADER;
-                    fSrc = GL33_F_SHADER;
+                    vSrc = GLES3_V_SHADER;
+                    fSrc = GLES3_F_SHADER;
                 }
                 break;
             case GraphicsAPI::DirectX:
@@ -155,7 +158,7 @@ namespace ngine::graphics {
         }
 
         if (vSrc == nullptr || fSrc == nullptr)
-            Console::Fail("Renderer", "Shader not available for current graphics API.");
+            Console::fail("Renderer", "Shader not available for current graphics API.");
 
         // Create shader
         auto vShader = new Shader(m_graphicsDevice, ShaderType::Vertex, vSrc);
@@ -231,7 +234,7 @@ namespace ngine::graphics {
 
     void Renderer::beginVertices(PrimitiveType type) {
         if (m_buildingVertices)
-            Console::Fail("Renderer", "Cannot begin pushing vertices until last vertices have been finished.");
+            Console::fail("Renderer", "Cannot begin pushing vertices until last vertices have been finished.");
         m_buildingVertices = true;
         m_builtType = type;
     }
@@ -241,7 +244,7 @@ namespace ngine::graphics {
         if (m_builtType != PrimitiveType::Triangles) {
             // Convert
             unsigned short *indices;
-            auto count = VertexDataConverter::GetTriangleIndices(m_builtType, m_builtVertexCount, &indices);
+            auto count = VertexDataConverter::getTriangleIndices(m_builtType, m_builtVertexCount, &indices);
 
             // Push
             _addIndexedTriangles(m_builtVertices, m_builtVertexCount, indices, count);
@@ -328,11 +331,11 @@ namespace ngine::graphics {
                                        ShaderProgramState *state_) {
         // Check buffer types
         if (VBO->Type != BufferType::Vertex || (IBO != nullptr && IBO->Type != BufferType::Index))
-            Console::Fail("Renderer", "Incorrect buffers provided to RenderBufferIndexed");
+            Console::fail("Renderer", "Incorrect buffers provided to RenderBufferIndexed");
 
         // Check viewport
         if (viewport == nullptr)
-            Console::Fail("Renderer", "Viewport cannot be null!");
+            Console::fail("Renderer", "Viewport cannot be null!");
 
         // Get graphics API
         auto api = m_graphicsDevice->getAPI();
@@ -343,7 +346,7 @@ namespace ngine::graphics {
         // Set predefined uniforms (only if they are on the lowest level, i.e. not nested inside of another structure).
         auto MVP = viewport->getProjection(coordSys) * m_currentModelView;
         state_->setUniform("NGINE_MATRIX_MVP",
-                           MVP.toFloatArray().data()); // TODO: Option for how the data is aligned so DX11 and OpenGL don't argue.
+                           MVP.toFloatArray().data());
         int texUnit = 0;
         state_->setUniform("NGINE_TEXTURE", &texUnit);
 
@@ -378,7 +381,7 @@ namespace ngine::graphics {
     void Renderer::pushMatrix() {
         // Check limits
         if (m_matrixStackCounter + 1 >= MATRIX_STACK_SIZE)
-            Console::Fail("Renderer", "Matrix stack overflow.");
+            Console::fail("Renderer", "Matrix stack overflow.");
 
         // Increase stack counter and write current matrix to it.
         m_matrixStackCounter++;
@@ -402,15 +405,15 @@ namespace ngine::graphics {
     }
 
     void Renderer::translate(const Vector3 &translation) {
-        multiplyMatrix(Matrix::Translate(translation));
+        multiplyMatrix(Matrix::translate(translation));
     }
 
     void Renderer::rotate(const Angle &rotation, const Vector3 &axis) {
-        multiplyMatrix(Matrix::Rotate(rotation, axis));
+        multiplyMatrix(Matrix::rotate(rotation, axis));
     }
 
     void Renderer::scale(const Vector3 &scale) {
-        multiplyMatrix(Matrix::Scale(scale.X, scale.Y, scale.Z));
+        multiplyMatrix(Matrix::scale(scale.X, scale.Y, scale.Z));
     }
 
     bool Renderer::willFit(PrimitiveType type, int elements) {

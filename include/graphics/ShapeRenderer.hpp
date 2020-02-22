@@ -72,7 +72,7 @@ namespace ngine::graphics {
          * @param color Line color.
          * @param thickness The line thickness in pixels.
          */
-        static void DrawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness = 1);
+        static void drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness = 1);
 
         /**
          * Draw a circle
@@ -84,7 +84,7 @@ namespace ngine::graphics {
          * @param outline Whether or not this should be an outline.
          * @param lineThickness The thickness of the line (if drawing an outline).
          */
-        static void DrawCircle(Renderer *renderer, Vector2 center, float radius, Color color, bool outline = false,
+        static void drawCircle(Renderer *renderer, Vector2 center, float radius, Color color, bool outline = false,
                                float lineThickness = 1);
 
         /**
@@ -101,7 +101,7 @@ namespace ngine::graphics {
          * @param lineThickness The line thickness for the outline.
          */
         static void
-        DrawRectangle(Renderer *renderer, Vector2 position, float width, float height, Color color, Angle rotation = 0,
+        drawRectangle(Renderer *renderer, Vector2 position, float width, float height, Color color, Angle rotation = 0,
                       Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         /**
@@ -115,7 +115,7 @@ namespace ngine::graphics {
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void DrawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation = 0,
+        static void drawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation = 0,
                                   Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         /**
@@ -130,7 +130,7 @@ namespace ngine::graphics {
          * @param lineThickness The line thickness for the outline.
          */
         static void
-        DrawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color, Angle rotation = 0,
+        drawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color, Angle rotation = 0,
                      Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
 
         /**
@@ -146,7 +146,8 @@ namespace ngine::graphics {
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void DrawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color, Angle rotation = 0, Vector2 origin = {0, 0}, bool outline = false, float lineThickness = 1);
+        static void drawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color, Angle rotation = 0, Vector2 origin = {
+                0, 0}, bool outline = false, float lineThickness = 1);
         
         // TODO: Drawing circle sectors etc.
     };

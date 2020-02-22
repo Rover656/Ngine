@@ -144,7 +144,7 @@ namespace ngine::audio {
          * @param path The music file to be loaded.
          * @return The Music.
          */
-        static Music *LoadMusic(const filesystem::Path &path);
+        static Music *loadMusic(const filesystem::Path &path);
 
         /**
          * pause music.
@@ -188,7 +188,7 @@ namespace ngine::audio {
         /**
          * Update all active music.
          */
-        static void Update();
+        static void update();
     };
 }
 

@@ -174,7 +174,7 @@ namespace ngine::graphics {
          * @param graphicsDevice The current graphics device.
          * @param path Texture file to load.
          */
-        static Texture2D *LoadTexture(GraphicsDevice *graphicsDevice, const filesystem::Path &path);
+        static Texture2D *loadTexture(GraphicsDevice *graphicsDevice, const filesystem::Path &path);
 
         /**
          * Get the texture pixel format.

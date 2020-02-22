@@ -106,34 +106,34 @@ namespace ngine::input {
     }
 #endif
 
-    void Gamepad::Init() {
+    void Gamepad::initialize() {
 #if defined(PLATFORM_UWP)
         Windows::Gaming::Input::Gamepad::GamepadAdded += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&_UWPGamepadAdded);
         Windows::Gaming::Input::Gamepad::GamepadRemoved += ref new Windows::Foundation::EventHandler<Windows::Gaming::Input::Gamepad ^>(&_UWPGamepadRemoved);
 #endif
     }
 
-    float Gamepad::GetAxisValue(GamepadNumber pad, const GamepadAxis axis) {
+    float Gamepad::getAxisValue(GamepadNumber pad, GamepadAxis axis) {
         return m_currentAxisValue[pad][axis];
     }
 
-    bool Gamepad::IsAvailable(GamepadNumber pad) {
+    bool Gamepad::isAvailable(GamepadNumber pad) {
         return m_ready[pad];
     }
 
-    bool Gamepad::IsButtonDown(GamepadNumber pad, const GamepadButton button) {
+    bool Gamepad::isButtonDown(GamepadNumber pad, GamepadButton button) {
         return m_currentButtonState[pad][button];
     }
 
-    bool Gamepad::IsButtonPressed(GamepadNumber pad, const GamepadButton button) {
+    bool Gamepad::isButtonPressed(GamepadNumber pad, GamepadButton button) {
         return m_currentButtonState[pad][button] != m_previousButtonState[pad][button] && m_currentButtonState[pad][button];
     }
 
-    bool Gamepad::IsButtonReleased(GamepadNumber pad, const GamepadButton button) {
+    bool Gamepad::isButtonReleased(GamepadNumber pad, GamepadButton button) {
         return m_currentButtonState[pad][button] != m_previousButtonState[pad][button] && !m_currentButtonState[pad][button];
     }
 
-    void Gamepad::PollInputs() {
+    void Gamepad::pollInputs() {
 #if defined(PLATFORM_DESKTOP)
         // Check for ready controllers
         for (auto i = 0; i < 4; i++) {
@@ -142,7 +142,7 @@ namespace ngine::input {
 
         // Check for inputs
         for (auto i = 0; i < 4; i++) {
-            if (IsAvailable((GamepadNumber) i)) {
+            if (isAvailable((GamepadNumber) i)) {
                 for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) m_previousButtonState[i][j] = m_currentButtonState[i][j];
 
                 GLFWgamepadstate state;

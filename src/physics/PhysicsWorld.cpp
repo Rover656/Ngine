@@ -197,11 +197,9 @@ namespace ngine::physics {
     void PhysicsWorld::debugDraw(graphics::Renderer *renderer) {
         // Set renderer and draw
         if (m_debugDraw != nullptr) {
-            // Check the renderer is in the correct mode. We cant draw properly in GUI mode.
-            // TODO: Maybe fork Box2D and modify b2Draw to pass transforms instead of multiplying vertices?
-            //  As this is what causes it to not work, rotation goes the wrong way.
+            // Check the renderer is in the correct mode. Scene will only ever draw in screen coords.
             if (renderer->getCoordinateSystem() != graphics::CoordinateSystem::Screen)
-                Console::Fail("PhysicsWorld", "Debug drawing must happen as part of the scene's Screen render phase.");
+                Console::fail("PhysicsWorld", "Debug drawing must happen as part of the scene's Screen render phase.");
 
             m_debugDraw->setRenderer(renderer);
             m_world->DrawDebugData();

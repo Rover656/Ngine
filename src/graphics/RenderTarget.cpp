@@ -33,7 +33,7 @@ namespace ngine::graphics {
 
         // Verify texture
         if (!m_texture->isValid()) {
-            Console::Error("RenderTarget", "Failed to create color attachment for render target.");
+            Console::error("RenderTarget", "Failed to create color attachment for render target.");
 
             // Delete texture
             delete m_texture;

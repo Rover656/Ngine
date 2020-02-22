@@ -150,7 +150,7 @@ namespace ngine::input {
         }
     }
 
-    Keyboard *Keyboard::GetCurrent() {
+    Keyboard *Keyboard::getCurrent() {
         auto w = Window::GetCurrent();
         return w == nullptr ? nullptr : w->getKeyboard();
     }

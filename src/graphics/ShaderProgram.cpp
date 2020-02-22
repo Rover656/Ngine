@@ -29,10 +29,10 @@ namespace ngine::graphics {
             : VertexShader(vertexShader), FragmentShader(fragmentShader) {
         // Check shaders
         if (VertexShader->Type != ShaderType::Vertex)
-            Console::Fail("ShaderProgram", "Vertex shader is not a vertex shader.");
+            Console::fail("ShaderProgram", "Vertex shader is not a vertex shader.");
 
         if (FragmentShader->Type != ShaderType::Fragment)
-            Console::Fail("ShaderProgram", "Fragment shader is not a fragment shader.");
+            Console::fail("ShaderProgram", "Fragment shader is not a fragment shader.");
 
         // Get API
         m_API = graphicsDevice->getAPI();
@@ -53,11 +53,12 @@ namespace ngine::graphics {
     void ShaderProgram::addUniform(ShaderDataStructure uniform) {
         // Verify
         if (uniform.Name.empty())
-            Console::Fail("ShaderProgram", "Uniform must have a name.");
+            Console::fail("ShaderProgram", "Uniform must have a name.");
         if (uniform.getSize() <= 0 || uniform.Count <= 0)
-            Console::Fail("ShaderProgram", "Uniform sizes are incorrect.");
+            Console::fail("ShaderProgram", "Uniform sizes are incorrect.");
         if (uniform.Offset != -1)
-            Console::Warn("ShaderProgram", "Uniform offset has been set outside of the program, this value will be ignored.");
+            Console::warn("ShaderProgram",
+                          "Uniform offset has been set outside of the program, this value will be ignored.");
 
         // Get the current data size (total of previous offsets).
         auto size = getUniformDataSize();

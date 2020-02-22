@@ -76,7 +76,7 @@ namespace ngine::audio {
          * @param path The file to load wave data from.
          * @return The wave data.
          */
-        static Wave *LoadWave(const filesystem::Path &path);
+        static Wave *loadWave(const filesystem::Path &path);
 
         /**
          * Free wave file.

@@ -30,13 +30,13 @@ namespace ngine::graphics {
             : Width(width), Height(height) {
         // Check dimensions
         if (width <= 0 || height <= 0) {
-            Console::Error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width, height);
+            Console::error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width, height);
             return;
         }
 
         // Check mipmap count
         if (mipmapCount <= 0)
-            Console::Fail("Texture2D", "Texture cannot have no mipmaps.");
+            Console::fail("Texture2D", "Texture cannot have no mipmaps.");
 
         // Save API
         m_API = graphicsDevice->getAPI();
@@ -52,7 +52,7 @@ namespace ngine::graphics {
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice, const Image *img)
             : Texture2D(graphicsDevice, img->PixelData, img->Width, img->Height, img->Format, img->MipmapCount) {}
 
-    Texture2D *Texture2D::LoadTexture(GraphicsDevice *graphicsDevice, const filesystem::Path &path) {
+    Texture2D *Texture2D::loadTexture(GraphicsDevice *graphicsDevice, const filesystem::Path &path) {
         Image img(path);
         return new Texture2D(graphicsDevice, &img);
     }

@@ -35,11 +35,11 @@ namespace ngine::graphics {
     Font::Font() {}
 
     Font::~Font() {
-        Console::Notice("Font", "Unloading and deleting font.");
+        Console::notice("Font", "Unloading and deleting font.");
         free();
     }
 
-    Font *Font::GetDefaultFont() {
+    Font *Font::getDefaultFont() {
         return m_defaultFont;
     }
 
@@ -60,7 +60,7 @@ namespace ngine::graphics {
         return m_texture->isValid();
     }
 
-    Font *Font::LoadTTFFont(GraphicsDevice *graphicsDevice, const filesystem::Path &path, int baseSize,
+    Font *Font::loadTTFFont(GraphicsDevice *graphicsDevice, const filesystem::Path &path, int baseSize,
                             std::vector<int> fontChars) {
         // Check size
         if (baseSize < 1) throw std::runtime_error("Invalid base size.");
@@ -83,13 +83,13 @@ namespace ngine::graphics {
                 font->m_characters[i].Image->free();
             }
         } else {
-            font = GetDefaultFont();
+            font = getDefaultFont();
         }
 
         return font;
     }
 
-    void Font::SetDefaultFont(Font *font) {
+    void Font::setDefaultFont(Font * font) {
         m_defaultFont = font;
     }
 
@@ -110,7 +110,7 @@ namespace ngine::graphics {
         // Check if a single batch will fit:
         auto willFit = renderer->willFit(PrimitiveType::Quads, string.length());
         if (!willFit) // TODO: Automatically batch text for the developer
-            Console::Fail("Font", "Too much text for a single buffer, please split your draw calls up.");
+            Console::fail("Font", "Too much text for a single buffer, please split your draw calls up.");
 
         // We need to know how big this will be
         auto size = measureString(string, fontSize, spacing, lineSpacing);
@@ -185,8 +185,6 @@ namespace ngine::graphics {
                     // Get correct dimensions
                     float x1,y1,x2,y2,srcX1,srcY1,srcX2,srcY2;
 
-                    // TODO: Hmmm... fullstops are floating when in Screen coords... Because Y is too big?
-
                     // Set common values
                     x1 = 0;
                     x2 = width;
@@ -247,7 +245,7 @@ namespace ngine::graphics {
     void Font::drawString(Renderer *renderer, const std::string &string, const Rectangle &bounds, float fontSize,
                           float spacing, const Color &color, LineSpacing lineSpacing, TextAlignment alignment,
                           TextWrap wrap, const Angle &rotation, const Vector2 &origin) {
-        Console::Fail("Font", "This version of DrawString is not yet implemented.");
+        Console::fail("Font", "This version of DrawString is not yet implemented.");
     }
 
     Vector2 Font::measureString(const std::string &string, float fontSize, float spacing, LineSpacing lineSpacing) {
@@ -297,14 +295,14 @@ namespace ngine::graphics {
     Vector2
     Font::measureStringRestrictedW(const std::string &string, float fontSize, float spacing, float maxWidth,
                                    TextAlignment alignment, TextWrap wrap) {
-        Console::Fail("Font", "MeasureStringRestrictedW is not yet implemented.");
+        Console::fail("Font", "MeasureStringRestrictedW is not yet implemented.");
         return {};
     }
 
     Vector2
     Font::measureStringRestrictedH(const std::string &string, float fontSize, float spacing, float maxHeight,
                                    TextAlignment alignment, TextWrap wrap) {
-        Console::Fail("Font", "MeasureStringRestrictedH is not yet implemented.");
+        Console::fail("Font", "MeasureStringRestrictedH is not yet implemented.");
         return {};
     }
 

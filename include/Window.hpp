@@ -374,6 +374,7 @@ namespace ngine {
         /**
          * Get the current window.
          *
+         * @deprecated This will be removed before Ngine 1.0
          * @return The currently active window.
          */
         static Window *GetCurrent();

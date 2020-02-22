@@ -144,14 +144,14 @@ namespace ngine::audio {
          *
          * @param buffer Buffer to close.
          */
-        static void CloseAudioBuffer(AudioBuffer *buffer);
+        static void closeAudioBuffer(AudioBuffer *buffer);
 
         /**
          * Close the audio device.
          *
          * @warning Normally called by Game, don't use unless reimplementing Game or reinitialising audio.
          */
-        static void Close();
+        static void close();
 
         /**
          * Init audio buffer.
@@ -164,7 +164,7 @@ namespace ngine::audio {
          * @return A new audio buffer.
          */
         static AudioBuffer *
-        InitAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sampleRate, ma_uint32 bufferSizeInFrames,
+        initAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sampleRate, ma_uint32 bufferSizeInFrames,
                         AudioBufferUsage usage);
 
         /**
@@ -175,35 +175,35 @@ namespace ngine::audio {
          * @param channels Channel count.
          * @return A new audio stream.
          */
-        static AudioStream InitAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels);
+        static AudioStream initAudioStream(unsigned int sampleRate, unsigned int sampleSize, unsigned int channels);
 
         /**
          * Init audio device.
          *
          * @note This is normally called by the Game. Should use with care.
          */
-        static void Initialize();
+        static void initialize();
 
         /**
          * Determine if the device is ready.
          *
          * @return Whether the device is ready or not.
          */
-        static bool IsReady();
+        static bool isReady();
 
         /**
          * Set the master volume.
          *
          * @param vol The new master volume.
          */
-        static void SetMasterVolume(float vol);
+        static void setMasterVolume(float vol);
 
         /**
          * Update.
          *
          * @note This is just for updating audio streams and buffers.
          */
-        static void Update();
+        static void update();
     };
 }
 

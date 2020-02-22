@@ -34,27 +34,27 @@ namespace ngine {
     void Game::_init() {
         // Create window
         m_gameWindow = new Window(m_gameWindowCreationConfig);
-        Console::Notice("Game", "Created game window.");
+        Console::notice("Game", "Created game window.");
 
         // Get graphics device
         auto graphicsDevice = getGraphicsDevice();
 
         // Create renderer.
         m_renderer = new graphics::Renderer(graphicsDevice);
-        Console::Notice("Game", "Created renderer.");
+        Console::notice("Game", "Created renderer.");
 
         // Init Gamepad
-        input::Gamepad::Init();
-        Console::Notice("Game", "Gamepad API has been initialized.");
+        input::Gamepad::initialize();
+        Console::notice("Game", "Gamepad API has been initialized.");
 
         // Init audio
-        Console::Notice("Game", "Attempting to initialize audio device.");
-        audio::AudioDevice::Initialize();
+        Console::notice("Game", "Attempting to initialize audio device.");
+        audio::AudioDevice::initialize();
 
         // Check if the device was created
-        if (audio::AudioDevice::IsReady())
-            Console::Notice("Game", "Audio device initialized successfully.");
-        else Console::Warn("Game", "Failed to create audio device. Audio APIs will be unavailable.");
+        if (audio::AudioDevice::isReady())
+            Console::notice("Game", "Audio device initialized successfully.");
+        else Console::warn("Game", "Failed to create audio device. Audio APIs will be unavailable.");
 
         // Create render target
         // TODO: Rework this to be more robust.
@@ -64,7 +64,7 @@ namespace ngine {
         }
 
         // Create resource manager
-        Console::Notice("Game", "Creating the game resource manager.");
+        Console::notice("Game", "Creating the game resource manager.");
         m_resourceManager = new filesystem::ResourceManager(graphicsDevice);
 
         // DEV: If anything new is added to the Game class, its initialization should occur here (Before OnInit())
@@ -223,7 +223,7 @@ namespace ngine {
             // Update timestep if FPS has changed
             if (m_timestep.count() != int(1000.0f / (float) Config.UpdatesPerSecond)) {
                 m_timestep = std::chrono::milliseconds(int(1000.0f / (float) Config.UpdatesPerSecond));
-                Console::Notice("Game", "Timestep updated to match updates per second.");
+                Console::notice("Game", "Timestep updated to match updates per second.");
             }
 
             // Increment lag
@@ -250,13 +250,13 @@ namespace ngine {
 
             // Check if we are behind by 15+ frames.
             if (m_lag >= m_timestep * 15) {
-                Console::Warn("Game", "Running behind by %i frame(s), skipping...", (int)(m_lag / m_timestep));
+                Console::warn("Game", "Running behind by %i frame(s), skipping...", (int) (m_lag / m_timestep));
                 m_lag = std::chrono::nanoseconds(0);
             }
 
             // Poll inputs if we'd update
             if (m_lag >= m_timestep) {
-                input::Gamepad::PollInputs();
+                input::Gamepad::pollInputs();
                 mouse->pollInputs();
                 keyboard->pollInputs();
             }
@@ -273,7 +273,7 @@ namespace ngine {
                 }
 
                 // AudioDevice update
-                audio::AudioDevice::Update();
+                audio::AudioDevice::update();
 
                 // If we need to quit, don't run any more frames
                 if (!m_running) return;
@@ -307,8 +307,8 @@ namespace ngine {
         delete m_resourceManager;
 
         // Close audio
-        audio::AudioDevice::Close();
-        Console::Notice("Game", "Closed audio device.");
+        audio::AudioDevice::close();
+        Console::notice("Game", "Closed audio device.");
 
         // Delete render target
         delete m_renderTarget;
@@ -317,12 +317,12 @@ namespace ngine {
         // Delete renderer
         delete m_renderer;
         m_renderer = nullptr;
-        Console::Notice("Game", "Deleted renderer.");
+        Console::notice("Game", "Deleted renderer.");
 
         // Close window
         delete m_gameWindow;
         m_gameWindow = nullptr;
-        Console::Notice("Game", "Deleted game window.");
+        Console::notice("Game", "Deleted game window.");
     }
 
     Game::Game(WindowConfig windowConfig, const GameConfig &config)
@@ -426,7 +426,7 @@ namespace ngine {
         //if (m_currentScene != nullptr)
         //    m_currentScene->OnInit({this});
 
-        Console::Notice("Game", "A new scene has been loaded.");
+        Console::notice("Game", "A new scene has been loaded.");
     }
 
     filesystem::ResourceManager *Game::getResourceManager() const {

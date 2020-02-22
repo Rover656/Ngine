@@ -66,9 +66,9 @@ namespace ngine::graphics {
                 Console::Fail("GraphicsDevice", "OpenGL is not supported on this platform.");
 #endif
                 if (major < 2 && (major == 3 && minor < 0))
-                    Console::Fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 3.0");
+                    Console::fail("GraphicsDevice", "Target OpenGL version too low, minimum version is 3.0");
                 if (major == 4 && minor > 6)
-                    Console::Fail("GraphicsDevice", "OpenGL 4.6 is the latest Ngine supports.");
+                    Console::fail("GraphicsDevice", "OpenGL 4.6 is the latest Ngine supports.");
 #else
                 Console::Fail("GraphicsDevice", "OpenGL not supported as Ngine was not built with it enabled.");
 #endif
@@ -76,9 +76,9 @@ namespace ngine::graphics {
             case GraphicsAPI::OpenGLES:
 #if defined(API_OPENGLES_ENABLED)
                 if (major < 2)
-                    Console::Fail("GraphicsDevice", "OpenGL ES 2.0+ required.");
+                    Console::fail("GraphicsDevice", "OpenGL ES 2.0+ required.");
                 if (major == 3 && minor > 1)
-                    Console::Fail("GraphicsDevice", "OpenGL ES 3.1 is the latest Ngine supports.");
+                    Console::fail("GraphicsDevice", "OpenGL ES 3.1 is the latest Ngine supports.");
 #else
                 Console::Fail("GraphicsDevice", "OpenGL ES not supported as Ngine was not built with it enabled.");
 #endif
@@ -94,13 +94,13 @@ namespace ngine::graphics {
 #endif
                 break;
             case GraphicsAPI::DirectX:
-                Console::Fail("GraphicsDevice", "DirectX not implemented.");
+                Console::fail("GraphicsDevice", "DirectX not implemented.");
                 break;
             default:
-                Console::Fail("GraphicsDevice", "Cannot determine target API.");
+                Console::fail("GraphicsDevice", "Cannot determine target API.");
                 break;
         }
-        Console::Notice("GraphicsDevice", "Successfully loaded extensions.");
+        Console::notice("GraphicsDevice", "Successfully loaded extensions.");
 
         // Load default matrices
         m_projectionMatrix = Matrix::Identity;
@@ -133,11 +133,11 @@ namespace ngine::graphics {
     void GraphicsDevice::pushTarget(RenderTarget *target) {
         // Check the stack has space
         if (m_targetCounter >= MAX_TARGETS)
-            Console::Fail("GraphicsDevice", "Render target stack overflow.");
+            Console::fail("GraphicsDevice", "Render target stack overflow.");
 
         // Force render of any batch before swapping target
         for (auto renderer : m_attachedRenderers)
-            renderer->renderBatch(); // TODO: Review this stuff now.
+            renderer->renderBatch();
 
         // Add to stack
         m_targetStack[m_targetCounter] = target;

@@ -57,8 +57,8 @@ namespace ngine::audio {
                         memset(subBuffer + bytesToWrite, 0, leftoverFrameCount * Channels * (SampleSize / 8));
 
                     Buffer->IsSubBufferProcessed[subBufferToUpdate] = false;
-                } else Console::Error("AudioStream", "Attempting to write too many frames to buffer.");
-            } else Console::Error("AudioStream", "Audio buffer not available for updating.");
-        } else Console::Error("AudioStream", "No audio buffer.");
+                } else Console::error("AudioStream", "Attempting to write too many frames to buffer.");
+            } else Console::error("AudioStream", "Audio buffer not available for updating.");
+        } else Console::error("AudioStream", "No audio buffer.");
     }
 }

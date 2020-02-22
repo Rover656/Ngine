@@ -115,6 +115,57 @@ namespace ngine::graphics {
                                                       "    gl_FragColor = texelColor*fragColor;\n"
                                                       "}\n";
 
+        static constexpr const char *GLES3_V_SHADER = "#version 300 es\n"
+                                                      "in vec3 NG_VertexPos;\n"
+                                                      "in vec2 NG_VertexTexCoord;\n"
+                                                      "in vec4 NG_VertexColor;\n"
+                                                      "out vec2 fragTexCoord;\n"
+                                                      "out vec4 fragColor;\n"
+                                                      "uniform mat4 NGINE_MATRIX_MVP;\n"
+                                                      "void main()\n"
+                                                      "{\n"
+                                                      "    fragTexCoord = NG_VertexTexCoord;\n"
+                                                      "    fragColor = NG_VertexColor;\n"
+                                                      "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                      "}\n";
+
+        static constexpr const char *GLES3_F_SHADER = "#version 300 es\n"
+                                                      "precision mediump float;"
+                                                      "in vec2 fragTexCoord;\n"
+                                                      "in vec4 fragColor;\n"
+                                                      "out vec4 finalColor;\n"
+                                                      "uniform sampler2D NGINE_TEXTURE;\n"
+                                                      "void main()\n"
+                                                      "{\n"
+                                                      "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
+                                                      "    finalColor = texelColor*fragColor;\n"
+                                                      "}\n";
+
+        static constexpr const char *GL3X_V_SHADER = "#version 130\n"
+                                                     "in vec3 NG_VertexPos;\n"
+                                                     "in vec2 NG_VertexTexCoord;\n"
+                                                     "in vec4 NG_VertexColor;\n"
+                                                     "out vec2 fragTexCoord;\n"
+                                                     "out vec4 fragColor;\n"
+                                                     "uniform mat4 NGINE_MATRIX_MVP;\n"
+                                                     "void main()\n"
+                                                     "{\n"
+                                                     "    fragTexCoord = NG_VertexTexCoord;\n"
+                                                     "    fragColor = NG_VertexColor;\n"
+                                                     "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+                                                     "}\n";
+
+        static constexpr const char *GL3X_F_SHADER = "#version 130\n"
+                                                     "in vec2 fragTexCoord;\n"
+                                                     "in vec4 fragColor;\n"
+                                                     "out vec4 finalColor;\n"
+                                                     "uniform sampler2D NGINE_TEXTURE;\n"
+                                                     "void main()\n"
+                                                     "{\n"
+                                                     "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
+                                                     "    finalColor = texelColor*fragColor;\n"
+                                                     "}\n";
+
         static constexpr const char *GL33_V_SHADER = "#version 330\n"
                                                      "in vec3 NG_VertexPos;\n"
                                                      "in vec2 NG_VertexTexCoord;\n"
@@ -136,7 +187,7 @@ namespace ngine::graphics {
                                                      "uniform sampler2D NGINE_TEXTURE;\n"
                                                      "void main()\n"
                                                      "{\n"
-                                                     "    vec4 texelColor = texture2D(NGINE_TEXTURE, fragTexCoord);\n"
+                                                     "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
                                                      "    finalColor = texelColor*fragColor;\n"
                                                      "}\n";
     private:

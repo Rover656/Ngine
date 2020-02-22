@@ -62,7 +62,7 @@ namespace ngine::graphics {
         renderer->popMatrix();
     }
 
-    void graphics::ShapeRenderer::DrawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color,
+    void graphics::ShapeRenderer::drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color,
                                            float thickness) {
         renderer->setTexture(nullptr);
         renderer->beginVertices(PrimitiveType::Quads);
@@ -74,7 +74,7 @@ namespace ngine::graphics {
     }
 
     void
-    graphics::ShapeRenderer::DrawCircle(Renderer *renderer, Vector2 center, float radius, Color color,
+    graphics::ShapeRenderer::drawCircle(Renderer *renderer, Vector2 center, float radius, Color color,
                                         bool outline,
                                         float lineThickness) {
         renderer->setTexture(nullptr);
@@ -84,7 +84,7 @@ namespace ngine::graphics {
             float step = DegToRad(360.0f / LINES_PER_CIRCLE);
 
             // Render lines.
-            renderer->beginVertices(PrimitiveType::Quads);  // TODO: This is also janky...
+            renderer->beginVertices(PrimitiveType::Quads);  // TODO: lines don't line up correctly?
             for (auto i = 0; i < LINES_PER_CIRCLE; i++) {
                 _drawLine(renderer,
                           {center.X + sinf((float) i * step) * radius, center.Y + cosf((float) i * step) * radius},
@@ -110,13 +110,13 @@ namespace ngine::graphics {
         }
     }
 
-    void graphics::ShapeRenderer::DrawRectangle(Renderer *renderer, Vector2 position, float width, float height,
+    void graphics::ShapeRenderer::drawRectangle(Renderer *renderer, Vector2 position, float width, float height,
                                                 Color color, Angle rotation, Vector2 origin, bool outline,
                                                 float lineThickness) {
-        DrawRectangle(renderer, {position, width, height}, color, rotation, origin, outline, lineThickness);
+        drawRectangle(renderer, {position, width, height}, color, rotation, origin, outline, lineThickness);
     }
 
-    void graphics::ShapeRenderer::DrawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation,
+    void graphics::ShapeRenderer::drawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation,
                                                 Vector2 origin, bool outline, float lineThickness) {
         // Get origin in pixel units
         auto pixelOrigin = Vector2(origin.X * rect.Width, origin.Y * rect.Height);
@@ -171,7 +171,7 @@ namespace ngine::graphics {
         renderer->popMatrix();
     }
 
-    void graphics::ShapeRenderer::DrawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color,
+    void graphics::ShapeRenderer::drawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color,
                                                Angle rotation, Vector2 origin, bool outline, float lineThickness) {
         // Push matrix (for rotation)
         renderer->setTexture(nullptr);
@@ -218,7 +218,7 @@ namespace ngine::graphics {
     }
 
     void
-    ShapeRenderer::DrawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color,
+    ShapeRenderer::drawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color,
                                Angle rotation, Vector2 origin, bool outline, float lineThickness) {
         renderer->setTexture(nullptr);
 

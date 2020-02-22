@@ -48,7 +48,7 @@ namespace ngine::physics {
     PhysicsFixture *PhysicsBody::createFixture(PhysicsShape *shape, float density) {
         // Check shape context
         if (shape->m_context != m_context)
-            Console::Fail("PhysicsBody", "Shape must be same context as body to create a fixture!");
+            Console::fail("PhysicsBody", "Shape must be same context as body to create a fixture!");
 
         // Create
         auto f = new PhysicsFixture(m_context, m_body->CreateFixture(shape->m_shape, density));

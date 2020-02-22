@@ -81,7 +81,7 @@ namespace ngine {
          * @param args Anything extra.
          */
         template <typename ...Args>
-        static void Notice(std::string moduleName, std::string format, Args...args) {
+        static void notice(std::string moduleName, std::string format, Args...args) {
             _write("NOTICE", moduleName, _getFormattedString(format, args...));
         }
 
@@ -94,7 +94,7 @@ namespace ngine {
          * @param args Anything extra.
          */
         template <typename ...Args>
-        static void Warn(std::string moduleName, std::string format, Args...args) {
+        static void warn(std::string moduleName, std::string format, Args...args) {
             _write("WARN", moduleName, _getFormattedString(format, args...));
         }
 
@@ -108,7 +108,7 @@ namespace ngine {
          * @param args Anything extra.
          */
         template <typename ...Args>
-        static void Error(std::string moduleName, std::string format, Args...args) {
+        static void error(std::string moduleName, std::string format, Args...args) {
             _write("ERROR", moduleName, _getFormattedString(format, args...));
         }
 
@@ -121,7 +121,7 @@ namespace ngine {
          * @param args Anything extra.
          */
         template<typename ...Args>
-        static void Fail(std::string moduleName, std::string format, Args... args) {
+        static void fail(std::string moduleName, std::string format, Args... args) {
             auto msg = _getFormattedString(format, args...);
             _write("FATAL", moduleName, msg);
             _showPopup(msg, "Fatal error occurred in \"" + moduleName + "\" module.");

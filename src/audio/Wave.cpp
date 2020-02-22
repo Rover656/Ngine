@@ -36,7 +36,7 @@ namespace ngine::audio {
         return Channels > 0 && Data != nullptr;
     }
 
-    Wave *Wave::LoadWave(const filesystem::Path &path) {
+    Wave *Wave::loadWave(const filesystem::Path &path) {
         auto wav = new Wave();
 
         if (path.getFileExtension() == "mp3") {
@@ -47,7 +47,7 @@ namespace ngine::audio {
             wav->_loadOGG(path);
         } else if (path.getFileExtension() == "flac") {
             wav->_loadFLAC(path);
-        } else Console::Error("Wave", "File format not supported.");
+        } else Console::error("Wave", "File format not supported.");
 
         return wav;
     }
@@ -55,7 +55,7 @@ namespace ngine::audio {
     void Wave::free() {
         ::free(Data);
         Data = nullptr;
-        Console::Notice("Wave", "Unloaded wav data from RAM.");
+        Console::notice("Wave", "Unloaded wav data from RAM.");
     }
 
     void Wave::_loadFLAC(const filesystem::Path &path) {
@@ -66,10 +66,10 @@ namespace ngine::audio {
         SampleCount = (unsigned int) totalSampleCount;
         SampleSize = 16;
 
-        if (Channels > 2) Console::Warn("Wave", "Too many FLAC channels!");
+        if (Channels > 2) Console::warn("Wave", "Too many FLAC channels!");
 
-        if (Data == nullptr) Console::Error("Wave", "Failed to load FLAC data.");
-        else Console::Notice("Wave", "Loaded FLAC file successfully!");
+        if (Data == nullptr) Console::error("Wave", "Failed to load FLAC data.");
+        else Console::notice("Wave", "Loaded FLAC file successfully!");
     }
 
     void Wave::_loadMP3(const filesystem::Path &path) {
@@ -84,17 +84,17 @@ namespace ngine::audio {
         SampleSize = 32;
 
         // Only support up to 2 channels
-        if (Channels > 2) Console::Error("Wave", "Too many MP3 channels!");
+        if (Channels > 2) Console::error("Wave", "Too many MP3 channels!");
 
-        if (Data == nullptr) Console::Error("Wave", "Failed to load MP3 data.");
-        else Console::Notice("Wave", "Loaded MP3 file successfully!");
+        if (Data == nullptr) Console::error("Wave", "Failed to load MP3 data.");
+        else Console::notice("Wave", "Loaded MP3 file successfully!");
     }
 
     void Wave::_loadOGG(const filesystem::Path &path) {
         // Load ogg file
         stb_vorbis *oggFile = stb_vorbis_open_filename(path.getString().c_str(), nullptr, nullptr);
 
-        if (oggFile == nullptr) Console::Warn("Wave", "OGG file could not be opened.");
+        if (oggFile == nullptr) Console::warn("Wave", "OGG file could not be opened.");
         else {
             stb_vorbis_info info = stb_vorbis_get_info(oggFile);
             SampleRate = info.sample_rate;
@@ -106,7 +106,7 @@ namespace ngine::audio {
             int numSamplesOgg = stb_vorbis_get_samples_short_interleaved(oggFile, info.channels, (short *)Data, SampleCount*Channels);
             stb_vorbis_close(oggFile);
 
-            Console::Notice("Wave", "OGG File loaded successfully!");
+            Console::notice("Wave", "OGG File loaded successfully!");
         }
     }
 
@@ -119,9 +119,9 @@ namespace ngine::audio {
         SampleSize = 32;
 
         // Only support up to 2 channels
-        if (Channels > 2) Console::Error("Wave", "Too many WAV channels!");
+        if (Channels > 2) Console::error("Wave", "Too many WAV channels!");
 
-        if (Data == nullptr) Console::Error("Wave", "Failed to load WAV data.");
-        else Console::Notice("Wave", "Loaded WAV file successfully!");
+        if (Data == nullptr) Console::error("Wave", "Failed to load WAV data.");
+        else Console::notice("Wave", "Loaded WAV file successfully!");
     }
 }

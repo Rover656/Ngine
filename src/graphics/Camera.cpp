@@ -31,10 +31,10 @@ namespace ngine::graphics {
 
     Matrix Camera::getViewMatrix() const {
         Matrix ret = Matrix::Identity;
-        ret = Matrix::Translate(-Position.X, -Position.Y, 0) * ret;
-        ret = Matrix::RotateZ(Rotation) * ret;
-        ret = Matrix::Scale(Zoom, Zoom, 1) * ret;
-        ret = Matrix::Translate(Origin.X, Origin.Y, 0) * ret;
+        ret = Matrix::translate(-Position.X, -Position.Y, 0) * ret;
+        ret = Matrix::rotateZ(Rotation) * ret; // TODO: Test this doesn't break in Screen coords...
+        ret = Matrix::scale(Zoom, Zoom, 1) * ret;
+        ret = Matrix::translate(Origin.X, Origin.Y, 0) * ret;
         return ret;
     }
 }

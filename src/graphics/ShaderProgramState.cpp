@@ -29,7 +29,7 @@ namespace ngine::graphics {
             : AttachedProgram(program) {
         // Check program
         if (!AttachedProgram->isFinal())
-            Console::Fail("ShaderProgramState", "Shader program must be marked as final before use.");
+            Console::fail("ShaderProgramState", "Shader program must be marked as final before use.");
 
         // Allocate
         // Get data size.
@@ -60,7 +60,7 @@ namespace ngine::graphics {
 
         // Skip if there is no data
         if (uniformDesc.getSize() == 0 || uniformDesc.Count == 0)
-            Console::Fail("ShaderUniformData", "Uniform could not be found or uniform has invalid parameters.");
+            Console::fail("ShaderUniformData", "Uniform could not be found or uniform has invalid parameters.");
 
         char *dat = (char *) m_data;
         return &dat[uniformDesc.Offset];
@@ -68,7 +68,7 @@ namespace ngine::graphics {
 
     void ShaderProgramState::setUniform(const std::string &name, void *data) {
         if (m_data == nullptr)
-            Console::Fail("ShaderUniformData", "Memory not allocated. Call Allocate() first.");
+            Console::fail("ShaderUniformData", "Memory not allocated. Call Allocate() first.");
 
         // Find the uniform
         ShaderDataStructure uniformDesc;
@@ -109,7 +109,7 @@ namespace ngine::graphics {
                 case ShaderDataType::UnsignedInt:
                 case ShaderDataType::Float:
                 case ShaderDataType::Matrix:
-                    Console::Fail("ShaderProgramState", "Cannot navigate *into* a simple data format.");
+                    Console::fail("ShaderProgramState", "Cannot navigate *into* a simple data format.");
                     break;
                 case ShaderDataType::Struct:
                     // Find target within this struct
@@ -131,7 +131,7 @@ namespace ngine::graphics {
                     }
                     break;
             }
-            Console::Fail("ShaderProgramState", "Could not find member.");
+            Console::fail("ShaderProgramState", "Could not find member.");
             found: continue;
         }
 

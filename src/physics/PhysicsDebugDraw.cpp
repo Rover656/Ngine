@@ -50,13 +50,13 @@ namespace ngine::physics {
 
         // Draw
         graphics::Color fill = {color.r * 0.5f, color.g * 0.5f, color.b * 0.5f, color.a * 0.5f};
-        graphics::ShapeRenderer::DrawPolygon(m_renderer, Vector2::Zero, verts, fill);
+        graphics::ShapeRenderer::drawPolygon(m_renderer, Vector2::Zero, verts, fill);
     }
 
     void PhysicsDebugDraw::DrawCircle(const b2Vec2 &center, float radius, const b2Color &color) {
         auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_context->convertMetersToPixels(radius);
-        graphics::ShapeRenderer::DrawCircle(m_renderer, c, r,
+        graphics::ShapeRenderer::drawCircle(m_renderer, c, r,
                                             graphics::Color(color.r, color.g, color.b, color.a), true);
     }
 
@@ -65,18 +65,18 @@ namespace ngine::physics {
         auto c = m_context->convertMetersToPixels(Vector2(center.x, center.y));
         auto r = m_context->convertMetersToPixels(radius);
         graphics::Color fill = {color.r * 0.5f, color.g * 0.5f, color.b * 0.5f, color.a * 0.5f};
-        graphics::ShapeRenderer::DrawCircle(m_renderer, c, r, fill);
+        graphics::ShapeRenderer::drawCircle(m_renderer, c, r, fill);
 
         // Axis line
         auto p = c + Vector2(axis.x, axis.y) * r;
-        graphics::ShapeRenderer::DrawLine(m_renderer, c, p, {color.r, color.g, color.b, color.a});
+        graphics::ShapeRenderer::drawLine(m_renderer, c, p, {color.r, color.g, color.b, color.a});
     }
 
     void PhysicsDebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &color) {
         // Correct
         auto v1 = m_context->convertMetersToPixels(Vector2(p1.x, p1.y));
         auto v2 = m_context->convertMetersToPixels(Vector2(p2.x, p2.y));
-        graphics::ShapeRenderer::DrawLine(m_renderer, v1, v2, {color.r, color.g, color.b, color.a});
+        graphics::ShapeRenderer::drawLine(m_renderer, v1, v2, {color.r, color.g, color.b, color.a});
     }
 
     void PhysicsDebugDraw::DrawTransform(const b2Transform &xf) {
@@ -95,6 +95,6 @@ namespace ngine::physics {
         auto pos = m_context->convertMetersToPixels(Vector2(p.x, p.y));
         auto s = m_context->convertMetersToPixels(size);
         Rectangle rect(pos - s / 2.0f, s, s);
-        graphics::ShapeRenderer::DrawRectangle(m_renderer, rect, {color.r, color.g, color.b, color.a});
+        graphics::ShapeRenderer::drawRectangle(m_renderer, rect, {color.r, color.g, color.b, color.a});
     }
 }

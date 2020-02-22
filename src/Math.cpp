@@ -28,10 +28,10 @@ namespace ngine {
     const Vector2 Vector2::Zero = {0, 0};
 
     Vector2 Vector2::clamp(const Vector2 &min, const Vector2 &max) {
-        return Clamp(*this, min, max);
+        return clamp(*this, min, max);
     }
 
-    Vector2 Vector2::Clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max) {
+    Vector2 Vector2::clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max) {
         return {
                 std::clamp(value.X, min.X, max.X),
                 std::clamp(value.Y, min.Y, max.Y)
@@ -39,18 +39,18 @@ namespace ngine {
     }
 
     float Vector2::dot(const Vector2 &b) const {
-        return Dot(*this, b);
+        return dot(*this, b);
     }
 
-    float Vector2::Dot(const Vector2 &a, const Vector2 &b) {
+    float Vector2::dot(const Vector2 &a, const Vector2 &b) {
         return (a.X * b.X) + (b.Y * b.Y);
     }
 
     float Vector2::distance(const Vector2 &b) const {
-        return Distance(*this, b);
+        return distance(*this, b);
     }
 
-    float Vector2::Distance(const Vector2 &a, const Vector2 &b) {
+    float Vector2::distance(const Vector2 &a, const Vector2 &b) {
         const auto xdiff = a.X - b.X;
         const auto ydiff = a.Y - b.Y;
         return sqrtf(xdiff * xdiff + ydiff * ydiff);
@@ -151,10 +151,10 @@ namespace ngine {
     const Vector3 Vector3::Zero = {0, 0, 0};
 
     Vector3 Vector3::clamp(const Vector3 &min, const Vector3 &max) {
-        return Clamp(*this, min, max);
+        return clamp(*this, min, max);
     }
 
-    Vector3 Vector3::Clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max) {
+    Vector3 Vector3::clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max) {
         return {
                 std::clamp(value.X, min.X, max.X),
                 std::clamp(value.Y, min.Y, max.Y),
@@ -163,18 +163,18 @@ namespace ngine {
     }
 
     float Vector3::dot(const Vector3 &b) const {
-        return Dot(*this, b);
+        return dot(*this, b);
     }
 
-    float Vector3::Dot(const Vector3 &a, const Vector3 &b) {
+    float Vector3::dot(const Vector3 &a, const Vector3 &b) {
         return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
     }
 
     float Vector3::distance(const Vector3 &b) {
-        return Distance(*this, b);
+        return distance(*this, b);
     }
 
-    float Vector3::Distance(const Vector3 &a, const Vector3 &b) {
+    float Vector3::distance(const Vector3 &a, const Vector3 &b) {
         const auto xdiff = a.X - b.X;
         const auto ydiff = a.Y - b.Y;
         const auto zdiff = a.Z - b.Z;
@@ -204,7 +204,7 @@ namespace ngine {
             0.0f, 0.0f, 0.0f, 1.0f
     };
 
-    float Matrix::Determinant() const {
+    float Matrix::determinant() const {
         float result = {0};
 
         // Cache the matrix values (speed optimization)
@@ -223,7 +223,7 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::Orthographic(float left, float right, float bottom, float top, float near_, float far_) {
+    Matrix Matrix::orthographic(float left, float right, float bottom, float top, float near_, float far_) {
         Matrix result = {0};
 
         result.M0 = 2.0f / (right - left);
@@ -249,7 +249,7 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::Rotate(const Angle &rotation, const Vector3 &axis) {
+    Matrix Matrix::rotate(const Angle &rotation, const Vector3 &axis) {
         // Gather data
         float a = DegToRad(rotation.getDegrees());
         float c = rotation.Cos;
@@ -287,7 +287,7 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::RotateX(const Angle &rotation) {
+    Matrix Matrix::rotateX(const Angle &rotation) {
         auto result = Identity;
 
         result.M5 = rotation.Cos;
@@ -298,7 +298,7 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::RotateY(const Angle &rotation) {
+    Matrix Matrix::rotateY(const Angle &rotation) {
         auto result = Identity;
 
         result.M0 = rotation.Cos;
@@ -309,7 +309,7 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::RotateZ(const Angle &rotation) {
+    Matrix Matrix::rotateZ(const Angle &rotation) {
         auto result = Identity;
 
         result.M0 = rotation.Cos;
@@ -320,7 +320,7 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::Scale(float x, float y, float z) {
+    Matrix Matrix::scale(float x, float y, float z) {
         const Matrix result = {
                 x, 0.0f, 0.0f, 0.0f,
                 0.0f, y, 0.0f, 0.0f,
@@ -359,11 +359,11 @@ namespace ngine {
         return result;
     }
 
-    Matrix Matrix::Translate(Vector3 translation) {
-        return Translate(translation.X, translation.Y, translation.Z);
+    Matrix Matrix::translate(Vector3 translation) {
+        return translate(translation.X, translation.Y, translation.Z);
     }
 
-    Matrix Matrix::Translate(float x, float y, float z) {
+    Matrix Matrix::translate(float x, float y, float z) {
         const Matrix result = {
                 1.0f, 0.0f, 0.0f, x,
                 0.0f, 1.0f, 0.0f, y,
@@ -445,7 +445,7 @@ namespace ngine {
     Matrix Matrix::normalize() const {
         Matrix result = {0};
 
-        const auto det = Determinant();
+        const auto det = determinant();
 
         result.M0 = M0 / det;
         result.M1 = M1 / det;
