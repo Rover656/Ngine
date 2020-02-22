@@ -70,21 +70,7 @@ namespace ngine {
             throw std::runtime_error("Cannot open more than one window on UWP.");
         m_UWPWindowCount++;
 #endif
-        // Init
-#if defined(PLATFORM_DESKTOP)
-        // Init GLFW
-        if (!glfwInit()) {
-            Console::fail("Window", "Failed to init GLFW.");
-        }
-        Console::notice("Window", "Initialized GLFW.");
-
-        // Set defaults
-        glfwDefaultWindowHints();
-
-        // Apply MSAA
-        if (config.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
-
-        // Get API versions
+        // Get default API versions
         m_targetAPI = config.TargetAPI;
         m_targetMajor = config.TargetAPIMajorVersion;
         m_targetMinor = config.TargetAPIMinorVersion;
@@ -109,6 +95,21 @@ namespace ngine {
             Console::Fail("GraphicsDevice", "Unable to determine default graphics API.");
 #endif
         }
+
+
+        // Init
+#if defined(PLATFORM_DESKTOP)
+        // Init GLFW
+        if (!glfwInit()) {
+            Console::fail("Window", "Failed to init GLFW.");
+        }
+        Console::notice("Window", "Initialized GLFW.");
+
+        // Set defaults
+        glfwDefaultWindowHints();
+
+        // Apply MSAA
+        if (config.MSAA_4X) glfwWindowHint(GLFW_SAMPLES, 4);
 
         // OpenGL Core
         if (m_targetAPI == graphics::GraphicsAPI::OpenGL) {
@@ -179,7 +180,7 @@ namespace ngine {
 
 #if defined(PLATFORM_UWP) // TODO: Add other platforms which use EGL
         // If we are using GLES, use the EGL API
-        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES) {
+        if (m_targetAPI == graphics::GraphicsAPI::OpenGLES) {
             // Get EGL surface size
             ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
         }
@@ -232,7 +233,7 @@ namespace ngine {
         glfwMakeContextCurrent((GLFWwindow *) m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
         // Make egl context current.
-        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+        if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
             ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->MakeEGLCurrent();
 #endif
 
@@ -288,7 +289,7 @@ namespace ngine {
 #if defined(PLATFORM_DESKTOP)
         glfwSwapInterval(flag ? 1 : 0);
 #else
-        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+        if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
             ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->SetEGLSwapInterval(flag ? 1 : 0);
 #endif
     }
@@ -362,7 +363,7 @@ namespace ngine {
         glfwSetWindowTitle(m_GLFWWindow, title.c_str());
         m_windowTitle = title;
 #else
-        Console::Notice("Window", "Window title was not changed as title changing is not enabled on this platform.");
+        Console::notice("Window", "Window title was not changed as title changing is not enabled on this platform.");
 #endif
     }
 
@@ -468,7 +469,7 @@ namespace ngine {
         m_visible = CoreWindow::GetForCurrentThread()->Visible == true;
 
         // Query dimensions
-        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+        if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
             ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->QueryEGLSurfaceSize(&m_currentWidth, &m_currentHeight);
 
         // Toggle fullscreen if necessary
@@ -529,7 +530,7 @@ namespace ngine {
 #if defined(PLATFORM_DESKTOP)
         glfwSwapBuffers((GLFWwindow *) m_GLFWWindow);
 #elif defined(PLATFORM_UWP)
-        if (graphics::GraphicsDevice::GetTargetAPI() == graphics::GraphicsAPI::OpenGLES)
+        if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
             ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->SwapEGLBuffers();
 #endif
     }

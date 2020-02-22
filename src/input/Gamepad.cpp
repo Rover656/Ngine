@@ -172,7 +172,7 @@ namespace ngine::input {
 #elif defined(PLATFORM_UWP)
         // Get gamepad states
         for (auto i = 0; i < 4; i++) {
-            if (IsAvailable((GamepadNumber)i)) {
+            if (isAvailable((GamepadNumber)i)) {
                 auto gamepad = m_UWPGamepads[i];
                 auto reading = gamepad->GetCurrentReading();
 

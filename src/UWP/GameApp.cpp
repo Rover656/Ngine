@@ -106,7 +106,7 @@ namespace ngine::UWP {
 
         // Suspend the game.
         concurrency::create_task([this, deferral]() {
-            m_game->OnSuspend();
+            EventDispatcher::fire(Game::SuspendEvent(m_game));
             m_game->m_running = false;
             m_updateThread.join();
             deferral->Complete();
@@ -115,7 +115,7 @@ namespace ngine::UWP {
 
     void GameApp::OnResuming(Platform::Object ^sender, Platform::Object ^args) {
         // Resume game
-        m_game->OnResume();
+        EventDispatcher::fire(Game::ResumeEvent(m_game));
         m_game->m_running = true;
 
         // Start update thread

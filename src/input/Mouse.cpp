@@ -110,9 +110,9 @@ namespace ngine::input {
         if (ptrPoint->PointerDevice->PointerDeviceType == Windows::Devices::Input::PointerDeviceType::Mouse) {
             auto ptrPointProps = ptrPoint->Properties;
 
-            m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_LEFT] = ptrPointProps->IsLeftButtonPressed;
-            m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_MIDDLE] = ptrPointProps->IsMiddleButtonPressed;
-            m_UWPMouse->m_nextMouseState.ButtonsDown[MOUSE_BUTTON_RIGHT] = ptrPointProps->IsRightButtonPressed;
+            m_UWPMouse->m_nextMouseState.ButtonsDown[static_cast<int>(MouseButton::Left)] = ptrPointProps->IsLeftButtonPressed;
+            m_UWPMouse->m_nextMouseState.ButtonsDown[static_cast<int>(MouseButton::Middle)] = ptrPointProps->IsMiddleButtonPressed;
+            m_UWPMouse->m_nextMouseState.ButtonsDown[static_cast<int>(MouseButton::Right)] = ptrPointProps->IsRightButtonPressed;
         }
     }
 

@@ -70,7 +70,7 @@ namespace ngine::graphics {
                 if (major == 4 && minor > 6)
                     Console::fail("GraphicsDevice", "OpenGL 4.6 is the latest Ngine supports.");
 #else
-                Console::Fail("GraphicsDevice", "OpenGL not supported as Ngine was not built with it enabled.");
+                Console::fail("GraphicsDevice", "OpenGL not supported as Ngine was not built with it enabled.");
 #endif
                 break;
             case GraphicsAPI::OpenGLES:
@@ -80,7 +80,7 @@ namespace ngine::graphics {
                 if (major == 3 && minor > 1)
                     Console::fail("GraphicsDevice", "OpenGL ES 3.1 is the latest Ngine supports.");
 #else
-                Console::Fail("GraphicsDevice", "OpenGL ES not supported as Ngine was not built with it enabled.");
+                Console::fail("GraphicsDevice", "OpenGL ES not supported as Ngine was not built with it enabled.");
 #endif
                 break;
         }

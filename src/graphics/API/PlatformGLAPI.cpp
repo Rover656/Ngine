@@ -586,8 +586,8 @@ namespace ngine::graphics::API {
             EGL_NONE
         };
 
-        auto major = GraphicsDevice::GetTargetAPIMajorVersion();
-        auto minor = GraphicsDevice::GetTargetAPIMinorVersion();
+        auto major = m_graphicsDevice->getWindow()->getContextAPIMajorVersion();
+        auto minor = m_graphicsDevice->getWindow()->getContextAPIMinorVersion();
 
         const EGLint contextAttribs[] = {
             //EGL_CONTEXT_CLIENT_VERSION, 2,
@@ -646,7 +646,7 @@ namespace ngine::graphics::API {
         // eglGetPlatformDisplayEXT is an alternative to eglGetDisplay. It allows us to pass in Display attributes, used to configure D3D11.
         PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)(eglGetProcAddress("eglGetPlatformDisplayEXT"));
         if (!eglGetPlatformDisplayEXT) {
-            Console::Fail("PlatformGLAPI", "Failed to get function eglGetPlatformDisplayEXT");
+            Console::fail("PlatformGLAPI", "Failed to get function eglGetPlatformDisplayEXT");
         }
 
         // To initialize the Display, we make three sets of calls to eglGetPlatformDisplayEXT and eglInitialize, with varying
@@ -660,33 +660,33 @@ namespace ngine::graphics::API {
         // This tries to initialize EGL to D3D11 Feature Level 10_0+. See above comment for details.
         m_display = (void*)eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, defaultDisplayAttributes);
         if (m_display == EGL_NO_DISPLAY) {
-            Console::Fail("PlatformGLAPI", "Failed to initialize EGL Display");
+            Console::fail("PlatformGLAPI", "Failed to initialize EGL Display");
         }
 
         if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
             // This tries to initialize EGL to D3D11 Feature Level 9_3, if 10_0+ is unavailable (e.g. on some mobile devices).
             m_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, fl9_3DisplayAttributes);
             if (m_display == EGL_NO_DISPLAY) {
-                Console::Fail("PlatformGLAPI", "Failed to initialize EGL Display");
+                Console::fail("PlatformGLAPI", "Failed to initialize EGL Display");
             }
 
             if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
                 // This initializes EGL to D3D11 Feature Level 11_0 on WARP, if 9_3+ is unavailable on the default GPU.
                 m_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, warpDisplayAttributes);
                 if (m_display == EGL_NO_DISPLAY) {
-                    Console::Fail("PlatformGLAPI", "Failed to initialize EGL Display");
+                    Console::fail("PlatformGLAPI", "Failed to initialize EGL Display");
                 }
 
                 if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
                     // If all of the calls to eglInitialize returned EGL_FALSE then an error has occurred.
-                    Console::Fail("PlatformGLAPI", "Failed to initialize EGL");
+                    Console::fail("PlatformGLAPI", "Failed to initialize EGL");
                 }
             }
         }
 
         EGLint numConfigs = 0;
         if ((eglChooseConfig(m_display, framebufferAttribs, &config, 1, &numConfigs) == EGL_FALSE) || (numConfigs == 0)) {
-            Console::Fail("PlatformGLAPI", "Failed to choose first EGLConfig");
+            Console::fail("PlatformGLAPI", "Failed to choose first EGLConfig");
         }
 
         // Create a PropertySet and initialize with the EGLNativeWindowType.
@@ -697,12 +697,12 @@ namespace ngine::graphics::API {
         m_surface = eglCreateWindowSurface(m_display, config, (EGLNativeWindowType)CoreWindow::GetForCurrentThread(), surfaceAttributes);
 
         if (m_surface == EGL_NO_SURFACE) {
-            Console::Fail("PlatformGLAPI", "Failed to create EGL fullscreen surface");
+            Console::fail("PlatformGLAPI", "Failed to create EGL fullscreen surface");
         }
 
         m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttribs);
         if (m_context == EGL_NO_CONTEXT) {
-            Console::Fail("PlatformGLAPI", "Failed to create EGL context.");
+            Console::fail("PlatformGLAPI", "Failed to create EGL context.");
         }
 #else
         // For future GLES2 platforms
@@ -774,8 +774,8 @@ namespace ngine::graphics::API {
 
         // Determine if we're running GLES
 #if !defined(GLAD)
-        if (GraphicsDevice::GetTargetAPI() == GraphicsAPI::OpenGLES) {
-            auto major = GraphicsDevice::GetTargetAPIMajorVersion();
+        if (m_graphicsDevice->getWindow()->getContextAPI() == GraphicsAPI::OpenGLES) {
+            auto major = m_graphicsDevice->getWindow()->getContextAPIMajorVersion();
             m_GLES2 = major == 2;
             m_GLES3 = major == 3;
         }
@@ -1453,7 +1453,7 @@ namespace ngine::graphics::API {
 
     void PlatformGLAPI::MakeEGLCurrent() {
         if (eglMakeCurrent(m_display, m_surface, m_surface, m_context) == EGL_FALSE)
-            Console::Fail("PlatformGLAPI", "Failed to make EGL context current.");
+            Console::fail("PlatformGLAPI", "Failed to make EGL context current.");
     }
 
     void PlatformGLAPI::SwapEGLBuffers() {
