@@ -3,7 +3,7 @@ file(GLOB_RECURSE SOURCE_FILES "${Ngine_SOURCE_DIR}/src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES "${Ngine_SOURCE_DIR}/include/*.hpp")
 
 # Generate versioning
-if (${PLATFORM} MATCHES "Desktop" AND WIN32 AND ${BUILD_NGINE_SHARED})
+if (PLATFORM MATCHES "Desktop" AND WIN32 AND BUILD_NGINE_SHARED)
     # Generate windows product info
     include(generate_product_version)
     generate_product_version(
@@ -18,19 +18,19 @@ endif ()
 
 # GLAD
 set(_NGINE_GLAD OFF)
-if (NOT ${PLATFORM} MATCHES "UWP") # UWP does not like GLAD...
-    if (${ENABLE_OPENGL} OR ${ENABLE_OPENGLES})
+if (NOT PLATFORM MATCHES "UWP") # UWP does not like GLAD...
+    if (ENABLE_OPENGL OR ENABLE_OPENGLES)
         set(_NGINE_GLAD ON)
     endif ()
 endif ()
 
 # GLAD source
-if (${_NGINE_GLAD})
+if (_NGINE_GLAD)
     set(_NGINE_EXTRA_FILES ${_NGINE_EXTRA_FILES} ${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c)
 endif()
 
 # Add target
-if (${BUILD_NGINE_SHARED})
+if (BUILD_NGINE_SHARED)
     # Add library
     add_library(Ngine SHARED ${SOURCE_FILES} ${HEADER_FILES} ${_NGINE_EXTRA_FILES})
 
@@ -44,15 +44,15 @@ endif ()
 # C++17
 target_compile_features(Ngine PRIVATE cxx_std_17)
 
-if (${ENABLE_OPENGL} AND ${PLATFORM} MATCHES "Desktop")
+if (ENABLE_OPENGL AND PLATFORM MATCHES "Desktop")
     target_compile_definitions(Ngine PUBLIC API_OPENGL_ENABLED=1)
 endif ()
-if (${ENABLE_OPENGLES})
+if (ENABLE_OPENGLES)
     target_compile_definitions(Ngine PUBLIC API_OPENGLES_ENABLED=1)
 endif ()
 
 # Depend on docs if enabled and we are able to say we're building release
-if (${BUILD_DOCS} AND DEFINED ${CMAKE_BUILD_TYPE} AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
+if (BUILD_DOCS AND DEFINED CMAKE_BUILD_TYPE AND CMAKE_BUILD_TYPE STREQUAL "Release")
     find_package(Doxygen)
     if (${DOXYGEN_FOUND})
         message(STATUS "Building docs...")
@@ -61,7 +61,7 @@ if (${BUILD_DOCS} AND DEFINED ${CMAKE_BUILD_TYPE} AND ${CMAKE_BUILD_TYPE} STREQU
 endif ()
 
 # UWP Specifics
-if (${PLATFORM} MATCHES "UWP")
+if (PLATFORM MATCHES "UWP")
     # Mark as WinRT Component
     set_property(TARGET Ngine PROPERTY VS_WINRT_COMPONENT TRUE)
 
@@ -86,19 +86,19 @@ target_include_directories(Ngine
             "${Ngine_SOURCE_DIR}/third-party/miniaudio")
 
 # GLFW
-if (${PLATFORM} MATCHES "Desktop")
+if (PLATFORM MATCHES "Desktop")
     target_link_libraries(Ngine PRIVATE glfw)
     target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/third-party/glfw/include)
 endif ()
 
 # GLAD
-if (${_NGINE_GLAD})
+if (_NGINE_GLAD)
     target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/third-party/glad/include)
 endif()
 
 # Graphics API handling
-if (${PLATFORM} MATCHES "Desktop")
-    if (${ENABLE_OPENGLES} AND WIN32)
+if (PLATFORM MATCHES "Desktop")
+    if (ENABLE_OPENGLES AND WIN32)
         # Copy DLLs to output
         add_custom_command(TARGET Ngine
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -120,8 +120,8 @@ if (${PLATFORM} MATCHES "Desktop")
         # Include
         target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/third-party/ANGLE/include)
     endif ()
-elseif (${PLATFORM} MATCHES "UWP")
-    if (${ENABLE_OPENGLES})
+elseif (PLATFORM MATCHES "UWP")
+    if (ENABLE_OPENGLES)
         # Install ANGLE with Nuget
         add_custom_target(NgineInstallANGLEUWP
                 COMMAND ${Ngine_SOURCE_DIR}/redist/nuget.exe install ANGLE.WindowsStore -Version 2.1.13 -OutputDirectory ${CMAKE_CURRENT_BINARY_DIR}/packages

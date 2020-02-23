@@ -10,7 +10,7 @@ project(NgineTest
         DESCRIPTION "A test program to see if the game engine performs given tasks. To be replaced with examples.")
 
 # Get UWP resources
-if (${PLATFORM} MATCHES "UWP")
+if (PLATFORM MATCHES "UWP")
     # Configure asset files
     file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_CURRENT_SOURCE_DIR}/Assets.UWP/*")
 endif()

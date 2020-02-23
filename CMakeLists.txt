@@ -8,7 +8,7 @@ project(Ngine
 
 # Add a version suffix
 set(PROJECT_VERSION_SUFFIX "dev")
-if (NOT ${PROJECT_VERSION_SUFFIX} STREQUAL "")
+if (NOT PROJECT_VERSION_SUFFIX STREQUAL "")
     set(PROJECT_VERSION ${PROJECT_VERSION}-${PROJECT_VERSION_SUFFIX})
     set(Ngine_VERSION ${PROJECT_VERSION})
 endif ()
@@ -43,23 +43,23 @@ option(ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will
 ### End Feature Flags
 
 # Option validation (basically disable any incompatible rendering pipelines.
-if (${PLATFORM} MATCHES "Desktop")
+if (PLATFORM MATCHES "Desktop")
     # TODO: Does GLES work on Mac/Linux. Do we need to block this?
-elseif (${PLATFORM} MATCHES "UWP")
+elseif (PLATFORM MATCHES "UWP")
     set(ENABLE_OPENGL OFF)
     set(ENABLE_OPENGLES ON) # Force until DX support arrives.
 endif ()
 
 # Check options
-if (${PLATFORM} MATCHES "Desktop")
-    if (${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
+if (PLATFORM MATCHES "Desktop")
+    if (CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
         message(FATAL_ERROR "Cannot build Desktop for UWP. Use UWP platform instead.")
     endif ()
-elseif (${PLATFORM} MATCHES "UWP")
-    if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
+elseif (PLATFORM MATCHES "UWP")
+    if (NOT CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
         message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_NAME=WindowsStore")
     endif ()
-    if (NOT ${CMAKE_SYSTEM_VERSION} STREQUAL "10.0")
+    if (NOT CMAKE_SYSTEM_VERSION STREQUAL "10.0")
         message(FATAL_ERROR "You must build UWP with -DCMAKE_SYSTEM_VERSION=10.0")
     endif ()
 endif ()
@@ -75,15 +75,15 @@ add_subdirectory(src)
 
 # Extra subdirectories if building as main project
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    if (${BUILD_DOCS})
+    if (BUILD_DOCS)
         add_subdirectory(docs)
     endif ()
 
-    if (${BUILD_TEST})
+    if (BUILD_TEST)
         add_subdirectory(test)
     endif ()
 endif ()
 
-if (${BUILD_EXAMPLES})
+if (BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
