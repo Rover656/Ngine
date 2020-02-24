@@ -42,12 +42,16 @@ public:
 class ExampleScene : public ngine::Scene {
     HelloWorldEntity *m_hello = nullptr;
 public:
-    ExampleScene(ngine::Game *game) : Scene(game) {
+    ExampleScene() : Scene() {}
+
+    void initialize(ngine::Game *game) override {
         // Add hello world entity in the center of the scene
         m_hello = new HelloWorldEntity();
         m_hello->setPosition({1280 / 2.0f, 768 / 2.0f});
         addChild(m_hello);
     }
+
+    // TODO: Cleanup
 };
 
 class ExampleGame : public ngine::Game {
@@ -62,7 +66,7 @@ public:
         resMan->loadResources();
 
         // Create scene
-        m_scene = new ExampleScene(this);
+        m_scene = new ExampleScene();
         setScene(m_scene);
     }
 };

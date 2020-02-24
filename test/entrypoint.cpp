@@ -151,7 +151,11 @@ public:
 // TESTING
 class NewTestScene : public Scene {
 public:
-    NewTestScene(Game *game) : Scene(game, {0, 0.0f}, 16) {
+    NewTestScene() : Scene({0, 0.0f}, 16) {}
+
+    void initialize(Game *game) override {
+        // Always call base first so that m_game is set!
+        Scene::initialize(game);
 //        auto par = new ParentEntity();
 //        par->addChild(new TestEntity());
 //        addChild(par);
@@ -160,8 +164,12 @@ public:
         getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
     }
 
-    void onRender(graphics::Renderer *renderer) override {
-        Scene::onRender(renderer);
+    void cleanup() override {
+        // Slightly big todo, enable removal of entities easily.
+    }
+
+    void renderScene(graphics::Renderer *renderer) override {
+        Scene::renderScene(renderer);
 
         // Setup coordinate mode
         renderer->setCoordinateSystem(CoordinateSystem::Screen);
@@ -213,7 +221,7 @@ public:
         Font::setDefaultFont(resMan->getFont("Upheaval"));
 
         // Create and enable scene.
-        m_scene = new NewTestScene(this);
+        m_scene = new NewTestScene();
         setScene(m_scene);
     }
 

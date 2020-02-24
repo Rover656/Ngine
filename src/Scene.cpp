@@ -29,15 +29,13 @@ namespace ngine {
         std::sort(m_entities.begin(), m_entities.end(), &Entity::_SortChildrenPredicate);
     }
 
-    Scene::Scene(Game *game)
-            : m_game(game) {
+    Scene::Scene() {
         // Add default camera
         createCamera("default");
         setCurrentCamera("default");
     }
 
-    Scene::Scene(Game *game, Vector2 gravity, int ppm)
-            : Scene(game) {
+    Scene::Scene(Vector2 gravity, int ppm) : Scene() {
         // Create context
         m_physicsContext = new physics::PhysicsContext(ppm);
 
@@ -61,11 +59,21 @@ namespace ngine {
         delete m_physicsContext;
     }
 
+    void Scene::initialize(Game *game) {
+        m_game = game;
+    }
+
+    void Scene::cleanup() {
+        m_game = nullptr;
+    }
+
     Game *Scene::getGame() const {
         return m_game;
     }
 
     filesystem::ResourceManager *Scene::getResourceManager() {
+        if (m_game == nullptr)
+            Console::fail("Scene", "This can only be used when the scene is active!");
         return m_game->getResourceManager();
     }
 
@@ -105,6 +113,10 @@ namespace ngine {
     }
 
     void Scene::addChild(Entity *entity) {
+        // We must be active TODO: make it so that children etc. can be added before we're active (like entities do for components)
+        if (m_game == nullptr)
+            Console::fail("Scene", "This can only be used when the scene is active!");
+
         // Ensure the child has no parent
         if (entity->m_parent != nullptr)
             Console::fail("Scene", "Entity already has a parent elsewhere.");
@@ -121,6 +133,12 @@ namespace ngine {
     }
 
     void Scene::removeChild(Entity *entity) {
+        // TODO: Add and remove child is a perfect example of where we need thread-safety.
+
+        // We must be active
+        if (m_game == nullptr)
+            Console::fail("Scene", "This can only be used when the scene is active!");
+
         // Check we actually own the entity.
         if (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end())
             Console::fail("Scene", "This entity is not parented by this scene.");
@@ -173,12 +191,16 @@ namespace ngine {
         m_currentViewport = m_game->getGameViewport();
     }
 
-    void Scene::onRender(graphics::Renderer *renderer) {
+    void Scene::renderScene(graphics::Renderer *renderer) {
+        // We must be active
+        if (m_game == nullptr)
+            Console::fail("Scene", "This can only be used when the scene is active!");
+
         // Pre-render
         preRender(renderer);
 
         // Render the scene with the current camera.
-        render(renderer);
+        renderDefaultView(renderer);
 
         // Post-render
         postRender(renderer);
@@ -189,11 +211,11 @@ namespace ngine {
 
     void Scene::postRender(graphics::Renderer *renderer) {}
 
-    void Scene::render(graphics::Renderer *renderer) {
-        renderWith(renderer, m_currentCamera);
+    void Scene::renderDefaultView(graphics::Renderer *renderer) {
+        renderUsingCamera(renderer, m_currentCamera);
     }
 
-    void Scene::renderWith(graphics::Renderer *renderer, const std::string &camera) {
+    void Scene::renderUsingCamera(graphics::Renderer *renderer, const std::string &camera) {
         // Exit if empty
         if (m_entities.empty())
             return;
@@ -231,6 +253,10 @@ namespace ngine {
     }
 
     void Scene::update() {
+        // We must be active
+        if (m_game == nullptr)
+            Console::fail("Scene", "This can only be used when the scene is active!");
+
         // Update entities
         for (const auto &e : m_entities) {
             if (!e->m_asleep)

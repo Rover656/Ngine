@@ -45,7 +45,7 @@ namespace ngine {
         /**
          * The game we are a part of.
          */
-        Game *m_game;
+        Game *m_game = nullptr;
 
         /**
          * Cameras that are a part of the scene.
@@ -79,21 +79,30 @@ namespace ngine {
     public:
         /**
          * Create a new scene.
-         *
-         * @param game Parent game.
          */
-        Scene(Game *game);
+        Scene();
 
         /**
          * Create a new physics-enabled scene.
          *
-         * @param game Parent game.
          * @param gravity Gravity vector.
          * @param ppm Pixels per meter.
          */
-        Scene(Game *game, Vector2 gravity, int ppm);
+        Scene(Vector2 gravity, int ppm);
 
         virtual ~Scene();
+
+        /**
+         * Initialize the scene as we are now active.
+         *
+         * @param game Game the scene is active in.
+         */
+        virtual void initialize(Game *game);
+
+        /**
+         * Cleanup the scene as it is no longer the active scene.
+         */
+        virtual void cleanup();
 
         /**
          * Get the game we are a member of.
@@ -221,7 +230,7 @@ namespace ngine {
          *
          * @param renderer Renderer to use.
          */
-        virtual void onRender(graphics::Renderer *renderer);
+        virtual void renderScene(graphics::Renderer *renderer);
 
         /**
          * Post-render event.
@@ -240,7 +249,7 @@ namespace ngine {
          *
          * @param renderer The renderer to use.
          */
-        void render(graphics::Renderer *renderer);
+        void renderDefaultView(graphics::Renderer *renderer);
 
         /**
          * Render the scene contents with the given camera.
@@ -249,7 +258,7 @@ namespace ngine {
          * @param renderer The renderer to use.
          * @param camera The name of the camera to use.
          */
-        void renderWith(graphics::Renderer *renderer, const std::string &camera);
+        void renderUsingCamera(graphics::Renderer *renderer, const std::string &camera);
 
         /**
          * Render all UI active in the scene.

@@ -60,7 +60,6 @@ namespace ngine {
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
             m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            //m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         }
 
         // Create resource manager
@@ -107,13 +106,11 @@ namespace ngine {
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
             m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            //m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         } else if (Config.MaintainResolution && (!m_renderTarget->isValid() ||
                                                  (m_renderTarget->Width != Config.TargetWidth ||
                                                   m_renderTarget->Height != Config.TargetHeight))) {
             delete m_renderTarget;
             m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-            //m_renderTarget->getTexture()->setTextureWrap(graphics::TextureWrapMode::Clamp);
         }
 
         if (Config.MaintainResolution && m_renderTarget != nullptr)
@@ -145,7 +142,7 @@ namespace ngine {
 
             // Render scene
             if (m_currentScene != nullptr) {
-                m_currentScene->onRender(m_renderer);
+                m_currentScene->renderScene(m_renderer);
             }
 
             // If using a target, draw target
@@ -418,13 +415,19 @@ namespace ngine {
     }
 
     void Game::setScene(Scene *scene) {
-        //if (m_currentScene != nullptr)
-        //    m_currentScene->OnUnload({this});
+        // Cleanup current scene.
+        if (m_currentScene != nullptr)
+            m_currentScene->cleanup();
 
+        auto old = m_currentScene;
         m_currentScene = scene;
 
-        //if (m_currentScene != nullptr)
-        //    m_currentScene->OnInit({this});
+        // Fire changed event
+        EventDispatcher::fire(SceneChangedEvent(this, old, scene));
+
+        // Initialize new scene.
+        if (m_currentScene != nullptr)
+            m_currentScene->initialize(this);
 
         Console::notice("Game", "A new scene has been loaded.");
     }

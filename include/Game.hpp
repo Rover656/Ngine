@@ -171,6 +171,7 @@ namespace ngine {
          * Cleanup the game.
          */
         void _cleanup();
+
     public:
         /**
          * The game suspend event fires whenever the game suspends.
@@ -192,6 +193,26 @@ namespace ngine {
              * Create a new game suspend event.
              */
             ResumeEvent(Game *sender) : Event(sender) {}
+        };
+
+        /**
+         * Event fired when a new scene is loaded.
+         */
+        class SceneChangedEvent : public Event {
+        public:
+            /**
+             * The last loaded scene.
+             */
+            Scene *LastScene = nullptr;
+
+            /**
+             * The newly loaded scene.
+             */
+            Scene *NewScene;
+
+            SceneChangedEvent(Game *sender, Scene *lastScene, Scene *newScene) : LastScene(lastScene),
+                                                                                 NewScene(newScene),
+                                                                                 Event(sender) {}
         };
 
         /**
