@@ -58,6 +58,7 @@ NGINE_GAME_ENTRY {
     // Create game
     auto game = YourGameClass(gameConfig, windowConfig);
     
+    // Run game
     NGINE_RUN_GAME(game);
     
     return 0;
