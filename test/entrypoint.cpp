@@ -74,19 +74,19 @@ public:
 
         auto ms = 5;
 
-        if (keyboard->isKeyDown(Key::KEY_W)) {
+        if (keyboard->isKeyDown('w')) {
             vel.Y += ms;
         }
 
-        if (keyboard->isKeyDown(Key::KEY_S)) {
+        if (keyboard->isKeyDown('s')) {
             vel.Y -= ms;
         }
 
-        if (keyboard->isKeyDown(Key::KEY_A)) {
+        if (keyboard->isKeyDown('a')) {
             vel.X -= ms;
         }
 
-        if (keyboard->isKeyDown(Key::KEY_D)) {
+        if (keyboard->isKeyDown('d')) {
             vel.X += ms;
         }
 
@@ -124,11 +124,11 @@ public:
         setRotation(rot);
         //setScale(scale);
 
-        if (keyboard->isKeyPressed(Key::KEY_SPACE)) {
+        if (keyboard->isKeyPressed(' ')) {
             setPosition({0, 0});
         }
 
-        if (keyboard->isKeyPressed(Key::KEY_ZERO)) {
+        if (keyboard->isKeyPressed('0')) {
             setRotation(0);
         }
     }

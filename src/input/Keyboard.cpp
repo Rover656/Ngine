@@ -155,26 +155,52 @@ namespace ngine::input {
         return w == nullptr ? nullptr : w->getKeyboard();
     }
 
-    Key Keyboard::getLatestKeypress() {
+    Key Keyboard::getKey(char key) {
+        // Skip keys that we can't have
+        if (key < 32 || key > 122) return KEY_NONE;
+        if (key > 32 && key < 39) return KEY_NONE;
+        if (key > 39 && key < 44) return KEY_NONE;
+        if (key > 57 && key < 61) return KEY_NONE;
+        if (key > 61 && key < 64) return KEY_NONE;
+        if (key == 94) return KEY_NONE;
+
+        // Convert lower to upper
+        if (key >= 97 && key <= 122) {
+            key -= 32;
+        }
+
+        return (Key)key;
+    }
+
+    Key Keyboard::getLatestKeypress() const {
         return m_latestKeyPress;
     }
 
-    bool Keyboard::isKeyDown(Key key) {
+    bool Keyboard::isKeyDown(Key key) const {
         if (key == KEY_NONE) return false;
         return m_currentKeyState[key];
     }
 
-    bool Keyboard::isKeyPressed(Key key) {
+    bool Keyboard::isKeyDown(char key) const {
+        return isKeyDown(getKey(key));
+    }
+
+    bool Keyboard::isKeyPressed(Key key) const {
+        if (key == KEY_NONE) return false;
         return m_currentKeyState[key] != m_previousKeyState[key] && m_currentKeyState[key];
     }
 
-    bool Keyboard::isKeyReleased(Key key) {
+    bool Keyboard::isKeyPressed(char key) const {
+        return isKeyPressed(getKey(key));
+    }
+
+    bool Keyboard::isKeyReleased(Key key) const {
+        if (key == KEY_NONE) return false;
         return m_currentKeyState[key] != m_previousKeyState[key] && !m_currentKeyState[key];
     }
 
-    bool Keyboard::isKeyUp(Key key) {
-        if (key == KEY_NONE) return true;
-        return !isKeyDown(key);
+    bool Keyboard::isKeyReleased(char key) const {
+        return isKeyReleased(getKey(key));
     }
 
     void Keyboard::pollInputs() {

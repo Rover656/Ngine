@@ -155,7 +155,6 @@ namespace ngine::input {
     /**
      * Keyboard input provider.
      *
-     * @todo Need to have support for keymods.
      * @todo Allow resetting the state of keys (to prevent any actions until it is released, overriding down).
      */
     class NEAPI Keyboard {
@@ -271,11 +270,20 @@ namespace ngine::input {
         static Keyboard *getCurrent();
 
         /**
+         * Get key enum from char.
+         *
+         * @param key Key to get.
+         * @return Key enum.
+         */
+        static Key getKey(char key);
+
+        /**
          * Get the latest keypress.
          *
+         * @deprecated This is pretty much useless, use events if you want this information.
          * @return The latest key that has been pressed.
          */
-        Key getLatestKeypress();
+        Key getLatestKeypress() const;
 
         /**
          * Is the key down.
@@ -283,7 +291,15 @@ namespace ngine::input {
          * @param key Key to check
          * @return Whether the key is down or not.
          */
-        bool isKeyDown(Key key);
+        bool isKeyDown(Key key) const;
+
+        /**
+         * Check if a key is down (by its character).
+         *
+         * @param key Key to check.
+         * @return Whether or not the key was pressed.
+         */
+        bool isKeyDown(char key) const;
 
         /**
          * Has a key been pressed this tick.
@@ -291,7 +307,15 @@ namespace ngine::input {
          * @param key Key to check
          * @return Whether the key is was pressed this frame.
          */
-        bool isKeyPressed(Key key);
+        bool isKeyPressed(Key key) const;
+
+        /**
+         * Has a key been pressed this tick.
+         *
+         * @param key Key to check
+         * @return Whether the key is was pressed this frame.
+         */
+        bool isKeyPressed(char key) const;
 
         /**
          * Was the key released this frame.
@@ -299,15 +323,15 @@ namespace ngine::input {
          * @param key Key to check
          * @return Whether the key was released this frame.
          */
-        bool isKeyReleased(Key key);
+        bool isKeyReleased(Key key) const;
 
         /**
-         * Is the key up.
+         * Was the key released this frame.
          *
          * @param key Key to check
-         * @return Whether the key is up or not.
+         * @return Whether the key was released this frame.
          */
-        bool isKeyUp(Key key);
+        bool isKeyReleased(char key) const;
 
         /**
          * Poll keyboard inputs.
