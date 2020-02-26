@@ -92,22 +92,22 @@ public:
 
         auto rot = getRotation();
 
-        if (keyboard->isKeyDown(Key::KEY_LEFT)) {
+        if (keyboard->isKeyDown(Key::Left)) {
             rot = rot - 5;
         }
 
-        if (keyboard->isKeyDown(Key::KEY_RIGHT)) {
+        if (keyboard->isKeyDown(Key::Right)) {
             rot = rot + 5;
         }
 
         auto scale = getScale();
 
-        if (keyboard->isKeyPressed(Key::KEY_UP)) {
+        if (keyboard->isKeyPressed(Key::Up)) {
             scale.X += 0.25;
             scale.Y += 0.25;
         }
 
-        if (keyboard->isKeyPressed(Key::KEY_DOWN)) {
+        if (keyboard->isKeyPressed(Key::Down)) {
             scale.X -= 0.25;
             scale.Y -= 0.25;
         }
@@ -211,7 +211,7 @@ public:
         }, getGameWindow()->getKeyboard());
 
         // Set exit key
-        Keyboard::getCurrent()->setExitKey(KEY_ESCAPE);
+        Keyboard::getCurrent()->setExitKey(Key::Escape);
 
         // Load all content (using default resource manager config).
         auto resMan = getResourceManager();

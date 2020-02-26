@@ -43,86 +43,86 @@ namespace ngine::input {
     Keyboard *Keyboard::m_UWPKeyboard = nullptr;
 
     Key Keyboard::_keyFromVirtualKey(int key) {
-        Key actualKey = KEY_NONE;
+        Key actualKey = Key::None;
         switch (key)
         {
-            case 0x08: actualKey = KEY_BACKSPACE; break;
-            case 0x20: actualKey = KEY_SPACE; break;
-            case 0x1B: actualKey = KEY_ESCAPE; break;
-            case 0x0D: actualKey = KEY_ENTER; break;
-            case 0x2E: actualKey = KEY_DELETE; break;
-            case 0x27: actualKey = KEY_RIGHT; break;
-            case 0x25: actualKey = KEY_LEFT; break;
-            case 0x28: actualKey = KEY_DOWN; break;
-            case 0x26: actualKey = KEY_UP; break;
-            case 0x70: actualKey = KEY_F1; break;
-            case 0x71: actualKey = KEY_F2; break;
-            case 0x72: actualKey = KEY_F3; break;
-            case 0x73: actualKey = KEY_F4; break;
-            case 0x74: actualKey = KEY_F5; break;
-            case 0x75: actualKey = KEY_F6; break;
-            case 0x76: actualKey = KEY_F7; break;
-            case 0x77: actualKey = KEY_F8; break;
-            case 0x78: actualKey = KEY_F9; break;
-            case 0x79: actualKey = KEY_F10; break;
-            case 0x7A: actualKey = KEY_F11; break;
-            case 0x7B: actualKey = KEY_F12; break;
-            case 0xA0: actualKey = KEY_LEFT_SHIFT; break;
-            case 0xA2: actualKey = KEY_LEFT_CONTROL; break;
-            case 0xA4: actualKey = KEY_LEFT_ALT; break;
-            case 0xA1: actualKey = KEY_RIGHT_SHIFT; break;
-            case 0xA3: actualKey = KEY_RIGHT_CONTROL; break;
-            case 0xA5: actualKey = KEY_RIGHT_ALT; break;
-            case 0x30: actualKey = KEY_ZERO; break;
-            case 0x31: actualKey = KEY_ONE; break;
-            case 0x32: actualKey = KEY_TWO; break;
-            case 0x33: actualKey = KEY_THREE; break;
-            case 0x34: actualKey = KEY_FOUR; break;
-            case 0x35: actualKey = KEY_FIVE; break;
-            case 0x36: actualKey = KEY_SIX; break;
-            case 0x37: actualKey = KEY_SEVEN; break;
-            case 0x38: actualKey = KEY_EIGHT; break;
-            case 0x39: actualKey = KEY_NINE; break;
-            case 0x41: actualKey = KEY_A; break;
-            case 0x42: actualKey = KEY_B; break;
-            case 0x43: actualKey = KEY_C; break;
-            case 0x44: actualKey = KEY_D; break;
-            case 0x45: actualKey = KEY_E; break;
-            case 0x46: actualKey = KEY_F; break;
-            case 0x47: actualKey = KEY_G; break;
-            case 0x48: actualKey = KEY_H; break;
-            case 0x49: actualKey = KEY_I; break;
-            case 0x4A: actualKey = KEY_J; break;
-            case 0x4B: actualKey = KEY_K; break;
-            case 0x4C: actualKey = KEY_L; break;
-            case 0x4D: actualKey = KEY_M; break;
-            case 0x4E: actualKey = KEY_N; break;
-            case 0x4F: actualKey = KEY_O; break;
-            case 0x50: actualKey = KEY_P; break;
-            case 0x51: actualKey = KEY_Q; break;
-            case 0x52: actualKey = KEY_R; break;
-            case 0x53: actualKey = KEY_S; break;
-            case 0x54: actualKey = KEY_T; break;
-            case 0x55: actualKey = KEY_U; break;
-            case 0x56: actualKey = KEY_V; break;
-            case 0x57: actualKey = KEY_W; break;
-            case 0x58: actualKey = KEY_X; break;
-            case 0x59: actualKey = KEY_Y; break;
-            case 0x5A: actualKey = KEY_Z; break;
-            default: break;
+        case 0x08: actualKey = Key::Backspace; break;
+        case 0x20: actualKey = Key::Space; break;
+        case 0x1B: actualKey = Key::Escape; break;
+        case 0x0D: actualKey = Key::Enter; break;
+        case 0x2E: actualKey = Key::Delete; break;
+        case 0x27: actualKey = Key::Right; break;
+        case 0x25: actualKey = Key::Left; break;
+        case 0x28: actualKey = Key::Down; break;
+        case 0x26: actualKey = Key::Up; break;
+        case 0x70: actualKey = Key::F1; break;
+        case 0x71: actualKey = Key::F2; break;
+        case 0x72: actualKey = Key::F3; break;
+        case 0x73: actualKey = Key::F4; break;
+        case 0x74: actualKey = Key::F5; break;
+        case 0x75: actualKey = Key::F6; break;
+        case 0x76: actualKey = Key::F7; break;
+        case 0x77: actualKey = Key::F8; break;
+        case 0x78: actualKey = Key::F9; break;
+        case 0x79: actualKey = Key::F10; break;
+        case 0x7A: actualKey = Key::F11; break;
+        case 0x7B: actualKey = Key::F12; break;
+        case 0xA0: actualKey = Key::LeftShift; break;
+        case 0xA2: actualKey = Key::LeftControl; break;
+        case 0xA4: actualKey = Key::LeftAlt; break;
+        case 0xA1: actualKey = Key::RightShift; break;
+        case 0xA3: actualKey = Key::RightControl; break;
+        case 0xA5: actualKey = Key::RightAlt; break;
+        case 0x30: actualKey = Key::Zero; break;
+        case 0x31: actualKey = Key::One; break;
+        case 0x32: actualKey = Key::Two; break;
+        case 0x33: actualKey = Key::Three; break;
+        case 0x34: actualKey = Key::Four; break;
+        case 0x35: actualKey = Key::Five; break;
+        case 0x36: actualKey = Key::Six; break;
+        case 0x37: actualKey = Key::Seven; break;
+        case 0x38: actualKey = Key::Eight; break;
+        case 0x39: actualKey = Key::Nine; break;
+        case 0x41: actualKey = Key::A; break;
+        case 0x42: actualKey = Key::B; break;
+        case 0x43: actualKey = Key::C; break;
+        case 0x44: actualKey = Key::D; break;
+        case 0x45: actualKey = Key::E; break;
+        case 0x46: actualKey = Key::F; break;
+        case 0x47: actualKey = Key::G; break;
+        case 0x48: actualKey = Key::H; break;
+        case 0x49: actualKey = Key::I; break;
+        case 0x4A: actualKey = Key::J; break;
+        case 0x4B: actualKey = Key::K; break;
+        case 0x4C: actualKey = Key::L; break;
+        case 0x4D: actualKey = Key::M; break;
+        case 0x4E: actualKey = Key::N; break;
+        case 0x4F: actualKey = Key::O; break;
+        case 0x50: actualKey = Key::P; break;
+        case 0x51: actualKey = Key::Q; break;
+        case 0x52: actualKey = Key::R; break;
+        case 0x53: actualKey = Key::S; break;
+        case 0x54: actualKey = Key::T; break;
+        case 0x55: actualKey = Key::U; break;
+        case 0x56: actualKey = Key::V; break;
+        case 0x57: actualKey = Key::W; break;
+        case 0x58: actualKey = Key::X; break;
+        case 0x59: actualKey = Key::Y; break;
+        case 0x5A: actualKey = Key::Z; break;
+        default: break;
         }
         return actualKey;
     }
 
     void Keyboard::_UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
         Key key = _keyFromVirtualKey((int)args->VirtualKey);
-        m_UWPKeyboard->m_nextKeyState[key] = true;
+        m_UWPKeyboard->m_nextKeyState[(int) key] = true;
     }
 
     void Keyboard::_UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
     {
         Key key = _keyFromVirtualKey((int)args->VirtualKey);
-        m_UWPKeyboard->m_nextKeyState[key] = false;
+        m_UWPKeyboard->m_nextKeyState[(int) key] = false;
     }
 #endif
 
@@ -157,12 +157,12 @@ namespace ngine::input {
 
     Key Keyboard::getKey(char key) {
         // Skip keys that we can't have
-        if (key < 32 || key > 122) return KEY_NONE;
-        if (key > 32 && key < 39) return KEY_NONE;
-        if (key > 39 && key < 44) return KEY_NONE;
-        if (key > 57 && key < 61) return KEY_NONE;
-        if (key > 61 && key < 64) return KEY_NONE;
-        if (key == 94) return KEY_NONE;
+        if (key < 32 || key > 122) return Key::None;
+        if (key > 32 && key < 39) return Key::None;
+        if (key > 39 && key < 44) return Key::None;
+        if (key > 57 && key < 61) return Key::None;
+        if (key > 61 && key < 64) return Key::None;
+        if (key == 94) return Key::None;
 
         // Convert lower to upper
         if (key >= 97 && key <= 122) {
@@ -177,8 +177,8 @@ namespace ngine::input {
     }
 
     bool Keyboard::isKeyDown(Key key) const {
-        if (key == KEY_NONE) return false;
-        return m_currentKeyState[key];
+        if (key == Key::None) return false;
+        return m_currentKeyState[(int) key];
     }
 
     bool Keyboard::isKeyDown(char key) const {
@@ -186,8 +186,8 @@ namespace ngine::input {
     }
 
     bool Keyboard::isKeyPressed(Key key) const {
-        if (key == KEY_NONE) return false;
-        return m_currentKeyState[key] != m_previousKeyState[key] && m_currentKeyState[key];
+        if (key == Key::None) return false;
+        return m_currentKeyState[(int) key] != m_previousKeyState[(int) key] && m_currentKeyState[(int) key];
     }
 
     bool Keyboard::isKeyPressed(char key) const {
@@ -195,8 +195,8 @@ namespace ngine::input {
     }
 
     bool Keyboard::isKeyReleased(Key key) const {
-        if (key == KEY_NONE) return false;
-        return m_currentKeyState[key] != m_previousKeyState[key] && !m_currentKeyState[key];
+        if (key == Key::None) return false;
+        return m_currentKeyState[(int) key] != m_previousKeyState[(int) key] && !m_currentKeyState[(int) key];
     }
 
     bool Keyboard::isKeyReleased(char key) const {
