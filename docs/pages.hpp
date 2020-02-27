@@ -125,18 +125,18 @@
  * Single line comments must have a space following the `//`.
  * Multi-line comments must have an `*` followed by a space before each line of text. E.g
  * @code
- * /&zwj;
- *  &zwj; This is a multi-line comment
- *  &zwj;/
+ * /&zwj;*
+ *  * This is a multi-line comment
+ *  *&zwj;/
  * @endcode
  * If you are commenting anything outside a function body, it must be doxygen compatible. E.g
  * @code
- * /&zwj;&zwj;
- *  &zwj; This function does stuff
- *  &zwj;
- *  &zwj; @param paramA_ The first parameter.
- *  &zwj; @return The answer.
- *  &zwj;/
+ * /&zwj;**
+ *  * This function does stuff
+ *  *
+ *  * @param paramA_ The first parameter.
+ *  * @return The answer.
+ *  *&zwj;/
  *  std::string getTheAnswer(int paramA_);
  * @endcode
  */
