@@ -340,20 +340,18 @@ namespace ngine::graphics {
          * Begin pushing vertices.
          *
          * @param type The vertex type. Will be converted by the `VertexDataTool`.
-         * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
+         * @note For large numbers of vertices, push use `addTriangles`, `addIndexedTriangles` or even use a custom vertex buffer. These methods are more efficient.
          */
         void beginVertices(PrimitiveType type);
 
         /**
          * Finish pushing vertices and add to the render queue.
-         * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
          */
         void endVertices();
 
         /**
          * Add a vertex to the current vertex build.
          *
-         * @deprecated Use `VertexDataTool` to build and then store data instead, it is far more efficient due to far less function calls. Even use a buffer for large data for even quicker rendering!
          * @param vertex Vertex to add.
          */
         void pushVertex(Vertex vertex);
