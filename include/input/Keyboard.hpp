@@ -102,7 +102,7 @@ namespace ngine::input {
         Home = 268,
         End = 269,
         CapsLock = 280,
-        ScrollLocl = 281,
+        ScrollLock = 281,
         NumLock = 282,
         PrintScreen = 283,
         Pause = 284,
