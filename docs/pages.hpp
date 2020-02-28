@@ -119,6 +119,9 @@
  *
  * @namespace ngine::graphics
  * Ngine Graphics module.
+ * 
+ * @namespace ngine::graphics::API
+ * Ngine platform agnostic APIs.
  *
  * @namespace ngine::input
  * Ngine Input module.
