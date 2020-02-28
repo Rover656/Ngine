@@ -99,47 +99,6 @@
  * @section macro_NGINE_RUN_GAME NGINE_RUN_GAME
  * NGINE_RUN_GAME runs a Ngine game for you. This is because on UWP, game running is more sophisticated. Using this macro makes your game compatible with UWP builds.
  */
-
-//----------------------------------------------------------------------------------
-// Page: Code conventions
-//----------------------------------------------------------------------------------
-
-/**
- * @page code_conventions Code Conventions
- * @section naming Naming Convention
- * Private struct and class fields must have the `m_` prefix and be in `lowerCamelCase`.
- * 
- * Private struct and class methods must have the `_` prefix and be in `lowerCamelCase`.
- * 
- * Public struct and class fields and methods must be named in `UpperCamelCase`.
- * 
- * All struct, enum and class names must be be in `UpperCamelCase`.
- * 
- * All local variables must be in `lowerCamelCase`.
- * 
- * All parameters must have the `_` suffix and be in `lowerCamelCase`.
- * 
- * All namespaces are based on paths and are prefixed with `NerdThings::Ngine`.
- * 
- * @section comments Commenting Styles
- * Single line comments must have a space following the `//`.
- * Multi-line comments must have an `*` followed by a space before each line of text. E.g
- * @code
- * /*
- *  * This is a multi-line comment
- *  * /
- * @endcode
- * If you are commenting anything outside a function body, it must be doxygen compatible. E.g
- * @code
- * /**
- *  * This function does stuff
- *  *
- *  * @param paramA_ The first parameter.
- *  * @return The answer.
- *  * /
- *  std::string getTheAnswer(int paramA_);
- * @endcode
- */
  
 //----------------------------------------------------------------------------------
 // Namespace Documentation
