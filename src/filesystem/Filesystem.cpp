@@ -463,11 +463,11 @@ namespace ngine::filesystem {
     }
 
     bool Path::operator==(Path rhs) {
-        return getAbsolute() == rhs.getAbsolute();
+        return getAbsolute().m_internalPath == rhs.getAbsolute().m_internalPath;
     }
 
     bool Path::operator!=(Path rhs) {
-        return getAbsolute() != rhs.getAbsolute();
+        return getAbsolute().m_internalPath != rhs.getAbsolute().m_internalPath;
     }
 
     // Private Methods
