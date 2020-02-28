@@ -29,7 +29,7 @@
  * MinGW support is untested.
  * @code
  * mkdir build & cd build
- * cmake .. <Insert any CMake config here>
+ * cmake .. <Additional CMake Options>
  * cmake --build . --config <Debug or Release>
  * @endcode
  *
