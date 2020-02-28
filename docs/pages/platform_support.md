@@ -1,6 +1,8 @@
 Platform Support
 ================
 
+[TOC]
+
 Ngine supports a wide range of platforms. This page details build instructions for each platform.
 All build instructions are compatible with the CMake config guides.
 
