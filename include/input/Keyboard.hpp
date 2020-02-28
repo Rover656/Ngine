@@ -132,24 +132,24 @@ namespace ngine::input {
         RightBracket = 93,
         Grave = 96,
 
-        // Keypad keys
-        KeyPad0 = 320,
-        KeyPad1 = 321,
-        KeyPad2 = 322,
-        KeyPad3 = 323,
-        KeyPad4 = 324,
-        KeyPad5 = 325,
-        KeyPad6 = 326,
-        KeyPad7 = 327,
-        KeyPad8 = 328,
-        KeyPad9 = 329,
-        KeyPadDecimal = 330,
-        KeyPadDivide = 331,
-        KeyPadMultiply = 332,
-        KeyPadSubtract = 333,
-        KeyPadAdd = 334,
-        KeyPadEnter = 335,
-        KeyPadEquals = 336
+        // Numpad keys
+        NumPad0 = 320,
+        NumPad1 = 321,
+        NumPad2 = 322,
+        NumPad3 = 323,
+        NumPad4 = 324,
+        NumPad5 = 325,
+        NumPad6 = 326,
+        NumPad7 = 327,
+        NumPad8 = 328,
+        NumPad9 = 329,
+        NumPadDecimal = 330,
+        NumPadDivide = 331,
+        NumPadMultiply = 332,
+        NumPadSubtract = 333,
+        NumPadAdd = 334,
+        NumPadEnter = 335,
+        NumPadEquals = 336
     };
 
 #define KEY_MAX 348

@@ -43,72 +43,118 @@ namespace ngine::input {
     Keyboard *Keyboard::m_UWPKeyboard = nullptr;
 
     Key Keyboard::_keyFromVirtualKey(int key) {
+        using Windows::System::VirtualKey;
+
         Key actualKey = Key::None;
-        switch (key)
+        switch ((VirtualKey) key)
         {
-        case 0x08: actualKey = Key::Backspace; break;
-        case 0x20: actualKey = Key::Space; break;
-        case 0x1B: actualKey = Key::Escape; break;
-        case 0x0D: actualKey = Key::Enter; break;
-        case 0x2E: actualKey = Key::Delete; break;
-        case 0x27: actualKey = Key::Right; break;
-        case 0x25: actualKey = Key::Left; break;
-        case 0x28: actualKey = Key::Down; break;
-        case 0x26: actualKey = Key::Up; break;
-        case 0x70: actualKey = Key::F1; break;
-        case 0x71: actualKey = Key::F2; break;
-        case 0x72: actualKey = Key::F3; break;
-        case 0x73: actualKey = Key::F4; break;
-        case 0x74: actualKey = Key::F5; break;
-        case 0x75: actualKey = Key::F6; break;
-        case 0x76: actualKey = Key::F7; break;
-        case 0x77: actualKey = Key::F8; break;
-        case 0x78: actualKey = Key::F9; break;
-        case 0x79: actualKey = Key::F10; break;
-        case 0x7A: actualKey = Key::F11; break;
-        case 0x7B: actualKey = Key::F12; break;
-        case 0xA0: actualKey = Key::LeftShift; break;
-        case 0xA2: actualKey = Key::LeftControl; break;
-        case 0xA4: actualKey = Key::LeftAlt; break;
-        case 0xA1: actualKey = Key::RightShift; break;
-        case 0xA3: actualKey = Key::RightControl; break;
-        case 0xA5: actualKey = Key::RightAlt; break;
-        case 0x30: actualKey = Key::Zero; break;
-        case 0x31: actualKey = Key::One; break;
-        case 0x32: actualKey = Key::Two; break;
-        case 0x33: actualKey = Key::Three; break;
-        case 0x34: actualKey = Key::Four; break;
-        case 0x35: actualKey = Key::Five; break;
-        case 0x36: actualKey = Key::Six; break;
-        case 0x37: actualKey = Key::Seven; break;
-        case 0x38: actualKey = Key::Eight; break;
-        case 0x39: actualKey = Key::Nine; break;
-        case 0x41: actualKey = Key::A; break;
-        case 0x42: actualKey = Key::B; break;
-        case 0x43: actualKey = Key::C; break;
-        case 0x44: actualKey = Key::D; break;
-        case 0x45: actualKey = Key::E; break;
-        case 0x46: actualKey = Key::F; break;
-        case 0x47: actualKey = Key::G; break;
-        case 0x48: actualKey = Key::H; break;
-        case 0x49: actualKey = Key::I; break;
-        case 0x4A: actualKey = Key::J; break;
-        case 0x4B: actualKey = Key::K; break;
-        case 0x4C: actualKey = Key::L; break;
-        case 0x4D: actualKey = Key::M; break;
-        case 0x4E: actualKey = Key::N; break;
-        case 0x4F: actualKey = Key::O; break;
-        case 0x50: actualKey = Key::P; break;
-        case 0x51: actualKey = Key::Q; break;
-        case 0x52: actualKey = Key::R; break;
-        case 0x53: actualKey = Key::S; break;
-        case 0x54: actualKey = Key::T; break;
-        case 0x55: actualKey = Key::U; break;
-        case 0x56: actualKey = Key::V; break;
-        case 0x57: actualKey = Key::W; break;
-        case 0x58: actualKey = Key::X; break;
-        case 0x59: actualKey = Key::Y; break;
-        case 0x5A: actualKey = Key::Z; break;
+        // No apostrophe
+        // No comma
+        // No minus
+        // No period
+        // No slash
+        case VirtualKey::Number0: actualKey = Key::Zero; break;
+        case VirtualKey::Number1: actualKey = Key::One; break;
+        case VirtualKey::Number2: actualKey = Key::Two; break;
+        case VirtualKey::Number3: actualKey = Key::Three; break;
+        case VirtualKey::Number4: actualKey = Key::Four; break;
+        case VirtualKey::Number5: actualKey = Key::Five; break;
+        case VirtualKey::Number6: actualKey = Key::Six; break;
+        case VirtualKey::Number7: actualKey = Key::Seven; break;
+        case VirtualKey::Number8: actualKey = Key::Eight; break;
+        case VirtualKey::Number9: actualKey = Key::Nine; break;
+
+        // No semicolon
+        // No equals
+
+        case VirtualKey::A: actualKey = Key::A; break;
+        case VirtualKey::B: actualKey = Key::B; break;
+        case VirtualKey::C: actualKey = Key::C; break;
+        case VirtualKey::D: actualKey = Key::D; break;
+        case VirtualKey::E: actualKey = Key::E; break;
+        case VirtualKey::F: actualKey = Key::F; break;
+        case VirtualKey::G: actualKey = Key::G; break;
+        case VirtualKey::H: actualKey = Key::H; break;
+        case VirtualKey::I: actualKey = Key::I; break;
+        case VirtualKey::J: actualKey = Key::J; break;
+        case VirtualKey::K: actualKey = Key::K; break;
+        case VirtualKey::L: actualKey = Key::L; break;
+        case VirtualKey::M: actualKey = Key::M; break;
+        case VirtualKey::N: actualKey = Key::N; break;
+        case VirtualKey::O: actualKey = Key::O; break;
+        case VirtualKey::P: actualKey = Key::P; break;
+        case VirtualKey::Q: actualKey = Key::Q; break;
+        case VirtualKey::R: actualKey = Key::R; break;
+        case VirtualKey::S: actualKey = Key::S; break;
+        case VirtualKey::T: actualKey = Key::T; break;
+        case VirtualKey::U: actualKey = Key::U; break;
+        case VirtualKey::V: actualKey = Key::V; break;
+        case VirtualKey::W: actualKey = Key::W; break;
+        case VirtualKey::X: actualKey = Key::X; break;
+        case VirtualKey::Y: actualKey = Key::Y; break;
+        case VirtualKey::Z: actualKey = Key::Z; break;
+
+        case VirtualKey::Space: actualKey = Key::Space; break;
+        case VirtualKey::Escape: actualKey = Key::Escape; break;
+        case VirtualKey::Enter: actualKey = Key::Enter; break;
+        case VirtualKey::Tab: actualKey = Key::Tab; break;
+        case VirtualKey::Back: actualKey = Key::Backspace; break;
+        case VirtualKey::Insert: actualKey = Key::Insert; break;
+        case VirtualKey::Delete: actualKey = Key::Delete; break;
+        case VirtualKey::Right: actualKey = Key::Right; break;
+        case VirtualKey::Left: actualKey = Key::Left; break;
+        case VirtualKey::Down: actualKey = Key::Down; break;
+        case VirtualKey::Up: actualKey = Key::Up; break;
+        case VirtualKey::PageUp: actualKey = Key::PageUp; break;
+        case VirtualKey::PageDown: actualKey = Key::PageDown; break;
+        case VirtualKey::Home: actualKey = Key::Home; break;
+        case VirtualKey::End: actualKey = Key::End; break;
+        case VirtualKey::CapitalLock: actualKey = Key::CapsLock; break;
+        case VirtualKey::Scroll: actualKey = Key::ScrollLock; break;
+        case VirtualKey::NumberKeyLock: actualKey = Key::NumLock; break;
+        // No print screen
+        case VirtualKey::Pause: actualKey = Key::Pause; break;
+        case VirtualKey::F1: actualKey = Key::F1; break;
+        case VirtualKey::F2: actualKey = Key::F2; break;
+        case VirtualKey::F3: actualKey = Key::F3; break;
+        case VirtualKey::F4: actualKey = Key::F4; break;
+        case VirtualKey::F5: actualKey = Key::F5; break;
+        case VirtualKey::F6: actualKey = Key::F6; break;
+        case VirtualKey::F7: actualKey = Key::F7; break;
+        case VirtualKey::F8: actualKey = Key::F8; break;
+        case VirtualKey::F9: actualKey = Key::F9; break;
+        case VirtualKey::F10: actualKey = Key::F10; break;
+        case VirtualKey::F11: actualKey = Key::F11; break;
+        case VirtualKey::F12: actualKey = Key::F12; break;
+        case VirtualKey::LeftShift: actualKey = Key::LeftShift; break;
+        case VirtualKey::LeftControl: actualKey = Key::LeftControl; break;
+        // No left alt
+        case VirtualKey::LeftWindows: actualKey = Key::LeftSuper; break;
+        case VirtualKey::RightShift: actualKey = Key::RightShift; break;
+        case VirtualKey::RightControl: actualKey = Key::RightControl; break;
+        // No right alt
+        case VirtualKey::RightWindows: actualKey = Key::RightSuper; break;
+        case VirtualKey::Menu: actualKey = Key::Menu; break;
+        // No left bracket
+        // No backslash
+        // No right bracket
+        // No grave
+        
+        case VirtualKey::NumberPad0: actualKey = Key::NumPad0; break;
+        case VirtualKey::NumberPad1: actualKey = Key::NumPad1; break;
+        case VirtualKey::NumberPad2: actualKey = Key::NumPad2; break;
+        case VirtualKey::NumberPad3: actualKey = Key::NumPad3; break;
+        case VirtualKey::NumberPad4: actualKey = Key::NumPad4; break;
+        case VirtualKey::NumberPad5: actualKey = Key::NumPad5; break;
+        case VirtualKey::NumberPad6: actualKey = Key::NumPad6; break;
+        case VirtualKey::NumberPad7: actualKey = Key::NumPad7; break;
+        case VirtualKey::NumberPad8: actualKey = Key::NumPad8; break;
+        case VirtualKey::NumberPad9: actualKey = Key::NumPad9; break;
+        case VirtualKey::Add: actualKey = Key::NumPadAdd; break;
+        case VirtualKey::Subtract: actualKey = Key::NumPadSubtract; break;
+        case VirtualKey::Multiply: actualKey = Key::NumPadMultiply; break;
+        case VirtualKey::Divide: actualKey = Key::NumPadDivide; break;
+        
         default: break;
         }
         return actualKey;
