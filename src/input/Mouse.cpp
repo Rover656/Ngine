@@ -123,11 +123,6 @@ namespace ngine::input {
 
 #endif
 
-    Mouse *Mouse::getCurrent() {
-        auto w = Window::GetCurrent();
-        return w == nullptr ? nullptr : w->getMouse();
-    }
-
     void Mouse::cancelButton(MouseButton button) {
         m_currentMouseState.ButtonsDown[static_cast<int>(button)] = false;
         m_nextMouseState.ButtonsDown[static_cast<int>(button)] = false;

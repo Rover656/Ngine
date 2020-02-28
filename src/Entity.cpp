@@ -131,6 +131,14 @@ namespace ngine {
         return m_scene->getGame();
     }
 
+    input::Keyboard *Entity::getKeyboard() const {
+        return m_scene->getKeyboard();
+    }
+
+    input::Mouse *Entity::getMouse() const {
+        return m_scene->getMouse();
+    }
+
     filesystem::ResourceManager *Entity::getResourceManager() const {
         return m_scene->getResourceManager();
     }

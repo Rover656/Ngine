@@ -139,11 +139,6 @@ namespace ngine {
 
         friend class input::Keyboard;
 
-        /**
-         * The current window.
-         */
-        static Window *m_currentWindow;
-
 #if defined(PLATFORM_DESKTOP)
         /**
          * GLFW Window.
@@ -370,14 +365,6 @@ namespace ngine {
          * Make this window's context current.
          */
         void makeCurrent();
-
-        /**
-         * Get the current window.
-         *
-         * @deprecated This will be removed before Ngine 1.0
-         * @return The currently active window.
-         */
-        static Window *GetCurrent();
 
         /**
          * Get the mouse input handler.

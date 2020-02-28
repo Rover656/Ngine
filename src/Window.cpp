@@ -39,8 +39,6 @@
 #include "Console.hpp"
 
 namespace ngine {
-    Window *Window::m_currentWindow = nullptr;
-
 #if defined(PLATFORM_UWP)
     int Window::m_UWPWindowCount = 0;
 #endif
@@ -236,13 +234,6 @@ namespace ngine {
         if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
             ((graphics::API::PlatformGLAPI *) m_graphicsDevice->getAPI())->MakeEGLCurrent();
 #endif
-
-        // Make current
-        m_currentWindow = this;
-    }
-
-    Window *Window::GetCurrent() {
-        return m_currentWindow;
     }
 
     input::Mouse *Window::getMouse() {

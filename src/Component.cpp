@@ -53,18 +53,38 @@ namespace ngine {
     }
 
     Entity *Component::getParent() const {
+        if (!m_initialized)
+            Console::fail("Component", "Component must be initialized before being used.");
         return m_parent;
     }
 
     Scene *Component::getScene() const {
+        if (!m_initialized)
+            Console::fail("Component", "Component must be initialized before being used.");
         return m_parent->getScene();
     }
 
     Game *Component::getGame() const {
+        if (!m_initialized)
+            Console::fail("Component", "Component must be initialized before being used.");
         return m_parent->getGame();
     }
 
+    input::Keyboard *Component::getKeyboard() const {
+        if (!m_initialized)
+            Console::fail("Component", "Component must be initialized before being used.");
+        return m_parent->getKeyboard();
+    }
+
+    input::Mouse *Component::getMouse() const {
+        if (!m_initialized)
+            Console::fail("Component", "Component must be initialized before being used.");
+        return m_parent->getMouse();
+    }
+
     filesystem::ResourceManager *Component::getResourceManager() const {
+        if (!m_initialized)
+            Console::fail("Component", "Component must be initialized before being used.");
         return m_parent->getResourceManager();
     }
 

@@ -281,14 +281,6 @@ namespace ngine::input {
         // TODO: CLEAN ORDER
 
         /**
-         * Get the current window's mouse manager.
-         *
-         * @deprecated This will be removed before Ngine 1.0
-         * @return The current window's mouse manager.
-         */
-        static Mouse *getCurrent();
-
-        /**
          * Cancel button press (Prevents double event checks).
          *
          * @param button The button to cancel.

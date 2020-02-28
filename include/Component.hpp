@@ -23,8 +23,10 @@
 
 #include "Config.hpp"
 
-#include "graphics/Renderer.hpp"
 #include "filesystem/ResourceManager.hpp"
+#include "graphics/Renderer.hpp"
+#include "input/Mouse.hpp"
+#include "input/Keyboard.hpp"
 
 namespace ngine {
     class Entity;
@@ -94,6 +96,20 @@ namespace ngine {
          * @return The scene.
          */
         Game *getGame() const;
+
+        /**
+         * Get the game's keyboard input manager.
+         *
+         * @return Keyboard input manager
+         */
+        input::Keyboard *getKeyboard() const;
+
+        /**
+         * Get the game's mouse input manager.
+         *
+         * @return Mouse input manager
+         */
+        input::Mouse *getMouse() const;
 
         /**
          * Return the game's resource manager.

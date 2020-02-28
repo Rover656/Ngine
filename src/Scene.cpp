@@ -71,6 +71,14 @@ namespace ngine {
         return m_game;
     }
 
+    input::Keyboard *Scene::getKeyboard() const {
+        return m_game->getKeyboard();
+    }
+
+    input::Mouse *Scene::getMouse() const {
+        return m_game->getMouse();
+    }
+
     filesystem::ResourceManager *Scene::getResourceManager() {
         if (m_game == nullptr)
             Console::fail("Scene", "This can only be used when the scene is active!");

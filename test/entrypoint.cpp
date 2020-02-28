@@ -69,7 +69,7 @@ public:
     void update() override {
         Entity::update();
 
-        auto keyboard = Keyboard::getCurrent();
+        auto keyboard = getKeyboard();
         Vector2 vel;
 
         auto ms = 5;
@@ -204,14 +204,14 @@ public:
             } else {
                 Console::notice("DEBUG", "The left didnt do it!");
             }
-        }, getGameWindow()->getMouse());
+        }, getMouse());
 
         EventDispatcher::bind<Keyboard::KeyPressEvent>([] (const Keyboard::KeyPressEvent &e) {
             Console::notice("DEBUG", "A key was pressed.");
-        }, getGameWindow()->getKeyboard());
+        }, getKeyboard());
 
         // Set exit key
-        Keyboard::getCurrent()->setExitKey(Key::Escape);
+        getKeyboard()->setExitKey(Key::Escape);
 
         // Load all content (using default resource manager config).
         auto resMan = getResourceManager();

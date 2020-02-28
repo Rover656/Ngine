@@ -196,11 +196,6 @@ namespace ngine::input {
         }
     }
 
-    Keyboard *Keyboard::getCurrent() {
-        auto w = Window::GetCurrent();
-        return w == nullptr ? nullptr : w->getKeyboard();
-    }
-
     Key Keyboard::getKey(char key) {
         // Skip keys that we can't have
         if (key < 32 || key > 122) return Key::None;
