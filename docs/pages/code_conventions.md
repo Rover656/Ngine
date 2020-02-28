@@ -1,3 +1,6 @@
+Code Conventions
+================
+
 ## Naming Convention
 Private struct and class fields must have the `m_` prefix and be in `lowerCamelCase`.
 
