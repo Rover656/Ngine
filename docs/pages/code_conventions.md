@@ -16,7 +16,7 @@ All parameters must have the `_` suffix and be in `lowerCamelCase`.
 
 All namespaces are based on paths and are prefixed with `NerdThings::Ngine`.
 
-# Commenting Styles
+## Commenting Styles
 Single line comments must have a space following the `//`.
 Multi-line comments must have an `*` followed by a space before each line of text. E.g
 ```
