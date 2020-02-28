@@ -33,6 +33,8 @@ mkdir build & cd build
 cmake ..
 ```
 
+While the documentation for master and develop are both available [online](https://ngine.nerdthings.dev/docs), you can also build the docs yourself by installing Doxygen then building the CMake project in release mode (or building the Ngine_Docs target).
+
 ## Usage
 
 This shows you how to launch your game class (which you have to write I'm afraid)...
