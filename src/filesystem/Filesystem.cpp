@@ -1126,7 +1126,7 @@ namespace ngine::filesystem {
         return files;
     }
 
-    Directory Directory::GetDirectory(const Path &path) {
+    Directory Directory::getDirectory(const Path &path) {
         return Directory(path);
     }
 

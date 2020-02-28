@@ -646,7 +646,7 @@ namespace ngine::filesystem {
          * @param path The path to the directory to get.
          * @return The directory requested.
          */
-        static Directory GetDirectory(const Path &path);
+        static Directory getDirectory(const Path &path);
 
         /**
          * Get the executable directory.
