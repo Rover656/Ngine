@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "physics/PhysicsContext.hpp"
+#include "ngine/physics/PhysicsContext.hpp"
 
 namespace ngine::physics {
     PhysicsContext::PhysicsContext(int ppm) : m_pixelsPerMeter(ppm) {}

@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "Scene.hpp"
+#include "ngine/Scene.hpp"
 
-#include "Console.hpp"
-#include "Entity.hpp"
-#include "Game.hpp"
+#include "ngine/Console.hpp"
+#include "ngine/Entity.hpp"
+#include "ngine/Game.hpp"
 
 namespace ngine {
     void Scene::_sortEntities() {

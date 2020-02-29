@@ -18,14 +18,14 @@
 *
 **********************************************************************************************/
 
-#include "audio/Music.hpp"
+#include "ngine/audio/Music.hpp"
 
 #include <dr_mp3.h>
 #include <dr_flac.h>
 #include <stb_vorbis.h>
 
-#include "audio/AudioDevice.hpp"
-#include "Console.hpp"
+#include "ngine/audio/AudioDevice.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::audio {
     // Destructor

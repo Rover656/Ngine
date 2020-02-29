@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Camera.hpp"
+#include "ngine/graphics/Camera.hpp"
 
 namespace ngine::graphics {
     Vector2 Camera::screenToWorld(Vector2 pos) {

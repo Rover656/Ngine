@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "graphics/VertexDataConverter.hpp"
+#include "ngine/graphics/VertexDataConverter.hpp"
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 #include <cmath>
 

@@ -18,10 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "physics/PhysicsBody.hpp"
+#include "ngine/physics/PhysicsBody.hpp"
 
-#include "physics/PhysicsWorld.hpp"
-#include "Console.hpp"
+#include "ngine/physics/PhysicsWorld.hpp"
+#include "ngine/Console.hpp"
 
 #include <box2d/box2d.h>
 

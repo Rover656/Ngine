@@ -18,10 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "Component.hpp"
+#include "ngine/Component.hpp"
 
-#include "Console.hpp"
-#include "Entity.hpp"
+#include "ngine/Console.hpp"
+#include "ngine/Entity.hpp"
 
 namespace ngine {
     Component::Component() = default;

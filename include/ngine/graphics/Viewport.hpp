@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "Math.hpp"
+#include "../Math.hpp"
 
 namespace ngine::graphics {
     /**

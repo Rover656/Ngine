@@ -18,8 +18,8 @@
 *
 **********************************************************************************************/
 
-#include "audio/AudioDevice.hpp"
-#include "Console.hpp"
+#include "ngine/audio/AudioDevice.hpp"
+#include "ngine/Console.hpp"
 
 #include <cstring>
 

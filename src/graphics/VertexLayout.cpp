@@ -18,10 +18,10 @@
 *
 **********************************************************************************************/
 
-#include "graphics/VertexLayout.hpp"
+#include "ngine/graphics/VertexLayout.hpp"
 
-#include "graphics/Buffer.hpp"
-#include "Console.hpp"
+#include "ngine/graphics/Buffer.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::graphics {
     VertexLayout::VertexLayout(GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer)

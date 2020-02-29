@@ -18,13 +18,13 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Sprite.hpp"
+#include "ngine/graphics/Sprite.hpp"
 
 #include <cmath>
 
-#include "graphics/Color.hpp"
-#include "graphics/Renderer.hpp"
-#include "Rectangle.hpp"
+#include "ngine/graphics/Color.hpp"
+#include "ngine/graphics/Renderer.hpp"
+#include "ngine/Rectangle.hpp"
 
 namespace ngine::graphics {
     Sprite::Sprite(Texture2D *texture) {

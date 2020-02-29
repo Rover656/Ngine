@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "graphics/API/PlatformGraphicsAPI.hpp"
+#include "ngine/graphics/API/PlatformGraphicsAPI.hpp"
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::graphics::API {
     void PlatformGraphicsAPI::useVertexLayout(VertexLayout *layout) {

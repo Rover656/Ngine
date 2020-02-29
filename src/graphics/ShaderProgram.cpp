@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "graphics/ShaderProgram.hpp"
+#include "ngine/graphics/ShaderProgram.hpp"
 
-#include "graphics/API/PlatformGraphicsAPI.hpp"
-#include "graphics/Shader.hpp"
-#include "Console.hpp"
+#include "ngine/graphics/API/PlatformGraphicsAPI.hpp"
+#include "ngine/graphics/Shader.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::graphics {
     ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, Shader *vertexShader, Shader *fragmentShader, std::vector<ShaderDataStructure> uniforms)

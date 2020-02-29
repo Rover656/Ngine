@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "physics/PhysicsFixture.hpp"
+#include "ngine/physics/PhysicsFixture.hpp"
 
 #include <box2d/box2d.h>
 

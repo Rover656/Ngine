@@ -18,16 +18,16 @@
 *
 **********************************************************************************************/
 
-#include "Game.hpp"
+#include "ngine/Game.hpp"
 
-#include "audio/AudioDevice.hpp"
-#include "input/Gamepad.hpp"
-#include "input/Keyboard.hpp"
-#include "input/Mouse.hpp"
-#include "Console.hpp"
+#include "ngine/audio/AudioDevice.hpp"
+#include "ngine/input/Gamepad.hpp"
+#include "ngine/input/Keyboard.hpp"
+#include "ngine/input/Mouse.hpp"
+#include "ngine/Console.hpp"
 
 #if defined(PLATFORM_UWP)
-#include "UWP/GameApp.hpp"
+#include "ngine/UWP/GameApp.hpp"
 #endif
 
 namespace ngine {

@@ -23,10 +23,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "Config.hpp"
+#include "ngine/Config.hpp"
 
-#include "graphics/Renderer.hpp"
-#include "physics/PhysicsWorld.hpp"
+#include "ngine/graphics/Renderer.hpp"
+#include "ngine/physics/PhysicsWorld.hpp"
 
 #include <box2d/box2d.h>
 

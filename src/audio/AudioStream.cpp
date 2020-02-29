@@ -18,8 +18,8 @@
 *
 **********************************************************************************************/
 
-#include "audio/AudioStream.hpp"
-#include "Console.hpp"
+#include "ngine/audio/AudioStream.hpp"
+#include "ngine/Console.hpp"
 
 #include <cstring>
 

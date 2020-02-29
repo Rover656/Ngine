@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "UWP/GameApp.hpp"
+#include "ngine/UWP/GameApp.hpp"
 
 #if defined(PLATFORM_UWP)
 

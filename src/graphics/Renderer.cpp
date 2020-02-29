@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Renderer.hpp"
+#include "ngine/graphics/Renderer.hpp"
 
-#include "graphics/VertexDataConverter.hpp"
-#include "Console.hpp"
-#include "Window.hpp"
+#include "ngine/graphics/VertexDataConverter.hpp"
+#include "ngine/Console.hpp"
+#include "ngine/Window.hpp"
 
 namespace ngine::graphics {
     void Renderer::_addTriangles(Vertex *vertices, int count, bool translate) {

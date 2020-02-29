@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "physics/PhysicsWorld.hpp"
+#include "ngine/physics/PhysicsWorld.hpp"
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 #include "PhysicsDebugDraw.hpp"
 

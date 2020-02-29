@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Window.hpp"
+#include "ngine/Window.hpp"
 
 // EGL stuff
 #if defined(PLATFORM_UWP) // TODO: Add other platforms which use EGL
@@ -33,10 +33,10 @@
 
 #include <stdexcept>
 
-#include "graphics/GraphicsDevice.hpp"
-#include "input/Mouse.hpp"
-#include "input/Keyboard.hpp"
-#include "Console.hpp"
+#include "ngine/graphics/GraphicsDevice.hpp"
+#include "ngine/input/Mouse.hpp"
+#include "ngine/input/Keyboard.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine {
 #if defined(PLATFORM_UWP)

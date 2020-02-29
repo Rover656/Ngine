@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "filesystem/Filesystem.hpp"
+#include "ngine/filesystem/Filesystem.hpp"
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -49,7 +49,7 @@
 #include <cstring>
 #include <sstream>
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::filesystem {
     ////////

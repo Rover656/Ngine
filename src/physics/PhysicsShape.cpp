@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "physics/PhysicsShape.hpp"
+#include "ngine/physics/PhysicsShape.hpp"
 
 #include <box2d/box2d.h>
 

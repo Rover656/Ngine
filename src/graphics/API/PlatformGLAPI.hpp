@@ -23,9 +23,9 @@
 
 #if defined(API_OPENGL_ENABLED) || defined(API_OPENGLES_ENABLED)
 
-#include "Config.hpp"
+#include "ngine/Config.hpp"
 
-#include "graphics/API/PlatformGraphicsAPI.hpp"
+#include "ngine/graphics/API/PlatformGraphicsAPI.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLAD

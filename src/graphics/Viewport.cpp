@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Viewport.hpp"
+#include "ngine/graphics/Viewport.hpp"
 
 namespace ngine::graphics {
     Viewport::Viewport(float x, float y, float width, float height) {

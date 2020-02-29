@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "Rectangle.hpp"
+#include "ngine/Rectangle.hpp"
 
 namespace ngine {
     bool Rectangle::contains(Vector2 point) const {

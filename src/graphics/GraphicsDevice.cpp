@@ -18,13 +18,14 @@
 *
 **********************************************************************************************/
 
-#include "graphics/GraphicsDevice.hpp"
+#include "ngine/graphics/GraphicsDevice.hpp"
 
 #include "API/PlatformGLAPI.hpp"
-#include "graphics/Renderer.hpp"
-#include "graphics/RenderTarget.hpp"
-#include "Console.hpp"
-#include "Window.hpp"
+
+#include "ngine/graphics/Renderer.hpp"
+#include "ngine/graphics/RenderTarget.hpp"
+#include "ngine/Console.hpp"
+#include "ngine/Window.hpp"
 
 #include <cstring>
 

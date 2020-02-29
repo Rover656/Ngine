@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "audio/AudioBuffer.hpp"
+#include "ngine/audio/AudioBuffer.hpp"
 
 namespace ngine::audio {
     // Public Methods

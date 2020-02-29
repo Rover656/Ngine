@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Shader.hpp"
+#include "ngine/graphics/Shader.hpp"
 
-#include "graphics/API/PlatformGraphicsAPI.hpp"
+#include "ngine/graphics/API/PlatformGraphicsAPI.hpp"
 
 namespace ngine::graphics {
     Shader::Shader(GraphicsDevice *graphicsDevice, ShaderType type, const char *src)

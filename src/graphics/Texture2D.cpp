@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Texture2D.hpp"
+#include "ngine/graphics/Texture2D.hpp"
 
-#include "graphics/API/PlatformGraphicsAPI.hpp"
-#include "graphics/Renderer.hpp"
-#include "Console.hpp"
+#include "ngine/graphics/API/PlatformGraphicsAPI.hpp"
+#include "ngine/graphics/Renderer.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::graphics {
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice, unsigned char *data, unsigned int width,

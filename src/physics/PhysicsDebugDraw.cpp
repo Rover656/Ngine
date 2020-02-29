@@ -20,7 +20,7 @@
 
 #include "PhysicsDebugDraw.hpp"
 
-#include "graphics/ShapeRenderer.hpp"
+#include "ngine/graphics/ShapeRenderer.hpp"
 
 #include <box2d/box2d.h>
 

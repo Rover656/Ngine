@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "filesystem/ResourceManager.hpp"
+#include "ngine/filesystem/ResourceManager.hpp"
 
 #include <regex>
 #include <sstream>

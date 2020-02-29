@@ -18,13 +18,13 @@
 *
 **********************************************************************************************/
 
-#include "input/Mouse.hpp"
+#include "ngine/input/Mouse.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
 #endif
 
-#include "Window.hpp"
+#include "ngine/Window.hpp"
 
 namespace ngine::input {
     Vector2 Mouse::_internalGetMousePosition() {

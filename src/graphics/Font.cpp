@@ -18,11 +18,11 @@
 *
 **********************************************************************************************/
 
-#include "graphics/Font.hpp"
+#include "ngine/graphics/Font.hpp"
 
-#include "graphics/Renderer.hpp"
-#include "Console.hpp"
-#include "Rectangle.hpp"
+#include "ngine/graphics/Renderer.hpp"
+#include "ngine/Console.hpp"
+#include "ngine/Rectangle.hpp"
 
 #include <cmath>
 #include <numeric>

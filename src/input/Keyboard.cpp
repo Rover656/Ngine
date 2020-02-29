@@ -18,17 +18,17 @@
 *
 **********************************************************************************************/
 
-#include "input/Keyboard.hpp"
+#include "ngine/input/Keyboard.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 
 #include <GLFW/glfw3.h>
 
 #elif defined(PLATFORM_UWP)
-#include "UWP/GameApp.hpp"
+#include "ngine/UWP/GameApp.hpp"
 #endif
 
-#include "Game.hpp"
+#include "ngine/Game.hpp"
 
 namespace ngine::input {
 #if defined(PLATFORM_DESKTOP)

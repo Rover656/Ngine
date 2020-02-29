@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "input/Gamepad.hpp"
+#include "ngine/input/Gamepad.hpp"
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>

@@ -18,14 +18,14 @@
 *
 **********************************************************************************************/
 
-#include "audio/Wave.hpp"
+#include "ngine/audio/Wave.hpp"
 
 #include <dr_flac.h>
 #include <dr_mp3.h>
 #include <dr_wav.h>
 #include <stb_vorbis.h>
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::audio {
     Wave::~Wave() {

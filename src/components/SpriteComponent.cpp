@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include "components/SpriteComponent.hpp"
+#include "ngine/components/SpriteComponent.hpp"
 
 namespace ngine::components {
     SpriteComponent::SpriteComponent(graphics::Sprite *sprite) : m_sprite(sprite) {}

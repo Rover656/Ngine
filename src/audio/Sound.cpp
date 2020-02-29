@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "audio/Sound.hpp"
+#include "ngine/audio/Sound.hpp"
 
 #include <miniaudio.h>
 
-#include "audio/AudioDevice.hpp"
-#include "Console.hpp"
+#include "ngine/audio/AudioDevice.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::audio {
     // Destructor

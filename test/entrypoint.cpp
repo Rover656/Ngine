@@ -18,7 +18,7 @@
 *
 **********************************************************************************************/
 
-#include <Ngine.hpp>
+#include <ngine/Ngine.hpp>
 
 using namespace ngine;
 using namespace ngine::audio;

@@ -18,12 +18,12 @@
 *
 **********************************************************************************************/
 
-#include "Entity.hpp"
+#include "ngine/Entity.hpp"
 
-#include "Component.hpp"
-#include "Console.hpp"
-#include "Entity.hpp"
-#include "Game.hpp"
+#include "ngine/Component.hpp"
+#include "ngine/Console.hpp"
+#include "ngine/Entity.hpp"
+#include "ngine/Game.hpp"
 
 namespace ngine {
     bool Entity::_SortChildrenPredicate(Entity *a, Entity *b) {

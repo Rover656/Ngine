@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "graphics/ShaderProgramState.hpp"
+#include "ngine/graphics/ShaderProgramState.hpp"
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 #include <cstring>
 

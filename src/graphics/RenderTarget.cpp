@@ -18,9 +18,9 @@
 *
 **********************************************************************************************/
 
-#include "graphics/RenderTarget.hpp"
+#include "ngine/graphics/RenderTarget.hpp"
 
-#include "Console.hpp"
+#include "ngine/Console.hpp"
 
 namespace ngine::graphics {
     RenderTarget::RenderTarget(GraphicsDevice *graphicsDevice, unsigned int width, unsigned int height)
