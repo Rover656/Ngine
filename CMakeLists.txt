@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.12)
 
 # Setup project
 project(Ngine
-        VERSION 1.0.0
+        VERSION 0.1.0
         DESCRIPTION "A 2D Game Engine")
 
 # Add a version suffix
-set(PROJECT_VERSION_SUFFIX "dev")
+set(PROJECT_VERSION_SUFFIX "")
 if (NOT PROJECT_VERSION_SUFFIX STREQUAL "")
     set(PROJECT_VERSION ${PROJECT_VERSION}-${PROJECT_VERSION_SUFFIX})
     set(Ngine_VERSION ${PROJECT_VERSION})
