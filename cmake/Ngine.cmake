@@ -267,13 +267,13 @@ function(add_game)
     if(${GAME_INCLUDE_ANGLE})
         add_custom_command(TARGET ${GAME_TARGET_NAME}
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libEGL.dll
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libEGL.dll
                 $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libGLESv2.dll
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libGLESv2.dll
                 $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
                 $<TARGET_FILE_DIR:${GAME_TARGET_NAME}>
 
                 COMMENT "Copying ANGLE binaries to game output")

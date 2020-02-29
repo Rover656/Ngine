@@ -26,7 +26,7 @@ endif ()
 
 # GLAD source
 if (_NGINE_GLAD)
-    set(_NGINE_EXTRA_FILES ${_NGINE_EXTRA_FILES} ${Ngine_SOURCE_DIR}/third-party/glad/src/glad.c)
+    set(_NGINE_EXTRA_FILES ${_NGINE_EXTRA_FILES} ${Ngine_SOURCE_DIR}/vendor/glad/src/glad.c)
 endif()
 
 # Add target
@@ -82,18 +82,18 @@ target_include_directories(Ngine
             "${Ngine_SOURCE_DIR}/include"
         PRIVATE
             "${Ngine_SOURCE_DIR}/src"
-            "${Ngine_SOURCE_DIR}/third-party/stb"
-            "${Ngine_SOURCE_DIR}/third-party/miniaudio")
+            "${Ngine_SOURCE_DIR}/vendor/stb"
+            "${Ngine_SOURCE_DIR}/vendor/miniaudio")
 
 # GLFW
 if (PLATFORM MATCHES "Desktop")
     target_link_libraries(Ngine PRIVATE glfw)
-    target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/third-party/glfw/include)
+    target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/vendor/glfw/include)
 endif ()
 
 # GLAD
 if (_NGINE_GLAD)
-    target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/third-party/glad/include)
+    target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/vendor/glad/include)
 endif()
 
 # Graphics API handling
@@ -102,29 +102,29 @@ if (PLATFORM MATCHES "Desktop")
         # Copy DLLs to output
         add_custom_command(TARGET Ngine
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libEGL.dll
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libEGL.dll
                 $<TARGET_FILE_DIR:Ngine>
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libGLESv2.dll
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libGLESv2.dll
                 $<TARGET_FILE_DIR:Ngine>
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
                 $<TARGET_FILE_DIR:Ngine>
                 COMMENT "Copying ANGLE binaries to output.")
 
         # Link
         target_link_libraries(Ngine PRIVATE
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libEGL.lib
-                ${Ngine_SOURCE_DIR}/third-party/ANGLE/WindowsBinaries/x86/libGLESv2.lib)
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libEGL.lib
+                ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libGLESv2.lib)
 
         # Include
-        target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/third-party/ANGLE/include)
+        target_include_directories(Ngine PRIVATE ${Ngine_SOURCE_DIR}/vendor/ANGLE/include)
     endif ()
 elseif (PLATFORM MATCHES "UWP")
     if (ENABLE_OPENGLES)
         # Install ANGLE with Nuget
         add_custom_target(NgineInstallANGLEUWP
-                COMMAND ${Ngine_SOURCE_DIR}/redist/nuget.exe install ANGLE.WindowsStore -Version 2.1.13 -OutputDirectory ${CMAKE_CURRENT_BINARY_DIR}/packages
+                COMMAND ${Ngine_SOURCE_DIR}/vendor/windows-redist/nuget.exe install ANGLE.WindowsStore -Version 2.1.13 -OutputDirectory ${CMAKE_CURRENT_BINARY_DIR}/packages
                 COMMENT "Installing ANGLE.WindowStore V2.1.13")
         add_dependencies(Ngine NgineInstallANGLEUWP)
 

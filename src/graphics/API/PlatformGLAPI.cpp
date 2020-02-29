@@ -89,7 +89,7 @@
 
 #if defined(PLATFORM_UWP)
 #include <angle_windowsstore.h>
-#include "UWP/GameApp.hpp"
+#include "ngine/UWP/GameApp.hpp"
 #endif
 
 #include "ngine/graphics/Buffer.hpp"

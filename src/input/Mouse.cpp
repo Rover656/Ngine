@@ -22,6 +22,8 @@
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
+#elif defined(PLATFORM_UWP)
+#include "ngine/UWP/GameApp.hpp"
 #endif
 
 #include "ngine/Window.hpp"

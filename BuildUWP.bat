@@ -2,7 +2,7 @@
 
 SETLOCAL EnableDelayedExpansion
 
-for /f "usebackq tokens=*" %%i in (`redist\vswhere.exe -property installationPath`) do (
+for /f "usebackq tokens=*" %%i in (`vendor\windows-redist\vswhere.exe -property installationPath`) do (
    set InstallDir=%%i
 )
 

@@ -25,8 +25,6 @@
 
 #if defined(PLATFORM_DESKTOP)
 struct GLFWwindow;
-#elif defined(PLATFORM_UWP)
-#include "../UWP/GameApp.hpp"
 #endif
 
 #include "../Events.hpp"

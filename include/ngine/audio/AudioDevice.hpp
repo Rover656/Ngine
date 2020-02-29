@@ -23,7 +23,8 @@
 
 #include "../Config.hpp"
 
-#include "../../third-party/miniaudio/miniaudio.h"
+// TODO: Make miniaudio includes public?
+#include "../../vendor/miniaudio/miniaudio.h"
 #include "../Events.hpp"
 #include "AudioBuffer.hpp"
 #include "Music.hpp"

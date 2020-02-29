@@ -23,6 +23,8 @@
 // EGL stuff
 #if defined(PLATFORM_UWP) // TODO: Add other platforms which use EGL
 #include "graphics/API/PlatformGLAPI.hpp"
+
+#include "ngine/UWP/GameApp.hpp"
 #endif
 
 #if defined(PLATFORM_DESKTOP)

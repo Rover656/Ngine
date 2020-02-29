@@ -1,1 +1,0 @@
-Generated at http://glad.dav1d.de/#profile=compatibility&specification=gl&api=gl%3D4.6&api=gles1%3Dnone&api=gles2%3D3.2&api=glsc2%3Dnone&language=c

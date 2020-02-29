@@ -1,6 +1,6 @@
-[submodule "third-party/glfw"]
-	path = third-party/glfw
-	url = https://github.com/glfw/glfw
-[submodule "third-party/box2d"]
-	path = third-party/box2d
+[submodule "vendor/box2d"]
+	path = vendor/box2d
 	url = https://github.com/erincatto/box2d
+[submodule "vendor/glfw"]
+	path = vendor/glfw
+	url = https://github.com/glfw/glfw

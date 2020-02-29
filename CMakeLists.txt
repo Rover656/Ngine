@@ -70,7 +70,7 @@ message(STATUS "Ngine OpenGL support is ${ENABLE_OPENGL}")
 message(STATUS "Ngine OpenGLES support is ${ENABLE_OPENGLES}")
 
 # Add sub directories
-add_subdirectory(third-party)
+add_subdirectory(vendor)
 add_subdirectory(src)
 
 # Extra subdirectories if building as main project
