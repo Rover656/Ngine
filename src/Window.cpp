@@ -246,6 +246,14 @@ namespace ngine {
         return m_keyboardInput;
     }
 
+    input::Key Window::getExitKey() const {
+        return m_exitKey;
+    }
+
+    void Window::setExitKey(input::Key key) {
+        m_exitKey = key;
+    }
+
     int Window::getWidth() {
         return m_currentWidth;
     }
@@ -516,7 +524,7 @@ namespace ngine {
 #if defined(PLATFORM_DESKTOP)
         windowWantsClose = glfwWindowShouldClose((GLFWwindow *) m_GLFWWindow);
 #endif
-        return windowWantsClose || m_keyboardInput->isKeyDown(m_keyboardInput->m_exitKey);
+        return windowWantsClose || m_keyboardInput->isKeyDown(m_exitKey);
     }
 
     void Window::swapBuffers() {

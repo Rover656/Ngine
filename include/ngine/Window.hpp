@@ -40,6 +40,7 @@ typedef void *EGLContext;
 
 #include "graphics/API/PlatformGraphicsAPI.hpp"
 #include "graphics/Image.hpp"
+#include "input/Keyboard.hpp"
 #include "Events.hpp"
 
 namespace ngine {
@@ -49,8 +50,6 @@ namespace ngine {
 
     namespace input {
         class Mouse;
-
-        class Keyboard;
     }
 
     /**
@@ -274,6 +273,16 @@ namespace ngine {
          */
         bool m_vsync = false;
 
+        /**
+         * When this key is pressed, the window must exit.
+         */
+        input::Key m_exitKey = input::Key::None;
+
+        /**
+         * Whether or not the window should close.
+         */
+        bool m_shouldClose = false;
+
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
          * Whether or not a native console is allocated
@@ -316,7 +325,6 @@ namespace ngine {
          * This only happens when the window is created.
          */
         void _applyConfig(const WindowConfig &config);
-
     public:
         /**
          * Create a new window.
@@ -375,6 +383,20 @@ namespace ngine {
          * Get the keyboard input handler.
          */
         input::Keyboard *getKeyboard();
+
+        /**
+         * Get the key that closes the window.
+         *
+         * @return The key that closes the window.
+         */
+        input::Key getExitKey() const;
+
+        /**
+         * Set the window's exit key.
+         *
+         * @param key The key that closes the window.
+         */
+        void setExitKey(input::Key key);
 
         /**
          * Get window width.

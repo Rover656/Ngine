@@ -53,6 +53,8 @@ namespace ngine {
         friend class EventDispatcher;
 
     public:
+        EventRef() = default;
+
         /**
          * Remove event from dispatcher.
          *
@@ -69,7 +71,7 @@ namespace ngine {
         /**
          * Whether or not this has already been removed.
          */
-        bool m_removed = false;
+        bool m_removed = true;
 
         /**
          * Create a new event reference.

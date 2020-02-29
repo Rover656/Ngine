@@ -208,10 +208,14 @@ public:
 
         EventDispatcher::bind<Keyboard::KeyPressEvent>([] (const Keyboard::KeyPressEvent &e) {
             Console::notice("DEBUG", "A key was pressed.");
+
+            if (e.Key == Key::Backspace && e.IsControl) {
+                Console::notice("DEBUG", "Howdy!");
+            }
         }, getKeyboard());
 
         // Set exit key
-        getKeyboard()->setExitKey(Key::Escape);
+        getGameWindow()->setExitKey(Key::Escape);
 
         // Load all content (using default resource manager config).
         auto resMan = getResourceManager();

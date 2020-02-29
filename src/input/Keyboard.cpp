@@ -29,6 +29,7 @@
 #endif
 
 #include "ngine/Game.hpp"
+#include "ngine/Window.hpp"
 
 namespace ngine::input {
     KeyboardState::KeyboardState() {
@@ -303,9 +304,5 @@ namespace ngine::input {
         // Move current to last and next into current
         m_previousState = m_currentState;
         m_currentState = m_nextState;
-    }
-
-    void Keyboard::setExitKey(Key key) {
-        m_exitKey = key;
     }
 }

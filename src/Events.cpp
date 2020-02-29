@@ -36,5 +36,6 @@ namespace ngine {
 
     EventRef::EventRef(std::function<void()> removeFunc) {
         m_removeFunction = std::move(removeFunc);
+        m_removed = false;
     }
 }
