@@ -31,12 +31,52 @@
 #include "ngine/Game.hpp"
 
 namespace ngine::input {
+    KeyboardState::KeyboardState() {
+        // Set to defaults
+        for (auto i = 0; i <= KEY_MAX; i++) {
+            m_keys[i] = 0;
+        }
+    }
+
+    bool KeyboardState::getKeyState(Key key) const {
+        if (key == Key::None) return false;
+        return m_keys[(int) key];
+    }
+
+    void KeyboardState::setKeyState(Key key, bool state) {
+        if (key == Key::None) return;
+        m_keys[(int) key] = state;
+    }
+
 #if defined(PLATFORM_DESKTOP)
 
     void Keyboard::_GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto kbd = ((Window *) glfwGetWindowUserPointer(window))->getKeyboard();
-        kbd->m_nextKeyState[key] = (action != GLFW_RELEASE);
-        kbd->m_latestKeyPress = (Key) key;
+        // TODO: If we find its released again, should we keep it as pressed if it is already so we don't miss is?
+        kbd->m_nextState.setKeyState((Key) key, action != GLFW_RELEASE);
+
+        // Fire event
+        if (action == GLFW_PRESS) {
+            EventDispatcher::fire(KeyPressEvent(kbd,
+                                                kbd->m_window,
+                                                (Key) key,
+                                                (mods & GLFW_MOD_SHIFT) == GLFW_MOD_SHIFT,
+                                                (mods & GLFW_MOD_CONTROL) == GLFW_MOD_CONTROL,
+                                                (mods & GLFW_MOD_ALT) == GLFW_MOD_ALT,
+                                                (mods & GLFW_MOD_SUPER) == GLFW_MOD_SUPER,
+                                                (mods & GLFW_MOD_CAPS_LOCK) == GLFW_MOD_CAPS_LOCK,
+                                                (mods & GLFW_MOD_NUM_LOCK) == GLFW_MOD_NUM_LOCK));
+        } else if (action == GLFW_RELEASE) {
+            EventDispatcher::fire(KeyReleaseEvent(kbd,
+                                                  kbd->m_window,
+                                                  (Key) key,
+                                                  (mods & GLFW_MOD_SHIFT) == GLFW_MOD_SHIFT,
+                                                  (mods & GLFW_MOD_CONTROL) == GLFW_MOD_CONTROL,
+                                                  (mods & GLFW_MOD_ALT) == GLFW_MOD_ALT,
+                                                  (mods & GLFW_MOD_SUPER) == GLFW_MOD_SUPER,
+                                                  (mods & GLFW_MOD_CAPS_LOCK) == GLFW_MOD_CAPS_LOCK,
+                                                  (mods & GLFW_MOD_NUM_LOCK) == GLFW_MOD_NUM_LOCK));
+        }
     }
 
 #elif defined(PLATFORM_UWP)
@@ -163,12 +203,35 @@ namespace ngine::input {
     void Keyboard::_UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
         Key key = _keyFromVirtualKey((int)args->VirtualKey);
         m_UWPKeyboard->m_nextKeyState[(int) key] = true;
+
+        // Fire event
+        EventDispatcher::fire(KeyPressEvent(m_UWPKeyboard,
+            m_UWPKeyboard->m_window,
+            (Key)key,
+            (sender->GetKeyState(Windows::System::VirtualKey::Shift) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down,
+            (sender->GetKeyState(Windows::System::VirtualKey::Control) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down,
+            false, // No alt
+            (sender->GetKeyState(Windows::System::VirtualKey::LeftWindows) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down
+                || (sender->GetKeyState(Windows::System::VirtualKey::RightWindows) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down, // Annoyingly, we need to check both
+            (sender->GetKeyState(Windows::System::VirtualKey::CapitalLock) & CoreVirtualKeyStates::Locked) == CoreVirtualKeyStates::Locked,
+            (sender->GetKeyState(Windows::System::VirtualKey::NumberKeyLock) & CoreVirtualKeyStates::Locked) == CoreVirtualKeyStates::Locked));
     }
 
-    void Keyboard::_UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args)
-    {
+    void Keyboard::_UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
         Key key = _keyFromVirtualKey((int)args->VirtualKey);
         m_UWPKeyboard->m_nextKeyState[(int) key] = false;
+
+        // Fire event
+        EventDispatcher::fire(KeyReleaseEvent(m_UWPKeyboard,
+            m_UWPKeyboard->m_window,
+            (Key)key,
+            (sender->GetKeyState(Windows::System::VirtualKey::Shift) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down,
+            (sender->GetKeyState(Windows::System::VirtualKey::Control) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down,
+            false, // No alt
+            (sender->GetKeyState(Windows::System::VirtualKey::LeftWindows) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down
+                || (sender->GetKeyState(Windows::System::VirtualKey::RightWindows) & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down, // Annoyingly, we need to check both
+            (sender->GetKeyState(Windows::System::VirtualKey::CapitalLock) & CoreVirtualKeyStates::Locked) == CoreVirtualKeyStates::Locked,
+            (sender->GetKeyState(Windows::System::VirtualKey::NumberKeyLock) & CoreVirtualKeyStates::Locked) == CoreVirtualKeyStates::Locked));
     }
 #endif
 
@@ -189,11 +252,10 @@ namespace ngine::input {
         UWPwindow->KeyDown += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyDown);
         UWPwindow->KeyUp += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>(&_UWPKeyUp);
 #endif
+    }
 
-        // Set key states to default to prevent bugs
-        for (auto i = 0; i <= KEY_MAX; i++) {
-            m_currentKeyState[i] = m_previousKeyState[i] = m_nextKeyState[i] = false;
-        }
+    const KeyboardState &Keyboard::getState() const {
+        return m_currentState;
     }
 
     Key Keyboard::getKey(char key) {
@@ -210,16 +272,11 @@ namespace ngine::input {
             key -= 32;
         }
 
-        return (Key)key;
-    }
-
-    Key Keyboard::getLatestKeypress() const {
-        return m_latestKeyPress;
+        return (Key) key;
     }
 
     bool Keyboard::isKeyDown(Key key) const {
-        if (key == Key::None) return false;
-        return m_currentKeyState[(int) key];
+        return m_currentState.getKeyState(key);
     }
 
     bool Keyboard::isKeyDown(char key) const {
@@ -227,8 +284,7 @@ namespace ngine::input {
     }
 
     bool Keyboard::isKeyPressed(Key key) const {
-        if (key == Key::None) return false;
-        return m_currentKeyState[(int) key] != m_previousKeyState[(int) key] && m_currentKeyState[(int) key];
+        return m_currentState.getKeyState(key) && !m_previousState.getKeyState(key);
     }
 
     bool Keyboard::isKeyPressed(char key) const {
@@ -236,8 +292,7 @@ namespace ngine::input {
     }
 
     bool Keyboard::isKeyReleased(Key key) const {
-        if (key == Key::None) return false;
-        return m_currentKeyState[(int) key] != m_previousKeyState[(int) key] && !m_currentKeyState[(int) key];
+        return !m_currentState.getKeyState(key) && m_previousState.getKeyState(key);
     }
 
     bool Keyboard::isKeyReleased(char key) const {
@@ -246,20 +301,8 @@ namespace ngine::input {
 
     void Keyboard::pollInputs() {
         // Move current to last and next into current
-        for (auto i = 0; i <= KEY_MAX; i++) {
-            m_previousKeyState[i] = m_currentKeyState[i];
-            m_currentKeyState[i] = m_nextKeyState[i];
-        }
-
-        // Fire events
-        for (auto i = 0; i <= KEY_MAX; i++) {
-            auto k = (Key) i;
-            if (isKeyPressed(k)) {
-                EventDispatcher::fire(KeyPressEvent(this, m_window, k));
-            } else if (isKeyReleased(k)) {
-                EventDispatcher::fire(KeyReleaseEvent(this, m_window, k));
-            }
-        }
+        m_previousState = m_currentState;
+        m_currentState = m_nextState;
     }
 
     void Keyboard::setExitKey(Key key) {

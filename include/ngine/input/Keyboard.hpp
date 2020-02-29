@@ -30,6 +30,9 @@
 struct GLFWwindow;
 #endif
 
+// This tells us the maximum number of addressable keys
+#define KEY_MAX 348
+
 namespace ngine::input {
     /**
      * A keyboard key
@@ -152,7 +155,33 @@ namespace ngine::input {
         NumPadEquals = 336
     };
 
-#define KEY_MAX 348
+    class NEAPI KeyboardState {
+        /**
+         * Key states.
+         */
+        bool m_keys[KEY_MAX + 1];
+    public:
+        /**
+         * Create a new keyboard state
+         */
+        KeyboardState();
+
+        /**
+         * Get the state of a key.
+         *
+         * @param key Key to get state for.
+         * @return Key state.
+         */
+        bool getKeyState(Key key) const;
+
+        /**
+         * Set a key's state.
+         *
+         * @param key Key to set a state for.
+         * @param state New key state.
+         */
+        void setKeyState(Key key, bool state);
+    };
 
     /**
      * Keyboard input provider.
@@ -169,30 +198,24 @@ namespace ngine::input {
         Window *m_window;
 
         /**
-         * Last frame's key state
+         * The last keyboard state.
          */
-        bool m_previousKeyState[KEY_MAX + 1];
+        KeyboardState m_previousState;
 
         /**
-         * This frame's key state
+         * The current keyboard state.
          */
-        bool m_currentKeyState[KEY_MAX + 1];
+        KeyboardState m_currentState;
 
         /**
-         * Next frame's key state.
-         * This is here because inputs are handled on a separate thread to updates.
+         * The next keyboard state (being built).
          */
-        bool m_nextKeyState[KEY_MAX + 1];
+        KeyboardState m_nextState;
 
         /**
          * The key used to exit the game.
          */
         Key m_exitKey = Key::None;
-
-        /**
-         * The latest key pressed.
-         */
-        Key m_latestKeyPress = Key::None;
 
 #if defined(PLATFORM_DESKTOP)
 
@@ -229,13 +252,51 @@ namespace ngine::input {
             input::Key Key;
 
             /**
+             * Is shift pressed.
+             */
+            bool IsShift;
+
+            /**
+             * Is control pressed.
+             */
+            bool IsControl;
+
+            /**
+             * Is alt pressed.
+             */
+            bool IsAlt;
+
+            /**
+             * Is super pressed.
+             */
+            bool IsSuper;
+
+            /**
+             * State of caps lock.
+             */
+            bool IsCapsLock;
+
+            /**
+             * State of num lock.
+             */
+            bool IsNumLock;
+
+            /**
              * Create a key press event
              * @param sender The keyboard that fired this
              * @param window The window the keyboard is attached to
              * @param key The key that has been pressed
              */
-            KeyPressEvent(Keyboard *sender, ngine::Window *window, input::Key key) : Window(window), Key(key),
-                                                                                     Event(sender) {}
+            KeyPressEvent(Keyboard *sender, ngine::Window *window, input::Key key, bool shift, bool control, bool alt,
+                          bool super, bool caps, bool num) : Window(window),
+                                                             Key(key),
+                                                             IsShift(shift),
+                                                             IsControl(control),
+                                                             IsAlt(alt),
+                                                             IsSuper(super),
+                                                             IsCapsLock(caps),
+                                                             IsNumLock(num),
+                                                             Event(sender) {}
         };
 
         /**
@@ -254,14 +315,59 @@ namespace ngine::input {
             input::Key Key;
 
             /**
+             * Is shift pressed.
+             */
+            bool IsShift;
+
+            /**
+             * Is control pressed.
+             */
+            bool IsControl;
+
+            /**
+             * Is alt pressed.
+             */
+            bool IsAlt;
+
+            /**
+             * Is super pressed.
+             */
+            bool IsSuper;
+
+            /**
+             * State of caps lock.
+             */
+            bool IsCapsLock;
+
+            /**
+             * State of num lock.
+             */
+            bool IsNumLock;
+
+            /**
              * Create a key release event
              * @param sender The keyboard that fired this
              * @param window The window the keyboard is attached to
              * @param key The key that has been released
              */
-            KeyReleaseEvent(Keyboard *sender, ngine::Window *window, input::Key key) : Window(window), Key(key),
-                                                                                     Event(sender) {}
+            KeyReleaseEvent(Keyboard *sender, ngine::Window *window, input::Key key, bool shift, bool control, bool alt,
+                            bool super, bool caps, bool num) : Window(window),
+                                                               Key(key),
+                                                               IsShift(shift),
+                                                               IsControl(control),
+                                                               IsAlt(alt),
+                                                               IsSuper(super),
+                                                               IsCapsLock(caps),
+                                                               IsNumLock(num),
+                                                               Event(sender) {}
         };
+
+        /**
+         * Get the current keyboard state.
+         *
+         * @param The current keyboard state.
+         */
+        const KeyboardState &getState() const;
 
         /**
          * Get key enum from char.
@@ -270,14 +376,6 @@ namespace ngine::input {
          * @return Key enum.
          */
         static Key getKey(char key);
-
-        /**
-         * Get the latest keypress.
-         *
-         * @deprecated This is pretty much useless, use events if you want this information.
-         * @return The latest key that has been pressed.
-         */
-        Key getLatestKeypress() const;
 
         /**
          * Is the key down.
