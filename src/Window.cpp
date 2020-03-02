@@ -36,6 +36,7 @@
 #include <stdexcept>
 
 #include "ngine/graphics/GraphicsDevice.hpp"
+#include "ngine/graphics/RenderTarget.hpp"
 #include "ngine/input/Mouse.hpp"
 #include "ngine/input/Keyboard.hpp"
 #include "ngine/Console.hpp"
@@ -44,25 +45,6 @@ namespace ngine {
 #if defined(PLATFORM_UWP)
     int Window::m_UWPWindowCount = 0;
 #endif
-
-    void Window::_applyConfig(const WindowConfig &config) {
-        if (!m_initialized) return;
-
-        // Enable debug console
-        setEnableNativeConsole(config.NativeDebugConsole);
-
-        // Set fullscreen mode.
-        setFullscreen(config.Fullscreen);
-
-        // Set the window icon.
-        setIcon(config.Icon);
-
-        // Set resizeable or not.
-        setResizable(config.Resizable);
-
-        // Enable/disable V-Sync
-        setVSyncEnabled(config.VSync);
-    }
 
     Window::Window(const WindowConfig &config) : m_creationConfig(config), m_windowViewport(0, 0, config.InitialWidth, config.InitialHeight) {
 #if defined(PLATFORM_UWP)
@@ -95,7 +77,6 @@ namespace ngine {
             Console::Fail("GraphicsDevice", "Unable to determine default graphics API.");
 #endif
         }
-
 
         // Init
 #if defined(PLATFORM_DESKTOP)
@@ -197,8 +178,21 @@ namespace ngine {
         m_keyboardInput = new input::Keyboard(this);
         Console::notice("Window", "Successfully opened keyboard and mouse APIs.");
 
-        // Apply any after-creation config
-        _applyConfig(config);
+        // Enable debug console
+        setEnableNativeConsole(config.NativeDebugConsole);
+
+        // Set fullscreen mode.
+        setFullscreen(config.Fullscreen);
+
+        // Set the window icon.
+        setIcon(config.Icon);
+
+        // Set resizeable or not.
+        setResizable(config.Resizable);
+
+        // Enable/disable V-Sync
+        setVSyncEnabled(config.VSync);
+        Console::notice("Window", "Applied window config.");
     }
 
     Window::~Window() {
@@ -503,7 +497,7 @@ namespace ngine {
         // Destroy window
         glfwDestroyWindow((GLFWwindow *) m_GLFWWindow);
 
-        // Disable GLFW
+        // Disable GLFW TODO: Only disable if there are no window's active. This will fix closing one window when multiple exist.
         glfwTerminate();
 #endif
 

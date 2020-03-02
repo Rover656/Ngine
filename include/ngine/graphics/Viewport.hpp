@@ -56,7 +56,7 @@ namespace ngine::graphics {
         Matrix m_guiProjection;
         Matrix m_world3DProjection;
     public:
-        Viewport(float x, float y, float width, float height);
+        Viewport(float x = 0, float y = 0, float width = 0, float height = 0);
 
         void update(float x, float y, float width, float height);
 

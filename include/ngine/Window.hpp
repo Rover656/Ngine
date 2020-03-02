@@ -75,14 +75,14 @@ namespace ngine {
         graphics::Image *Icon = nullptr;
 
         /**
-         * Initial window height.
-         */
-        int InitialHeight = 0;
-
-        /**
          * Initial window width.
          */
         int InitialWidth = 0;
+
+        /**
+         * Initial window height.
+         */
+        int InitialHeight = 0;
 
         /**
          * Enable MSAA 4X.
@@ -135,7 +135,6 @@ namespace ngine {
      */
     class NEAPI Window {
         friend class input::Mouse;
-
         friend class input::Keyboard;
 
 #if defined(PLATFORM_DESKTOP)
@@ -224,12 +223,12 @@ namespace ngine {
         int m_currentHeight = 0;
 
         /**
-         * Whether or not the window is initialized
+         * Whether or not the window has been initialized.
          */
         bool m_initialized = false;
 
         /**
-         * Is the window currently fullscreen
+         * Is the window currently fullscreen.
          */
         bool m_isFullscreen = false;
 
@@ -319,13 +318,9 @@ namespace ngine {
          */
         std::streambuf *m_oldCerrBuffer;
 #endif
-
-        /**
-         * Apply the provided window config.
-         * This only happens when the window is created.
-         */
-        void _applyConfig(const WindowConfig &config);
     public:
+        // TODO: Events: GainFocus, LoseFocus, Resized
+
         /**
          * Create a new window.
          *
