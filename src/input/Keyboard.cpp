@@ -203,7 +203,7 @@ namespace ngine::input {
 
     void Keyboard::_UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
         Key key = _keyFromVirtualKey((int)args->VirtualKey);
-        m_UWPKeyboard->m_nextKeyState[(int) key] = true;
+        m_UWPKeyboard->m_nextState.setKeyState(key, true);
 
         // Fire event
         EventDispatcher::fire(KeyPressEvent(m_UWPKeyboard,
@@ -220,7 +220,7 @@ namespace ngine::input {
 
     void Keyboard::_UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args) {
         Key key = _keyFromVirtualKey((int)args->VirtualKey);
-        m_UWPKeyboard->m_nextKeyState[(int) key] = false;
+        m_UWPKeyboard->m_nextState.setKeyState(key, false);
 
         // Fire event
         EventDispatcher::fire(KeyReleaseEvent(m_UWPKeyboard,

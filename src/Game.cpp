@@ -157,16 +157,16 @@ namespace ngine {
                 m_renderTarget->getTexture()->draw(
                         m_renderer,
                         {
-                                (w - iw * scale) * 0.5f,
-                                (h - ih * scale) * 0.5f,
+                                offsetX,
+                                offsetY,
                                 iw * scale,
                                 ih * scale
                         },
                         {
                                 0,
                                 0,
-                                static_cast<float>(m_renderTarget->Width),
-                                static_cast<float>(m_renderTarget->Height) * -1
+                                iw,
+                                ih * -1
                         },
                         graphics::Color::White, {0, 0});
             }

@@ -22,13 +22,12 @@
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
-#elif defined(PLATFORM_UWP)
 #endif
 
 namespace ngine::input {
-    float Gamepad::m_currentAxisValue[4][GAMEPAD_AXIS_RIGHT_TRIGGER + 1];
-    bool Gamepad::m_currentButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
-    bool Gamepad::m_previousButtonState[4][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
+    float Gamepad::m_currentAxisValue[4][AXIS_COUNT];
+    bool Gamepad::m_currentButtonState[4][BUTTON_COUNT];
+    bool Gamepad::m_previousButtonState[4][BUTTON_COUNT];
     bool Gamepad::m_ready[4];
 
 #if defined(PLATFORM_UWP)
@@ -36,45 +35,47 @@ namespace ngine::input {
 #endif
 
     GamepadAxis Gamepad::_getAxis(int axis) {
-        GamepadAxis axisEnum = GAMEPAD_AXIS_UNKNOWN;
+        GamepadAxis axisEnum = GamepadAxis::Unknown;
 #if defined(PLATFORM_DESKTOP)
         switch (axis) {
-            case GLFW_GAMEPAD_AXIS_LEFT_X: axisEnum = GAMEPAD_AXIS_LEFT_X; break;
-            case GLFW_GAMEPAD_AXIS_LEFT_Y: axisEnum = GAMEPAD_AXIS_LEFT_Y; break;
-            case GLFW_GAMEPAD_AXIS_RIGHT_X: axisEnum = GAMEPAD_AXIS_RIGHT_X; break;
-            case GLFW_GAMEPAD_AXIS_RIGHT_Y: axisEnum = GAMEPAD_AXIS_RIGHT_Y; break;
-            case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER: axisEnum = GAMEPAD_AXIS_LEFT_TRIGGER; break;
-            case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER: axisEnum = GAMEPAD_AXIS_RIGHT_TRIGGER; break;
+            case GLFW_GAMEPAD_AXIS_LEFT_X: axisEnum = GamepadAxis::LeftX; break;
+            case GLFW_GAMEPAD_AXIS_LEFT_Y: axisEnum = GamepadAxis::LeftY; break;
+            case GLFW_GAMEPAD_AXIS_RIGHT_X: axisEnum = GamepadAxis::RightX; break;
+            case GLFW_GAMEPAD_AXIS_RIGHT_Y: axisEnum = GamepadAxis::RightY; break;
+            case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER: axisEnum = GamepadAxis::LeftTrigger; break;
+            case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER: axisEnum = GamepadAxis::RightTrigger; break;
         }
 #elif defined(PLATFORM_UWP)
-        axis = (GamepadAxis) axis;     // UWP will provide the correct axis
+        axisEnum = (GamepadAxis) axis;     // UWP will provide the correct axis
 #endif
         return axisEnum;
     }
 
     GamepadButton Gamepad::_getButton(int button) {
-        GamepadButton btn = GAMEPAD_BUTTON_UNKNOWN;
+        GamepadButton btn = GamepadButton::Unknown;
 #if defined(PLATFORM_DESKTOP)
         switch (button) {
-            case GLFW_GAMEPAD_BUTTON_Y: btn = GAMEPAD_BUTTON_RIGHT_FACE_UP; break;
-            case GLFW_GAMEPAD_BUTTON_B: btn = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT; break;
-            case GLFW_GAMEPAD_BUTTON_A: btn = GAMEPAD_BUTTON_RIGHT_FACE_DOWN; break;
-            case GLFW_GAMEPAD_BUTTON_X: btn = GAMEPAD_BUTTON_RIGHT_FACE_LEFT; break;
+            case GLFW_GAMEPAD_BUTTON_Y: btn = GamepadButton::RightFaceUp; break;
+            case GLFW_GAMEPAD_BUTTON_B: btn = GamepadButton::RightFaceRight; break;
+            case GLFW_GAMEPAD_BUTTON_A: btn = GamepadButton::RightFaceDown; break;
+            case GLFW_GAMEPAD_BUTTON_X: btn = GamepadButton::RightFaceLeft; break;
 
-            case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER: btn = GAMEPAD_BUTTON_LEFT_TRIGGER_1; break;
-            case GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER: btn = GAMEPAD_BUTTON_RIGHT_TRIGGER_1; break;
+            case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER: btn = GamepadButton::LeftTrigger1; break;
+            case GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER: btn = GamepadButton::RightTrigger1; break;
 
-            case GLFW_GAMEPAD_BUTTON_BACK: btn = GAMEPAD_BUTTON_MIDDLE_LEFT; break;
-            case GLFW_GAMEPAD_BUTTON_GUIDE: btn = GAMEPAD_BUTTON_MIDDLE; break;
-            case GLFW_GAMEPAD_BUTTON_START: btn = GAMEPAD_BUTTON_MIDDLE_RIGHT; break;
+            // Trigger 2 set by axis test in poll
 
-            case GLFW_GAMEPAD_BUTTON_DPAD_UP: btn = GAMEPAD_BUTTON_LEFT_FACE_UP; break;
-            case GLFW_GAMEPAD_BUTTON_DPAD_RIGHT: btn = GAMEPAD_BUTTON_LEFT_FACE_RIGHT; break;
-            case GLFW_GAMEPAD_BUTTON_DPAD_DOWN: btn = GAMEPAD_BUTTON_LEFT_FACE_DOWN; break;
-            case GLFW_GAMEPAD_BUTTON_DPAD_LEFT: btn = GAMEPAD_BUTTON_LEFT_FACE_LEFT; break;
+            case GLFW_GAMEPAD_BUTTON_BACK: btn = GamepadButton::MiddleLeft; break;
+            case GLFW_GAMEPAD_BUTTON_GUIDE: btn = GamepadButton::Middle; break;
+            case GLFW_GAMEPAD_BUTTON_START: btn = GamepadButton::MiddleRight; break;
 
-            case GLFW_GAMEPAD_BUTTON_LEFT_THUMB: btn = GAMEPAD_BUTTON_LEFT_THUMB; break;
-            case GLFW_GAMEPAD_BUTTON_RIGHT_THUMB: btn = GAMEPAD_BUTTON_RIGHT_THUMB; break;
+            case GLFW_GAMEPAD_BUTTON_DPAD_UP: btn = GamepadButton::LeftFaceUp; break;
+            case GLFW_GAMEPAD_BUTTON_DPAD_RIGHT: btn = GamepadButton::LeftFaceRight; break;
+            case GLFW_GAMEPAD_BUTTON_DPAD_DOWN: btn = GamepadButton::LeftFaceDown; break;
+            case GLFW_GAMEPAD_BUTTON_DPAD_LEFT: btn = GamepadButton::LeftFaceLeft; break;
+
+            case GLFW_GAMEPAD_BUTTON_LEFT_THUMB: btn = GamepadButton::LeftThumb; break;
+            case GLFW_GAMEPAD_BUTTON_RIGHT_THUMB: btn = GamepadButton::RightThumb; break;
         }
 #elif defined(PLATFORM_UWP)
         // Provided correctly
@@ -114,26 +115,28 @@ namespace ngine::input {
     }
 
     float Gamepad::getAxisValue(GamepadNumber pad, GamepadAxis axis) {
-        return m_currentAxisValue[pad][axis];
+        return m_currentAxisValue[(int) pad][(int) axis];
     }
 
     bool Gamepad::isAvailable(GamepadNumber pad) {
-        return m_ready[pad];
+        return m_ready[(int) pad];
     }
 
     bool Gamepad::isButtonDown(GamepadNumber pad, GamepadButton button) {
-        return m_currentButtonState[pad][button];
+        return m_currentButtonState[(int) pad][(int) button];
     }
 
     bool Gamepad::isButtonPressed(GamepadNumber pad, GamepadButton button) {
-        return m_currentButtonState[pad][button] != m_previousButtonState[pad][button] && m_currentButtonState[pad][button];
+        return m_currentButtonState[(int) pad][(int) button] != m_previousButtonState[(int) pad][(int) button] && m_currentButtonState[(int) pad][(int) button];
     }
 
     bool Gamepad::isButtonReleased(GamepadNumber pad, GamepadButton button) {
-        return m_currentButtonState[pad][button] != m_previousButtonState[pad][button] && !m_currentButtonState[pad][button];
+        return m_currentButtonState[(int) pad][(int) button] != m_previousButtonState[(int) pad][(int) button] && !m_currentButtonState[(int) pad][(int) button];
     }
 
     void Gamepad::pollInputs() {
+        // TODO: Check axis value parity.
+
 #if defined(PLATFORM_DESKTOP)
         // Check for ready controllers
         for (auto i = 0; i < 4; i++) {
@@ -143,30 +146,31 @@ namespace ngine::input {
         // Check for inputs
         for (auto i = 0; i < 4; i++) {
             if (isAvailable((GamepadNumber) i)) {
-                for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) m_previousButtonState[i][j] = m_currentButtonState[i][j];
+                for (auto j = 0; j < BUTTON_COUNT; j++)
+                    m_previousButtonState[i][j] = m_currentButtonState[i][j];
 
                 GLFWgamepadstate state;
                 glfwGetGamepadState(i, &state);
                 auto buttons = state.buttons;
 
-                for (auto j = 0; (buttons != nullptr) && (j <= GLFW_GAMEPAD_BUTTON_DPAD_LEFT) && (j <= GAMEPAD_BUTTON_RIGHT_THUMB); j++) {
+                for (auto j = 0; (buttons != nullptr) && (j <= GLFW_GAMEPAD_BUTTON_DPAD_LEFT) && (j < BUTTON_COUNT); j++) {
                     GamepadButton b = _getButton(j);
 
-                    m_currentButtonState[i][b] = buttons[j] == GLFW_PRESS;
+                    m_currentButtonState[i][(int) b] = buttons[j] == GLFW_PRESS;
                 }
 
                 // Get axis values
                 auto axes = state.axes;
 
-                for (auto j = 0; (axes != nullptr) && (j <= GLFW_GAMEPAD_AXIS_LAST) && (j <= GAMEPAD_AXIS_RIGHT_TRIGGER); j++){
+                for (auto j = 0; (axes != nullptr) && (j <= GLFW_GAMEPAD_AXIS_LAST) && (j < AXIS_COUNT); j++){
                     GamepadAxis a = _getAxis(j);
 
-                    m_currentAxisValue[i][a] = axes[j];
+                    m_currentAxisValue[i][(int) a] = axes[j];
                 }
 
                 // Register buttons for pressure triggers
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] > 0.1;
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.1;
+                m_currentButtonState[i][(int) GamepadButton::LeftTrigger2] = m_currentAxisValue[i][(int) GamepadAxis::LeftTrigger] > 0.1;
+                m_currentButtonState[i][(int) GamepadButton::RightTrigger2] = m_currentAxisValue[i][(int) GamepadAxis::RightTrigger] > 0.1;
             }
         }
 #elif defined(PLATFORM_UWP)
@@ -176,38 +180,38 @@ namespace ngine::input {
                 auto gamepad = m_UWPGamepads[i];
                 auto reading = gamepad->GetCurrentReading();
 
-                for (auto j = 0; j <= GAMEPAD_BUTTON_RIGHT_THUMB; j++) m_previousButtonState[i][j] = m_currentButtonState[i][j];
+                for (auto j = 0; j < BUTTON_COUNT; j++) m_previousButtonState[i][j] = m_currentButtonState[i][j];
 
                 // Get buttons
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_DOWN] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::A) == Windows::Gaming::Input::GamepadButtons::A);
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::B) == Windows::Gaming::Input::GamepadButtons::B);
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::X) == Windows::Gaming::Input::GamepadButtons::X);
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_FACE_UP] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Y) == Windows::Gaming::Input::GamepadButtons::Y);
+                m_currentButtonState[i][(int) GamepadButton::RightFaceDown] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::A) == Windows::Gaming::Input::GamepadButtons::A);
+                m_currentButtonState[i][(int)GamepadButton::RightFaceRight] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::B) == Windows::Gaming::Input::GamepadButtons::B);
+                m_currentButtonState[i][(int)GamepadButton::RightFaceLeft] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::X) == Windows::Gaming::Input::GamepadButtons::X);
+                m_currentButtonState[i][(int) GamepadButton::RightFaceUp] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Y) == Windows::Gaming::Input::GamepadButtons::Y);
 
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::LeftShoulder) == Windows::Gaming::Input::GamepadButtons::LeftShoulder);
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::RightShoulder) == Windows::Gaming::Input::GamepadButtons::RightShoulder);
+                m_currentButtonState[i][(int)GamepadButton::LeftTrigger1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::LeftShoulder) == Windows::Gaming::Input::GamepadButtons::LeftShoulder);
+                m_currentButtonState[i][(int)GamepadButton::RightTrigger1] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::RightShoulder) == Windows::Gaming::Input::GamepadButtons::RightShoulder);
 
-                m_currentButtonState[i][GAMEPAD_BUTTON_MIDDLE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::View) == Windows::Gaming::Input::GamepadButtons::View);
-                m_currentButtonState[i][GAMEPAD_BUTTON_MIDDLE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Menu) == Windows::Gaming::Input::GamepadButtons::Menu);
+                m_currentButtonState[i][(int)GamepadButton::MiddleLeft] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::View) == Windows::Gaming::Input::GamepadButtons::View);
+                m_currentButtonState[i][(int)GamepadButton::MiddleRight] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::Menu) == Windows::Gaming::Input::GamepadButtons::Menu);
 
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_UP] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadUp) == Windows::Gaming::Input::GamepadButtons::DPadUp);
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_RIGHT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadRight) == Windows::Gaming::Input::GamepadButtons::DPadRight);
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_DOWN] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadDown) == Windows::Gaming::Input::GamepadButtons::DPadDown);
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_FACE_LEFT] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadLeft) == Windows::Gaming::Input::GamepadButtons::DPadLeft);
+                m_currentButtonState[i][(int)GamepadButton::LeftFaceUp] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadUp) == Windows::Gaming::Input::GamepadButtons::DPadUp);
+                m_currentButtonState[i][(int)GamepadButton::LeftFaceRight] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadRight) == Windows::Gaming::Input::GamepadButtons::DPadRight);
+                m_currentButtonState[i][(int)GamepadButton::LeftFaceDown] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadDown) == Windows::Gaming::Input::GamepadButtons::DPadDown);
+                m_currentButtonState[i][(int)GamepadButton::LeftFaceLeft] = ((reading.Buttons & Windows::Gaming::Input::GamepadButtons::DPadLeft) == Windows::Gaming::Input::GamepadButtons::DPadLeft);
 
-                m_currentButtonState[i][GAMEPAD_BUTTON_MIDDLE] = false; // Not supported
+                m_currentButtonState[i][(int)GamepadButton::Middle] = false; // Not supported
 
                 // Get axis
-                m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_X] = (float)reading.LeftThumbstickX;
-                m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_Y] = (float)-reading.LeftThumbstickY;
-                m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_X] = (float)reading.RightThumbstickX;
-                m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_Y] = (float)-reading.RightThumbstickY;
-                m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] = (float)reading.LeftTrigger;
-                m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] = (float)reading.RightTrigger;
+                m_currentAxisValue[i][(int) GamepadAxis::LeftX] = (float)reading.LeftThumbstickX;
+                m_currentAxisValue[i][(int)GamepadAxis::LeftY] = (float)-reading.LeftThumbstickY;
+                m_currentAxisValue[i][(int)GamepadAxis::RightX] = (float)reading.RightThumbstickX;
+                m_currentAxisValue[i][(int)GamepadAxis::RightY] = (float)-reading.RightThumbstickY;
+                m_currentAxisValue[i][(int)GamepadAxis::LeftTrigger] = (float)reading.LeftTrigger;
+                m_currentAxisValue[i][(int)GamepadAxis::RightTrigger] = (float)reading.RightTrigger;
 
                 // Register buttons for pressure triggers
-                m_currentButtonState[i][GAMEPAD_BUTTON_LEFT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_LEFT_TRIGGER] > 0.1;
-                m_currentButtonState[i][GAMEPAD_BUTTON_RIGHT_TRIGGER_2] = m_currentAxisValue[i][GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.1;
+                m_currentButtonState[i][(int)GamepadButton::LeftTrigger2] = m_currentAxisValue[i][(int)GamepadAxis::LeftTrigger] > 0.1;
+                m_currentButtonState[i][(int)GamepadButton::RightTrigger2] = m_currentAxisValue[i][(int)GamepadAxis::RightTrigger] > 0.1;
             }
         }
 #endif

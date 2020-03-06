@@ -23,165 +23,169 @@
 
 #include "../Config.hpp"
 
+// Counts for arrays (include unknowns)
+#define AXIS_COUNT 7
+#define BUTTON_COUNT 18
+
 namespace ngine::input {
     /**
      * Gamepad axis.
      */
-    enum GamepadAxis {
+    enum class GamepadAxis {
         /**
          * Error checking for unknown axis used.
          */
-        GAMEPAD_AXIS_UNKNOWN = 0,
+        Unknown = 0,
 
         /**
          * Left stick X.
          */
-        GAMEPAD_AXIS_LEFT_X,
+        LeftX,
 
         /**
          * Left stick Y.
          */
-        GAMEPAD_AXIS_LEFT_Y,
+        LeftY,
 
         /**
          * Right stick X.
          */
-        GAMEPAD_AXIS_RIGHT_X,
+        RightX,
 
         /**
          * Right stick Y.
          */
-        GAMEPAD_AXIS_RIGHT_Y,
+        RightY,
 
         /**
          * Left trigger.
          */
-        GAMEPAD_AXIS_LEFT_TRIGGER,
+        LeftTrigger,
 
         /**
          * Right trigger.
          */
-        GAMEPAD_AXIS_RIGHT_TRIGGER
+        RightTrigger
     };
 
     /**
      * Gamepad buttons.
      */
-    enum GamepadButton {
+    enum class GamepadButton {
         /**
          * Error checking for unknown buttons.
          */
-        GAMEPAD_BUTTON_UNKNOWN = 0,
+        Unknown = 0,
 
         /**
          * Left collection of buttons up.
          */
-        GAMEPAD_BUTTON_LEFT_FACE_UP,
+        LeftFaceUp,
 
         /**
          * Left collection of buttons right.
          */
-        GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
+        LeftFaceRight,
 
         /**
          * Left collection of buttons down.
          */
-        GAMEPAD_BUTTON_LEFT_FACE_DOWN,
+        LeftFaceDown,
 
         /**
          * Left collection of buttons left.
          */
-        GAMEPAD_BUTTON_LEFT_FACE_LEFT,
+        LeftFaceLeft,
 
         /**
          * Right collection of buttons up.
          */
-        GAMEPAD_BUTTON_RIGHT_FACE_UP,
+        RightFaceUp,
 
         /**
          * Right collection of buttons right.
          */
-        GAMEPAD_BUTTON_RIGHT_FACE_RIGHT,
+        RightFaceRight,
 
         /**
          * Right collection of buttons down.
          */
-        GAMEPAD_BUTTON_RIGHT_FACE_DOWN,
+        RightFaceDown,
 
         /**
          * Right collection of buttons left.
          */
-        GAMEPAD_BUTTON_RIGHT_FACE_LEFT,
+        RightFaceLeft,
 
         /**
          * Left trigger 1.
          */
-        GAMEPAD_BUTTON_LEFT_TRIGGER_1,
+        LeftTrigger1,
 
         /**
          * Left trigger 2.
          */
-        GAMEPAD_BUTTON_LEFT_TRIGGER_2,
+        LeftTrigger2,
 
         /**
          * Right trigger 1.
          */
-        GAMEPAD_BUTTON_RIGHT_TRIGGER_1,
+        RightTrigger1,
 
         /**
          * Right trigger 2.
          */
-        GAMEPAD_BUTTON_RIGHT_TRIGGER_2,
+        RightTrigger2,
 
         /**
          * Middle left button.
          */
-        GAMEPAD_BUTTON_MIDDLE_LEFT,
+        MiddleLeft,
 
         /**
          * Middle button.
          */
-        GAMEPAD_BUTTON_MIDDLE,
+        Middle,
 
         /**
          * Middle right button.
          */
-        GAMEPAD_BUTTON_MIDDLE_RIGHT,
+        MiddleRight,
 
         /**
          * Left thumb clicked in.
          */
-        GAMEPAD_BUTTON_LEFT_THUMB,
+        LeftThumb,
 
         /**
          * Right thumb clicked in.
          */
-        GAMEPAD_BUTTON_RIGHT_THUMB
+        RightThumb
     };
 
     /**
      * Gamepad numbers.
      */
-    enum GamepadNumber {
+    enum class GamepadNumber {
         /**
          * Gamepad 1.
          */
-        GAMEPAD_1 = 0,
+        One = 0,
 
         /**
          * Gamepad 2.
          */
-        GAMEPAD_2 = 1,
+        Two = 1,
 
         /**
          * Gamepad 3.
          */
-        GAMEPAD_3 = 2,
+        Three = 2,
 
         /**
          * Gamepad 4.
          */
-        GAMEPAD_4 = 3
+        Four = 3
     };
 
     /**
@@ -191,17 +195,17 @@ namespace ngine::input {
         /**
          * The current axis values.
          */
-        static float m_currentAxisValue[][GAMEPAD_AXIS_RIGHT_TRIGGER + 1];
+        static float m_currentAxisValue[][AXIS_COUNT];
 
         /**
          * Current button states.
          */
-        static bool m_currentButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
+        static bool m_currentButtonState[][BUTTON_COUNT];
 
         /**
          * Previous button states.
          */
-        static bool m_previousButtonState[][GAMEPAD_BUTTON_RIGHT_THUMB + 1];
+        static bool m_previousButtonState[][BUTTON_COUNT];
 
         /**
          * Gamepad readiness.
