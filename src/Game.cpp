@@ -247,7 +247,7 @@ namespace ngine {
 
             // Check if we are behind by 15+ frames.
             if (m_lag >= m_timestep * 15) {
-                Console::warn("Game", "Running behind by %i frame(s), skipping...", (int) (m_lag / m_timestep));
+                Console::warn("Game", "Running behind by %i frame(s) or %d ms, skipping...", (int) (m_lag / m_timestep), std::chrono::duration_cast<std::chrono::milliseconds>(m_lag).count());
                 m_lag = std::chrono::nanoseconds(0);
             }
 
