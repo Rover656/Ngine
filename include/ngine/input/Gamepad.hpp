@@ -31,7 +31,7 @@ namespace ngine::input {
     /**
      * Gamepad axis.
      */
-    enum class GamepadAxis {
+    enum class GamepadAxis : int {
         /**
          * Error checking for unknown axis used.
          */
@@ -71,7 +71,7 @@ namespace ngine::input {
     /**
      * Gamepad buttons.
      */
-    enum class GamepadButton {
+    enum class GamepadButton : int {
         /**
          * Error checking for unknown buttons.
          */
@@ -166,7 +166,7 @@ namespace ngine::input {
     /**
      * Gamepad numbers.
      */
-    enum class GamepadNumber {
+    enum class GamepadNumber : int {
         /**
          * Gamepad 1.
          */
