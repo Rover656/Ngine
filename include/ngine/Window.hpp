@@ -164,11 +164,6 @@ namespace ngine {
         EGLSurface m_surface;
 
         /**
-         * Whether or not the window is focussed.
-         */
-        bool m_focussed = false;
-
-        /**
          * Whether or not the window is visible.
          */
         bool m_visible = false;
@@ -282,6 +277,11 @@ namespace ngine {
          */
         bool m_shouldClose = false;
 
+        /**
+         * Whether or not the window has focus.
+         */
+        bool m_hasFocus = true;
+
 #if defined(PLATFORM_DESKTOP) && defined(_WIN32)
         /**
          * Whether or not a native console is allocated
@@ -319,7 +319,23 @@ namespace ngine {
         std::streambuf *m_oldCerrBuffer;
 #endif
     public:
-        // TODO: Events: GainFocus, LoseFocus, Resized
+        /**
+         * Window gain focus event.
+         */
+        class GainFocusEvent : public Event {
+        public:
+            explicit GainFocusEvent(Window *sender) : Event(sender) {}
+        };
+
+        /**
+         * Window lose focus event.
+         */
+        class LoseFocusEvent : public Event {
+        public:
+            explicit LoseFocusEvent(Window *sender) : Event(sender) {}
+        };
+
+        // TODO: Resized, Visible, Hidden events.
 
         /**
          * Create a new window.

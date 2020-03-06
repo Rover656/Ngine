@@ -425,14 +425,7 @@ namespace ngine {
     }
 
     bool Window::isFocussed() {
-#if defined(PLATFORM_DESKTOP)
-        return glfwGetWindowAttrib((GLFWwindow *) m_GLFWWindow, GLFW_FOCUSED) == GLFW_TRUE;
-#elif defined(PLATFORM_UWP)
-        return m_focussed;
-#endif
-
-        // Default to true
-        return true;
+        return m_hasFocus;
     }
 
     bool Window::isVisible() {
@@ -459,8 +452,7 @@ namespace ngine {
         else
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
 
-        // Test visibility and focus
-        m_focussed = CoreWindow::GetForCurrentThread()->ActivationMode == CoreWindowActivationMode::ActivatedInForeground;
+        // Test visibility
         m_visible = CoreWindow::GetForCurrentThread()->Visible == true;
 
         // Query dimensions
@@ -483,6 +475,24 @@ namespace ngine {
 
         // Ensure viewport is up to date
         m_windowViewport.update(0, 0, m_currentWidth, m_currentHeight);
+
+        // Test focus
+        bool focus = true;
+#if defined(PLATFORM_DESKTOP)
+        focus = glfwGetWindowAttrib((GLFWwindow *) m_GLFWWindow, GLFW_FOCUSED) == GLFW_TRUE;
+#elif defined(PLATFORM_UWP)
+        focus = CoreWindow::GetForCurrentThread()->ActivationMode == CoreWindowActivationMode::ActivatedInForeground;
+#endif
+        if (!focus && m_hasFocus) {
+            EventDispatcher::fire(LoseFocusEvent(this));
+
+            // Clear states to fix stuck keys
+            m_keyboardInput->m_nextState = input::KeyboardState();
+        } else if (focus && !m_hasFocus) {
+            EventDispatcher::fire(GainFocusEvent(this));
+        }
+
+        m_hasFocus = focus;
     }
 
     void Window::close() {
