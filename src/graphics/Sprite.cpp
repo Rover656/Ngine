@@ -1,30 +1,30 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/graphics/Sprite.hpp"
 
 #include <cmath>
 
+#include "ngine/Rectangle.hpp"
 #include "ngine/graphics/Color.hpp"
 #include "ngine/graphics/Renderer.hpp"
-#include "ngine/Rectangle.hpp"
 
 namespace ngine::graphics {
     Sprite::Sprite(Texture2D *texture) {
@@ -39,10 +39,11 @@ namespace ngine::graphics {
         m_spriteSheet = true;
     }
 
-    Sprite::Sprite(Texture2D *texture, int frameWidth, int frameHeight, int drawWidth, int drawHeight,
-                   float imageSpeed, int startingFrame)
-            : DrawHeight(drawHeight), DrawWidth(drawWidth), FrameWidth(frameWidth), FrameHeight(frameHeight),
-              FrameTime(imageSpeed) {
+    Sprite::Sprite(Texture2D *texture, int frameWidth, int frameHeight,
+                   int drawWidth, int drawHeight, float imageSpeed,
+                   int startingFrame)
+        : DrawHeight(drawHeight), DrawWidth(drawWidth), FrameWidth(frameWidth),
+          FrameHeight(frameHeight), FrameTime(imageSpeed) {
         // Add texture
         m_textures.push_back(texture);
 
@@ -53,7 +54,8 @@ namespace ngine::graphics {
         m_spriteSheet = true;
     }
 
-    Sprite::Sprite(const std::vector<Texture2D *> &textures, float imageSpeed, int startingFrame) {
+    Sprite::Sprite(const std::vector<Texture2D *> &textures, float imageSpeed,
+                   int startingFrame) {
         // Set textures
         for (auto tex : textures) {
             m_textures.push_back(tex);
@@ -66,21 +68,14 @@ namespace ngine::graphics {
         m_spriteSheet = false;
     }
 
-    void Sprite::draw(graphics::Renderer *renderer, Vector2 position, float rotation, Vector2 origin) {
+    void Sprite::draw(graphics::Renderer *renderer, Vector2 position,
+                      float rotation, Vector2 origin) {
         if (m_textures.empty())
             return;
 
         getCurrentTexture()->draw(
-                renderer,
-                {
-                        position,
-                        (float) DrawWidth,
-                        (float) DrawHeight
-                },
-                getSourceRectangle(),
-                Color::White,
-                origin,
-                rotation);
+            renderer, {position, (float)DrawWidth, (float)DrawHeight},
+            getSourceRectangle(), Color::White, origin, rotation);
     }
 
     void Sprite::update() {
@@ -88,7 +83,8 @@ namespace ngine::graphics {
             // Increment timer
             m_animationTimer++;
 
-            while (m_animationTimer > 0 && fmod(m_animationTimer, FrameTime) == 0) {
+            while (m_animationTimer > 0 &&
+                   fmod(m_animationTimer, FrameTime) == 0) {
                 // Reset timer
                 m_animationTimer = 0;
 
@@ -97,8 +93,8 @@ namespace ngine::graphics {
 
                 // Reset if out of range
                 if (m_spriteSheet) {
-                    auto count =
-                            (getCurrentTexture()->Width / FrameWidth) * (getCurrentTexture()->Height / FrameHeight);
+                    auto count = (getCurrentTexture()->Width / FrameWidth) *
+                                 (getCurrentTexture()->Height / FrameHeight);
 
                     if (CurrentFrame > count - 1)
                         CurrentFrame = 0;
@@ -113,7 +109,8 @@ namespace ngine::graphics {
     bool Sprite::isAnimated() {
         if (m_spriteSheet) {
             if (getCurrentTexture()->isValid())
-                return FrameHeight != getCurrentTexture()->Height || FrameWidth != getCurrentTexture()->Width;
+                return FrameHeight != getCurrentTexture()->Height ||
+                       FrameWidth != getCurrentTexture()->Width;
             else
                 return false;
         } else {
@@ -179,28 +176,24 @@ namespace ngine::graphics {
 
     Rectangle Sprite::getSourceRectangle() {
         if (m_spriteSheet)
-            return {
-                    static_cast<float>(getFrameX()),
+            return {static_cast<float>(getFrameX()),
                     static_cast<float>(getFrameY()),
                     static_cast<float>(FrameWidth),
-                    static_cast<float>(FrameHeight)
-            };
+                    static_cast<float>(FrameHeight)};
         else
-            return {
-                    0,
-                    0,
-                    static_cast<float>(getCurrentTexture()->Width),
-                    static_cast<float>(getCurrentTexture()->Height)
-            };
+            return {0, 0, static_cast<float>(getCurrentTexture()->Width),
+                    static_cast<float>(getCurrentTexture()->Height)};
     }
 
     bool Sprite::operator==(const Sprite &b) {
-        return m_textures == b.m_textures && DrawHeight == b.DrawHeight && DrawWidth == b.DrawWidth &&
-               FrameHeight == b.FrameHeight && FrameWidth == b.FrameWidth && FrameTime == b.FrameTime;
+        return m_textures == b.m_textures && DrawHeight == b.DrawHeight &&
+               DrawWidth == b.DrawWidth && FrameHeight == b.FrameHeight &&
+               FrameWidth == b.FrameWidth && FrameTime == b.FrameTime;
     }
 
     bool Sprite::operator!=(const Sprite &b) {
-        return m_textures != b.m_textures || DrawHeight != b.DrawHeight || DrawWidth != b.DrawWidth ||
-               FrameHeight != b.FrameHeight || FrameWidth != b.FrameWidth || FrameTime != b.FrameTime;
+        return m_textures != b.m_textures || DrawHeight != b.DrawHeight ||
+               DrawWidth != b.DrawWidth || FrameHeight != b.FrameHeight ||
+               FrameWidth != b.FrameWidth || FrameTime != b.FrameTime;
     }
-}
+} // namespace ngine::graphics

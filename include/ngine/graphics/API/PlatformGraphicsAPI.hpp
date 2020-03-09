@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef PLATFORMGRAPHICSAPI_HPP
 #define PLATFORMGRAPHICSAPI_HPP
@@ -34,7 +34,8 @@ namespace ngine::graphics {
 
     namespace API {
         /**
-         * The platform graphics API interface. This defines all functions required of a graphics API and exposes them in a universal way.
+         * The platform graphics API interface. This defines all functions
+         * required of a graphics API and exposes them in a universal way.
          */
         class NEAPI PlatformGraphicsAPI {
         protected:
@@ -61,13 +62,15 @@ namespace ngine::graphics {
              * @param layout Layout to stop.
              */
             virtual void _stopVertexLayout(VertexLayout *layout) = 0;
+
         public:
             /**
              * Create a platform API.
              *
              * @param graphicsDevice The graphics device to attach to.
              */
-            PlatformGraphicsAPI(GraphicsDevice *graphicsDevice) : m_graphicsDevice(graphicsDevice) {}
+            PlatformGraphicsAPI(GraphicsDevice *graphicsDevice)
+                : m_graphicsDevice(graphicsDevice) {}
             virtual ~PlatformGraphicsAPI() = default;
 
             /**
@@ -78,7 +81,8 @@ namespace ngine::graphics {
              * @param width Width.
              * @param height Height.
              */
-            virtual void configureViewport(int x, int y, int width, int height) = 0;
+            virtual void configureViewport(int x, int y, int width,
+                                           int height) = 0;
 
             /**
              * Clear the display.
@@ -93,7 +97,8 @@ namespace ngine::graphics {
              * @param texture Texture object.
              * @param data Pixel data (can be null).
              */
-            virtual void createTexture(Texture2D *texture, unsigned char *data) = 0;
+            virtual void createTexture(Texture2D *texture,
+                                       unsigned char *data) = 0;
 
             /**
              * Delete a texture on the GPU.
@@ -115,7 +120,8 @@ namespace ngine::graphics {
              * @param texture Texture.
              * @param mode Mode to use.
              */
-            virtual void setTextureFilterMode(Texture2D *texture, TextureFilterMode mode) = 0;
+            virtual void setTextureFilterMode(Texture2D *texture,
+                                              TextureFilterMode mode) = 0;
 
             /**
              * Set the texture's wrap mode.
@@ -123,7 +129,8 @@ namespace ngine::graphics {
              * @param texture Texture.
              * @param mode Mode to use.
              */
-            virtual void setTextureWrapMode(Texture2D *texture, TextureWrapMode mode) = 0;
+            virtual void setTextureWrapMode(Texture2D *texture,
+                                            TextureWrapMode mode) = 0;
 
             /**
              * Determine if the texture is valid on the GPU.
@@ -140,14 +147,16 @@ namespace ngine::graphics {
              * @param b Texture B.
              * @returns Whether or not the textures are the same.
              */
-            virtual bool compareTextures(const Texture2D *a, const Texture2D *b) = 0;
+            virtual bool compareTextures(const Texture2D *a,
+                                         const Texture2D *b) = 0;
 
             /**
              * Create a shader on the GPU.
              *
              * @note This will compile the shader too.
              * @param shader Shader object.
-             * @param sourceData The source data, this will be a GLSL string for OpenGL, HLSL bytecode for DirectX and so on.
+             * @param sourceData The source data, this will be a GLSL string for
+             * OpenGL, HLSL bytecode for DirectX and so on.
              */
             virtual void createShader(Shader *shader, void *sourceData) = 0;
 
@@ -229,7 +238,8 @@ namespace ngine::graphics {
              * @param renderTarget Render target to check.
              * @return Whether or not the render target is valid.
              */
-            virtual bool isRenderTargetValid(const RenderTarget *renderTarget) = 0;
+            virtual bool
+            isRenderTargetValid(const RenderTarget *renderTarget) = 0;
 
             /**
              * Compare two render targets.
@@ -238,12 +248,14 @@ namespace ngine::graphics {
              * @param b Render target B.
              * @return Whether or not the targets are the same.
              */
-            virtual bool compareRenderTargets(const RenderTarget *a, const RenderTarget *b) = 0;
+            virtual bool compareRenderTargets(const RenderTarget *a,
+                                              const RenderTarget *b) = 0;
 
             /**
              * Bind a buffer.
              *
-             * @warning Due to the nature of buffers, you must use `UnbindBuffer` instead of passing null.
+             * @warning Due to the nature of buffers, you must use
+             * `UnbindBuffer` instead of passing null.
              * @param buffer The buffer to bind
              */
             virtual void bindBuffer(Buffer *buffer) = 0;
@@ -278,7 +290,8 @@ namespace ngine::graphics {
              * @param size The size of each entry
              * @param update GL only, whether or not to use glBufferSubData
              */
-            virtual void writeBuffer(Buffer *buffer, void *data, int count, int size, bool update) = 0;
+            virtual void writeBuffer(Buffer *buffer, void *data, int count,
+                                     int size, bool update) = 0;
 
             /**
              * Initialize a vertex layout on the GPU.
@@ -329,14 +342,15 @@ namespace ngine::graphics {
             virtual void draw(int count, int start) = 0;
 
             /**
-             * Draw the currently bound vertex buffer which is indexed by a bound index buffer.
+             * Draw the currently bound vertex buffer which is indexed by a
+             * bound index buffer.
              *
              * @param count Number of vertices (triangles * 3) to draw.
              * @param start The starting index.
              */
             virtual void drawIndexed(int count, int start) = 0;
         };
-    }
-}
+    } // namespace API
+} // namespace ngine::graphics
 
-#endif //PLATFORMGRAPHICSAPI_HPP
+#endif // PLATFORMGRAPHICSAPI_HPP

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef GRAPHICSDEVICE_HPP
 #define GRAPHICSDEVICE_HPP
@@ -71,7 +71,9 @@ namespace ngine {
              * * Desktop (Windows Only)
              * * UWP
              *
-             * @warning Use of this on Desktop and UWP will be deprecated once DirectX11 API is added as ANGLE will be obsolete. This will be left purely for GLES support for possible other platforms.
+             * @warning Use of this on Desktop and UWP will be deprecated once
+             * DirectX11 API is added as ANGLE will be obsolete. This will be
+             * left purely for GLES support for possible other platforms.
              */
             OpenGLES,
 
@@ -100,6 +102,7 @@ namespace ngine {
              * Once accessed, it is used and therefore can no longer change.
              */
             static bool m_targetAccessed;
+
         public:
             /**
              * Maximum targets in a stack.
@@ -110,6 +113,7 @@ namespace ngine {
              * The maximum number of matrices permitted per stack.
              */
             static const int MAX_MATRICES = 32;
+
         private:
             /**
              * The current platform API.
@@ -162,7 +166,8 @@ namespace ngine {
             /**
              * Get the current render target.
              *
-             * @return The current render target or null if rendering straight to window.
+             * @return The current render target or null if rendering straight
+             * to window.
              */
             RenderTarget *getCurrentTarget();
 
@@ -197,11 +202,12 @@ namespace ngine {
             /**
              * Get the graphics API.
              *
-             * @warning This is intended for internal use, please use the classes provided by the `graphics` namespace instead.
+             * @warning This is intended for internal use, please use the
+             * classes provided by the `graphics` namespace instead.
              */
             API::PlatformGraphicsAPI *getAPI();
         };
-    }
-}
+    } // namespace graphics
+} // namespace ngine
 
 #endif // GRAPHICSDEVICE_HPP

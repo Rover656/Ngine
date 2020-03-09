@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef NEW_SHADER_H
 #define NEW_SHADER_H
@@ -38,10 +38,7 @@ namespace ngine::graphics {
      *
      * @todo Should we support more?
      */
-    enum class ShaderType {
-        Vertex,
-        Fragment
-    };
+    enum class ShaderType { Vertex, Fragment };
 
     /**
      * A program that runs on the graphics card.
@@ -51,6 +48,7 @@ namespace ngine::graphics {
          * Graphics API.
          */
         API::PlatformGraphicsAPI *m_API;
+
     public:
         union {
             /**
@@ -70,13 +68,15 @@ namespace ngine::graphics {
          * @todo Universal constructor.
          * @param src GLSL source
          */
-        Shader(GraphicsDevice *graphicsDevice, ShaderType type, const char *src);
+        Shader(GraphicsDevice *graphicsDevice, ShaderType type,
+               const char *src);
         ~Shader();
 
         /**
          * Determine if the shader is valid.
          *
-         * @note If the shader has not compiled, or failed to compile it will not be valid.
+         * @note If the shader has not compiled, or failed to compile it will
+         * not be valid.
          * @return Whether or not the shader is valid.
          */
         bool isValid() const override;
@@ -86,6 +86,6 @@ namespace ngine::graphics {
          */
         void free() override;
     };
-}
+} // namespace ngine::graphics
 
-#endif //NEW_SHADER_H
+#endif // NEW_SHADER_H

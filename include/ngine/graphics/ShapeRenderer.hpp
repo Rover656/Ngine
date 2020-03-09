@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef SHAPERENDERER_HPP
 #define SHAPERENDERER_HPP
@@ -30,10 +30,14 @@
 
 namespace ngine::graphics {
     /**
-     * The shape renderer is a static API that allows shapes do be drawn. Kinda figures.
+     * The shape renderer is a static API that allows shapes do be drawn. Kinda
+     * figures.
      *
-     * @note This *is* the API that will replace the shape drawing in the old renderer. Best to start using it as soon as to be forward compatible.
-     * @warning The old renderer does not support rotation on some shapes. Please check old renderer documentation to see what you could do. All limitations there apply here.
+     * @note This *is* the API that will replace the shape drawing in the old
+     * renderer. Best to start using it as soon as to be forward compatible.
+     * @warning The old renderer does not support rotation on some shapes.
+     * Please check old renderer documentation to see what you could do. All
+     * limitations there apply here.
      */
     class NEAPI ShapeRenderer {
         /**
@@ -45,7 +49,8 @@ namespace ngine::graphics {
          * @param color Line color.
          * @param thickness Line thickness.
          */
-        static void _drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness = 1);
+        static void _drawLine(Renderer *renderer, Vector2 v1, Vector2 v2,
+                              Color color, float thickness = 1);
 
     public:
         /**
@@ -56,7 +61,8 @@ namespace ngine::graphics {
         const static int TRIANGLES_PER_CIRCLE = 20;
 
         /**
-         * The number of lines (therefore quads) used to produce a circle outline.
+         * The number of lines (therefore quads) used to produce a circle
+         * outline.
          *
          * @todo Settle on a value for this (OR add CMake config for it).
          */
@@ -65,14 +71,16 @@ namespace ngine::graphics {
         /**
          * Draw a line.
          *
-         * @warning Ensure you are familiar with the coordinate system you are targeting. Inputs do not work across different systems.
+         * @warning Ensure you are familiar with the coordinate system you are
+         * targeting. Inputs do not work across different systems.
          * @param renderer The game renderer.
          * @param v1 Starting line position.
          * @param v2 Ending line position.
          * @param color Line color.
          * @param thickness The line thickness in pixels.
          */
-        static void drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness = 1);
+        static void drawLine(Renderer *renderer, Vector2 v1, Vector2 v2,
+                             Color color, float thickness = 1);
 
         /**
          * Draw a circle
@@ -82,9 +90,11 @@ namespace ngine::graphics {
          * @param radius The circle radius.
          * @param color The circle color.
          * @param outline Whether or not this should be an outline.
-         * @param lineThickness The thickness of the line (if drawing an outline).
+         * @param lineThickness The thickness of the line (if drawing an
+         * outline).
          */
-        static void drawCircle(Renderer *renderer, Vector2 center, float radius, Color color, bool outline = false,
+        static void drawCircle(Renderer *renderer, Vector2 center, float radius,
+                               Color color, bool outline = false,
                                float lineThickness = 1);
 
         /**
@@ -96,13 +106,17 @@ namespace ngine::graphics {
          * @param height The rectangle height.
          * @param color The rectangle color.
          * @param rotation The rectangle rotation.
-         * @param origin The origin of the rectangle (as a percentage of width and height).
+         * @param origin The origin of the rectangle (as a percentage of width
+         * and height).
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void
-        drawRectangle(Renderer *renderer, Vector2 position, float width, float height, Color color, Angle rotation = 0,
-                      Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
+        static void drawRectangle(Renderer *renderer, Vector2 position,
+                                  float width, float height, Color color,
+                                  Angle rotation = 0,
+                                  Vector2 origin = Vector2::Zero,
+                                  bool outline = false,
+                                  float lineThickness = 1);
 
         /**
          * Draw a rectangle.
@@ -111,12 +125,16 @@ namespace ngine::graphics {
          * @param rect The rectangle to draw.
          * @param color The rectangle color.
          * @param rotation The rectangle rotation.
-         * @param origin The origin of the rectangle (as a percentage of width and height).
+         * @param origin The origin of the rectangle (as a percentage of width
+         * and height).
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void drawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation = 0,
-                                  Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
+        static void drawRectangle(Renderer *renderer, Rectangle rect,
+                                  Color color, Angle rotation = 0,
+                                  Vector2 origin = Vector2::Zero,
+                                  bool outline = false,
+                                  float lineThickness = 1);
 
         /**
          * Draw a triangle.
@@ -129,16 +147,19 @@ namespace ngine::graphics {
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void
-        drawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color, Angle rotation = 0,
-                     Vector2 origin = Vector2::Zero, bool outline = false, float lineThickness = 1);
+        static void drawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2,
+                                 Vector2 v3, Color color, Angle rotation = 0,
+                                 Vector2 origin = Vector2::Zero,
+                                 bool outline = false, float lineThickness = 1);
 
         /**
          * Draw a polygon (convex).
          *
-         * @warning Ensure you are aware of your coordinate system as polygons will NOT render the same across them.
+         * @warning Ensure you are aware of your coordinate system as polygons
+         * will NOT render the same across them.
          * @param renderer The renderer.
-         * @param position Position to render (if your vertices account for this, pass zero).
+         * @param position Position to render (if your vertices account for
+         * this, pass zero).
          * @param vertices Polygon vertices.
          * @param color Color to render.
          * @param rotation Rotation to apply.
@@ -146,11 +167,14 @@ namespace ngine::graphics {
          * @param outline Whether or not to draw an outline.
          * @param lineThickness The line thickness for the outline.
          */
-        static void drawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color, Angle rotation = 0, Vector2 origin = {
-                0, 0}, bool outline = false, float lineThickness = 1);
-        
+        static void drawPolygon(Renderer *renderer, Vector2 position,
+                                const std::vector<Vector2> &vertices,
+                                Color color, Angle rotation = 0,
+                                Vector2 origin = {0, 0}, bool outline = false,
+                                float lineThickness = 1);
+
         // TODO: Drawing circle sectors etc.
     };
-}
+} // namespace ngine::graphics
 
-#endif //SHAPERENDERER_HPP
+#endif // SHAPERENDERER_HPP

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef MOUSE_H
 #define MOUSE_H
@@ -35,11 +35,7 @@ namespace ngine::input {
     /**
      * Mouse button
      */
-    enum class MouseButton : int {
-        Left = 0,
-        Right = 1,
-        Middle = 2
-    };
+    enum class MouseButton : int { Left = 0, Right = 1, Middle = 2 };
 
     /**
      * Mouse state info.
@@ -94,7 +90,8 @@ namespace ngine::input {
         MouseState m_currentMouseState;
 
         /**
-         * The next mouse state that is being built while the frame is progressing.
+         * The next mouse state that is being built while the frame is
+         * progressing.
          */
         MouseState m_nextMouseState;
 
@@ -115,15 +112,22 @@ namespace ngine::input {
 
 #if defined(PLATFORM_DESKTOP)
 
-        static void _GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+        static void _GLFWMouseButtonCallback(GLFWwindow *window, int button,
+                                             int action, int mods);
 
         static void _GLFWScrollCallback(GLFWwindow *window, double x, double y);
 
 #elif defined(PLATFORM_UWP)
         static Mouse *m_UWPMouse;
-        static void _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
-        static void _UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
-        static void _UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args);
+        static void
+            _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^ sender,
+                                    Windows::UI::Core::PointerEventArgs ^ args);
+        static void
+            _UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^ sender,
+                                   Windows::UI::Core::PointerEventArgs ^ args);
+        static void
+            _UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^ sender,
+                                  Windows::UI::Core::PointerEventArgs ^ args);
 #endif
 
         /**
@@ -154,9 +158,9 @@ namespace ngine::input {
              * @param window The window this was fired for.
              * @param button The button pressed.
              */
-            ButtonPressedEvent(Mouse *sender, ngine::Window *window, MouseButton button) : Window(window),
-                                                                                           Button(button),
-                                                                                           Event(sender) {}
+            ButtonPressedEvent(Mouse *sender, ngine::Window *window,
+                               MouseButton button)
+                : Window(window), Button(button), Event(sender) {}
         };
 
         /**
@@ -181,9 +185,9 @@ namespace ngine::input {
              * @param window The window this was fired for.
              * @param button The button released.
              */
-            ButtonReleasedEvent(Mouse *sender, ngine::Window *window, MouseButton button) : Window(window),
-                                                                                            Button(button),
-                                                                                            Event(sender) {}
+            ButtonReleasedEvent(Mouse *sender, ngine::Window *window,
+                                MouseButton button)
+                : Window(window), Button(button), Event(sender) {}
         };
 
         /**
@@ -214,10 +218,10 @@ namespace ngine::input {
              * @param pos The current mouse position.
              * @param delta The delta mouse position.
              */
-            MovedEvent(Mouse *sender, ngine::Window *window, Vector2 pos, Vector2 delta) : Window(window),
-                                                                                           CurrentPosition(pos),
-                                                                                           DeltaPosition(delta),
-                                                                                           Event(sender) {}
+            MovedEvent(Mouse *sender, ngine::Window *window, Vector2 pos,
+                       Vector2 delta)
+                : Window(window), CurrentPosition(pos), DeltaPosition(delta),
+                  Event(sender) {}
         };
 
         /**
@@ -233,7 +237,7 @@ namespace ngine::input {
             /**
              * The scroll value.
              */
-            int Value;
+            float Value;
 
             /**
              * Create a button pressed event.
@@ -243,9 +247,9 @@ namespace ngine::input {
              * @param pos The current mouse position.
              * @param delta The delta mouse position.
              */
-            WheelYChangedEvent(Mouse *sender, ngine::Window *window, float value) : Window(window),
-                                                                                    Value(value),
-                                                                                    Event(sender) {}
+            WheelYChangedEvent(Mouse *sender, ngine::Window *window,
+                               float value)
+                : Window(window), Value(value), Event(sender) {}
         };
 
         /**
@@ -271,9 +275,9 @@ namespace ngine::input {
              * @param pos The current mouse position.
              * @param delta The delta mouse position.
              */
-            WheelXChangedEvent(Mouse *sender, ngine::Window *window, float value) : Window(window),
-                                                                                    Value(value),
-                                                                                    Event(sender) {}
+            WheelXChangedEvent(Mouse *sender, ngine::Window *window,
+                               float value)
+                : Window(window), Value(value), Event(sender) {}
         };
 
         // TODO: CLEAN ORDER
@@ -353,6 +357,6 @@ namespace ngine::input {
          */
         void setScale(float xScale, float yScale);
     };
-}
+} // namespace ngine::input
 
-#endif //MOUSE_H
+#endif // MOUSE_H

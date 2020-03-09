@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/filesystem/ResourceManager.hpp"
 
@@ -24,16 +24,22 @@
 #include <sstream>
 
 namespace ngine::filesystem {
-    ResourceManager::ResourceManager(graphics::GraphicsDevice *graphicsDevice) : m_graphicsDevice(graphicsDevice) {
-        if (m_graphicsDevice == nullptr) throw std::runtime_error("Graphics device cannot be null.");
+    ResourceManager::ResourceManager(graphics::GraphicsDevice *graphicsDevice)
+        : m_graphicsDevice(graphicsDevice) {
+        if (m_graphicsDevice == nullptr)
+            throw std::runtime_error("Graphics device cannot be null.");
     }
 
     void ResourceManager::deleteAll() {
         // Delete all
-        for (const auto& fnt : m_fonts) delete fnt.second;
-        for (const auto& mus : m_music) delete mus.second;
-        for (const auto& snd : m_sounds) delete snd.second;
-        for (const auto& tex : m_textures) delete tex.second;
+        for (const auto &fnt : m_fonts)
+            delete fnt.second;
+        for (const auto &mus : m_music)
+            delete mus.second;
+        for (const auto &snd : m_sounds)
+            delete snd.second;
+        for (const auto &tex : m_textures)
+            delete tex.second;
 
         // Clear
         m_fonts.clear();
@@ -105,9 +111,11 @@ namespace ngine::filesystem {
     void ResourceManager::loadResources() {
         // File extension definitions
         std::vector<std::string> fntExts = {"ttf", "otf"};
-        std::vector<std::string> musExts = {"ogg", "flac", "mp3"};//, "xm", "mod"};
+        std::vector<std::string> musExts = {"ogg", "flac",
+                                            "mp3"}; //, "xm", "mod"};
         std::vector<std::string> sndExts = {"wav", "ogg", "flac", "mp3"};
-        std::vector<std::string> texExts = {"png", "bmp", "tga", "gif", "pic", "psd"};
+        std::vector<std::string> texExts = {"png", "bmp", "tga",
+                                            "gif", "pic", "psd"};
 
         // Loop over all resource directories
         for (auto dir : Config.ResourceDirectories) {
@@ -120,7 +128,9 @@ namespace ngine::filesystem {
             // Load all files
             for (auto file : files) {
                 // Get name (relative path to the content folder)
-                auto name = file.getPath().getRelativeTo(contentDir.getPath()).getStringNoExtension();
+                auto name = file.getPath()
+                                .getRelativeTo(contentDir.getPath())
+                                .getStringNoExtension();
 
                 // Replace windows slashes with forward slashes
                 name = std::regex_replace(name, std::regex("\\\\"), "/");
@@ -132,27 +142,38 @@ namespace ngine::filesystem {
                 auto path = file.getPath();
 
                 // Load resources
-                if (std::find(fntExts.begin(), fntExts.end(), ext) != fntExts.end() && dir.second & CONTENT_FONTS)
+                if (std::find(fntExts.begin(), fntExts.end(), ext) !=
+                        fntExts.end() &&
+                    dir.second & CONTENT_FONTS)
                     loadFont(path, name);
-                if (std::find(musExts.begin(), musExts.end(), ext) != musExts.end() && dir.second & CONTENT_MUSIC)
+                if (std::find(musExts.begin(), musExts.end(), ext) !=
+                        musExts.end() &&
+                    dir.second & CONTENT_MUSIC)
                     loadMusic(path, name);
-                if (std::find(sndExts.begin(), sndExts.end(), ext) != sndExts.end() && dir.second & CONTENT_SOUNDS)
+                if (std::find(sndExts.begin(), sndExts.end(), ext) !=
+                        sndExts.end() &&
+                    dir.second & CONTENT_SOUNDS)
                     loadSound(path, name);
-                if (std::find(texExts.begin(), texExts.end(), ext) != texExts.end() && dir.second & CONTENT_TEXTURES)
+                if (std::find(texExts.begin(), texExts.end(), ext) !=
+                        texExts.end() &&
+                    dir.second & CONTENT_TEXTURES)
                     loadTexture(path, name);
             }
         }
     }
 
-    bool ResourceManager::loadFont(const Path &inPath, const std::string &name, int baseSize) {
+    bool ResourceManager::loadFont(const Path &inPath, const std::string &name,
+                                   int baseSize) {
         // Fix base size
-        if (baseSize == -1) baseSize = Config.DefaultFontBaseSize;
+        if (baseSize == -1)
+            baseSize = Config.DefaultFontBaseSize;
 
         // Get the name
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
         // Create font
-        auto fnt = graphics::Font::loadTTFFont(m_graphicsDevice, inPath, baseSize);
+        auto fnt =
+            graphics::Font::loadTTFFont(m_graphicsDevice, inPath, baseSize);
 
         // Check if it is valid
         if (fnt->isValid()) {
@@ -165,7 +186,8 @@ namespace ngine::filesystem {
         return false;
     }
 
-    bool ResourceManager::loadMusic(const Path &inPath, const std::string &name) {
+    bool ResourceManager::loadMusic(const Path &inPath,
+                                    const std::string &name) {
         // Get the name
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
@@ -183,7 +205,8 @@ namespace ngine::filesystem {
         return false;
     }
 
-    bool ResourceManager::loadSound(const Path &inPath, const std::string &name) {
+    bool ResourceManager::loadSound(const Path &inPath,
+                                    const std::string &name) {
         // Get the name
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
@@ -201,7 +224,8 @@ namespace ngine::filesystem {
         return false;
     }
 
-    bool ResourceManager::loadTexture(const Path &inPath, const std::string &name) {
+    bool ResourceManager::loadTexture(const Path &inPath,
+                                      const std::string &name) {
         // Get the name
         auto correctedName = std::regex_replace(name, std::regex("\\\\"), "/");
 
@@ -218,4 +242,4 @@ namespace ngine::filesystem {
         delete tex;
         return false;
     }
-}
+} // namespace ngine::filesystem

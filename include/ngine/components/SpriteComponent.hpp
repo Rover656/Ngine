@@ -1,30 +1,30 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef SPRITECOMPONENT_HPP
 #define SPRITECOMPONENT_HPP
 
 #include "../Config.hpp"
 
-#include "../graphics/Sprite.hpp"
 #include "../Component.hpp"
+#include "../graphics/Sprite.hpp"
 
 namespace ngine::components {
     /**
@@ -55,6 +55,7 @@ namespace ngine::components {
          * Color modifier.
          */
         graphics::Color m_color = graphics::Color::White;
+
     public:
         /**
          * Create a new sprite component.
@@ -74,7 +75,8 @@ namespace ngine::components {
         /**
          * Set the sprite to be rendered.
          *
-         * @warning Lifecycle of the sprite will be managed by this component. This deletes the current sprite.
+         * @warning Lifecycle of the sprite will be managed by this component.
+         * This deletes the current sprite.
          * @param sprite Sprite to be rendered.
          */
         void setSprite(graphics::Sprite *sprite);
@@ -142,6 +144,6 @@ namespace ngine::components {
          */
         void draw(graphics::Renderer *renderer);
     };
-}
+} // namespace ngine::components
 
-#endif //SPRITECOMPONENT_HPP
+#endif // SPRITECOMPONENT_HPP

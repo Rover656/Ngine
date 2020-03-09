@@ -1,33 +1,35 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/physics/PhysicsBody.hpp"
 
-#include "ngine/physics/PhysicsWorld.hpp"
 #include "ngine/Console.hpp"
+#include "ngine/physics/PhysicsWorld.hpp"
+
 
 #include <box2d/box2d.h>
 
 namespace ngine::physics {
-    PhysicsBody::PhysicsBody(const PhysicsContext *context, PhysicsWorld *world, b2Body *body)
-            : m_context(context) {
+    PhysicsBody::PhysicsBody(const PhysicsContext *context, PhysicsWorld *world,
+                             b2Body *body)
+        : m_context(context) {
         // Save body and world
         m_body = body;
         m_world = world;
@@ -45,13 +47,17 @@ namespace ngine::physics {
         }
     }
 
-    PhysicsFixture *PhysicsBody::createFixture(PhysicsShape *shape, float density) {
+    PhysicsFixture *PhysicsBody::createFixture(PhysicsShape *shape,
+                                               float density) {
         // Check shape context
         if (shape->m_context != m_context)
-            Console::fail("PhysicsBody", "Shape must be same context as body to create a fixture!");
+            Console::fail(
+                "PhysicsBody",
+                "Shape must be same context as body to create a fixture!");
 
         // Create
-        auto f = new PhysicsFixture(m_context, m_body->CreateFixture(shape->m_shape, density));
+        auto f = new PhysicsFixture(
+            m_context, m_body->CreateFixture(shape->m_shape, density));
 
         // Track
         m_fixtures.push_back(f);
@@ -63,15 +69,15 @@ namespace ngine::physics {
         m_body->DestroyFixture(fixture->m_fixture);
 
         // Stop tracking
-        m_fixtures.erase(std::remove(m_fixtures.begin(), m_fixtures.end(), fixture), m_fixtures.end());
+        m_fixtures.erase(
+            std::remove(m_fixtures.begin(), m_fixtures.end(), fixture),
+            m_fixtures.end());
 
         // Delete
         delete fixture;
     }
 
-    PhysicsWorld *PhysicsBody::getWorld() const {
-        return m_world;
-    }
+    PhysicsWorld *PhysicsBody::getWorld() const { return m_world; }
 
     Vector2 PhysicsBody::getPosition() const {
         auto p = m_body->GetPosition();
@@ -131,9 +137,7 @@ namespace ngine::physics {
         m_body->SetAngularVelocity(-DegToRad(velocity));
     }
 
-    float PhysicsBody::getMass() const {
-        return m_body->GetMass();
-    }
+    float PhysicsBody::getMass() const { return m_body->GetMass(); }
 
     float PhysicsBody::getInertia() const {
         // TODO: Verify unit conversion
@@ -148,7 +152,8 @@ namespace ngine::physics {
         m_body->GetMassData(&d);
 
         MassData data;
-        data.Center = m_context->convertMetersToPixels(Vector2(d.center.x, d.center.y));
+        data.Center =
+            m_context->convertMetersToPixels(Vector2(d.center.x, d.center.y));
         data.Mass = d.mass;
         data.Inertia = d.I * oneM * oneM;
 
@@ -167,32 +172,30 @@ namespace ngine::physics {
         m_body->SetMassData(&dat);
     }
 
-    void PhysicsBody::resetMassData() {
-        m_body->ResetMassData();
-    }
+    void PhysicsBody::resetMassData() { m_body->ResetMassData(); }
 
     PhysicsBody::Type PhysicsBody::getType() const {
         switch (m_body->GetType()) {
-            case b2_staticBody:
-                return Type::Static;
-            case b2_kinematicBody:
-                return Type::Kinematic;
-            case b2_dynamicBody:
-                return Type::Dynamic;
+        case b2_staticBody:
+            return Type::Static;
+        case b2_kinematicBody:
+            return Type::Kinematic;
+        case b2_dynamicBody:
+            return Type::Dynamic;
         }
     }
 
     void PhysicsBody::setType(PhysicsBody::Type type) {
         switch (type) {
-            case Type::Static:
-                m_body->SetType(b2_staticBody);
-                break;
-            case Type::Kinematic:
-                m_body->SetType(b2_kinematicBody);
-                break;
-            case Type::Dynamic:
-                m_body->SetType(b2_dynamicBody);
-                break;
+        case Type::Static:
+            m_body->SetType(b2_staticBody);
+            break;
+        case Type::Kinematic:
+            m_body->SetType(b2_kinematicBody);
+            break;
+        case Type::Dynamic:
+            m_body->SetType(b2_dynamicBody);
+            break;
         }
     }
 
@@ -200,13 +203,13 @@ namespace ngine::physics {
         auto nxt = m_body->GetNext();
         if (nxt == nullptr)
             return nullptr;
-        return (PhysicsBody *) nxt->GetUserData();
+        return (PhysicsBody *)nxt->GetUserData();
     }
 
     const PhysicsBody *PhysicsBody::getNext() const {
         auto nxt = m_body->GetNext();
         if (nxt == nullptr)
             return nullptr;
-        return (PhysicsBody *) nxt->GetUserData();
+        return (PhysicsBody *)nxt->GetUserData();
     }
-}
+} // namespace ngine::physics

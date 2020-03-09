@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef KEYBOARD_HPP
 #define KEYBOARD_HPP
@@ -162,6 +162,7 @@ namespace ngine {
              * Key states.
              */
             bool m_keys[KEY_MAX + 1];
+
         public:
             /**
              * Create a new keyboard state
@@ -188,7 +189,8 @@ namespace ngine {
         /**
          * Keyboard input provider.
          *
-         * @todo Allow resetting the state of keys (to prevent any actions until it is released, overriding down).
+         * @todo Allow resetting the state of keys (to prevent any actions until
+         * it is released, overriding down).
          */
         class NEAPI Keyboard {
             // Make window a friend so it can use our constructor
@@ -216,13 +218,16 @@ namespace ngine {
 
 #if defined(PLATFORM_DESKTOP)
 
-            static void _GLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+            static void _GLFWKeyCallback(GLFWwindow *window, int key,
+                                         int scancode, int action, int mods);
 
 #elif defined(PLATFORM_UWP)
-            static Keyboard * m_UWPKeyboard;
+            static Keyboard *m_UWPKeyboard;
             static Key _keyFromVirtualKey(int key);
-            static void _UWPKeyDown(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
-            static void _UWPKeyUp(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::KeyEventArgs ^args);
+            static void _UWPKeyDown(Windows::UI::Core::CoreWindow ^ sender,
+                                    Windows::UI::Core::KeyEventArgs ^ args);
+            static void _UWPKeyUp(Windows::UI::Core::CoreWindow ^ sender,
+                                  Windows::UI::Core::KeyEventArgs ^ args);
 #endif
 
             /**
@@ -284,17 +289,12 @@ namespace ngine {
                  * @param window The window the keyboard is attached to
                  * @param key The key that has been pressed
                  */
-                KeyPressEvent(Keyboard *sender, ngine::Window *window, input::Key key, bool shift, bool control,
-                              bool alt,
-                              bool super, bool caps, bool num) : Window(window),
-                                                                 Key(key),
-                                                                 IsShift(shift),
-                                                                 IsControl(control),
-                                                                 IsAlt(alt),
-                                                                 IsSuper(super),
-                                                                 IsCapsLock(caps),
-                                                                 IsNumLock(num),
-                                                                 Event(sender) {}
+                KeyPressEvent(Keyboard *sender, ngine::Window *window,
+                              input::Key key, bool shift, bool control,
+                              bool alt, bool super, bool caps, bool num)
+                    : Window(window), Key(key), IsShift(shift),
+                      IsControl(control), IsAlt(alt), IsSuper(super),
+                      IsCapsLock(caps), IsNumLock(num), Event(sender) {}
             };
 
             /**
@@ -348,17 +348,12 @@ namespace ngine {
                  * @param window The window the keyboard is attached to
                  * @param key The key that has been released
                  */
-                KeyReleaseEvent(Keyboard *sender, ngine::Window *window, input::Key key, bool shift, bool control,
-                                bool alt,
-                                bool super, bool caps, bool num) : Window(window),
-                                                                   Key(key),
-                                                                   IsShift(shift),
-                                                                   IsControl(control),
-                                                                   IsAlt(alt),
-                                                                   IsSuper(super),
-                                                                   IsCapsLock(caps),
-                                                                   IsNumLock(num),
-                                                                   Event(sender) {}
+                KeyReleaseEvent(Keyboard *sender, ngine::Window *window,
+                                input::Key key, bool shift, bool control,
+                                bool alt, bool super, bool caps, bool num)
+                    : Window(window), Key(key), IsShift(shift),
+                      IsControl(control), IsAlt(alt), IsSuper(super),
+                      IsCapsLock(caps), IsNumLock(num), Event(sender) {}
             };
 
             /**
@@ -429,7 +424,7 @@ namespace ngine {
              */
             void pollInputs();
         };
-    }
-}
+    } // namespace input
+} // namespace ngine
 
-#endif //KEYBOARD_HPP
+#endif // KEYBOARD_HPP

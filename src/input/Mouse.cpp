@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/input/Mouse.hpp"
 
@@ -41,7 +41,8 @@ namespace ngine::input {
         auto pointerPos = window->PointerPosition;
 
         // Get display resolution scale (Fixes a big bad bug)
-        auto resScale = (int)DisplayInformation::GetForCurrentView()->ResolutionScale;
+        auto resScale =
+            (int)DisplayInformation::GetForCurrentView()->ResolutionScale;
         auto sf = (float)resScale / 100.0f;
 
         // Translate pointer position
@@ -63,8 +64,10 @@ namespace ngine::input {
     Mouse::Mouse(Window *window) : m_attachedWindow(window) {
 #if defined(PLATFORM_DESKTOP)
         // Register glfw callbacks
-        glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow, Mouse::_GLFWMouseButtonCallback);
-        glfwSetScrollCallback(m_attachedWindow->m_GLFWWindow, Mouse::_GLFWScrollCallback);
+        glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow,
+                                   Mouse::_GLFWMouseButtonCallback);
+        glfwSetScrollCallback(m_attachedWindow->m_GLFWWindow,
+                              Mouse::_GLFWScrollCallback);
 #elif defined(PLATFORM_UWP)
         if (m_UWPMouse != nullptr)
             throw std::runtime_error("On UWP only one mouse can be created.");
@@ -74,24 +77,42 @@ namespace ngine::input {
 
         // Register UWP callbacks
         auto UWPwindow = CoreWindow::GetForCurrentThread();
-        UWPwindow->PointerWheelChanged += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerWheelChanged);
-        UWPwindow->PointerPressed += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
-        UWPwindow->PointerReleased += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
-        UWPwindow->PointerMoved += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerMovedEvent);
+        UWPwindow->PointerWheelChanged +=
+            ref new Windows::Foundation::TypedEventHandler<
+                Windows::UI::Core::CoreWindow ^,
+                Windows::UI::Core::PointerEventArgs ^>(
+                &_UWPPointerWheelChanged);
+        UWPwindow->PointerPressed +=
+            ref new Windows::Foundation::TypedEventHandler<
+                Windows::UI::Core::CoreWindow ^,
+                Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
+        UWPwindow->PointerReleased +=
+            ref new Windows::Foundation::TypedEventHandler<
+                Windows::UI::Core::CoreWindow ^,
+                Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerButtonEvent);
+        UWPwindow->PointerMoved +=
+            ref new Windows::Foundation::TypedEventHandler<
+                Windows::UI::Core::CoreWindow ^,
+                Windows::UI::Core::PointerEventArgs ^>(&_UWPPointerMovedEvent);
 #endif
     }
 
 #if defined(PLATFORM_DESKTOP)
 
-    void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-        if (button <= static_cast<int>(MouseButton::Middle)) { // GLFW supports more than our 3 buttons
-            auto mouse = ((Window *) glfwGetWindowUserPointer(window))->getMouse();
-            mouse->m_nextMouseState.ButtonsDown[button] = (action == GLFW_PRESS);
+    void Mouse::_GLFWMouseButtonCallback(GLFWwindow *window, int button,
+                                         int action, int mods) {
+        if (button <=
+            static_cast<int>(
+                MouseButton::Middle)) { // GLFW supports more than our 3 buttons
+            auto mouse =
+                ((Window *)glfwGetWindowUserPointer(window))->getMouse();
+            mouse->m_nextMouseState.ButtonsDown[button] =
+                (action == GLFW_PRESS);
         }
     }
 
     void Mouse::_GLFWScrollCallback(GLFWwindow *window, double x, double y) {
-        auto mouse = ((Window *) glfwGetWindowUserPointer(window))->getMouse();
+        auto mouse = ((Window *)glfwGetWindowUserPointer(window))->getMouse();
         mouse->m_nextMouseState.MouseWheelXDelta = static_cast<int>(x);
         mouse->m_nextMouseState.MouseWheelYDelta = static_cast<int>(y);
     }
@@ -100,27 +121,44 @@ namespace ngine::input {
 
     Mouse *Mouse::m_UWPMouse = nullptr;
 
-    void Mouse::_UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
+    void Mouse::_UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^ sender,
+                                        Windows::UI::Core::PointerEventArgs ^
+                                            args) {
         if (args->CurrentPoint->Properties->IsHorizontalMouseWheel)
-            m_UWPMouse->m_nextMouseState.MouseWheelXDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
-        else m_UWPMouse->m_nextMouseState.MouseWheelYDelta = args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
+            m_UWPMouse->m_nextMouseState.MouseWheelXDelta =
+                args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
+        else
+            m_UWPMouse->m_nextMouseState.MouseWheelYDelta =
+                args->CurrentPoint->Properties->MouseWheelDelta / WHEEL_DELTA;
     }
 
-    void Mouse::_UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
+    void Mouse::_UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^ sender,
+                                       Windows::UI::Core::PointerEventArgs ^
+                                           args) {
         auto ptrPoint = args->CurrentPoint;
 
-        if (ptrPoint->PointerDevice->PointerDeviceType == Windows::Devices::Input::PointerDeviceType::Mouse) {
+        if (ptrPoint->PointerDevice->PointerDeviceType ==
+            Windows::Devices::Input::PointerDeviceType::Mouse) {
             auto ptrPointProps = ptrPoint->Properties;
 
-            m_UWPMouse->m_nextMouseState.ButtonsDown[static_cast<int>(MouseButton::Left)] = ptrPointProps->IsLeftButtonPressed;
-            m_UWPMouse->m_nextMouseState.ButtonsDown[static_cast<int>(MouseButton::Middle)] = ptrPointProps->IsMiddleButtonPressed;
-            m_UWPMouse->m_nextMouseState.ButtonsDown[static_cast<int>(MouseButton::Right)] = ptrPointProps->IsRightButtonPressed;
+            m_UWPMouse->m_nextMouseState
+                .ButtonsDown[static_cast<int>(MouseButton::Left)] =
+                ptrPointProps->IsLeftButtonPressed;
+            m_UWPMouse->m_nextMouseState
+                .ButtonsDown[static_cast<int>(MouseButton::Middle)] =
+                ptrPointProps->IsMiddleButtonPressed;
+            m_UWPMouse->m_nextMouseState
+                .ButtonsDown[static_cast<int>(MouseButton::Right)] =
+                ptrPointProps->IsRightButtonPressed;
         }
     }
 
-    void Mouse::_UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^sender, Windows::UI::Core::PointerEventArgs ^args) {
+    void Mouse::_UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^ sender,
+                                      Windows::UI::Core::PointerEventArgs ^
+                                          args) {
         // Fetch the new position
-        m_UWPMouse->m_nextMouseState.Position = m_UWPMouse->_internalGetMousePosition();
+        m_UWPMouse->m_nextMouseState.Position =
+            m_UWPMouse->_internalGetMousePosition();
     }
 
 #endif
@@ -153,34 +191,48 @@ namespace ngine::input {
     }
 
     bool Mouse::isButtonPressed(MouseButton button) {
-        return m_currentMouseState.ButtonsDown[static_cast<int>(button)] != m_previousMouseState.ButtonsDown[static_cast<int>(button)] && m_currentMouseState.ButtonsDown[static_cast<int>(button)] == true;
+        return m_currentMouseState.ButtonsDown[static_cast<int>(button)] !=
+                   m_previousMouseState.ButtonsDown[static_cast<int>(button)] &&
+               m_currentMouseState.ButtonsDown[static_cast<int>(button)] ==
+                   true;
     }
 
     bool Mouse::isButtonReleased(MouseButton button) {
-        return m_currentMouseState.ButtonsDown[static_cast<int>(button)] != m_previousMouseState.ButtonsDown[static_cast<int>(button)] && m_currentMouseState.ButtonsDown[static_cast<int>(button)] == false;
+        return m_currentMouseState.ButtonsDown[static_cast<int>(button)] !=
+                   m_previousMouseState.ButtonsDown[static_cast<int>(button)] &&
+               m_currentMouseState.ButtonsDown[static_cast<int>(button)] ==
+                   false;
     }
 
     void Mouse::pollInputs() {
         // Mouse position events
         if (m_previousMouseState.Position != m_currentMouseState.Position) {
-            EventDispatcher::fire(MovedEvent(this, m_attachedWindow, m_currentMouseState.Position, m_currentMouseState.Position - m_previousMouseState.Position));
+            EventDispatcher::fire(MovedEvent(
+                this, m_attachedWindow, m_currentMouseState.Position,
+                m_currentMouseState.Position - m_previousMouseState.Position));
         }
 
         // Mouse button events
         for (auto i = 0; i < 3; i++) {
-            if (isButtonPressed((MouseButton) i)) {
-                EventDispatcher::fire(ButtonPressedEvent(this, m_attachedWindow, (MouseButton) i));
-            } else if (isButtonReleased((MouseButton) i)) {
-                EventDispatcher::fire(ButtonReleasedEvent(this, m_attachedWindow, (MouseButton) i));
+            if (isButtonPressed((MouseButton)i)) {
+                EventDispatcher::fire(
+                    ButtonPressedEvent(this, m_attachedWindow, (MouseButton)i));
+            } else if (isButtonReleased((MouseButton)i)) {
+                EventDispatcher::fire(ButtonReleasedEvent(
+                    this, m_attachedWindow, (MouseButton)i));
             }
         }
 
         // Scroll wheel events
-        if (m_currentMouseState.MouseWheelXDelta != m_previousMouseState.MouseWheelXDelta) {
-            EventDispatcher::fire(WheelXChangedEvent(this, m_attachedWindow, m_currentMouseState.MouseWheelXDelta));
+        if (m_currentMouseState.MouseWheelXDelta !=
+            m_previousMouseState.MouseWheelXDelta) {
+            EventDispatcher::fire(WheelXChangedEvent(
+                this, m_attachedWindow, m_currentMouseState.MouseWheelXDelta));
         }
-        if (m_currentMouseState.MouseWheelYDelta != m_previousMouseState.MouseWheelYDelta) {
-            EventDispatcher::fire(WheelYChangedEvent(this, m_attachedWindow, m_currentMouseState.MouseWheelYDelta));
+        if (m_currentMouseState.MouseWheelYDelta !=
+            m_previousMouseState.MouseWheelYDelta) {
+            EventDispatcher::fire(WheelYChangedEvent(
+                this, m_attachedWindow, m_currentMouseState.MouseWheelYDelta));
         }
 
         // Update last frame state
@@ -206,4 +258,4 @@ namespace ngine::input {
     void Mouse::setScale(float xScale, float yScale) {
         m_mouseScale = {xScale, yScale};
     }
-}
+} // namespace ngine::input

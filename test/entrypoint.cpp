@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include <ngine/Ngine.hpp>
 
@@ -30,6 +30,7 @@ using namespace ngine::physics;
 
 class TestEntity : public Entity {
     PhysicsFixture *m_fixture = nullptr;
+
 public:
     TestEntity() {}
 
@@ -44,8 +45,8 @@ public:
             auto body = world->createBody(PhysicsBody::Type::Dynamic, {0, 0});
 
             // Add a fixture
-            //CirclePhysicsShape shape(scene->getPhysicsContext(), 32);
-            //m_fixture = body->createFixture(&shape, 1);
+            // CirclePhysicsShape shape(scene->getPhysicsContext(), 32);
+            // m_fixture = body->createFixture(&shape, 1);
             PolygonPhysicsShape shape(scene->getPhysicsContext(), 32, 32);
             m_fixture = body->createFixture(&shape, 1);
 
@@ -62,7 +63,9 @@ public:
         setName("TestEntity");
 
         // Add component.
-        auto sprite = new Sprite(getResourceManager()->getTexture("test_spritesheet"), 16, 16, 32, 32);
+        auto sprite =
+            new Sprite(getResourceManager()->getTexture("test_spritesheet"), 16,
+                       16, 32, 32);
         addComponent("Sprite", new SpriteComponent(sprite));
     }
 
@@ -113,16 +116,17 @@ public:
         }
 
         // Move
-//        if (getScene()->isPhysicsEnabled()) {
-//            // * 60 because normally we're doing this once a frame but velocities are once per second
-//            getPhysicsBody()->setLinearVelocity(vel * 60);
-//        } else {
-            auto pos = getPosition();
-            setPosition(pos + vel);
-//        }
+        //        if (getScene()->isPhysicsEnabled()) {
+        //            // * 60 because normally we're doing this once a frame but
+        //            velocities are once per second
+        //            getPhysicsBody()->setLinearVelocity(vel * 60);
+        //        } else {
+        auto pos = getPosition();
+        setPosition(pos + vel);
+        //        }
 
         setRotation(rot);
-        //setScale(scale);
+        // setScale(scale);
 
         if (keyboard->isKeyPressed(' ')) {
             setPosition({0, 0});
@@ -156,12 +160,13 @@ public:
     void initialize(Game *game) override {
         // Always call base first so that m_game is set!
         Scene::initialize(game);
-//        auto par = new ParentEntity();
-//        par->addChild(new TestEntity());
-//        addChild(par);
+        //        auto par = new ParentEntity();
+        //        par->addChild(new TestEntity());
+        //        addChild(par);
         addChild(new TestEntity());
         getPhysicsWorld()->enableDebugDraw();
-        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB | DRAW_CENTER_OF_MASS);
+        getPhysicsWorld()->setDebugDrawFlags(DRAW_SHAPE | DRAW_AABB |
+                                             DRAW_CENTER_OF_MASS);
     }
 
     void cleanup() override {
@@ -175,44 +180,57 @@ public:
         renderer->setCoordinateSystem(CoordinateSystem::Screen);
 
         // Render debug stuffs
-        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90}, Color::Orange, 0, {});
+        // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90},
+        // Color::Orange, 0, {});
         auto viewport = getGame()->getGameViewport();
         ShapeRenderer::drawRectangle(renderer,
-                                     {viewport.Width / 2.0f, viewport.Height / 2.0f, viewport.Width, viewport.Height},
+                                     {viewport.Width / 2.0f,
+                                      viewport.Height / 2.0f, viewport.Width,
+                                      viewport.Height},
                                      Color::Blue, 0, {0.5f, 0.5f}, true, 5);
 
         ShapeRenderer::drawCircle(renderer, {150, 150}, 2, Color::Red);
 
-        getResourceManager()->getFont("Upheaval")->drawString(renderer, "Hello world.\nHow be you?", {150, 150}, 36, 2, Color::Orange);
+        getResourceManager()
+            ->getFont("Upheaval")
+            ->drawString(renderer, "Hello world.\nHow be you?", {150, 150}, 36,
+                         2, Color::Orange);
     }
 };
 
 class TestGame : public Game {
     NewTestScene *m_scene;
-public:
 
-    TestGame(const WindowConfig &windowConfig_, const GameConfig &config_) : Game(windowConfig_, config_) {}
+public:
+    TestGame(const WindowConfig &windowConfig_, const GameConfig &config_)
+        : Game(windowConfig_, config_) {}
 
     void initialize() override {
         // Hook events
-        EventDispatcher::bind<Game::SuspendEvent>(std::bind(&TestGame::Save, this, std::placeholders::_1), this);
-        EventDispatcher::bind<Game::ResumeEvent>(std::bind(&TestGame::Load, this, std::placeholders::_1), this);
+        EventDispatcher::bind<Game::SuspendEvent>(
+            std::bind(&TestGame::Save, this, std::placeholders::_1), this);
+        EventDispatcher::bind<Game::ResumeEvent>(
+            std::bind(&TestGame::Load, this, std::placeholders::_1), this);
 
-        EventDispatcher::bind<Mouse::ButtonPressedEvent>([] (const Mouse::ButtonPressedEvent &e) {
-            if (e.Button == MouseButton::Left) {
-                Console::notice("DEBUG", "Left mouse button pressed.");
-            } else {
-                Console::notice("DEBUG", "The left didnt do it!");
-            }
-        }, getMouse());
+        EventDispatcher::bind<Mouse::ButtonPressedEvent>(
+            [](const Mouse::ButtonPressedEvent &e) {
+                if (e.Button == MouseButton::Left) {
+                    Console::notice("DEBUG", "Left mouse button pressed.");
+                } else {
+                    Console::notice("DEBUG", "The left didnt do it!");
+                }
+            },
+            getMouse());
 
-        EventDispatcher::bind<Keyboard::KeyPressEvent>([] (const Keyboard::KeyPressEvent &e) {
-            Console::notice("DEBUG", "A key was pressed.");
+        EventDispatcher::bind<Keyboard::KeyPressEvent>(
+            [](const Keyboard::KeyPressEvent &e) {
+                Console::notice("DEBUG", "A key was pressed.");
 
-            if (e.Key == Key::Backspace && e.IsControl) {
-                Console::notice("DEBUG", "Howdy!");
-            }
-        }, getKeyboard());
+                if (e.Key == Key::Backspace && e.IsControl) {
+                    Console::notice("DEBUG", "Howdy!");
+                }
+            },
+            getKeyboard());
 
         // Set exit key
         getGameWindow()->setExitKey(Key::Escape);
@@ -240,7 +258,8 @@ public:
 
 NGINE_GAME_ENTRY {
     // Load icon (must remain in scope until NGINE_RUN_GAME happens)
-    graphics::Image icon(Path::getExecutableDirectory() / "content" / "test_icon.png");
+    graphics::Image icon(Path::getExecutableDirectory() / "content" /
+                         "test_icon.png");
 
     GameConfig gameConfig;
     gameConfig.TargetWidth = 1280;
@@ -257,7 +276,7 @@ NGINE_GAME_ENTRY {
     windowConfig.InitialHeight = 1080 / 2;
     windowConfig.Title = "Test Game";
     windowConfig.Icon = &icon;
-    //windowConfig.NativeDebugConsole = true;
+    // windowConfig.NativeDebugConsole = true;
 
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
     windowConfig.TargetAPI = GraphicsAPI::OpenGL;

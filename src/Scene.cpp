@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/Scene.hpp"
 
@@ -26,7 +26,8 @@
 
 namespace ngine {
     void Scene::_sortEntities() {
-        std::sort(m_entities.begin(), m_entities.end(), &Entity::_SortChildrenPredicate);
+        std::sort(m_entities.begin(), m_entities.end(),
+                  &Entity::_SortChildrenPredicate);
     }
 
     Scene::Scene() {
@@ -59,35 +60,26 @@ namespace ngine {
         delete m_physicsContext;
     }
 
-    void Scene::initialize(Game *game) {
-        m_game = game;
-    }
+    void Scene::initialize(Game *game) { m_game = game; }
 
-    void Scene::cleanup() {
-        m_game = nullptr;
-    }
+    void Scene::cleanup() { m_game = nullptr; }
 
-    Game *Scene::getGame() const {
-        return m_game;
-    }
+    Game *Scene::getGame() const { return m_game; }
 
     input::Keyboard *Scene::getKeyboard() const {
         return m_game->getKeyboard();
     }
 
-    input::Mouse *Scene::getMouse() const {
-        return m_game->getMouse();
-    }
+    input::Mouse *Scene::getMouse() const { return m_game->getMouse(); }
 
     filesystem::ResourceManager *Scene::getResourceManager() {
         if (m_game == nullptr)
-            Console::fail("Scene", "This can only be used when the scene is active!");
+            Console::fail("Scene",
+                          "This can only be used when the scene is active!");
         return m_game->getResourceManager();
     }
 
-    bool Scene::isPhysicsEnabled() const {
-        return m_physicsWorld != nullptr;
-    }
+    bool Scene::isPhysicsEnabled() const { return m_physicsWorld != nullptr; }
 
     const physics::PhysicsContext *Scene::getPhysicsContext() const {
         return m_physicsContext;
@@ -110,20 +102,21 @@ namespace ngine {
         return nullptr;
     }
 
-    void Scene::removeCamera(const std::string &name) {
-        m_cameras.erase(name);
-    }
+    void Scene::removeCamera(const std::string &name) { m_cameras.erase(name); }
 
     void Scene::setCurrentCamera(const std::string &name) {
         if (m_cameras.find(name) != m_cameras.end())
             m_currentCamera = name;
-        else Console::fail("Scene", "Camera does not exist.");
+        else
+            Console::fail("Scene", "Camera does not exist.");
     }
 
     void Scene::addChild(Entity *entity) {
-        // We must be active TODO: make it so that children etc. can be added before we're active (like entities do for components)
+        // We must be active TODO: make it so that children etc. can be added
+        // before we're active (like entities do for components)
         if (m_game == nullptr)
-            Console::fail("Scene", "This can only be used when the scene is active!");
+            Console::fail("Scene",
+                          "This can only be used when the scene is active!");
 
         // Ensure the child has no parent
         if (entity->m_parent != nullptr)
@@ -141,18 +134,24 @@ namespace ngine {
     }
 
     void Scene::removeChild(Entity *entity) {
-        // TODO: Add and remove child is a perfect example of where we need thread-safety.
+        // TODO: Add and remove child is a perfect example of where we need
+        // thread-safety.
 
         // We must be active
         if (m_game == nullptr)
-            Console::fail("Scene", "This can only be used when the scene is active!");
+            Console::fail("Scene",
+                          "This can only be used when the scene is active!");
 
         // Check we actually own the entity.
-        if (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end())
-            Console::fail("Scene", "This entity is not parented by this scene.");
+        if (std::find(m_entities.begin(), m_entities.end(), entity) ==
+            m_entities.end())
+            Console::fail("Scene",
+                          "This entity is not parented by this scene.");
 
         // Remove
-        m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());
+        m_entities.erase(
+            std::remove(m_entities.begin(), m_entities.end(), entity),
+            m_entities.end());
 
         // If the entity is still initialized, cleanup now
         if (entity->m_initialized)
@@ -176,9 +175,7 @@ namespace ngine {
         return nullptr;
     }
 
-    std::vector<Entity *> Scene::getChildren() {
-        return m_entities;
-    }
+    std::vector<Entity *> Scene::getChildren() { return m_entities; }
 
     std::vector<Entity *> Scene::getChildrenByName(const std::string &name) {
         std::vector<Entity *> ents;
@@ -190,9 +187,7 @@ namespace ngine {
         return ents;
     }
 
-    Rectangle Scene::getCurrentViewport() {
-        return m_currentViewport;
-    }
+    Rectangle Scene::getCurrentViewport() { return m_currentViewport; }
 
     void Scene::preRender(graphics::Renderer *renderer) {
         // Get the viewport.
@@ -202,7 +197,8 @@ namespace ngine {
     void Scene::renderScene(graphics::Renderer *renderer) {
         // We must be active
         if (m_game == nullptr)
-            Console::fail("Scene", "This can only be used when the scene is active!");
+            Console::fail("Scene",
+                          "This can only be used when the scene is active!");
 
         // Pre-render
         preRender(renderer);
@@ -223,7 +219,8 @@ namespace ngine {
         renderUsingCamera(renderer, m_currentCamera);
     }
 
-    void Scene::renderUsingCamera(graphics::Renderer *renderer, const std::string &camera) {
+    void Scene::renderUsingCamera(graphics::Renderer *renderer,
+                                  const std::string &camera) {
         // Exit if empty
         if (m_entities.empty())
             return;
@@ -243,7 +240,8 @@ namespace ngine {
         renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
 
         // Render all entities
-        for (const auto &e : m_entities) e->render(renderer, view, cam);
+        for (const auto &e : m_entities)
+            e->render(renderer, view, cam);
 
         // Physics debug draw
         if (m_physicsWorld != nullptr && m_physicsWorld->isDebugDrawEnabled()) {
@@ -263,7 +261,8 @@ namespace ngine {
     void Scene::update() {
         // We must be active
         if (m_game == nullptr)
-            Console::fail("Scene", "This can only be used when the scene is active!");
+            Console::fail("Scene",
+                          "This can only be used when the scene is active!");
 
         // Update entities
         for (const auto &e : m_entities) {
@@ -273,7 +272,7 @@ namespace ngine {
 
         // Step world
         if (m_physicsWorld != nullptr) {
-            float timestep = 1.0f / (float) m_game->getTargetFPS();
+            float timestep = 1.0f / (float)m_game->getTargetFPS();
             m_physicsWorld->step(timestep);
         }
     }
@@ -281,4 +280,4 @@ namespace ngine {
     void Scene::updateUI() {
         // TODO: A UI system.
     }
-}
+} // namespace ngine

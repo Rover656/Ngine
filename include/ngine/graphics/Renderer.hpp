@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
@@ -60,7 +60,8 @@ namespace ngine::graphics {
          * Draw a fan of triangles.
          * The first vertex is used as the first vertex of every triangle.
          * A triangle is formed for each *adjacent* vertex pair.
-         * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3), (0, 3, 4)` etc.
+         * For example, the output of triangles would be `(0, 1, 2), (0, 2, 3),
+         * (0, 3, 4)` etc.
          */
         TriangleFan,
 
@@ -89,107 +90,117 @@ namespace ngine::graphics {
          */
         static const int MATRIX_STACK_SIZE = 32;
 
-        // TEMP: GLSL shaders for each version. I want to have a single shader language for this somepoint (either HLSL converter or something else)
-        static constexpr const char *GLES2_V_SHADER = "#version 100\n"
-                                                      "attribute vec3 NG_VertexPos;\n"
-                                                      "attribute vec2 NG_VertexTexCoord;\n"
-                                                      "attribute vec4 NG_VertexColor;\n"
-                                                      "varying vec2 fragTexCoord;\n"
-                                                      "varying vec4 fragColor;\n"
-                                                      "uniform mat4 NGINE_MATRIX_MVP;\n"
-                                                      "void main()\n"
-                                                      "{\n"
-                                                      "    fragTexCoord = NG_VertexTexCoord;\n"
-                                                      "    fragColor = NG_VertexColor;\n"
-                                                      "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                                                      "}\n";
+        // TEMP: GLSL shaders for each version. I want to have a single shader
+        // language for this somepoint (either HLSL converter or something else)
+        static constexpr const char *GLES2_V_SHADER =
+            "#version 100\n"
+            "attribute vec3 NG_VertexPos;\n"
+            "attribute vec2 NG_VertexTexCoord;\n"
+            "attribute vec4 NG_VertexColor;\n"
+            "varying vec2 fragTexCoord;\n"
+            "varying vec4 fragColor;\n"
+            "uniform mat4 NGINE_MATRIX_MVP;\n"
+            "void main()\n"
+            "{\n"
+            "    fragTexCoord = NG_VertexTexCoord;\n"
+            "    fragColor = NG_VertexColor;\n"
+            "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+            "}\n";
 
-        static constexpr const char *GLES2_F_SHADER = "#version 100\n"
-                                                      "precision mediump float;\n"
-                                                      "varying vec2 fragTexCoord;\n"
-                                                      "varying vec4 fragColor;\n"
-                                                      "uniform sampler2D NGINE_TEXTURE;\n"
-                                                      "void main()\n"
-                                                      "{\n"
-                                                      "    vec4 texelColor = texture2D(NGINE_TEXTURE, fragTexCoord);\n"
-                                                      "    gl_FragColor = texelColor*fragColor;\n"
-                                                      "}\n";
+        static constexpr const char *GLES2_F_SHADER =
+            "#version 100\n"
+            "precision mediump float;\n"
+            "varying vec2 fragTexCoord;\n"
+            "varying vec4 fragColor;\n"
+            "uniform sampler2D NGINE_TEXTURE;\n"
+            "void main()\n"
+            "{\n"
+            "    vec4 texelColor = texture2D(NGINE_TEXTURE, fragTexCoord);\n"
+            "    gl_FragColor = texelColor*fragColor;\n"
+            "}\n";
 
-        static constexpr const char *GLES3_V_SHADER = "#version 300 es\n"
-                                                      "in vec3 NG_VertexPos;\n"
-                                                      "in vec2 NG_VertexTexCoord;\n"
-                                                      "in vec4 NG_VertexColor;\n"
-                                                      "out vec2 fragTexCoord;\n"
-                                                      "out vec4 fragColor;\n"
-                                                      "uniform mat4 NGINE_MATRIX_MVP;\n"
-                                                      "void main()\n"
-                                                      "{\n"
-                                                      "    fragTexCoord = NG_VertexTexCoord;\n"
-                                                      "    fragColor = NG_VertexColor;\n"
-                                                      "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                                                      "}\n";
+        static constexpr const char *GLES3_V_SHADER =
+            "#version 300 es\n"
+            "in vec3 NG_VertexPos;\n"
+            "in vec2 NG_VertexTexCoord;\n"
+            "in vec4 NG_VertexColor;\n"
+            "out vec2 fragTexCoord;\n"
+            "out vec4 fragColor;\n"
+            "uniform mat4 NGINE_MATRIX_MVP;\n"
+            "void main()\n"
+            "{\n"
+            "    fragTexCoord = NG_VertexTexCoord;\n"
+            "    fragColor = NG_VertexColor;\n"
+            "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+            "}\n";
 
-        static constexpr const char *GLES3_F_SHADER = "#version 300 es\n"
-                                                      "precision mediump float;"
-                                                      "in vec2 fragTexCoord;\n"
-                                                      "in vec4 fragColor;\n"
-                                                      "out vec4 finalColor;\n"
-                                                      "uniform sampler2D NGINE_TEXTURE;\n"
-                                                      "void main()\n"
-                                                      "{\n"
-                                                      "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
-                                                      "    finalColor = texelColor*fragColor;\n"
-                                                      "}\n";
+        static constexpr const char *GLES3_F_SHADER =
+            "#version 300 es\n"
+            "precision mediump float;"
+            "in vec2 fragTexCoord;\n"
+            "in vec4 fragColor;\n"
+            "out vec4 finalColor;\n"
+            "uniform sampler2D NGINE_TEXTURE;\n"
+            "void main()\n"
+            "{\n"
+            "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
+            "    finalColor = texelColor*fragColor;\n"
+            "}\n";
 
-        static constexpr const char *GL3X_V_SHADER = "#version 130\n"
-                                                     "in vec3 NG_VertexPos;\n"
-                                                     "in vec2 NG_VertexTexCoord;\n"
-                                                     "in vec4 NG_VertexColor;\n"
-                                                     "out vec2 fragTexCoord;\n"
-                                                     "out vec4 fragColor;\n"
-                                                     "uniform mat4 NGINE_MATRIX_MVP;\n"
-                                                     "void main()\n"
-                                                     "{\n"
-                                                     "    fragTexCoord = NG_VertexTexCoord;\n"
-                                                     "    fragColor = NG_VertexColor;\n"
-                                                     "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                                                     "}\n";
+        static constexpr const char *GL3X_V_SHADER =
+            "#version 130\n"
+            "in vec3 NG_VertexPos;\n"
+            "in vec2 NG_VertexTexCoord;\n"
+            "in vec4 NG_VertexColor;\n"
+            "out vec2 fragTexCoord;\n"
+            "out vec4 fragColor;\n"
+            "uniform mat4 NGINE_MATRIX_MVP;\n"
+            "void main()\n"
+            "{\n"
+            "    fragTexCoord = NG_VertexTexCoord;\n"
+            "    fragColor = NG_VertexColor;\n"
+            "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+            "}\n";
 
-        static constexpr const char *GL3X_F_SHADER = "#version 130\n"
-                                                     "in vec2 fragTexCoord;\n"
-                                                     "in vec4 fragColor;\n"
-                                                     "out vec4 finalColor;\n"
-                                                     "uniform sampler2D NGINE_TEXTURE;\n"
-                                                     "void main()\n"
-                                                     "{\n"
-                                                     "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
-                                                     "    finalColor = texelColor*fragColor;\n"
-                                                     "}\n";
+        static constexpr const char *GL3X_F_SHADER =
+            "#version 130\n"
+            "in vec2 fragTexCoord;\n"
+            "in vec4 fragColor;\n"
+            "out vec4 finalColor;\n"
+            "uniform sampler2D NGINE_TEXTURE;\n"
+            "void main()\n"
+            "{\n"
+            "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
+            "    finalColor = texelColor*fragColor;\n"
+            "}\n";
 
-        static constexpr const char *GL33_V_SHADER = "#version 330\n"
-                                                     "in vec3 NG_VertexPos;\n"
-                                                     "in vec2 NG_VertexTexCoord;\n"
-                                                     "in vec4 NG_VertexColor;\n"
-                                                     "out vec2 fragTexCoord;\n"
-                                                     "out vec4 fragColor;\n"
-                                                     "uniform mat4 NGINE_MATRIX_MVP;\n"
-                                                     "void main()\n"
-                                                     "{\n"
-                                                     "    fragTexCoord = NG_VertexTexCoord;\n"
-                                                     "    fragColor = NG_VertexColor;\n"
-                                                     "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                                                     "}\n";
+        static constexpr const char *GL33_V_SHADER =
+            "#version 330\n"
+            "in vec3 NG_VertexPos;\n"
+            "in vec2 NG_VertexTexCoord;\n"
+            "in vec4 NG_VertexColor;\n"
+            "out vec2 fragTexCoord;\n"
+            "out vec4 fragColor;\n"
+            "uniform mat4 NGINE_MATRIX_MVP;\n"
+            "void main()\n"
+            "{\n"
+            "    fragTexCoord = NG_VertexTexCoord;\n"
+            "    fragColor = NG_VertexColor;\n"
+            "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
+            "}\n";
 
-        static constexpr const char *GL33_F_SHADER = "#version 330\n"
-                                                     "in vec2 fragTexCoord;\n"
-                                                     "in vec4 fragColor;\n"
-                                                     "out vec4 finalColor;\n"
-                                                     "uniform sampler2D NGINE_TEXTURE;\n"
-                                                     "void main()\n"
-                                                     "{\n"
-                                                     "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
-                                                     "    finalColor = texelColor*fragColor;\n"
-                                                     "}\n";
+        static constexpr const char *GL33_F_SHADER =
+            "#version 330\n"
+            "in vec2 fragTexCoord;\n"
+            "in vec4 fragColor;\n"
+            "out vec4 finalColor;\n"
+            "uniform sampler2D NGINE_TEXTURE;\n"
+            "void main()\n"
+            "{\n"
+            "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
+            "    finalColor = texelColor*fragColor;\n"
+            "}\n";
+
     private:
         /**
          * The graphics device attached to the renderer.
@@ -305,8 +316,9 @@ namespace ngine::graphics {
         /**
          * Add indexed triangles to the buffer (no matrix translation).
          */
-        void
-        _addIndexedTriangles(Vertex *vertices, int vCount, unsigned short *indices, int iCount, bool translate = false);
+        void _addIndexedTriangles(Vertex *vertices, int vCount,
+                                  unsigned short *indices, int iCount,
+                                  bool translate = false);
 
     public:
         /**
@@ -334,13 +346,17 @@ namespace ngine::graphics {
          * @param indices The indices for the vertex array.
          * @param iCount The number of indices in the array.
          */
-        void addIndexedTriangles(Vertex *vertices, int vCount, unsigned short *indices, int iCount);
+        void addIndexedTriangles(Vertex *vertices, int vCount,
+                                 unsigned short *indices, int iCount);
 
         /**
          * Begin pushing vertices.
          *
-         * @param type The vertex type. Will be converted by the `VertexDataTool`.
-         * @note For large numbers of vertices, push use `addTriangles`, `addIndexedTriangles` or even use a custom vertex buffer. These methods are more efficient.
+         * @param type The vertex type. Will be converted by the
+         * `VertexDataTool`.
+         * @note For large numbers of vertices, push use `addTriangles`,
+         * `addIndexedTriangles` or even use a custom vertex buffer. These
+         * methods are more efficient.
          */
         void beginVertices(PrimitiveType type);
 
@@ -359,7 +375,9 @@ namespace ngine::graphics {
         /**
          * Set the coordinate system.
          *
-         * @warning Don't touch this unless you are going to reset the value and not call anything that depends on a different system. It can seriously break stuff.
+         * @warning Don't touch this unless you are going to reset the value and
+         * not call anything that depends on a different system. It can
+         * seriously break stuff.
          * @param system The new system to use.
          */
         void setCoordinateSystem(CoordinateSystem system);
@@ -374,7 +392,8 @@ namespace ngine::graphics {
         /**
          * Set the current texture for rendering.
          *
-         * @note Will force a draw of anything before this call if the texture is different.
+         * @note Will force a draw of anything before this call if the texture
+         * is different.
          * @param texture The texture to render with.
          */
         void setTexture(Texture2D *texture);
@@ -382,7 +401,8 @@ namespace ngine::graphics {
         /**
          * Set the current shader for rendering.
          *
-         * @note Will force a draw of anything before this call if the texture is different.
+         * @note Will force a draw of anything before this call if the texture
+         * is different.
          * @param state The shader program state to use.
          */
         void setShader(ShaderProgramState *state);
@@ -398,7 +418,9 @@ namespace ngine::graphics {
         /**
          * Push a matrix onto the stack (with the current matrix's value).
          *
-         * @note This is extremely handy for moving vertices around. This **only** supports the immediate mode (Begin, Vertex, End) workflow at the moment.
+         * @note This is extremely handy for moving vertices around. This
+         * **only** supports the immediate mode (Begin, Vertex, End) workflow at
+         * the moment.
          */
         void pushMatrix();
 
@@ -412,7 +434,8 @@ namespace ngine::graphics {
         /**
          * Set the value of the current Matrix.
          *
-         * @warning Remember to push first, this could destroy critical existing data. General rule of thumb: Push if you modify something.
+         * @warning Remember to push first, this could destroy critical existing
+         * data. General rule of thumb: Push if you modify something.
          * @param mat The new value for the matrix.
          */
         void setMatrix(const Matrix &mat);
@@ -427,7 +450,8 @@ namespace ngine::graphics {
         /**
          * Multiply the given matrix by the current one.
          *
-         * @note Formula is as follows: Current Matrix = Matrix Provided * Current Matrix
+         * @note Formula is as follows: Current Matrix = Matrix Provided *
+         * Current Matrix
          */
         void multiplyMatrix(const Matrix &mat);
 
@@ -454,7 +478,8 @@ namespace ngine::graphics {
         void scale(const Vector3 &scale);
 
         /**
-         * Trigger a render of the internal buffers with the graphics device's coordinate system.
+         * Trigger a render of the internal buffers with the graphics device's
+         * coordinate system.
          */
         void renderBatch();
 
@@ -467,9 +492,9 @@ namespace ngine::graphics {
          * @param texture The texture to render with.
          * @param shader_ The shader program state to render with.
          */
-        void
-        renderBuffer(const Viewport *viewport, CoordinateSystem coordSys, VertexLayout *layout, Buffer *VBO, int count,
-                     Texture2D *texture, ShaderProgramState *state);
+        void renderBuffer(const Viewport *viewport, CoordinateSystem coordSys,
+                          VertexLayout *layout, Buffer *VBO, int count,
+                          Texture2D *texture, ShaderProgramState *state);
 
         /**
          * Render an indexed vertex buffer.
@@ -481,8 +506,11 @@ namespace ngine::graphics {
          * @param texture The texture to render with.
          * @param state_ The shader program state to render with.
          */
-        void renderBufferIndexed(const Viewport *viewport, CoordinateSystem coordSys, VertexLayout *layout, Buffer *VBO,
-                                 Buffer *IBO, int count, Texture2D *texture, ShaderProgramState *state);
+        void renderBufferIndexed(const Viewport *viewport,
+                                 CoordinateSystem coordSys,
+                                 VertexLayout *layout, Buffer *VBO, Buffer *IBO,
+                                 int count, Texture2D *texture,
+                                 ShaderProgramState *state);
 
         /**
          * Check if n elements of type will fit in a buffer.
@@ -499,6 +527,6 @@ namespace ngine::graphics {
          */
         GraphicsDevice *getGraphicsDevice();
     };
-}
+} // namespace ngine::graphics
 
-#endif //RENDERER_HPP
+#endif // RENDERER_HPP

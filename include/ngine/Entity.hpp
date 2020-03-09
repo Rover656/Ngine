@@ -1,34 +1,35 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
 #include "Config.hpp"
 
+#include "Scene.hpp"
 #include "filesystem/ResourceManager.hpp"
 #include "graphics/Renderer.hpp"
-#include "input/Mouse.hpp"
 #include "input/Keyboard.hpp"
+#include "input/Mouse.hpp"
 #include "physics/PhysicsBody.hpp"
-#include "Scene.hpp"
+
 
 namespace ngine {
     class Component;
@@ -144,6 +145,7 @@ namespace ngine {
          * Update our model view.
          */
         void _updateModelView(graphics::CoordinateSystem coordSys);
+
     public:
         /**
          * Create a new entity.
@@ -410,27 +412,35 @@ namespace ngine {
         /**
          * Detemine if this entity is visible in the given camera.
          *
-         * @note By default, this will check the size fields for a non-physics shape, and the physics body's AABB for a physics shape.
+         * @note By default, this will check the size fields for a non-physics
+         * shape, and the physics body's AABB for a physics shape.
          * @param camera Camera we are checking with.
          * @return Whether or not we are visible in the camera.
          */
         virtual bool isVisibleInCamera(graphics::Camera *camera);
 
         /**
-         * Render this entity and its children with the given renderer and model view matrix.
+         * Render this entity and its children with the given renderer and model
+         * view matrix.
          *
          * @param renderer The renderer.
-         * @param modelView The current modelview (if the scene calls this, it'll be the camera's view matrix).
-         * @param currentCamera The current camera or null if a camera is not used.
+         * @param modelView The current modelview (if the scene calls this,
+         * it'll be the camera's view matrix).
+         * @param currentCamera The current camera or null if a camera is not
+         * used.
          */
-        void render(graphics::Renderer *renderer, Matrix modelView, graphics::Camera *currentCamera = nullptr);
+        void render(graphics::Renderer *renderer, Matrix modelView,
+                    graphics::Camera *currentCamera = nullptr);
 
         /**
          * Draw the contents of the entity.
          *
-         * @note All rendering in this method is ***RELATIVE*** to the entity already. So rendering something at (0, 0) will render at the entity itself.
+         * @note All rendering in this method is ***RELATIVE*** to the entity
+         * already. So rendering something at (0, 0) will render at the entity
+         * itself.
          * @param renderer The renderer.
-         * @param modelView The currently applied modelview, should only be used for reference/converting of coordinates.
+         * @param modelView The currently applied modelview, should only be used
+         * for reference/converting of coordinates.
          */
         virtual void draw(graphics::Renderer *renderer, Matrix modelView);
 
@@ -439,6 +449,6 @@ namespace ngine {
          */
         virtual void update();
     };
-}
+} // namespace ngine
 
-#endif //ENTITY_HPP
+#endif // ENTITY_HPP

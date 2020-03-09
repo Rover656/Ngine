@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef NGINE_HPP
 #define NGINE_HPP
@@ -42,8 +42,8 @@
 #include "graphics/Font.hpp"
 #include "graphics/GraphicsDevice.hpp"
 #include "graphics/Image.hpp"
-#include "graphics/Renderer.hpp"
 #include "graphics/RenderTarget.hpp"
+#include "graphics/Renderer.hpp"
 #include "graphics/Shader.hpp"
 #include "graphics/ShaderProgram.hpp"
 #include "graphics/ShaderProgramState.hpp"
@@ -60,6 +60,7 @@
 #include "physics/PhysicsFixture.hpp"
 #include "physics/PhysicsShape.hpp"
 #include "physics/PhysicsWorld.hpp"
+
 // TODO: UI once the API is finished
 #include "Component.hpp"
 #include "Console.hpp"
@@ -91,18 +92,24 @@
 // Game entrypoint
 #if defined(PLATFORM_DESKTOP)
 #if defined(_WIN32)
-#define NGINE_GAME_ENTRY int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
+#define NGINE_GAME_ENTRY                                                       \
+    int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,         \
+                         LPSTR pCmdLine, int nCmdShow)
 #else
 #define NGINE_GAME_ENTRY int main()
 #endif
 #elif defined(PLATFORM_UWP)
-#define NGINE_GAME_ENTRY [Platform::MTAThread] int main(Platform::Array<Platform::String^>^)
+#define NGINE_GAME_ENTRY                                                       \
+    [Platform::MTAThread] int main(Platform::Array<Platform::String ^> ^)
 #endif
 
 // Game runner
 #if defined(PLATFORM_UWP)
 #include "UWP/GameApp.hpp"
-#define NGINE_RUN_GAME(game) UWP::UWPGameBootstrapper::ExecuteGame(&game); CoreApplication::Run(ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
+#define NGINE_RUN_GAME(game)                                                   \
+    UWP::UWPGameBootstrapper::ExecuteGame(&game);                              \
+    CoreApplication::Run(                                                      \
+        ref new UWP::GameApplicationSource(ref new UWP::GameApp()));
 #else
 #define NGINE_RUN_GAME(game) game.run();
 #endif

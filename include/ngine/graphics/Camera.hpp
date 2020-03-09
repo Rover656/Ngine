@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
@@ -59,8 +59,10 @@ namespace ngine::graphics {
          * @param zoom Camera zoom level.
          * @param origin Camera origin.
          */
-        Camera(Vector2 position = Vector2::Zero, float rotation = 0, float zoom = 1, Vector2 origin = Vector2::Zero)
-                : Position(position), Rotation(rotation), Zoom(zoom), Origin(origin) {}
+        Camera(Vector2 position = Vector2::Zero, float rotation = 0,
+               float zoom = 1, Vector2 origin = Vector2::Zero)
+            : Position(position), Rotation(rotation), Zoom(zoom),
+              Origin(origin) {}
 
         /**
          * Convert a screen/window position to a world position.
@@ -85,6 +87,6 @@ namespace ngine::graphics {
          */
         Matrix getViewMatrix() const;
     };
-}
+} // namespace ngine::graphics
 
-#endif //CAMERA2D_H
+#endif // CAMERA2D_H

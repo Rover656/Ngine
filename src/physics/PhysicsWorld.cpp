@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/physics/PhysicsWorld.hpp"
 
@@ -27,7 +27,8 @@
 #include <box2d/box2d.h>
 
 namespace ngine::physics {
-    PhysicsWorld::PhysicsWorld(PhysicsContext *context, const Vector2 &gravity) : m_context(context) {
+    PhysicsWorld::PhysicsWorld(PhysicsContext *context, const Vector2 &gravity)
+        : m_context(context) {
         // Convert gravity
         auto grav = m_context->convertPixelsToMeters(gravity);
 
@@ -48,25 +49,24 @@ namespace ngine::physics {
         m_world = nullptr;
     }
 
-    const PhysicsContext *PhysicsWorld::getContext() const {
-        return m_context;
-    }
+    const PhysicsContext *PhysicsWorld::getContext() const { return m_context; }
 
-    PhysicsBody *PhysicsWorld::createBody(PhysicsBody::Type type, const Vector2 &position) {
+    PhysicsBody *PhysicsWorld::createBody(PhysicsBody::Type type,
+                                          const Vector2 &position) {
         // Build params
         auto pos = m_context->convertPixelsToMeters(position);
         b2BodyDef def;
         def.position = {pos.X, pos.Y};
         switch (type) {
-            case PhysicsBody::Type::Static:
-                def.type = b2_staticBody;
-                break;
-            case PhysicsBody::Type::Kinematic:
-                def.type = b2_kinematicBody;
-                break;
-            case PhysicsBody::Type::Dynamic:
-                def.type = b2_dynamicBody;
-                break;
+        case PhysicsBody::Type::Static:
+            def.type = b2_staticBody;
+            break;
+        case PhysicsBody::Type::Kinematic:
+            def.type = b2_kinematicBody;
+            break;
+        case PhysicsBody::Type::Dynamic:
+            def.type = b2_dynamicBody;
+            break;
         }
 
         // Create
@@ -85,19 +85,16 @@ namespace ngine::physics {
         m_world->DestroyBody(body->m_body);
 
         // Stop tracking
-        m_bodies.erase(std::remove(m_bodies.begin(), m_bodies.end(), body), m_bodies.end());
+        m_bodies.erase(std::remove(m_bodies.begin(), m_bodies.end(), body),
+                       m_bodies.end());
 
         // Delete
         delete body;
     }
 
-    int PhysicsWorld::getBodyCount() const {
-        return m_world->GetBodyCount();
-    }
+    int PhysicsWorld::getBodyCount() const { return m_world->GetBodyCount(); }
 
-    int PhysicsWorld::getTreeHeight() const {
-        return m_world->GetTreeHeight();
-    }
+    int PhysicsWorld::getTreeHeight() const { return m_world->GetTreeHeight(); }
 
     int PhysicsWorld::getTreeBalance() const {
         return m_world->GetTreeBalance();
@@ -125,9 +122,7 @@ namespace ngine::physics {
         m_world->SetAutoClearForces(flag);
     }
 
-    void PhysicsWorld::clearForces() {
-        m_world->ClearForces();
-    }
+    void PhysicsWorld::clearForces() { m_world->ClearForces(); }
 
     bool PhysicsWorld::getAllowSleeping() const {
         return m_world->GetAllowSleeping();
@@ -167,7 +162,8 @@ namespace ngine::physics {
 
     void PhysicsWorld::enableDebugDraw() {
         // Create debug drawer
-        if (m_debugDraw != nullptr) return;
+        if (m_debugDraw != nullptr)
+            return;
         m_debugDraw = new PhysicsDebugDraw(this);
 
         // Set debug drawer
@@ -197,9 +193,13 @@ namespace ngine::physics {
     void PhysicsWorld::debugDraw(graphics::Renderer *renderer) {
         // Set renderer and draw
         if (m_debugDraw != nullptr) {
-            // Check the renderer is in the correct mode. Scene will only ever draw in screen coords.
-            if (renderer->getCoordinateSystem() != graphics::CoordinateSystem::Screen)
-                Console::fail("PhysicsWorld", "Debug drawing must happen as part of the scene's Screen render phase.");
+            // Check the renderer is in the correct mode. Scene will only ever
+            // draw in screen coords.
+            if (renderer->getCoordinateSystem() !=
+                graphics::CoordinateSystem::Screen)
+                Console::fail("PhysicsWorld",
+                              "Debug drawing must happen as part of the "
+                              "scene's Screen render phase.");
 
             m_debugDraw->setRenderer(renderer);
             m_world->DrawDebugData();
@@ -225,4 +225,4 @@ namespace ngine::physics {
     void PhysicsWorld::step(float timestep) {
         m_world->Step(timestep, m_velocityIterations, m_positionIterations);
     }
-}
+} // namespace ngine::physics

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef SHADERPROGRAM_HPP
 #define SHADERPROGRAM_HPP
@@ -74,7 +74,9 @@ namespace ngine::graphics {
         /**
          * The number of elements.
          *
-         * @note For standard scalars, this determines float, vec2, vec3 etc. For arrays this defines how many entries and this does nothing for structs.
+         * @note For standard scalars, this determines float, vec2, vec3 etc.
+         * For arrays this defines how many entries and this does nothing for
+         * structs.
          */
         int Count = 1;
 
@@ -91,7 +93,8 @@ namespace ngine::graphics {
         /**
          * The element members.
          *
-         * @note For arrays this should contain a singular member to determine what type the array is holding.
+         * @note For arrays this should contain a singular member to determine
+         * what type the array is holding.
          */
         std::vector<ShaderDataStructure> Members;
 
@@ -114,25 +117,25 @@ namespace ngine::graphics {
         int getSize() const {
             int s = 0;
             switch (Type) {
-                case ShaderDataType::Int:
-                    s = sizeof(int) * Count;
-                    break;
-                case ShaderDataType::UnsignedInt:
-                    s = sizeof(unsigned int) * Count;
-                    break;
-                case ShaderDataType::Float:
-                    s = sizeof(float) * Count;
-                    break;
-                case ShaderDataType::Matrix:
-                    s = sizeof(float) * 16;
-                    break;
-                case ShaderDataType::Struct:
-                    for (auto member : Members)
-                        s += member.getSize();
-                    break;
-                case ShaderDataType::Array:
-                    s = Members[0].getSize() * Count;
-                    break;
+            case ShaderDataType::Int:
+                s = sizeof(int) * Count;
+                break;
+            case ShaderDataType::UnsignedInt:
+                s = sizeof(unsigned int) * Count;
+                break;
+            case ShaderDataType::Float:
+                s = sizeof(float) * Count;
+                break;
+            case ShaderDataType::Matrix:
+                s = sizeof(float) * 16;
+                break;
+            case ShaderDataType::Struct:
+                for (auto member : Members)
+                    s += member.getSize();
+                break;
+            case ShaderDataType::Array:
+                s = Members[0].getSize() * Count;
+                break;
             }
 
             return s;
@@ -177,6 +180,7 @@ namespace ngine::graphics {
          * Whether or not the shader is final.
          */
         bool m_final = false;
+
     public:
         union {
             /**
@@ -198,14 +202,17 @@ namespace ngine::graphics {
         /**
          * Create a shader program.
          *
-         * @todo Rework this constructor if we want to support more kinds of shader.
-         * @warning Uniforms must be passed in the correct order as they are defined, this is soley for Direct X.
+         * @todo Rework this constructor if we want to support more kinds of
+         * shader.
+         * @warning Uniforms must be passed in the correct order as they are
+         * defined, this is soley for Direct X.
          * @param graphicsDevice The graphics device.
          * @param vertexShader The vertex shader.
          * @param fragmentShader The fragment shader.
          * @param uniforms The uniform definitions for the program.
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice, Shader *vertexShader, Shader *fragmentShader,
+        ShaderProgram(GraphicsDevice *graphicsDevice, Shader *vertexShader,
+                      Shader *fragmentShader,
                       std::vector<ShaderDataStructure> uniforms = {});
 
         ~ShaderProgram();
@@ -251,6 +258,6 @@ namespace ngine::graphics {
          */
         void free() override;
     };
-}
+} // namespace ngine::graphics
 
-#endif //SHADERPROGRAM_HPP
+#endif // SHADERPROGRAM_HPP

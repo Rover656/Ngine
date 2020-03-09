@@ -1,29 +1,30 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/graphics/ShapeRenderer.hpp"
 
 #include <cmath>
 
 namespace ngine::graphics {
-    void ShapeRenderer::_drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color, float thickness) {
+    void ShapeRenderer::_drawLine(Renderer *renderer, Vector2 v1, Vector2 v2,
+                                  Color color, float thickness) {
         // Flip inputs if X is smaller
         bool flipped = false;
         if (v1.X > v2.X) {
@@ -50,7 +51,8 @@ namespace ngine::graphics {
 
         if (flipped)
             renderer->translate({thickness / 2.0f, -thickness / 2.0f, 0});
-        else renderer->translate({-thickness / 2.0f, -thickness / 2.0f, 0});
+        else
+            renderer->translate({-thickness / 2.0f, -thickness / 2.0f, 0});
 
         // Write to renderer
         renderer->pushVertex({{0, 0, 0}, {0, 0}, color});
@@ -62,7 +64,8 @@ namespace ngine::graphics {
         renderer->popMatrix();
     }
 
-    void graphics::ShapeRenderer::drawLine(Renderer *renderer, Vector2 v1, Vector2 v2, Color color,
+    void graphics::ShapeRenderer::drawLine(Renderer *renderer, Vector2 v1,
+                                           Vector2 v2, Color color,
                                            float thickness) {
         renderer->setTexture(nullptr);
         renderer->beginVertices(PrimitiveType::Quads);
@@ -73,10 +76,10 @@ namespace ngine::graphics {
         renderer->endVertices();
     }
 
-    void
-    graphics::ShapeRenderer::drawCircle(Renderer *renderer, Vector2 center, float radius, Color color,
-                                        bool outline,
-                                        float lineThickness) {
+    void graphics::ShapeRenderer::drawCircle(Renderer *renderer, Vector2 center,
+                                             float radius, Color color,
+                                             bool outline,
+                                             float lineThickness) {
         renderer->setTexture(nullptr);
         if (outline) {
             // Get two times PI
@@ -84,12 +87,14 @@ namespace ngine::graphics {
             float step = DegToRad(360.0f / LINES_PER_CIRCLE);
 
             // Render lines.
-            renderer->beginVertices(PrimitiveType::Quads);  // TODO: lines don't line up correctly?
+            renderer->beginVertices(
+                PrimitiveType::Quads); // TODO: lines don't line up correctly?
             for (auto i = 0; i < LINES_PER_CIRCLE; i++) {
                 _drawLine(renderer,
-                          {center.X + sinf((float) i * step) * radius, center.Y + cosf((float) i * step) * radius},
-                          {center.X + sinf((float) (i + 1) * step) * radius,
-                           center.Y + cosf((float) (i + 1) * step) * radius},
+                          {center.X + sinf((float)i * step) * radius,
+                           center.Y + cosf((float)i * step) * radius},
+                          {center.X + sinf((float)(i + 1) * step) * radius,
+                           center.Y + cosf((float)(i + 1) * step) * radius},
                           color, lineThickness);
             }
             renderer->endVertices();
@@ -98,28 +103,42 @@ namespace ngine::graphics {
             float twoPi = 2.0f * PI;
 
             // Render using triangle fan primitive type (NEW!!!)
-            renderer->beginVertices(PrimitiveType::TriangleFan); // TODO: theres a strange bug, see renderdoc.
+            renderer->beginVertices(
+                PrimitiveType::TriangleFan); // TODO: theres a strange bug, see
+                                             // renderdoc.
             renderer->pushVertex({{center.X, center.Y, 0}, {0, 0}, color});
             for (auto i = 1; i <= TRIANGLES_PER_CIRCLE + 1; i++) {
-                renderer->pushVertex({{
-                                              center.X + (radius * cosf(i * twoPi / TRIANGLES_PER_CIRCLE)),
-                                              center.Y + (radius * sinf(i * twoPi / TRIANGLES_PER_CIRCLE)), 0
-                                      }, {0, 0}, color});
+                renderer->pushVertex(
+                    {{center.X +
+                          (radius * cosf(i * twoPi / TRIANGLES_PER_CIRCLE)),
+                      center.Y +
+                          (radius * sinf(i * twoPi / TRIANGLES_PER_CIRCLE)),
+                      0},
+                     {0, 0},
+                     color});
             }
             renderer->endVertices();
         }
     }
 
-    void graphics::ShapeRenderer::drawRectangle(Renderer *renderer, Vector2 position, float width, float height,
-                                                Color color, Angle rotation, Vector2 origin, bool outline,
+    void graphics::ShapeRenderer::drawRectangle(Renderer *renderer,
+                                                Vector2 position, float width,
+                                                float height, Color color,
+                                                Angle rotation, Vector2 origin,
+                                                bool outline,
                                                 float lineThickness) {
-        drawRectangle(renderer, {position, width, height}, color, rotation, origin, outline, lineThickness);
+        drawRectangle(renderer, {position, width, height}, color, rotation,
+                      origin, outline, lineThickness);
     }
 
-    void graphics::ShapeRenderer::drawRectangle(Renderer *renderer, Rectangle rect, Color color, Angle rotation,
-                                                Vector2 origin, bool outline, float lineThickness) {
+    void graphics::ShapeRenderer::drawRectangle(Renderer *renderer,
+                                                Rectangle rect, Color color,
+                                                Angle rotation, Vector2 origin,
+                                                bool outline,
+                                                float lineThickness) {
         // Get origin in pixel units
-        auto pixelOrigin = Vector2(origin.X * rect.Width, origin.Y * rect.Height);
+        auto pixelOrigin =
+            Vector2(origin.X * rect.Width, origin.Y * rect.Height);
 
         // Push a matrix and set up our transform/rotation
         renderer->setTexture(nullptr);
@@ -131,7 +150,8 @@ namespace ngine::graphics {
         // Apply rotation (this fixes issues with different Y stuffs)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->rotate(rotation, {0, 0, 1});
-        else renderer->rotate(rotation, {0, 0, -1});
+        else
+            renderer->rotate(rotation, {0, 0, -1});
 
         // Fix origin
         renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
@@ -171,8 +191,11 @@ namespace ngine::graphics {
         renderer->popMatrix();
     }
 
-    void graphics::ShapeRenderer::drawTriangle(Renderer *renderer, Vector2 v1, Vector2 v2, Vector2 v3, Color color,
-                                               Angle rotation, Vector2 origin, bool outline, float lineThickness) {
+    void graphics::ShapeRenderer::drawTriangle(Renderer *renderer, Vector2 v1,
+                                               Vector2 v2, Vector2 v3,
+                                               Color color, Angle rotation,
+                                               Vector2 origin, bool outline,
+                                               float lineThickness) {
         // Push matrix (for rotation)
         renderer->setTexture(nullptr);
         renderer->pushMatrix();
@@ -217,9 +240,10 @@ namespace ngine::graphics {
         renderer->popMatrix();
     }
 
-    void
-    ShapeRenderer::drawPolygon(Renderer *renderer, Vector2 position, const std::vector<Vector2> &vertices, Color color,
-                               Angle rotation, Vector2 origin, bool outline, float lineThickness) {
+    void ShapeRenderer::drawPolygon(Renderer *renderer, Vector2 position,
+                                    const std::vector<Vector2> &vertices,
+                                    Color color, Angle rotation, Vector2 origin,
+                                    bool outline, float lineThickness) {
         renderer->setTexture(nullptr);
 
         // Push matrix
@@ -231,12 +255,14 @@ namespace ngine::graphics {
         // Apply rotation (this fixes issues with different Y stuffs)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->rotate(rotation, {0, 0, 1});
-        else renderer->rotate(rotation, {0, 0, -1});
+        else
+            renderer->rotate(rotation, {0, 0, -1});
 
         // Fix origin (Flipping Y for bottom-origin renders)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->translate({-origin.X, -origin.Y, 0});
-        else renderer->translate({-origin.X, origin.Y, 0});
+        else
+            renderer->translate({-origin.X, origin.Y, 0});
 
         // TODO: Deal with different rotations etc.
 
@@ -283,15 +309,18 @@ namespace ngine::graphics {
 
             // Push center
             if (renderer->getCoordinateSystem() == CoordinateSystem::GUI) {
-                renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
+                renderer->pushVertex(
+                    {{vertices[0].X, vertices[0].Y, 0}, {}, color});
             } else {
-                renderer->pushVertex({{vertices[0].X, vertices[0].Y, 0}, {}, color});
+                renderer->pushVertex(
+                    {{vertices[0].X, vertices[0].Y, 0}, {}, color});
             }
 
             for (auto i = 1; i < vertices.size() - 1; i++) {
                 // Get vertices
                 auto v1 = vertices[i];
-                auto v2 = vertices[i + 1];;
+                auto v2 = vertices[i + 1];
+                ;
 
                 // Push
                 renderer->pushVertex({{v1.X, v1.Y, 0}, {}, color});
@@ -303,4 +332,4 @@ namespace ngine::graphics {
         // Pop
         renderer->popMatrix();
     }
-}
+} // namespace ngine::graphics

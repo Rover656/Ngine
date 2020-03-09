@@ -1,30 +1,30 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/Game.hpp"
 
+#include "ngine/Console.hpp"
 #include "ngine/audio/AudioDevice.hpp"
 #include "ngine/input/Gamepad.hpp"
 #include "ngine/input/Keyboard.hpp"
 #include "ngine/input/Mouse.hpp"
-#include "ngine/Console.hpp"
 
 #if defined(PLATFORM_UWP)
 #include "ngine/UWP/GameApp.hpp"
@@ -54,19 +54,23 @@ namespace ngine {
         // Check if the device was created
         if (audio::AudioDevice::isReady())
             Console::notice("Game", "Audio device initialized successfully.");
-        else Console::warn("Game", "Failed to create audio device. Audio APIs will be unavailable.");
+        else
+            Console::warn("Game", "Failed to create audio device. Audio APIs "
+                                  "will be unavailable.");
 
         // Create render target
         // TODO: Rework this to be more robust.
         if (Config.MaintainResolution) {
-            m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new graphics::RenderTarget(
+                graphicsDevice, Config.TargetWidth, Config.TargetHeight);
         }
 
         // Create resource manager
         Console::notice("Game", "Creating the game resource manager.");
         m_resourceManager = new filesystem::ResourceManager(graphicsDevice);
 
-        // DEV: If anything new is added to the Game class, its initialization should occur here (Before OnInit())
+        // DEV: If anything new is added to the Game class, its initialization
+        // should occur here (Before OnInit())
 
         // Initialize
         initialize();
@@ -74,7 +78,8 @@ namespace ngine {
         // Init Timing
         m_lag = std::chrono::nanoseconds(0);
         m_started = std::chrono::high_resolution_clock::now();
-        m_timestep = std::chrono::milliseconds(int(1000.0f / float(Config.UpdatesPerSecond)));
+        m_timestep = std::chrono::milliseconds(
+            int(1000.0f / float(Config.UpdatesPerSecond)));
     }
 
     void Game::_runDraw() {
@@ -105,16 +110,20 @@ namespace ngine {
 
         // TODO: Clean this mess
         if (Config.MaintainResolution && m_renderTarget == nullptr) {
-            m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
-        } else if (Config.MaintainResolution && (!m_renderTarget->isValid() ||
-                                                 (m_renderTarget->Width != Config.TargetWidth ||
-                                                  m_renderTarget->Height != Config.TargetHeight))) {
+            m_renderTarget = new graphics::RenderTarget(
+                graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+        } else if (Config.MaintainResolution &&
+                   (!m_renderTarget->isValid() ||
+                    (m_renderTarget->Width != Config.TargetWidth ||
+                     m_renderTarget->Height != Config.TargetHeight))) {
             delete m_renderTarget;
-            m_renderTarget = new graphics::RenderTarget(graphicsDevice, Config.TargetWidth, Config.TargetHeight);
+            m_renderTarget = new graphics::RenderTarget(
+                graphicsDevice, Config.TargetWidth, Config.TargetHeight);
         }
 
         if (Config.MaintainResolution && m_renderTarget != nullptr)
-            m_renderTarget->getTexture()->setTextureFilter(RenderTargetFilterMode);
+            m_renderTarget->getTexture()->setTextureFilter(
+                RenderTargetFilterMode);
 
         // Get the time that we begin (for timing)
         auto frameBegin = std::chrono::high_resolution_clock::now();
@@ -122,7 +131,8 @@ namespace ngine {
         // Setup mouse translation
         if (Config.MaintainResolution && m_renderTarget->isValid()) {
             const auto mouse = m_gameWindow->getMouse();
-            mouse->setScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+            mouse->setScale(iw / (w - offsetX * 2.0f),
+                            ih / (h - offsetY * 2.0f));
             mouse->setOffset(-offsetX, -offsetY);
         }
 
@@ -150,25 +160,15 @@ namespace ngine {
                 // Remove target from stack
                 graphicsDevice->popTarget();
 
-                // We use Screen coordinates to put our internal framebuffer up, but any'll do.
-                m_renderer->setCoordinateSystem(graphics::CoordinateSystem::Screen);
+                // We use Screen coordinates to put our internal framebuffer up,
+                // but any'll do.
+                m_renderer->setCoordinateSystem(
+                    graphics::CoordinateSystem::Screen);
 
                 // Draw render target.
                 m_renderTarget->getTexture()->draw(
-                        m_renderer,
-                        {
-                                offsetX,
-                                offsetY,
-                                iw * scale,
-                                ih * scale
-                        },
-                        {
-                                0,
-                                0,
-                                iw,
-                                ih * -1
-                        },
-                        graphics::Color::White, {0, 0});
+                    m_renderer, {offsetX, offsetY, iw * scale, ih * scale},
+                    {0, 0, iw, ih * -1}, graphics::Color::White, {0, 0});
             }
 
             // Render final buffers
@@ -180,9 +180,13 @@ namespace ngine {
 
         // FPS limiter
         if (!m_gameWindow->getVSyncEnabled()) {
-            auto frameTime = std::chrono::high_resolution_clock::now() - frameBegin;
-            auto frameTimeMS = std::chrono::duration_cast<std::chrono::milliseconds>(frameTime);
-            auto timestep = std::chrono::milliseconds ((int)((float) 1e+3f / (float) Config.FPSCap));
+            auto frameTime =
+                std::chrono::high_resolution_clock::now() - frameBegin;
+            auto frameTimeMS =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    frameTime);
+            auto timestep = std::chrono::milliseconds(
+                (int)((float)1e+3f / (float)Config.FPSCap));
 
             // If we were too quick.
             if (frameTimeMS < timestep) {
@@ -192,7 +196,8 @@ namespace ngine {
     }
 
     void Game::_runUpdate() {
-        // Start timing here so if updates don't happen, frame skips don't either.
+        // Start timing here so if updates don't happen, frame skips don't
+        // either.
         auto now = std::chrono::high_resolution_clock::now();
         auto deltaTime = now - m_started;
         m_started = now;
@@ -200,7 +205,8 @@ namespace ngine {
         // Check if we are/should be suspended
         if (!m_gameWindow->isVisible() && !Config.RunWhileHidden) {
             // If told to quit, quit
-            if (!m_running) return;
+            if (!m_running)
+                return;
 
             // Suspend if we haven't
             if (!m_suspended) {
@@ -218,13 +224,17 @@ namespace ngine {
             }
 
             // Update timestep if FPS has changed
-            if (m_timestep.count() != int(1000.0f / (float) Config.UpdatesPerSecond)) {
-                m_timestep = std::chrono::milliseconds(int(1000.0f / (float) Config.UpdatesPerSecond));
-                Console::notice("Game", "Timestep updated to match updates per second.");
+            if (m_timestep.count() !=
+                int(1000.0f / (float)Config.UpdatesPerSecond)) {
+                m_timestep = std::chrono::milliseconds(
+                    int(1000.0f / (float)Config.UpdatesPerSecond));
+                Console::notice(
+                    "Game", "Timestep updated to match updates per second.");
             }
 
             // Increment lag
-            m_lag += std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
+            m_lag +=
+                std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime);
 
             // Get input managers
             auto mouse = getMouse();
@@ -233,21 +243,27 @@ namespace ngine {
             // Setup mouse translation
             if (Config.MaintainResolution && m_renderTarget->isValid()) {
                 // Get fields required for ofsetting.
-                const auto w = (float) m_gameWindow->getWidth();
-                const auto h = (float) m_gameWindow->getHeight();
-                const auto iw = (float) Config.TargetWidth;
-                const auto ih = (float) Config.TargetHeight;
+                const auto w = (float)m_gameWindow->getWidth();
+                const auto h = (float)m_gameWindow->getHeight();
+                const auto iw = (float)Config.TargetWidth;
+                const auto ih = (float)Config.TargetHeight;
                 const auto scale = std::min(w / iw, h / ih);
                 const auto offsetX = (w - iw * scale) * 0.5f;
                 const auto offsetY = (h - ih * scale) * 0.5f;
 
-                mouse->setScale(iw / (w - offsetX * 2.0f), ih / (h - offsetY * 2.0f));
+                mouse->setScale(iw / (w - offsetX * 2.0f),
+                                ih / (h - offsetY * 2.0f));
                 mouse->setOffset(-offsetX, -offsetY);
             }
 
             // Check if we are behind by 15+ frames.
             if (m_lag >= m_timestep * 15) {
-                Console::warn("Game", "Running behind by %i frame(s) or %d ms, skipping...", (int) (m_lag / m_timestep), std::chrono::duration_cast<std::chrono::milliseconds>(m_lag).count());
+                Console::warn(
+                    "Game",
+                    "Running behind by %i frame(s) or %d ms, skipping...",
+                    (int)(m_lag / m_timestep),
+                    std::chrono::duration_cast<std::chrono::milliseconds>(m_lag)
+                        .count());
                 m_lag = std::chrono::nanoseconds(0);
             }
 
@@ -273,11 +289,13 @@ namespace ngine {
                 audio::AudioDevice::update();
 
                 // If we need to quit, don't run any more frames
-                if (!m_running) return;
+                if (!m_running)
+                    return;
             }
 
             // If we need to quit, don't render
-            if (!m_running) return;
+            if (!m_running)
+                return;
 
             // Release thread for others.
             std::this_thread::sleep_for(std::chrono::milliseconds(0));
@@ -323,15 +341,15 @@ namespace ngine {
     }
 
     Game::Game(WindowConfig windowConfig, const GameConfig &config)
-            : m_gameWindowCreationConfig(std::move(windowConfig)), Config(config), m_virtualViewport(0, 0, config.TargetWidth, config.TargetHeight) {}
+        : m_gameWindowCreationConfig(std::move(windowConfig)), Config(config),
+          m_virtualViewport(0, 0, (float)config.TargetWidth,
+                            (float)config.TargetHeight) {}
 
-    void Game::initialize() { }
+    void Game::initialize() {}
 
-    void Game::cleanup() { }
+    void Game::cleanup() {}
 
-    Window *Game::getGameWindow() const {
-        return m_gameWindow;
-    }
+    Window *Game::getGameWindow() const { return m_gameWindow; }
 
     input::Mouse *Game::getMouse() const {
         return m_gameWindow ? m_gameWindow->getMouse() : nullptr;
@@ -346,26 +364,29 @@ namespace ngine {
     }
 
     Vector2 Game::getDefaultWindowDimensions() const {
-        return {(float) m_gameWindow->getWidth(), (float) m_gameWindow->getHeight()};
+        return {(float)m_gameWindow->getWidth(),
+                (float)m_gameWindow->getHeight()};
     }
 
     Vector2 Game::getDimensions() const {
-        return {(float) Config.TargetWidth, (float) Config.TargetHeight};
+        return {(float)Config.TargetWidth, (float)Config.TargetHeight};
     }
 
     Rectangle Game::getGameViewport() {
         if (Config.MaintainResolution) {
-            return {0, 0, (float)Config.TargetWidth, (float)Config.TargetHeight};
-        } else return {0, 0, (float) m_gameWindow->getWidth(), (float) m_gameWindow->getHeight()};
+            return {0, 0, (float)Config.TargetWidth,
+                    (float)Config.TargetHeight};
+        } else
+            return {0, 0, (float)m_gameWindow->getWidth(),
+                    (float)m_gameWindow->getHeight()};
     }
 
-    int Game::getTargetFPS() const {
-        return Config.UpdatesPerSecond;
-    }
+    int Game::getTargetFPS() const { return Config.UpdatesPerSecond; }
 
     void Game::run() {
 #if defined(PLATFORM_UWP)
-        throw std::runtime_error("For the UWP platform, the Run() method must not be used! Use UWP::GameApp instead.");
+        throw std::runtime_error("For the UWP platform, the Run() method must "
+                                 "not be used! Use UWP::GameApp instead.");
 #else
         // Init game.
         _init();
@@ -393,26 +414,18 @@ namespace ngine {
 #endif
     }
 
-    bool Game::isRunning() {
-        return m_running;
-    }
+    bool Game::isRunning() { return m_running; }
 
-    void Game::quit() {
-        m_running = false;
-    }
+    void Game::quit() { m_running = false; }
 
-    void Game::setFPS(int FPS) {
-        Config.UpdatesPerSecond = FPS;
-    }
+    void Game::setFPS(int FPS) { Config.UpdatesPerSecond = FPS; }
 
     void Game::setIntendedSize(Vector2 size) {
-        Config.TargetWidth = (int) size.X;
-        Config.TargetHeight = (int) size.Y;
+        Config.TargetWidth = (int)size.X;
+        Config.TargetHeight = (int)size.Y;
     }
 
-    void Game::setIsRunning(bool running) {
-        m_running = running;
-    }
+    void Game::setIsRunning(bool running) { m_running = running; }
 
     void Game::setScene(Scene *scene) {
         // Cleanup current scene.
@@ -435,4 +448,4 @@ namespace ngine {
     filesystem::ResourceManager *Game::getResourceManager() const {
         return m_resourceManager;
     }
-}
+} // namespace ngine

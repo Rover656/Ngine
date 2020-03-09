@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef MATH_HPP
 #define MATH_HPP
@@ -96,7 +96,8 @@ namespace ngine {
          * @param max The maximum value.
          * @return The clamped vector.
          */
-        static Vector2 clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max);
+        static Vector2 clamp(const Vector2 &value, const Vector2 &min,
+                             const Vector2 &max);
 
         /**
          * Find the dot (scalar) product between this and another vector.
@@ -136,7 +137,8 @@ namespace ngine {
          * Find the magnitude of this vector
          *
          * @return The magnitude of this vector.
-         * @note If using this for speed-critical comparisons, use MagnitudeSquared() instead.
+         * @note If using this for speed-critical comparisons, use
+         * MagnitudeSquared() instead.
          */
         float magnitude() const;
 
@@ -169,60 +171,52 @@ namespace ngine {
 
         friend Vector2 operator+(const Vector2 &a, const Vector2 &b);
 
-        template <typename T>
-        friend Vector2 operator+(const Vector2 &a, T b) {
+        template <typename T> friend Vector2 operator+(const Vector2 &a, T b) {
             return {a.X + b, a.Y + b};
         }
 
         void operator+=(const Vector2 &b);
 
-        template <typename T>
-        void operator+=(T b) {
+        template <typename T> void operator+=(T b) {
             X += b;
             Y += b;
         }
 
         friend Vector2 operator-(const Vector2 &a, const Vector2 &b);
 
-        template <typename T>
-        friend Vector2 operator-(const Vector2 &a, T b) {
+        template <typename T> friend Vector2 operator-(const Vector2 &a, T b) {
             return {a.X - b, a.Y - b};
         }
 
         void operator-=(const Vector2 &b);
 
-        template <typename T>
-        void operator-=(T b) {
+        template <typename T> void operator-=(T b) {
             X -= b;
             Y -= b;
         }
 
         friend Vector2 operator*(const Vector2 &a, const Vector2 &b);
 
-        template <typename T>
-        friend Vector2 operator*(const Vector2 &a, T b) {
+        template <typename T> friend Vector2 operator*(const Vector2 &a, T b) {
             return {a.X * b, a.Y * b};
         }
 
         void operator*=(const Vector2 &b);
 
-        template <typename T>
-        void operator*=(T b) {
+        template <typename T> void operator*=(T b) {
             X *= b;
             Y *= b;
         }
 
         friend Vector2 operator/(const Vector2 &a, const Vector2 &b);
 
-        template <typename T>
-        friend Vector2 operator/(const Vector2 &a, T b) {
+        template <typename T> friend Vector2 operator/(const Vector2 &a, T b) {
             return {a.X / b, a.Y / b};
         }
 
         void operator/=(const Vector2 &b);
 
-        template <typename T>
-        void operator/=(T b) {
+        template <typename T> void operator/=(T b) {
             X /= b;
             Y /= b;
         }
@@ -305,7 +299,8 @@ namespace ngine {
          * @param max The maximum value.
          * @return The clamped vector.
          */
-        static Vector3 clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max);
+        static Vector3 clamp(const Vector3 &value, const Vector3 &min,
+                             const Vector3 &max);
 
         /**
          * Find the dot (scalar) product between this and another vector.
@@ -345,7 +340,8 @@ namespace ngine {
          * Find the magnitude of this vector
          *
          * @return The magnitude of this vector.
-         * @note If using this for speed-critical comparisons, use MagnitudeSquared() instead.
+         * @note If using this for speed-critical comparisons, use
+         * MagnitudeSquared() instead.
          */
         float magnitude() const;
 
@@ -376,11 +372,7 @@ namespace ngine {
         }
 
         friend Vector3 operator+(const Vector3 &a, const Vector3 &b) {
-            return {
-                    a.X + b.X,
-                    a.Y + b.Y,
-                    a.Z + b.Z
-            };
+            return {a.X + b.X, a.Y + b.Y, a.Z + b.Z};
         }
 
         void operator+=(const Vector3 &b) {
@@ -396,11 +388,7 @@ namespace ngine {
         }
 
         friend Vector3 operator-(const Vector3 &a, const Vector3 &b) {
-            return {
-                    a.X - b.X,
-                    a.Y - b.Y,
-                    a.Z - b.Z
-            };
+            return {a.X - b.X, a.Y - b.Y, a.Z - b.Z};
         }
 
         void operator-=(const Vector3 &b) {
@@ -416,11 +404,7 @@ namespace ngine {
         }
 
         friend Vector3 operator*(const Vector3 &a, const Vector3 &b) {
-            return {
-                    a.X * b.X,
-                    a.Y * b.Y,
-                    a.Z * b.Z
-            };
+            return {a.X * b.X, a.Y * b.Y, a.Z * b.Z};
         }
 
         void operator*=(const Vector3 &b) {
@@ -436,11 +420,7 @@ namespace ngine {
         }
 
         friend Vector3 operator/(const Vector3 &a, const Vector3 &b) {
-            return {
-                    a.X / b.X,
-                    a.Y / b.Y,
-                    a.Z / b.Z
-            };
+            return {a.X / b.X, a.Y / b.Y, a.Z / b.Z};
         }
 
         void operator/=(const Vector3 &b) {
@@ -471,7 +451,8 @@ namespace ngine {
 
         float determinant() const;
 
-        static Matrix orthographic(float left, float right, float bottom, float top, float near_, float far_);
+        static Matrix orthographic(float left, float right, float bottom,
+                                   float top, float near_, float far_);
 
         static Matrix rotate(const Angle &rotation, const Vector3 &axis);
 
@@ -584,25 +565,41 @@ namespace ngine {
         friend Matrix operator*(const Matrix &left, const Matrix &right) {
             Matrix result = {0};
 
-            result.M0  = left.M0 * right.M0  + left.M4 * right.M1  + left.M8  * right.M2 + left.M12 * right.M3;
-            result.M1  = left.M1 * right.M0  + left.M5 * right.M1  + left.M9  * right.M2 + left.M13 * right.M3;
-            result.M2  = left.M2 * right.M0  + left.M6 * right.M1  + left.M10 * right.M2 + left.M14 * right.M3;
-            result.M3  = left.M3 * right.M0  + left.M7 * right.M1  + left.M11 * right.M2 + left.M15 * right.M3;
+            result.M0 = left.M0 * right.M0 + left.M4 * right.M1 +
+                        left.M8 * right.M2 + left.M12 * right.M3;
+            result.M1 = left.M1 * right.M0 + left.M5 * right.M1 +
+                        left.M9 * right.M2 + left.M13 * right.M3;
+            result.M2 = left.M2 * right.M0 + left.M6 * right.M1 +
+                        left.M10 * right.M2 + left.M14 * right.M3;
+            result.M3 = left.M3 * right.M0 + left.M7 * right.M1 +
+                        left.M11 * right.M2 + left.M15 * right.M3;
 
-            result.M4  = left.M0 * right.M4  + left.M4 * right.M5  + left.M8  * right.M6 + left.M12 * right.M7;
-            result.M5  = left.M1 * right.M4  + left.M5 * right.M5  + left.M9  * right.M6 + left.M13 * right.M7;
-            result.M6  = left.M2 * right.M4  + left.M6 * right.M5  + left.M10 * right.M6 + left.M14 * right.M7;
-            result.M7  = left.M3 * right.M4  + left.M7 * right.M5  + left.M11 * right.M6 + left.M15 * right.M7;
+            result.M4 = left.M0 * right.M4 + left.M4 * right.M5 +
+                        left.M8 * right.M6 + left.M12 * right.M7;
+            result.M5 = left.M1 * right.M4 + left.M5 * right.M5 +
+                        left.M9 * right.M6 + left.M13 * right.M7;
+            result.M6 = left.M2 * right.M4 + left.M6 * right.M5 +
+                        left.M10 * right.M6 + left.M14 * right.M7;
+            result.M7 = left.M3 * right.M4 + left.M7 * right.M5 +
+                        left.M11 * right.M6 + left.M15 * right.M7;
 
-            result.M8  = left.M0 * right.M8  + left.M4 * right.M9  + left.M8  * right.M10 + left.M12 * right.M11;
-            result.M9  = left.M1 * right.M8  + left.M5 * right.M9  + left.M9  * right.M10 + left.M13 * right.M11;
-            result.M10 = left.M2 * right.M8  + left.M6 * right.M9  + left.M10 * right.M10 + left.M14 * right.M11;
-            result.M11 = left.M3 * right.M8  + left.M7 * right.M9  + left.M11 * right.M10 + left.M15 * right.M11;
+            result.M8 = left.M0 * right.M8 + left.M4 * right.M9 +
+                        left.M8 * right.M10 + left.M12 * right.M11;
+            result.M9 = left.M1 * right.M8 + left.M5 * right.M9 +
+                        left.M9 * right.M10 + left.M13 * right.M11;
+            result.M10 = left.M2 * right.M8 + left.M6 * right.M9 +
+                         left.M10 * right.M10 + left.M14 * right.M11;
+            result.M11 = left.M3 * right.M8 + left.M7 * right.M9 +
+                         left.M11 * right.M10 + left.M15 * right.M11;
 
-            result.M12 = left.M0 * right.M12 + left.M4 * right.M13 + left.M8  * right.M14 + left.M12 * right.M15;
-            result.M13 = left.M1 * right.M12 + left.M5 * right.M13 + left.M9  * right.M14 + left.M13 * right.M15;
-            result.M14 = left.M2 * right.M12 + left.M6 * right.M13 + left.M10 * right.M14 + left.M14 * right.M15;
-            result.M15 = left.M3 * right.M12 + left.M7 * right.M13 + left.M11 * right.M14 + left.M15 * right.M15;
+            result.M12 = left.M0 * right.M12 + left.M4 * right.M13 +
+                         left.M8 * right.M14 + left.M12 * right.M15;
+            result.M13 = left.M1 * right.M12 + left.M5 * right.M13 +
+                         left.M9 * right.M14 + left.M13 * right.M15;
+            result.M14 = left.M2 * right.M12 + left.M6 * right.M13 +
+                         left.M10 * right.M14 + left.M14 * right.M15;
+            result.M15 = left.M3 * right.M12 + left.M7 * right.M13 +
+                         left.M11 * right.M14 + left.M15 * right.M15;
             return result;
         }
     };
@@ -675,6 +672,6 @@ namespace ngine {
         Transform2D();
         Transform2D(const Vector2 &pos, const Angle &rot);
     };
-}
+} // namespace ngine
 
-#endif //MATH_HPP
+#endif // MATH_HPP

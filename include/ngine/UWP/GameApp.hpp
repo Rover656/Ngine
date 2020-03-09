@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "../Config.hpp"
 
@@ -55,7 +55,7 @@ namespace ngine::UWP {
         /**
          * The current game we are launching with
          */
-        static Game* CurrentGame;
+        static Game *CurrentGame;
 
         /**
          * Execute this game.
@@ -66,7 +66,8 @@ namespace ngine::UWP {
         static void ExecuteGame(Game *game);
     };
 
-    ref class GameApp sealed : public Windows::ApplicationModel::Core::IFrameworkView {
+    ref class GameApp sealed
+        : public Windows::ApplicationModel::Core::IFrameworkView {
         /**
          * The game we are running
          */
@@ -76,6 +77,7 @@ namespace ngine::UWP {
          * The main update thread.
          */
         std::thread m_updateThread;
+
     public:
         /**
          * Create a new game app.
@@ -85,12 +87,14 @@ namespace ngine::UWP {
         /**
          * Initialize app
          */
-        virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView);
+        virtual void
+            Initialize(Windows::ApplicationModel::Core::CoreApplicationView ^
+                       applicationView);
 
         /**
          * Load app.
          */
-        virtual void Load(Platform::String^ entryPoint);        
+        virtual void Load(Platform::String ^ entryPoint);
 
         /**
          * Run app.
@@ -100,48 +104,54 @@ namespace ngine::UWP {
         /**
          * Set app window.
          */
-        virtual void SetWindow(Windows::UI::Core::CoreWindow^ window);
-        
+        virtual void SetWindow(Windows::UI::Core::CoreWindow ^ window);
+
         /**
          * Uninitialize the app.
          */
         virtual void Uninitialize();
 
     protected:
-        void OnActivated(Windows::ApplicationModel::Core::CoreApplicationView ^sender, Windows::ApplicationModel::Activation::IActivatedEventArgs ^args);
+        void OnActivated(
+            Windows::ApplicationModel::Core::CoreApplicationView ^ sender,
+            Windows::ApplicationModel::Activation::IActivatedEventArgs ^ args);
 
         /**
          * OnBackRequested event handler.
          */
-        void OnBackRequested(Platform::Object ^sender, Windows::UI::Core::BackRequestedEventArgs ^args);
+        void OnBackRequested(Platform::Object ^ sender,
+                             Windows::UI::Core::BackRequestedEventArgs ^ args);
 
         /**
          * OnSuspended event handler.
          */
-        void OnSuspended(Platform::Object ^sender, Windows::ApplicationModel::SuspendingEventArgs ^args);
-        void OnResuming(Platform::Object ^sender, Platform::Object ^args);       
+        void OnSuspended(Platform::Object ^ sender,
+                         Windows::ApplicationModel::SuspendingEventArgs ^ args);
+        void OnResuming(Platform::Object ^ sender, Platform::Object ^ args);
     };
 
     /**
      * The application source for running the game.
      */
-    ref class GameApplicationSource sealed : Windows::ApplicationModel::Core::IFrameworkViewSource {
+    ref class GameApplicationSource sealed
+        : Windows::ApplicationModel::Core::IFrameworkViewSource {
         /**
          * The game app.
          */
-        GameApp ^m_app;
+        GameApp ^ m_app;
+
     public:
         /**
          * Create the application source.
          */
-        GameApplicationSource(GameApp ^app);
+        GameApplicationSource(GameApp ^ app);
 
         /**
          * Create the app view (returns the app).
          */
-        virtual Windows::ApplicationModel::Core::IFrameworkView^ CreateView();
+        virtual Windows::ApplicationModel::Core::IFrameworkView ^ CreateView();
     };
-}
+} // namespace ngine::UWP
 
-#endif //GAMEAPP_H
+#endif // GAMEAPP_H
 #endif

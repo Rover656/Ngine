@@ -1,36 +1,39 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/graphics/Texture2D.hpp"
 
+#include "ngine/Console.hpp"
 #include "ngine/graphics/API/PlatformGraphicsAPI.hpp"
 #include "ngine/graphics/Renderer.hpp"
-#include "ngine/Console.hpp"
 
 namespace ngine::graphics {
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice, unsigned char *data, unsigned int width,
-                         unsigned height, PixelFormat format, int mipmapCount)
-            : Width(width), Height(height) {
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice, unsigned char *data,
+                         unsigned int width, unsigned height,
+                         PixelFormat format, int mipmapCount)
+        : Width(width), Height(height) {
         // Check dimensions
         if (width <= 0 || height <= 0) {
-            Console::error("Texture2D", "Texture was given invalid dimensions of %u, %u.", width, height);
+            Console::error("Texture2D",
+                           "Texture was given invalid dimensions of %u, %u.",
+                           width, height);
             return;
         }
 
@@ -50,24 +53,20 @@ namespace ngine::graphics {
     }
 
     Texture2D::Texture2D(GraphicsDevice *graphicsDevice, const Image *img)
-            : Texture2D(graphicsDevice, img->PixelData, img->Width, img->Height, img->Format, img->MipmapCount) {}
+        : Texture2D(graphicsDevice, img->PixelData, img->Width, img->Height,
+                    img->Format, img->MipmapCount) {}
 
-    Texture2D *Texture2D::loadTexture(GraphicsDevice *graphicsDevice, const filesystem::Path &path) {
+    Texture2D *Texture2D::loadTexture(GraphicsDevice *graphicsDevice,
+                                      const filesystem::Path &path) {
         Image img(path);
         return new Texture2D(graphicsDevice, &img);
     }
 
-    Texture2D::~Texture2D() {
-        free();
-    }
+    Texture2D::~Texture2D() { free(); }
 
-    PixelFormat Texture2D::getFormat() {
-        return m_format;
-    }
+    PixelFormat Texture2D::getFormat() { return m_format; }
 
-    int Texture2D::getMipmapCount() const {
-        return m_mipmapCount;
-    }
+    int Texture2D::getMipmapCount() const { return m_mipmapCount; }
 
     void Texture2D::setTextureFilter(TextureFilterMode filterMode) {
         // Set filter
@@ -88,30 +87,19 @@ namespace ngine::graphics {
         m_API->deleteTexture(this);
     }
 
-    void Texture2D::draw(graphics::Renderer *renderer, Vector2 pos, Color col, float scale, Vector2 origin,
-                         Angle rotation) {
+    void Texture2D::draw(graphics::Renderer *renderer, Vector2 pos, Color col,
+                         float scale, Vector2 origin, Angle rotation) {
         draw(renderer,
-             {
-                     pos.X,
-                     pos.Y,
-                     (float) Width * scale,
-                     (float) Height * scale
-             },
-             {0,
-              0,
-              (float) Width,
-              (float) Height
-             },
-             col,
-             origin,
-             rotation);
+             {pos.X, pos.Y, (float)Width * scale, (float)Height * scale},
+             {0, 0, (float)Width, (float)Height}, col, origin, rotation);
     }
 
-    void
-    Texture2D::draw(graphics::Renderer *renderer, Rectangle destRect, Rectangle srcRect, Color col_, Vector2 origin,
-                    Angle rotation) {
+    void Texture2D::draw(graphics::Renderer *renderer, Rectangle destRect,
+                         Rectangle srcRect, Color col_, Vector2 origin,
+                         Angle rotation) {
         // Get origin in pixel coords
-        Vector2 pixelOrigin = {origin.X * destRect.Width, origin.Y * destRect.Height};
+        Vector2 pixelOrigin = {origin.X * destRect.Width,
+                               origin.Y * destRect.Height};
 
         // Push transformation matrix
         renderer->pushMatrix();
@@ -122,7 +110,8 @@ namespace ngine::graphics {
         // Apply rotation (this fixes issues with different Y stuffs)
         if (renderer->getCoordinateSystem() == CoordinateSystem::GUI)
             renderer->rotate(rotation, {0, 0, 1});
-        else renderer->rotate(rotation, {0, 0, -1});
+        else
+            renderer->rotate(rotation, {0, 0, -1});
 
         // Fix origin
         renderer->translate({-pixelOrigin.X, -pixelOrigin.Y, 0});
@@ -132,7 +121,7 @@ namespace ngine::graphics {
         renderer->beginVertices(PrimitiveType::Quads);
 
         // Get correct dimensions
-        float x1,y1,x2,y2,srcX1,srcY1,srcX2,srcY2;
+        float x1, y1, x2, y2, srcX1, srcY1, srcX2, srcY2;
 
         // Set common values
         x1 = 0;
@@ -171,4 +160,4 @@ namespace ngine::graphics {
     bool Texture2D::operator!=(const Texture2D &tex) const {
         return !m_API->compareTextures(this, &tex);
     }
-}
+} // namespace ngine::graphics

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef VERTEXLAYOUT_HPP
 #define VERTEXLAYOUT_HPP
@@ -29,16 +29,15 @@
 
 namespace ngine::graphics {
     /**
-     * Description of what a vertex array contains and where it should be routed to in the shader.
+     * Description of what a vertex array contains and where it should be routed
+     * to in the shader.
      */
     class NEAPI VertexLayout {
     public:
         /**
          * Internal element data type.
          */
-        enum class VertexElementType {
-            Float
-        };
+        enum class VertexElementType { Float };
 
         /**
          * This defines an element in a vertex layout.
@@ -79,6 +78,7 @@ namespace ngine::graphics {
              */
             bool Normalized = false;
         };
+
     private:
         /**
          * The graphics API.
@@ -109,6 +109,7 @@ namespace ngine::graphics {
          * Track if we are being used.
          */
         bool m_using = false;
+
     public:
         union {
             /**
@@ -127,15 +128,18 @@ namespace ngine::graphics {
          *
          * @param graphicsDevice The graphics device.
          * @param vertexBuffer The vertex buffer to bind when using this layout.
-         * @param indexBuffer The index buffer to bind when using this layout or null.
+         * @param indexBuffer The index buffer to bind when using this layout or
+         * null.
          */
-        VertexLayout(GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer);
+        VertexLayout(GraphicsDevice *graphicsDevice, Buffer *vertexBuffer,
+                     Buffer *indexBuffer);
         ~VertexLayout();
 
         /**
          * Add an element to the layout
          *
-         * @warning Once `Configure` is called, this will throw as the layout cannot be modified at the moment.
+         * @warning Once `Configure` is called, this will throw as the layout
+         * cannot be modified at the moment.
          * @param element
          */
         void addElement(const VertexElement &element);
@@ -173,6 +177,6 @@ namespace ngine::graphics {
          */
         void stop();
     };
-}
+} // namespace ngine::graphics
 
-#endif //VERTEXLAYOUT_HPP
+#endif // VERTEXLAYOUT_HPP

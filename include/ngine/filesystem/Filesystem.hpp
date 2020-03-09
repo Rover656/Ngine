@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef FILESYSTEM_HPP
 #define FILESYSTEM_HPP
@@ -29,11 +29,7 @@ namespace ngine::filesystem {
     /**
      * Resource type.
      */
-    enum class ResourceType {
-        Invalid = 0,
-        File,
-        Directory
-    };
+    enum class ResourceType { Invalid = 0, File, Directory };
 
     /**
      * A path that points to a filesystem resource.
@@ -85,7 +81,8 @@ namespace ngine::filesystem {
 
         /**
          * Get this as an absolute path.
-         * This makes the path relative to the executable directory NOT the current/working directory.
+         * This makes the path relative to the executable directory NOT the
+         * current/working directory.
          *
          * @return The absolute path from the executable directory.
          */
@@ -93,11 +90,15 @@ namespace ngine::filesystem {
 
         /**
          * Get app data directory.
-         * This will return a varying degree of paths (Documents, Roaming app data, etc.).
+         * This will return a varying degree of paths (Documents, Roaming app
+         * data, etc.).
          *
-         * @note You MUST create a folder within this path for your app data. Otherwise you risk overriding other data. Read the following points for details.
+         * @note You MUST create a folder within this path for your app data.
+         * Otherwise you risk overriding other data. Read the following points
+         * for details.
          * @note Desktop: Will return the \%appdata\% (or OS equivalent) path.
-         * @note UWP: Will return the correct path, with no worry of overwriting data.
+         * @note UWP: Will return the correct path, with no worry of overwriting
+         * data.
          * @return The app data directory,
          */
         static Path getAppDataDirectory();
@@ -209,7 +210,8 @@ namespace ngine::filesystem {
         /*
          * Combine two paths
          */
-        friend NEAPI Path operator/(const std::string &path, const std::string &pathB);
+        friend NEAPI Path operator/(const std::string &path,
+                                    const std::string &pathB);
 
         /*
          * Combine two paths
@@ -329,6 +331,7 @@ namespace ngine::filesystem {
          * @return The object path.
          */
         Path getPath() const;
+
     protected:
         /**
          * Create a new filesystem object reference.
@@ -410,6 +413,7 @@ namespace ngine::filesystem {
          * Get the current open mode.
          */
         FileOpenMode m_internalOpenMode = FileOpenMode::Closed;
+
     public:
         /**
          * Create an empty file reference.
@@ -439,7 +443,8 @@ namespace ngine::filesystem {
          * @param binary Whether or not this is a binary file.
          * @return The file.
          */
-        static File createNewFile(const Path &path, bool leaveOpen = false, bool binary = true);
+        static File createNewFile(const Path &path, bool leaveOpen = false,
+                                  bool binary = true);
 
         /**
          * Delete this object from the filesystem.
@@ -574,16 +579,19 @@ namespace ngine::filesystem {
          * Create a new directory.
          *
          * @param path The path to the directory to create.
-         * @return A pair, first is the success, second is the Directory reference.
+         * @return A pair, first is the success, second is the Directory
+         * reference.
          */
         static std::pair<bool, Directory> create(const Path &path);
 
         /**
          * Delete this object from the filesystem.
          *
-         * @note Directory must be empty to use this method. Use DeleteRecursive() instead.
+         * @note Directory must be empty to use this method. Use
+         * DeleteRecursive() instead.
          * @throws std::runtime_error When directory does not exist.
-         * @throws std::runtime_error When this is pointing to a non-directory resource.
+         * @throws std::runtime_error When this is pointing to a non-directory
+         * resource.
          * @return Whether or not the directory was deleted.
          */
         bool deleteObject() override;
@@ -592,7 +600,8 @@ namespace ngine::filesystem {
          * Recursively delete the directory.
          *
          * @throws std::runtime_error When directory does not exist.
-         * @throws std::runtime_error When this is pointing to a non-directory resource.
+         * @throws std::runtime_error When this is pointing to a non-directory
+         * resource.
          * @return Whether or not the directory and its contents were deleted.
          */
         bool deleteRecursive();
@@ -606,10 +615,12 @@ namespace ngine::filesystem {
 
         /**
          * Get the app data directory for the operating system.
-         * This will return a varying degree of paths (Documents, Roaming app data, etc.).
+         * This will return a varying degree of paths (Documents, Roaming app
+         * data, etc.).
          *
          * @return The AppData directory.
-         * @sa ngine::filesystem::Path::GetAppDataDirectory() for platform specific notes.
+         * @sa ngine::filesystem::Path::GetAppDataDirectory() for platform
+         * specific notes.
          */
         static Directory getAppDataDirectory();
 
@@ -617,7 +628,8 @@ namespace ngine::filesystem {
          * Get all of the children directories.
          *
          * @throws std::runtime_error When directory does not exist.
-         * @throws std::runtime_error When this is pointing to a non-directory resource.
+         * @throws std::runtime_error When this is pointing to a non-directory
+         * resource.
          * @return All child directories.
          */
         std::vector<Directory> getDirectories() const;
@@ -626,7 +638,8 @@ namespace ngine::filesystem {
          * Get all of the children files.
          *
          * @throws std::runtime_error When directory does not exist.
-         * @throws std::runtime_error When this is pointing to a non-directory resource.
+         * @throws std::runtime_error When this is pointing to a non-directory
+         * resource.
          * @return All child files.
          */
         std::vector<File> getFiles() const;
@@ -635,7 +648,8 @@ namespace ngine::filesystem {
          * Get all of the descended children inside any child directory.
          *
          * @throws std::runtime_error When directory does not exist.
-         * @throws std::runtime_error When this is pointing to a non-directory resource.
+         * @throws std::runtime_error When this is pointing to a non-directory
+         * resource.
          * @return All child files within *every* child folder.
          */
         std::vector<File> getFilesRecursive() const;
@@ -670,6 +684,6 @@ namespace ngine::filesystem {
          */
         void _throwAccessErrors() const;
     };
-}
+} // namespace ngine::filesystem
 
-#endif //FILESYSTEM_HPP
+#endif // FILESYSTEM_HPP

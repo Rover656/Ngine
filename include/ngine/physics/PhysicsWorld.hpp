@@ -1,31 +1,30 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
-
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef PHYSICSWORLD_HPP
 #define PHYSICSWORLD_HPP
 
 #include "../Config.hpp"
 
-#include "../graphics/Renderer.hpp"
 #include "../Math.hpp"
+#include "../graphics/Renderer.hpp"
 #include "PhysicsBody.hpp"
 #include "PhysicsContext.hpp"
 
@@ -37,17 +36,18 @@ namespace ngine::physics {
      * Physics debug draw flags
      */
     enum PhysicsDebugDrawFlag {
-        DRAW_SHAPE				= 0x0001,	///< draw shapes
-        DRAW_JOINT				= 0x0002,	///< draw joint connections
-        DRAW_AABB				= 0x0004,	///< draw axis aligned bounding boxes
-        DRAW_PAIR				= 0x0008,	///< draw broad-phase pairs
-        DRAW_CENTER_OF_MASS		= 0x0010	///< draw center of mass frame
+        DRAW_SHAPE = 0x0001,         ///< draw shapes
+        DRAW_JOINT = 0x0002,         ///< draw joint connections
+        DRAW_AABB = 0x0004,          ///< draw axis aligned bounding boxes
+        DRAW_PAIR = 0x0008,          ///< draw broad-phase pairs
+        DRAW_CENTER_OF_MASS = 0x0010 ///< draw center of mass frame
     };
 
     /**
      * This contains all of the physics bodies.
      *
-     * This only deals with units in pixels, it accepts a pixel per meter ratio for internal conversions for Box2D.
+     * This only deals with units in pixels, it accepts a pixel per meter ratio
+     * for internal conversions for Box2D.
      */
     class NEAPI PhysicsWorld {
         /**
@@ -79,6 +79,7 @@ namespace ngine::physics {
          * Track physics bodies for deletion.
          */
         std::vector<PhysicsBody *> m_bodies;
+
     public:
         /**
          * Create a new physics world.
@@ -101,9 +102,11 @@ namespace ngine::physics {
          * Create a new physics body.
          *
          * @param type Body type.
-         * @param position Body position (avoid setting to origin then setting elsewhere).
+         * @param position Body position (avoid setting to origin then setting
+         * elsewhere).
          */
-        PhysicsBody *createBody(PhysicsBody::Type type, const Vector2 &position);
+        PhysicsBody *createBody(PhysicsBody::Type type,
+                                const Vector2 &position);
 
         /**
          * Destroy a physics body.
@@ -176,8 +179,10 @@ namespace ngine::physics {
          * By default, forces are cleared automatically after each call to Step.
          * The default behavior is modified by calling SetAutoClearForces.
          * The purpose of this function is to support sub-stepping.
-         * Sub-stepping is often used to maintain a fixed sized time step under a variable frame-rate.
-         * When you perform sub-stepping you will disable auto clearing of forces and instead call ClearForces after all sub-steps are complete in one pass of your game loop.
+         * Sub-stepping is often used to maintain a fixed sized time step under
+         * a variable frame-rate. When you perform sub-stepping you will disable
+         * auto clearing of forces and instead call ClearForces after all
+         * sub-steps are complete in one pass of your game loop.
          */
         void clearForces();
 
@@ -300,12 +305,13 @@ namespace ngine::physics {
         void setPositionIterations(int iterations);
 
         /**
-         * Take a time step. This performs collision detection, integration and constraint solution.
+         * Take a time step. This performs collision detection, integration and
+         * constraint solution.
          *
          * @param timestep The amount of time to simulate (should not vary).
          */
         void step(float timestep);
     };
-}
+} // namespace ngine::physics
 
-#endif //PHYSICSWORLD_HPP
+#endif // PHYSICSWORLD_HPP

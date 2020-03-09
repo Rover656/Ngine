@@ -1,36 +1,36 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef GAME_HPP
 #define GAME_HPP
 
 #include "Config.hpp"
 
-#include "graphics/Color.hpp"
-#include "graphics/Renderer.hpp"
-#include "graphics/RenderTarget.hpp"
-#include "filesystem/ResourceManager.hpp"
 #include "Events.hpp"
 #include "Math.hpp"
 #include "Scene.hpp"
 #include "Window.hpp"
+#include "filesystem/ResourceManager.hpp"
+#include "graphics/Color.hpp"
+#include "graphics/RenderTarget.hpp"
+#include "graphics/Renderer.hpp"
 
 namespace ngine {
 #if defined(PLATFORM_UWP)
@@ -210,9 +210,8 @@ namespace ngine {
              */
             Scene *NewScene;
 
-            SceneChangedEvent(Game *sender, Scene *lastScene, Scene *newScene) : LastScene(lastScene),
-                                                                                 NewScene(newScene),
-                                                                                 Event(sender) {}
+            SceneChangedEvent(Game *sender, Scene *lastScene, Scene *newScene)
+                : LastScene(lastScene), NewScene(newScene), Event(sender) {}
         };
 
         /**
@@ -228,7 +227,8 @@ namespace ngine {
         /**
          * Filter mode for scaling render target
          */
-        graphics::TextureFilterMode RenderTargetFilterMode = graphics::TextureFilterMode::Trilinear;
+        graphics::TextureFilterMode RenderTargetFilterMode =
+            graphics::TextureFilterMode::Trilinear;
 
         /**
          * Create a new Game
@@ -354,6 +354,6 @@ namespace ngine {
          */
         filesystem::ResourceManager *getResourceManager() const;
     };
-}
+} // namespace ngine
 
-#endif //GAME_HPP
+#endif // GAME_HPP

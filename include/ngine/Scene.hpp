@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef SCENE_HPP
 #define SCENE_HPP
@@ -26,8 +26,8 @@
 #include "filesystem/ResourceManager.hpp"
 #include "graphics/Camera.hpp"
 #include "graphics/Renderer.hpp"
-#include "input/Mouse.hpp"
 #include "input/Keyboard.hpp"
+#include "input/Mouse.hpp"
 #include "physics/PhysicsWorld.hpp"
 
 namespace ngine {
@@ -35,8 +35,9 @@ namespace ngine {
     class Game;
 
     /**
-     * A scene contains all of your Entities and Cameras and handles the sorting, updating and rendering of them.
-     * A scene can represent a level in a game.
+     * A scene contains all of your Entities and Cameras and handles the
+     * sorting, updating and rendering of them. A scene can represent a level in
+     * a game.
      */
     class NEAPI Scene {
         /**
@@ -78,6 +79,7 @@ namespace ngine {
          * Sort the entities.
          */
         void _sortEntities();
+
     public:
         /**
          * Create a new scene.
@@ -167,7 +169,8 @@ namespace ngine {
          * Get a weak reference to the requested camera.
          *
          * @param name The camera to get.
-         * @return A weak reference to the camera or null if the camera doesn't exist.
+         * @return A weak reference to the camera or null if the camera doesn't
+         * exist.
          */
         graphics::Camera *getCamera(const std::string &name);
 
@@ -223,13 +226,15 @@ namespace ngine {
         /**
          * Get the current viewport.
          *
-         * This will return the camera viewport, virtual viewport or finally the window viewport.
+         * This will return the camera viewport, virtual viewport or finally the
+         * window viewport.
          */
         Rectangle getCurrentViewport();
 
         /**
          * Pre-render event.
-         * This enables the developer to use render targets and have them drawn before the scene is, allowing entities to use these targets in game.
+         * This enables the developer to use render targets and have them drawn
+         * before the scene is, allowing entities to use these targets in game.
          *
          * This is called (in the default onRender) before everything.
          *
@@ -241,8 +246,9 @@ namespace ngine {
          * On-render event.
          * This defines what happens when the scene is to be rendered.
          *
-         * By default this will call `preRender()`, `render()`, `postRender()` and `renderUI()`.
-         * This could be overridden and instead render two render targets created in preRender which constitute split screen.
+         * By default this will call `preRender()`, `render()`, `postRender()`
+         * and `renderUI()`. This could be overridden and instead render two
+         * render targets created in preRender which constitute split screen.
          *
          * @param renderer Renderer to use.
          */
@@ -250,9 +256,11 @@ namespace ngine {
 
         /**
          * Post-render event.
-         * This enables the developer to apply post-processing effects or something else.
+         * This enables the developer to apply post-processing effects or
+         * something else.
          *
-         * This is called (in the default `onRender`) after `render()` and before `postRender()`.
+         * This is called (in the default `onRender`) after `render()` and
+         * before `postRender()`.
          *
          * @param renderer Renderer to use.
          */
@@ -261,7 +269,8 @@ namespace ngine {
         /**
          * Render the scene contents in the current/main camera.
          *
-         * This is called (in the default `onRender`) after `preRender()` and before `postRender()`.
+         * This is called (in the default `onRender`) after `preRender()` and
+         * before `postRender()`.
          *
          * @param renderer The renderer to use.
          */
@@ -274,7 +283,8 @@ namespace ngine {
          * @param renderer The renderer to use.
          * @param camera The name of the camera to use.
          */
-        void renderUsingCamera(graphics::Renderer *renderer, const std::string &camera);
+        void renderUsingCamera(graphics::Renderer *renderer,
+                               const std::string &camera);
 
         /**
          * Render all UI active in the scene.
@@ -293,6 +303,6 @@ namespace ngine {
          */
         void updateUI();
     };
-}
+} // namespace ngine
 
-#endif //SCENE_HPP
+#endif // SCENE_HPP

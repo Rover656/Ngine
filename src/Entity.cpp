@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/Entity.hpp"
 
@@ -32,11 +32,13 @@ namespace ngine {
 
     void Entity::_sortChildren() {
         // Sort
-        std::sort(m_children.begin(), m_children.end(), &_SortChildrenPredicate);
+        std::sort(m_children.begin(), m_children.end(),
+                  &_SortChildrenPredicate);
     }
 
     void Entity::_updateModelView(graphics::CoordinateSystem coordSys) {
-        // We use relative stuff as modelview will already consist of parent's input.
+        // We use relative stuff as modelview will already consist of parent's
+        // input.
         auto pos = getPosition();
         auto rot = getRotation();
         auto rotAxis = Vector3(0, 0, 1);
@@ -46,9 +48,9 @@ namespace ngine {
             rotAxis.Z = -1;
 
         // Build modelview
-        m_modelView = Matrix::translate({pos.X, pos.Y, 0})
-                      * Matrix::rotate(rot, rotAxis)
-                      * Matrix::scale(m_scale.X, m_scale.Y, 1);
+        m_modelView = Matrix::translate({pos.X, pos.Y, 0}) *
+                      Matrix::rotate(rot, rotAxis) *
+                      Matrix::scale(m_scale.X, m_scale.Y, 1);
 
         // Mark as clean
         m_modelViewDirty = false;
@@ -95,7 +97,8 @@ namespace ngine {
     void Entity::initialize(Scene *scene) {
         // Check we aren't initialized already
         if (m_initialized)
-            Console::fail("Entity", "Do not call initialize ever, unless you have to!");
+            Console::fail("Entity",
+                          "Do not call initialize ever, unless you have to!");
 
         // Mark as initialized
         m_initialized = true;
@@ -115,29 +118,19 @@ namespace ngine {
         m_initialized = false;
     }
 
-    void Entity::destroy() {
-        delete this;
-    }
+    void Entity::destroy() { delete this; }
 
-    Entity *Entity::getParent() const {
-        return m_parent;
-    }
+    Entity *Entity::getParent() const { return m_parent; }
 
-    Scene *Entity::getScene() const {
-        return m_scene;
-    }
+    Scene *Entity::getScene() const { return m_scene; }
 
-    Game *Entity::getGame() const {
-        return m_scene->getGame();
-    }
+    Game *Entity::getGame() const { return m_scene->getGame(); }
 
     input::Keyboard *Entity::getKeyboard() const {
         return m_scene->getKeyboard();
     }
 
-    input::Mouse *Entity::getMouse() const {
-        return m_scene->getMouse();
-    }
+    input::Mouse *Entity::getMouse() const { return m_scene->getMouse(); }
 
     filesystem::ResourceManager *Entity::getResourceManager() const {
         return m_scene->getResourceManager();
@@ -193,16 +186,15 @@ namespace ngine {
 
     void Entity::setScale(Vector2 scale) {
         if (m_physicsBody != nullptr) {
-            Console::warn("Entity", "Scale was not set as scaling physics entities is not implemented.");
+            Console::warn("Entity", "Scale was not set as scaling physics "
+                                    "entities is not implemented.");
         } else {
             m_scale = scale;
             m_modelViewDirty = true;
         }
     }
 
-    physics::PhysicsBody *Entity::getPhysicsBody() {
-        return m_physicsBody;
-    }
+    physics::PhysicsBody *Entity::getPhysicsBody() { return m_physicsBody; }
 
     void Entity::setPhysicsBody(physics::PhysicsBody *body) {
         // TODO Passing in/saving coordinates etc.
@@ -213,7 +205,9 @@ namespace ngine {
 
         // Check body is a member of the scene's world
         if (body->getWorld() != m_scene->getPhysicsWorld())
-            Console::fail("Entity", "Body must be a member of the scene's physics world!");
+            Console::fail(
+                "Entity",
+                "Body must be a member of the scene's physics world!");
 
         // Delete current body if we have one
         if (m_physicsBody != nullptr) {
@@ -222,19 +216,16 @@ namespace ngine {
         m_physicsBody = body;
     }
 
-    int Entity::getZIndex() const {
-        return m_zIndex;
-    }
+    int Entity::getZIndex() const { return m_zIndex; }
 
-    void Entity::setZIndex(int zIndex) {
-        m_zIndex = zIndex;
-    }
+    void Entity::setZIndex(int zIndex) { m_zIndex = zIndex; }
 
     void Entity::addComponent(const std::string &name, Component *component) {
         // Check we are initialized
         if (!m_initialized)
             Console::fail("Entity",
-                          "Cannot add components until initialized, use the initialize method to add components!");
+                          "Cannot add components until initialized, use the "
+                          "initialize method to add components!");
 
         // Check that the component has no parent
         if (component->m_parent != nullptr)
@@ -243,7 +234,8 @@ namespace ngine {
         // See if we already have this component
         for (const auto &c : m_components) {
             if (c.second == component)
-                Console::fail("Entity", "Component is already a child of this entity.");
+                Console::fail("Entity",
+                              "Component is already a child of this entity.");
             if (c.first == name)
                 Console::fail("Entity", "Component name has been used.");
         }
@@ -293,25 +285,15 @@ namespace ngine {
         return nullptr;
     }
 
-    bool Entity::isAsleep() {
-        return m_asleep;
-    }
+    bool Entity::isAsleep() { return m_asleep; }
 
-    void Entity::setIsAsleep(bool asleep) {
-        m_asleep = asleep;
-    }
+    void Entity::setIsAsleep(bool asleep) { m_asleep = asleep; }
 
-    bool Entity::isVisible() {
-        return m_visible;
-    }
+    bool Entity::isVisible() { return m_visible; }
 
-    void Entity::setIsVisible(bool visible) {
-        m_visible = visible;
-    }
+    void Entity::setIsVisible(bool visible) { m_visible = visible; }
 
-    std::string Entity::getName() {
-        return m_name;
-    }
+    std::string Entity::getName() { return m_name; }
 
     void Entity::setName(const std::string &name) {
         m_name = name;
@@ -349,7 +331,9 @@ namespace ngine {
             Console::fail("Entity", "Entity is not parented by me!");
 
         // Remove
-        m_children.erase(std::remove(m_children.begin(), m_children.end(), entity), m_children.end());
+        m_children.erase(
+            std::remove(m_children.begin(), m_children.end(), entity),
+            m_children.end());
 
         // If the entity is still initialized, cleanup now
         if (entity->m_initialized)
@@ -373,9 +357,7 @@ namespace ngine {
         return nullptr;
     }
 
-    std::vector<Entity *> Entity::getChildren() {
-        return m_children;
-    }
+    std::vector<Entity *> Entity::getChildren() { return m_children; }
 
     std::vector<Entity *> Entity::getChildrenByName(const std::string &name) {
         std::vector<Entity *> ents;
@@ -392,7 +374,8 @@ namespace ngine {
         return true;
     }
 
-    void Entity::render(graphics::Renderer *renderer, Matrix modelView, graphics::Camera *currentCamera) {
+    void Entity::render(graphics::Renderer *renderer, Matrix modelView,
+                        graphics::Camera *currentCamera) {
         // Skip if not visible.
         if (!m_visible)
             return;
@@ -402,7 +385,8 @@ namespace ngine {
         if (currentCamera != nullptr)
             visibleInCamera = isVisibleInCamera(currentCamera);
 
-        // TODO: Camera flags, these will allow some entities to hide from certain cameras.
+        // TODO: Camera flags, these will allow some entities to hide from
+        // certain cameras.
 
         // Update model view if dirty
         if (m_modelViewDirty || m_physicsBody != nullptr)
@@ -455,4 +439,4 @@ namespace ngine {
                 e->update();
         }
     }
-}
+} // namespace ngine

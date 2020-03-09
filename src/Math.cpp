@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/Math.hpp"
 
@@ -31,16 +31,13 @@ namespace ngine {
         return clamp(*this, min, max);
     }
 
-    Vector2 Vector2::clamp(const Vector2 &value, const Vector2 &min, const Vector2 &max) {
-        return {
-                std::clamp(value.X, min.X, max.X),
-                std::clamp(value.Y, min.Y, max.Y)
-        };
+    Vector2 Vector2::clamp(const Vector2 &value, const Vector2 &min,
+                           const Vector2 &max) {
+        return {std::clamp(value.X, min.X, max.X),
+                std::clamp(value.Y, min.Y, max.Y)};
     }
 
-    float Vector2::dot(const Vector2 &b) const {
-        return dot(*this, b);
-    }
+    float Vector2::dot(const Vector2 &b) const { return dot(*this, b); }
 
     float Vector2::dot(const Vector2 &a, const Vector2 &b) {
         return (a.X * b.X) + (b.Y * b.Y);
@@ -56,22 +53,17 @@ namespace ngine {
         return sqrtf(xdiff * xdiff + ydiff * ydiff);
     }
 
-    float Vector2::magnitude() const {
-        return sqrtf(magnitudeSquared());
-    }
+    float Vector2::magnitude() const { return sqrtf(magnitudeSquared()); }
 
-    float Vector2::magnitudeSquared() const {
-        return (X * X) + (Y * Y);
-    }
+    float Vector2::magnitudeSquared() const { return (X * X) + (Y * Y); }
 
     Vector2 Vector2::transform(Matrix matrix) const {
-        return {
-                (X * matrix.M0) + (Y * matrix.M4) + matrix.M12,
-                (X * matrix.M1) + (Y * matrix.M5) + matrix.M13
-        };
+        return {(X * matrix.M0) + (Y * matrix.M4) + matrix.M12,
+                (X * matrix.M1) + (Y * matrix.M5) + matrix.M13};
     }
 
-    Vector2 Vector2::transform(const Vector2 &origin, const Angle &angle) const {
+    Vector2 Vector2::transform(const Vector2 &origin,
+                               const Angle &angle) const {
         // Create return vector
         Vector2 ret = {X, Y};
 
@@ -98,10 +90,7 @@ namespace ngine {
     }
 
     Vector2 operator+(const Vector2 &a, const Vector2 &b) {
-        return {
-                a.X + b.X,
-                a.Y + b.Y
-        };
+        return {a.X + b.X, a.Y + b.Y};
     }
 
     void Vector2::operator+=(const Vector2 &b) {
@@ -110,10 +99,7 @@ namespace ngine {
     }
 
     Vector2 operator-(const Vector2 &a, const Vector2 &b) {
-        return {
-                a.X - b.X,
-                a.Y - b.Y
-        };
+        return {a.X - b.X, a.Y - b.Y};
     }
 
     void Vector2::operator-=(const Vector2 &b) {
@@ -122,10 +108,7 @@ namespace ngine {
     }
 
     Vector2 operator*(const Vector2 &a, const Vector2 &b) {
-        return {
-                a.X * b.X,
-                a.Y * b.Y
-        };
+        return {a.X * b.X, a.Y * b.Y};
     }
 
     void Vector2::operator*=(const Vector2 &b) {
@@ -134,10 +117,7 @@ namespace ngine {
     }
 
     Vector2 operator/(const Vector2 &a, const Vector2 &b) {
-        return {
-                a.X / b.X,
-                a.Y / b.Y
-        };
+        return {a.X / b.X, a.Y / b.Y};
     }
 
     void Vector2::operator/=(const Vector2 &b) {
@@ -154,25 +134,20 @@ namespace ngine {
         return clamp(*this, min, max);
     }
 
-    Vector3 Vector3::clamp(const Vector3 &value, const Vector3 &min, const Vector3 &max) {
-        return {
-                std::clamp(value.X, min.X, max.X),
+    Vector3 Vector3::clamp(const Vector3 &value, const Vector3 &min,
+                           const Vector3 &max) {
+        return {std::clamp(value.X, min.X, max.X),
                 std::clamp(value.Y, min.Y, max.Y),
-                std::clamp(value.Z, min.Z, max.Z)
-        };
+                std::clamp(value.Z, min.Z, max.Z)};
     }
 
-    float Vector3::dot(const Vector3 &b) const {
-        return dot(*this, b);
-    }
+    float Vector3::dot(const Vector3 &b) const { return dot(*this, b); }
 
     float Vector3::dot(const Vector3 &a, const Vector3 &b) {
         return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
     }
 
-    float Vector3::distance(const Vector3 &b) {
-        return distance(*this, b);
-    }
+    float Vector3::distance(const Vector3 &b) { return distance(*this, b); }
 
     float Vector3::distance(const Vector3 &a, const Vector3 &b) {
         const auto xdiff = a.X - b.X;
@@ -181,9 +156,7 @@ namespace ngine {
         return sqrtf(xdiff * xdiff + ydiff * ydiff + zdiff * zdiff);
     }
 
-    float Vector3::magnitude() const {
-        return sqrtf(magnitudeSquared());
-    }
+    float Vector3::magnitude() const { return sqrtf(magnitudeSquared()); }
 
     float Vector3::magnitudeSquared() const {
         return (X * X) + (Y * Y) + (Z * Z);
@@ -191,18 +164,15 @@ namespace ngine {
 
     Vector3 Vector3::transform(Matrix matrix) const {
         return {
-                (X * matrix.M0) + (Y * matrix.M4) + (Z * matrix.M8) + matrix.M12,
-                (X * matrix.M1) + (Y * matrix.M5) + (Z * matrix.M9) + matrix.M13,
-                (X * matrix.M2) + (Y * matrix.M6) + (Z * matrix.M10) + matrix.M14,
+            (X * matrix.M0) + (Y * matrix.M4) + (Z * matrix.M8) + matrix.M12,
+            (X * matrix.M1) + (Y * matrix.M5) + (Z * matrix.M9) + matrix.M13,
+            (X * matrix.M2) + (Y * matrix.M6) + (Z * matrix.M10) + matrix.M14,
         };
     }
 
-    const Matrix Matrix::Identity = {
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-    };
+    const Matrix Matrix::Identity = {1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+                                     0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                                     0.0f, 0.0f, 0.0f, 1.0f};
 
     float Matrix::determinant() const {
         float result = {0};
@@ -213,17 +183,24 @@ namespace ngine {
         const auto a20 = M8, a21 = M9, a22 = M10, a23 = M11;
         const auto a30 = M12, a31 = M13, a32 = M14, a33 = M15;
 
-        result = a30 * a21 * a12 * a03 - a20 * a31 * a12 * a03 - a30 * a11 * a22 * a03 + a10 * a31 * a22 * a03 +
-                 a20 * a11 * a32 * a03 - a10 * a21 * a32 * a03 - a30 * a21 * a02 * a13 + a20 * a31 * a02 * a13 +
-                 a30 * a01 * a22 * a13 - a00 * a31 * a22 * a13 - a20 * a01 * a32 * a13 + a00 * a21 * a32 * a13 +
-                 a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 - a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
-                 a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 - a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
-                 a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 - a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
+        result = a30 * a21 * a12 * a03 - a20 * a31 * a12 * a03 -
+                 a30 * a11 * a22 * a03 + a10 * a31 * a22 * a03 +
+                 a20 * a11 * a32 * a03 - a10 * a21 * a32 * a03 -
+                 a30 * a21 * a02 * a13 + a20 * a31 * a02 * a13 +
+                 a30 * a01 * a22 * a13 - a00 * a31 * a22 * a13 -
+                 a20 * a01 * a32 * a13 + a00 * a21 * a32 * a13 +
+                 a30 * a11 * a02 * a23 - a10 * a31 * a02 * a23 -
+                 a30 * a01 * a12 * a23 + a00 * a31 * a12 * a23 +
+                 a10 * a01 * a32 * a23 - a00 * a11 * a32 * a23 -
+                 a20 * a11 * a02 * a33 + a10 * a21 * a02 * a33 +
+                 a20 * a01 * a12 * a33 - a00 * a21 * a12 * a33 -
+                 a10 * a01 * a22 * a33 + a00 * a11 * a22 * a33;
 
         return result;
     }
 
-    Matrix Matrix::orthographic(float left, float right, float bottom, float top, float near_, float far_) {
+    Matrix Matrix::orthographic(float left, float right, float bottom,
+                                float top, float near_, float far_) {
         Matrix result = {0};
 
         result.M0 = 2.0f / (right - left);
@@ -257,7 +234,8 @@ namespace ngine {
 
         // Normalize axis
         Vector3 nAxis = axis;
-        auto length = sqrtf(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
+        auto length =
+            sqrtf(axis.X * axis.X + axis.Y * axis.Y + axis.Z * axis.Z);
         if ((length != 1.0f) && (length != 0.0f)) {
             length = 1.0f / length;
             nAxis *= length;
@@ -321,12 +299,8 @@ namespace ngine {
     }
 
     Matrix Matrix::scale(float x, float y, float z) {
-        const Matrix result = {
-                x, 0.0f, 0.0f, 0.0f,
-                0.0f, y, 0.0f, 0.0f,
-                0.0f, 0.0f, z, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f
-        };
+        const Matrix result = {x,    0.0f, 0.0f, 0.0f, 0.0f, y,    0.0f, 0.0f,
+                               0.0f, 0.0f, z,    0.0f, 0.0f, 0.0f, 0.0f, 1.0f};
 
         return result;
     }
@@ -364,12 +338,8 @@ namespace ngine {
     }
 
     Matrix Matrix::translate(float x, float y, float z) {
-        const Matrix result = {
-                1.0f, 0.0f, 0.0f, x,
-                0.0f, 1.0f, 0.0f, y,
-                0.0f, 0.0f, 1.0f, z,
-                0.0f, 0.0f, 0.0f, 1.0f
-        };
+        const Matrix result = {1.0f, 0.0f, 0.0f, x, 0.0f, 1.0f, 0.0f, y,
+                               0.0f, 0.0f, 1.0f, z, 0.0f, 0.0f, 0.0f, 1.0f};
 
         return result;
     }
@@ -420,7 +390,8 @@ namespace ngine {
         const auto b11 = a22 * a33 - a23 * a32;
 
         // Calculate the invert determinant (inlined to avoid double-caching)
-        const auto invDet = 1.0f / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
+        const auto invDet = 1.0f / (b00 * b11 - b01 * b10 + b02 * b09 +
+                                    b03 * b08 - b04 * b07 + b05 * b06);
 
         result.M0 = (a11 * b11 - a12 * b10 + a13 * b09) * invDet;
         result.M1 = (-a01 * b11 + a02 * b10 - a03 * b09) * invDet;
@@ -474,8 +445,7 @@ namespace ngine {
         Cos = cosf(DegToRad(theta));
     }
 
-    Angle::Angle(float sine, float cos)
-            : Sin(sine), Cos(cos) {}
+    Angle::Angle(float sine, float cos) : Sin(sine), Cos(cos) {}
 
     Angle &Angle::operator=(float theta) {
         Sin = sinf(DegToRad(theta));
@@ -483,13 +453,9 @@ namespace ngine {
         return *this;
     }
 
-    float Angle::getDegrees() const {
-        return RadToDeg(atan2f(Sin, Cos));
-    }
+    float Angle::getDegrees() const { return RadToDeg(atan2f(Sin, Cos)); }
 
-    Angle Angle::operator-() const {
-        return Angle(-getDegrees());
-    }
+    Angle Angle::operator-() const { return Angle(-getDegrees()); }
 
     Angle operator+(Angle angle, float theta) {
         auto d = angle.getDegrees();
@@ -510,9 +476,8 @@ namespace ngine {
 
     Transform2D Transform2D::Identity = Transform2D({0, 0}, {0});
 
-    Transform2D::Transform2D()
-            : Rotation(0), Position(0, 0) {}
+    Transform2D::Transform2D() : Rotation(0), Position(0, 0) {}
 
     Transform2D::Transform2D(const Vector2 &pos, const Angle &rot)
-            : Rotation(rot), Position(pos) {}
-}
+        : Rotation(rot), Position(pos) {}
+} // namespace ngine

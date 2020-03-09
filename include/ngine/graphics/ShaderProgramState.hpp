@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef SHADERPROGRAMSTATE_HPP
 #define SHADERPROGRAMSTATE_HPP
@@ -28,7 +28,8 @@
 namespace ngine::graphics {
     /**
      * Shader uniform data handler.
-     * This holds all information that is to be sent to the shader in GPU readable format, and exposes this in a simple API.
+     * This holds all information that is to be sent to the shader in GPU
+     * readable format, and exposes this in a simple API.
      */
     class NEAPI ShaderProgramState {
         /**
@@ -36,6 +37,7 @@ namespace ngine::graphics {
          * This is manually allocated and managed.
          */
         void *m_data = nullptr;
+
     public:
         /**
          * The program that this state applies to.
@@ -66,23 +68,26 @@ namespace ngine::graphics {
          * @param name The name of the uniform to get.
          * @return The uniform data as the desired type.
          */
-        template<typename Type>
+        template <typename Type>
         const Type *getUniformAs(const std::string &name) {
-            return (Type *) getUniform(name);
+            return (Type *)getUniform(name);
         }
 
         /**
          * Set data for the given uniform.
          *
          * @param name Uniform for which to set the data.
-         * @param data The date to write for the uniform. This expects `data_` to be the same size as the target uniform.
+         * @param data The date to write for the uniform. This expects `data_`
+         * to be the same size as the target uniform.
          */
         void setUniform(const std::string &name, void *data);
 
         /**
          * Set a uniform (advanced).
          *
-         * @param nameTree The tree of names to navigate. A number (in the form of a string) is expected if the target is an array. Ex. `{"TestArray", "5"}` to target `TestArray[5]`.
+         * @param nameTree The tree of names to navigate. A number (in the form
+         * of a string) is expected if the target is an array. Ex.
+         * `{"TestArray", "5"}` to target `TestArray[5]`.
          * @param data Data to write to the target.
          */
         void setUniformEx(std::vector<std::string> nameTree, void *data);
@@ -94,6 +99,6 @@ namespace ngine::graphics {
          */
         const void *getData() const;
     };
-}
+} // namespace ngine::graphics
 
-#endif //SHADERPROGRAMSTATE_HPP
+#endif // SHADERPROGRAMSTATE_HPP

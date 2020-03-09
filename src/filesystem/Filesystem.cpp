@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "ngine/filesystem/Filesystem.hpp"
 
@@ -26,24 +26,27 @@
 #elif defined(__linux__)
 #define _GNU_SOURCE
 #define __USE_GNU
-#include <unistd.h>
+#include <dlfcn.h>
 #include <limits.h>
-#include <pwd.h>
 #include <linux/limits.h>
-#include <dlfcn.h>
+#include <pwd.h>
+#include <unistd.h>
+
 #elif defined(__APPLE__)
-#include <mach-o/dyld.h>
 #include <dlfcn.h>
+#include <mach-o/dyld.h>
+#include <pwd.h>
 #include <sys/syslimits.h>
 #include <unistd.h>
-#include <pwd.h>
+
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
-#include <unistd.h>
 #include <dirent.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #endif
 
 #include <cstring>
@@ -79,9 +82,10 @@ namespace ngine::filesystem {
         _correctPath();
     }
 
-    Path::Path(const Path& path, const Path& pathB) {
+    Path::Path(const Path &path, const Path &pathB) {
         // Set internal path
-        m_internalPath = path.m_internalPath + _getJoinChar() + pathB.m_internalPath;
+        m_internalPath =
+            path.m_internalPath + _getJoinChar() + pathB.m_internalPath;
 
         // Check path
         _correctPath();
@@ -107,7 +111,8 @@ namespace ngine::filesystem {
 
     Path Path::getAbsolute() const {
         // If we are already absolute, ignore
-        if (isAbsolute()) return *this;
+        if (isAbsolute())
+            return *this;
 
         // Get relative to executable dir
         return getExecutableDirectory() / *this;
@@ -128,7 +133,8 @@ namespace ngine::filesystem {
 #endif
 #elif defined(PLATFORM_UWP)
         // Windows specific path
-        auto roamingAppData = Windows::Storage::ApplicationData::Current->RoamingFolder->Path->ToString();
+        auto roamingAppData = Windows::Storage::ApplicationData::Current
+                                  ->RoamingFolder->Path->ToString();
         std::wstring tmp(roamingAppData->Begin());
         std::string path(tmp.begin(), tmp.end());
         return path;
@@ -137,7 +143,8 @@ namespace ngine::filesystem {
 
     Path Path::getExecutableDirectory() {
 #if defined(PLATFORM_UWP)
-        auto installed = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+        auto installed = Windows::ApplicationModel::Package::Current
+                             ->InstalledLocation->Path;
         std::wstring tmp(installed->Begin());
         std::string installedPath(tmp.begin(), tmp.end());
 
@@ -152,13 +159,15 @@ namespace ngine::filesystem {
         // I trust this works as there are no issues about it...
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
         char exePath[MAX_PATH];
-        unsigned int len = GetModuleFileNameA(GetModuleHandleA(nullptr), exePath, MAX_PATH);
+        unsigned int len =
+            GetModuleFileNameA(GetModuleHandleA(nullptr), exePath, MAX_PATH);
         if (len == 0)
             return Path("");
 
         return Path(std::string(exePath));
 #elif defined(_WIN32) && defined(PLATFORM_UWP)
-        throw std::runtime_error("Cannot get executable path of UWP app, get executable directory instead.");
+        throw std::runtime_error("Cannot get executable path of UWP app, get "
+                                 "executable directory instead.");
 #elif defined(__linux__)
         char exePath[PATH_MAX];
         int len = readlink("/proc/self/exe", exePath, PATH_MAX);
@@ -171,12 +180,10 @@ namespace ngine::filesystem {
 
         unsigned int len = (unsigned int)PATH_MAX;
 
-        if (_NSGetExecutablePath(exePath, &len) == 0)
-        {
-            char * realPath = realpath(exePath, 0x0);
+        if (_NSGetExecutablePath(exePath, &len) == 0) {
+            char *realPath = realpath(exePath, 0x0);
 
-            if (realPath == 0x0)
-            {
+            if (realPath == 0x0) {
                 return Path("");
             }
 
@@ -185,23 +192,19 @@ namespace ngine::filesystem {
             free(realPath);
 
             return Path(pathStr);
-        }
-        else
-        {
-            char * intermediatePath = (char *)malloc(sizeof(char) * len);
+        } else {
+            char *intermediatePath = (char *)malloc(sizeof(char) * len);
 
-            if (_NSGetExecutablePath(intermediatePath, &len) != 0)
-            {
+            if (_NSGetExecutablePath(intermediatePath, &len) != 0) {
                 free(intermediatePath);
                 return Path("");
             }
 
-            char * realPath = realpath(intermediatePath, 0x0);
+            char *realPath = realpath(intermediatePath, 0x0);
 
             free(intermediatePath);
 
-            if (realPath == 0x0)
-            {
+            if (realPath == 0x0) {
                 return Path("");
             }
 
@@ -212,7 +215,7 @@ namespace ngine::filesystem {
             return Path(pathStr);
         }
 
-        #else
+#else
         // Returns blank, this cannot be used
         return Path("");
 #endif
@@ -259,19 +262,23 @@ namespace ngine::filesystem {
 
         if (std::string::npos != lastSlash)
             return Path(m_internalPath.substr(0, lastSlash));
-        else return Path();
+        else
+            return Path();
     }
 
     Path Path::getRelativeTo(const Path &base) const {
         // The base must be absolute
         auto basePath = base;
-        if (!basePath.isAbsolute()) basePath = basePath.getAbsolute();
+        if (!basePath.isAbsolute())
+            basePath = basePath.getAbsolute();
 
         // Base must be a directory
-        if (basePath.getResourceType() != ResourceType::Directory) throw std::runtime_error("Base must be a directory.");
+        if (basePath.getResourceType() != ResourceType::Directory)
+            throw std::runtime_error("Base must be a directory.");
 
         // I must be absolute
-        if (!isAbsolute()) throw std::runtime_error("Path must be absolute.");
+        if (!isAbsolute())
+            throw std::runtime_error("Path must be absolute.");
 
         // Find common path
         auto commonPathPos = 0;
@@ -288,7 +295,8 @@ namespace ngine::filesystem {
 
         // Catches things like different drives
         if (commonPathPos == 0) {
-            throw std::runtime_error("Cannot get relative path to files on different drives.");
+            throw std::runtime_error(
+                "Cannot get relative path to files on different drives.");
         }
 
         // Remove from both strings
@@ -303,7 +311,8 @@ namespace ngine::filesystem {
         }
 
         // Prepend ../ for all extra parts
-        int subdirs = (int)std::count(baseStr.begin(), baseStr.end(), _getJoinChar());
+        int subdirs =
+            (int)std::count(baseStr.begin(), baseStr.end(), _getJoinChar());
 
         // Add one more if it doesn't end in a slash
         if (baseStr.size() > 0) {
@@ -325,7 +334,8 @@ namespace ngine::filesystem {
         DWORD dwAttrib = GetFileAttributesA(getString().c_str());
 
         if (dwAttrib != INVALID_FILE_ATTRIBUTES) {
-            return dwAttrib & FILE_ATTRIBUTE_DIRECTORY ? ResourceType::Directory : ResourceType::File;
+            return dwAttrib & FILE_ATTRIBUTE_DIRECTORY ? ResourceType::Directory
+                                                       : ResourceType::File;
         }
 #elif defined(__linux__) || defined(__APPLE__)
         // Get path info
@@ -340,9 +350,7 @@ namespace ngine::filesystem {
         return ResourceType::Invalid;
     }
 
-    std::string Path::getString() const {
-        return m_internalPath;
-    }
+    std::string Path::getString() const { return m_internalPath; }
 
     std::string Path::getStringNoExtension() const {
         auto lastDot = m_internalPath.find_last_of('.');
@@ -386,7 +394,8 @@ namespace ngine::filesystem {
         auto buffer = new char[PATH_MAX];
 
         // Get working dir
-        if (getcwd(buffer, PATH_MAX) == nullptr) throw std::runtime_error("Unable to determine working directory.");
+        if (getcwd(buffer, PATH_MAX) == nullptr)
+            throw std::runtime_error("Unable to determine working directory.");
 
         // Convert to string
         std::string string(buffer);
@@ -420,9 +429,7 @@ namespace ngine::filesystem {
         return Path(pathA, pathB);
     }
 
-    bool Path::isValid() const {
-        return m_hasProperValue;
-    }
+    bool Path::isValid() const { return m_hasProperValue; }
 
     // Operators
 
@@ -458,9 +465,7 @@ namespace ngine::filesystem {
         _correctPath();
     }
 
-    Path::operator std::string() const {
-        return m_internalPath;
-    }
+    Path::operator std::string() const { return m_internalPath; }
 
     bool Path::operator==(Path rhs) {
         return getAbsolute().m_internalPath == rhs.getAbsolute().m_internalPath;
@@ -483,7 +488,8 @@ namespace ngine::filesystem {
 //        // Check length
 //        if (len == 0) {
 //            auto e = GetLastError();
-//            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
+//            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot
+//            clean it
 //                return str_;
 //            else throw std::runtime_error("GetShortPathNameA error.");
 //        }
@@ -497,7 +503,8 @@ namespace ngine::filesystem {
 //        // Check length
 //        if (len == 0) {
 //            auto e = GetLastError();
-//            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot clean it
+//            if (e == 0x2 || e == 0x3) // File not found/Path not found, cannot
+//            clean it
 //                return str_;
 //            else throw std::runtime_error("GetShortPathNameA error.");
 //        }
@@ -541,11 +548,13 @@ namespace ngine::filesystem {
 
         // Look for notation foreign to this OS
         if (_getJoinChar() != '\\') {
-            std::replace(m_internalPath.begin(), m_internalPath.end(), '\\', _getJoinChar());
+            std::replace(m_internalPath.begin(), m_internalPath.end(), '\\',
+                         _getJoinChar());
         }
 
         if (_getJoinChar() != '/') {
-            std::replace(m_internalPath.begin(), m_internalPath.end(), '/', _getJoinChar());
+            std::replace(m_internalPath.begin(), m_internalPath.end(), '/',
+                         _getJoinChar());
         }
 
         // Is valid
@@ -558,7 +567,8 @@ namespace ngine::filesystem {
 
         // Use HOME environment variable if not run as root
         const char *homeVar = std::getenv("HOME");
-        if (uid != 0 && homeVar) return std::string(homeVar);
+        if (uid != 0 && homeVar)
+            return std::string(homeVar);
 
         // Use psswd home
         struct passwd *pw = getpwuid(uid);
@@ -595,9 +605,7 @@ namespace ngine::filesystem {
         return m_objectPath.getObjectName();
     }
 
-    Path FilesystemObject::getPath() const {
-        return m_objectPath;
-    }
+    Path FilesystemObject::getPath() const { return m_objectPath; }
 
     // Protected Constructors
 
@@ -624,7 +632,8 @@ namespace ngine::filesystem {
 
     File::File(const Path &path) : FilesystemObject(path) {
         // Check path is valid
-        if (!path.isValid()) throw std::runtime_error("File must be given a valid path.");
+        if (!path.isValid())
+            throw std::runtime_error("File must be given a valid path.");
 
         // Create an empty handler
         m_internalHandle = std::make_shared<InternalFileHandler>();
@@ -668,7 +677,8 @@ namespace ngine::filesystem {
 
     bool File::exists() const {
         // If we are open, we know we exist
-        if (isOpen()) return true;
+        if (isOpen())
+            return true;
 
         // Using C apis so that it is cross platform
         FILE *file = fopen(m_objectPath.getString().c_str(), "r");
@@ -679,13 +689,9 @@ namespace ngine::filesystem {
         return false;
     }
 
-    FileOpenMode File::getCurrentOpenMode() const {
-        return m_internalOpenMode;
-    }
+    FileOpenMode File::getCurrentOpenMode() const { return m_internalOpenMode; }
 
-    File File::getFile(const Path &path) {
-        return File(path);
-    }
+    File File::getFile(const Path &path) { return File(path); }
 
     std::string File::getFileExtension() const {
         return m_objectPath.getFileExtension();
@@ -693,7 +699,8 @@ namespace ngine::filesystem {
 
     FILE *File::getFileHandle() const {
         if (!isOpen()) {
-            Console::warn("File", "Cannot get handle of file that is not open.");
+            Console::warn("File",
+                          "Cannot get handle of file that is not open.");
             return nullptr;
         }
 
@@ -702,7 +709,8 @@ namespace ngine::filesystem {
 
     int File::getSize() const {
         if (!isOpen()) {
-            Console::warn("File", "Cannot determine size of file that is not open.");
+            Console::warn("File",
+                          "Cannot determine size of file that is not open.");
             return 0;
         }
 
@@ -714,61 +722,69 @@ namespace ngine::filesystem {
     }
 
     bool File::isOpen() const {
-        if (m_internalHandle == nullptr) return false;
+        if (m_internalHandle == nullptr)
+            return false;
 
         return m_internalHandle->InternalHandle != nullptr;
     }
 
     bool File::open(FileOpenMode mode, bool binary) {
         // Check validity of path
-        if (!m_objectPath.isValid()) throw std::runtime_error("This file's path is invalid");
+        if (!m_objectPath.isValid())
+            throw std::runtime_error("This file's path is invalid");
 
         // Open with selected mode
-        switch(mode) {
-            case FileOpenMode::Read:
-                // Check this is actually a file
-                if (m_objectPath.getResourceType() != ResourceType::File) throw std::runtime_error("This path does not point to a file.");
+        switch (mode) {
+        case FileOpenMode::Read:
+            // Check this is actually a file
+            if (m_objectPath.getResourceType() != ResourceType::File)
+                throw std::runtime_error("This path does not point to a file.");
 
-                // Open binary file for read
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "rb" : "r");
+            // Open binary file for read
+            m_internalHandle->InternalHandle =
+                fopen(m_objectPath.getString().c_str(), binary ? "rb" : "r");
 
-                // Set mode
-                m_internalOpenMode = mode;
-                break;
-            case FileOpenMode::Write:
-                // Open binary file for write
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "wb" : "w");
+            // Set mode
+            m_internalOpenMode = mode;
+            break;
+        case FileOpenMode::Write:
+            // Open binary file for write
+            m_internalHandle->InternalHandle =
+                fopen(m_objectPath.getString().c_str(), binary ? "wb" : "w");
 
-                // Set mode
-                m_internalOpenMode = mode;
-                break;
-            case FileOpenMode::Append:
-                // Open binary file for append
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "ab" : "a");
+            // Set mode
+            m_internalOpenMode = mode;
+            break;
+        case FileOpenMode::Append:
+            // Open binary file for append
+            m_internalHandle->InternalHandle =
+                fopen(m_objectPath.getString().c_str(), binary ? "ab" : "a");
 
-                // Set mode
-                m_internalOpenMode = mode;
-                break;
-            case FileOpenMode::ReadWrite:
-                // Open binary file for read and write
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "w+b" : "w+");
+            // Set mode
+            m_internalOpenMode = mode;
+            break;
+        case FileOpenMode::ReadWrite:
+            // Open binary file for read and write
+            m_internalHandle->InternalHandle =
+                fopen(m_objectPath.getString().c_str(), binary ? "w+b" : "w+");
 
-                // Set mode
-                m_internalOpenMode = mode;
-                break;
-            case FileOpenMode::ReadAppend:
-                // Open binary file for read and append
-                m_internalHandle->InternalHandle = fopen(m_objectPath.getString().c_str(), binary ? "a+b" : "a+");
+            // Set mode
+            m_internalOpenMode = mode;
+            break;
+        case FileOpenMode::ReadAppend:
+            // Open binary file for read and append
+            m_internalHandle->InternalHandle =
+                fopen(m_objectPath.getString().c_str(), binary ? "a+b" : "a+");
 
-                // Set mode
-                m_internalOpenMode = mode;
-                break;
-            default:
-                Console::warn("File", "File mode not supported.");
+            // Set mode
+            m_internalOpenMode = mode;
+            break;
+        default:
+            Console::warn("File", "File mode not supported.");
 
-                // Set mode
-                m_internalOpenMode = FileOpenMode::Closed;
-                break;
+            // Set mode
+            m_internalOpenMode = FileOpenMode::Closed;
+            break;
         }
 
         // Return success
@@ -776,12 +792,13 @@ namespace ngine::filesystem {
     }
 
     unsigned char *File::readBytes(int size, int offset) {
-        if (!isOpen()) throw std::runtime_error("Cannot read from closed file.");
+        if (!isOpen())
+            throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != FileOpenMode::Read
-            && m_internalOpenMode != FileOpenMode::ReadWrite
-            && m_internalOpenMode != FileOpenMode::ReadAppend)
+        if (m_internalOpenMode != FileOpenMode::Read &&
+            m_internalOpenMode != FileOpenMode::ReadWrite &&
+            m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for reading.");
 
         // Determine file size if size is -1
@@ -816,12 +833,13 @@ namespace ngine::filesystem {
 
     std::string File::readString(int size, int offset) {
         // Check we're open
-        if (!isOpen()) throw std::runtime_error("Cannot read from closed file.");
+        if (!isOpen())
+            throw std::runtime_error("Cannot read from closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != FileOpenMode::Read
-            && m_internalOpenMode != FileOpenMode::ReadWrite
-            && m_internalOpenMode != FileOpenMode::ReadAppend)
+        if (m_internalOpenMode != FileOpenMode::Read &&
+            m_internalOpenMode != FileOpenMode::ReadWrite &&
+            m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for reading.");
 
         // Determine file size if size is -1
@@ -848,7 +866,7 @@ namespace ngine::filesystem {
 
         // Read to c string
         auto buffer = new char[size + 1];
-        int r = fread(buffer, 1, size, m_internalHandle->InternalHandle);
+        size_t r = fread(buffer, 1, size, m_internalHandle->InternalHandle);
 
         // Null-terminate buffer
         buffer[r] = '\0';
@@ -864,13 +882,14 @@ namespace ngine::filesystem {
 
     bool File::writeBytes(unsigned char *data, int size) {
         // Check we're open
-        if (!isOpen()) throw std::runtime_error("Cannot write to a closed file.");
+        if (!isOpen())
+            throw std::runtime_error("Cannot write to a closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != FileOpenMode::Write
-            && m_internalOpenMode != FileOpenMode::Append
-            && m_internalOpenMode != FileOpenMode::ReadWrite
-            && m_internalOpenMode != FileOpenMode::ReadAppend)
+        if (m_internalOpenMode != FileOpenMode::Write &&
+            m_internalOpenMode != FileOpenMode::Append &&
+            m_internalOpenMode != FileOpenMode::ReadWrite &&
+            m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for writing.");
 
         // Write
@@ -879,13 +898,14 @@ namespace ngine::filesystem {
 
     bool File::writeString(const std::string &string) {
         // Check we're open
-        if (!isOpen()) throw std::runtime_error("Cannot write to closed file.");
+        if (!isOpen())
+            throw std::runtime_error("Cannot write to closed file.");
 
         // Check for our mode
-        if (m_internalOpenMode != FileOpenMode::Write
-            && m_internalOpenMode != FileOpenMode::Append
-            && m_internalOpenMode != FileOpenMode::ReadWrite
-            && m_internalOpenMode != FileOpenMode::ReadAppend)
+        if (m_internalOpenMode != FileOpenMode::Write &&
+            m_internalOpenMode != FileOpenMode::Append &&
+            m_internalOpenMode != FileOpenMode::ReadWrite &&
+            m_internalOpenMode != FileOpenMode::ReadAppend)
             throw std::runtime_error("File not opened for writing.");
 
         // Write string
@@ -900,7 +920,8 @@ namespace ngine::filesystem {
 
     Directory::Directory(const Path &path) : FilesystemObject(path) {
         // Check for valid path
-        if (!path.isValid()) throw std::runtime_error("Directory must be given a valid path.");
+        if (!path.isValid())
+            throw std::runtime_error("Directory must be given a valid path.");
     }
 
     bool Directory::create() {
@@ -968,7 +989,6 @@ namespace ngine::filesystem {
         if (!success)
             return false;
 
-
         // Delete self
         success = deleteObject();
 
@@ -1009,7 +1029,8 @@ namespace ngine::filesystem {
 #if defined(_WIN32)
         // Find first directory
         WIN32_FIND_DATAA FindFileData;
-        HANDLE hFind = FindFirstFileA((m_objectPath.getString() + "\\*").c_str(), &FindFileData);
+        HANDLE hFind = FindFirstFileA(
+            (m_objectPath.getString() + "\\*").c_str(), &FindFileData);
 
         // Check exists
         if (hFind == INVALID_HANDLE_VALUE) {
@@ -1037,13 +1058,16 @@ namespace ngine::filesystem {
         dir = opendir(m_objectPath.getString().c_str());
 
         // Test open
-        if (!dir) throw std::runtime_error("Cannot open directory.");
+        if (!dir)
+            throw std::runtime_error("Cannot open directory.");
 
         // Read all directories
         while ((entry = readdir(dir)) != nullptr) {
             if (entry->d_type == DT_DIR) {
-                if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0)
-                    dirs.push_back(Directory(Path(m_objectPath, entry->d_name)));
+                if (strcmp(entry->d_name, ".") != 0 &&
+                    strcmp(entry->d_name, "..") != 0)
+                    dirs.push_back(
+                        Directory(Path(m_objectPath, entry->d_name)));
             }
         }
 
@@ -1062,7 +1086,8 @@ namespace ngine::filesystem {
 #if defined(_WIN32)
         // Find the first file in the directory
         WIN32_FIND_DATAA FindFileData;
-        HANDLE hFind = FindFirstFileA((m_objectPath.getString() + "\\*").c_str(), &FindFileData);
+        HANDLE hFind = FindFirstFileA(
+            (m_objectPath.getString() + "\\*").c_str(), &FindFileData);
 
         // Check it exists
         if (hFind == INVALID_HANDLE_VALUE) {
@@ -1089,7 +1114,8 @@ namespace ngine::filesystem {
         dir = opendir(m_objectPath.getString().c_str());
 
         // Test open
-        if (!dir) throw std::runtime_error("Cannot open directory.");
+        if (!dir)
+            throw std::runtime_error("Cannot open directory.");
 
         // Read all directories
         while ((entry = readdir(dir)) != nullptr) {
@@ -1142,9 +1168,12 @@ namespace ngine::filesystem {
 
     void Directory::_throwAccessErrors() const {
         // Check exists
-        if (!exists()) throw std::runtime_error("This directory does not exist.");
+        if (!exists())
+            throw std::runtime_error("This directory does not exist.");
 
         // Check this is actually a directory
-        if (getPath().getResourceType() != ResourceType::Directory) throw std::runtime_error("This path does not point to a directory.");
+        if (getPath().getResourceType() != ResourceType::Directory)
+            throw std::runtime_error(
+                "This path does not point to a directory.");
     }
-}
+} // namespace ngine::filesystem

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef RESOURCEMANAGER_HPP
 #define RESOURCEMANAGER_HPP
@@ -45,33 +45,33 @@ namespace ngine::filesystem {
     /**
      * Resource manager configuration.
      * This details exactly what resources should be loaded from where.
-     * By default this recursively loads *everything* from the 'content' directory.
+     * By default this recursively loads *everything* from the 'content'
+     * directory.
      */
     struct ResourceManagerConfig {
         /**
          * Default base size for loaded fonts.
          * Default: 36.
          *
-         * @warning The higher this value is set, the more memory each loaded font will use.
-         * @warning This will also affect how well fonts can be scaled up or down.
+         * @warning The higher this value is set, the more memory each loaded
+         * font will use.
+         * @warning This will also affect how well fonts can be scaled up or
+         * down.
          */
         int DefaultFontBaseSize = 36;
 
         /**
          * The directory structure of the resources directory.
          */
-        std::vector<std::pair<filesystem::Path, int>> ResourceDirectories =
-            {
-                {
-                    Path("content"),
-                    CONTENT_TEXTURES | CONTENT_SOUNDS | CONTENT_MUSIC | CONTENT_FONTS
-                }
-            };
+        std::vector<std::pair<filesystem::Path, int>> ResourceDirectories = {
+            {Path("content"), CONTENT_TEXTURES | CONTENT_SOUNDS |
+                                  CONTENT_MUSIC | CONTENT_FONTS}};
     };
 
     /**
      * Resource management helper.
-     * This will control the loading, unloading and overall lifetime of loadable assets.
+     * This will control the loading, unloading and overall lifetime of loadable
+     * assets.
      */
     class NEAPI ResourceManager {
         /**
@@ -98,11 +98,13 @@ namespace ngine::filesystem {
          * All named textures.
          */
         std::unordered_map<std::string, graphics::Texture2D *> m_textures;
+
     public:
         /**
          * Create a new resource manager.
          *
-         * @warning The `Game` class provides a resource manager. Using more than one resource manager could get confusing in your implementation.
+         * @warning The `Game` class provides a resource manager. Using more
+         * than one resource manager could get confusing in your implementation.
          * @param graphicsDevice The graphics device for graphics resources.
          */
         ResourceManager(graphics::GraphicsDevice *graphicsDevice);
@@ -112,14 +114,16 @@ namespace ngine::filesystem {
          * The resource manager config.
          *
          * @note This should be configured *before* calling LoadResources().
-         * @note To modify this, you should remember to DeleteAll() before calling LoadResources() again.
+         * @note To modify this, you should remember to DeleteAll() before
+         * calling LoadResources() again.
          */
         ResourceManagerConfig Config;
 
         /**
          * Delete all resources.
          *
-         * @warning This will break any pointers to existing textures, fonts etc. Ensure this is handled before calling.
+         * @warning This will break any pointers to existing textures, fonts
+         * etc. Ensure this is handled before calling.
          */
         void deleteAll();
 
@@ -197,7 +201,8 @@ namespace ngine::filesystem {
          * @param baseSize The base size for the font.
          * @return Whether or not the font was loaded.
          */
-        bool loadFont(const Path &inPath, const std::string &name, int baseSize = -1);
+        bool loadFont(const Path &inPath, const std::string &name,
+                      int baseSize = -1);
 
         /**
          * Load music from file.
@@ -226,6 +231,6 @@ namespace ngine::filesystem {
          */
         bool loadTexture(const Path &inPath, const std::string &name);
     };
-}
+} // namespace ngine::filesystem
 
-#endif //RESOURCEMANAGER_HPP
+#endif // RESOURCEMANAGER_HPP

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #include "PlatformGLAPI.hpp"
 
@@ -30,7 +30,7 @@
 #include <GLFW/glfw3.h>
 #elif defined(EGL)
 #define GL_KHR_debug 0
-#define GL_GLEXT_PROTOTYPES 1 
+#define GL_GLEXT_PROTOTYPES 1
 
 #if !defined(GLAD)
 // Include latest GLES header
@@ -88,17 +88,18 @@
 #endif
 
 #if defined(PLATFORM_UWP)
-#include <angle_windowsstore.h>
 #include "ngine/UWP/GameApp.hpp"
+#include <angle_windowsstore.h>
+
 #endif
 
-#include "ngine/graphics/Buffer.hpp"
-#include "ngine/graphics/Shader.hpp"
-#include "ngine/graphics/ShaderProgram.hpp"
-#include "ngine/graphics/RenderTarget.hpp"
-#include "ngine/graphics/VertexLayout.hpp"
 #include "ngine/Console.hpp"
 #include "ngine/Window.hpp"
+#include "ngine/graphics/Buffer.hpp"
+#include "ngine/graphics/RenderTarget.hpp"
+#include "ngine/graphics/Shader.hpp"
+#include "ngine/graphics/ShaderProgram.hpp"
+#include "ngine/graphics/VertexLayout.hpp"
 
 #include <cstring>
 
@@ -109,9 +110,10 @@ static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
 #endif
 
 namespace ngine::graphics::API {
-    void
-    PlatformGLAPI::_getTextureFormats(PixelFormat format, unsigned int *glInternalFormat, unsigned int *glFormat,
-                                      unsigned int *glType) {
+    void PlatformGLAPI::_getTextureFormats(PixelFormat format,
+                                           unsigned int *glInternalFormat,
+                                           unsigned int *glFormat,
+                                           unsigned int *glType) {
         // Set to -1 for error checking
         *glInternalFormat = -1;
         *glFormat = -1;
@@ -121,65 +123,67 @@ namespace ngine::graphics::API {
         // GLES2 and 3 specific
         if (m_GLES2 || m_GLES3) {
             switch (format) {
-                case UNCOMPRESSED_GRAYSCALE:
+            case UNCOMPRESSED_GRAYSCALE:
+                *glInternalFormat = GL_LUMINANCE;
+                *glFormat = GL_LUMINANCE;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_GRAY_ALPHA:
+                *glInternalFormat = GL_LUMINANCE_ALPHA;
+                *glFormat = GL_LUMINANCE_ALPHA;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_R5G6B5:
+                *glInternalFormat = GL_RGB;
+                *glFormat = GL_RGB;
+                *glType = GL_UNSIGNED_SHORT_5_6_5;
+                return;
+            case UNCOMPRESSED_R8G8B8:
+                *glInternalFormat = GL_RGB;
+                *glFormat = GL_RGB;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_R5G5B5A1:
+                *glInternalFormat = GL_RGBA;
+                *glFormat = GL_RGBA;
+                *glType = GL_UNSIGNED_SHORT_5_5_5_1;
+                return;
+            case UNCOMPRESSED_R4G4B4A4:
+                *glInternalFormat = GL_RGBA;
+                *glFormat = GL_RGBA;
+                *glType = GL_UNSIGNED_SHORT_4_4_4_4;
+                return;
+            case UNCOMPRESSED_R8G8B8A8:
+                *glInternalFormat = GL_RGBA;
+                *glFormat = GL_RGBA;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_R32:
+                // Requires OES_texture_float
+                if (m_featureFlags[EXT_TEX_FLOAT]) {
                     *glInternalFormat = GL_LUMINANCE;
                     *glFormat = GL_LUMINANCE;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_GRAY_ALPHA:
-                    *glInternalFormat = GL_LUMINANCE_ALPHA;
-                    *glFormat = GL_LUMINANCE_ALPHA;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_R5G6B5:
+                    *glType = GL_FLOAT;
+                } else
+                    Console::fail("PlatformGLAPI", "Format not supported.");
+                return;
+            case UNCOMPRESSED_R32G32B32:
+                // Requires OES_texture_float
+                if (m_featureFlags[EXT_TEX_FLOAT]) {
                     *glInternalFormat = GL_RGB;
                     *glFormat = GL_RGB;
-                    *glType = GL_UNSIGNED_SHORT_5_6_5;
-                    return;
-                case UNCOMPRESSED_R8G8B8:
-                    *glInternalFormat = GL_RGB;
-                    *glFormat = GL_RGB;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_R5G5B5A1:
+                    *glType = GL_FLOAT;
+                }
+                return;
+            case UNCOMPRESSED_R32G32B32A32:
+                // Requires OES_texture_float
+                if (m_featureFlags[EXT_TEX_FLOAT]) {
                     *glInternalFormat = GL_RGBA;
                     *glFormat = GL_RGBA;
-                    *glType = GL_UNSIGNED_SHORT_5_5_5_1;
-                    return;
-                case UNCOMPRESSED_R4G4B4A4:
-                    *glInternalFormat = GL_RGBA;
-                    *glFormat = GL_RGBA;
-                    *glType = GL_UNSIGNED_SHORT_4_4_4_4;
-                    return;
-                case UNCOMPRESSED_R8G8B8A8:
-                    *glInternalFormat = GL_RGBA;
-                    *glFormat = GL_RGBA;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_R32:
-                    // Requires OES_texture_float
-                    if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat = GL_LUMINANCE;
-                        *glFormat = GL_LUMINANCE;
-                        *glType = GL_FLOAT;
-                    } else Console::fail("PlatformGLAPI", "Format not supported.");
-                    return;
-                case UNCOMPRESSED_R32G32B32:
-                    // Requires OES_texture_float
-                    if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat = GL_RGB;
-                        *glFormat = GL_RGB;
-                        *glType = GL_FLOAT;
-                    }
-                    return;
-                case UNCOMPRESSED_R32G32B32A32:
-                    // Requires OES_texture_float
-                    if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat = GL_RGBA;
-                        *glFormat = GL_RGBA;
-                        *glType = GL_FLOAT;
-                    } else Console::fail("PlatformGLAPI", "Format not supported.");
-                    return;
+                    *glType = GL_FLOAT;
+                } else
+                    Console::fail("PlatformGLAPI", "Format not supported.");
+                return;
             }
         }
 #endif
@@ -188,188 +192,207 @@ namespace ngine::graphics::API {
         // GL specific
         if (!m_GLES2 && !m_GLES3) {
             switch (format) {
-                case UNCOMPRESSED_GRAYSCALE:
-                    *glInternalFormat = GL_R8;
+            case UNCOMPRESSED_GRAYSCALE:
+                *glInternalFormat = GL_R8;
+                *glFormat = GL_RED;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_GRAY_ALPHA:
+                *glInternalFormat = GL_RG8;
+                *glFormat = GL_RG;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_R5G6B5:
+                *glInternalFormat = GL_RGB565;
+                *glFormat = GL_RGB;
+                *glType = GL_UNSIGNED_SHORT_5_6_5;
+                return;
+            case UNCOMPRESSED_R8G8B8:
+                *glInternalFormat = GL_RGB8;
+                *glFormat = GL_RGB;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_R5G5B5A1:
+                *glInternalFormat = GL_RGB5_A1;
+                *glFormat = GL_RGBA;
+                *glType = GL_UNSIGNED_SHORT_5_5_5_1;
+                return;
+            case UNCOMPRESSED_R4G4B4A4:
+                *glInternalFormat = GL_RGBA4;
+                *glFormat = GL_RGBA;
+                *glType = GL_UNSIGNED_SHORT_4_4_4_4;
+                return;
+            case UNCOMPRESSED_R8G8B8A8:
+                *glInternalFormat = GL_RGBA8;
+                *glFormat = GL_RGBA;
+                *glType = GL_UNSIGNED_BYTE;
+                return;
+            case UNCOMPRESSED_R32:
+                // Requires OES_texture_float
+                if (m_featureFlags[EXT_TEX_FLOAT]) {
+                    *glInternalFormat = GL_R32F;
                     *glFormat = GL_RED;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_GRAY_ALPHA:
-                    *glInternalFormat = GL_RG8;
-                    *glFormat = GL_RG;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_R5G6B5:
-                    *glInternalFormat = GL_RGB565;
+                    *glType = GL_FLOAT;
+                } else
+                    Console::fail("PlatformGLAPI", "Format not supported.");
+                return;
+            case UNCOMPRESSED_R32G32B32:
+                // Requires OES_texture_float
+                if (m_featureFlags[EXT_TEX_FLOAT]) {
+                    *glInternalFormat = GL_RGB32F;
                     *glFormat = GL_RGB;
-                    *glType = GL_UNSIGNED_SHORT_5_6_5;
-                    return;
-                case UNCOMPRESSED_R8G8B8:
-                    *glInternalFormat = GL_RGB8;
-                    *glFormat = GL_RGB;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_R5G5B5A1:
-                    *glInternalFormat = GL_RGB5_A1;
+                    *glType = GL_FLOAT;
+                } else
+                    Console::fail("PlatformGLAPI", "Format not supported.");
+                return;
+            case UNCOMPRESSED_R32G32B32A32:
+                // Requires OES_texture_float
+                if (m_featureFlags[EXT_TEX_FLOAT]) {
+                    *glInternalFormat = GL_RGBA32F;
                     *glFormat = GL_RGBA;
-                    *glType = GL_UNSIGNED_SHORT_5_5_5_1;
-                    return;
-                case UNCOMPRESSED_R4G4B4A4:
-                    *glInternalFormat = GL_RGBA4;
-                    *glFormat = GL_RGBA;
-                    *glType = GL_UNSIGNED_SHORT_4_4_4_4;
-                    return;
-                case UNCOMPRESSED_R8G8B8A8:
-                    *glInternalFormat = GL_RGBA8;
-                    *glFormat = GL_RGBA;
-                    *glType = GL_UNSIGNED_BYTE;
-                    return;
-                case UNCOMPRESSED_R32:
-                    // Requires OES_texture_float
-                    if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat = GL_R32F;
-                        *glFormat = GL_RED;
-                        *glType = GL_FLOAT;
-                    } else Console::fail("PlatformGLAPI", "Format not supported.");
-                    return;
-                case UNCOMPRESSED_R32G32B32:
-                    // Requires OES_texture_float
-                    if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat = GL_RGB32F;
-                        *glFormat = GL_RGB;
-                        *glType = GL_FLOAT;
-                    } else Console::fail("PlatformGLAPI", "Format not supported.");
-                    return;
-                case UNCOMPRESSED_R32G32B32A32:
-                    // Requires OES_texture_float
-                    if (m_featureFlags[EXT_TEX_FLOAT]) {
-                        *glInternalFormat = GL_RGBA32F;
-                        *glFormat = GL_RGBA;
-                        *glType = GL_FLOAT;
-                    } else Console::fail("PlatformGLAPI", "Format not supported.");
-                    return;
+                    *glType = GL_FLOAT;
+                } else
+                    Console::fail("PlatformGLAPI", "Format not supported.");
+                return;
             }
         }
 #endif
 
         // General/Common
         switch (format) {
-            case COMPRESSED_DXT1_RGB:
-                if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return;
-            case COMPRESSED_DXT1_RGBA:
-                if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return;
-            case COMPRESSED_DXT3_RGBA:
-                if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return;
-            case COMPRESSED_DXT5_RGBA:
-                if (m_featureFlags[EXT_COMP_DXT])
-                    *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return;
-            case COMPRESSED_ETC1_RGB:
-                if (m_featureFlags[EXT_COMP_ETC1])
-                    *glInternalFormat = GL_ETC1_RGB8_OES;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
-            case COMPRESSED_ETC2_RGB:
-                if (m_featureFlags[EXT_COMP_ETC2])
-                    *glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
-            case COMPRESSED_ETC2_EAC_RGBA:
-                if (m_featureFlags[EXT_COMP_ETC2])
-                    *glInternalFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
-            case COMPRESSED_PVRT_RGB:
-                if (m_featureFlags[EXT_COMP_PVRT])
-                    *glInternalFormat = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires PowerVR GPU
-            case COMPRESSED_PVRT_RGBA:
-                if (m_featureFlags[EXT_COMP_PVRT])
-                    *glInternalFormat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires PowerVR GPU
-            case COMPRESSED_ASTC_4x4_RGBA:
-                if (m_featureFlags[EXT_COMP_ASTC])
-                    *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
-            case COMPRESSED_ASTC_8x8_RGBA:
-                if (m_featureFlags[EXT_COMP_ASTC])
-                    *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
-                else Console::fail("PlatformGLAPI", "Format not supported.");
-                return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
-            default:
+        case COMPRESSED_DXT1_RGB:
+            if (m_featureFlags[EXT_COMP_DXT])
+                *glInternalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+            else
                 Console::fail("PlatformGLAPI", "Format not supported.");
-                return;
+            return;
+        case COMPRESSED_DXT1_RGBA:
+            if (m_featureFlags[EXT_COMP_DXT])
+                *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return;
+        case COMPRESSED_DXT3_RGBA:
+            if (m_featureFlags[EXT_COMP_DXT])
+                *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return;
+        case COMPRESSED_DXT5_RGBA:
+            if (m_featureFlags[EXT_COMP_DXT])
+                *glInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return;
+        case COMPRESSED_ETC1_RGB:
+            if (m_featureFlags[EXT_COMP_ETC1])
+                *glInternalFormat = GL_ETC1_RGB8_OES;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires OpenGL ES 2.0 or OpenGL 4.3
+        case COMPRESSED_ETC2_RGB:
+            if (m_featureFlags[EXT_COMP_ETC2])
+                *glInternalFormat = GL_COMPRESSED_RGB8_ETC2;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+        case COMPRESSED_ETC2_EAC_RGBA:
+            if (m_featureFlags[EXT_COMP_ETC2])
+                *glInternalFormat = GL_COMPRESSED_RGBA8_ETC2_EAC;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires OpenGL ES 3.0 or OpenGL 4.3
+        case COMPRESSED_PVRT_RGB:
+            if (m_featureFlags[EXT_COMP_PVRT])
+                *glInternalFormat = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires PowerVR GPU
+        case COMPRESSED_PVRT_RGBA:
+            if (m_featureFlags[EXT_COMP_PVRT])
+                *glInternalFormat = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires PowerVR GPU
+        case COMPRESSED_ASTC_4x4_RGBA:
+            if (m_featureFlags[EXT_COMP_ASTC])
+                *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+        case COMPRESSED_ASTC_8x8_RGBA:
+            if (m_featureFlags[EXT_COMP_ASTC])
+                *glInternalFormat = GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
+            else
+                Console::fail("PlatformGLAPI", "Format not supported.");
+            return; // NOTE: Requires OpenGL ES 3.1 or OpenGL 4.3
+        default:
+            Console::fail("PlatformGLAPI", "Format not supported.");
+            return;
         }
     }
 
-    int PlatformGLAPI::_calculatePixelDataSize(int width, int height, PixelFormat format) {
+    int PlatformGLAPI::_calculatePixelDataSize(int width, int height,
+                                               PixelFormat format) {
         auto bpp = 0;
 
         switch (format) {
-            case UNCOMPRESSED_GRAYSCALE:
-                bpp = 8;
-                break;
-            case UNCOMPRESSED_GRAY_ALPHA:
-            case UNCOMPRESSED_R5G6B5:
-            case UNCOMPRESSED_R5G5B5A1:
-            case UNCOMPRESSED_R4G4B4A4:
-                bpp = 16;
-                break;
-            case UNCOMPRESSED_R8G8B8A8:
-                bpp = 32;
-                break;
-            case UNCOMPRESSED_R8G8B8:
-                bpp = 24;
-                break;
-            case UNCOMPRESSED_R32:
-                bpp = 32;
-                break;
-            case UNCOMPRESSED_R32G32B32:
-                bpp = 32 * 3;
-                break;
-            case UNCOMPRESSED_R32G32B32A32:
-                bpp = 32 * 4;
-                break;
-            case COMPRESSED_DXT1_RGB:
-            case COMPRESSED_DXT1_RGBA:
-            case COMPRESSED_ETC1_RGB:
-            case COMPRESSED_ETC2_RGB:
-            case COMPRESSED_PVRT_RGB:
-            case COMPRESSED_PVRT_RGBA:
-                bpp = 4;
-                break;
-            case COMPRESSED_DXT3_RGBA:
-            case COMPRESSED_DXT5_RGBA:
-            case COMPRESSED_ETC2_EAC_RGBA:
-            case COMPRESSED_ASTC_4x4_RGBA:
-                bpp = 8;
-                break;
-            case COMPRESSED_ASTC_8x8_RGBA:
-                bpp = 2;
-                break;
-            default:
-                break;
+        case UNCOMPRESSED_GRAYSCALE:
+            bpp = 8;
+            break;
+        case UNCOMPRESSED_GRAY_ALPHA:
+        case UNCOMPRESSED_R5G6B5:
+        case UNCOMPRESSED_R5G5B5A1:
+        case UNCOMPRESSED_R4G4B4A4:
+            bpp = 16;
+            break;
+        case UNCOMPRESSED_R8G8B8A8:
+            bpp = 32;
+            break;
+        case UNCOMPRESSED_R8G8B8:
+            bpp = 24;
+            break;
+        case UNCOMPRESSED_R32:
+            bpp = 32;
+            break;
+        case UNCOMPRESSED_R32G32B32:
+            bpp = 32 * 3;
+            break;
+        case UNCOMPRESSED_R32G32B32A32:
+            bpp = 32 * 4;
+            break;
+        case COMPRESSED_DXT1_RGB:
+        case COMPRESSED_DXT1_RGBA:
+        case COMPRESSED_ETC1_RGB:
+        case COMPRESSED_ETC2_RGB:
+        case COMPRESSED_PVRT_RGB:
+        case COMPRESSED_PVRT_RGBA:
+            bpp = 4;
+            break;
+        case COMPRESSED_DXT3_RGBA:
+        case COMPRESSED_DXT5_RGBA:
+        case COMPRESSED_ETC2_EAC_RGBA:
+        case COMPRESSED_ASTC_4x4_RGBA:
+            bpp = 8;
+            break;
+        case COMPRESSED_ASTC_8x8_RGBA:
+            bpp = 2;
+            break;
+        default:
+            break;
         }
 
-        auto dataSize = width * height * bpp / 8;  // Total data size in bytes
+        auto dataSize = width * height * bpp / 8; // Total data size in bytes
 
         // Most compressed formats works on 4x4 blocks,
         // if texture is smaller, minimum dataSize is 8 or 16
         if ((width < 4) && (height < 4)) {
-            if ((format >= COMPRESSED_DXT1_RGB) && (format < COMPRESSED_DXT3_RGBA)) dataSize = 8;
-            else if ((format >= COMPRESSED_DXT3_RGBA) && (format < COMPRESSED_ASTC_8x8_RGBA)) dataSize = 16;
+            if ((format >= COMPRESSED_DXT1_RGB) &&
+                (format < COMPRESSED_DXT3_RGBA))
+                dataSize = 8;
+            else if ((format >= COMPRESSED_DXT3_RGBA) &&
+                     (format < COMPRESSED_ASTC_8x8_RGBA))
+                dataSize = 16;
         }
 
         return dataSize;
@@ -395,14 +418,15 @@ namespace ngine::graphics::API {
             for (const auto &elm : elements) {
                 GLenum type;
                 switch (elm.Type) {
-                    case VertexLayout::VertexElementType::Float:
-                        type = GL_FLOAT;
-                        break;
+                case VertexLayout::VertexElementType::Float:
+                    type = GL_FLOAT;
+                    break;
                 }
 
                 glEnableVertexAttribArray(elm.ElementIndex);
-                glVertexAttribPointer(elm.ElementIndex, elm.Count, type, elm.Normalized ? GL_TRUE : GL_FALSE,
-                                      elm.Stride, (GLvoid *) elm.Offset);
+                glVertexAttribPointer(elm.ElementIndex, elm.Count, type,
+                                      elm.Normalized ? GL_TRUE : GL_FALSE,
+                                      elm.Stride, (GLvoid *)elm.Offset);
             }
         }
     }
@@ -430,116 +454,130 @@ namespace ngine::graphics::API {
         }
     }
 
-    void PlatformGLAPI::_setUniform(const ShaderProgram *program, std::string name, ShaderDataStructure structure, const void *data) {
+    void PlatformGLAPI::_setUniform(const ShaderProgram *program,
+                                    std::string name,
+                                    ShaderDataStructure structure,
+                                    const void *data) {
         // Complete actions based on type.
         switch (structure.Type) {
-            case ShaderDataType::Int:
-            case ShaderDataType::UnsignedInt:
-            case ShaderDataType::Float:
-            case ShaderDataType::Matrix:
-                // This could be separated again, but this looks better.
-                _writeSimpleUniform(program, name.c_str(), structure.Type, structure.Count, (char *)data);
-                break;
-            case ShaderDataType::Struct: {
-                // Write each member
-                int offset = 0;
-                for (const auto& s : structure.Members) {
-                    _setUniform(program, name + "." + s.Name, s, (char *)data + offset);
-                    offset += s.getSize();
-                }
-                break;
+        case ShaderDataType::Int:
+        case ShaderDataType::UnsignedInt:
+        case ShaderDataType::Float:
+        case ShaderDataType::Matrix:
+            // This could be separated again, but this looks better.
+            _writeSimpleUniform(program, name.c_str(), structure.Type,
+                                structure.Count, (char *)data);
+            break;
+        case ShaderDataType::Struct: {
+            // Write each member
+            int offset = 0;
+            for (const auto &s : structure.Members) {
+                _setUniform(program, name + "." + s.Name, s,
+                            (char *)data + offset);
+                offset += s.getSize();
             }
-            case ShaderDataType::Array: {
-                // Write simple data for each bit
-                auto sizePerEntry = structure.Members[0].getSize();
-                for (auto i = 0; i < structure.Count; i++) {
-                    _setUniform(program, name + "[" + std::to_string(i) + "]", structure.Members[0], (char*)data + sizePerEntry * i);
-                }
-                break;
+            break;
+        }
+        case ShaderDataType::Array: {
+            // Write simple data for each bit
+            auto sizePerEntry = structure.Members[0].getSize();
+            for (auto i = 0; i < structure.Count; i++) {
+                _setUniform(program, name + "[" + std::to_string(i) + "]",
+                            structure.Members[0],
+                            (char *)data + sizePerEntry * i);
             }
+            break;
+        }
         }
     }
 
-    void PlatformGLAPI::_writeSimpleUniform(const ShaderProgram *program, const char *name, ShaderDataType type, int count, const void *data) {
+    void PlatformGLAPI::_writeSimpleUniform(const ShaderProgram *program,
+                                            const char *name,
+                                            ShaderDataType type, int count,
+                                            const void *data) {
         auto loc = glGetUniformLocation(program->ID, name);
         switch (type) {
-            case ShaderDataType::Int: {
-                auto ints = (int *)data;
-                switch (count) {
-                    case 1:
-                        glUniform1i(loc, *ints);
-                        break;
-                    case 2:
-                        glUniform2i(loc, *ints, *(ints + 1));
-                        break;
-                    case 3:
-                        glUniform3i(loc, *ints, *(ints + 1), *(ints + 2));
-                        break;
-                    case 4:
-                        glUniform4i(loc, *ints, *(ints + 1), *(ints + 2), *(ints + 3));
-                        break;
-                    default:
-                        Console::fail("PlatformGLAPI", "Invalid count for int type.");
-                }
+        case ShaderDataType::Int: {
+            auto ints = (int *)data;
+            switch (count) {
+            case 1:
+                glUniform1i(loc, *ints);
                 break;
-            }
-            case ShaderDataType::UnsignedInt: {
-                auto uints = (unsigned int *)data;
-                switch (count) {
-                    case 1:
-                        glUniform1ui(loc, *uints);
-                        break;
-                    case 2:
-                        glUniform2ui(loc, *uints, *(uints + 1));
-                        break;
-                    case 3:
-                        glUniform3ui(loc, *uints, *(uints + 1), *(uints + 2));
-                        break;
-                    case 4:
-                        glUniform4ui(loc, *uints, *(uints + 1), *(uints + 2), *(uints + 3));
-                        break;
-                    default:
-                        Console::fail("PlatformGLAPI", "Invalid count for uint type.");
-                }
+            case 2:
+                glUniform2i(loc, *ints, *(ints + 1));
                 break;
-            }
-            case ShaderDataType::Float: {
-                auto floats = (float *)data;
-                switch (count) {
-                    case 1:
-                        glUniform1f(loc, *floats);
-                        break;
-                    case 2:
-                        glUniform2f(loc, *floats, *(floats + 1));
-                        break;
-                    case 3:
-                        glUniform3f(loc, *floats, *(floats + 1), *(floats + 2));
-                        break;
-                    case 4: {
-                        auto a = *floats;
-                        auto b = *(floats + 1);
-                        auto c = *(floats + 2);
-                        auto d = *(floats + 3);
-                        glUniform4f(loc, *floats, *(floats + 1), *(floats + 2), *(floats + 3));
-                        break;
-                    }
-                    default:
-                        Console::fail("PlatformGLAPI", "Invalid count for float type.");
-                }
+            case 3:
+                glUniform3i(loc, *ints, *(ints + 1), *(ints + 2));
                 break;
-            }
-            case ShaderDataType::Matrix:
-                glUniformMatrix4fv(loc, count, GL_FALSE, (float*)data);
+            case 4:
+                glUniform4i(loc, *ints, *(ints + 1), *(ints + 2), *(ints + 3));
                 break;
             default:
-                Console::fail("PlatformGLAPI", "Non simple passed to simple write.");
+                Console::fail("PlatformGLAPI", "Invalid count for int type.");
+            }
+            break;
+        }
+        case ShaderDataType::UnsignedInt: {
+            auto uints = (unsigned int *)data;
+            switch (count) {
+            case 1:
+                glUniform1ui(loc, *uints);
+                break;
+            case 2:
+                glUniform2ui(loc, *uints, *(uints + 1));
+                break;
+            case 3:
+                glUniform3ui(loc, *uints, *(uints + 1), *(uints + 2));
+                break;
+            case 4:
+                glUniform4ui(loc, *uints, *(uints + 1), *(uints + 2),
+                             *(uints + 3));
+                break;
+            default:
+                Console::fail("PlatformGLAPI", "Invalid count for uint type.");
+            }
+            break;
+        }
+        case ShaderDataType::Float: {
+            auto floats = (float *)data;
+            switch (count) {
+            case 1:
+                glUniform1f(loc, *floats);
+                break;
+            case 2:
+                glUniform2f(loc, *floats, *(floats + 1));
+                break;
+            case 3:
+                glUniform3f(loc, *floats, *(floats + 1), *(floats + 2));
+                break;
+            case 4: {
+                auto a = *floats;
+                auto b = *(floats + 1);
+                auto c = *(floats + 2);
+                auto d = *(floats + 3);
+                glUniform4f(loc, *floats, *(floats + 1), *(floats + 2),
+                            *(floats + 3));
+                break;
+            }
+            default:
+                Console::fail("PlatformGLAPI", "Invalid count for float type.");
+            }
+            break;
+        }
+        case ShaderDataType::Matrix:
+            glUniformMatrix4fv(loc, count, GL_FALSE, (float *)data);
+            break;
+        default:
+            Console::fail("PlatformGLAPI",
+                          "Non simple passed to simple write.");
         }
     }
 
     PlatformGLAPI::PlatformGLAPI(GraphicsDevice *graphicsDevice)
-            : PlatformGraphicsAPI(graphicsDevice) {
+        : PlatformGraphicsAPI(graphicsDevice) {
         // Clear feature flags
-        for (auto i = 0; i < EXT_TEX_NPOT; i++) m_featureFlags[i] = false;
+        for (auto i = 0; i < EXT_TEX_NPOT; i++)
+            m_featureFlags[i] = false;
 
 #if defined(EGL)
         // Init EGL
@@ -583,124 +621,175 @@ namespace ngine::graphics::API {
             EGL_SAMPLES, samples,
 
             // No idea what this does
-            EGL_NONE
-        };
+            EGL_NONE};
 
         auto major = m_graphicsDevice->getWindow()->getContextAPIMajorVersion();
         auto minor = m_graphicsDevice->getWindow()->getContextAPIMinorVersion();
 
-        const EGLint contextAttribs[] = {
-            //EGL_CONTEXT_CLIENT_VERSION, 2,
-            EGL_CONTEXT_MAJOR_VERSION, major,
-            EGL_CONTEXT_MINOR_VERSION, minor,
-            EGL_NONE
-        };
+        const EGLint contextAttribs[] = {// EGL_CONTEXT_CLIENT_VERSION, 2,
+                                         EGL_CONTEXT_MAJOR_VERSION, major,
+                                         EGL_CONTEXT_MINOR_VERSION, minor,
+                                         EGL_NONE};
 
 #if defined(PLATFORM_UWP)
         const EGLint surfaceAttributes[] = {
-            // EGL_ANGLE_SURFACE_RENDER_TO_BACK_BUFFER is part of the same optimization as EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER (see above).
-            // If you have compilation issues with it then please update your Visual Studio templates.
-            EGL_ANGLE_SURFACE_RENDER_TO_BACK_BUFFER, EGL_TRUE,
-            EGL_NONE
-        };
+            // EGL_ANGLE_SURFACE_RENDER_TO_BACK_BUFFER is part of the same
+            // optimization as EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER
+            // (see above).
+            // If you have compilation issues with it then please update your
+            // Visual Studio templates.
+            EGL_ANGLE_SURFACE_RENDER_TO_BACK_BUFFER, EGL_TRUE, EGL_NONE};
 
         const EGLint defaultDisplayAttributes[] = {
-            // These are the default display attributes, used to request ANGLE's D3D11 renderer.
-            // eglInitialize will only succeed with these attributes if the hardware supports D3D11 Feature Level 10_0+.
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+            // These are the default display attributes, used to request ANGLE's
+            // D3D11 renderer.
+            // eglInitialize will only succeed with these attributes if the
+            // hardware supports D3D11 Feature Level 10_0+.
+            EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+            EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
 
-            // EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER is an optimization that can have large performance benefits on mobile devices.
-            // Its syntax is subject to change, though. Please update your Visual Studio templates if you experience compilation issues with it.
-            EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER, EGL_TRUE,
+            // EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER is an optimization
+            // that can have large performance benefits on mobile devices.
+            // Its syntax is subject to change, though. Please update your
+            // Visual Studio templates if you experience compilation issues with
+            // it.
+            EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER,
+            EGL_TRUE,
 
-            // EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE is an option that enables ANGLE to automatically call
-            // the IDXGIDevice3::Trim method on behalf of the application when it gets suspended.
-            // Calling IDXGIDevice3::Trim when an application is suspended is a Windows Store application certification requirement.
-            EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE, EGL_TRUE,
+            // EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE is an option that
+            // enables ANGLE to automatically call
+            // the IDXGIDevice3::Trim method on behalf of the application when
+            // it gets suspended.
+            // Calling IDXGIDevice3::Trim when an application is suspended is a
+            // Windows Store application certification requirement.
+            EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE,
+            EGL_TRUE,
             EGL_NONE,
         };
 
         const EGLint fl9_3DisplayAttributes[] = {
-            // These can be used to request ANGLE's D3D11 renderer, with D3D11 Feature Level 9_3.
-            // These attributes are used if the call to eglInitialize fails with the default display attributes.
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
-            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE, 9,
-            EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE, 3,
-            EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER, EGL_TRUE,
-            EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE, EGL_TRUE,
+            // These can be used to request ANGLE's D3D11 renderer, with D3D11
+            // Feature Level 9_3.
+            // These attributes are used if the call to eglInitialize fails with
+            // the default display attributes.
+            EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+            EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+            EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE,
+            9,
+            EGL_PLATFORM_ANGLE_MAX_VERSION_MINOR_ANGLE,
+            3,
+            EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER,
+            EGL_TRUE,
+            EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE,
+            EGL_TRUE,
             EGL_NONE,
         };
 
         const EGLint warpDisplayAttributes[] = {
             // These attributes can be used to request D3D11 WARP.
-            // They are used if eglInitialize fails with both the default display attributes and the 9_3 display attributes.
-            EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
-            EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_WARP_ANGLE,
-            EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER, EGL_TRUE,
-            EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE, EGL_TRUE,
+            // They are used if eglInitialize fails with both the default
+            // display attributes and the 9_3 display attributes.
+            EGL_PLATFORM_ANGLE_TYPE_ANGLE,
+            EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
+            EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE,
+            EGL_PLATFORM_ANGLE_DEVICE_TYPE_WARP_ANGLE,
+            EGL_ANGLE_DISPLAY_ALLOW_RENDER_TO_BACK_BUFFER,
+            EGL_TRUE,
+            EGL_PLATFORM_ANGLE_ENABLE_AUTOMATIC_TRIM_ANGLE,
+            EGL_TRUE,
             EGL_NONE,
         };
 
         EGLConfig config = nullptr;
 
-        // eglGetPlatformDisplayEXT is an alternative to eglGetDisplay. It allows us to pass in Display attributes, used to configure D3D11.
-        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)(eglGetProcAddress("eglGetPlatformDisplayEXT"));
+        // eglGetPlatformDisplayEXT is an alternative to eglGetDisplay. It
+        // allows us to pass in Display attributes, used to configure D3D11.
+        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =
+            (PFNEGLGETPLATFORMDISPLAYEXTPROC)(
+                eglGetProcAddress("eglGetPlatformDisplayEXT"));
         if (!eglGetPlatformDisplayEXT) {
-            Console::fail("PlatformGLAPI", "Failed to get function eglGetPlatformDisplayEXT");
+            Console::fail("PlatformGLAPI",
+                          "Failed to get function eglGetPlatformDisplayEXT");
         }
 
-        // To initialize the Display, we make three sets of calls to eglGetPlatformDisplayEXT and eglInitialize, with varying
-        // parameters passed to eglGetPlatformDisplayEXT:
-        // 1) The first calls uses "defaultDisplayAttributes" as a parameter. This corresponds to D3D11 Feature Level 10_0+.
-        // 2) If eglInitialize fails for step 1 (e.g. because 10_0+ isn't supported by the default GPU), then we try again
-        //    using "fl9_3DisplayAttributes". This corresponds to D3D11 Feature Level 9_3.
-        // 3) If eglInitialize fails for step 2 (e.g. because 9_3+ isn't supported by the default GPU), then we try again
-        //    using "warpDisplayAttributes".  This corresponds to D3D11 Feature Level 11_0 on WARP, a D3D11 software rasterizer.
+        // To initialize the Display, we make three sets of calls to
+        // eglGetPlatformDisplayEXT and eglInitialize, with varying parameters
+        // passed to eglGetPlatformDisplayEXT: 1) The first calls uses
+        // "defaultDisplayAttributes" as a parameter. This corresponds to D3D11
+        // Feature Level 10_0+. 2) If eglInitialize fails for step 1 (e.g.
+        // because 10_0+ isn't supported by the default GPU), then we try again
+        //    using "fl9_3DisplayAttributes". This corresponds to D3D11 Feature
+        //    Level 9_3.
+        // 3) If eglInitialize fails for step 2 (e.g. because 9_3+ isn't
+        // supported by the default GPU), then we try again
+        //    using "warpDisplayAttributes".  This corresponds to D3D11 Feature
+        //    Level 11_0 on WARP, a D3D11 software rasterizer.
 
-        // This tries to initialize EGL to D3D11 Feature Level 10_0+. See above comment for details.
-        m_display = (void*)eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, defaultDisplayAttributes);
+        // This tries to initialize EGL to D3D11 Feature Level 10_0+. See above
+        // comment for details.
+        m_display = (void *)eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
+                                                     EGL_DEFAULT_DISPLAY,
+                                                     defaultDisplayAttributes);
         if (m_display == EGL_NO_DISPLAY) {
             Console::fail("PlatformGLAPI", "Failed to initialize EGL Display");
         }
 
         if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
-            // This tries to initialize EGL to D3D11 Feature Level 9_3, if 10_0+ is unavailable (e.g. on some mobile devices).
-            m_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, fl9_3DisplayAttributes);
+            // This tries to initialize EGL to D3D11 Feature Level 9_3, if 10_0+
+            // is unavailable (e.g. on some mobile devices).
+            m_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
+                                                 EGL_DEFAULT_DISPLAY,
+                                                 fl9_3DisplayAttributes);
             if (m_display == EGL_NO_DISPLAY) {
-                Console::fail("PlatformGLAPI", "Failed to initialize EGL Display");
+                Console::fail("PlatformGLAPI",
+                              "Failed to initialize EGL Display");
             }
 
             if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
-                // This initializes EGL to D3D11 Feature Level 11_0 on WARP, if 9_3+ is unavailable on the default GPU.
-                m_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, warpDisplayAttributes);
+                // This initializes EGL to D3D11 Feature Level 11_0 on WARP, if
+                // 9_3+ is unavailable on the default GPU.
+                m_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE,
+                                                     EGL_DEFAULT_DISPLAY,
+                                                     warpDisplayAttributes);
                 if (m_display == EGL_NO_DISPLAY) {
-                    Console::fail("PlatformGLAPI", "Failed to initialize EGL Display");
+                    Console::fail("PlatformGLAPI",
+                                  "Failed to initialize EGL Display");
                 }
 
                 if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
-                    // If all of the calls to eglInitialize returned EGL_FALSE then an error has occurred.
+                    // If all of the calls to eglInitialize returned EGL_FALSE
+                    // then an error has occurred.
                     Console::fail("PlatformGLAPI", "Failed to initialize EGL");
                 }
             }
         }
 
         EGLint numConfigs = 0;
-        if ((eglChooseConfig(m_display, framebufferAttribs, &config, 1, &numConfigs) == EGL_FALSE) || (numConfigs == 0)) {
+        if ((eglChooseConfig(m_display, framebufferAttribs, &config, 1,
+                             &numConfigs) == EGL_FALSE) ||
+            (numConfigs == 0)) {
             Console::fail("PlatformGLAPI", "Failed to choose first EGLConfig");
         }
 
         // Create a PropertySet and initialize with the EGLNativeWindowType.
-        PropertySet^ surfaceCreationProperties = ref new PropertySet();
-        surfaceCreationProperties->Insert(ref new String(EGLNativeWindowTypeProperty), CoreWindow::GetForCurrentThread());     // CoreWindow^ window
+        PropertySet ^ surfaceCreationProperties = ref new PropertySet();
+        surfaceCreationProperties->Insert(
+            ref new String(EGLNativeWindowTypeProperty),
+            CoreWindow::GetForCurrentThread()); // CoreWindow^ window
 
         // Create surface
-        m_surface = eglCreateWindowSurface(m_display, config, (EGLNativeWindowType)CoreWindow::GetForCurrentThread(), surfaceAttributes);
+        m_surface = eglCreateWindowSurface(
+            m_display, config,
+            (EGLNativeWindowType)CoreWindow::GetForCurrentThread(),
+            surfaceAttributes);
 
         if (m_surface == EGL_NO_SURFACE) {
-            Console::fail("PlatformGLAPI", "Failed to create EGL fullscreen surface");
+            Console::fail("PlatformGLAPI",
+                          "Failed to create EGL fullscreen surface");
         }
 
-        m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttribs);
+        m_context =
+            eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttribs);
         if (m_context == EGL_NO_CONTEXT) {
             Console::fail("PlatformGLAPI", "Failed to create EGL context.");
         }
@@ -716,7 +805,8 @@ namespace ngine::graphics::API {
 
         // Initialize the EGL display connection
         if (eglInitialize(m_display, NULL, NULL) == EGL_FALSE) {
-            // If all of the calls to eglInitialize returned EGL_FALSE then an error has occurred.
+            // If all of the calls to eglInitialize returned EGL_FALSE then an
+            // error has occurred.
             throw std::runtime_error("Failed to initialize EGL");
         }
 
@@ -727,7 +817,8 @@ namespace ngine::graphics::API {
         eglBindAPI(EGL_OPENGL_ES_API);
 
         // Create an EGL rendering context
-        m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttribs);
+        m_context =
+            eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttribs);
         if (m_context == EGL_NO_CONTEXT) {
             throw std::runtime_error("Failed to create EGL context");
         }
@@ -747,15 +838,16 @@ namespace ngine::graphics::API {
         // Init GLAD loader
         auto status = false;
 
-        if (m_graphicsDevice->getWindow()->getContextAPI() == GraphicsAPI::OpenGLES) {
+        if (m_graphicsDevice->getWindow()->getContextAPI() ==
+            GraphicsAPI::OpenGLES) {
 #if defined(GLFW)
-            status = gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress);
+            status = gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress);
 #elif defined(EGL)
-            status = gladLoadGLES2Loader((GLADloadproc) eglGetProcAddress);
+            status = gladLoadGLES2Loader((GLADloadproc)eglGetProcAddress);
 #endif
         } else {
 #if defined(GLFW)
-            status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+            status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 #endif
         }
 
@@ -774,16 +866,16 @@ namespace ngine::graphics::API {
 
         // Determine if we're running GLES
 #if !defined(GLAD)
-        if (m_graphicsDevice->getWindow()->getContextAPI() == GraphicsAPI::OpenGLES) {
-            auto major = m_graphicsDevice->getWindow()->getContextAPIMajorVersion();
+        if (m_graphicsDevice->getWindow()->getContextAPI() ==
+            GraphicsAPI::OpenGLES) {
+            auto major =
+                m_graphicsDevice->getWindow()->getContextAPIMajorVersion();
             m_GLES2 = major == 2;
             m_GLES3 = major == 3;
         }
 #else
-        m_GLES2 = GLAD_GL_ES_VERSION_2_0
-                && !GLAD_GL_ES_VERSION_3_0
-                && !GLAD_GL_ES_VERSION_3_1
-                && !GLAD_GL_ES_VERSION_3_2;
+        m_GLES2 = GLAD_GL_ES_VERSION_2_0 && !GLAD_GL_ES_VERSION_3_0 &&
+                  !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
         m_GLES3 = GLAD_GL_ES_VERSION_3_0;
 #endif
 
@@ -810,10 +902,10 @@ namespace ngine::graphics::API {
             // Create array
             extList = new const char *[512];
 
-            const char *extensions = (const char *) glGetString(GL_EXTENSIONS);
+            const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
 
             int len = strlen(extensions) + 1;
-            toDelete = (char *) new char[len];
+            toDelete = (char *)new char[len];
             strcpy(toDelete, extensions);
 
             extList[numExt] = toDelete;
@@ -832,7 +924,8 @@ namespace ngine::graphics::API {
 
             // Get extensions
             extList = new const char *[numExt];
-            for (auto i = 0; i < numExt; i++) extList[i] = (char *) glGetStringi(GL_EXTENSIONS, i);
+            for (auto i = 0; i < numExt; i++)
+                extList[i] = (char *)glGetStringi(GL_EXTENSIONS, i);
 #endif
         }
 
@@ -845,12 +938,18 @@ namespace ngine::graphics::API {
 #if defined(GLAD)
 #if defined(GLFW)
                     // GLFW does not provide the OES methods, try to find them.
-                    glGenVertexArraysOES = (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress("glGenVertexArraysOES");
-                    glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress("glBindVertexArrayOES");
-                    glDeleteVertexArraysOES = (PFNGLDELETEVERTEXARRAYSPROC) glfwGetProcAddress(
+                    glGenVertexArraysOES =
+                        (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress(
+                            "glGenVertexArraysOES");
+                    glBindVertexArrayOES =
+                        (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress(
+                            "glBindVertexArrayOES");
+                    glDeleteVertexArraysOES =
+                        (PFNGLDELETEVERTEXARRAYSPROC)glfwGetProcAddress(
                             "glDeleteVertexArraysOES");
 #endif
-                    if ((glGenVertexArraysOES != nullptr) && (glBindVertexArrayOES != nullptr) &&
+                    if ((glGenVertexArraysOES != nullptr) &&
+                        (glBindVertexArrayOES != nullptr) &&
                         (glDeleteVertexArraysOES != nullptr))
                         m_featureFlags[FEATURE_VAO] = true;
 #else
@@ -863,48 +962,61 @@ namespace ngine::graphics::API {
             // GLES 2/3 Specific extensions
             if (m_GLES2 || m_GLES3) {
                 // Check NPOT textures support
-                if (strcmp(extList[i], "GL_OES_texture_npot") == 0) m_featureFlags[EXT_TEX_NPOT] = true;
+                if (strcmp(extList[i], "GL_OES_texture_npot") == 0)
+                    m_featureFlags[EXT_TEX_NPOT] = true;
 
                 // Check texture float support
-                if (strcmp(extList[i], "GL_OES_texture_float") == 0) m_featureFlags[EXT_TEX_FLOAT] = true;
+                if (strcmp(extList[i], "GL_OES_texture_float") == 0)
+                    m_featureFlags[EXT_TEX_FLOAT] = true;
 
                 // Check depth texture support
                 if ((strcmp(extList[i], "GL_OES_depth_texture") == 0) ||
                     (strcmp(extList[i], "GL_WEBGL_depth_texture") == 0))
                     m_featureFlags[EXT_TEX_DEPTH] = true;
 
-                if (strcmp(extList[i], "GL_OES_depth24") == 0) m_maxDepthBits = 24;
-                if (strcmp(extList[i], "GL_OES_depth32") == 0) m_maxDepthBits = 32;
+                if (strcmp(extList[i], "GL_OES_depth24") == 0)
+                    m_maxDepthBits = 24;
+                if (strcmp(extList[i], "GL_OES_depth32") == 0)
+                    m_maxDepthBits = 32;
             }
 
             // DDS texture compression support
             if ((strcmp(extList[i], "GL_EXT_texture_compression_s3tc") == 0) ||
                 (strcmp(extList[i], "GL_WEBGL_compressed_texture_s3tc") == 0) ||
-                (strcmp(extList[i], "GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0))
+                (strcmp(extList[i],
+                        "GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0))
                 m_featureFlags[EXT_COMP_DXT] = true;
 
             // ETC1 texture compression support
-            if ((strcmp(extList[i], "GL_OES_compressed_ETC1_RGB8_texture") == 0) ||
+            if ((strcmp(extList[i], "GL_OES_compressed_ETC1_RGB8_texture") ==
+                 0) ||
                 (strcmp(extList[i], "GL_WEBGL_compressed_texture_etc1") == 0))
                 m_featureFlags[EXT_COMP_ETC1] = true;
 
             // ETC2/EAC texture compression support
-            if (strcmp(extList[i], "GL_ARB_ES3_compatibility") == 0) m_featureFlags[EXT_COMP_ETC2] = true;
+            if (strcmp(extList[i], "GL_ARB_ES3_compatibility") == 0)
+                m_featureFlags[EXT_COMP_ETC2] = true;
 
             // PVR texture compression support
-            if (strcmp(extList[i], "GL_IMG_texture_compression_pvrtc") == 0) m_featureFlags[EXT_COMP_PVRT] = true;
+            if (strcmp(extList[i], "GL_IMG_texture_compression_pvrtc") == 0)
+                m_featureFlags[EXT_COMP_PVRT] = true;
 
             // ASTC texture compression support
-            if (strcmp(extList[i], "GL_KHR_texture_compression_astc_hdr") == 0) m_featureFlags[EXT_COMP_ASTC] = true;
+            if (strcmp(extList[i], "GL_KHR_texture_compression_astc_hdr") == 0)
+                m_featureFlags[EXT_COMP_ASTC] = true;
 
             // Anisotropic texture filter
-            if (strcmp(extList[i], (const char *) "GL_EXT_texture_filter_anisotropic") == 0) {
+            if (strcmp(extList[i],
+                       (const char *)"GL_EXT_texture_filter_anisotropic") ==
+                0) {
                 m_featureFlags[EXT_ANISOTROPIC_TEXTURE_FILTER] = true;
-                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropicLevel);
+                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT,
+                            &m_maxAnisotropicLevel);
             }
 
             // Clamp mirror wrap mode supported
-            if (strcmp(extList[i], (const char *) "GL_EXT_texture_mirror_clamp") == 0)
+            if (strcmp(extList[i],
+                       (const char *)"GL_EXT_texture_mirror_clamp") == 0)
                 m_featureFlags[EXT_TEX_MIRROR_CLAMP] = true;
 
             // TODO: Determine m_maxDepthBits for OpenGL
@@ -918,7 +1030,8 @@ namespace ngine::graphics::API {
 #if defined(EGL)
         // Close surface, context and Display
         if (m_display != EGL_NO_DISPLAY) {
-            eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE,
+                           EGL_NO_CONTEXT);
 
             if (m_surface != EGL_NO_SURFACE) {
                 eglDestroySurface(m_display, m_surface);
@@ -964,29 +1077,39 @@ namespace ngine::graphics::API {
         _getTextureFormats(format, &glInternalFormat, &glFormat, &glType);
 
         for (int i = 0; i < texture->getMipmapCount(); i++) {
-            unsigned int mipSize = _calculatePixelDataSize(mipWidth, mipHeight, format);
+            unsigned int mipSize =
+                _calculatePixelDataSize(mipWidth, mipHeight, format);
 
             if (glInternalFormat != -1) {
                 if (format < COMPRESSED_DXT1_RGB)
-                    glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType,
-                                 (unsigned char *) data + mipOffset);
+                    glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth,
+                                 mipHeight, 0, glFormat, glType,
+                                 (unsigned char *)data + mipOffset);
                 else
-                    glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize,
-                                           (unsigned char *) data + mipOffset);
+                    glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat,
+                                           mipWidth, mipHeight, 0, mipSize,
+                                           (unsigned char *)data + mipOffset);
 
 #if defined(API_OPENGL_ENABLED)
                 if (!m_GLES2 && !m_GLES3) {
                     if (format == UNCOMPRESSED_GRAYSCALE) {
                         GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
-                        glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                        glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA,
+                                         swizzleMask);
                     } else if (format == UNCOMPRESSED_GRAY_ALPHA) {
 #if defined(GLAD)
                         if (GLAD_GL_VERSION_3_0) {
-                            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_GREEN};
-                            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED,
+                                                   GL_GREEN};
+                            glTexParameteriv(GL_TEXTURE_2D,
+                                             GL_TEXTURE_SWIZZLE_RGBA,
+                                             swizzleMask);
                         } else if (GLAD_GL_VERSION_2_0) {
-                            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ALPHA};
-                            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+                            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED,
+                                                   GL_ALPHA};
+                            glTexParameteriv(GL_TEXTURE_2D,
+                                             GL_TEXTURE_SWIZZLE_RGBA,
+                                             swizzleMask);
                         }
 #endif
                     }
@@ -1012,7 +1135,8 @@ namespace ngine::graphics::API {
         }
     }
 
-    void PlatformGLAPI::setTextureFilterMode(Texture2D *texture, TextureFilterMode mode) {
+    void PlatformGLAPI::setTextureFilterMode(Texture2D *texture,
+                                             TextureFilterMode mode) {
         // Bind
         bindTexture(texture);
 
@@ -1021,69 +1145,93 @@ namespace ngine::graphics::API {
 
         // Set filter mode
         switch (mode) {
-            case TextureFilterMode::Point:
-                if (mipmapCount > 1) {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                } else {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                }
-                break;
-            case TextureFilterMode::Bilinear:
-                if (mipmapCount > 1) {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                } else {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                }
-                break;
-            case TextureFilterMode::Trilinear:
-                if (mipmapCount > 1) {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                } else {
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                }
-                break;
-            case TextureFilterMode::Anisotropic_4X:
-                if (4 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 4);
-                else
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
-                break;
-            case TextureFilterMode::Anisotropic_8X:
-                if (8 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
-                else
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
-                break;
-            case TextureFilterMode::Anisotropic_16X:
-                if (16 < m_maxAnisotropicLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
-                else
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropicLevel);
-                break;
+        case TextureFilterMode::Point:
+            if (mipmapCount > 1) {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_NEAREST_MIPMAP_NEAREST);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_NEAREST);
+            } else {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_NEAREST);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_NEAREST);
+            }
+            break;
+        case TextureFilterMode::Bilinear:
+            if (mipmapCount > 1) {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_LINEAR_MIPMAP_NEAREST);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_NEAREST);
+            } else {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_LINEAR);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_LINEAR);
+            }
+            break;
+        case TextureFilterMode::Trilinear:
+            if (mipmapCount > 1) {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_LINEAR_MIPMAP_NEAREST);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_LINEAR);
+            } else {
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_LINEAR);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_LINEAR);
+            }
+            break;
+        case TextureFilterMode::Anisotropic_4X:
+            if (4 < m_maxAnisotropicLevel)
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                4);
+            else
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                m_maxAnisotropicLevel);
+            break;
+        case TextureFilterMode::Anisotropic_8X:
+            if (8 < m_maxAnisotropicLevel)
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                8);
+            else
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                m_maxAnisotropicLevel);
+            break;
+        case TextureFilterMode::Anisotropic_16X:
+            if (16 < m_maxAnisotropicLevel)
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                16);
+            else
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                                m_maxAnisotropicLevel);
+            break;
         }
     }
 
-    void PlatformGLAPI::setTextureWrapMode(Texture2D *texture, TextureWrapMode mode) {
+    void PlatformGLAPI::setTextureWrapMode(Texture2D *texture,
+                                           TextureWrapMode mode) {
         // Bind
         bindTexture(texture);
 
         // Set wrap mode
         switch (mode) {
-            case TextureWrapMode::Repeat:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-                break;
-            case TextureWrapMode::Clamp:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                break;
-            case TextureWrapMode::MirrorRepeat:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-                break;
+        case TextureWrapMode::Repeat:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            break;
+        case TextureWrapMode::Clamp:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            break;
+        case TextureWrapMode::MirrorRepeat:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                            GL_MIRRORED_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+                            GL_MIRRORED_REPEAT);
+            break;
         }
     }
 
@@ -1091,7 +1239,8 @@ namespace ngine::graphics::API {
         return texture->ID > 0;
     }
 
-    bool PlatformGLAPI::compareTextures(const Texture2D *a, const Texture2D *b) {
+    bool PlatformGLAPI::compareTextures(const Texture2D *a,
+                                        const Texture2D *b) {
         return a->ID == b->ID;
     }
 
@@ -1103,7 +1252,8 @@ namespace ngine::graphics::API {
         // Depth buffer
         glGenRenderbuffers(1, &renderTarget->ID[1]);
         glBindRenderbuffer(GL_RENDERBUFFER, renderTarget->ID[1]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, renderTarget->Width, renderTarget->Height);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16,
+                              renderTarget->Width, renderTarget->Height);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
         // Create FBO
@@ -1113,8 +1263,11 @@ namespace ngine::graphics::API {
         glBindFramebuffer(GL_FRAMEBUFFER, renderTarget->ID[0]);
 
         // Set depth and color attachment
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderTarget->ID[1]);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTarget->getTexture()->ID, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, renderTarget->ID[1]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, renderTarget->getTexture()->ID,
+                               0);
 
         // Check framebuffer status
         auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -1135,7 +1288,9 @@ namespace ngine::graphics::API {
             return false;
         }
 
-        Console::notice("PlatformGLAPI", "Successfully created framebuffer with ID %i", renderTarget->ID[0]);
+        Console::notice("PlatformGLAPI",
+                        "Successfully created framebuffer with ID %i",
+                        renderTarget->ID[0]);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         return true;
@@ -1157,7 +1312,9 @@ namespace ngine::graphics::API {
 
     void PlatformGLAPI::bindRenderTarget(RenderTarget *renderTarget) {
         if (renderTarget != m_currentRenderTarget) {
-            glBindFramebuffer(GL_FRAMEBUFFER, renderTarget != nullptr ? renderTarget->ID[0] : 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, renderTarget != nullptr
+                                                  ? renderTarget->ID[0]
+                                                  : 0);
             m_currentRenderTarget = renderTarget;
         }
     }
@@ -1166,7 +1323,8 @@ namespace ngine::graphics::API {
         return renderTarget->ID[0] > 0;
     }
 
-    bool PlatformGLAPI::compareRenderTargets(const RenderTarget *a, const RenderTarget *b) {
+    bool PlatformGLAPI::compareRenderTargets(const RenderTarget *a,
+                                             const RenderTarget *b) {
         return a->ID[0] == b->ID[0] && a->ID[1] == b->ID[1];
     }
 
@@ -1174,19 +1332,19 @@ namespace ngine::graphics::API {
         // Get shader type
         GLenum type;
         switch (shader->Type) {
-            case ShaderType::Vertex:
-                type = GL_VERTEX_SHADER;
-                break;
-            case ShaderType::Fragment:
-                type = GL_FRAGMENT_SHADER;
-                break;
+        case ShaderType::Vertex:
+            type = GL_VERTEX_SHADER;
+            break;
+        case ShaderType::Fragment:
+            type = GL_FRAGMENT_SHADER;
+            break;
         }
 
         // Create shader object
         shader->ID = glCreateShader(type);
 
         // Set source
-        const char *src = (const char *) sourceData;
+        const char *src = (const char *)sourceData;
         glShaderSource(shader->ID, 1, &src, nullptr);
 
         // Compile
@@ -1221,8 +1379,10 @@ namespace ngine::graphics::API {
         glAttachShader(program->ID, program->VertexShader->ID);
         glAttachShader(program->ID, program->FragmentShader->ID);
 
-        // TODO: Develop a better system for this. (One that is universal across shader languages)
-        //  Maybe do this as part of VertexLayout, whenever a shader or a vertex layout is bound, link these attrib locations up?
+        // TODO: Develop a better system for this. (One that is universal across
+        // shader languages)
+        //  Maybe do this as part of VertexLayout, whenever a shader or a vertex
+        //  layout is bound, link these attrib locations up?
         // Bind attrib locations
         glBindAttribLocation(program->ID, 0, "NG_VertexPos");
         glBindAttribLocation(program->ID, 1, "NG_VertexColor");
@@ -1257,12 +1417,14 @@ namespace ngine::graphics::API {
 
         // Apply each uniform
         for (const auto &uniform : state->AttachedProgram->getUniforms()) {
-            _setUniform(state->AttachedProgram, uniform.Name, uniform, state->getUniform(uniform.Name));
+            _setUniform(state->AttachedProgram, uniform.Name, uniform,
+                        state->getUniform(uniform.Name));
         }
     }
 
     bool PlatformGLAPI::isShaderProgramValid(const ShaderProgram *program) {
-        return program->ID > 0 && isShaderValid(program->VertexShader) && isShaderValid(program->FragmentShader);
+        return program->ID > 0 && isShaderValid(program->VertexShader) &&
+               isShaderValid(program->FragmentShader);
     }
 
     void PlatformGLAPI::bindBuffer(Buffer *buffer) {
@@ -1272,12 +1434,12 @@ namespace ngine::graphics::API {
 
         // Bind buffer
         switch (buffer->Type) {
-            case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
-                break;
-            case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->ID);
-                break;
+        case BufferType::Vertex:
+            glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
+            break;
+        case BufferType::Index:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->ID);
+            break;
         }
     }
 
@@ -1288,12 +1450,12 @@ namespace ngine::graphics::API {
 
         // Bind buffer
         switch (buffer->Type) {
-            case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                break;
-            case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-                break;
+        case BufferType::Vertex:
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            break;
+        case BufferType::Index:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            break;
         }
     }
 
@@ -1315,30 +1477,31 @@ namespace ngine::graphics::API {
         buffer->ID = 0;
     }
 
-    void PlatformGLAPI::writeBuffer(Buffer *buffer, void *data, int count, int size, bool update) {
+    void PlatformGLAPI::writeBuffer(Buffer *buffer, void *data, int count,
+                                    int size, bool update) {
         // Bind
         bindBuffer(buffer);
 
         // Get type
         GLenum bufType = 0;
         switch (buffer->Type) {
-            case BufferType::Vertex:
-                bufType = GL_ARRAY_BUFFER;
-                break;
-            case BufferType::Index:
-                bufType = GL_ELEMENT_ARRAY_BUFFER;
-                break;
+        case BufferType::Vertex:
+            bufType = GL_ARRAY_BUFFER;
+            break;
+        case BufferType::Index:
+            bufType = GL_ELEMENT_ARRAY_BUFFER;
+            break;
         }
 
         // Get usage
         GLenum bufUsage = 0;
         switch (buffer->Usage) {
-            case BufferUsage::Static:
-                bufUsage = GL_STATIC_DRAW;
-                break;
-            case BufferUsage::Dynamic:
-                bufUsage = GL_DYNAMIC_DRAW;
-                break;
+        case BufferUsage::Static:
+            bufUsage = GL_STATIC_DRAW;
+            break;
+        case BufferUsage::Dynamic:
+            bufUsage = GL_DYNAMIC_DRAW;
+            break;
         }
 
         // Write
@@ -1397,14 +1560,15 @@ namespace ngine::graphics::API {
         for (const auto &elm : elements) {
             GLenum type;
             switch (elm.Type) {
-                case VertexLayout::VertexElementType::Float:
-                    type = GL_FLOAT;
-                    break;
+            case VertexLayout::VertexElementType::Float:
+                type = GL_FLOAT;
+                break;
             }
 
             glEnableVertexAttribArray(elm.ElementIndex);
-            glVertexAttribPointer(elm.ElementIndex, elm.Count, type, elm.Normalized ? GL_TRUE : GL_FALSE, elm.Stride,
-                                  (GLvoid *) elm.Offset);
+            glVertexAttribPointer(elm.ElementIndex, elm.Count, type,
+                                  elm.Normalized ? GL_TRUE : GL_FALSE,
+                                  elm.Stride, (GLvoid *)elm.Offset);
         }
 
         // Unbind VAO then buffers (if present)
@@ -1429,22 +1593,17 @@ namespace ngine::graphics::API {
     }
 
     void PlatformGLAPI::drawIndexed(int count, int start) {
-        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (GLvoid *) start);
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (GLvoid *)start);
     }
 
 #if defined(EGL)
-    // TODO: Add an abstraction kind of thing for Window so this kind of context management can be handled externally?
-    EGLContext PlatformGLAPI::GetEGLContext() {
-        return m_context;
-    }
+    // TODO: Add an abstraction kind of thing for Window so this kind of context
+    // management can be handled externally?
+    EGLContext PlatformGLAPI::GetEGLContext() { return m_context; }
 
-    EGLDisplay PlatformGLAPI::GetEGLDisplay() {
-        return m_display;
-    }
+    EGLDisplay PlatformGLAPI::GetEGLDisplay() { return m_display; }
 
-    EGLSurface PlatformGLAPI::GetEGLSurface() {
-        return m_surface;
-    }
+    EGLSurface PlatformGLAPI::GetEGLSurface() { return m_surface; }
 
     void PlatformGLAPI::QueryEGLSurfaceSize(int *width, int *height) {
         eglQuerySurface(m_display, m_surface, EGL_WIDTH, width);
@@ -1452,8 +1611,10 @@ namespace ngine::graphics::API {
     }
 
     void PlatformGLAPI::MakeEGLCurrent() {
-        if (eglMakeCurrent(m_display, m_surface, m_surface, m_context) == EGL_FALSE)
-            Console::fail("PlatformGLAPI", "Failed to make EGL context current.");
+        if (eglMakeCurrent(m_display, m_surface, m_surface, m_context) ==
+            EGL_FALSE)
+            Console::fail("PlatformGLAPI",
+                          "Failed to make EGL context current.");
     }
 
     void PlatformGLAPI::SwapEGLBuffers() {
@@ -1464,6 +1625,6 @@ namespace ngine::graphics::API {
         eglSwapInterval(m_display, interval);
     }
 #endif
-}
+} // namespace ngine::graphics::API
 
 #endif

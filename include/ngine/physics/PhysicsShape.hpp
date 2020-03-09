@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef PHYSICSSHAPE_HPP
 #define PHYSICSSHAPE_HPP
@@ -54,6 +54,7 @@ namespace ngine::physics {
      */
     class NEAPI PhysicsShape {
         friend class PhysicsBody;
+
     protected:
         /**
          * The Box2D shape.
@@ -76,18 +77,14 @@ namespace ngine::physics {
          * @param shape Box2D shape pointer.
          */
         PhysicsShape(const PhysicsContext *context, b2Shape *shape);
+
     public:
         virtual ~PhysicsShape();
 
         /**
          * Physics shape type.
          */
-        enum class Type {
-            Circle = 0,
-            Edge,
-            Polygon,
-            Chain
-        };
+        enum class Type { Circle = 0, Edge, Polygon, Chain };
 
         /**
          * Get the shape's type.
@@ -115,16 +112,20 @@ namespace ngine::physics {
          * @param context The context.
          * @param circle The circle reference.
          */
-        CirclePhysicsShape(const PhysicsContext *context, b2CircleShape *circle);
+        CirclePhysicsShape(const PhysicsContext *context,
+                           b2CircleShape *circle);
+
     public:
         /**
          * Create a circle shape.
          *
-         * @param context The context. Must be the same as the fixture you're attaching this to.
+         * @param context The context. Must be the same as the fixture you're
+         * attaching this to.
          * @param radius Circle radius.
          * @param position Offset from body center.
          */
-        CirclePhysicsShape(const PhysicsContext *context, float radius, const Vector2 &position = {0, 0});
+        CirclePhysicsShape(const PhysicsContext *context, float radius,
+                           const Vector2 &position = {0, 0});
 
         /**
          * Get the circle radius.
@@ -161,17 +162,21 @@ namespace ngine::physics {
     class NEAPI PolygonPhysicsShape : public PhysicsShape {
         friend class PhysicsFixture;
 
-        PolygonPhysicsShape(const PhysicsContext *context, b2PolygonShape *polygon);
+        PolygonPhysicsShape(const PhysicsContext *context,
+                            b2PolygonShape *polygon);
+
     public:
         /**
          * Create a polygon physics shape as a box.
          */
-        PolygonPhysicsShape(const PhysicsContext *context, float width, float height);
+        PolygonPhysicsShape(const PhysicsContext *context, float width,
+                            float height);
 
         /**
          * Create a polygon physics shape with vertices.
          */
-        PolygonPhysicsShape(const PhysicsContext *context, const std::vector<Vector2> &vertices);
+        PolygonPhysicsShape(const PhysicsContext *context,
+                            const std::vector<Vector2> &vertices);
 
         Vector2 getCentroid();
 
@@ -194,6 +199,6 @@ namespace ngine::physics {
          */
         void setAsBox(float width, float height);
     };
-}
+} // namespace ngine::physics
 
-#endif //PHYSICSSHAPE_HPP
+#endif // PHYSICSSHAPE_HPP

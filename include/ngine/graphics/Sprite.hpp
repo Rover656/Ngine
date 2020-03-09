@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef SPRITE_HPP
 #define SPRITE_HPP
@@ -29,7 +29,8 @@
 
 namespace ngine::graphics {
     /**
-     * A sprite is a wrapper which controls the behaviour of a texture or textures.
+     * A sprite is a wrapper which controls the behaviour of a texture or
+     * textures.
      */
     class NEAPI Sprite {
         /**
@@ -46,6 +47,7 @@ namespace ngine::graphics {
          * Whether or not this is a spritesheet.
          */
         bool m_spriteSheet = true;
+
     public:
         /**
          * The current animation frame.
@@ -63,7 +65,9 @@ namespace ngine::graphics {
         int FrameHeight = 0;
 
         /**
-         * The number of game frames before changing animation frame. E.g for 60fps game, setting this to 60 makes one animation frame happen each second.
+         * The number of game frames before changing animation frame. E.g for
+         * 60fps game, setting this to 60 makes one animation frame happen each
+         * second.
          */
         float FrameTime = 0;
 
@@ -100,8 +104,9 @@ namespace ngine::graphics {
          * @param imageSpeed The image speed.
          * @param startingFrame The frame to start with.
          */
-        Sprite(Texture2D *texture, int frameWidth, int frameHeight, int drawWidth, int drawHeight,
-               float imageSpeed = 30, int startingFrame = 0);
+        Sprite(Texture2D *texture, int frameWidth, int frameHeight,
+               int drawWidth, int drawHeight, float imageSpeed = 30,
+               int startingFrame = 0);
 
         /**
          * Create an animated sequence of textures.
@@ -110,7 +115,8 @@ namespace ngine::graphics {
          * @param imageSpeed The image speed.
          * @param startingFrame The image to start with.
          */
-        Sprite(const std::vector<Texture2D *> &textures, float imageSpeed = 30, int startingFrame = 0);
+        Sprite(const std::vector<Texture2D *> &textures, float imageSpeed = 30,
+               int startingFrame = 0);
 
         virtual ~Sprite() = default;
 
@@ -122,8 +128,8 @@ namespace ngine::graphics {
          * @param rotation Rotation of the sprite.
          * @param origin Origin of the sprite (in percentages (0 -> 1))
          */
-        void draw(graphics::Renderer *renderer, Vector2 position, float rotation = 0,
-                  Vector2 origin = {0.5f, 0.5f});
+        void draw(graphics::Renderer *renderer, Vector2 position,
+                  float rotation = 0, Vector2 origin = {0.5f, 0.5f});
 
         /**
          * Update the sprite timer.
@@ -184,6 +190,6 @@ namespace ngine::graphics {
 
         bool operator!=(const Sprite &b);
     };
-}
+} // namespace ngine::graphics
 
-#endif //SPRITE_HPP
+#endif // SPRITE_HPP

@@ -1,22 +1,22 @@
 /**********************************************************************************************
-*
-*   Ngine - A 2D game engine.
-*
-*   Copyright 2020 NerdThings (Reece Mackie)
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-**********************************************************************************************/
+ *
+ *   Ngine - A 2D game engine.
+ *
+ *   Copyright 2020 NerdThings (Reece Mackie)
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ **********************************************************************************************/
 
 #ifndef GLRENDERER_HPP
 #define GLRENDERER_HPP
@@ -132,7 +132,9 @@ namespace ngine::graphics::API {
         /**
          * Get OpenGL texture formats for a specified pixel format.
          */
-        void _getTextureFormats(PixelFormat format, unsigned int *glInternalFormat, unsigned int *glFormat, unsigned int *glType);
+        void _getTextureFormats(PixelFormat format,
+                                unsigned int *glInternalFormat,
+                                unsigned int *glFormat, unsigned int *glType);
 
         /**
          * Calculate the size of the pixel data.
@@ -143,11 +145,13 @@ namespace ngine::graphics::API {
          * Set a uniform value inside of the current program.
          *
          * @param program The program we are writing to.
-         * @param name The current name (this is for traversing the OpenGL naming setup)
+         * @param name The current name (this is for traversing the OpenGL
+         * naming setup)
          * @param structure The current structure being processed.
          * @param data The data (at the current offset).
          */
-        void _setUniform(const ShaderProgram *program, std::string name, ShaderDataStructure structure, const void *data);
+        void _setUniform(const ShaderProgram *program, std::string name,
+                         ShaderDataStructure structure, const void *data);
 
         /**
          * Write a simple uniform (int, uint, float, matrix).
@@ -158,10 +162,14 @@ namespace ngine::graphics::API {
          * @param count The number of values.
          * @param data The data to write.
          */
-        void _writeSimpleUniform(const ShaderProgram *program, const char *name, ShaderDataType type, int count, const void* data);
+        void _writeSimpleUniform(const ShaderProgram *program, const char *name,
+                                 ShaderDataType type, int count,
+                                 const void *data);
+
     protected:
         void _useVertexLayout(VertexLayout *layout) override;
         void _stopVertexLayout(VertexLayout *layout) override;
+
     public:
         PlatformGLAPI(GraphicsDevice *graphicsDevice);
         ~PlatformGLAPI() override;
@@ -171,15 +179,18 @@ namespace ngine::graphics::API {
         void createTexture(Texture2D *texture, unsigned char *data) override;
         void deleteTexture(Texture2D *texture) override;
         void bindTexture(Texture2D *texture) override;
-        void setTextureFilterMode(Texture2D *texture, TextureFilterMode mode) override;
-        void setTextureWrapMode(Texture2D *texture, TextureWrapMode mode) override;
+        void setTextureFilterMode(Texture2D *texture,
+                                  TextureFilterMode mode) override;
+        void setTextureWrapMode(Texture2D *texture,
+                                TextureWrapMode mode) override;
         bool isTextureValid(const Texture2D *texture) override;
         bool compareTextures(const Texture2D *a, const Texture2D *b) override;
         bool createRenderTarget(RenderTarget *renderTarget) override;
         void deleteRenderTarget(RenderTarget *renderTarget) override;
         void bindRenderTarget(RenderTarget *renderTarget) override;
         bool isRenderTargetValid(const RenderTarget *renderTarget) override;
-        bool compareRenderTargets(const RenderTarget *a, const RenderTarget *b) override;
+        bool compareRenderTargets(const RenderTarget *a,
+                                  const RenderTarget *b) override;
         void createShader(Shader *shader, void *sourceData) override;
         void deleteShader(Shader *shader) override;
         bool isShaderValid(const Shader *shader) override;
@@ -192,7 +203,8 @@ namespace ngine::graphics::API {
         void unbindBuffer(Buffer *buffer) override;
         void createBuffer(Buffer *buffer) override;
         void deleteBuffer(Buffer *buffer) override;
-        void writeBuffer(Buffer *buffer, void *data, int count, int size, bool update) override;
+        void writeBuffer(Buffer *buffer, void *data, int count, int size,
+                         bool update) override;
         void createVertexLayout(VertexLayout *layout) override;
         void deleteVertexLayout(VertexLayout *layout) override;
         void configureVertexLayout(VertexLayout *layout) override;
@@ -210,8 +222,8 @@ namespace ngine::graphics::API {
         void SetEGLSwapInterval(int interval);
 #endif
     };
-}
+} // namespace ngine::graphics::API
 
 #endif
 
-#endif //GLRENDERER_HPP
+#endif // GLRENDERER_HPP
