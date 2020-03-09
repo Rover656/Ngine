@@ -5,6 +5,10 @@ cmake-build-*/
 # BuildUWP.bat
 build-UWP/
 
+# VS Code
+build/
+.vscode/
+
 # Created by https://www.gitignore.io/api/c,c++,cmake
 # Edit at https://www.gitignore.io/?templates=c,c++,cmake
 

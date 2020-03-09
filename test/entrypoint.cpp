@@ -260,12 +260,9 @@ NGINE_GAME_ENTRY {
     //windowConfig.NativeDebugConsole = true;
 
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
-//    windowConfig.TargetAPI = GraphicsAPI::OpenGL;
-//    windowConfig.TargetAPIMajorVersion = 4;
-//    windowConfig.TargetAPIMinorVersion = 6;
-    windowConfig.TargetAPI = GraphicsAPI::OpenGLES;
-    windowConfig.TargetAPIMajorVersion = 3;
-    windowConfig.TargetAPIMinorVersion = 1;
+    windowConfig.TargetAPI = GraphicsAPI::OpenGL;
+    windowConfig.TargetAPIMajorVersion = 4;
+    windowConfig.TargetAPIMinorVersion = 6;
 #endif
 
     // Create game

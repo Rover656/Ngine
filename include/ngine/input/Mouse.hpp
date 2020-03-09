@@ -261,7 +261,7 @@ namespace ngine::input {
             /**
              * The scroll value.
              */
-            int Value;
+            float Value;
 
             /**
              * Create a button pressed event.
