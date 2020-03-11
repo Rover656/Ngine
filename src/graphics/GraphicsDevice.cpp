@@ -54,7 +54,7 @@ namespace ngine::graphics {
                 minor = 0;
                 break;
             case GraphicsAPI::DirectX:
-                // TODO
+                // TODO: DirectX 11 support
                 break;
             }
         }

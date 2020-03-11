@@ -80,10 +80,10 @@ target_link_libraries(Ngine
 target_include_directories(Ngine
         PUBLIC
             "${Ngine_SOURCE_DIR}/include"
+            "${Ngine_SOURCE_DIR}/vendor/miniaudio"
         PRIVATE
             "${Ngine_SOURCE_DIR}/src"
-            "${Ngine_SOURCE_DIR}/vendor/stb"
-            "${Ngine_SOURCE_DIR}/vendor/miniaudio")
+            "${Ngine_SOURCE_DIR}/vendor/stb")
 
 # GLFW
 if (PLATFORM MATCHES "Desktop")

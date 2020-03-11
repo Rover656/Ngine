@@ -56,8 +56,6 @@ namespace ngine::input {
     void Keyboard::_GLFWKeyCallback(GLFWwindow *window, int key, int scancode,
                                     int action, int mods) {
         auto kbd = ((Window *)glfwGetWindowUserPointer(window))->getKeyboard();
-        // TODO: If we find its released again, should we keep it as pressed if
-        // it is already so we don't miss is?
         kbd->m_nextState.setKeyState((Key)key, action != GLFW_RELEASE);
 
         // Fire event

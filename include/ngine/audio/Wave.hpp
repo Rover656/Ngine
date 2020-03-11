@@ -31,9 +31,32 @@ namespace ngine::audio {
      * Wave sound data.
      */
     class NEAPI Wave : public IResource {
+        /**
+         * Load a FLAC audio file.
+         * 
+         * @param path File to load.
+         */
         void _loadFLAC(const filesystem::Path &path);
+
+        /**
+         * Load an MP3 audio file.
+         * 
+         * @param path File to load.
+         */
         void _loadMP3(const filesystem::Path &path);
+
+        /**
+         * Load a OGG audio file.
+         * 
+         * @param path File to load.
+         */
         void _loadOGG(const filesystem::Path &path);
+
+        /**
+         * Load a WAV audio file.
+         * 
+         * @param path File to load.
+         */
         void _loadWAV(const filesystem::Path &path);
 
     public:

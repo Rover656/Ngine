@@ -23,12 +23,12 @@
 
 #include "../Config.hpp"
 
-// TODO: Make miniaudio includes public?
-#include "../../../vendor/miniaudio/miniaudio.h"
 #include "../Events.hpp"
 #include "AudioBuffer.hpp"
 #include "Music.hpp"
 #include "Sound.hpp"
+
+#include <miniaudio.h>
 
 #define DEVICE_FORMAT ma_format_f32
 #define DEVICE_CHANNELS 2

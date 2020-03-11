@@ -23,7 +23,7 @@
 
 #include "../Config.hpp"
 
-#include "../../../vendor/miniaudio/miniaudio.h"
+#include <miniaudio.h>
 
 namespace ngine::audio {
     /**

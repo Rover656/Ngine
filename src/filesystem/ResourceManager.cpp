@@ -119,7 +119,7 @@ namespace ngine::filesystem {
 
         // Loop over all resource directories
         for (auto dir : Config.ResourceDirectories) {
-            // TODO: Will this need to be more robust for some platforms?
+            // Get the resource directory.
             auto contentDir = Directory(dir.first.getAbsolute());
 
             // Get all files

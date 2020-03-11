@@ -217,10 +217,8 @@ namespace ngine {
             KeyboardState m_nextState;
 
 #if defined(PLATFORM_DESKTOP)
-
             static void _GLFWKeyCallback(GLFWwindow *window, int key,
                                          int scancode, int action, int mods);
-
 #elif defined(PLATFORM_UWP)
             static Keyboard *m_UWPKeyboard;
             static Key _keyFromVirtualKey(int key);
