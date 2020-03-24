@@ -130,14 +130,21 @@ namespace ngine {
 
         // Setup mouse translation
         if (Config.MaintainResolution && m_renderTarget->isValid()) {
-            const auto mouse = m_gameWindow->getMouse();
-            mouse->setScale(iw / (w - offsetX * 2.0f),
-                            ih / (h - offsetY * 2.0f));
-            mouse->setOffset(-offsetX, -offsetY);
+            m_virtualMouseContext.XScale = iw / (w - offsetX * 2.0f);
+            m_virtualMouseContext.YScale = ih / (h - offsetY * 2.0f);
+            m_virtualMouseContext.XOffset = offsetX;
+            m_virtualMouseContext.YOffset = offsetY;
         }
 
         // Only render if visible
         if (m_gameWindow->isVisible()) {
+            // Mouse
+            const auto mouse = m_gameWindow->getMouse();
+
+            if (Config.MaintainResolution && m_renderTarget->isValid()) {
+                mouse->_setContext(&m_virtualMouseContext);
+            }
+
             // If using, start render target
             if (Config.MaintainResolution && m_renderTarget->isValid()) {
                 // Clear the main framebuffer (for black bars)
@@ -176,6 +183,10 @@ namespace ngine {
 
             // Swap buffers
             m_gameWindow->swapBuffers();
+
+            if (Config.MaintainResolution && m_renderTarget->isValid()) {
+//                mouse->_setContext(nullptr);
+            }
         }
 
         // FPS limiter
@@ -242,18 +253,10 @@ namespace ngine {
 
             // Setup mouse translation
             if (Config.MaintainResolution && m_renderTarget->isValid()) {
-                // Get fields required for ofsetting.
-                const auto w = (float)m_gameWindow->getWidth();
-                const auto h = (float)m_gameWindow->getHeight();
-                const auto iw = (float)Config.TargetWidth;
-                const auto ih = (float)Config.TargetHeight;
-                const auto scale = std::min(w / iw, h / ih);
-                const auto offsetX = (w - iw * scale) * 0.5f;
-                const auto offsetY = (h - ih * scale) * 0.5f;
-
-                mouse->setScale(iw / (w - offsetX * 2.0f),
-                                ih / (h - offsetY * 2.0f));
-                mouse->setOffset(-offsetX, -offsetY);
+                // Assume render thread kept the context up to date.
+                if (Config.MaintainResolution && m_renderTarget->isValid()) {
+                    mouse->_setContext(&m_virtualMouseContext);
+                }
             }
 
             // Check if we are behind by 15+ frames.
@@ -291,6 +294,10 @@ namespace ngine {
                 // If we need to quit, don't run any more frames
                 if (!m_running)
                     return;
+            }
+
+            if (Config.MaintainResolution && m_renderTarget->isValid()) {
+//                mouse->_setContext(nullptr);
             }
 
             // If we need to quit, don't render
@@ -372,13 +379,10 @@ namespace ngine {
         return {(float)Config.TargetWidth, (float)Config.TargetHeight};
     }
 
-    Rectangle Game::getGameViewport() {
-        if (Config.MaintainResolution) {
-            return {0, 0, (float)Config.TargetWidth,
-                    (float)Config.TargetHeight};
-        } else
-            return {0, 0, (float)m_gameWindow->getWidth(),
-                    (float)m_gameWindow->getHeight()};
+    const graphics::Viewport *Game::getViewport() {
+        if (Config.MaintainResolution)
+            return &m_virtualViewport;
+        else return m_gameWindow->getWindowViewport();
     }
 
     int Game::getTargetFPS() const { return Config.UpdatesPerSecond; }

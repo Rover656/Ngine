@@ -433,7 +433,7 @@ namespace ngine::input {
     Keyboard::Keyboard(Window *window) : m_window(window) {
 #if defined(PLATFORM_DESKTOP)
         // Register events
-        glfwSetKeyCallback(m_window->m_GLFWWindow, Keyboard::_GLFWKeyCallback);
+        glfwSetKeyCallback((GLFWwindow *) m_window->m_windowPtr, Keyboard::_GLFWKeyCallback);
 #elif defined(PLATFORM_UWP)
         // Throw error.
         if (m_UWPKeyboard != nullptr)

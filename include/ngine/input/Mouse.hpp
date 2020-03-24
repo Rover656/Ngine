@@ -31,332 +31,342 @@ struct GLFWwindow;
 #include "../Math.hpp"
 #include "../Window.hpp"
 
-namespace ngine::input {
-    /**
-     * Mouse button
-     */
-    enum class MouseButton : int { Left = 0, Right = 1, Middle = 2 };
-
-    /**
-     * Mouse state info.
-     */
-    struct MouseState {
+namespace ngine {
+    class Game;
+    namespace input {
         /**
-         * Buttons that are down.
+         * Mouse button
          */
-        bool ButtonsDown[3] = {false, false, false};
+        enum class MouseButton : int {
+            Left = 0, Right = 1, Middle = 2
+        };
 
         /**
-         * The change in mouse wheel X offset between frames.
+         * Mouse state info.
          */
-        int MouseWheelXDelta = 0;
+        struct MouseState {
+            /**
+             * Buttons that are down.
+             */
+            bool ButtonsDown[3] = {false, false, false};
+
+            /**
+             * The change in mouse wheel X offset between frames.
+             */
+            int MouseWheelXDelta = 0;
+
+            /**
+             * The change in mouse wheel Y offset between frames.
+             */
+            int MouseWheelYDelta = 0;
+
+            /**
+             * Whether or not this mouse state struct has been populated with info.
+             */
+            bool Populated = false;
+
+            /**
+             * Mouse cursor position.
+             */
+            Vector2 Position = {0, 0};
+        };
 
         /**
-         * The change in mouse wheel Y offset between frames.
+         * Mouse context.
+         * This deals with mouse position scaling and offsets.
+         * This is soley implemented for the case of virtual resolutions.
+         * @todo Take virtual resolution functionality into its own manager class.
          */
-        int MouseWheelYDelta = 0;
+        struct MouseContext {
+            float XScale = 1;
+            float YScale = 1;
+            float XOffset = 0;
+            float YOffset = 0;
+        };
 
         /**
-         * Whether or not this mouse state struct has been populated with info.
+         * Mouse input provider.
          */
-        bool Populated = false;
+        class NEAPI Mouse {
+            // Window needs our constructor
+            friend class ngine::Window;
 
-        /**
-         * Mouse cursor position.
-         */
-        Vector2 Position = {0, 0};
-    };
+            friend class ngine::Game;
 
-    /**
-     * Mouse input provider.
-     */
-    class NEAPI Mouse {
-        // Window needs our constructor
-        friend class ngine::Window;
+            /**
+             * The window we are attached to.
+             */
+            Window *m_attachedWindow;
 
-        /**
-         * The window we are attached to.
-         */
-        Window *m_attachedWindow;
+            /**
+             * The last frame mouse position
+             */
+            MouseState m_previousMouseState;
 
-        /**
-         * The last frame mouse position
-         */
-        MouseState m_previousMouseState;
+            /**
+             * The current mouse state
+             */
+            MouseState m_currentMouseState;
 
-        /**
-         * The current mouse state
-         */
-        MouseState m_currentMouseState;
+            /**
+             * The next mouse state that is being built while the frame is
+             * progressing.
+             */
+            MouseState m_nextMouseState;
 
-        /**
-         * The next mouse state that is being built while the frame is
-         * progressing.
-         */
-        MouseState m_nextMouseState;
+            /**
+             * The current mouse context.
+             */
+            MouseContext *m_currentContext = nullptr;
 
-        /**
-         * Mouse position offset.
-         */
-        Vector2 m_mouseOffset = {0, 0};
+            /**
+             * The default context.
+             */
+            MouseContext m_defaultContext;
 
-        /**
-         * Mouse position scale.
-         */
-        Vector2 m_mouseScale = {1, 1};
+            /**
+             * Get the mouse position direct from the device.
+             */
+            Vector2 _internalGetMousePosition();
 
-        /**
-         * Get the mouse position direct from the device.
-         */
-        Vector2 _internalGetMousePosition();
+            /**
+             * Set the active mouse context.
+             *
+             * @note This is temporary, will only be exposed to virtual resolution class eventually.
+             * @param ctx Context reference or null to disable.
+             */
+            void _setContext(MouseContext *ctx);
 
 #if defined(PLATFORM_DESKTOP)
 
-        static void _GLFWMouseButtonCallback(GLFWwindow *window, int button,
-                                             int action, int mods);
+            static void _GLFWMouseButtonCallback(GLFWwindow *window, int button,
+                                                 int action, int mods);
 
-        static void _GLFWScrollCallback(GLFWwindow *window, double x, double y);
+            static void _GLFWScrollCallback(GLFWwindow *window, double x, double y);
 
 #elif defined(PLATFORM_UWP)
-        static Mouse *m_UWPMouse;
-        static void
-            _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^ sender,
-                                    Windows::UI::Core::PointerEventArgs ^ args);
-        static void
-            _UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^ sender,
-                                   Windows::UI::Core::PointerEventArgs ^ args);
-        static void
-            _UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^ sender,
-                                  Windows::UI::Core::PointerEventArgs ^ args);
+            static Mouse *m_UWPMouse;
+            static void
+                _UWPPointerWheelChanged(Windows::UI::Core::CoreWindow ^ sender,
+                                        Windows::UI::Core::PointerEventArgs ^ args);
+            static void
+                _UWPPointerButtonEvent(Windows::UI::Core::CoreWindow ^ sender,
+                                       Windows::UI::Core::PointerEventArgs ^ args);
+            static void
+                _UWPPointerMovedEvent(Windows::UI::Core::CoreWindow ^ sender,
+                                      Windows::UI::Core::PointerEventArgs ^ args);
 #endif
 
-        /**
-         * Create a new mouse input handler.
-         */
-        Mouse(Window *window);
+            /**
+             * Create a new mouse input handler.
+             */
+            Mouse(Window *window);
 
-    public:
-        /**
-         * Mouse button pressed event.
-         */
-        class ButtonPressedEvent : public Event {
         public:
             /**
-             * The window this event was fired for.
+             * Mouse button pressed event.
              */
-            ngine::Window *Window;
+            class ButtonPressedEvent : public Event {
+            public:
+                /**
+                 * The window this event was fired for.
+                 */
+                ngine::Window *Window;
+
+                /**
+                 * The button pressed.
+                 */
+                MouseButton Button;
+
+                /**
+                 * Create a button pressed event.
+                 *
+                 * @param sender The sender.
+                 * @param window The window this was fired for.
+                 * @param button The button pressed.
+                 */
+                ButtonPressedEvent(Mouse *sender, ngine::Window *window,
+                                   MouseButton button)
+                        : Window(window), Button(button), Event(sender) {}
+            };
 
             /**
-             * The button pressed.
+             * Mouse button released event.
              */
-            MouseButton Button;
+            class ButtonReleasedEvent : public Event {
+            public:
+                /**
+                 * The window this event was fired for.
+                 */
+                ngine::Window *Window;
+
+                /**
+                 * The button released.
+                 */
+                MouseButton Button;
+
+                /**
+                 * Create a button pressed event.
+                 *
+                 * @param sender The sender.
+                 * @param window The window this was fired for.
+                 * @param button The button released.
+                 */
+                ButtonReleasedEvent(Mouse *sender, ngine::Window *window,
+                                    MouseButton button)
+                        : Window(window), Button(button), Event(sender) {}
+            };
 
             /**
-             * Create a button pressed event.
+             * Mouse moved event.
+             */
+            class MovedEvent : public Event {
+            public:
+                /**
+                 * The window this event was fired for.
+                 */
+                ngine::Window *Window;
+
+                /**
+                 * The mouse position.
+                 */
+                Vector2 CurrentPosition;
+
+                /**
+                 * The mouse delta position.
+                 */
+                Vector2 DeltaPosition;
+
+                /**
+                 * Create a button pressed event.
+                 *
+                 * @param sender The sender.
+                 * @param window The window this was fired for.
+                 * @param pos The current mouse position.
+                 * @param delta The delta mouse position.
+                 */
+                MovedEvent(Mouse *sender, ngine::Window *window, Vector2 pos,
+                           Vector2 delta)
+                        : Window(window), CurrentPosition(pos), DeltaPosition(delta),
+                          Event(sender) {}
+            };
+
+            /**
+             * Mouse wheel Y changed event.
+             */
+            class WheelYChangedEvent : public Event {
+            public:
+                /**
+                 * The window this event was fired for.
+                 */
+                ngine::Window *Window;
+
+                /**
+                 * The scroll value.
+                 */
+                float Value;
+
+                /**
+                 * Create a button pressed event.
+                 *
+                 * @param sender The sender.
+                 * @param window The window this was fired for.
+                 * @param pos The current mouse position.
+                 * @param delta The delta mouse position.
+                 */
+                WheelYChangedEvent(Mouse *sender, ngine::Window *window,
+                                   float value)
+                        : Window(window), Value(value), Event(sender) {}
+            };
+
+            /**
+             * Mouse wheel X changed event.
+             */
+            class WheelXChangedEvent : public Event {
+            public:
+                /**
+                 * The window this event was fired for.
+                 */
+                ngine::Window *Window;
+
+                /**
+                 * The scroll value.
+                 */
+                float Value;
+
+                /**
+                 * Create a button pressed event.
+                 *
+                 * @param sender The sender.
+                 * @param window The window this was fired for.
+                 * @param pos The current mouse position.
+                 * @param delta The delta mouse position.
+                 */
+                WheelXChangedEvent(Mouse *sender, ngine::Window *window,
+                                   float value)
+                        : Window(window), Value(value), Event(sender) {}
+            };
+
+            // TODO: CLEAN ORDER
+
+            /**
+             * Cancel button press (Prevents double event checks).
              *
-             * @param sender The sender.
-             * @param window The window this was fired for.
-             * @param button The button pressed.
+             * @param button The button to cancel.
              */
-            ButtonPressedEvent(Mouse *sender, ngine::Window *window,
-                               MouseButton button)
-                : Window(window), Button(button), Event(sender) {}
-        };
-
-        /**
-         * Mouse button released event.
-         */
-        class ButtonReleasedEvent : public Event {
-        public:
-            /**
-             * The window this event was fired for.
-             */
-            ngine::Window *Window;
+            void cancelButton(MouseButton button);
 
             /**
-             * The button released.
-             */
-            MouseButton Button;
-
-            /**
-             * Create a button pressed event.
+             * Get mouse position.
              *
-             * @param sender The sender.
-             * @param window The window this was fired for.
-             * @param button The button released.
+             * @return The mouse position in screen coordinates.
              */
-            ButtonReleasedEvent(Mouse *sender, ngine::Window *window,
-                                MouseButton button)
-                : Window(window), Button(button), Event(sender) {}
-        };
-
-        /**
-         * Mouse moved event.
-         */
-        class MovedEvent : public Event {
-        public:
-            /**
-             * The window this event was fired for.
-             */
-            ngine::Window *Window;
+            Vector2 getMousePosition();
 
             /**
-             * The mouse position.
-             */
-            Vector2 CurrentPosition;
-
-            /**
-             * The mouse delta position.
-             */
-            Vector2 DeltaPosition;
-
-            /**
-             * Create a button pressed event.
+             * Get mouse wheel X movement.
              *
-             * @param sender The sender.
-             * @param window The window this was fired for.
-             * @param pos The current mouse position.
-             * @param delta The delta mouse position.
+             * @return Mouse wheel X movement.
              */
-            MovedEvent(Mouse *sender, ngine::Window *window, Vector2 pos,
-                       Vector2 delta)
-                : Window(window), CurrentPosition(pos), DeltaPosition(delta),
-                  Event(sender) {}
-        };
-
-        /**
-         * Mouse wheel Y changed event.
-         */
-        class WheelYChangedEvent : public Event {
-        public:
-            /**
-             * The window this event was fired for.
-             */
-            ngine::Window *Window;
+            int getMouseWheelXDelta();
 
             /**
-             * The scroll value.
-             */
-            float Value;
-
-            /**
-             * Create a button pressed event.
+             * Get mouse wheel Y movement.
              *
-             * @param sender The sender.
-             * @param window The window this was fired for.
-             * @param pos The current mouse position.
-             * @param delta The delta mouse position.
+             * @return Mouse wheel Y movement.
              */
-            WheelYChangedEvent(Mouse *sender, ngine::Window *window,
-                               float value)
-                : Window(window), Value(value), Event(sender) {}
-        };
-
-        /**
-         * Mouse wheel X changed event.
-         */
-        class WheelXChangedEvent : public Event {
-        public:
-            /**
-             * The window this event was fired for.
-             */
-            ngine::Window *Window;
+            int getMouseWheelYDelta();
 
             /**
-             * The scroll value.
-             */
-            float Value;
-
-            /**
-             * Create a button pressed event.
+             * Is button down.
              *
-             * @param sender The sender.
-             * @param window The window this was fired for.
-             * @param pos The current mouse position.
-             * @param delta The delta mouse position.
+             * @param button Button to check.
+             * @return Whether or not the button is down.
              */
-            WheelXChangedEvent(Mouse *sender, ngine::Window *window,
-                               float value)
-                : Window(window), Value(value), Event(sender) {}
+            bool isButtonDown(MouseButton button);
+
+            /**
+             * Was button pushed this frame.
+             *
+             * @param button_Button to check.
+             * @return Whether or not the button was pushed this frame.
+             */
+            bool isButtonPressed(MouseButton button);
+
+            /**
+             * Was button released this frame.
+             *
+             * @param button_Button to check.
+             * @return Whether or not the button was released this frame.
+             */
+            bool isButtonReleased(MouseButton button);
+
+            /**
+             * Poll Mouse Inputs.
+             */
+            void pollInputs();
         };
-
-        // TODO: CLEAN ORDER
-
-        /**
-         * Cancel button press (Prevents double event checks).
-         *
-         * @param button The button to cancel.
-         */
-        void cancelButton(MouseButton button);
-
-        /**
-         * Get mouse position.
-         *
-         * @return The mouse position in screen coordinates.
-         */
-        Vector2 getMousePosition();
-
-        /**
-         * Get mouse wheel X movement.
-         *
-         * @return Mouse wheel X movement.
-         */
-        int getMouseWheelXDelta();
-
-        /**
-         * Get mouse wheel Y movement.
-         *
-         * @return Mouse wheel Y movement.
-         */
-        int getMouseWheelYDelta();
-
-        /**
-         * Is button down.
-         *
-         * @param button Button to check.
-         * @return Whether or not the button is down.
-         */
-        bool isButtonDown(MouseButton button);
-
-        /**
-         * Was button pushed this frame.
-         *
-         * @param button_Button to check.
-         * @return Whether or not the button was pushed this frame.
-         */
-        bool isButtonPressed(MouseButton button);
-
-        /**
-         * Was button released this frame.
-         *
-         * @param button_Button to check.
-         * @return Whether or not the button was released this frame.
-         */
-        bool isButtonReleased(MouseButton button);
-
-        /**
-         * Poll Mouse Inputs.
-         */
-        void pollInputs();
-
-        /**
-         * Set mouse offset.
-         * This is used internally for fixing mouse input.
-         *
-         * @param xOffset X offset.
-         * @param yOffset Y offset.
-         */
-        void setOffset(float xOffset, float yOffset);
-
-        /**
-         * Set mouse scale.
-         * This is used internally for fixing mouse input.
-         *
-         * @param xScale X scale.
-         * @param yScale Y scale.
-         */
-        void setScale(float xScale, float yScale);
-    };
-} // namespace ngine::input
+    } // namespace input
+} // namespace input
 
 #endif // MOUSE_H

@@ -182,14 +182,17 @@ public:
         // Render debug stuffs
         // ShapeRenderer::DrawTriangle(renderer_, {40, 40}, {90, 90}, {40, 90},
         // Color::Orange, 0, {});
-        auto viewport = getGame()->getGameViewport();
+        auto viewport = getGame()->getViewport();
         ShapeRenderer::drawRectangle(renderer,
-                                     {viewport.Width / 2.0f,
-                                      viewport.Height / 2.0f, viewport.Width,
-                                      viewport.Height},
+                                     {viewport->getWidth() / 2.0f,
+                                      viewport->getHeight() / 2.0f, viewport->getWidth(),
+                                      viewport->getHeight()},
                                      Color::Blue, 0, {0.5f, 0.5f}, true, 5);
 
         ShapeRenderer::drawCircle(renderer, {150, 150}, 2, Color::Red);
+
+        auto mPos = viewport->screenToGUI(getMouse()->getMousePosition());
+        ShapeRenderer::drawCircle(renderer, mPos, 4, Color::Green);
 
         getResourceManager()
             ->getFont("Upheaval")

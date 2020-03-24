@@ -148,6 +148,11 @@ namespace ngine {
         graphics::Viewport m_virtualViewport;
 
         /**
+         * Mouse virtual context.
+         */
+        input::MouseContext m_virtualMouseContext;
+
+        /**
          * Initialize the game ready to process frames.
          */
         void _init();
@@ -227,8 +232,7 @@ namespace ngine {
         /**
          * Filter mode for scaling render target
          */
-        graphics::TextureFilterMode RenderTargetFilterMode =
-            graphics::TextureFilterMode::Trilinear;
+        graphics::TextureFilterMode RenderTargetFilterMode = graphics::TextureFilterMode::Trilinear;
 
         /**
          * Create a new Game
@@ -288,11 +292,11 @@ namespace ngine {
         Vector2 getDimensions() const;
 
         /**
-         * Get the size of the root viewport.
+         * Get the viewport.
          *
          * This will either be the virtual viewport or the window viewport.
          */
-        Rectangle getGameViewport();
+        const graphics::Viewport *getViewport();
 
         /**
          * Get the target FPS.

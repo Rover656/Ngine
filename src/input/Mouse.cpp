@@ -33,7 +33,7 @@ namespace ngine::input {
         auto pos = Vector2::Zero;
 #if defined(PLATFORM_DESKTOP)
         double x = 0, y = 0;
-        glfwGetCursorPos(m_attachedWindow->m_GLFWWindow, &x, &y);
+        glfwGetCursorPos((GLFWwindow *) m_attachedWindow->m_windowPtr, &x, &y);
         pos.X = static_cast<float>(x);
         pos.Y = static_cast<float>(y);
 #elif defined(PLATFORM_UWP)
@@ -61,12 +61,16 @@ namespace ngine::input {
         return pos;
     }
 
+    void Mouse::_setContext(MouseContext *ctx) {
+        m_currentContext = ctx;
+    }
+
     Mouse::Mouse(Window *window) : m_attachedWindow(window) {
 #if defined(PLATFORM_DESKTOP)
         // Register glfw callbacks
-        glfwSetMouseButtonCallback(m_attachedWindow->m_GLFWWindow,
+        glfwSetMouseButtonCallback((GLFWwindow *) m_attachedWindow->m_windowPtr,
                                    Mouse::_GLFWMouseButtonCallback);
-        glfwSetScrollCallback(m_attachedWindow->m_GLFWWindow,
+        glfwSetScrollCallback((GLFWwindow *) m_attachedWindow->m_windowPtr,
                               Mouse::_GLFWScrollCallback);
 #elif defined(PLATFORM_UWP)
         if (m_UWPMouse != nullptr)
@@ -171,9 +175,11 @@ namespace ngine::input {
     Vector2 Mouse::getMousePosition() {
         auto pos = m_currentMouseState.Position;
 
+        auto ctx = m_currentContext != nullptr ? *m_currentContext : m_defaultContext;
+
         // Apply translation
-        pos.X = (pos.X + m_mouseOffset.X) * m_mouseScale.X;
-        pos.Y = (pos.Y + m_mouseOffset.Y) * m_mouseScale.Y;
+        pos.X = (pos.X + ctx.XOffset) * ctx.XScale;
+        pos.Y = (pos.Y + ctx.YOffset) * ctx.YScale;
 
         return pos;
     }
@@ -193,15 +199,13 @@ namespace ngine::input {
     bool Mouse::isButtonPressed(MouseButton button) {
         return m_currentMouseState.ButtonsDown[static_cast<int>(button)] !=
                    m_previousMouseState.ButtonsDown[static_cast<int>(button)] &&
-               m_currentMouseState.ButtonsDown[static_cast<int>(button)] ==
-                   true;
+               m_currentMouseState.ButtonsDown[static_cast<int>(button)];
     }
 
     bool Mouse::isButtonReleased(MouseButton button) {
         return m_currentMouseState.ButtonsDown[static_cast<int>(button)] !=
                    m_previousMouseState.ButtonsDown[static_cast<int>(button)] &&
-               m_currentMouseState.ButtonsDown[static_cast<int>(button)] ==
-                   false;
+               !m_currentMouseState.ButtonsDown[static_cast<int>(button)];
     }
 
     void Mouse::pollInputs() {
@@ -249,13 +253,5 @@ namespace ngine::input {
         // Reset next state's scroll wheel
         m_nextMouseState.MouseWheelYDelta = 0;
         m_nextMouseState.MouseWheelXDelta = 0;
-    }
-
-    void Mouse::setOffset(float xOffset, float yOffset) {
-        m_mouseOffset = {xOffset, yOffset};
-    }
-
-    void Mouse::setScale(float xScale, float yScale) {
-        m_mouseScale = {xScale, yScale};
     }
 } // namespace ngine::input

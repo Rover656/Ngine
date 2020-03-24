@@ -67,18 +67,22 @@ namespace ngine::graphics {
         Matrix getProjection(CoordinateSystem system) const;
 
         float getX() const;
+
         float getY() const;
+
         float getWidth() const;
+
         float getHeight() const;
 
         bool operator==(const Viewport &b);
+
         bool operator!=(const Viewport &b);
 
         // Convenience methods
-        //        Vector2 screenToGUI(Vector2 screen);
+        Vector2 screenToGUI(Vector2 screen) const;
         //        Vector3 screenToWorld3D(Vector2 screen);
         //
-        //        Vector2 GUIToScreen(Vector2 GUI);
+        Vector2 GUIToScreen(Vector2 GUI) const;
         //        Vector3 GUIToWorld3D(Vector2 GUI);
         //
         //        Vector2 world3DToScreen(Vector3 world);

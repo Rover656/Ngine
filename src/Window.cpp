@@ -21,9 +21,8 @@
 #include "ngine/Window.hpp"
 
 // EGL stuff
-#if defined(PLATFORM_UWP) // TODO: Add other platforms which use EGL
+#if defined(PLATFORM_UWP)
 #include "graphics/API/PlatformGLAPI.hpp"
-
 #include "ngine/UWP/GameApp.hpp"
 #endif
 
@@ -128,12 +127,12 @@ namespace ngine {
             [](int, const char *msg) { Console::error("GLFW", "%s", msg); });
 
         // Create window
-        m_GLFWWindow =
+        m_windowPtr =
             glfwCreateWindow(config.InitialWidth, config.InitialHeight,
                              config.Title.c_str(), nullptr, nullptr);
 
         // If creation failed
-        if (!m_GLFWWindow) {
+        if (!m_windowPtr) {
             glfwTerminate();
             Console::fail("Window", "Failed to create window with GLFW.");
         }
@@ -144,10 +143,10 @@ namespace ngine {
         m_windowTitle = config.Title;
 
         // Save this as a user pointer
-        glfwSetWindowUserPointer(m_GLFWWindow, this);
+        glfwSetWindowUserPointer((GLFWwindow *) m_windowPtr, this);
 
         // Get initial size
-        glfwGetWindowSize((GLFWwindow *)m_GLFWWindow, &m_currentWidth,
+        glfwGetWindowSize((GLFWwindow *) m_windowPtr, &m_currentWidth,
                           &m_currentHeight);
 #endif
 
@@ -229,7 +228,7 @@ namespace ngine {
                 "This window is not ready to be made current!");
 #if defined(PLATFORM_DESKTOP)
         // Make this context current
-        glfwMakeContextCurrent((GLFWwindow *)m_GLFWWindow);
+        glfwMakeContextCurrent((GLFWwindow *) m_windowPtr);
 #elif defined(PLATFORM_UWP)
         // Make egl context current.
         if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
@@ -253,7 +252,7 @@ namespace ngine {
     void Window::setSize(int width, int height) {
 #if defined(PLATFORM_DESKTOP)
         // Set size
-        glfwSetWindowSize((GLFWwindow *)m_GLFWWindow, width, height);
+        glfwSetWindowSize((GLFWwindow *) m_windowPtr, width, height);
 #elif defined(PLATFORM_UWP)
         // Set size
         Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()
@@ -286,13 +285,13 @@ namespace ngine {
     void Window::setIcon(graphics::Image *icon) {
 #if defined(PLATFORM_DESKTOP)
         if (icon == nullptr) {
-            glfwSetWindowIcon(m_GLFWWindow, 0, nullptr);
+            glfwSetWindowIcon((GLFWwindow *) m_windowPtr, 0, nullptr);
         } else {
             GLFWimage glfwIcon;
             glfwIcon.width = icon->Width;
             glfwIcon.height = icon->Height;
             glfwIcon.pixels = icon->PixelData;
-            glfwSetWindowIcon(m_GLFWWindow, 1, &glfwIcon);
+            glfwSetWindowIcon((GLFWwindow *) m_windowPtr, 1, &glfwIcon);
         }
 #endif
     }
@@ -312,21 +311,21 @@ namespace ngine {
         // Toggle fullscreen
         if (fullscreen && !m_isFullscreen) {
             // Save info
-            glfwGetWindowSize((GLFWwindow *)m_GLFWWindow,
+            glfwGetWindowSize((GLFWwindow *) m_windowPtr,
                               &m_preFullscreenSizeWidth,
                               &m_preFullscreenSizeHeight);
-            glfwGetWindowPos((GLFWwindow *)m_GLFWWindow, &m_preFullscreenPosX,
+            glfwGetWindowPos((GLFWwindow *) m_windowPtr, &m_preFullscreenPosX,
                              &m_preFullscreenPosY);
 
             // Fullscreen
-            glfwSetWindowMonitor((GLFWwindow *)m_GLFWWindow, display, 0, 0,
+            glfwSetWindowMonitor((GLFWwindow *) m_windowPtr, display, 0, 0,
                                  vidmode->width, vidmode->height,
                                  GLFW_DONT_CARE);
             m_isFullscreen = true;
         } else {
             // No fullscreen
             if (m_isFullscreen) {
-                glfwSetWindowMonitor((GLFWwindow *)m_GLFWWindow, nullptr,
+                glfwSetWindowMonitor((GLFWwindow *) m_windowPtr, nullptr,
                                      m_preFullscreenPosX, m_preFullscreenPosY,
                                      m_preFullscreenSizeWidth,
                                      m_preFullscreenSizeHeight, GLFW_DONT_CARE);
@@ -341,7 +340,7 @@ namespace ngine {
 
     void Window::setResizable(bool resizable) {
 #if defined(PLATFORM_DESKTOP)
-        glfwSetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_RESIZABLE,
+        glfwSetWindowAttrib((GLFWwindow *) m_windowPtr, GLFW_RESIZABLE,
                             resizable ? 1 : 0);
 #endif
     }
@@ -350,7 +349,7 @@ namespace ngine {
 
     void Window::setTitle(const std::string &title) {
 #if defined(PLATFORM_DESKTOP)
-        glfwSetWindowTitle(m_GLFWWindow, title.c_str());
+        glfwSetWindowTitle((GLFWwindow *) m_windowPtr, title.c_str());
         m_windowTitle = title;
 #else
         Console::notice("Window", "Window title was not changed as title "
@@ -427,7 +426,7 @@ namespace ngine {
 
     bool Window::isVisible() {
 #if defined(PLATFORM_DESKTOP)
-        return glfwGetWindowAttrib((GLFWwindow *)m_GLFWWindow,
+        return glfwGetWindowAttrib((GLFWwindow *) m_windowPtr,
                                    GLFW_ICONIFIED) == 0;
 #elif defined(PLATFORM_UWP)
         return m_visible;
@@ -442,7 +441,7 @@ namespace ngine {
         glfwPollEvents();
 
         // Query dimensions
-        glfwGetWindowSize((GLFWwindow *)m_GLFWWindow, &m_currentWidth,
+        glfwGetWindowSize((GLFWwindow *) m_windowPtr, &m_currentWidth,
                           &m_currentHeight);
 #elif defined(PLATFORM_UWP)
         // Poll window events
@@ -484,7 +483,7 @@ namespace ngine {
         // Test focus
         bool focus = true;
 #if defined(PLATFORM_DESKTOP)
-        focus = glfwGetWindowAttrib((GLFWwindow *)m_GLFWWindow, GLFW_FOCUSED) ==
+        focus = glfwGetWindowAttrib((GLFWwindow *) m_windowPtr, GLFW_FOCUSED) ==
                 GLFW_TRUE;
 #elif defined(PLATFORM_UWP)
         focus = CoreWindow::GetForCurrentThread()->ActivationMode ==
@@ -512,7 +511,7 @@ namespace ngine {
 
 #if defined(PLATFORM_DESKTOP)
         // Destroy window
-        glfwDestroyWindow((GLFWwindow *)m_GLFWWindow);
+        glfwDestroyWindow((GLFWwindow *) m_windowPtr);
 
         // Disable GLFW TODO: Only disable if there are no window's active. This
         // will fix closing one window when multiple exist.
@@ -534,14 +533,14 @@ namespace ngine {
     bool Window::shouldClose() {
         auto windowWantsClose = false;
 #if defined(PLATFORM_DESKTOP)
-        windowWantsClose = glfwWindowShouldClose((GLFWwindow *)m_GLFWWindow);
+        windowWantsClose = glfwWindowShouldClose((GLFWwindow *) m_windowPtr);
 #endif
         return windowWantsClose || m_keyboardInput->isKeyDown(m_exitKey);
     }
 
     void Window::swapBuffers() {
 #if defined(PLATFORM_DESKTOP)
-        glfwSwapBuffers((GLFWwindow *)m_GLFWWindow);
+        glfwSwapBuffers((GLFWwindow *) m_windowPtr);
 #elif defined(PLATFORM_UWP)
         if (m_targetAPI == graphics::GraphicsAPI::OpenGLES)
             ((graphics::API::PlatformGLAPI *)m_graphicsDevice->getAPI())

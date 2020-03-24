@@ -61,11 +61,6 @@ namespace ngine {
         std::string m_currentCamera;
 
         /**
-         * The current viewport.
-         */
-        Rectangle m_currentViewport;
-
-        /**
          * The internal physics context.
          */
         physics::PhysicsContext *m_physicsContext = nullptr;
@@ -226,10 +221,9 @@ namespace ngine {
         /**
          * Get the current viewport.
          *
-         * This will return the camera viewport, virtual viewport or finally the
-         * window viewport.
+         * This will return the camera viewport, virtual viewport or finally the window viewport.
          */
-        Rectangle getCurrentViewport();
+        const graphics::Viewport *getViewport();
 
         /**
          * Pre-render event.

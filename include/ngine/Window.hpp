@@ -138,12 +138,28 @@ namespace ngine {
         friend class input::Mouse;
         friend class input::Keyboard;
 
-#if defined(PLATFORM_DESKTOP)
         /**
-         * GLFW Window.
+         * The window pointer.
+         * On desktop this points to a GLFWwindow.
          */
-        GLFWwindow *m_GLFWWindow;
-#elif defined(PLATFORM_UWP)
+        void *m_windowPtr = nullptr;
+
+        /**
+         * This windows context API type.
+         */
+        graphics::GraphicsAPI m_targetAPI = graphics::GraphicsAPI::Default;
+
+        /**
+         * This windows context API major version.
+         */
+        int m_targetMajor = -1;
+
+        /**
+         * This windows context API minor version.
+         */
+        int m_targetMinor = -1;
+
+#if defined(PLATFORM_UWP)
         /**
          * UWP Window count.
          */
@@ -184,21 +200,6 @@ namespace ngine {
         const WindowConfig m_creationConfig;
 
         /**
-         * This windows context API type.
-         */
-        graphics::GraphicsAPI m_targetAPI = graphics::GraphicsAPI::Default;
-
-        /**
-         * This windows context API major version.
-         */
-        int m_targetMajor = -1;
-
-        /**
-         * This windows context API minor version.
-         */
-        int m_targetMinor = -1;
-
-        /**
          * The mouse input manager for this window.
          */
         input::Mouse *m_mouseInput = nullptr;
@@ -217,6 +218,11 @@ namespace ngine {
          * Current window height.
          */
         int m_currentHeight = 0;
+
+        /**
+         * This window's viewport.
+         */
+        graphics::Viewport m_windowViewport;
 
         /**
          * Whether or not the window has been initialized.
@@ -257,11 +263,6 @@ namespace ngine {
          * The graphics device attached to the window context.
          */
         graphics::GraphicsDevice *m_graphicsDevice;
-
-        /**
-         * This window's viewport.
-         */
-        graphics::Viewport m_windowViewport;
 
         /**
          * Whether or not Vsync is currently enabled.

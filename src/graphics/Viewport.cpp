@@ -71,4 +71,12 @@ namespace ngine::graphics {
         return m_x != b.m_x || m_y != b.m_y || m_width != b.m_width ||
                m_height != b.m_height;
     }
+
+    Vector2 Viewport::screenToGUI(Vector2 screen) const {
+        return {screen.X, m_height - screen.Y};
+    }
+
+    Vector2 Viewport::GUIToScreen(Vector2 GUI) const {
+        return Vector2();
+    }
 } // namespace ngine::graphics

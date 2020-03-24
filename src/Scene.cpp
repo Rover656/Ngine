@@ -187,12 +187,11 @@ namespace ngine {
         return ents;
     }
 
-    Rectangle Scene::getCurrentViewport() { return m_currentViewport; }
-
-    void Scene::preRender(graphics::Renderer *renderer) {
-        // Get the viewport.
-        m_currentViewport = m_game->getGameViewport();
+    const graphics::Viewport *Scene::getViewport() {
+        return m_game->getViewport();
     }
+
+    void Scene::preRender(graphics::Renderer *renderer) {}
 
     void Scene::renderScene(graphics::Renderer *renderer) {
         // We must be active
