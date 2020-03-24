@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.12)
 
 # Setup project
 project(Ngine
-        VERSION 0.1.0
+        VERSION 1.0.0
         DESCRIPTION "A 2D Game Engine")
 
 # Add a version suffix
-set(PROJECT_VERSION_SUFFIX "dev")
+set(PROJECT_VERSION_SUFFIX "rewrite")
 if (NOT PROJECT_VERSION_SUFFIX STREQUAL "")
     set(PROJECT_VERSION ${PROJECT_VERSION}-${PROJECT_VERSION_SUFFIX})
     set(Ngine_VERSION ${PROJECT_VERSION})
@@ -22,9 +22,17 @@ option(BUILD_TEST "Build the test program." ON)
 option(BUILD_DOCS "Build documentation." ON)
 option(BUILD_EXAMPLES "Build examples." OFF)
 
-option(BUILD_NGINE_SHARED "Build Ngine as a shared library. Will build instead of shared." OFF)
+option(BUILD_NGINE_STATIC "Build Ngine as a static library." ON)
+option(BUILD_NGINE_SHARED "Build Ngine as a shared library." OFF)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
+
+# Set platform variables for config.hpp
+if (PLATFORM MATCHES "Desktop")
+    set(PLATFORM_DESKTOP ON)
+elseif(PLATFORM MATCHES "UWP")
+    set(PLATFORM_UWP ON)
+endif()
 
 # Setup project (if we are the main project)
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -37,8 +45,8 @@ message(STATUS "Building Ngine V${PROJECT_VERSION}")
 
 ### Feature Flags
 
-option(ENABLE_OPENGL "Enable the OpenGL Rendering API." ON)
-option(ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will add ANGLE as a dependency." ON)
+option(NGINE_ENABLE_OPENGL "Enable the OpenGL Rendering API." ON)
+option(NGINE_ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will add ANGLE as a dependency." ON)
 
 ### End Feature Flags
 
@@ -46,8 +54,8 @@ option(ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will
 if (PLATFORM MATCHES "Desktop")
     # TODO: Does GLES work on Mac/Linux. Do we need to block this?
 elseif (PLATFORM MATCHES "UWP")
-    set(ENABLE_OPENGL OFF)
-    set(ENABLE_OPENGLES ON) # Force until DX support arrives.
+    set(NGINE_ENABLE_OPENGL OFF)
+    set(NGINE_ENABLE_OPENGLES ON) # Force until DX support arrives.
 endif ()
 
 # Check options
@@ -66,8 +74,8 @@ endif ()
 
 # Broadcast renderer
 message(STATUS "Building Ngine for the \"${PLATFORM}\" platform.")
-message(STATUS "Ngine OpenGL support is ${ENABLE_OPENGL}")
-message(STATUS "Ngine OpenGLES support is ${ENABLE_OPENGLES}")
+message(STATUS "Ngine OpenGL support is ${NGINE_ENABLE_OPENGL}")
+message(STATUS "Ngine OpenGLES support is ${NGINE_ENABLE_OPENGLES}")
 
 # Add sub directories
 add_subdirectory(vendor)
@@ -76,7 +84,7 @@ add_subdirectory(src)
 # Extra subdirectories if building as main project
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     if (BUILD_DOCS)
-        add_subdirectory(docs)
+        #add_subdirectory(docs)
     endif ()
 
     if (BUILD_TEST)
@@ -85,5 +93,5 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif ()
 
 if (BUILD_EXAMPLES)
-    add_subdirectory(examples)
+    #add_subdirectory(examples)
 endif()
