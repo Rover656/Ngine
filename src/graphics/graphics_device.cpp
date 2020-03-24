@@ -18,36 +18,14 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_GRAPHICSDEVICE_HPP
-#define NGINE_GRAPHICSDEVICE_HPP
+#include "ngine/graphics/graphics_device.hpp"
 
-#include "ngine/config.hpp"
+namespace ngine::graphics {
+    GraphicsDevice::GraphicsDevice(Window *window) : m_context(window) {
 
-namespace ngine {
-    class Window;
+    }
 
-    namespace graphics {
-        class NEAPI GraphicsDevice {
-            friend class ngine::Window;
-        public:
-        protected:
-            /**
-             * Create a new graphics device.
-             * @param window Window whose context we will use.
-             */
-            GraphicsDevice(Window *window);
+    GraphicsDevice::~GraphicsDevice() {
 
-            /**
-             * Destroy the graphics device.
-             */
-            ~GraphicsDevice();
-
-            /**
-             * The window whose context we utilise.
-             */
-            Window *m_context;
-        };
     }
 }
-
-#endif //NGINE_GRAPHICSDEVICE_HPP

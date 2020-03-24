@@ -24,6 +24,7 @@
 #include "ngine/config.hpp"
 
 #include "graphics/context_descriptor.hpp"
+#include "graphics/graphics_device.hpp"
 
 #include <string>
 
@@ -70,6 +71,11 @@ namespace ngine {
         ~Window();
 
         /**
+         * Get the window's context descriptor.
+         */
+        const graphics::ContextDescriptor getContextDescriptor() const;
+
+        /**
          * Poll window lifecycle events.
          */
         void pollEvents();
@@ -105,6 +111,11 @@ namespace ngine {
          * The window's context descriptor.
          */
         graphics::ContextDescriptor m_contextDescriptor;
+
+        /**
+         * The graphics device which control's the window context.
+         */
+        graphics::GraphicsDevice *m_graphicsDevice;
 
         /**
          * Window title.

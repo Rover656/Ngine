@@ -18,36 +18,37 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_GRAPHICSDEVICE_HPP
-#define NGINE_GRAPHICSDEVICE_HPP
+#ifndef NGINE_OPENGL_GRAPHICS_DEVICE_HPP
+#define NGINE_OPENGL_GRAPHICS_DEVICE_HPP
 
 #include "ngine/config.hpp"
 
-namespace ngine {
-    class Window;
+#include "../graphics_device.hpp"
 
-    namespace graphics {
-        class NEAPI GraphicsDevice {
-            friend class ngine::Window;
-        public:
-        protected:
-            /**
-             * Create a new graphics device.
-             * @param window Window whose context we will use.
-             */
-            GraphicsDevice(Window *window);
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-            /**
-             * Destroy the graphics device.
-             */
-            ~GraphicsDevice();
+namespace ngine::graphics::platform {
+    /**
+     * Graphics device for OpenGL(ES) platform.
+     */
+    class NEAPI OpenGLGraphicsDevice : public GraphicsDevice {
+        friend class Window;
+    private:
+        OpenGLGraphicsDevice(Window *window);
+        ~OpenGLGraphicsDevice();
 
-            /**
-             * The window whose context we utilise.
-             */
-            Window *m_context;
-        };
-    }
+        /**
+         * Whether or not the context is GLES2.
+         */
+        bool m_isGLES2 = false;
+
+        /**
+         * Whether or not the context is GLES3.
+         */
+        bool m_isGLES3 = false;
+    };
 }
 
-#endif //NGINE_GRAPHICSDEVICE_HPP
+#endif // defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+
+#endif //NGINE_OPENGL_GRAPHICS_DEVICE_HPP

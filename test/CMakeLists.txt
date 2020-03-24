@@ -1,3 +1,2 @@
-add_executable(test WIN32 test.cpp)
-
-target_link_libraries(test Ngine_static)
+add_executable(NgineTest WIN32 test.cpp)
+target_link_libraries(NgineTest Ngine_static)

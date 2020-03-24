@@ -24,8 +24,16 @@
 
 #include "ngine/console.hpp"
 
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+
+#include "ngine/graphics/platform/opengl_graphics_device.hpp"
+
+#endif
+
 #if defined(PLATFORM_DESKTOP)
+
 #include <GLFW/glfw3.h>
+
 #endif
 
 namespace ngine {
@@ -100,7 +108,31 @@ namespace ngine {
 
         // Finish setup
         m_initialized = true;
-        // TODO: Create graphics device
+
+        // Create graphics device
+        switch (m_contextDescriptor.Type) {
+            case graphics::ContextType::OpenGL:
+#if defined(NGINE_ENABLE_OPENGL)
+                m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
+#else
+                Console::fail("Window", "Cannot create OpenGL graphics device, OpenGL is not enabled.");
+#endif
+                break;
+            case graphics::ContextType::OpenGLES:
+#if defined(NGINE_ENABLE_OPENGLES)
+                m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
+#else
+                Console::fail("Window", "Cannot create OpenGLES graphics device, OpenGL is not enabled.");
+#endif
+                break;
+            case graphics::ContextType::DirectX:
+                Console::fail("Window", "DirectX not implemented.");
+                break;
+            case graphics::ContextType::Vulkan:
+                Console::fail("Window", "Vulkan not implemented.");
+                break;
+        }
+
         // TODO: Create viewport.
         // TODO: Create input APIs.
     }
@@ -119,6 +151,10 @@ namespace ngine {
         }
 #endif
         Console::notice("Window", "Successfully closed window.");
+    }
+
+    const graphics::ContextDescriptor Window::getContextDescriptor() const {
+        return m_contextDescriptor;
     }
 
     void Window::pollEvents() {
