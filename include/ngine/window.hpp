@@ -76,6 +76,16 @@ namespace ngine {
         const graphics::ContextDescriptor getContextDescriptor() const;
 
         /**
+         * Get the window graphics device.
+         */
+        graphics::GraphicsDevice *getGraphicsDevice();
+
+        /**
+         * Get the window graphics device.
+         */
+        const graphics::GraphicsDevice *getGraphicsDevice() const;
+
+        /**
          * Poll window lifecycle events.
          */
         void pollEvents();

@@ -75,14 +75,12 @@ namespace ngine {
 
         /**
          * Create a vector with a single value for all components.
-         *
          * @param val The value for the X and Y components.
          */
         explicit Vector2(float val) : X(val), Y(val) {}
 
         /**
          * Create a 2D vector
-         *
          * @param x The X component.
          * @param y The Y component.
          */
@@ -90,7 +88,6 @@ namespace ngine {
 
         /**
          * Clamp this vector.
-         *
          * @param min The minimum value.
          * @param max The maximum value.
          * @return The clamped vector.
@@ -99,7 +96,6 @@ namespace ngine {
 
         /**
          * Clamp a vector.
-         *
          * @param value The vector to clamp.
          * @param min The minimum value.
          * @param max The maximum value.
@@ -110,7 +106,6 @@ namespace ngine {
 
         /**
          * Find the dot (scalar) product between this and another vector.
-         *
          * @param b The other vector.
          * @return The dot (scalar) product.
          */
@@ -118,7 +113,6 @@ namespace ngine {
 
         /**
          * Find the dot (scalar) product between two vectors.
-         *
          * @param a The first vector.
          * @param b The seconds vector.
          * @return The dot (scalar) product.
@@ -127,7 +121,6 @@ namespace ngine {
 
         /**
          * Find the distance between this and another vector.
-         *
          * @param b The other vector.
          * @return The distance between the vectors.
          */
@@ -135,7 +128,6 @@ namespace ngine {
 
         /**
          * Find the distance between two vectors.
-         *
          * @param a The first vector.
          * @param b The second vector.
          * @return The distance between the two vectors.
@@ -143,8 +135,7 @@ namespace ngine {
         static float distance(const Vector2 &a, const Vector2 &b);
 
         /**
-         * Find the magnitude of this vector
-         *
+         * Find the magnitude of this vector.
          * @return The magnitude of this vector.
          * @note If using this for speed-critical comparisons, use
          * MagnitudeSquared() instead.
@@ -153,7 +144,6 @@ namespace ngine {
 
         /**
          * Find the magnitude of this vector squared.
-         *
          * @return The magnitude squared.
          * @note Use this for speed-critical comparisons (doesn't use sqrt()).
          */
@@ -161,7 +151,6 @@ namespace ngine {
 
         /**
          * Translate using a matrix.
-         *
          * @param matrix Matrix to transform with.
          * @return Transformed vector.
          */
@@ -169,7 +158,6 @@ namespace ngine {
 
         /**
          * Translate this vector by an angle.
-         *
          * @param angle The angle to rotate by.
          */
         Vector2 transform(const Vector2 &origin, const Angle &angle) const;
@@ -285,14 +273,12 @@ namespace ngine {
 
         /**
          * Create a vector with a single value.
-         *
          * @param val The value for the X, Y and Z components.
          */
         explicit Vector3(float val) : X(val), Y(val), Z(val) {}
 
         /**
          * Create a 3D vector.
-         *
          * @param x The X component.
          * @param y The Y component.
          * @param z The Z component.
@@ -301,7 +287,6 @@ namespace ngine {
 
         /**
          * Clamp this vector.
-         *
          * @param min The minimum value.
          * @param max The maximum value.
          * @return The clamped vector.
@@ -310,7 +295,6 @@ namespace ngine {
 
         /**
          * Clamp a vector.
-         *
          * @param value The vector to clamp.
          * @param min The minimum value.
          * @param max The maximum value.
@@ -321,7 +305,6 @@ namespace ngine {
 
         /**
          * Find the dot (scalar) product between this and another vector.
-         *
          * @param b The other vector.
          * @return The dot (scalar) product.
          */
@@ -329,7 +312,6 @@ namespace ngine {
 
         /**
          * Find the dot (scalar) product between two vectors.
-         *
          * @param a The first vector.
          * @param b The seconds vector.
          * @return The dot (scalar) product.
@@ -338,7 +320,6 @@ namespace ngine {
 
         /**
          * Find the distance between this and another vector.
-         *
          * @param b The other vector.
          * @return The distance between the vectors.
          */
@@ -346,7 +327,6 @@ namespace ngine {
 
         /**
          * Find the distance between two vectors.
-         *
          * @param a The first vector.
          * @param b The second vector.
          * @return The distance between the two vectors.
@@ -355,7 +335,6 @@ namespace ngine {
 
         /**
          * Find the magnitude of this vector
-         *
          * @return The magnitude of this vector.
          * @note If using this for speed-critical comparisons, use
          * MagnitudeSquared() instead.
@@ -364,7 +343,6 @@ namespace ngine {
 
         /**
          * Find the magnitude of this vector squared.
-         *
          * @return The magnitude squared.
          * @note Use this for speed-critical comparisons (doesn't use sqrt()).
          */
@@ -374,7 +352,6 @@ namespace ngine {
 
         /**
          * Translate using a matrix.
-         *
          * @param matrix Matrix to transform with.
          * @return Transformed vector.
          */
@@ -642,7 +619,6 @@ namespace ngine {
 
         /**
          * Create an angle.
-         *
          * @param theta Size of the angle in degrees
          */
         Angle(float theta);
@@ -653,7 +629,6 @@ namespace ngine {
 
         /**
          * Get this angle in degrees.
-         *
          * @return This angle in degrees.
          */
         float getDegrees() const;
@@ -675,7 +650,6 @@ namespace ngine {
     struct Transform2D {
         /**
          * Identity transformation.
-         *
          * @todo Is this the correct name?
          */
         static Transform2D Identity;

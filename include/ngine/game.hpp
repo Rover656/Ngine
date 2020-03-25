@@ -41,6 +41,16 @@ namespace ngine {
         ~Game();
 
         /**
+         * Get the game window.
+         */
+        Window *getWindow();
+
+        /**
+         * Get the window graphics device.
+         */
+        graphics::GraphicsDevice *getGraphicsDevice();
+
+        /**
          * Run the game.
          * This will become the "main thread".
          */
@@ -50,7 +60,7 @@ namespace ngine {
 
         void cleanup() override;
 
-        void draw() override final;
+        void draw() override;// final;
 
         void update() override final;
 

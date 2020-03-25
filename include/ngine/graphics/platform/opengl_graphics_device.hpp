@@ -33,10 +33,14 @@ namespace ngine::graphics::platform {
      */
     class NEAPI OpenGLGraphicsDevice : public GraphicsDevice {
         friend class Window;
-    private:
-        OpenGLGraphicsDevice(Window *window);
-        ~OpenGLGraphicsDevice();
+    public:
+        void clear(Color color) override;
 
+        void bindBuffer(BufferType type, Buffer *buffer) override;
+
+        void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
+
+    private:
         /**
          * Whether or not the context is GLES2.
          */
@@ -46,6 +50,31 @@ namespace ngine::graphics::platform {
          * Whether or not the context is GLES3.
          */
         bool m_isGLES3 = false;
+
+        unsigned int m_VAO = 0;
+
+        OpenGLGraphicsDevice(Window *window);
+        ~OpenGLGraphicsDevice();
+
+        void _initBuffer(Buffer *buffer) override;
+
+        void _freeBuffer(Buffer *buffer) override;
+
+        void _writeBuffer(Buffer *buffer, BufferType type, void *data, int count, int size, bool update) override;
+
+        void _initShader(Shader *shader, const std::string &source) override;
+
+        void _freeShader(Shader *shader) override;
+
+        void _initShaderProgram(ShaderProgram *prog) override;
+
+        void _freeShaderProgram(ShaderProgram *prog) override;
+
+        void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) override;
+
+        void _linkShaderProgram(ShaderProgram *prog) override;
+
+        void _useShaderProgram(ShaderProgram *prog) override;
     };
 }
 

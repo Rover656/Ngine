@@ -35,6 +35,14 @@ namespace ngine {
 
     }
 
+    Window *Game::getWindow() {
+        return m_window;
+    }
+
+    graphics::GraphicsDevice *Game::getGraphicsDevice() {
+        return m_window->getGraphicsDevice();
+    }
+
     void Game::run() {
         // Start update thread
         m_updateThread = std::thread(&Game::_updateThread, this);
@@ -45,9 +53,16 @@ namespace ngine {
         // Run draw thread
         while (m_running) {
             m_window->pollEvents();
+
+            m_window->getGraphicsDevice()->clear(graphics::Color::Blue);
+
+            draw();
+
             m_window->swapBuffers();
 
             m_running = !m_window->pendingClose();
+
+            // TODO: Frame limiter
         }
 
         // Finish update thread

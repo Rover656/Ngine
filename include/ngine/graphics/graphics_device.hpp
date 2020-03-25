@@ -23,13 +23,41 @@
 
 #include "ngine/config.hpp"
 
+#include "buffer.hpp"
+#include "color.hpp"
+#include "shader.hpp"
+#include "shader_program.hpp"
+
 namespace ngine {
     class Window;
 
     namespace graphics {
+        enum class PrimitiveType {
+            Triangles
+        };
+
         class NEAPI GraphicsDevice {
             friend class ngine::Window;
+            friend class ngine::graphics::Buffer;
+            friend class ngine::graphics::Shader;
+            friend class ngine::graphics::ShaderProgram;
         public:
+            /**
+             * Clear the current framebuffer.
+             *
+             * @param color Color to clear with.
+             */
+            virtual void clear(Color color) = 0;
+
+            /**
+             * Bind a buffer.
+             */
+            virtual void bindBuffer(BufferType type, Buffer *buffer) = 0;
+
+            /**
+             * Draw primitives from the currently bound buffer.
+             */
+            virtual void drawPrimitives(PrimitiveType primitiveType, int start, int count) = 0;
         protected:
             /**
              * Create a new graphics device.
@@ -46,6 +74,22 @@ namespace ngine {
              * The window whose context we utilise.
              */
             Window *m_context;
+        private:
+            /**
+             * Create a buffer on the GPU.
+             */
+            virtual void _initBuffer(Buffer *buffer) = 0;
+            virtual void _freeBuffer(Buffer *buffer) = 0;
+            virtual void _writeBuffer(Buffer *buffer, BufferType type, void* data, int count, int size, bool update) = 0;
+
+            virtual void _initShader(Shader *shader, const std::string &source) = 0;
+            virtual void _freeShader(Shader *shader) = 0;
+
+            virtual void _initShaderProgram(ShaderProgram *prog) = 0;
+            virtual void _freeShaderProgram(ShaderProgram *prog) = 0;
+            virtual void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) = 0;
+            virtual void _linkShaderProgram(ShaderProgram *prog) = 0;
+            virtual void _useShaderProgram(ShaderProgram *prog) = 0;
         };
     }
 }

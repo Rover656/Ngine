@@ -157,6 +157,14 @@ namespace ngine {
         return m_contextDescriptor;
     }
 
+    graphics::GraphicsDevice *Window::getGraphicsDevice() {
+        return m_graphicsDevice;
+    }
+
+    const graphics::GraphicsDevice *Window::getGraphicsDevice() const {
+        return m_graphicsDevice;
+    }
+
     void Window::pollEvents() {
         if (!m_initialized)
             Console::fail("Window", "Window not initialized.");

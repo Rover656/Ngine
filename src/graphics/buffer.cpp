@@ -18,14 +18,20 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_VERTEXBUFFER_HPP
-#define NGINE_VERTEXBUFFER_HPP
+#include "ngine/graphics/buffer.hpp"
 
-#include "ngine/config.hpp"
+#include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    class NEAPI VertexBuffer
-            {};
-}
+    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferUsage usage) : m_graphicsDevice(graphicsDevice), Usage(usage) {
+        m_graphicsDevice->_initBuffer(this);
+    }
 
-#endif //NGINE_VERTEXBUFFER_HPP
+    Buffer::~Buffer() {
+        m_graphicsDevice->_freeBuffer(this);
+    }
+
+    void Buffer::_writeInternal(BufferType type, void *data, int count, int size, bool update) {
+        m_graphicsDevice->_writeBuffer(this, type, data, count, size, update);
+    }
+}
