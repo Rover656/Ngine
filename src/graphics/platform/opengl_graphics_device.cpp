@@ -58,32 +58,6 @@ namespace ngine::graphics::platform {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLGraphicsDevice::bindBuffer(Buffer *buffer) {
-        switch (buffer->Type) {
-            case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, buffer->GLID);
-                break;
-            case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->GLID);
-                break;
-        }
-    }
-
-    void OpenGLGraphicsDevice::unbindBuffer(Buffer *buffer) {
-        unbindBuffer(buffer->Type);
-    }
-
-    void OpenGLGraphicsDevice::unbindBuffer(BufferType type) {
-        switch (type) {
-            case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                break;
-            case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-                break;
-        }
-    }
-
     void OpenGLGraphicsDevice::bindVertexArray(VertexArray *array) {
         glBindVertexArray(array->GLID);
         _prepareVertexArray(array);
@@ -149,7 +123,7 @@ namespace ngine::graphics::platform {
         glGenBuffers(1, &buffer->GLID);
 
         // Write default size.
-        bindBuffer(buffer);
+        _bindBuffer(buffer);
 
         GLenum bufType, bufUsage;
         switch (buffer->Type) {
@@ -175,9 +149,20 @@ namespace ngine::graphics::platform {
         glBufferData(bufType, size * count, nullptr, bufUsage);
     }
 
+    void OpenGLGraphicsDevice::_bindBuffer(Buffer *buffer) {
+        switch (buffer->Type) {
+            case BufferType::Vertex:
+                glBindBuffer(GL_ARRAY_BUFFER, buffer->GLID);
+                break;
+            case BufferType::Index:
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->GLID);
+                break;
+        }
+    }
+
     void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, int count) {
         // Bind
-        bindBuffer(buffer);
+        _bindBuffer(buffer);
 
         // Get type and usage
         GLenum bufType, bufUsage;
@@ -280,9 +265,9 @@ namespace ngine::graphics::platform {
         glBindVertexArray(array->GLID);
 
         // Bind buffers
-        bindBuffer(array->getVertexBuffer());
+        _bindBuffer(array->getVertexBuffer());
         if (array->getIndexBuffer())
-            bindBuffer(array->getIndexBuffer());
+            _bindBuffer(array->getIndexBuffer());
 
         // Add to cache if missing
         if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {

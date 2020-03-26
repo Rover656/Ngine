@@ -38,34 +38,11 @@ namespace ngine::graphics::platform {
         m_deviceContext->ClearRenderTargetView(m_backbuffer, c);
     }
 
-    void DirectXGraphicsDevice::bindBuffer(Buffer *buffer) {
-        auto buf = (ID3D11Buffer *) buffer->Handle;
-        switch (buffer->Type) {
-            case BufferType::Vertex: {
-                unsigned int stride = buffer->Size;
-                unsigned int offset = 0;
-                m_deviceContext->IASetVertexBuffers(0, 1, &buf, &stride, &offset);
-                break;
-            }
-            case BufferType::Index:
-                //m_deviceContext->IASetIndexBuffer(buf, DXGI_FORMAT_, nullptr);
-                break;
-        }
-    }
-
-    void DirectXGraphicsDevice::unbindBuffer(Buffer *buffer) {
-        // Do nothing, no need (i think)
-    }
-
-    void DirectXGraphicsDevice::unbindBuffer(BufferType type) {
-        // Do nothing, no need (i think)
-    }
-
     void DirectXGraphicsDevice::bindVertexArray(VertexArray *array) {
         // Bind vertex array and index buffer (if present)
-        bindBuffer(array->getVertexBuffer());
+        _bindBuffer(array->getVertexBuffer());
         if (array->getIndexBuffer())
-            bindBuffer(array->getIndexBuffer());
+            _bindBuffer(array->getIndexBuffer());
     }
 
     void DirectXGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -89,6 +66,7 @@ namespace ngine::graphics::platform {
     void DirectXGraphicsDevice::free(GraphicsResource *resource) {
         switch (resource->getResourceType()) {
             case ResourceType::Buffer:
+                ((ID3D11Buffer *) resource->Handle)->Release();
                 break;
             case ResourceType::Shader:
                 switch (((Shader *) resource)->Type) {
@@ -256,6 +234,21 @@ namespace ngine::graphics::platform {
         // Create buffer
         m_device->CreateBuffer(&bd, NULL, &handle);
         buffer->Handle = (void *) handle;
+    }
+
+    void DirectXGraphicsDevice::_bindBuffer(Buffer *buffer) {
+        auto buf = (ID3D11Buffer *) buffer->Handle;
+        switch (buffer->Type) {
+            case BufferType::Vertex: {
+                unsigned int stride = buffer->Size;
+                unsigned int offset = 0;
+                m_deviceContext->IASetVertexBuffers(0, 1, &buf, &stride, &offset);
+                break;
+            }
+            case BufferType::Index:
+                //m_deviceContext->IASetIndexBuffer(buf, DXGI_FORMAT_, nullptr);
+                break;
+        }
     }
 
     void

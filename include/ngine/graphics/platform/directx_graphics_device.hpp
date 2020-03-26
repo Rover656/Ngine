@@ -39,12 +39,6 @@ namespace ngine::graphics::platform {
     public:
         void clear(Color color) override;
 
-        void bindBuffer(Buffer *buffer) override;
-
-        void unbindBuffer(Buffer *buffer) override;
-
-        void unbindBuffer(BufferType type) override;
-
         void bindVertexArray(VertexArray *array) override;
 
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
@@ -66,6 +60,7 @@ namespace ngine::graphics::platform {
         ~DirectXGraphicsDevice();
 
         void _initBuffer(Buffer *buffer, int size, int count) override;
+        void _bindBuffer(Buffer *buffer) override;
         void _writeBuffer(Buffer *buffer, void *data, int count) override;
 
         void _initShader(Shader *shader, const std::string &source) override;

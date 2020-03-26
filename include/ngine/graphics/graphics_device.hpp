@@ -55,20 +55,9 @@ namespace ngine {
             virtual void clear(Color color) = 0;
 
             /**
-             * Bind a buffer.
+             * Bind a vertex array.
+             * @warning Must match the shader's layout if you are going to render with it.
              */
-            virtual void bindBuffer(Buffer *buffer) = 0;
-
-            /**
-             * Unbind a buffer.
-             */
-            virtual void unbindBuffer(Buffer *buffer) = 0;
-
-            /**
-             * Unbind a buffer by type.
-             */
-            virtual void unbindBuffer(BufferType type) = 0;
-
             virtual void bindVertexArray(VertexArray *array) = 0;
 
             /**
@@ -106,6 +95,7 @@ namespace ngine {
              * Create a buffer on the GPU.
              */
             virtual void _initBuffer(Buffer *buffer, int size, int count) = 0;
+            virtual void _bindBuffer(Buffer *buffer) = 0;
             virtual void _writeBuffer(Buffer *buffer, void* data, int count) = 0;
 
             virtual void _initShader(Shader *shader, const std::string &source) = 0;
@@ -113,7 +103,7 @@ namespace ngine {
             virtual void _initShaderProgram(ShaderProgram *prog) = 0;
             virtual void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) = 0;
             virtual void _linkShaderProgram(ShaderProgram *prog) = 0;
-            virtual void _useShaderProgram(ShaderProgram *prog) = 0;
+            virtual void _useShaderProgram(ShaderProgram *prog) = 0; // TODO: Do this through GraphicsDevice to make API more uniform.
 
             virtual void _initVertexArray(VertexArray *array) = 0;
 
