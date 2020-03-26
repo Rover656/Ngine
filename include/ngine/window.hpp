@@ -97,13 +97,15 @@ namespace ngine {
 
         /**
          * Make this window current on the given thread.
+         *
+         * TODO: Move to OpenGLContext
          */
         void makeCurrent();
 
         /**
-         * Swap the window's buffers.
+         * Get the window handle.
          */
-        void swapBuffers();
+        void *getHandle() const;
 
     private:
         /**

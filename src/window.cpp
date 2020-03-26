@@ -140,6 +140,7 @@ namespace ngine {
     Window::~Window() {
         // Delete
         m_initialized = false;
+        delete m_graphicsDevice;
 
 #if defined(PLATFORM_DESKTOP)
         // Destroy
@@ -193,11 +194,7 @@ namespace ngine {
 #endif
     }
 
-    void Window::swapBuffers() {
-        if (!m_initialized)
-            Console::fail("Window", "Window not initialized.");
-#if defined(PLATFORM_DESKTOP)
-        glfwSwapBuffers((GLFWwindow *) m_handle);
-#endif
+    void *Window::getHandle() const {
+        return m_handle;
     }
 }

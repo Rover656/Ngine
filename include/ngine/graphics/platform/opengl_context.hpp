@@ -18,51 +18,50 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_SHADER_PROGRAM_HPP
-#define NGINE_SHADER_PROGRAM_HPP
+#ifndef NGINE_OPENGL_CONTEXT_HPP
+#define NGINE_OPENGL_CONTEXT_HPP
 
 #include "ngine/config.hpp"
 
-#include "graphics_resource.hpp"
-#include "shader.hpp"
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-#include <vector>
+#include "../../window.hpp"
 
-namespace ngine::graphics {
-    class GraphicsDevice;
-
-    class NEAPI ShaderProgram : public GraphicsResource {
+namespace ngine::graphics::platform {
+    /**
+     * OpenGL context manager.
+     * Handles utilisation of the GLFW and EGL contexts.
+     */
+    class NEAPI OpenGLContext {
     public:
         /**
-         * Create a shader program.
+         * Create an OpenGL Context
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice);
+        OpenGLContext(Window *window);
+        ~OpenGLContext();
 
         /**
-         * Destroy a shader program.
+         * Make this context current.
          */
-        ~ShaderProgram();
+        //void makeCurrent();
 
         /**
-         * Attach a shader to the program.
+         * Swap the buffers.
          */
-        void attachShader(Shader *shader);
-
-        /**
-         * Link the shader for use.
-         */
-        void link();
-
-        /**
-         * Use the shader in rendering.
-         */
-        void use();
+        void swapBuffers();
     private:
         /**
-         * The shaders attached.
+         * The window the OpenGL context is owned by.
          */
-        std::vector<Shader *> m_shaders;
+        Window *m_window = nullptr;
+
+        /**
+         * Whether or not GLAD has been initialized once.
+         */
+        static bool m_gladInit;
     };
 }
 
-#endif //NGINE_SHADER_PROGRAM_HPP
+#endif // defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+
+#endif //NGINE_OPENGL_CONTEXT_HPP

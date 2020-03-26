@@ -65,6 +65,12 @@ namespace ngine::graphics::platform {
         }
     }
 
+    void OpenGLGraphicsDevice::bindVertexArray(VertexArray *array) {
+        glBindVertexArray(array->GLID);
+        _prepareVertexArray(array);
+        m_currentVAO = array;
+    }
+
     void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
         GLenum prim;
         switch (primitiveType) {
@@ -75,32 +81,18 @@ namespace ngine::graphics::platform {
         glDrawArrays(prim, start, count);
     }
 
+    void OpenGLGraphicsDevice::free(GraphicsResource *resource) {
+        m_freeLock.lock();
+        m_freeNextFrame.push_back(resource);
+        m_freeLock.unlock();
+    }
+
     OpenGLGraphicsDevice::OpenGLGraphicsDevice(Window *window) : GraphicsDevice(window) {
         // Make window context current
-        window->makeCurrent();
+        m_window->makeCurrent();
 
-        // Setup GLAD
-#if defined(GLAD)
-        bool status;
-        if (window->getContextDescriptor().Type == ContextType::OpenGLES) {
-#if defined(GLFW)
-            status = gladLoadGLES2Loader((GLADloadproc) glfwGetProcAddress);
-#elif defined(EGL)
-            status = gladLoadGLES2Loader((GLADloadproc) eglGetProcAddress);
-#endif
-        } else {
-#if defined(GLFW)
-            status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-#endif
-        }
-
-        // If we didn't load, terminate
-        if (!status)
-            Console::fail("OpenGL", "Failed to init GLAD.");
-#endif
-
-        // Broadcast GL version
-        Console::notice("OpenGL", "Successfully opened graphics device with OpenGL version: %s", glGetString(GL_VERSION));
+        // Create context
+        m_context = new OpenGLContext(m_window);
 
         // Determine if we're running GLES
 #if !defined(GLAD)
@@ -118,18 +110,11 @@ namespace ngine::graphics::platform {
         // TODO: Load capabilities/extensions
     }
 
-    OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {
-        // TODO: Free any resources.
-    }
+    OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {}
 
     void OpenGLGraphicsDevice::_initBuffer(Buffer *buffer) {
         buffer->GLID = 0;
         glGenBuffers(1, &buffer->GLID);
-    }
-
-    void OpenGLGraphicsDevice::_freeBuffer(Buffer *buffer) {
-        glDeleteBuffers(1, &buffer->GLID);
-        buffer->GLID = 0;
     }
 
     void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, BufferType type, void *data, int count, int size, bool update) {
@@ -199,19 +184,9 @@ namespace ngine::graphics::platform {
         Console::notice("OpenGL", "Successfully created and compiled shader %u.", shader->GLID);
     }
 
-    void OpenGLGraphicsDevice::_freeShader(Shader *shader) {
-        glDeleteShader(shader->GLID);
-        shader->GLID = 0;
-    }
-
     void OpenGLGraphicsDevice::_initShaderProgram(ShaderProgram *prog) {
         prog->GLID = glCreateProgram();
         Console::notice("OpenGL", "Successfully created shader program %u.", prog->GLID);
-    }
-
-    void OpenGLGraphicsDevice::_freeShaderProgram(ShaderProgram *prog) {
-        glDeleteProgram(prog->GLID);
-        prog->GLID = 0;
     }
 
     void OpenGLGraphicsDevice::_shaderProgramAttach(ShaderProgram *prog, Shader *shader) {
@@ -237,7 +212,137 @@ namespace ngine::graphics::platform {
     }
 
     void OpenGLGraphicsDevice::_useShaderProgram(ShaderProgram *prog) {
+        // Use the program
         glUseProgram(prog->GLID);
+
+        // Save current and last programs
+        m_lastShaderProgram = m_currentShaderProgram;
+        m_currentShaderProgram = prog;
+
+        // Setup VAO if available.
+        if (m_currentVAO)
+            _prepareVertexArray(m_currentVAO);
+    }
+
+    void OpenGLGraphicsDevice::_initVertexArray(VertexArray *array) {
+        // Create VAO
+        array->GLID = 0;
+        glGenVertexArrays(1, &array->GLID);
+        _prepareVertexArray(array);
+    }
+
+    void OpenGLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
+        // Bind
+        glBindVertexArray(array->GLID);
+
+        // Bind buffers
+        bindBuffer(BufferType::Vertex, array->getVertexBuffer());
+        bindBuffer(BufferType::Index, array->getIndexBuffer());
+
+        // Add to cache if missing
+        if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {
+            m_VAOShaderCache.insert({array, nullptr});
+        }
+
+        // If there is no shader, we cannot perform element layouts yet.
+        // If we're using the same shader as the last setup, skip
+        if (!m_currentShaderProgram || m_VAOShaderCache[array] == m_currentShaderProgram)
+            return;
+
+        // Get elements
+        auto elements = array->getLayout().Elements;
+        auto size = array->getLayout().getSize();
+
+        if (m_lastShaderProgram) {
+            for (auto e : elements) {
+                int loc = glGetAttribLocation(m_lastShaderProgram->GLID, e.Name.c_str());
+                glDisableVertexAttribArray(loc);
+            }
+        }
+
+        // Prepare layout
+        int ptr = 0;
+        for (auto e : elements) {
+            GLenum type;
+            switch (e.Type) {
+                case ElementType::Byte:
+                    type = GL_BYTE;
+                    break;
+                case ElementType::UnsignedByte:
+                    type = GL_UNSIGNED_BYTE;
+                    break;
+                case ElementType::Short:
+                    type = GL_SHORT;
+                    break;
+                case ElementType::UnsignedShort:
+                    type = GL_UNSIGNED_SHORT;
+                    break;
+                case ElementType::Int:
+                    type = GL_INT;
+                    break;
+                case ElementType::UnsignedInt:
+                    type = GL_UNSIGNED_INT;
+                    break;
+                case ElementType::Float:
+                    type = GL_FLOAT;
+                    break;
+            }
+
+            GLint count = e.Count;
+            if (count > 4)
+                Console::fail("OpenGL", "VertexBufferElement count cannot be greater than 4.");
+
+            // Get location in shader
+            int loc = glGetAttribLocation(m_currentShaderProgram->GLID, e.Name.c_str());
+
+            // Enable attrib
+            glEnableVertexAttribArray(loc);
+            glVertexAttribPointer(loc, count, type, e.Normalized ? GL_TRUE : GL_FALSE, size - e.getSize(), (void *)ptr);
+            ptr += e.getSize();
+        }
+
+        // Register in cache
+        m_VAOShaderCache[array] = m_currentShaderProgram;
+    }
+
+    void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
+        // Free resource.
+        switch (resource->getType()) {
+            case ResourceType::Buffer:
+                glDeleteBuffers(1, &resource->GLID);
+                break;
+            case ResourceType::Shader:
+                glDeleteShader(resource->GLID);
+                break;
+            case ResourceType::ShaderProgram:
+                // TODO: Handle the VAO system if the current shader is removed.
+                glDeleteProgram(resource->GLID);
+                break;
+            case ResourceType::VertexArray:
+                glDeleteVertexArrays(1, &resource->GLID);
+                // Remove from VAO cache
+                m_VAOShaderCache.erase((VertexArray *) resource);
+                break;
+        }
+        resource->GLID = 0;
+    }
+
+    void OpenGLGraphicsDevice::_present() {
+        // SwapBuffers
+        m_context->swapBuffers();
+
+        // Dispose resources
+        for (auto res : m_freeThisFrame)
+            _freeResource(res);
+        m_freeThisFrame.clear();
+
+        m_freeLock.lock();
+        {
+            auto tmp = m_freeThisFrame;
+            m_freeThisFrame = m_freeNextFrame;
+            m_freeNextFrame = m_freeThisFrame;
+        }
+        m_freeLock.unlock();
     }
 }
 

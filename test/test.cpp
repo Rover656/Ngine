@@ -6,9 +6,11 @@
 #include <ngine/graphics/graphics_device.hpp>
 #include <ngine/graphics/shader.hpp>
 #include <ngine/graphics/shader_program.hpp>
+#include <ngine/graphics/vertex_array.hpp>
 
 class TestGame : public ngine::Game {
     ngine::graphics::Buffer *vb;
+    ngine::graphics::VertexArray *array;
     ngine::graphics::Shader *vertShader;
     ngine::graphics::Shader *fragShader;
     ngine::graphics::ShaderProgram *prog;
@@ -19,19 +21,19 @@ public:
         Game::init();
 
         // Create vertex shader
-        auto vertSrc = "#version 130\n"
-                       "in vec3 NG_VertexPos;\n"
-                       "in vec2 NG_VertexTexCoord;\n"
-                       "in vec4 NG_VertexColor;\n"
+        auto vertSrc = "#version 330\n"
+                       "layout(location = 2) in vec3 POSITION;\n"
+                       "in vec2 TEXCOORD;\n"
+                       "in vec4 COLOR;\n"
                        "out vec2 fragTexCoord;\n"
                        "out vec4 fragColor;\n"
                        "uniform mat4 NGINE_MATRIX_MVP;\n"
                        "void main()\n"
                        "{\n"
-                       "    fragTexCoord = NG_VertexTexCoord;\n"
-                       "    fragColor = NG_VertexColor;\n"
-                       "    gl_Position = NGINE_MATRIX_MVP * vec4(NG_VertexPos, 1.0);\n"
-                       "}\n";
+                       "    fragTexCoord = TEXCOORD;\n"
+                       "    fragColor = vec4(1, 1, 1, 1);//COLOR;\n"
+                       "    gl_Position = vec4(POSITION, 1.0);//NGINE_MATRIX_MVP * vec4(POSITION, 1.0);\n"
+                       "}";
         vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc, ngine::graphics::ShaderType::Vertex);
 
         // Create fragment shader
@@ -43,8 +45,8 @@ public:
                        "void main()\n"
                        "{\n"
                        "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
-                       "    finalColor = texelColor*fragColor;\n"
-                       "}\n";
+                       "    finalColor = fragColor;//texelColor*fragColor;\n"
+                       "}";
         fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc, ngine::graphics::ShaderType::Fragment);
 
         // Create shader program
@@ -54,17 +56,35 @@ public:
         prog->link();
 
         vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferUsage::Static);
-        int dat[] = {
-                0, 0,
-                1, 0,
-                1, 1
+        float dat[] = {
+                0, 0, 0,
+                1, 0, 0,
+                1, 1, 0
         };
-        vb->write(ngine::graphics::BufferType::Vertex, dat, 3);
+        vb->write(ngine::graphics::BufferType::Vertex, dat, 9);
+
+        ngine::graphics::VertexBufferLayout l;
+        l.Elements.push_back({
+            "POSITION", ngine::graphics::ElementType::Float, 3, false
+        });
+
+        array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, l);
+    }
+
+    void cleanup() override {
+        delete vb;
+        delete array;
+        delete vertShader;
+        delete fragShader;
+        delete prog;
+
+        Game::cleanup();
     }
 
     void draw() override {
+        prog->use();
         auto gd = getGraphicsDevice();
-        gd->bindBuffer(ngine::graphics::BufferType::Vertex, vb);
+        gd->bindVertexArray(array);
         gd->drawPrimitives(ngine::graphics::PrimitiveType::Triangles, 0, 3);
 
         Game::draw();

@@ -21,8 +21,9 @@
 #ifndef NGINE_BUFFER_HPP
 #define NGINE_BUFFER_HPP
 
-#include <type_traits>
 #include "ngine/config.hpp"
+
+#include "graphics_resource.hpp"
 
 namespace ngine::graphics {
     class GraphicsDevice;
@@ -44,17 +45,10 @@ namespace ngine::graphics {
     /**
      * Base buffer class.
      */
-    class NEAPI Buffer {
+    class NEAPI Buffer : public GraphicsResource {
         friend class ngine::graphics::GraphicsDevice;
-    public:
-        union {
-            /**
-             * Buffer OGL id.
-             * @warning DO NOT MODIFY.
-             */
-            unsigned int GLID;
-        };
 
+    public:
         /**
          * Buffer usage mode.
          */
@@ -79,15 +73,11 @@ namespace ngine::graphics {
          * @param count Number of data entries to write.
          * @param update Whether or not to update the buffer or resize.
          */
-        template <typename T>
+        template<typename T>
         void write(BufferType type, T *data, int count, bool update = false) {
             _writeInternal(type, data, count, sizeof(T), update);
         }
-    protected:
-        /**
-         * The graphics device we belong to.
-         */
-        graphics::GraphicsDevice *m_graphicsDevice;
+
     private:
         /**
          * Internally write buffer data.

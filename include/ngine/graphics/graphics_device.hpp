@@ -27,6 +27,7 @@
 #include "color.hpp"
 #include "shader.hpp"
 #include "shader_program.hpp"
+#include "vertex_array.hpp"
 
 namespace ngine {
     class Window;
@@ -41,6 +42,7 @@ namespace ngine {
             friend class ngine::graphics::Buffer;
             friend class ngine::graphics::Shader;
             friend class ngine::graphics::ShaderProgram;
+            friend class ngine::graphics::VertexArray;
         public:
             /**
              * Clear the current framebuffer.
@@ -54,10 +56,22 @@ namespace ngine {
              */
             virtual void bindBuffer(BufferType type, Buffer *buffer) = 0;
 
+            virtual void bindVertexArray(VertexArray *array) = 0;
+
             /**
              * Draw primitives from the currently bound buffer.
              */
             virtual void drawPrimitives(PrimitiveType primitiveType, int start, int count) = 0;
+
+            /**
+             * Schedule a graphics resource to be freed.
+             */
+            virtual void free(GraphicsResource *resource) = 0;
+
+            /**
+             * Present backbuffer to screen.
+             */
+            void present();
         protected:
             /**
              * Create a new graphics device.
@@ -68,28 +82,29 @@ namespace ngine {
             /**
              * Destroy the graphics device.
              */
-            ~GraphicsDevice();
+            virtual ~GraphicsDevice();
 
             /**
-             * The window whose context we utilise.
+             * The window who owns the context.
              */
-            Window *m_context;
+            Window *m_window;
         private:
             /**
              * Create a buffer on the GPU.
              */
             virtual void _initBuffer(Buffer *buffer) = 0;
-            virtual void _freeBuffer(Buffer *buffer) = 0;
             virtual void _writeBuffer(Buffer *buffer, BufferType type, void* data, int count, int size, bool update) = 0;
 
             virtual void _initShader(Shader *shader, const std::string &source) = 0;
-            virtual void _freeShader(Shader *shader) = 0;
 
             virtual void _initShaderProgram(ShaderProgram *prog) = 0;
-            virtual void _freeShaderProgram(ShaderProgram *prog) = 0;
             virtual void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) = 0;
             virtual void _linkShaderProgram(ShaderProgram *prog) = 0;
             virtual void _useShaderProgram(ShaderProgram *prog) = 0;
+
+            virtual void _initVertexArray(VertexArray *array) = 0;
+
+            virtual void _present() = 0;
         };
     }
 }

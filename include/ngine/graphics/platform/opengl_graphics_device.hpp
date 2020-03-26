@@ -23,24 +23,37 @@
 
 #include "ngine/config.hpp"
 
-#include "../graphics_device.hpp"
-
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+
+#include "../graphics_device.hpp"
+#include "opengl_context.hpp"
+
+#include <mutex>
+#include <unordered_map>
 
 namespace ngine::graphics::platform {
     /**
      * Graphics device for OpenGL(ES) platform.
      */
     class NEAPI OpenGLGraphicsDevice : public GraphicsDevice {
-        friend class Window;
+        friend class ngine::Window;
     public:
         void clear(Color color) override;
 
         void bindBuffer(BufferType type, Buffer *buffer) override;
 
+        void bindVertexArray(VertexArray *array) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
+        void free(GraphicsResource *resource) override;
+
     private:
+        /**
+         * The OpenGL context.
+         */
+        OpenGLContext *m_context = nullptr;
+
         /**
          * Whether or not the context is GLES2.
          */
@@ -51,30 +64,60 @@ namespace ngine::graphics::platform {
          */
         bool m_isGLES3 = false;
 
-        unsigned int m_VAO = 0;
+        /**
+         * The current VAO.
+         */
+        VertexArray *m_currentVAO = nullptr;
+
+        /**
+         * The last applied shader program.
+         */
+        ShaderProgram *m_lastShaderProgram = nullptr;
+
+        /**
+         * The current applied shader program.
+         */
+        ShaderProgram *m_currentShaderProgram = nullptr;
+
+        /**
+         * Resources to be freed this frame.
+         */
+        std::vector<GraphicsResource *> m_freeThisFrame;
+
+        /**
+         * Resources to be freed next frame.
+         */
+        std::vector<GraphicsResource *> m_freeNextFrame;
+
+        /**
+         * Resource free lock.
+         */
+        std::mutex m_freeLock;
+
+        /**
+         * VAO Shader cache.
+         */
+        std::unordered_map<VertexArray *, ShaderProgram *> m_VAOShaderCache;
 
         OpenGLGraphicsDevice(Window *window);
         ~OpenGLGraphicsDevice();
 
         void _initBuffer(Buffer *buffer) override;
-
-        void _freeBuffer(Buffer *buffer) override;
-
         void _writeBuffer(Buffer *buffer, BufferType type, void *data, int count, int size, bool update) override;
 
         void _initShader(Shader *shader, const std::string &source) override;
 
-        void _freeShader(Shader *shader) override;
-
         void _initShaderProgram(ShaderProgram *prog) override;
-
-        void _freeShaderProgram(ShaderProgram *prog) override;
-
         void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) override;
-
         void _linkShaderProgram(ShaderProgram *prog) override;
-
         void _useShaderProgram(ShaderProgram *prog) override;
+
+        void _initVertexArray(VertexArray *array) override;
+        void _prepareVertexArray(VertexArray *array);
+
+        void _freeResource(GraphicsResource *resource);
+
+        void _present() override;
     };
 }
 

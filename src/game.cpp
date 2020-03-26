@@ -58,7 +58,7 @@ namespace ngine {
 
             draw();
 
-            m_window->swapBuffers();
+            getGraphicsDevice()->present();
 
             m_running = !m_window->pendingClose();
 

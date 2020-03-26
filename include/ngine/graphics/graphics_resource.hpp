@@ -18,33 +18,56 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_SHADER_HPP
-#define NGINE_SHADER_HPP
+#ifndef NGINE_GRAPHICS_RESOURCE_HPP
+#define NGINE_GRAPHICS_RESOURCE_HPP
 
 #include "ngine/config.hpp"
-
-#include "graphics_resource.hpp"
-
-#include <string>
 
 namespace ngine::graphics {
     class GraphicsDevice;
 
-    enum class ShaderType {
-        Vertex,
-        Fragment
+    enum class ResourceType {
+        Buffer,
+        Shader,
+        ShaderProgram,
+        VertexArray
     };
 
-    class NEAPI Shader : public GraphicsResource {
+    class NEAPI GraphicsResource {
     public:
-        /**
-         * The shader type.
-         */
-        ShaderType Type;
+        union {
+            /**
+             * Resource OpenGL ID.
+             * @warning DO NOT MODIFY.
+             */
+            unsigned int GLID;
+        };
 
-        Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderType type);
-        ~Shader();
+        /**
+         * Free the resource.
+         */
+        void free();
+
+        /**
+         * Get the resource type.
+         */
+        ResourceType getType() const;
+    protected:
+        /**
+         * The graphics device
+         */
+        GraphicsDevice *m_graphicsDevice;
+
+        /**
+         * My resource type.
+         */
+        ResourceType m_type;
+
+        /**
+         * Create a new graphics resource.
+         */
+        GraphicsResource(GraphicsDevice *graphicsDevice, ResourceType type);
     };
 }
 
-#endif //NGINE_SHADER_HPP
+#endif //NGINE_GRAPHICS_RESOURCE_HPP

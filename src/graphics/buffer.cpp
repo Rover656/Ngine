@@ -23,12 +23,13 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferUsage usage) : m_graphicsDevice(graphicsDevice), Usage(usage) {
+    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferUsage usage)
+            : GraphicsResource(graphicsDevice, ResourceType::Buffer), Usage(usage) {
         m_graphicsDevice->_initBuffer(this);
     }
 
     Buffer::~Buffer() {
-        m_graphicsDevice->_freeBuffer(this);
+        free();
     }
 
     void Buffer::_writeInternal(BufferType type, void *data, int count, int size, bool update) {

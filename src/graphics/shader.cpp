@@ -23,12 +23,12 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    Shader::Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderType type) : m_graphicsDevice(
-            graphicsDevice), Type(type) {
+    Shader::Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderType type)
+            : GraphicsResource(graphicsDevice, ResourceType::Shader), Type(type) {
         m_graphicsDevice->_initShader(this, src);
     }
 
     Shader::~Shader() {
-        m_graphicsDevice->_freeShader(this);
+        free();
     }
 }
