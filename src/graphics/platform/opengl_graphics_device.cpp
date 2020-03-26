@@ -93,8 +93,17 @@ namespace ngine::graphics::platform {
     void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
         GLenum prim;
         switch (primitiveType) {
-            case PrimitiveType::Triangles:
+            case PrimitiveType::TriangleList:
                 prim = GL_TRIANGLES;
+                break;
+            case PrimitiveType::TriangleStrip:
+                prim = GL_TRIANGLE_STRIP;
+                break;
+            case PrimitiveType::LineList:
+                prim = GL_LINE;
+                break;
+            case PrimitiveType::LineStrip:
+                prim = GL_LINE_STRIP;
                 break;
         }
         glDrawArrays(prim, start, count);

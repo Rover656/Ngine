@@ -70,8 +70,17 @@ namespace ngine::graphics::platform {
 
     void DirectXGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
         switch (primitiveType) {
-            case PrimitiveType::Triangles:
+            case PrimitiveType::TriangleList:
                 m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                break;
+            case PrimitiveType::TriangleStrip:
+                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+                break;
+            case PrimitiveType::LineList:
+                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+                break;
+            case PrimitiveType::LineStrip:
+                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
                 break;
         }
         m_deviceContext->Draw(count, start);

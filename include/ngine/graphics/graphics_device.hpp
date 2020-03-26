@@ -34,7 +34,10 @@ namespace ngine {
 
     namespace graphics {
         enum class PrimitiveType {
-            Triangles
+            TriangleList,
+            TriangleStrip,
+            LineList,
+            LineStrip
         };
 
         class NEAPI GraphicsDevice {

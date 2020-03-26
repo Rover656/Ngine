@@ -65,16 +65,18 @@ public:
                 auto dxSrc = "struct VOut {\n"
                              "    float4 position : SV_POSITION;\n"
                              "    float4 color : COLOR;\n"
+                             "    float2 texcoord : TEXCOORD;\n"
                              "};\n"
                              "\n"
-                             "VOut VSMain(float4 pos : POSITION, float4 color : COLOR) {\n"
+                             "VOut VSMain(float4 pos : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) {\n"
                              "    VOut output;"
                              "    output.position = pos;\n"
                              "    output.color = color;\n"
+                             "    output.texcoord = texcoord;\n"
                              "    return output;\n"
                              "}\n"
                              "\n"
-                             "float4 PSMain(float4 pos : SV_POSITION, float4 color : COLOR) : SV_TARGET {\n"
+                             "float4 PSMain(float4 pos : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET {\n"
                              "    return color;\n"
                              "}";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
@@ -91,6 +93,7 @@ public:
         ngine::graphics::VertexBufferLayout shaderLayout;
         shaderLayout.Elements.push_back({"POSITION", ngine::graphics::ElementType::Float, 3, false});
         shaderLayout.Elements.push_back({"COLOR", ngine::graphics::ElementType::Float, 4, false});
+        shaderLayout.Elements.push_back({"TEXCOORD", ngine::graphics::ElementType::Float, 2, false});
 
         // Create shader program
         prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderLayout);
@@ -99,18 +102,14 @@ public:
         prog->link();
 
         vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
-                                         ngine::graphics::BufferUsage::Static, sizeof(float) * (3 + 4), 3);
-
-        ngine::Vector2 v1(-0.5f, -0.5f);
-        ngine::Vector2 v2(0.5f, -0.5f);
-        ngine::Vector2 v3(0.0f, 0.5f);
+                                         ngine::graphics::BufferUsage::Static, sizeof(float) * (3 + 4 + 2), 3);
 
         float dat[] = {
-                v1.X, v1.Y, 0,   1, 0, 1, 1,
-                v2.X, v2.Y, 0,   1, 1, 0, 1,
-                v3.X, v3.Y, 0,   0, 1, 1, 1
+                -0.5f, -0.5f, 0,   1, 0, 1, 1,   0, 0,
+                0.5f,  -0.5f, 0,   1, 1, 0, 1,   0, 1,
+                0.0f,  0.5f,  0,   0, 1, 1, 1,   1, 1
         };
-        vb->write(dat, sizeof(float) * (3 + 4), 3);
+        vb->write(dat, sizeof(float) * (3 + 4 + 2), 3);
 
         array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderLayout);
     }
@@ -129,7 +128,7 @@ public:
         prog->use();
         auto gd = getGraphicsDevice();
         gd->bindVertexArray(array);
-        gd->drawPrimitives(ngine::graphics::PrimitiveType::Triangles, 0, 3);
+        gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
 
         Game::draw();
     }
