@@ -25,64 +25,13 @@
 
 #include "buffer.hpp"
 #include "graphics_resource.hpp"
+#include "shader_program.hpp"
 
 #include <string>
 #include <vector>
 
 namespace ngine::graphics {
     class GraphicsDevice;
-
-    // TODO: More permanent location
-    enum class ElementType {
-        Byte,
-        UnsignedByte,
-        Short,
-        UnsignedShort,
-        Int,
-        UnsignedInt,
-        Float
-    };
-
-    /**
-     * A vertex buffer element is an entry in a vertex layout.
-     * It details an element in the vertex data.
-     */
-    struct VertexBufferElement {
-        /**
-         * Vertex element name.
-         */
-        std::string Name;
-
-        /**
-         * Data type.
-         */
-        ElementType Type;
-
-        /**
-         * Data count.
-         */
-        int Count;
-
-        /**
-         * Is the data normalized?
-         */
-        bool Normalized;
-
-        int getSize() const;
-    };
-
-    /**
-     * Vertex buffer layout.
-     * @note Should match layout in the shader.
-     */
-    struct VertexBufferLayout {
-        /**
-         * The vertex layouts elements.
-         */
-        std::vector<VertexBufferElement> Elements;
-
-        int getSize() const;
-    };
 
     /**
      * A vertex array defines a buffer filled with vertices and a buffer with the indices.
@@ -96,9 +45,9 @@ namespace ngine::graphics {
          * @param graphicsDevice The graphics device.
          * @param vertexBuffer The vertex buffer for the array.
          * @param indexBuffer The index buffer for the array. Can be null.
-         * @param layout The vertex buffer layout.
+         * @param layout The layout to follow. Must match target shader.
          */
-        VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, VertexBufferLayout layout);
+        VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, const VertexBufferLayout layout);
 
         /**
          * Destroy a vertex array.
@@ -112,7 +61,7 @@ namespace ngine::graphics {
         const VertexBufferLayout getLayout() const;
     private:
         /**
-         * The vertex buffer layout this array uses.
+         * The vertex buffer layout this array follows.
          */
         VertexBufferLayout m_vertexLayout;
 

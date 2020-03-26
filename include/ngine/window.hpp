@@ -86,6 +86,16 @@ namespace ngine {
         const graphics::GraphicsDevice *getGraphicsDevice() const;
 
         /**
+         * Get window width.
+         */
+        float getWidth() const;
+
+        /**
+         * Get window height.
+         */
+        float getHeight() const;
+
+        /**
          * Poll window lifecycle events.
          */
         void pollEvents();

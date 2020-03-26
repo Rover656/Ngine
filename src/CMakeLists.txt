@@ -37,6 +37,9 @@ if (BUILD_NGINE_STATIC)
     target_link_libraries(Ngine_static
             PRIVATE
             box2d
+            d3d11.lib # TEMP
+            dxgi.lib # TEMP
+            d3dcompiler.lib # TEMP
             ${_NGINE_LIBRARIES})
     target_include_directories(Ngine_static
             PUBLIC

@@ -21,18 +21,25 @@
 #include "ngine/graphics/buffer.hpp"
 
 #include "ngine/graphics/graphics_device.hpp"
+#include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferUsage usage)
-            : GraphicsResource(graphicsDevice, ResourceType::Buffer), Usage(usage) {
-        m_graphicsDevice->_initBuffer(this);
+    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize,
+                   int dataCount) : GraphicsResource(graphicsDevice, ResourceType::Buffer), Type(type), Usage(usage),
+                                    Size(dataSize), Count(dataCount) {
+        m_graphicsDevice->_initBuffer(this, dataSize, dataCount);
     }
 
     Buffer::~Buffer() {
         free();
     }
 
-    void Buffer::_writeInternal(BufferType type, void *data, int count, int size, bool update) {
-        m_graphicsDevice->_writeBuffer(this, type, data, count, size, update);
+    void Buffer::write(void *data, int size, int count) {
+        if (size != Size)
+            Console::fail("Buffer", "Cannot write data with different size to buffer!");
+        if (count > Count)
+            Console::fail("Buffer", "Attempt to write too many elements to buffer!");
+
+        m_graphicsDevice->_writeBuffer(this, data, count);
     }
 }

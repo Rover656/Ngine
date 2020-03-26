@@ -26,12 +26,16 @@
 #include "ngine/window.hpp"
 
 #if !defined(PLATFORM_UWP)
+
 #include <glad/glad.h>
+
 #define GLAD
 #endif
 
 #if defined(PLATFORM_DESKTOP)
+
 #include <GLFW/glfw3.h>
+
 #define GLFW
 #endif
 
@@ -54,13 +58,28 @@ namespace ngine::graphics::platform {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLGraphicsDevice::bindBuffer(BufferType type, Buffer *buffer) {
-        switch(type) {
+    void OpenGLGraphicsDevice::bindBuffer(Buffer *buffer) {
+        switch (buffer->Type) {
             case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, buffer ? buffer->GLID : 0);
+                glBindBuffer(GL_ARRAY_BUFFER, buffer->GLID);
                 break;
             case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer ? buffer->GLID : 0);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->GLID);
+                break;
+        }
+    }
+
+    void OpenGLGraphicsDevice::unbindBuffer(Buffer *buffer) {
+        unbindBuffer(buffer->Type);
+    }
+
+    void OpenGLGraphicsDevice::unbindBuffer(BufferType type) {
+        switch (type) {
+            case BufferType::Vertex:
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                break;
+            case BufferType::Index:
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
                 break;
         }
     }
@@ -103,27 +122,28 @@ namespace ngine::graphics::platform {
         }
 #else
         m_isGLES2 = GLAD_GL_ES_VERSION_2_0 && !GLAD_GL_ES_VERSION_3_0 &&
-                  !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
+                    !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
         m_isGLES3 = GLAD_GL_ES_VERSION_3_0;
 #endif
+
+        // Setup viewport
+        glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
 
         // TODO: Load capabilities/extensions
     }
 
     OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {}
 
-    void OpenGLGraphicsDevice::_initBuffer(Buffer *buffer) {
+    void OpenGLGraphicsDevice::_initBuffer(Buffer *buffer, int size, int count) {
+        // Create
         buffer->GLID = 0;
         glGenBuffers(1, &buffer->GLID);
-    }
 
-    void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, BufferType type, void *data, int count, int size, bool update) {
-        // Bind
-        bindBuffer(type, buffer);
+        // Write default size.
+        bindBuffer(buffer);
 
-        // Get type and usage
         GLenum bufType, bufUsage;
-        switch(type) {
+        switch (buffer->Type) {
             case BufferType::Vertex:
                 bufType = GL_ARRAY_BUFFER;
                 break;
@@ -132,7 +152,7 @@ namespace ngine::graphics::platform {
                 break;
         }
 
-        switch(buffer->Usage) {
+        switch (buffer->Usage) {
             case BufferUsage::Static:
                 bufUsage = GL_STATIC_DRAW;
                 break;
@@ -143,11 +163,26 @@ namespace ngine::graphics::platform {
                 bufUsage = GL_STREAM_DRAW;
                 break;
         }
+        glBufferData(bufType, size * count, nullptr, bufUsage);
+    }
 
-        // Write
-        if (update) {
-            glBufferSubData(bufType, 0, size * count, data);
-        } else glBufferData(bufType, size * count, data, bufUsage);
+    void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, int count) {
+        // Bind
+        bindBuffer(buffer);
+
+        // Get type and usage
+        GLenum bufType, bufUsage;
+        switch (buffer->Type) {
+            case BufferType::Vertex:
+                bufType = GL_ARRAY_BUFFER;
+                break;
+            case BufferType::Index:
+                bufType = GL_ELEMENT_ARRAY_BUFFER;
+                break;
+        }
+
+        // Write (we don't use glBufferData as we want to restrict buffer size for parity with DX11).
+        glBufferSubData(bufType, 0, buffer->Size * count, data);
     }
 
     void OpenGLGraphicsDevice::_initShader(Shader *shader, const std::string &source) {
@@ -236,8 +271,9 @@ namespace ngine::graphics::platform {
         glBindVertexArray(array->GLID);
 
         // Bind buffers
-        bindBuffer(BufferType::Vertex, array->getVertexBuffer());
-        bindBuffer(BufferType::Index, array->getIndexBuffer());
+        bindBuffer(array->getVertexBuffer());
+        if (array->getIndexBuffer())
+            bindBuffer(array->getIndexBuffer());
 
         // Add to cache if missing
         if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {
@@ -254,29 +290,37 @@ namespace ngine::graphics::platform {
         auto size = array->getLayout().getSize();
 
         if (m_lastShaderProgram) {
-            for (auto e : elements) {
-                int loc = glGetAttribLocation(m_lastShaderProgram->GLID, e.Name.c_str());
+            for (const auto &e : elements) {
+                int loc = glGetAttribLocation(m_lastShaderProgram->GLID, e.Name);
                 glDisableVertexAttribArray(loc);
             }
         }
 
+        // Don't configure if mismatched
+        if (array->getLayout() != m_currentShaderProgram->getLayout()) {
+            // Only warn, as it may be an accident/they set the shader then the array.
+            // TODO: Should we actually warn about this?
+            // Console::warn("OpenGL", "Cannot configure a vertex array to use a shader with a different layout. Not configuring.");
+            return;
+        }
+
         // Prepare layout
-        int ptr = 0;
-        for (auto e : elements) {
+        int offset = 0;
+        for (const auto &e : elements) {
             GLenum type;
             switch (e.Type) {
-                case ElementType::Byte:
-                    type = GL_BYTE;
-                    break;
-                case ElementType::UnsignedByte:
-                    type = GL_UNSIGNED_BYTE;
-                    break;
-                case ElementType::Short:
-                    type = GL_SHORT;
-                    break;
-                case ElementType::UnsignedShort:
-                    type = GL_UNSIGNED_SHORT;
-                    break;
+//                case ElementType::Byte:
+//                    type = GL_BYTE;
+//                    break;
+//                case ElementType::UnsignedByte:
+//                    type = GL_UNSIGNED_BYTE;
+//                    break;
+//                case ElementType::Short:
+//                    type = GL_SHORT;
+//                    break;
+//                case ElementType::UnsignedShort:
+//                    type = GL_UNSIGNED_SHORT;
+//                    break;
                 case ElementType::Int:
                     type = GL_INT;
                     break;
@@ -293,12 +337,13 @@ namespace ngine::graphics::platform {
                 Console::fail("OpenGL", "VertexBufferElement count cannot be greater than 4.");
 
             // Get location in shader
-            int loc = glGetAttribLocation(m_currentShaderProgram->GLID, e.Name.c_str());
+            int loc = glGetAttribLocation(m_currentShaderProgram->GLID, e.Name);
 
             // Enable attrib
             glEnableVertexAttribArray(loc);
-            glVertexAttribPointer(loc, count, type, e.Normalized ? GL_TRUE : GL_FALSE, size - e.getSize(), (void *)ptr);
-            ptr += e.getSize();
+            glVertexAttribPointer(loc, count, type, e.Normalized ? GL_TRUE : GL_FALSE, size,
+                                  (void *) offset);
+            offset += e.getSize();
         }
 
         // Register in cache
@@ -307,7 +352,7 @@ namespace ngine::graphics::platform {
 
     void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
         // Free resource.
-        switch (resource->getType()) {
+        switch (resource->getResourceType()) {
             case ResourceType::Buffer:
                 glDeleteBuffers(1, &resource->GLID);
                 break;
@@ -343,6 +388,10 @@ namespace ngine::graphics::platform {
             m_freeNextFrame = m_freeThisFrame;
         }
         m_freeLock.unlock();
+    }
+
+    void OpenGLGraphicsDevice::_onResize() {
+        glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
     }
 }
 

@@ -25,15 +25,14 @@
 #include "ngine/console.hpp"
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
-
 #include "ngine/graphics/platform/opengl_graphics_device.hpp"
-
 #endif
 
+// TEMP
+#include "ngine/graphics/platform/directx_graphics_device.hpp"
+
 #if defined(PLATFORM_DESKTOP)
-
 #include <GLFW/glfw3.h>
-
 #endif
 
 namespace ngine {
@@ -74,8 +73,7 @@ namespace ngine {
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
                 break;
             case graphics::ContextType::DirectX:
-                // TODO One day
-                Console::fail("Window", "DirectX not implemented.");
+                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 break;
             case graphics::ContextType::Vulkan:
                 // TODO One day
@@ -126,7 +124,7 @@ namespace ngine {
 #endif
                 break;
             case graphics::ContextType::DirectX:
-                Console::fail("Window", "DirectX not implemented.");
+                m_graphicsDevice = new graphics::platform::DirectXGraphicsDevice(this);
                 break;
             case graphics::ContextType::Vulkan:
                 Console::fail("Window", "Vulkan not implemented.");
@@ -166,6 +164,14 @@ namespace ngine {
         return m_graphicsDevice;
     }
 
+    float Window::getWidth() const {
+        return m_windowWidth;
+    }
+
+    float Window::getHeight() const {
+        return m_windowHeight;
+    }
+
     void Window::pollEvents() {
         if (!m_initialized)
             Console::fail("Window", "Window not initialized.");
@@ -174,7 +180,13 @@ namespace ngine {
         glfwPollEvents();
 
         // Collect window size.
+        auto w = m_windowWidth;
+        auto h = m_windowHeight;
         glfwGetWindowSize((GLFWwindow *) m_handle, &m_windowWidth, &m_windowHeight);
+
+        // Tell graphics device to resize if we did.
+        if (m_windowWidth != w || m_windowHeight != h)
+            m_graphicsDevice->_onResize();
 #endif
     }
 

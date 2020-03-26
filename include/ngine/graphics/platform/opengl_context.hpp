@@ -28,18 +28,15 @@
 #include "../../window.hpp"
 
 namespace ngine::graphics::platform {
+    class OpenGLGraphicsDevice;
+
     /**
      * OpenGL context manager.
      * Handles utilisation of the GLFW and EGL contexts.
      */
     class NEAPI OpenGLContext {
+        friend class OpenGLGraphicsDevice;
     public:
-        /**
-         * Create an OpenGL Context
-         */
-        OpenGLContext(Window *window);
-        ~OpenGLContext();
-
         /**
          * Make this context current.
          */
@@ -50,6 +47,12 @@ namespace ngine::graphics::platform {
          */
         void swapBuffers();
     private:
+        /**
+         * Create an OpenGL Context
+         */
+        OpenGLContext(Window *window);
+        ~OpenGLContext();
+
         /**
          * The window the OpenGL context is owned by.
          */

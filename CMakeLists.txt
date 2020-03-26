@@ -47,6 +47,7 @@ message(STATUS "Building Ngine V${PROJECT_VERSION}")
 
 option(NGINE_ENABLE_OPENGL "Enable the OpenGL Rendering API." ON)
 option(NGINE_ENABLE_OPENGLES "Enable the OpenGL ES Rendering API. On Windows this will add ANGLE as a dependency." ON)
+option(NGINE_ENABLE_DIRECTX "Enable the DirectX 11 Rendering API." ON)
 
 ### End Feature Flags
 
@@ -84,7 +85,7 @@ add_subdirectory(src)
 # Extra subdirectories if building as main project
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     if (BUILD_DOCS)
-        #add_subdirectory(docs)
+        add_subdirectory(docs)
     endif ()
 
     if (BUILD_TEST)

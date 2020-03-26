@@ -41,6 +41,20 @@ namespace ngine::graphics {
              * @warning DO NOT MODIFY.
              */
             unsigned int GLID;
+
+            struct {
+                /**
+                 * Platform handle.
+                 * @warning DO NOT MODIFY.
+                 */
+                void *Handle;
+
+                /**
+                 * Platform handle.
+                 * @warning DO NOT MODIFY.
+                 */
+                void *Handle1;
+            };
         };
 
         /**
@@ -51,7 +65,7 @@ namespace ngine::graphics {
         /**
          * Get the resource type.
          */
-        ResourceType getType() const;
+        ResourceType getResourceType() const;
     protected:
         /**
          * The graphics device

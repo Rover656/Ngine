@@ -25,12 +25,12 @@
 namespace ngine::graphics {
     int VertexBufferElement::getSize() const {
         switch (Type) {
-            case ElementType::Byte:
-            case ElementType::UnsignedByte:
-                return sizeof(char) * Count;
-            case ElementType::Short:
-            case ElementType::UnsignedShort:
-                return sizeof(short) * Count;
+            //case ElementType::Byte:
+            //case ElementType::UnsignedByte:
+            //    return sizeof(char) * Count;
+            //case ElementType::Short:
+            //case ElementType::UnsignedShort:
+            //    return sizeof(short) * Count;
             case ElementType::Int:
             case ElementType::UnsignedInt:
                 return sizeof(int) * Count;
@@ -48,7 +48,7 @@ namespace ngine::graphics {
     }
 
     VertexArray::VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer,
-                             VertexBufferLayout layout)
+                             const VertexBufferLayout layout)
             : GraphicsResource(graphicsDevice, ResourceType::VertexArray), m_vertexBuffer(vertexBuffer),
               m_indexBuffer(indexBuffer), m_vertexLayout(layout) {
         m_graphicsDevice->_initVertexArray(this);

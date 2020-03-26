@@ -50,16 +50,34 @@ namespace ngine::graphics {
 
     public:
         /**
+         * The buffer type
+         */
+        BufferType Type;
+
+        /**
          * Buffer usage mode.
          */
         BufferUsage Usage;
 
         /**
+         * Size of each element in the buffer.
+         */
+        const int Size;
+
+        /**
+         * Number of elements in the buffer.
+         */
+        const int Count;
+
+        /**
          * Create a new buffer.
          * @param graphicsDevice Graphics device to create with.
+         * @param type Buffer type.
          * @param usage Buffer usage.
+         * @param dataSize The size of each buffer entry.
+         * @param dataCount The number of entries in the buffer.
          */
-        Buffer(graphics::GraphicsDevice *graphicsDevice, BufferUsage usage);
+        Buffer(graphics::GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize, int dataCount);
 
         /**
          * Destroy the buffer.
@@ -68,21 +86,12 @@ namespace ngine::graphics {
 
         /**
          * Write the given data to the buffer.
-         * @param type The type of buffer to write as.
+         * @warning Cannot exceed size set in constructor.
          * @param data Data to write.
-         * @param count Number of data entries to write.
-         * @param update Whether or not to update the buffer or resize.
+         * @param size Size of each data entry (must match constructor).
+         * @param count Number of data entries to write (must not exceed constructor value).
          */
-        template<typename T>
-        void write(BufferType type, T *data, int count, bool update = false) {
-            _writeInternal(type, data, count, sizeof(T), update);
-        }
-
-    private:
-        /**
-         * Internally write buffer data.
-         */
-        void _writeInternal(BufferType type, void *data, int count, int size, bool update = false);
+        void write(void *data, int size, int count);
     };
 }
 

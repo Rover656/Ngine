@@ -34,7 +34,7 @@
 #cmakedefine NGINE_ENABLE_OPENGLES
 
 // DirectX 11
-#cmakedefine NGINE_ENABLE_DIRECTX11
+#cmakedefine NGINE_ENABLE_DIRECTX
 
 // Vulkan
 #cmakedefine NGINE_ENABLE_VULKAN

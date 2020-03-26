@@ -7,7 +7,7 @@ namespace ngine::graphics {
         m_graphicsDevice->free(this);
     }
 
-    ResourceType GraphicsResource::getType() const {
+    ResourceType GraphicsResource::getResourceType() const {
         return m_type;
     }
 

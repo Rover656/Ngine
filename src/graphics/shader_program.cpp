@@ -21,10 +21,11 @@
 #include "ngine/graphics/shader_program.hpp"
 
 #include "ngine/graphics/graphics_device.hpp"
+#include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice)
-            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram) {
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, VertexBufferLayout layout)
+            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_layout(layout) {
         m_graphicsDevice->_initShaderProgram(this);
     }
 
@@ -32,8 +33,27 @@ namespace ngine::graphics {
         free();
     }
 
+    const VertexBufferLayout ShaderProgram::getLayout() const {
+        return m_layout;
+    }
+
     void ShaderProgram::attachShader(Shader *shader) {
+        for (auto s : m_shaders) {
+            if (s->Type == shader->Type) {
+                Console::fail("ShaderProgram", "A shader program can only have one of each shader type!");
+            }
+        }
+
         m_graphicsDevice->_shaderProgramAttach(this, shader);
+        m_shaders.push_back(shader);
+    }
+
+    Shader *ShaderProgram::getShaderByType(ShaderType type) {
+        for (auto s : m_shaders) {
+            if (s->Type == type)
+                return s;
+        }
+        return nullptr;
     }
 
     void ShaderProgram::link() {

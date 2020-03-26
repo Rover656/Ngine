@@ -54,7 +54,17 @@ namespace ngine {
             /**
              * Bind a buffer.
              */
-            virtual void bindBuffer(BufferType type, Buffer *buffer) = 0;
+            virtual void bindBuffer(Buffer *buffer) = 0;
+
+            /**
+             * Unbind a buffer.
+             */
+            virtual void unbindBuffer(Buffer *buffer) = 0;
+
+            /**
+             * Unbind a buffer by type.
+             */
+            virtual void unbindBuffer(BufferType type) = 0;
 
             virtual void bindVertexArray(VertexArray *array) = 0;
 
@@ -92,8 +102,8 @@ namespace ngine {
             /**
              * Create a buffer on the GPU.
              */
-            virtual void _initBuffer(Buffer *buffer) = 0;
-            virtual void _writeBuffer(Buffer *buffer, BufferType type, void* data, int count, int size, bool update) = 0;
+            virtual void _initBuffer(Buffer *buffer, int size, int count) = 0;
+            virtual void _writeBuffer(Buffer *buffer, void* data, int count) = 0;
 
             virtual void _initShader(Shader *shader, const std::string &source) = 0;
 
@@ -105,6 +115,7 @@ namespace ngine {
             virtual void _initVertexArray(VertexArray *array) = 0;
 
             virtual void _present() = 0;
+            virtual void _onResize() = 0;
         };
     }
 }
