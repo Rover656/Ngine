@@ -43,6 +43,8 @@ namespace ngine::graphics::platform {
 
         void bindTexture(unsigned int unit, Texture2D *texture) override;
 
+        void bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
@@ -90,6 +92,9 @@ namespace ngine::graphics::platform {
         void _initVertexArray(VertexArray *array) override;
 
         void _initTexture(Texture2D *texture, void *data) override;
+
+        void _initSamplerState(SamplerState *samplerState) override;
+        void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
         void _present() override;
         void _onResize() override;

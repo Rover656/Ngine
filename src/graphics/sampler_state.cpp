@@ -18,36 +18,12 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_TEXTURE2D_HPP
-#define NGINE_TEXTURE2D_HPP
+#include "ngine/graphics/sampler_state.hpp"
 
-#include "ngine/config.hpp"
-
-#include "graphics_resource.hpp"
+#include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    // TODO: Move to Image class once we get one. This will control the pixel data (including flippage).
-    // TODO: Add all supported formats.
-    enum class PixelFormat {
-        R8G8B8A8,
-    };
-
-    class NEAPI Texture2D : public GraphicsResource {
-    public:
-        /**
-         * Create a texture with existing pixel data.
-         */
-        Texture2D(GraphicsDevice *graphicsDevice, int width, int height, void *pixelData, PixelFormat format);
-
-        PixelFormat getPixelFormat() const;
-        int getWidth() const;
-        int getHeight() const;
-    private:
-        PixelFormat m_format;
-        // TODO: Store the image
-        int m_width;
-        int m_height;
-    };
+    SamplerState::SamplerState(GraphicsDevice *graphicsDevice) : GraphicsResource(graphicsDevice, ResourceType::SamplerState) {
+        m_graphicsDevice->_initSamplerState(this);
+    }
 }
-
-#endif //NGINE_TEXTURE2D_HPP

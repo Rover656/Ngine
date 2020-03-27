@@ -44,6 +44,8 @@ namespace ngine::graphics::platform {
 
         void bindTexture(unsigned int unit, Texture2D *texture) override;
 
+        void bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
@@ -63,6 +65,23 @@ namespace ngine::graphics::platform {
          * Whether or not the context is GLES3.
          */
         bool m_isGLES3 = false;
+
+        /**
+         * Whether or not sampler objects are supported.
+         */
+        bool m_supportSamplerObject = false;
+
+        /**
+         * The list of currently bound textures.
+         */
+        Texture2D *m_textures[8];
+
+        /**
+         * The currently active sampler states (or null).
+         * For adding non-samplerobject based samplers.
+         * Tracks one sampler for each texture unit and applies its properties to a given texture when bound.
+         */
+        SamplerState *m_samplerStates[8];
 
         /**
          * The current VAO.
@@ -117,6 +136,11 @@ namespace ngine::graphics::platform {
         void _prepareVertexArray(VertexArray *array);
 
         void _initTexture(Texture2D *texture, void *data) override;
+
+        void _initSamplerState(SamplerState *samplerState) override;
+        void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
+        void _applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode);
+        void _applyFakeSamplerState(SamplerState *samplerState, int unit);
 
         void _freeResource(GraphicsResource *resource);
 

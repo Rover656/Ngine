@@ -25,6 +25,7 @@
 
 #include "buffer.hpp"
 #include "color.hpp"
+#include "sampler_state.hpp"
 #include "shader.hpp"
 #include "shader_program.hpp"
 #include "texture2d.hpp"
@@ -44,6 +45,7 @@ namespace ngine {
         class NEAPI GraphicsDevice {
             friend class ngine::Window;
             friend class ngine::graphics::Buffer;
+            friend class ngine::graphics::SamplerState;
             friend class ngine::graphics::Shader;
             friend class ngine::graphics::ShaderProgram;
             friend class ngine::graphics::Texture2D;
@@ -68,6 +70,8 @@ namespace ngine {
              * @param texture Texture to bind.
              */
             virtual void bindTexture(unsigned int unit, Texture2D *texture) = 0;
+
+            virtual void bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
 
             /**
              * Draw primitives from the currently bound buffer.
@@ -117,6 +121,9 @@ namespace ngine {
             virtual void _initVertexArray(VertexArray *array) = 0;
 
             virtual void _initTexture(Texture2D *texture, void *data) = 0;
+
+            virtual void _initSamplerState(SamplerState *samplerState) = 0;
+            virtual void _updateSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
 
             virtual void _present() = 0;
             virtual void _onResize() = 0;

@@ -49,16 +49,21 @@ namespace ngine::graphics::platform {
 
     void DirectXGraphicsDevice::bindTexture(unsigned int unit, Texture2D *texture) {
         // Check unit limit
-        if (unit > 8)
+        if (unit >= 8)
             Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
 
         // Set texture
         auto resView = (ID3D11ShaderResourceView *) texture->Handle1;
         m_deviceContext->PSSetShaderResources(unit, 1, &resView);
+    }
 
+    void DirectXGraphicsDevice::bindSamplerState(unsigned int unit, SamplerState *samplerState) {
         // Set sampler
-        auto sampler = (ID3D11SamplerState *) texture->TempHandle;
+        auto sampler = (ID3D11SamplerState *) samplerState->Handle;
         m_deviceContext->PSSetSamplers(unit, 1, &sampler);
+
+        // Check for updates
+        _updateSamplerState(0, samplerState); // Not passing unit as that is only for GL
     }
 
     void DirectXGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -84,6 +89,9 @@ namespace ngine::graphics::platform {
             case ResourceType::Buffer:
                 ((ID3D11Buffer *) resource->Handle)->Release();
                 break;
+            case ResourceType::SamplerState:
+                ((ID3D11SamplerState*) resource->Handle)->Release();
+                break;
             case ResourceType::Shader:
                 switch (((Shader *) resource)->Type) {
                     case ShaderType::Vertex:
@@ -102,7 +110,6 @@ namespace ngine::graphics::platform {
             case ResourceType::Texture2D:
                 ((ID3D11Texture2D *) resource->Handle)->Release();
                 ((ID3D11ShaderResourceView *) resource->Handle1)->Release();
-                ((ID3D11SamplerState*) resource->TempHandle)->Release();
                 break;
             case ResourceType::VertexArray:
                 break;
@@ -477,30 +484,98 @@ namespace ngine::graphics::platform {
         }
 
         texture->Handle1 = resourceView;
+    }
 
-        // Create sampler state TODO: Move to a SamplerState class
+    void DirectXGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
+        _updateSamplerState(0, samplerState);
+    }
+
+    void DirectXGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
+        // Create sampler state
         D3D11_SAMPLER_DESC samplerDesc;
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;//D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.MinLOD = -FLT_MAX;
         samplerDesc.MaxLOD = FLT_MAX;
         samplerDesc.MipLODBias = 0.0f;
-        samplerDesc.MaxAnisotropy = 1;
         samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        samplerDesc.MaxAnisotropy = samplerState->MaxAnisotropy;
 
+        switch (samplerState->Filter) {
+            case TextureFilter::Anisotropic:
+                samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+                break;
+            case TextureFilter::Linear:
+                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+                break;
+            case TextureFilter::LinearMipPoint:
+                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+                break;
+            case TextureFilter::MinLinearMagPointMipLinear:
+                samplerDesc.Filter = D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
+                break;
+            case TextureFilter::MinLinearMagPointMipPoint:
+                samplerDesc.Filter = D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT;
+                break;
+            case TextureFilter::MinPointMagLinearMipLinear:
+                samplerDesc.Filter = D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR;
+                break;
+            case TextureFilter::MinPointMagLinearMipPoint:
+                samplerDesc.Filter = D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
+                break;
+            case TextureFilter::Point:
+                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+                break;
+            case TextureFilter::PointMipLinear:
+                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+                break;
+        }
+
+        switch (samplerState->WrapModeU) {
+            case WrapMode::Wrap:
+                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+                break;
+            case WrapMode::Mirror:
+                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
+                break;
+            case WrapMode::Clamp:
+                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+                break;
+            case WrapMode::Border:
+                samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+                break;
+        }
+
+        switch (samplerState->WrapModeV) {
+            case WrapMode::Wrap:
+                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+                break;
+            case WrapMode::Mirror:
+                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
+                break;
+            case WrapMode::Clamp:
+                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+                break;
+            case WrapMode::Border:
+                samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+                break;
+        }
+
+        // We don't use this at the moment.
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+
+        // Create new state
         ID3D11SamplerState *state;
-        hr = m_device->CreateSamplerState(&samplerDesc, &state);
+        HRESULT hr = m_device->CreateSamplerState(&samplerDesc, &state);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Could not create sampler state!");
         }
-        texture->TempHandle = state;
+        samplerState->Handle = state;
     }
 
     void DirectXGraphicsDevice::_present() {
         // Present to swapchain
         m_swapchain->Present(0, 0);
+
+        // Bring backbuffer render target back.
         m_deviceContext->OMSetRenderTargets(1, &m_backbuffer, nullptr);
     }
 

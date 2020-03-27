@@ -28,6 +28,7 @@ namespace ngine::graphics {
 
     enum class ResourceType {
         Buffer,
+        SamplerState,
         Shader,
         ShaderProgram,
         Texture2D,
@@ -55,9 +56,6 @@ namespace ngine::graphics {
                  * @warning DO NOT MODIFY.
                  */
                 void *Handle1;
-
-                // TEMP FOR TESTING
-                void *TempHandle;
             };
         };
 

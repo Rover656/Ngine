@@ -37,23 +37,20 @@ namespace ngine::graphics {
 #endif
 
     bool ContextDescriptor::verify() const {
-        // TODO: Finish others
         switch (Type) {
             case ContextType::OpenGL:
 #if !defined(NGINE_ENABLE_OPENGL)
                 return false;
 #else
-                if (MajorVersion < 3 || MinorVersion < 0) return false;
-                if (MajorVersion == 3 && MinorVersion > 3) return false;
+                if (MajorVersion == 3 && MinorVersion != 3) return false;
                 if (MajorVersion == 4 && MinorVersion > 6) return false;
 #endif
                 break;
             case ContextType::OpenGLES:
+                // TODO: Finish this
                 break;
-            case ContextType::DirectX:
-                break;
-            case ContextType::Vulkan:
-                break;
+            case ContextType::DirectX: break; // Doesnt use this parameter.
+            case ContextType::Vulkan: break; // Will add once we support it.
         }
         return true;
     }

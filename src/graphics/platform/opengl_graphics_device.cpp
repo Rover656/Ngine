@@ -72,6 +72,21 @@ namespace ngine::graphics::platform {
         // Set the unit we are using
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(GL_TEXTURE_2D, texture->GLID);
+
+        // Update (in case of changes)
+        if (m_samplerStates[unit])
+            _updateSamplerState(unit, m_samplerStates[unit]);
+    }
+
+    void OpenGLGraphicsDevice::bindSamplerState(unsigned int unit, SamplerState *samplerState) {
+        // Check unit limit
+        if (unit >= 8)
+            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
+        glBindSampler(unit, samplerState->GLID);
+        m_samplerStates[unit] = samplerState;
+
+        // Update (in case of changes)
+        _updateSamplerState(unit, samplerState);
     }
 
     void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -118,6 +133,11 @@ namespace ngine::graphics::platform {
                     !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
         m_isGLES3 = GLAD_GL_ES_VERSION_3_0;
 #endif
+
+        // Determine if we can use sampler objects
+        if (!m_isGLES2) { // Only platform that can't is GLES2, we will have a workaround once I get to adding GLES2
+            m_supportSamplerObject = true;
+        }
 
         // Setup viewport
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
@@ -382,14 +402,102 @@ namespace ngine::graphics::platform {
         }
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->getWidth(), texture->getHeight(), 0, format, type, data);
 
-        // TODO: Texture parameters
         // TODO: Mipmap limits
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
         Console::notice("OpenGL", "Successfully created texture %u.", texture->GLID);
+    }
+
+    void OpenGLGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
+        if (m_supportSamplerObject) {
+            // Create sampler
+            samplerState->GLID = 0;
+            glGenSamplers(1, &samplerState->GLID);
+        }
+    }
+
+    void OpenGLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
+        if (m_supportSamplerObject) {
+            // Apply wrap modes
+            _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_R, samplerState->WrapModeU);
+            _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_S, samplerState->WrapModeV);
+
+            // Apply filter
+            GLint paramMin;
+            GLint paramMag;
+            float anisotropy = 1.0f;
+            bool useMipmaps = false;
+
+            if (m_textures[unit])
+                useMipmaps = false; // TODO: Check mipmap count is greater than 1
+
+            switch (samplerState->Filter) {
+                case TextureFilter::Anisotropic:
+                    anisotropy = (float) samplerState->MaxAnisotropy;
+                case TextureFilter::Linear:
+                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR;
+                    paramMag = GL_LINEAR;
+                    break;
+                case TextureFilter::LinearMipPoint:
+                    paramMin = useMipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
+                    paramMag = GL_LINEAR;
+                    break;
+                case TextureFilter::MinLinearMagPointMipLinear:
+                    paramMin = useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+                    paramMag = GL_NEAREST;
+                    break;
+                case TextureFilter::MinLinearMagPointMipPoint:
+                    paramMin = useMipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
+                    paramMag = GL_NEAREST;
+                    break;
+                case TextureFilter::MinPointMagLinearMipLinear:
+                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
+                    paramMag = GL_LINEAR;
+                    break;
+                case TextureFilter::MinPointMagLinearMipPoint:
+                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+                    paramMag = GL_LINEAR;
+                    break;
+                case TextureFilter::Point:
+                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+                    paramMag = GL_NEAREST;
+                    break;
+                case TextureFilter::PointMipLinear:
+                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
+                    paramMin = GL_NEAREST;
+                    break;
+            }
+
+            // Apply filtering
+            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MAG_FILTER, paramMag);
+            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MIN_FILTER, paramMin);
+
+            // Set anisotropic filtering TODO: Check limit is within range
+            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+        }
+    }
+
+    void OpenGLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
+        GLint param;
+        switch (wrapMode) {
+            case WrapMode::Wrap:
+                param = GL_REPEAT;
+                break;
+            case WrapMode::Mirror:
+                param = GL_MIRRORED_REPEAT;
+                break;
+            case WrapMode::Clamp:
+                param = GL_CLAMP_TO_EDGE;
+                break;
+            case WrapMode::Border:
+                param = GL_CLAMP_TO_BORDER;
+                break;
+        }
+        glSamplerParameteri(sampler, field, param);
+    }
+
+    void OpenGLGraphicsDevice::_applyFakeSamplerState(SamplerState *samplerState, int unit) {
+        // TODO
     }
 
     void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
@@ -398,12 +506,20 @@ namespace ngine::graphics::platform {
             case ResourceType::Buffer:
                 glDeleteBuffers(1, &resource->GLID);
                 break;
+            case ResourceType::SamplerState:
+                if (m_supportSamplerObject) {
+                    glDeleteSamplers(1, &resource->GLID);
+                }
+                break;
             case ResourceType::Shader:
                 glDeleteShader(resource->GLID);
                 break;
             case ResourceType::ShaderProgram:
                 // TODO: Handle the VAO system if the current shader is removed.
                 glDeleteProgram(resource->GLID);
+                break;
+            case ResourceType::Texture2D:
+                glDeleteTextures(1, &resource->GLID);
                 break;
             case ResourceType::VertexArray:
                 glDeleteVertexArrays(1, &resource->GLID);

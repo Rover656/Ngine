@@ -16,6 +16,7 @@ class TestGame : public ngine::Game {
     ngine::graphics::Shader *fragShader;
     ngine::graphics::ShaderProgram *prog;
     ngine::graphics::Texture2D *tex;
+    ngine::graphics::SamplerState *samplerState;
 public:
     TestGame(ngine::WindowConfig conf) : Game(conf) {}
 
@@ -125,10 +126,14 @@ public:
                 255, 255,   0, 255
         };
         tex = new ngine::graphics::Texture2D(getGraphicsDevice(), 2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
+
+        samplerState = new ngine::graphics::SamplerState(getGraphicsDevice());
+        samplerState->Filter = ngine::graphics::TextureFilter::Point;
     }
 
     void cleanup() override {
         delete tex;
+        delete samplerState;
         delete vb;
         delete array;
         delete vertShader;
@@ -142,6 +147,7 @@ public:
         prog->use();
         auto gd = getGraphicsDevice();
         gd->bindVertexArray(array);
+        gd->bindSamplerState(1, samplerState);
         gd->bindTexture(1, tex);
         gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
 
