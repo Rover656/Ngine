@@ -31,8 +31,6 @@
 #include <vector>
 
 namespace ngine::graphics {
-    class GraphicsDevice;
-
     /**
      * A vertex array defines a buffer filled with vertices and a buffer with the indices.
      * This controls both the array and the layout.
@@ -47,12 +45,7 @@ namespace ngine::graphics {
          * @param indexBuffer The index buffer for the array. Can be null.
          * @param layout The layout to follow. Must match target shader.
          */
-        VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, const VertexBufferLayout layout);
-
-        /**
-         * Destroy a vertex array.
-         */
-        ~VertexArray();
+        VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, const VertexBufferLayout &layout);
 
         Buffer *getVertexBuffer();
 

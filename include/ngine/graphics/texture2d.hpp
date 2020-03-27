@@ -18,30 +18,43 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_SHADER_HPP
-#define NGINE_SHADER_HPP
+#ifndef NGINE_TEXTURE2D_HPP
+#define NGINE_TEXTURE2D_HPP
 
 #include "ngine/config.hpp"
 
 #include "graphics_resource.hpp"
 
-#include <string>
-
 namespace ngine::graphics {
-    enum class ShaderType {
-        Vertex,
-        Fragment
+    // TODO: Move to Image class once we get one. This will control the pixel data (including flippage).
+    // TODO: Add all supported formats.
+    enum class PixelFormat {
+        R8G8B8A8,
     };
 
-    class NEAPI Shader : public GraphicsResource {
+    /**
+     * Texture properties
+     */
+    struct TextureProperties {
+        // TODO
+    };
+
+    class NEAPI Texture2D : public GraphicsResource {
     public:
         /**
-         * The shader type.
+         * Create a texture with existing pixel data.
          */
-        ShaderType Type;
+        Texture2D(GraphicsDevice *graphicsDevice, int width, int height, void *pixelData, PixelFormat format);
 
-        Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderType type);
+        PixelFormat getPixelFormat() const;
+        int getWidth() const;
+        int getHeight() const;
+    private:
+        PixelFormat m_format;
+        // TODO: Store the image
+        int m_width;
+        int m_height;
     };
 }
 
-#endif //NGINE_SHADER_HPP
+#endif //NGINE_TEXTURE2D_HPP

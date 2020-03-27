@@ -25,6 +25,11 @@ if (PLATFORM_DESKTOP)
     set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} glfw)
 endif()
 
+# DirectX
+if (NGINE_ENABLE_DIRECTX)
+    set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} d3d11.lib dxgi.lib d3dcompiler.lib)
+endif()
+
 # Setup projects
 if (BUILD_NGINE_STATIC)
     # Add library
@@ -37,9 +42,6 @@ if (BUILD_NGINE_STATIC)
     target_link_libraries(Ngine_static
             PRIVATE
             box2d
-            d3d11.lib # TEMP
-            dxgi.lib # TEMP
-            d3dcompiler.lib # TEMP
             ${_NGINE_LIBRARIES})
     target_include_directories(Ngine_static
             PUBLIC

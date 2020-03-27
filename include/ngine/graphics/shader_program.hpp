@@ -29,10 +29,11 @@
 #include <vector>
 
 namespace ngine::graphics {
-    class GraphicsDevice;
-
-    // TODO: More permanent location
+    /**
+     * List of data types that can be passed to shaders.
+     */
     enum class ElementType {
+        // TODO: Implement these later, I'm lazy
         //Byte,
         //UnsignedByte,
         //Short,
@@ -40,6 +41,17 @@ namespace ngine::graphics {
         Int,
         UnsignedInt,
         Float
+    };
+
+    /**
+     * Element use.
+     * Helps systems to build vertex data for many layouts.
+     */
+    enum class ElementUse {
+        Position,
+        Texcoords,
+        Color,
+        Custom
     };
 
     /**
@@ -56,6 +68,11 @@ namespace ngine::graphics {
          * Data type.
          */
         ElementType Type;
+
+        /**
+         * Element use.
+         */
+        ElementUse Use;
 
         /**
          * Data count.
@@ -105,14 +122,20 @@ namespace ngine::graphics {
     class NEAPI ShaderProgram : public GraphicsResource {
     public:
         /**
+         * The name of the uniform which holds an array of samplers.
+         */
+        std::string GLSLSamplerUniform = "Textures";
+
+        /**
+         * The number of texture samplers expected.
+         * @warning This value is critical on OpenGL as it tells the engine how big the uniform array is.
+         */
+        unsigned int ExpectedSamplerCount = 1;
+
+        /**
          * Create a shader program.
          */
         ShaderProgram(GraphicsDevice *graphicsDevice, VertexBufferLayout layout);
-
-        /**
-         * Destroy a shader program.
-         */
-        ~ShaderProgram();
 
         /**
          * Get this shaders vertex buffer layout.

@@ -26,8 +26,6 @@
 #include "graphics_resource.hpp"
 
 namespace ngine::graphics {
-    class GraphicsDevice;
-
     /**
      * Buffer usage descriptor.
      */
@@ -40,6 +38,7 @@ namespace ngine::graphics {
     enum class BufferType {
         Vertex,
         Index
+        // TODO: Instanced, we want to allow instancing on capable hardware.
     };
 
     /**
@@ -47,7 +46,6 @@ namespace ngine::graphics {
      */
     class NEAPI Buffer : public GraphicsResource {
         friend class ngine::graphics::GraphicsDevice;
-
     public:
         /**
          * The buffer type
@@ -77,12 +75,7 @@ namespace ngine::graphics {
          * @param dataSize The size of each buffer entry.
          * @param dataCount The number of entries in the buffer.
          */
-        Buffer(graphics::GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize, int dataCount);
-
-        /**
-         * Destroy the buffer.
-         */
-        virtual ~Buffer();
+        Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize, int dataCount);
 
         /**
          * Write the given data to the buffer.

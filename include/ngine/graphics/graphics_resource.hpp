@@ -30,6 +30,7 @@ namespace ngine::graphics {
         Buffer,
         Shader,
         ShaderProgram,
+        Texture2D,
         VertexArray
     };
 
@@ -54,6 +55,9 @@ namespace ngine::graphics {
                  * @warning DO NOT MODIFY.
                  */
                 void *Handle1;
+
+                // TEMP FOR TESTING
+                void *TempHandle;
             };
         };
 
@@ -81,6 +85,7 @@ namespace ngine::graphics {
          * Create a new graphics resource.
          */
         GraphicsResource(GraphicsDevice *graphicsDevice, ResourceType type);
+        virtual ~GraphicsResource();
     };
 }
 

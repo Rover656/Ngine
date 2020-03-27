@@ -32,7 +32,7 @@
 
 namespace ngine::graphics::platform {
     /**
-     * Graphics device for OpenGL(ES) platform.
+     * Graphics device for DirectX platform.
      */
     class NEAPI DirectXGraphicsDevice : public GraphicsDevice {
         friend class ngine::Window;
@@ -41,19 +41,36 @@ namespace ngine::graphics::platform {
 
         void bindVertexArray(VertexArray *array) override;
 
+        void bindTexture(unsigned int unit, Texture2D *texture) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
 
     private:
-
+        /**
+         * Swapchain
+         */
         IDXGISwapChain* m_swapchain;
+
+        /**
+         * Device.
+         */
         ID3D11Device* m_device;
+
+        /**
+         * Device context.
+         */
         ID3D11DeviceContext* m_deviceContext;
+
+        /**
+         * Back buffer render target.
+         */
         ID3D11RenderTargetView* m_backbuffer;
-        ID3D11Texture2D* m_depthStencilBuffer;
-        ID3D11DepthStencilState* m_depthStencilState;
-        ID3D11DepthStencilView* m_depthStencilView;
+
+        /**
+         * Rasterizer state.
+         */
         ID3D11RasterizerState* m_rasterizerState;
 
         DirectXGraphicsDevice(Window *window);
@@ -71,6 +88,8 @@ namespace ngine::graphics::platform {
         void _useShaderProgram(ShaderProgram *prog) override;
 
         void _initVertexArray(VertexArray *array) override;
+
+        void _initTexture(Texture2D *texture, void *data) override;
 
         void _present() override;
         void _onResize() override;

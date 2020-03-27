@@ -27,6 +27,7 @@
 #include "color.hpp"
 #include "shader.hpp"
 #include "shader_program.hpp"
+#include "texture2d.hpp"
 #include "vertex_array.hpp"
 
 namespace ngine {
@@ -45,6 +46,7 @@ namespace ngine {
             friend class ngine::graphics::Buffer;
             friend class ngine::graphics::Shader;
             friend class ngine::graphics::ShaderProgram;
+            friend class ngine::graphics::Texture2D;
             friend class ngine::graphics::VertexArray;
         public:
             /**
@@ -59,6 +61,13 @@ namespace ngine {
              * @warning Must match the shader's layout if you are going to render with it.
              */
             virtual void bindVertexArray(VertexArray *array) = 0;
+
+            /**
+             * Bind a texture to a texture unit.
+             * @param unit Texture unit to bind to.
+             * @param texture Texture to bind.
+             */
+            virtual void bindTexture(unsigned int unit, Texture2D *texture) = 0;
 
             /**
              * Draw primitives from the currently bound buffer.
@@ -106,6 +115,8 @@ namespace ngine {
             virtual void _useShaderProgram(ShaderProgram *prog) = 0; // TODO: Do this through GraphicsDevice to make API more uniform.
 
             virtual void _initVertexArray(VertexArray *array) = 0;
+
+            virtual void _initTexture(Texture2D *texture, void *data) = 0;
 
             virtual void _present() = 0;
             virtual void _onResize() = 0;

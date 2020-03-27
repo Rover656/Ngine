@@ -24,13 +24,33 @@
 #include "ngine/console.hpp"
 
 namespace ngine::graphics {
+    int VertexBufferElement::getSize() const {
+        switch (Type) {
+            //case ElementType::Byte:
+            //case ElementType::UnsignedByte:
+            //    return sizeof(char) * Count;
+            //case ElementType::Short:
+            //case ElementType::UnsignedShort:
+            //    return sizeof(short) * Count;
+            case ElementType::Int:
+            case ElementType::UnsignedInt:
+                return sizeof(int) * Count;
+            case ElementType::Float:
+                return sizeof(float) * Count;
+        }
+    }
+
+    int VertexBufferLayout::getSize() const {
+        int s = 0;
+        for (const auto &e : Elements) {
+            s += e.getSize();
+        }
+        return s;
+    }
+    
     ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, VertexBufferLayout layout)
             : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_layout(layout) {
         m_graphicsDevice->_initShaderProgram(this);
-    }
-
-    ShaderProgram::~ShaderProgram() {
-        free();
     }
 
     const VertexBufferLayout ShaderProgram::getLayout() const {

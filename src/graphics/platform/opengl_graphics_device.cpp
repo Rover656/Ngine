@@ -64,6 +64,16 @@ namespace ngine::graphics::platform {
         m_currentVAO = array;
     }
 
+    void OpenGLGraphicsDevice::bindTexture(unsigned int unit, Texture2D *texture) {
+        // Check unit limit
+        if (unit >= 8)
+            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
+
+        // Set the unit we are using
+        glActiveTexture(GL_TEXTURE0 + unit);
+        glBindTexture(GL_TEXTURE_2D, texture->GLID);
+    }
+
     void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
         GLenum prim;
         switch (primitiveType) {
@@ -251,6 +261,14 @@ namespace ngine::graphics::platform {
         // Setup VAO if available.
         if (m_currentVAO)
             _prepareVertexArray(m_currentVAO);
+
+        // Setup texture uniforms (TODO: Do we need to do this every time?)
+        int *samplers = new int[prog->ExpectedSamplerCount];
+        for (auto i = 0; i < prog->ExpectedSamplerCount; i++)
+            samplers[i] = i;
+        int loc = glGetUniformLocation(prog->GLID, prog->GLSLSamplerUniform.c_str());
+        glUniform1iv(loc, prog->ExpectedSamplerCount, samplers);
+        delete[] samplers;
     }
 
     void OpenGLGraphicsDevice::_initVertexArray(VertexArray *array) {
@@ -342,6 +360,36 @@ namespace ngine::graphics::platform {
 
         // Register in cache
         m_VAOShaderCache[array] = m_currentShaderProgram;
+    }
+
+    void OpenGLGraphicsDevice::_initTexture(Texture2D *texture, void *data) {
+        // Create texture
+        texture->GLID = 0;
+        glGenTextures(1, &texture->GLID);
+
+        // Bind texture and set it up (always use unit 0 as it should be replaced when drawing commences).
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture->GLID);
+
+        // Write image data
+        GLenum internalFormat = 0, format = 0, type = 0;
+        switch (texture->getPixelFormat()) {
+            case PixelFormat::R8G8B8A8:
+                internalFormat = GL_RGBA;
+                format = GL_RGBA;
+                type = GL_UNSIGNED_BYTE;
+                break;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->getWidth(), texture->getHeight(), 0, format, type, data);
+
+        // TODO: Texture parameters
+        // TODO: Mipmap limits
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        Console::notice("OpenGL", "Successfully created texture %u.", texture->GLID);
     }
 
     void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {

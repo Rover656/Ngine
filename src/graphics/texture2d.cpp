@@ -18,24 +18,26 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/buffer.hpp"
+#include "ngine/graphics/texture2d.hpp"
 
 #include "ngine/graphics/graphics_device.hpp"
-#include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize,
-                   int dataCount) : GraphicsResource(graphicsDevice, ResourceType::Buffer), Type(type), Usage(usage),
-                                    Size(dataSize), Count(dataCount) {
-        m_graphicsDevice->_initBuffer(this, dataSize, dataCount);
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice, int width, int height, void *pixelData, PixelFormat format)
+            : GraphicsResource(graphicsDevice, ResourceType::Texture2D), m_width(width), m_height(height),
+              m_format(format) {
+        m_graphicsDevice->_initTexture(this, pixelData);
     }
 
-    void Buffer::write(void *data, int size, int count) {
-        if (size != Size)
-            Console::fail("Buffer", "Cannot write data with different size to buffer!");
-        if (count > Count)
-            Console::fail("Buffer", "Attempt to write too many elements to buffer!");
+    PixelFormat Texture2D::getPixelFormat() const {
+        return m_format;
+    }
 
-        m_graphicsDevice->_writeBuffer(this, data, count);
+    int Texture2D::getWidth() const {
+        return m_width;
+    }
+
+    int Texture2D::getHeight() const {
+        return m_height;
     }
 }

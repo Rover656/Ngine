@@ -32,6 +32,8 @@
 
 #include <d3dcompiler.h>
 
+// TODO: UWP Support
+
 namespace ngine::graphics::platform {
     void DirectXGraphicsDevice::clear(Color color) {
         float c[4] = {color.R, color.G, color.B, color.A};
@@ -43,6 +45,20 @@ namespace ngine::graphics::platform {
         _bindBuffer(array->getVertexBuffer());
         if (array->getIndexBuffer())
             _bindBuffer(array->getIndexBuffer());
+    }
+
+    void DirectXGraphicsDevice::bindTexture(unsigned int unit, Texture2D *texture) {
+        // Check unit limit
+        if (unit > 8)
+            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
+
+        // Set texture
+        auto resView = (ID3D11ShaderResourceView *) texture->Handle1;
+        m_deviceContext->PSSetShaderResources(unit, 1, &resView);
+
+        // Set sampler
+        auto sampler = (ID3D11SamplerState *) texture->TempHandle;
+        m_deviceContext->PSSetSamplers(unit, 1, &sampler);
     }
 
     void DirectXGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -83,6 +99,11 @@ namespace ngine::graphics::platform {
             case ResourceType::ShaderProgram:
                 ((ID3D11InputLayout *) resource->Handle)->Release();
                 break;
+            case ResourceType::Texture2D:
+                ((ID3D11Texture2D *) resource->Handle)->Release();
+                ((ID3D11ShaderResourceView *) resource->Handle1)->Release();
+                ((ID3D11SamplerState*) resource->TempHandle)->Release();
+                break;
             case ResourceType::VertexArray:
                 break;
         }
@@ -95,7 +116,7 @@ namespace ngine::graphics::platform {
         // Create swap chain
         DXGI_SWAP_CHAIN_DESC sd;
         ZeroMemory(&sd, sizeof(sd));
-        sd.BufferCount = 1;
+        sd.BufferCount = 2;
         sd.BufferDesc.Width = m_window->getWidth();
         sd.BufferDesc.Height = m_window->getHeight();
         sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -107,6 +128,7 @@ namespace ngine::graphics::platform {
         sd.SampleDesc.Quality = 0;
         sd.Windowed = TRUE; // TODO: Window fullscreening
         sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+        sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
         // Define feature level
         D3D_FEATURE_LEVEL FeatureLevels = D3D_FEATURE_LEVEL_11_0;
@@ -120,9 +142,9 @@ namespace ngine::graphics::platform {
         deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-        hr = D3D11CreateDeviceAndSwapChain(NULL,
+        hr = D3D11CreateDeviceAndSwapChain(nullptr,
                                            D3D_DRIVER_TYPE_HARDWARE,
-                                           NULL,
+                                           nullptr,
                                            deviceFlags,
                                            &FeatureLevels,
                                            1,
@@ -135,9 +157,9 @@ namespace ngine::graphics::platform {
 
         if (FAILED (hr)) {
             // Attempt to create a warp device
-            hr = D3D11CreateDeviceAndSwapChain(NULL,
+            hr = D3D11CreateDeviceAndSwapChain(nullptr,
                                                D3D_DRIVER_TYPE_WARP,
-                                               NULL,
+                                               nullptr,
                                                deviceFlags,
                                                &FeatureLevels,
                                                1,
@@ -162,7 +184,11 @@ namespace ngine::graphics::platform {
         }
 
         // Create the render target
-        hr = m_device->CreateRenderTargetView(backBuffer, nullptr, &m_backbuffer);
+        D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+        ZeroMemory(&rtvDesc, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
+        rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+        rtvDesc.Texture2D.MipSlice = 0;
+        hr = m_device->CreateRenderTargetView(backBuffer, &rtvDesc, &m_backbuffer);
 
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create render target view!");
@@ -206,6 +232,7 @@ namespace ngine::graphics::platform {
         m_swapchain->SetFullscreenState(false, nullptr);
 
         // Release swapchain, device and device context
+        m_rasterizerState->Release();
         m_swapchain->Release();
         m_backbuffer->Release();
         m_device->Release();
@@ -269,6 +296,7 @@ namespace ngine::graphics::platform {
         ID3D11VertexShader *vshdr;
         ID3D11PixelShader *pshdr;
 
+        // Get compile errors
         ID3DBlob *error;
 
         switch (shader->Type) {
@@ -405,8 +433,75 @@ namespace ngine::graphics::platform {
 
     void DirectXGraphicsDevice::_initVertexArray(VertexArray *array) {}
 
+    void DirectXGraphicsDevice::_initTexture(Texture2D *texture, void *data) {
+        // Setup description
+        D3D11_TEXTURE2D_DESC desc;
+        ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
+        desc.Width = texture->getWidth();
+        desc.Height = texture->getHeight();
+        desc.MipLevels = desc.ArraySize = 1;
+        desc.SampleDesc.Count = 1;
+        desc.Usage = D3D11_USAGE_DEFAULT; // No, we do not use dynamic
+        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+        int bpp;
+        switch (texture->getPixelFormat()) {
+            case PixelFormat::R8G8B8A8:
+                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+                bpp = sizeof(unsigned char) * 4;
+                break;
+        }
+
+        // TODO: Generate mipmaps
+
+        // Write the data to the texture
+        D3D11_SUBRESOURCE_DATA subdata;
+        subdata.pSysMem = data;
+        subdata.SysMemPitch = texture->getWidth() * bpp;
+        subdata.SysMemSlicePitch = 0;
+
+        // Create
+        ID3D11Texture2D *tex;
+        HRESULT hr = m_device->CreateTexture2D(&desc, &subdata, &tex);
+        if (FAILED(hr)) {
+            Console::fail("DirectX", "Could not create texture!");
+        }
+        texture->Handle = tex;
+
+        // Create resource view.
+        ID3D11ShaderResourceView *resourceView;
+        hr = m_device->CreateShaderResourceView(tex, nullptr, &resourceView);
+        if (FAILED(hr)) {
+            Console::fail("DirectX", "Failed to create shader resource view!");
+        }
+
+        texture->Handle1 = resourceView;
+
+        // Create sampler state TODO: Move to a SamplerState class
+        D3D11_SAMPLER_DESC samplerDesc;
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;//D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.MinLOD = -FLT_MAX;
+        samplerDesc.MaxLOD = FLT_MAX;
+        samplerDesc.MipLODBias = 0.0f;
+        samplerDesc.MaxAnisotropy = 1;
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+        ID3D11SamplerState *state;
+        hr = m_device->CreateSamplerState(&samplerDesc, &state);
+        if (FAILED(hr)) {
+            Console::fail("DirectX", "Could not create sampler state!");
+        }
+        texture->TempHandle = state;
+    }
+
     void DirectXGraphicsDevice::_present() {
+        // Present to swapchain
         m_swapchain->Present(0, 0);
+        m_deviceContext->OMSetRenderTargets(1, &m_backbuffer, nullptr);
     }
 
     void DirectXGraphicsDevice::_onResize() {

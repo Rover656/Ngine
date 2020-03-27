@@ -15,6 +15,7 @@ class TestGame : public ngine::Game {
     ngine::graphics::Shader *vertShader;
     ngine::graphics::Shader *fragShader;
     ngine::graphics::ShaderProgram *prog;
+    ngine::graphics::Texture2D *tex;
 public:
     TestGame(ngine::WindowConfig conf) : Game(conf) {}
 
@@ -49,11 +50,11 @@ public:
                                "in vec2 fragTexCoord;\n"
                                "in vec4 fragColor;\n"
                                "out vec4 finalColor;\n"
-                               "uniform sampler2D NGINE_TEXTURE;\n"
+                               "uniform sampler2D Textures[2];\n"
                                "void main()\n"
                                "{\n"
-                               "    vec4 texelColor = texture(NGINE_TEXTURE, fragTexCoord);\n"
-                               "    finalColor = fragColor;//texelColor*fragColor;\n"
+                               "    vec4 texelColor = texture(Textures[1], fragTexCoord);\n"
+                               "    finalColor = texelColor*fragColor;\n"
                                "}";
                 fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc,
                                                          ngine::graphics::ShaderType::Fragment);
@@ -76,8 +77,11 @@ public:
                              "    return output;\n"
                              "}\n"
                              "\n"
+                             "Texture2D Textures[2];\n"
+                             "SamplerState Samplers[2];\n"
                              "float4 PSMain(float4 pos : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET {\n"
-                             "    return color;\n"
+                             "    float4 texelColor = Textures[1].Sample(Samplers[1], texcoord);"
+                             "    return texelColor;// * color;\n"
                              "}";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
                                                          ngine::graphics::ShaderType::Vertex);
@@ -91,30 +95,40 @@ public:
 
         // Setup shader layout
         ngine::graphics::VertexBufferLayout shaderLayout;
-        shaderLayout.Elements.push_back({"POSITION", ngine::graphics::ElementType::Float, 3, false});
-        shaderLayout.Elements.push_back({"COLOR", ngine::graphics::ElementType::Float, 4, false});
-        shaderLayout.Elements.push_back({"TEXCOORD", ngine::graphics::ElementType::Float, 2, false});
+        shaderLayout.Elements.push_back({"POSITION", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Position, 3, false});
+        shaderLayout.Elements.push_back({"COLOR", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Color, 4, false});
+        shaderLayout.Elements.push_back({"TEXCOORD", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Texcoords, 2, false});
 
         // Create shader program
         prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderLayout);
         prog->attachShader(vertShader);
         prog->attachShader(fragShader);
         prog->link();
+        prog->ExpectedSamplerCount = 2;
 
         vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
                                          ngine::graphics::BufferUsage::Static, sizeof(float) * (3 + 4 + 2), 3);
 
         float dat[] = {
-                -0.5f, -0.5f, 0,   1, 0, 1, 1,   0, 0,
-                0.5f,  -0.5f, 0,   1, 1, 0, 1,   0, 1,
-                0.0f,  0.5f,  0,   0, 1, 1, 1,   1, 1
+                -0.5f, -0.5f, 0,   1, 1, 1, 1,   0, 0,
+                0.5f,  -0.5f, 0,   1, 1, 1, 1,   1.0f, 0,
+                0.0f,  0.5f,  0,   1, 1, 1, 1,   0.5f, 1
         };
         vb->write(dat, sizeof(float) * (3 + 4 + 2), 3);
 
         array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderLayout);
+
+        unsigned char imgdat[] = {
+                255, 255, 255, 255,
+                0  , 255, 255, 255,
+                255, 0  , 255, 255,
+                255, 255,   0, 255
+        };
+        tex = new ngine::graphics::Texture2D(getGraphicsDevice(), 2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
     }
 
     void cleanup() override {
+        delete tex;
         delete vb;
         delete array;
         delete vertShader;
@@ -128,6 +142,7 @@ public:
         prog->use();
         auto gd = getGraphicsDevice();
         gd->bindVertexArray(array);
+        gd->bindTexture(1, tex);
         gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
 
         Game::draw();

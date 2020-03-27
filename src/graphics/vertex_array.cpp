@@ -23,39 +23,11 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    int VertexBufferElement::getSize() const {
-        switch (Type) {
-            //case ElementType::Byte:
-            //case ElementType::UnsignedByte:
-            //    return sizeof(char) * Count;
-            //case ElementType::Short:
-            //case ElementType::UnsignedShort:
-            //    return sizeof(short) * Count;
-            case ElementType::Int:
-            case ElementType::UnsignedInt:
-                return sizeof(int) * Count;
-            case ElementType::Float:
-                return sizeof(float) * Count;
-        }
-    }
-
-    int VertexBufferLayout::getSize() const {
-        int s = 0;
-        for (const auto &e : Elements) {
-            s += e.getSize();
-        }
-        return s;
-    }
-
     VertexArray::VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer,
-                             const VertexBufferLayout layout)
+                             const VertexBufferLayout &layout)
             : GraphicsResource(graphicsDevice, ResourceType::VertexArray), m_vertexBuffer(vertexBuffer),
               m_indexBuffer(indexBuffer), m_vertexLayout(layout) {
         m_graphicsDevice->_initVertexArray(this);
-    }
-
-    VertexArray::~VertexArray() {
-        free();
     }
 
     Buffer *VertexArray::getVertexBuffer() {

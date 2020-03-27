@@ -42,6 +42,8 @@ namespace ngine::graphics::platform {
 
         void bindVertexArray(VertexArray *array) override;
 
+        void bindTexture(unsigned int unit, Texture2D *texture) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
@@ -113,6 +115,8 @@ namespace ngine::graphics::platform {
 
         void _initVertexArray(VertexArray *array) override;
         void _prepareVertexArray(VertexArray *array);
+
+        void _initTexture(Texture2D *texture, void *data) override;
 
         void _freeResource(GraphicsResource *resource);
 

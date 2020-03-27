@@ -53,10 +53,14 @@ option(NGINE_ENABLE_DIRECTX "Enable the DirectX 11 Rendering API." ON)
 
 # Option validation (basically disable any incompatible rendering pipelines.
 if (PLATFORM MATCHES "Desktop")
-    # TODO: Does GLES work on Mac/Linux. Do we need to block this?
 elseif (PLATFORM MATCHES "UWP")
     set(NGINE_ENABLE_OPENGL OFF)
     set(NGINE_ENABLE_OPENGLES ON) # Force until DX support arrives.
+endif ()
+
+# Block DirectX on non-windows
+if (NOT WIN32)
+    set(NGINE_ENABLE_DIRECTX OFF)
 endif ()
 
 # Check options
@@ -77,6 +81,7 @@ endif ()
 message(STATUS "Building Ngine for the \"${PLATFORM}\" platform.")
 message(STATUS "Ngine OpenGL support is ${NGINE_ENABLE_OPENGL}")
 message(STATUS "Ngine OpenGLES support is ${NGINE_ENABLE_OPENGLES}")
+message(STATUS "Ngine DirectX support is ${NGINE_ENABLE_DIRECTX}")
 
 # Add sub directories
 add_subdirectory(vendor)

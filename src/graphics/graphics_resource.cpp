@@ -13,4 +13,9 @@ namespace ngine::graphics {
 
     GraphicsResource::GraphicsResource(GraphicsDevice *graphicsDevice, ResourceType type)
             : m_graphicsDevice(graphicsDevice), m_type(type) {}
+
+    GraphicsResource::~GraphicsResource() {
+        // Free the resource.
+        free();
+    }
 }

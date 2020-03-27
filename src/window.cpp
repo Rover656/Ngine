@@ -66,6 +66,9 @@ namespace ngine {
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
                 break;
             case graphics::ContextType::OpenGLES:
+                // TODO Finish support
+                Console::fail("Window", "OpenGL ES is not implemented.");
+
                 // Setup for GLES
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
@@ -73,11 +76,12 @@ namespace ngine {
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
                 break;
             case graphics::ContextType::DirectX:
+                // Ask GLFW to not init OGL.
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 break;
             case graphics::ContextType::Vulkan:
                 // TODO One day
-                Console::fail("Window", "Vulkan not implemented.");
+                Console::fail("Window", "Vulkan is not implemented.");
                 break;
         }
 
@@ -117,6 +121,8 @@ namespace ngine {
 #endif
                 break;
             case graphics::ContextType::OpenGLES:
+                // TODO: GLES is not fully implemented
+                Console::fail("Window", "OpenGL ES is not implemented.");
 #if defined(NGINE_ENABLE_OPENGLES)
                 m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
 #else
@@ -127,7 +133,7 @@ namespace ngine {
                 m_graphicsDevice = new graphics::platform::DirectXGraphicsDevice(this);
                 break;
             case graphics::ContextType::Vulkan:
-                Console::fail("Window", "Vulkan not implemented.");
+                Console::fail("Window", "Vulkan is not implemented.");
                 break;
         }
 

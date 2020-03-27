@@ -27,8 +27,4 @@ namespace ngine::graphics {
             : GraphicsResource(graphicsDevice, ResourceType::Shader), Type(type) {
         m_graphicsDevice->_initShader(this, src);
     }
-
-    Shader::~Shader() {
-        free();
-    }
 }
