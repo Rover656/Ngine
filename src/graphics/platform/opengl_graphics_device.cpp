@@ -515,6 +515,11 @@ namespace ngine::graphics::platform {
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
+
+            // Apply border color
+            auto col = samplerState->BorderColor;
+            float c[4] = {col.R, col.G, col.B, col.A};
+            glSamplerParameterfv(samplerState->GLID, GL_TEXTURE_BORDER_COLOR, c);
         } else {
             // TODO: Apply fake sampler state
         }

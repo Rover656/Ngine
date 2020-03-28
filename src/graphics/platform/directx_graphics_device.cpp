@@ -529,6 +529,13 @@ namespace ngine::graphics::platform {
         samplerDesc.MipLODBias = samplerState->LODBias;
         samplerDesc.MaxAnisotropy = samplerState->MaxAnisotropy;
 
+        // Set border color
+        auto col = samplerState->BorderColor;
+        samplerDesc.BorderColor[0] = col.R;
+        samplerDesc.BorderColor[1] = col.G;
+        samplerDesc.BorderColor[2] = col.B;
+        samplerDesc.BorderColor[3] = col.A;
+
         // Set comparison function
         switch (samplerState->ComparisonFunction) {
             case CompareFunction::Always:

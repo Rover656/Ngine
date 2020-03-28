@@ -23,6 +23,7 @@
 
 #include "ngine/config.hpp"
 
+#include "color.hpp"
 #include "graphics_resource.hpp"
 
 namespace ngine::graphics {
@@ -154,7 +155,10 @@ namespace ngine::graphics {
          */
         CompareFunction ComparisonFunction = CompareFunction::Never;
 
-        // TODO: Filter modes and Comparison Functions
+        /**
+         * The color used for border texels.
+         */
+        Color BorderColor = Color(0, 0, 0, 0);
 
         /**
          * UV wrap mode in the U direction.
