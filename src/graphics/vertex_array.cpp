@@ -41,4 +41,8 @@ namespace ngine::graphics {
     const VertexBufferLayout VertexArray::getLayout() const {
         return m_vertexLayout;
     }
+
+    void VertexArray::bind() {
+        m_graphicsDevice->_bindVertexArray(this);
+    }
 }

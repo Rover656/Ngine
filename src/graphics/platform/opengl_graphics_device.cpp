@@ -52,41 +52,18 @@
 #include <GLES2/gl2ext.h>
 #endif
 
+#include <algorithm>
+
+#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
+
+// TODO: Security checks and bind safety (rebinding things after modifiying another i.e. textures).
+
 namespace ngine::graphics::platform {
     void OpenGLGraphicsDevice::clear(Color color) {
         glClearColor(color.R, color.G, color.B, color.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    void OpenGLGraphicsDevice::bindVertexArray(VertexArray *array) {
-        glBindVertexArray(array->GLID);
-        _prepareVertexArray(array);
-        m_currentVAO = array;
-    }
-
-    void OpenGLGraphicsDevice::bindTexture(unsigned int unit, Texture2D *texture) {
-        // Check unit limit
-        if (unit >= 8)
-            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
-
-        // Set the unit we are using
-        glActiveTexture(GL_TEXTURE0 + unit);
-        glBindTexture(GL_TEXTURE_2D, texture->GLID);
-
-        // Update (in case of changes)
-        if (m_samplerStates[unit])
-            _updateSamplerState(unit, m_samplerStates[unit]);
-    }
-
-    void OpenGLGraphicsDevice::bindSamplerState(unsigned int unit, SamplerState *samplerState) {
-        // Check unit limit
-        if (unit >= 8)
-            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
-        glBindSampler(unit, samplerState->GLID);
-        m_samplerStates[unit] = samplerState;
-
-        // Update (in case of changes)
-        _updateSamplerState(unit, samplerState);
     }
 
     void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -142,7 +119,54 @@ namespace ngine::graphics::platform {
         // Setup viewport
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
 
-        // TODO: Load capabilities/extensions
+        // Process extensions
+        int numExt = 0;
+        const char **extList = nullptr;
+        char *toDelete = nullptr;
+        if (m_isGLES2) {
+            // Create array
+            extList = new const char *[512];
+
+            const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
+
+            int len = strlen(extensions) + 1;
+            toDelete = (char *)new char[len];
+            strcpy(toDelete, extensions);
+
+            extList[numExt] = toDelete;
+
+            for (int i = 0; i < len; i++) {
+                if (toDelete[i] == ' ') {
+                    toDelete[i] = '\0';
+                    numExt++;
+                    extList[numExt] = &toDelete[i + 1];
+                }
+            }
+        } else {
+#if defined(GLAD)
+            // Get extension count
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
+
+            // Get extensions
+            extList = new const char *[numExt];
+            for (auto i = 0; i < numExt; i++)
+                extList[i] = (char *)glGetStringi(GL_EXTENSIONS, i);
+#endif
+        }
+
+        for (auto i = 0; i < numExt; i++) {
+            // Anisotropic texture filter
+            if (strcmp(extList[i],
+                       (const char *)"GL_EXT_texture_filter_anisotropic") ==
+                0) {
+                m_supportAnisotropicFiltering = true;
+                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropicLevel);
+            }
+        }
+
+        // Delete if needed
+        delete[] toDelete;
+        Console::notice("OpenGL", "OpenGL context created and extensions processed.");
     }
 
     OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {}
@@ -237,15 +261,15 @@ namespace ngine::graphics::platform {
             int actual_length = 0;
             char shader_log[2048];
             glGetShaderInfoLog(shader->GLID, max_length, &actual_length, shader_log);
-            Console::notice("OpenGL", "Shader info log for shader %u:\n%s", shader->GLID, shader_log);
+            Console::warn("OpenGL", "Shader info log for shader %u:\n%s", shader->GLID, shader_log);
             Console::fail("OpenGL", "Failed to compile shader %u.", shader->GLID);
         }
-        Console::notice("OpenGL", "Successfully created and compiled shader %u.", shader->GLID);
+        Console::debug("OpenGL", "Successfully created and compiled shader %u.", shader->GLID);
     }
 
     void OpenGLGraphicsDevice::_initShaderProgram(ShaderProgram *prog) {
         prog->GLID = glCreateProgram();
-        Console::notice("OpenGL", "Successfully created shader program %u.", prog->GLID);
+        Console::debug("OpenGL", "Successfully created shader program %u.", prog->GLID);
     }
 
     void OpenGLGraphicsDevice::_shaderProgramAttach(ShaderProgram *prog, Shader *shader) {
@@ -264,10 +288,10 @@ namespace ngine::graphics::platform {
             int actual_length = 0;
             char program_log[2048];
             glGetProgramInfoLog(prog->GLID, max_length, &actual_length, program_log);
-            Console::notice("OpenGL", "Program info log for %u:\n%s", prog->GLID, program_log);
+            Console::warn("OpenGL", "Program info log for %u:\n%s", prog->GLID, program_log);
             Console::fail("OpenGL", "Failed to link shader program %u.", prog->GLID);
         }
-        Console::notice("OpenGL", "Successfully linked shader program %u.", prog->GLID);
+        Console::debug("OpenGL", "Successfully linked shader program %u.", prog->GLID);
     }
 
     void OpenGLGraphicsDevice::_useShaderProgram(ShaderProgram *prog) {
@@ -296,6 +320,7 @@ namespace ngine::graphics::platform {
         array->GLID = 0;
         glGenVertexArrays(1, &array->GLID);
         _prepareVertexArray(array);
+        Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
     }
 
     void OpenGLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
@@ -382,7 +407,13 @@ namespace ngine::graphics::platform {
         m_VAOShaderCache[array] = m_currentShaderProgram;
     }
 
-    void OpenGLGraphicsDevice::_initTexture(Texture2D *texture, void *data) {
+    void OpenGLGraphicsDevice::_bindVertexArray(VertexArray *array) {
+        glBindVertexArray(array->GLID);
+        _prepareVertexArray(array);
+        m_currentVAO = array;
+    }
+
+    void OpenGLGraphicsDevice::_initTexture(Texture2D *texture, const void *data) {
         // Create texture
         texture->GLID = 0;
         glGenTextures(1, &texture->GLID);
@@ -391,21 +422,75 @@ namespace ngine::graphics::platform {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture->GLID);
 
-        // Write image data
-        GLenum internalFormat = 0, format = 0, type = 0;
+        // Load mipmaps
+        int mipWidth = texture->getWidth();
+        int mipHeight = texture->getHeight();
+        int mipOffset = 0;
+        auto format = texture->getPixelFormat();
+
+        // Determine image formats
+        GLenum glInternalFormat = 0, glFormat = 0, glType = 0;
         switch (texture->getPixelFormat()) {
             case PixelFormat::R8G8B8A8:
-                internalFormat = GL_RGBA;
-                format = GL_RGBA;
-                type = GL_UNSIGNED_BYTE;
+                glInternalFormat = GL_RGBA;
+                glFormat = GL_RGBA;
+                glType = GL_UNSIGNED_BYTE;
                 break;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, texture->getWidth(), texture->getHeight(), 0, format, type, data);
 
-        // TODO: Mipmap limits
+        // Write mip levels
+        for (auto i = 0; i < texture->getMipmapCount(); i++) {
+            // Get size of mip data
+            unsigned int mipSize = Image::getDataSize(mipWidth, mipHeight, format);
+
+            // Write TODO: Compressed formats
+            glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *) data + mipOffset);
+
+            // TODO: Greyscale swizzle
+
+            // Prepare for next mipmap
+            mipWidth /= 2;
+            mipHeight /= 2;
+            mipOffset += mipSize;
+
+            // NPOT textures
+            if (mipWidth < 1) mipWidth = 1;
+            if (mipHeight < 1) mipHeight = 1;
+        }
+
+        Console::debug("OpenGL", "Successfully created texture %u.", texture->GLID);
+    }
+
+    void OpenGLGraphicsDevice::_bindTexture(unsigned int unit, Texture2D *texture) {
+        // Check unit limit
+        if (unit >= 8)
+            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
+
+        // Set the unit we are using
+        glActiveTexture(GL_TEXTURE0 + unit);
+        glBindTexture(GL_TEXTURE_2D, texture->GLID);
+
+        // Update filter
+        if (m_samplerStates[unit]) {
+            if (m_supportSamplerObject) {
+                _applySamplerFiltering(unit, m_samplerStates[unit]);
+            } else {
+                // We've got to do a full update
+                _updateSamplerState(unit, m_samplerStates[unit]);
+            }
+        }
+    }
+
+    int OpenGLGraphicsDevice::_generateTextureMipmaps(Texture2D *texture) {
+        // TODO: Deal with lack of NPOT support (GL_OES_texture_npot)
+
+        // Bind and generate
+        _bindTexture(0, texture);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        Console::notice("OpenGL", "Successfully created texture %u.", texture->GLID);
+        // Remove "max" macro
+#undef max
+        return 1 + (int)floor(log(std::max(texture->getWidth(), texture->getHeight()))/log(2));
     }
 
     void OpenGLGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
@@ -413,7 +498,8 @@ namespace ngine::graphics::platform {
             // Create sampler
             samplerState->GLID = 0;
             glGenSamplers(1, &samplerState->GLID);
-        }
+            Console::debug("OpenGL", "Created sampler %u.", samplerState->GLID);
+        } // We don't do anything if we're using fake samplers.
     }
 
     void OpenGLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
@@ -423,13 +509,47 @@ namespace ngine::graphics::platform {
             _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_S, samplerState->WrapModeV);
 
             // Apply filter
+            _applySamplerFiltering(unit, samplerState);
+        } else {
+            // TODO: Apply fake sampler state
+        }
+    }
+
+    void OpenGLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
+        // TODO: Deal with lack of NPOT support (GL_OES_texture_npot)
+
+        if (m_supportSamplerObject) {
+            GLint param;
+            switch (wrapMode) {
+                case WrapMode::Wrap:
+                    param = GL_REPEAT;
+                    break;
+                case WrapMode::Mirror:
+                    param = GL_MIRRORED_REPEAT;
+                    break;
+                case WrapMode::Clamp:
+                    param = GL_CLAMP_TO_EDGE;
+                    break;
+                case WrapMode::Border:
+                    param = GL_CLAMP_TO_BORDER;
+                    break;
+            }
+            glSamplerParameteri(sampler, field, param);
+        } else {
+            // TODO: Apply fake sampler state
+        }
+    }
+
+    void OpenGLGraphicsDevice::_applySamplerFiltering(unsigned int unit, SamplerState *samplerState) {
+        // No point if we have no texture yet
+        if (!m_textures[unit])
+            return;
+
+        if (m_supportSamplerObject) {
             GLint paramMin;
             GLint paramMag;
             float anisotropy = 1.0f;
-            bool useMipmaps = false;
-
-            if (m_textures[unit])
-                useMipmaps = false; // TODO: Check mipmap count is greater than 1
+            bool useMipmaps = m_textures[unit]->getMipmapCount() > 1;
 
             switch (samplerState->Filter) {
                 case TextureFilter::Anisotropic:
@@ -472,32 +592,30 @@ namespace ngine::graphics::platform {
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MAG_FILTER, paramMag);
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MIN_FILTER, paramMin);
 
-            // Set anisotropic filtering TODO: Check limit is within range
+            // Check anisotropic filtering
+            if (!m_supportAnisotropicFiltering)
+                anisotropy = 1.0f;
+            if (anisotropy > m_maxAnisotropicLevel)
+                anisotropy = m_maxAnisotropicLevel;
+            if (anisotropy < 1.0f)
+                anisotropy = 1.0f;
+
+            // Apply anisotropic filtering
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+        } else {
+            // TODO: Apply fake sampler state
         }
     }
 
-    void OpenGLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
-        GLint param;
-        switch (wrapMode) {
-            case WrapMode::Wrap:
-                param = GL_REPEAT;
-                break;
-            case WrapMode::Mirror:
-                param = GL_MIRRORED_REPEAT;
-                break;
-            case WrapMode::Clamp:
-                param = GL_CLAMP_TO_EDGE;
-                break;
-            case WrapMode::Border:
-                param = GL_CLAMP_TO_BORDER;
-                break;
-        }
-        glSamplerParameteri(sampler, field, param);
-    }
+    void OpenGLGraphicsDevice::_bindSamplerState(unsigned int unit, SamplerState *samplerState) {
+        // Check unit limit
+        if (unit >= 8)
+            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
+        glBindSampler(unit, samplerState->GLID);
+        m_samplerStates[unit] = samplerState;
 
-    void OpenGLGraphicsDevice::_applyFakeSamplerState(SamplerState *samplerState, int unit) {
-        // TODO
+        // Update (in case of changes)
+        _updateSamplerState(unit, samplerState);
     }
 
     void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
@@ -519,6 +637,14 @@ namespace ngine::graphics::platform {
                 glDeleteProgram(resource->GLID);
                 break;
             case ResourceType::Texture2D:
+                // Check this isn't active
+                for (auto i = 0; i < 8; i++) {
+                    if (m_textures[i] == resource) {
+                        glActiveTexture(GL_TEXTURE0 + i);
+                        glBindTexture(GL_TEXTURE_2D, 0);
+                        m_textures[i] = nullptr;
+                    }
+                }
                 glDeleteTextures(1, &resource->GLID);
                 break;
             case ResourceType::VertexArray:

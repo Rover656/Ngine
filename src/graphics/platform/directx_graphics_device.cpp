@@ -32,38 +32,14 @@
 
 #include <d3dcompiler.h>
 
+#include <algorithm>
+
 // TODO: UWP Support
 
 namespace ngine::graphics::platform {
     void DirectXGraphicsDevice::clear(Color color) {
         float c[4] = {color.R, color.G, color.B, color.A};
         m_deviceContext->ClearRenderTargetView(m_backbuffer, c);
-    }
-
-    void DirectXGraphicsDevice::bindVertexArray(VertexArray *array) {
-        // Bind vertex array and index buffer (if present)
-        _bindBuffer(array->getVertexBuffer());
-        if (array->getIndexBuffer())
-            _bindBuffer(array->getIndexBuffer());
-    }
-
-    void DirectXGraphicsDevice::bindTexture(unsigned int unit, Texture2D *texture) {
-        // Check unit limit
-        if (unit >= 8)
-            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
-
-        // Set texture
-        auto resView = (ID3D11ShaderResourceView *) texture->Handle1;
-        m_deviceContext->PSSetShaderResources(unit, 1, &resView);
-    }
-
-    void DirectXGraphicsDevice::bindSamplerState(unsigned int unit, SamplerState *samplerState) {
-        // Set sampler
-        auto sampler = (ID3D11SamplerState *) samplerState->Handle;
-        m_deviceContext->PSSetSamplers(unit, 1, &sampler);
-
-        // Check for updates
-        _updateSamplerState(0, samplerState); // Not passing unit as that is only for GL
     }
 
     void DirectXGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -440,50 +416,104 @@ namespace ngine::graphics::platform {
 
     void DirectXGraphicsDevice::_initVertexArray(VertexArray *array) {}
 
-    void DirectXGraphicsDevice::_initTexture(Texture2D *texture, void *data) {
+    void DirectXGraphicsDevice::_bindVertexArray(VertexArray *array) {
+        // Bind vertex array and index buffer (if present)
+        _bindBuffer(array->getVertexBuffer());
+        if (array->getIndexBuffer())
+            _bindBuffer(array->getIndexBuffer());
+    }
+
+    void DirectXGraphicsDevice::_initTexture(Texture2D *texture, const void *data) {
         // Setup description
         D3D11_TEXTURE2D_DESC desc;
         ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
         desc.Width = texture->getWidth();
         desc.Height = texture->getHeight();
-        desc.MipLevels = desc.ArraySize = 1;
+        desc.MipLevels = desc.ArraySize = texture->getMipmapCount();
         desc.SampleDesc.Count = 1;
         desc.Usage = D3D11_USAGE_DEFAULT; // No, we do not use dynamic
         desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-        int bpp;
+        // Get format
         switch (texture->getPixelFormat()) {
             case PixelFormat::R8G8B8A8:
                 desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-                bpp = sizeof(unsigned char) * 4;
                 break;
         }
 
-        // TODO: Generate mipmaps
+        // Get bytes per pixel
+        int bytesPerPixel = Image::getBitsPerPixel(texture->getPixelFormat()) / 8;
 
-        // Write the data to the texture
-        D3D11_SUBRESOURCE_DATA subdata;
-        subdata.pSysMem = data;
-        subdata.SysMemPitch = texture->getWidth() * bpp;
-        subdata.SysMemSlicePitch = 0;
+        // Write mip levels
+        auto subdata = new D3D11_SUBRESOURCE_DATA[texture->getMipmapCount()];
+        int mipWidth = texture->getWidth();
+        int mipHeight = texture->getHeight();
+        int mipOffset = 0;
+        auto format = texture->getPixelFormat();
+        for (auto i = 0; i < texture->getMipmapCount(); i++) {
+            // Get size of mip data
+            unsigned int mipSize = Image::getDataSize(mipWidth, mipHeight, format);
+
+            // Create subresource data
+            ZeroMemory(&subdata[i], sizeof(D3D11_SUBRESOURCE_DATA));
+            subdata[i].pSysMem = (unsigned char *) data + mipOffset;
+            subdata[i].SysMemPitch = mipWidth * bytesPerPixel;
+
+            // Prepare for next mipmap
+            mipWidth /= 2;
+            mipHeight /= 2;
+            mipOffset += mipSize;
+
+            // NPOT textures
+            if (mipWidth < 1) mipWidth = 1;
+            if (mipHeight < 1) mipHeight = 1;
+        }
 
         // Create
         ID3D11Texture2D *tex;
-        HRESULT hr = m_device->CreateTexture2D(&desc, &subdata, &tex);
+        HRESULT hr = m_device->CreateTexture2D(&desc, subdata, &tex);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Could not create texture!");
         }
         texture->Handle = tex;
 
+        // Free subresource data array
+        delete[] subdata;
+
         // Create resource view.
+        D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
+        ZeroMemory(&resourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+        resourceViewDesc.Format = desc.Format;
+        resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+        resourceViewDesc.Texture2D.MipLevels = desc.MipLevels;
+
         ID3D11ShaderResourceView *resourceView;
-        hr = m_device->CreateShaderResourceView(tex, nullptr, &resourceView);
+        hr = m_device->CreateShaderResourceView(tex, &resourceViewDesc, &resourceView);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create shader resource view!");
         }
 
         texture->Handle1 = resourceView;
+    }
+
+    void DirectXGraphicsDevice::_bindTexture(unsigned int unit, Texture2D *texture) {
+        // Check unit limit
+        if (unit >= 8)
+            Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
+
+        // Set texture
+        auto resView = (ID3D11ShaderResourceView *) texture->Handle1;
+        m_deviceContext->PSSetShaderResources(unit, 1, &resView);
+    }
+
+    int DirectXGraphicsDevice::_generateTextureMipmaps(Texture2D *texture) {
+        // Generate mips
+        m_deviceContext->GenerateMips((ID3D11ShaderResourceView *) texture->Handle1);
+
+        // Remove "max" macro
+#undef max
+        return 1 + (int)floor(log(std::max(texture->getWidth(), texture->getHeight()))/log(2));
     }
 
     void DirectXGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
@@ -569,6 +599,15 @@ namespace ngine::graphics::platform {
             Console::fail("DirectX", "Could not create sampler state!");
         }
         samplerState->Handle = state;
+    }
+
+    void DirectXGraphicsDevice::_bindSamplerState(unsigned int unit, SamplerState *samplerState) {
+        // Set sampler
+        auto sampler = (ID3D11SamplerState *) samplerState->Handle;
+        m_deviceContext->PSSetSamplers(unit, 1, &sampler);
+
+        // Check for updates
+        _updateSamplerState(0, samplerState); // Not passing unit as that is only for GL
     }
 
     void DirectXGraphicsDevice::_present() {

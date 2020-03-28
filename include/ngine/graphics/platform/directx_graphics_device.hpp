@@ -39,12 +39,6 @@ namespace ngine::graphics::platform {
     public:
         void clear(Color color) override;
 
-        void bindVertexArray(VertexArray *array) override;
-
-        void bindTexture(unsigned int unit, Texture2D *texture) override;
-
-        void bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
-
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
@@ -90,11 +84,15 @@ namespace ngine::graphics::platform {
         void _useShaderProgram(ShaderProgram *prog) override;
 
         void _initVertexArray(VertexArray *array) override;
+        void _bindVertexArray(VertexArray *array) override;
 
-        void _initTexture(Texture2D *texture, void *data) override;
+        void _initTexture(Texture2D *texture, const void *data) override;
+        void _bindTexture(unsigned int unit, Texture2D *texture) override;
+        int _generateTextureMipmaps(Texture2D *texture) override;
 
         void _initSamplerState(SamplerState *samplerState) override;
         void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
+        void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
         void _present() override;
         void _onResize() override;

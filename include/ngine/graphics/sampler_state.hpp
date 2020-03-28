@@ -75,6 +75,12 @@ namespace ngine::graphics {
          * Create a new sampler state.
          */
         SamplerState(GraphicsDevice *graphicsDevice);
+
+        /**
+         * Bind this sampler state.
+         * @param unit Texture/Sampler unit to bind to.
+         */
+        void bind(unsigned int unit);
     };
 }
 

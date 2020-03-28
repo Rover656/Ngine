@@ -52,6 +52,11 @@ namespace ngine::graphics {
         Buffer *getIndexBuffer();
 
         const VertexBufferLayout getLayout() const;
+
+        /**
+         * Bind this vertex array.
+         */
+        void bind();
     private:
         /**
          * The vertex buffer layout this array follows.

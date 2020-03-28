@@ -59,21 +59,6 @@ namespace ngine {
             virtual void clear(Color color) = 0;
 
             /**
-             * Bind a vertex array.
-             * @warning Must match the shader's layout if you are going to render with it.
-             */
-            virtual void bindVertexArray(VertexArray *array) = 0;
-
-            /**
-             * Bind a texture to a texture unit.
-             * @param unit Texture unit to bind to.
-             * @param texture Texture to bind.
-             */
-            virtual void bindTexture(unsigned int unit, Texture2D *texture) = 0;
-
-            virtual void bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
-
-            /**
              * Draw primitives from the currently bound buffer.
              */
             virtual void drawPrimitives(PrimitiveType primitiveType, int start, int count) = 0;
@@ -116,14 +101,18 @@ namespace ngine {
             virtual void _initShaderProgram(ShaderProgram *prog) = 0;
             virtual void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) = 0;
             virtual void _linkShaderProgram(ShaderProgram *prog) = 0;
-            virtual void _useShaderProgram(ShaderProgram *prog) = 0; // TODO: Do this through GraphicsDevice to make API more uniform.
+            virtual void _useShaderProgram(ShaderProgram *prog) = 0;
 
             virtual void _initVertexArray(VertexArray *array) = 0;
+            virtual void _bindVertexArray(VertexArray *array) = 0;
 
-            virtual void _initTexture(Texture2D *texture, void *data) = 0;
+            virtual void _initTexture(Texture2D *texture, const void *data) = 0;
+            virtual void _bindTexture(unsigned int unit, Texture2D *texture) = 0;
+            virtual int _generateTextureMipmaps(Texture2D *texture) = 0;
 
             virtual void _initSamplerState(SamplerState *samplerState) = 0;
             virtual void _updateSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
+            virtual void _bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
 
             virtual void _present() = 0;
             virtual void _onResize() = 0;

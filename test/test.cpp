@@ -2,11 +2,7 @@
 
 #include <ngine/game.hpp>
 
-#include <ngine/graphics/buffer.hpp>
 #include <ngine/graphics/graphics_device.hpp>
-#include <ngine/graphics/shader.hpp>
-#include <ngine/graphics/shader_program.hpp>
-#include <ngine/graphics/vertex_array.hpp>
 #include <ngine/math.hpp>
 
 class TestGame : public ngine::Game {
@@ -15,6 +11,7 @@ class TestGame : public ngine::Game {
     ngine::graphics::Shader *vertShader;
     ngine::graphics::Shader *fragShader;
     ngine::graphics::ShaderProgram *prog;
+    ngine::graphics::Image *img;
     ngine::graphics::Texture2D *tex;
     ngine::graphics::SamplerState *samplerState;
 public:
@@ -107,9 +104,11 @@ public:
         prog->link();
         prog->ExpectedSamplerCount = 2;
 
+        // Create vertex buffer
         vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
                                          ngine::graphics::BufferUsage::Static, sizeof(float) * (3 + 4 + 2), 3);
 
+        // Write vertex buffer data
         float dat[] = {
                 -0.5f, -0.5f, 0,   1, 1, 1, 1,   0, 0,
                 0.5f,  -0.5f, 0,   1, 1, 1, 1,   1.0f, 0,
@@ -117,22 +116,28 @@ public:
         };
         vb->write(dat, sizeof(float) * (3 + 4 + 2), 3);
 
+        // Create vertex array
         array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderLayout);
 
+        // Create texture from image
         unsigned char imgdat[] = {
                 255, 255, 255, 255,
                 0  , 255, 255, 255,
                 255, 0  , 255, 255,
                 255, 255,   0, 255
         };
-        tex = new ngine::graphics::Texture2D(getGraphicsDevice(), 2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
 
+        img = new ngine::graphics::Image(2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
+        tex = new ngine::graphics::Texture2D(getGraphicsDevice(), img);
+
+        // Create sampler state
         samplerState = new ngine::graphics::SamplerState(getGraphicsDevice());
         samplerState->Filter = ngine::graphics::TextureFilter::Point;
     }
 
     void cleanup() override {
         delete tex;
+        delete img;
         delete samplerState;
         delete vb;
         delete array;
@@ -145,11 +150,10 @@ public:
 
     void draw() override {
         prog->use();
-        auto gd = getGraphicsDevice();
-        gd->bindVertexArray(array);
-        gd->bindSamplerState(1, samplerState);
-        gd->bindTexture(1, tex);
-        gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
+        array->bind();
+        samplerState->bind(1);
+        tex->bind(1);
+        getGraphicsDevice()->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
 
         Game::draw();
     }

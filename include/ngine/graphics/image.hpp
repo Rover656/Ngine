@@ -18,61 +18,82 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_TEXTURE2D_HPP
-#define NGINE_TEXTURE2D_HPP
+#ifndef NGINE_IMAGE_HPP
+#define NGINE_IMAGE_HPP
 
 #include "ngine/config.hpp"
 
-#include "graphics_resource.hpp"
-#include "image.hpp"
-
 namespace ngine::graphics {
-    class NEAPI Texture2D : public GraphicsResource {
+    // TODO: Add all supported formats.
+    enum class PixelFormat {
+        R8G8B8A8,
+    };
+
+    class NEAPI Image {
     public:
         /**
-         * Create a texture with existing pixel data.
+         * Create an image from raw pixel data.
+         * @note The pixel data will be copied.
+         * @param width Image width.
+         * @param height Image height.
+         * @param data Image pixel data.
+         * @param format Image pixel data format.
+         * @param mipmapCount Image mipmap count. 1 for most cases.
          */
-        Texture2D(GraphicsDevice *graphicsDevice, Image *image);
+        Image(int width, int height, void *data, PixelFormat format, unsigned int mipmapCount = 1);
 
-        PixelFormat getPixelFormat() const;
+        // TODO: Create from file
+
+        /**
+         * Destroy image
+         */
+        ~Image();
+
+        /**
+         * Get image pixel data.
+         */
+        const void *getData() const;
+
         int getWidth() const;
+
         int getHeight() const;
+
+        PixelFormat getFormat() const;
+
         unsigned int getMipmapCount() const;
 
-        /**
-         * Bind this texture.
-         * @param unit Texture unit to bind to.
-         */
-        void bind(unsigned int unit);
+        static int getBitsPerPixel(PixelFormat format);
 
         /**
-         * Generate texture mipmaps.
-         * @warning Binds texture.
+         * Get the size of some pixel data in bits.
          */
-        void generateMipmaps();
+        static int getDataSize(int width, int height, PixelFormat format);
     private:
-        // TODO: Should we store a copy of the image?
-
         /**
-         * Texture pixel format
+         * Image pixel data.
          */
-        PixelFormat m_format;
+        void *m_data;
 
         /**
-         * Texture width.
+         * Image width.
          */
         int m_width;
 
         /**
-         * Texture height.
+         * Image height.
          */
         int m_height;
 
         /**
-         * Texture mipmap count.
+         * Image format.
+         */
+        PixelFormat m_format;
+
+        /**
+         * Image mipmap count.
          */
         unsigned int m_mipmapCount;
     };
 }
 
-#endif //NGINE_TEXTURE2D_HPP
+#endif //NGINE_IMAGE_HPP

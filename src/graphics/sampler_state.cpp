@@ -26,4 +26,8 @@ namespace ngine::graphics {
     SamplerState::SamplerState(GraphicsDevice *graphicsDevice) : GraphicsResource(graphicsDevice, ResourceType::SamplerState) {
         m_graphicsDevice->_initSamplerState(this);
     }
+
+    void SamplerState::bind(unsigned int unit) {
+        m_graphicsDevice->_bindSamplerState(unit, this);
+    }
 }

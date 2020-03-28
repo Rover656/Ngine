@@ -23,10 +23,15 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice, int width, int height, void *pixelData, PixelFormat format)
-            : GraphicsResource(graphicsDevice, ResourceType::Texture2D), m_width(width), m_height(height),
-              m_format(format) {
-        m_graphicsDevice->_initTexture(this, pixelData);
+    Texture2D::Texture2D(GraphicsDevice *graphicsDevice, Image *image)
+            : GraphicsResource(graphicsDevice, ResourceType::Texture2D) {
+        // Get image data and save it
+        m_width = image->getWidth();
+        m_height = image->getHeight();
+        m_format = image->getFormat();
+        m_mipmapCount = image->getMipmapCount();
+
+        m_graphicsDevice->_initTexture(this, image->getData());
     }
 
     PixelFormat Texture2D::getPixelFormat() const {
@@ -39,5 +44,17 @@ namespace ngine::graphics {
 
     int Texture2D::getHeight() const {
         return m_height;
+    }
+
+    unsigned int Texture2D::getMipmapCount() const {
+        return m_mipmapCount;
+    }
+
+    void Texture2D::bind(unsigned int unit) {
+        m_graphicsDevice->_bindTexture(unit, this);
+    }
+
+    void Texture2D::generateMipmaps() {
+        m_mipmapCount = m_graphicsDevice->_generateTextureMipmaps(this);
     }
 }
