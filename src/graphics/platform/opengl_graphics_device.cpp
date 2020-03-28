@@ -349,7 +349,7 @@ namespace ngine::graphics::platform {
         if (m_currentVAO)
             _prepareVertexArray(m_currentVAO);
 
-        // Setup texture uniforms (TODO: Do we need to do this every time?)
+        // Setup texture uniforms
         int *samplers = new int[prog->ExpectedSamplerCount];
         for (auto i = 0; i < prog->ExpectedSamplerCount; i++)
             samplers[i] = i;
@@ -405,8 +405,7 @@ namespace ngine::graphics::platform {
         // Don't configure if mismatched
         if (array->getLayout() != m_currentShaderProgram->getLayout()) {
             // Only warn, as it may be an accident/they set the shader then the array.
-            // TODO: Should we actually warn about this?
-            // Console::warn("OpenGL", "Cannot configure a vertex array to use a shader with a different layout. Not configuring.");
+            Console::warn("OpenGL", "Cannot configure a vertex array to use a shader with a different layout. Not configuring.");
             return;
         }
 
@@ -601,43 +600,42 @@ namespace ngine::graphics::platform {
     void OpenGLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
         // TODO: Deal with lack of NPOT support (GL_OES_texture_npot)
 
-        if (m_supportSamplerObject) {
-            GLint param;
-            switch (wrapMode) {
-                case WrapMode::Wrap:
-                    param = GL_REPEAT;
-                    break;
-                case WrapMode::Mirror:
-                    param = GL_MIRRORED_REPEAT;
-                    break;
-                case WrapMode::Clamp:
-                    param = GL_CLAMP_TO_EDGE;
-                    break;
-                case WrapMode::Border:
+        GLint param;
+        switch (wrapMode) {
+            case WrapMode::Wrap:
+                param = GL_REPEAT;
+                break;
+            case WrapMode::Mirror:
+                param = GL_MIRRORED_REPEAT;
+                break;
+            case WrapMode::Clamp:
+                param = GL_CLAMP_TO_EDGE;
+                break;
+            case WrapMode::Border:
 #if defined(GLAD)
-                    // GLES V2 does not support these features.
-                    if (!m_isGLES2) {
-                        param = GL_CLAMP_TO_BORDER;
-                    } else {
-                        if (!m_haveWarnedWrapBorder) {
-                            Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
-                            m_haveWarnedWrapBorder = true;
-                        }
-                        param = GL_CLAMP_TO_EDGE;
-                    }
-#else
+                // GLES V2 does not support these features.
+                if (!m_isGLES2) {
+                    param = GL_CLAMP_TO_BORDER;
+                } else {
                     if (!m_haveWarnedWrapBorder) {
                         Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
                         m_haveWarnedWrapBorder = true;
                     }
                     param = GL_CLAMP_TO_EDGE;
+                }
+#else
+                if (!m_haveWarnedWrapBorder) {
+                        Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
+                        m_haveWarnedWrapBorder = true;
+                    }
+                    param = GL_CLAMP_TO_EDGE;
 #endif
-                    break;
-            }
-            glSamplerParameteri(sampler, field, param);
-        } else {
-            // TODO: Apply fake sampler state
+                break;
         }
+
+        if (m_supportSamplerObject)
+            glSamplerParameteri(sampler, field, param);
+        else glTexParameteri(GL_TEXTURE_2D, field, param);
     }
 
     void OpenGLGraphicsDevice::_applySamplerFiltering(unsigned int unit, SamplerState *samplerState) {

@@ -82,7 +82,7 @@ namespace ngine {
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 break;
             case graphics::ContextType::Vulkan:
-                // TODO One day
+                // TODO One day we might
                 Console::fail("Window", "Vulkan is not implemented.");
                 break;
         }

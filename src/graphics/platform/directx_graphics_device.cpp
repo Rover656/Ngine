@@ -37,8 +37,6 @@
 
 #include <algorithm>
 
-// TODO: UWP Support
-
 namespace ngine::graphics::platform {
     void DirectXGraphicsDevice::clear(Color color) {
         float c[4] = {color.R, color.G, color.B, color.A};

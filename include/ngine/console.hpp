@@ -73,7 +73,7 @@ namespace ngine {
         static void _showPopup(const std::string &msg,
                                const std::string &title) {
             // TODO: Support more platforms or even make a universal API for
-            // message boxes.
+            //  message boxes.
 #if defined(_WIN32) && defined(PLATFORM_DESKTOP)
             MessageBoxA(NULL, msg.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
 #elif defined(PLATFORM_UWP)
