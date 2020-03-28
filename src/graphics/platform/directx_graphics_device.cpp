@@ -36,6 +36,7 @@
 #include <d3dcompiler.h>
 
 #include <algorithm>
+#include <cmath>
 
 namespace ngine::graphics::platform {
     void DirectXGraphicsDevice::clear(Color color) {
