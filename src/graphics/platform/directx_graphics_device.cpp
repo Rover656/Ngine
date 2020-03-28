@@ -66,7 +66,7 @@ namespace ngine::graphics::platform {
                 ((ID3D11Buffer *) resource->Handle)->Release();
                 break;
             case ResourceType::SamplerState:
-                ((ID3D11SamplerState*) resource->Handle)->Release();
+                ((ID3D11SamplerState *) resource->Handle)->Release();
                 break;
             case ResourceType::Shader:
                 switch (((Shader *) resource)->Type) {
@@ -396,7 +396,8 @@ namespace ngine::graphics::platform {
 
         // Create layout
         ID3D11InputLayout *layout;
-        HRESULT hr = m_device->CreateInputLayout(layoutTemplate.data(), layoutTemplate.size(), vs->GetBufferPointer(), vs->GetBufferSize(), &layout);
+        HRESULT hr = m_device->CreateInputLayout(layoutTemplate.data(), layoutTemplate.size(), vs->GetBufferPointer(),
+                                                 vs->GetBufferSize(), &layout);
 
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create input layout!");
@@ -513,7 +514,7 @@ namespace ngine::graphics::platform {
 
         // Remove "max" macro
 #undef max
-        return 1 + (int)floor(log(std::max(texture->getWidth(), texture->getHeight()))/log(2));
+        return 1 + (int) floor(log(std::max(texture->getWidth(), texture->getHeight())) / log(2));
     }
 
     void DirectXGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
@@ -523,39 +524,78 @@ namespace ngine::graphics::platform {
     void DirectXGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
         // Create sampler state
         D3D11_SAMPLER_DESC samplerDesc;
-        samplerDesc.MinLOD = -FLT_MAX;
-        samplerDesc.MaxLOD = FLT_MAX;
-        samplerDesc.MipLODBias = 0.0f;
-        samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+        samplerDesc.MinLOD = samplerState->MinLOD;
+        samplerDesc.MaxLOD = samplerState->MaxLOD;
+        samplerDesc.MipLODBias = samplerState->LODBias;
         samplerDesc.MaxAnisotropy = samplerState->MaxAnisotropy;
 
+        // Set comparison function
+        switch (samplerState->ComparisonFunction) {
+            case CompareFunction::Always:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+                break;
+            case CompareFunction::Equal:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_EQUAL;
+                break;
+            case CompareFunction::Greater:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+                break;
+            case CompareFunction::GreaterEqual:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER_EQUAL;
+                break;
+            case CompareFunction::Less:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+                break;
+            case CompareFunction::LessEqual:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+                break;
+            case CompareFunction::Never:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+                break;
+            case CompareFunction::NotEqual:
+                samplerDesc.ComparisonFunc = D3D11_COMPARISON_NOT_EQUAL;
+                break;
+        }
+
+        // Set filter
+        bool compare = samplerState->FilterMode == TextureFilterMode::Comparison;
         switch (samplerState->Filter) {
             case TextureFilter::Anisotropic:
-                samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_ANISOTROPIC
+                                             : D3D11_FILTER_ANISOTROPIC;
                 break;
             case TextureFilter::Linear:
-                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR
+                                             : D3D11_FILTER_MIN_MAG_MIP_LINEAR;
                 break;
             case TextureFilter::LinearMipPoint:
-                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT
+                                             : D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
                 break;
             case TextureFilter::MinLinearMagPointMipLinear:
                 samplerDesc.Filter = D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR
+                                             : D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
                 break;
             case TextureFilter::MinLinearMagPointMipPoint:
-                samplerDesc.Filter = D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_LINEAR_MAG_MIP_POINT
+                                             : D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT;
                 break;
             case TextureFilter::MinPointMagLinearMipLinear:
-                samplerDesc.Filter = D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_POINT_MAG_MIP_LINEAR
+                                             : D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR;
                 break;
             case TextureFilter::MinPointMagLinearMipPoint:
-                samplerDesc.Filter = D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT
+                                             : D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
                 break;
             case TextureFilter::Point:
-                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT
+                                             : D3D11_FILTER_MIN_MAG_MIP_POINT;
                 break;
             case TextureFilter::PointMipLinear:
-                samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+                samplerDesc.Filter = compare ? D3D11_FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR
+                                             : D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
                 break;
         }
 

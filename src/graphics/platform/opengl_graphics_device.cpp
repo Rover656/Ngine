@@ -510,6 +510,11 @@ namespace ngine::graphics::platform {
 
             // Apply filter
             _applySamplerFiltering(unit, samplerState);
+
+            // Apply LOD options
+            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
+            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
+            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
         } else {
             // TODO: Apply fake sampler state
         }
@@ -602,6 +607,43 @@ namespace ngine::graphics::platform {
 
             // Apply anisotropic filtering
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+
+            // Apply filter mode
+            if (samplerState->FilterMode == TextureFilterMode::Comparison) {
+                glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+
+                switch (samplerState->ComparisonFunction) {
+                    case CompareFunction::Always:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_ALWAYS);
+                        break;
+                    case CompareFunction::Equal:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_EQUAL);
+                        break;
+                    case CompareFunction::Greater:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_GREATER);
+                        break;
+                    case CompareFunction::GreaterEqual:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
+                        break;
+                    case CompareFunction::Less:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+                        break;
+                    case CompareFunction::LessEqual:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+                        break;
+                    case CompareFunction::Never:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_NEVER);
+                        break;
+                    case CompareFunction::NotEqual:
+                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_NOTEQUAL);
+                        break;
+                }
+
+            } else {
+                glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+            }
+
+            // TODO: Set GL_TEXTURE_MAX_LEVEL
         } else {
             // TODO: Apply fake sampler state
         }

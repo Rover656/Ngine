@@ -26,16 +26,107 @@
 #include "graphics_resource.hpp"
 
 namespace ngine::graphics {
+    /**
+     * Texture filter types.
+     */
     enum class TextureFilter {
+        /**
+         * Use anisotropic filtering.
+         */
         Anisotropic,
+
+        /**
+         * Use linear filtering.
+         */
         Linear,
+
+        /**
+         * Use linear filtering to shrink or expand and point filtering between mipmap levels.
+         */
         LinearMipPoint,
+
+        /**
+         * Use linear filtering to shrink, point filtering to expand and linear filtering between mipmap levels.
+         */
         MinLinearMagPointMipLinear,
+
+        /**
+         * Use linear filtering to shrink, point filtering to expand and point filtering between mipmap levels.
+         */
         MinLinearMagPointMipPoint,
+
+        /**
+         * Use point filtering to shrink, linear filtering to expand and linear filtering between mipmap levels.
+         */
         MinPointMagLinearMipLinear,
+
+        /**
+         * Use point filtering to shrink, linear filtering to expand and point filtering between mipmap levels.
+         */
         MinPointMagLinearMipPoint,
+
+        /**
+         * Use point filtering.
+         */
         Point,
+
+        /**
+         * Use point filtering to shrink or expand and linear filtering between mipmap levels.
+         */
         PointMipLinear
+    };
+
+    /**
+     * Filtering mode for texture sampling.
+     */
+    enum class TextureFilterMode {
+        Default,
+        Comparison
+    };
+
+    /**
+     * Comparison function used during depth, stencil and alpha tests.
+     */
+    enum class CompareFunction {
+        /**
+         * Test always passes
+         */
+        Always,
+
+        /**
+         * Passes when the new pixel is equal to the current.
+         */
+        Equal,
+
+        /**
+         * Passes when the new pixel is greater than the current.
+         */
+        Greater,
+
+        /**
+         * Passes when the new pixel is greater than or equal to the current.
+         */
+        GreaterEqual,
+
+        /**
+         * Passes when the new pixel is less than the current.
+         */
+        Less,
+
+        /**
+         * Passes when the new pixel is less than or equal to the current.
+         */
+        LessEqual,
+
+        /**
+         * Test never passes.
+         */
+        Never,
+
+        /**
+         * Passes when the new pixel is not equal to the current.
+         */
+        NotEqual
     };
 
     enum class WrapMode {
@@ -52,6 +143,16 @@ namespace ngine::graphics {
          * Texture filtering mode.
          */
         TextureFilter Filter = TextureFilter::Linear;
+
+        /**
+         * Texture filtering mode.
+         */
+        TextureFilterMode FilterMode = TextureFilterMode::Default;
+
+        /**
+         * Comparison function for TextureFilterMode::Comparison.
+         */
+        CompareFunction ComparisonFunction = CompareFunction::Never;
 
         // TODO: Filter modes and Comparison Functions
 
@@ -70,6 +171,21 @@ namespace ngine::graphics {
          * @warning Must be between 1 and 16.
          */
         unsigned int MaxAnisotropy = 1;
+
+        /**
+         * The minimum level of detail.
+         */
+        float MinLOD = -1000.0f;
+
+        /**
+         * The maximum level of detail.
+         */
+        float MaxLOD = 1000.0f;
+
+        /**
+         * The level of detail bias.
+         */
+        float LODBias = 0.0f;
 
         /**
          * Create a new sampler state.
