@@ -23,7 +23,7 @@
 
 #include "ngine/config.hpp"
 
-#if defined(NGINE_ENABLE_OPENGL)// || defined(NGINE_ENABLE_OPENGLES)
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
 #include "../graphics_device.hpp"
 #include "opengl_context.hpp"
@@ -61,12 +61,28 @@ namespace ngine::graphics::platform {
         bool m_isGLES3 = false;
 
         /**
+         * Have we warned about GLES2's lack of WRAP_BORDER.
+         */
+        bool m_haveWarnedWrapBorder = false;
+
+        /**
+         * Whether or not VAOs are supported.
+         */
+        bool m_supportVAOs = false;
+
+        /**
          * Whether or not sampler objects are supported.
          */
         bool m_supportSamplerObject = false;
 
+        /**
+         * Whether or not anisotropic filtering is supported.
+         */
         bool m_supportAnisotropicFiltering = false;
 
+        /**
+         * The maximum anisotropy level.
+         */
         float m_maxAnisotropicLevel = 1.0f;
 
         /**

@@ -42,12 +42,15 @@ namespace ngine::graphics {
 #if !defined(NGINE_ENABLE_OPENGL)
                 return false;
 #else
+                if (MajorVersion < 3) return false;
                 if (MajorVersion == 3 && MinorVersion != 3) return false;
                 if (MajorVersion == 4 && MinorVersion > 6) return false;
 #endif
                 break;
             case ContextType::OpenGLES:
-                // TODO: Finish this
+                if (MajorVersion < 2) return false;
+                if (MajorVersion == 2 && MinorVersion != 0) return false;
+                if (MajorVersion == 3 && MinorVersion > 1) return false; // 3.2 isn't available through ANGLE yet.
                 break;
             case ContextType::DirectX: break; // Doesnt use this parameter.
             case ContextType::Vulkan: break; // Will add once we support it.

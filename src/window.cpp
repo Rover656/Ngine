@@ -71,9 +71,6 @@ namespace ngine {
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
                 break;
             case graphics::ContextType::OpenGLES:
-                // TODO Finish support
-                Console::fail("Window", "OpenGL ES is not implemented.");
-
                 // Setup for GLES
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
@@ -130,9 +127,7 @@ namespace ngine {
 #endif
                 break;
             case graphics::ContextType::OpenGLES:
-                // TODO: GLES is not fully implemented
-                Console::fail("Window", "OpenGL ES is not implemented.");
-#if defined(NGINE_ENABLE_OPENGLES) && FALSE
+#if defined(NGINE_ENABLE_OPENGLES)
                 m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
 #else
                 Console::fail("Window", "Cannot create OpenGLES graphics device, OpenGL is not enabled.");
@@ -224,14 +219,6 @@ namespace ngine {
         return glfwWindowShouldClose((GLFWwindow *) m_handle);
 #endif
         return false;
-    }
-
-    void Window::makeCurrent() {
-        if (!m_initialized)
-            Console::fail("Window", "Window not initialized.");
-#if defined(PLATFORM_DESKTOP)
-        glfwMakeContextCurrent((GLFWwindow *) m_handle);
-#endif
     }
 
     void *Window::getHandle() const {

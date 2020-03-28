@@ -30,11 +30,20 @@ if (NGINE_ENABLE_DIRECTX)
     set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} d3d11.lib dxgi.lib d3dcompiler.lib)
 endif()
 
+# ANGLE
+if (NGINE_ENABLE_OPENGLES)
+    if (PLATFORM_DESKTOP)
+        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libEGL.lib
+                                                 ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libGLESv2.lib)
+        set(_NGINE_PRIVATE_INCLUDE_DIRS ${_NGINE_PRIVATE_INCLUDE_DIRS} ${Ngine_SOURCE_DIR}/vendor/ANGLE/include)
+    elseif (PLATFORM_UWP)
+        set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} ${CMAKE_CURRENT_BINARY_DIR}/packages/ANGLE.WindowsStore.2.1.13/build/native/ANGLE.WindowsStore.targets)
+        set(_NGINE_PRIVATE_INCLUDE_DIRS ${_NGINE_PRIVATE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/packages/ANGLE.WindowsStore.2.1.13/include)
+    endif()
+endif()
+
 # UWP
 if (PLATFORM_UWP)
-    # Include WindowsApp
-    set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} WindowsApp)
-
     # No warnings
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
@@ -71,6 +80,30 @@ if (BUILD_NGINE_STATIC)
     if (WIN32 AND PLATFORM_DESKTOP)
         target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000000)
     endif ()
+
+    # ANGLE
+    if (NGINE_ENABLE_OPENGLES)
+        if (PLATFORM_DESKTOP)
+            # Copy DLLs to output
+            add_custom_command(TARGET Ngine_static
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libEGL.dll
+                    $<TARGET_FILE_DIR:Ngine_static>
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libGLESv2.dll
+                    $<TARGET_FILE_DIR:Ngine_static>
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
+                    $<TARGET_FILE_DIR:Ngine_static>
+                    COMMENT "Copying ANGLE binaries to output.")
+        elseif(PLATFORM_UWP)
+            # Install ANGLE with Nuget
+            add_custom_target(NgineInstallANGLEUWP
+                    COMMAND ${Ngine_SOURCE_DIR}/vendor/windows-redist/nuget.exe install ANGLE.WindowsStore -Version 2.1.13 -OutputDirectory ${CMAKE_CURRENT_BINARY_DIR}/packages
+                    COMMENT "Installing ANGLE.WindowStore V2.1.13")
+            add_dependencies(Ngine_static NgineInstallANGLEUWP)
+        endif()
+    endif()
 endif()
 
 if (BUILD_NGINE_SHARED)
@@ -107,6 +140,30 @@ if (BUILD_NGINE_SHARED)
     if (WIN32 AND PLATFORM_DESKTOP)
         target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000000)
     endif ()
+
+    # ANGLE
+    if (NGINE_ENABLE_OPENGLES)
+        if (PLATFORM_DESKTOP)
+            # Copy DLLs to output
+            add_custom_command(TARGET Ngine
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libEGL.dll
+                    $<TARGET_FILE_DIR:Ngine>
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/libGLESv2.dll
+                    $<TARGET_FILE_DIR:Ngine>
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
+                    $<TARGET_FILE_DIR:Ngine_static>
+                    COMMENT "Copying ANGLE binaries to output.")
+        elseif(PLATFORM_UWP)
+            # Install ANGLE with Nuget
+            add_custom_target(NgineInstallANGLEUWP
+                    COMMAND ${Ngine_SOURCE_DIR}/vendor/windows-redist/nuget.exe install ANGLE.WindowsStore -Version 2.1.13 -OutputDirectory ${CMAKE_CURRENT_BINARY_DIR}/packages
+                    COMMENT "Installing ANGLE.WindowStore V2.1.13")
+            add_dependencies(Ngine NgineInstallANGLEUWP)
+        endif()
+    endif()
 endif()
 
 # TODO: Doxygen and UWP support

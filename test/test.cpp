@@ -62,8 +62,39 @@ public:
                                                          ngine::graphics::ShaderType::Fragment);
                 break;
             }
-            case ngine::graphics::ContextType::OpenGLES:
+            case ngine::graphics::ContextType::OpenGLES: {
+                // Create vertex shader
+                auto vertSrc = "#version 100\n"
+                               "attribute vec3 POSITION;\n"
+                               "attribute vec2 TEXCOORD;\n"
+                               "attribute vec4 COLOR;\n"
+                               "varying vec2 fragTexCoord;\n"
+                               "varying vec4 fragColor;\n"
+                               "uniform mat4 NGINE_MATRIX_MVP;\n"
+                               "void main()\n"
+                               "{\n"
+                               "    fragTexCoord = TEXCOORD;\n"
+                               "    fragColor = COLOR;\n"
+                               "    gl_Position = vec4(POSITION, 1.0);//NGINE_MATRIX_MVP * vec4(POSITION, 1.0);\n"
+                               "}\n";
+                vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
+                                                         ngine::graphics::ShaderType::Vertex);
+
+                // Create fragment shader
+                auto fragSrc = "#version 100\n"
+                               "precision mediump float;\n"
+                               "varying vec2 fragTexCoord;\n"
+                               "varying vec4 fragColor;\n"
+                               "uniform sampler2D Textures[2];\n"
+                               "void main()\n"
+                               "{\n"
+                               "    vec4 texelColor = texture2D(Textures[1], fragTexCoord);\n"
+                               "    gl_FragColor = texelColor*fragColor;\n"
+                               "}\n";
+                fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc,
+                                                         ngine::graphics::ShaderType::Fragment);
                 break;
+            }
             case ngine::graphics::ContextType::DirectX: {
                 auto dxSrc = "struct VOut {\n"
                              "    float4 position : SV_POSITION;\n"
@@ -97,9 +128,12 @@ public:
 
         // Setup shader layout
         ngine::graphics::VertexBufferLayout shaderLayout;
-        shaderLayout.Elements.push_back({"POSITION", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Position, 3, false});
-        shaderLayout.Elements.push_back({"COLOR", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Color, 4, false});
-        shaderLayout.Elements.push_back({"TEXCOORD", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Texcoords, 2, false});
+        shaderLayout.Elements.push_back(
+                {"POSITION", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Position, 3, false});
+        shaderLayout.Elements.push_back(
+                {"COLOR", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Color, 4, false});
+        shaderLayout.Elements.push_back(
+                {"TEXCOORD", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Texcoords, 2, false});
 
         // Create shader program
         prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderLayout);
@@ -114,9 +148,9 @@ public:
 
         // Write vertex buffer data
         float dat[] = {
-                -0.5f, -0.5f, 0,   1, 1, 1, 1,   0, 0,
-                0.5f,  -0.5f, 0,   1, 1, 1, 1,   1.0f, 0,
-                0.0f,  0.5f,  0,   1, 1, 1, 1,   0.5f, 1
+                -0.5f, -0.5f, 0, 1, 1, 1, 1, 0, 0,
+                0.5f, -0.5f, 0, 1, 1, 1, 1, 1.0f, 0,
+                0.0f, 0.5f, 0, 1, 1, 1, 1, 0.5f, 1
         };
         vb->write(dat, sizeof(float) * (3 + 4 + 2), 3);
 
@@ -126,9 +160,9 @@ public:
         // Create image from array
         unsigned char imgdat[] = {
                 255, 255, 255, 255,
-                0  , 255, 255, 255,
-                255, 0  , 255, 255,
-                255, 255,   0, 255
+                0, 255, 255, 255,
+                255, 0, 255, 255,
+                255, 255, 0, 255
         };
 
         img = new ngine::graphics::Image(2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
@@ -167,11 +201,13 @@ public:
 
 NGINE_GAME_ENTRY {
     ngine::graphics::ContextDescriptor desc = {};
-    desc.Type = ngine::graphics::ContextType::DirectX;
+    desc.Type = ngine::graphics::ContextType::OpenGLES;
 
     // The below only apply to OGL
-    desc.MajorVersion = 4;
-    desc.MinorVersion = 6;
+    desc.MajorVersion = 3;
+    desc.MinorVersion = 1;
+//    desc.MajorVersion = 3;
+//    desc.MinorVersion = 3;
 
     ngine::WindowConfig conf;
     conf.Title = "Test";

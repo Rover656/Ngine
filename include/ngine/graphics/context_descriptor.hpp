@@ -54,12 +54,12 @@ namespace ngine::graphics {
         /**
          * Major version (only for OGL at the minute).
          */
-        int MajorVersion;
+        unsigned int MajorVersion;
 
         /**
          * Minor version (only for OGL at the minute).
          */
-        int MinorVersion;
+        unsigned int MinorVersion;
 
         /**
          * Verify context descriptor options.

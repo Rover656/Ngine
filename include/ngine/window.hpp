@@ -106,13 +106,6 @@ namespace ngine {
         bool pendingClose();
 
         /**
-         * Make this window current on the given thread.
-         *
-         * TODO: Move to OpenGLContext
-         */
-        void makeCurrent();
-
-        /**
          * Get the window handle.
          */
         void *getHandle() const;

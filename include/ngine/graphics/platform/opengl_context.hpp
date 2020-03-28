@@ -23,9 +23,27 @@
 
 #include "ngine/config.hpp"
 
-#if defined(NGINE_ENABLE_OPENGL)// || defined(NGINE_ENABLE_OPENGLES)
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
 #include "../../window.hpp"
+
+#if !defined(PLATFORM_UWP)
+#define GLAD
+#endif
+
+#if defined(PLATFORM_DESKTOP)
+#define GLFW
+#endif
+
+#if defined(PLATFORM_UWP)
+#define EGL
+#endif
+
+#if defined(EGL)
+typedef void* EGLDisplay;
+typedef void* EGLSurface;
+typedef void* EGLContext;
+#endif
 
 namespace ngine::graphics::platform {
     class OpenGLGraphicsDevice;
@@ -40,13 +58,29 @@ namespace ngine::graphics::platform {
         /**
          * Make this context current.
          */
-        //void makeCurrent();
+        void makeCurrent();
 
         /**
          * Swap the buffers.
          */
         void swapBuffers();
     private:
+#if defined(EGL)
+        /**
+         * EGL Context
+         */
+        EGLContext m_context;
+
+        /**
+         * EGL Display
+         */
+        EGLDisplay m_display;
+
+        /**
+         * EGL Surface
+         */
+        EGLSurface m_surface;
+#endif
         /**
          * Create an OpenGL Context
          */
@@ -62,6 +96,12 @@ namespace ngine::graphics::platform {
          * Whether or not GLAD has been initialized once.
          */
         static bool m_gladInit;
+
+        /**
+         * The context type GLAD was initialized for.
+         * This stops cross-context use.
+         */
+        static ContextType m_gladInitContextType;
     };
 }
 

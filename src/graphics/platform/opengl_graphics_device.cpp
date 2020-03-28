@@ -20,25 +20,19 @@
 
 #include "ngine/graphics/platform/opengl_graphics_device.hpp"
 
-// TODO: Implement GLES
-
-#if defined(NGINE_ENABLE_OPENGL)// || defined(NGINE_ENABLE_OPENGLES)
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
 #include "ngine/console.hpp"
 #include "ngine/window.hpp"
 
 #if !defined(PLATFORM_UWP)
-
-#include <glad/glad.h>
-
 #define GLAD
+#include <glad/glad.h>
 #endif
 
 #if defined(PLATFORM_DESKTOP)
-
-#include <GLFW/glfw3.h>
-
 #define GLFW
+#include <GLFW/glfw3.h>
 #endif
 
 #if defined(PLATFORM_UWP)
@@ -48,6 +42,9 @@
 #endif
 
 #if defined(NGINE_ENABLE_OPENGLES) && !defined(GLAD)
+#define GL_KHR_debug 0
+#define GL_GLEXT_PROTOTYPES 1
+
 // Include latest GLES header
 #include <GLES3/gl31.h>
 // Add GLES2 extensions
@@ -56,8 +53,19 @@
 
 #include <algorithm>
 
-#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY 0x84FF
+#endif
+
+#ifndef GL_TEXTURE_MAX_ANISOTROPY
+#define GL_TEXTURE_MAX_ANISOTROPY 0x84FE
+#endif
+
+// We do this here, as if we have two GLGraphicsDevices, these will be the same anyway.
+#if defined(GLAD)
+static PFNGLGENVERTEXARRAYSPROC glGenVertexArraysOES;
+static PFNGLBINDVERTEXARRAYPROC glBindVertexArrayOES;
+static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
 #endif
 
 // TODO: Security checks and bind safety (rebinding things after modifiying another i.e. textures).
@@ -78,7 +86,7 @@ namespace ngine::graphics::platform {
                 prim = GL_TRIANGLE_STRIP;
                 break;
             case PrimitiveType::LineList:
-                prim = GL_LINE;
+                prim = GL_LINES;
                 break;
             case PrimitiveType::LineStrip:
                 prim = GL_LINE_STRIP;
@@ -94,11 +102,12 @@ namespace ngine::graphics::platform {
     }
 
     OpenGLGraphicsDevice::OpenGLGraphicsDevice(Window *window) : GraphicsDevice(window) {
-        // Make window context current
-        m_window->makeCurrent();
-
         // Create context
         m_context = new OpenGLContext(m_window);
+
+        // Make context current on this thread (if it changes then developer isn't using one thread per context)
+        //  A thread should have only **one** context current, ever.
+        m_context->makeCurrent();
 
         // Determine if we're running GLES
 #if !defined(GLAD)
@@ -116,6 +125,7 @@ namespace ngine::graphics::platform {
         // Determine if we can use sampler objects
         if (!m_isGLES2) { // Only platform that can't is GLES2, we will have a workaround once I get to adding GLES2
             m_supportSamplerObject = true;
+            m_supportVAOs = true;
         }
 
         // Setup viewport
@@ -157,18 +167,49 @@ namespace ngine::graphics::platform {
         }
 
         for (auto i = 0; i < numExt; i++) {
+            // Check for VAO support
+            if (m_isGLES2) {
+#if defined(GLAD)
+#if defined(GLFW)
+                // GLFW does not provide the OES methods, try to find them.
+                glGenVertexArraysOES =
+                        (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress(
+                                "glGenVertexArraysOES");
+                glBindVertexArrayOES =
+                        (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress(
+                                "glBindVertexArrayOES");
+                glDeleteVertexArraysOES =
+                        (PFNGLDELETEVERTEXARRAYSPROC)glfwGetProcAddress(
+                                "glDeleteVertexArraysOES");
+#endif
+                if ((glGenVertexArraysOES != nullptr) &&
+                    (glBindVertexArrayOES != nullptr) &&
+                    (glDeleteVertexArraysOES != nullptr))
+                    m_supportVAOs = true;
+#else
+                // gl2ext.h provides the functions already.
+                m_supportVAOs = true;
+#endif
+            }
+
             // Anisotropic texture filter
             if (strcmp(extList[i],
                        (const char *)"GL_EXT_texture_filter_anisotropic") ==
                 0) {
                 m_supportAnisotropicFiltering = true;
-                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotropicLevel);
+                glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &m_maxAnisotropicLevel);
             }
         }
 
         // Delete if needed
         delete[] toDelete;
         Console::notice("OpenGL", "OpenGL context created and extensions processed.");
+
+        // Set default nulls
+        for (auto i = 0; i < 8; i++) {
+            m_textures[i] = nullptr;
+            m_samplerStates[i] = nullptr;
+        }
     }
 
     OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {}
@@ -318,16 +359,22 @@ namespace ngine::graphics::platform {
     }
 
     void OpenGLGraphicsDevice::_initVertexArray(VertexArray *array) {
-        // Create VAO
-        array->GLID = 0;
-        glGenVertexArrays(1, &array->GLID);
-        _prepareVertexArray(array);
-        Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
+        if (m_supportVAOs) {
+            // Create VAO
+            array->GLID = 0;
+            if (m_isGLES2) glGenVertexArraysOES(1, &array->GLID);
+            else glGenVertexArrays(1, &array->GLID);
+            _prepareVertexArray(array);
+            Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
+        }
     }
 
     void OpenGLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
         // Bind
-        glBindVertexArray(array->GLID);
+        if (m_supportVAOs) {
+            if (m_isGLES2) glBindVertexArrayOES(array->GLID);
+            else glBindVertexArray(array->GLID);
+        }
 
         // Bind buffers
         _bindBuffer(array->getVertexBuffer());
@@ -335,7 +382,7 @@ namespace ngine::graphics::platform {
             _bindBuffer(array->getIndexBuffer());
 
         // Add to cache if missing
-        if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {
+        if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end() && m_supportVAOs) {
             m_VAOShaderCache.insert({array, nullptr});
         }
 
@@ -406,11 +453,17 @@ namespace ngine::graphics::platform {
         }
 
         // Register in cache
-        m_VAOShaderCache[array] = m_currentShaderProgram;
+        if (m_supportVAOs)
+            m_VAOShaderCache[array] = m_currentShaderProgram;
     }
 
     void OpenGLGraphicsDevice::_bindVertexArray(VertexArray *array) {
-        glBindVertexArray(array->GLID);
+        if (m_supportVAOs) {
+            if (m_isGLES2) glBindVertexArrayOES(array->GLID);
+            else glBindVertexArray(array->GLID);
+        }
+
+        // Check for changes (with shader attributes)
         _prepareVertexArray(array);
         m_currentVAO = array;
     }
@@ -471,13 +524,14 @@ namespace ngine::graphics::platform {
         // Set the unit we are using
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(GL_TEXTURE_2D, texture->GLID);
+        m_textures[unit] = texture;
 
         // Update filter
         if (m_samplerStates[unit]) {
             if (m_supportSamplerObject) {
                 _applySamplerFiltering(unit, m_samplerStates[unit]);
             } else {
-                // We've got to do a full update
+                // We've got to do a full update because we're using fake samplers
                 _updateSamplerState(unit, m_samplerStates[unit]);
             }
         }
@@ -505,25 +559,42 @@ namespace ngine::graphics::platform {
     }
 
     void OpenGLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
+        // Apply wrap modes
+        _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_R, samplerState->WrapModeU);
+        _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_S, samplerState->WrapModeV);
+
+        // Apply filter
+        _applySamplerFiltering(unit, samplerState);
+
+        // Apply LOD options
         if (m_supportSamplerObject) {
-            // Apply wrap modes
-            _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_R, samplerState->WrapModeU);
-            _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_S, samplerState->WrapModeV);
-
-            // Apply filter
-            _applySamplerFiltering(unit, samplerState);
-
-            // Apply LOD options
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
-            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
+#if defined(GLAD)
+            // GLES V2 does not support these features.
+            if (!m_isGLES2) {
+                // Apply border color
+                auto col = samplerState->BorderColor;
+                float c[4] = { col.R, col.G, col.B, col.A };
+                glSamplerParameterfv(samplerState->GLID, GL_TEXTURE_BORDER_COLOR, c);
 
-            // Apply border color
-            auto col = samplerState->BorderColor;
-            float c[4] = {col.R, col.G, col.B, col.A};
-            glSamplerParameterfv(samplerState->GLID, GL_TEXTURE_BORDER_COLOR, c);
+                glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
+            }
+#endif
         } else {
-            // TODO: Apply fake sampler state
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
+#if defined(GLAD)
+            // GLES V2 does not support these features.
+            if (!m_isGLES2) {
+                // Apply border color
+                auto col = samplerState->BorderColor;
+                float c[4] = { col.R, col.G, col.B, col.A };
+                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, c);
+
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
+            }
+#endif
         }
     }
 
@@ -543,7 +614,24 @@ namespace ngine::graphics::platform {
                     param = GL_CLAMP_TO_EDGE;
                     break;
                 case WrapMode::Border:
-                    param = GL_CLAMP_TO_BORDER;
+#if defined(GLAD)
+                    // GLES V2 does not support these features.
+                    if (!m_isGLES2) {
+                        param = GL_CLAMP_TO_BORDER;
+                    } else {
+                        if (!m_haveWarnedWrapBorder) {
+                            Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
+                            m_haveWarnedWrapBorder = true;
+                        }
+                        param = GL_CLAMP_TO_EDGE;
+                    }
+#else
+                    if (!m_haveWarnedWrapBorder) {
+                        Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
+                        m_haveWarnedWrapBorder = true;
+                    }
+                    param = GL_CLAMP_TO_EDGE;
+#endif
                     break;
             }
             glSamplerParameteri(sampler, field, param);
@@ -557,110 +645,123 @@ namespace ngine::graphics::platform {
         if (!m_textures[unit])
             return;
 
+        GLint paramMin;
+        GLint paramMag;
+        float anisotropy = 1.0f;
+        bool useMipmaps = m_textures[unit]->getMipmapCount() > 1;
+
+        switch (samplerState->Filter) {
+            case TextureFilter::Anisotropic:
+                anisotropy = (float) samplerState->MaxAnisotropy;
+            case TextureFilter::Linear:
+                paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR;
+                paramMag = GL_LINEAR;
+                break;
+            case TextureFilter::LinearMipPoint:
+                paramMin = useMipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
+                paramMag = GL_LINEAR;
+                break;
+            case TextureFilter::MinLinearMagPointMipLinear:
+                paramMin = useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+                paramMag = GL_NEAREST;
+                break;
+            case TextureFilter::MinLinearMagPointMipPoint:
+                paramMin = useMipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
+                paramMag = GL_NEAREST;
+                break;
+            case TextureFilter::MinPointMagLinearMipLinear:
+                paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
+                paramMag = GL_LINEAR;
+                break;
+            case TextureFilter::MinPointMagLinearMipPoint:
+                paramMin = useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+                paramMag = GL_LINEAR;
+                break;
+            case TextureFilter::Point:
+                paramMin = useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+                paramMag = GL_NEAREST;
+                break;
+            case TextureFilter::PointMipLinear:
+                paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
+                paramMin = GL_NEAREST;
+                break;
+        }
+
+        // Apply filtering
         if (m_supportSamplerObject) {
-            GLint paramMin;
-            GLint paramMag;
-            float anisotropy = 1.0f;
-            bool useMipmaps = m_textures[unit]->getMipmapCount() > 1;
-
-            switch (samplerState->Filter) {
-                case TextureFilter::Anisotropic:
-                    anisotropy = (float) samplerState->MaxAnisotropy;
-                case TextureFilter::Linear:
-                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR;
-                    paramMag = GL_LINEAR;
-                    break;
-                case TextureFilter::LinearMipPoint:
-                    paramMin = useMipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
-                    paramMag = GL_LINEAR;
-                    break;
-                case TextureFilter::MinLinearMagPointMipLinear:
-                    paramMin = useMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
-                    paramMag = GL_NEAREST;
-                    break;
-                case TextureFilter::MinLinearMagPointMipPoint:
-                    paramMin = useMipmaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
-                    paramMag = GL_NEAREST;
-                    break;
-                case TextureFilter::MinPointMagLinearMipLinear:
-                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
-                    paramMag = GL_LINEAR;
-                    break;
-                case TextureFilter::MinPointMagLinearMipPoint:
-                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
-                    paramMag = GL_LINEAR;
-                    break;
-                case TextureFilter::Point:
-                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
-                    paramMag = GL_NEAREST;
-                    break;
-                case TextureFilter::PointMipLinear:
-                    paramMin = useMipmaps ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
-                    paramMin = GL_NEAREST;
-                    break;
-            }
-
-            // Apply filtering
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MAG_FILTER, paramMag);
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MIN_FILTER, paramMin);
+        } else {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, paramMag);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, paramMin);
+        }
 
-            // Check anisotropic filtering
-            if (!m_supportAnisotropicFiltering)
-                anisotropy = 1.0f;
-            if (anisotropy > m_maxAnisotropicLevel)
-                anisotropy = m_maxAnisotropicLevel;
-            if (anisotropy < 1.0f)
-                anisotropy = 1.0f;
+        // Check anisotropic filtering
+        if (!m_supportAnisotropicFiltering)
+            anisotropy = 1.0f;
+        if (anisotropy > m_maxAnisotropicLevel)
+            anisotropy = m_maxAnisotropicLevel;
+        if (anisotropy < 1.0f)
+            anisotropy = 1.0f;
 
-            // Apply anisotropic filtering
+        // Apply anisotropic filtering
+        if (m_supportSamplerObject)
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+        else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
 
-            // Apply filter mode
-            if (samplerState->FilterMode == TextureFilterMode::Comparison) {
+        // Apply filter mode
+        if (samplerState->FilterMode == TextureFilterMode::Comparison) {
+            if (m_supportSamplerObject)
                 glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
-                switch (samplerState->ComparisonFunction) {
-                    case CompareFunction::Always:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_ALWAYS);
-                        break;
-                    case CompareFunction::Equal:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_EQUAL);
-                        break;
-                    case CompareFunction::Greater:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_GREATER);
-                        break;
-                    case CompareFunction::GreaterEqual:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
-                        break;
-                    case CompareFunction::Less:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-                        break;
-                    case CompareFunction::LessEqual:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-                        break;
-                    case CompareFunction::Never:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_NEVER);
-                        break;
-                    case CompareFunction::NotEqual:
-                        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, GL_NOTEQUAL);
-                        break;
-                }
-
-            } else {
-                glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+            // Set comparison function
+            GLint param;
+            switch (samplerState->ComparisonFunction) {
+                case CompareFunction::Always:
+                    param = GL_ALWAYS;
+                    break;
+                case CompareFunction::Equal:
+                    param = GL_EQUAL;
+                    break;
+                case CompareFunction::Greater:
+                    param = GL_GREATER;
+                    break;
+                case CompareFunction::GreaterEqual:
+                    param = GL_GEQUAL;
+                    break;
+                case CompareFunction::Less:
+                    param = GL_LESS;
+                    break;
+                case CompareFunction::LessEqual:
+                    param = GL_LEQUAL;
+                    break;
+                case CompareFunction::Never:
+                    param = GL_NEVER;
+                    break;
+                case CompareFunction::NotEqual:
+                    param = GL_NOTEQUAL;
+                    break;
             }
 
-            // TODO: Set GL_TEXTURE_MAX_LEVEL
+            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, param);
         } else {
-            // TODO: Apply fake sampler state
+            if (m_supportSamplerObject)
+                glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+            else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
         }
+
+        // TODO: Set GL_TEXTURE_MAX_LEVEL
     }
 
     void OpenGLGraphicsDevice::_bindSamplerState(unsigned int unit, SamplerState *samplerState) {
         // Check unit limit
         if (unit >= 8)
             Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
-        glBindSampler(unit, samplerState->GLID);
+
+        if (m_supportSamplerObject) {
+            glBindSampler(unit, samplerState->GLID);
+        }
         m_samplerStates[unit] = samplerState;
 
         // Update (in case of changes)
