@@ -28,11 +28,16 @@
 #include "ngine/graphics/platform/opengl_graphics_device.hpp"
 #endif
 
-// TEMP
+#if defined(NGINE_ENABLE_DIRECTX)
 #include "ngine/graphics/platform/directx_graphics_device.hpp"
+#endif
 
 #if defined(PLATFORM_DESKTOP)
 #include <GLFW/glfw3.h>
+#endif
+
+#if defined(PLATFORM_UWP)
+#include "ngine/platform/UWP/uwp_bootstrap.hpp"
 #endif
 
 namespace ngine {
@@ -105,7 +110,11 @@ namespace ngine {
         // Gather remaining information
         m_windowCount++;
         m_title = config.Title;
-        glfwGetWindowSize((GLFWwindow *) m_handle, &m_windowWidth, &m_windowHeight);
+        glfwGetWindowSize((GLFWwindow*)m_handle, &m_windowWidth, &m_windowHeight);
+#elif defined(PLATFORM_UWP)
+        auto bounds = CoreWindow::GetForCurrentThread()->Bounds;
+        m_windowWidth = bounds.Width;
+        m_windowHeight = bounds.Height;
 #endif
 
         // Finish setup
@@ -123,7 +132,7 @@ namespace ngine {
             case graphics::ContextType::OpenGLES:
                 // TODO: GLES is not fully implemented
                 Console::fail("Window", "OpenGL ES is not implemented.");
-#if defined(NGINE_ENABLE_OPENGLES)
+#if defined(NGINE_ENABLE_OPENGLES) && FALSE
                 m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
 #else
                 Console::fail("Window", "Cannot create OpenGLES graphics device, OpenGL is not enabled.");
@@ -193,6 +202,18 @@ namespace ngine {
         // Tell graphics device to resize if we did.
         if (m_windowWidth != w || m_windowHeight != h)
             m_graphicsDevice->_onResize();
+#elif defined(PLATFORM_UWP)
+        // Poll window events
+        if (CoreWindow::GetForCurrentThread()->Visible == true) // TODO: Visible field
+            CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(
+                CoreProcessEventsOption::ProcessAllIfPresent);
+        else
+            CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(
+                CoreProcessEventsOption::ProcessOneAndAllPending);
+
+        auto bounds = CoreWindow::GetForCurrentThread()->Bounds;
+        m_windowWidth = bounds.Width;
+        m_windowHeight = bounds.Height;
 #endif
     }
 
@@ -202,6 +223,7 @@ namespace ngine {
 #if defined(PLATFORM_DESKTOP)
         return glfwWindowShouldClose((GLFWwindow *) m_handle);
 #endif
+        return false;
     }
 
     void Window::makeCurrent() {

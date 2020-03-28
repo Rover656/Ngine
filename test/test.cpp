@@ -5,6 +5,10 @@
 #include <ngine/graphics/graphics_device.hpp>
 #include <ngine/math.hpp>
 
+#if defined(PLATFORM_UWP)
+#include <ngine/platform/UWP/uwp_bootstrap.hpp>
+#endif
+
 class TestGame : public ngine::Game {
     ngine::graphics::Buffer *vb;
     ngine::graphics::VertexArray *array;
@@ -119,7 +123,7 @@ public:
         // Create vertex array
         array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderLayout);
 
-        // Create texture from image
+        // Create image from array
         unsigned char imgdat[] = {
                 255, 255, 255, 255,
                 0  , 255, 255, 255,
@@ -128,6 +132,8 @@ public:
         };
 
         img = new ngine::graphics::Image(2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
+
+        // Create texture from image
         tex = new ngine::graphics::Texture2D(getGraphicsDevice(), img);
 
         // Create sampler state
@@ -160,7 +166,7 @@ public:
 };
 
 NGINE_GAME_ENTRY {
-    ngine::graphics::ContextDescriptor desc;
+    ngine::graphics::ContextDescriptor desc = {};
     desc.Type = ngine::graphics::ContextType::DirectX;
 
     // The below only apply to OGL
@@ -174,7 +180,12 @@ NGINE_GAME_ENTRY {
     conf.ContextDescriptor = desc;
 
     TestGame game(conf);
+
+#if defined(PLATFORM_UWP)
+    CoreApplication::Run(ref new ngine::platform::UWP::BootstrappedGameSource(&game));
+#else
     game.run();
+#endif
 
     return 0;
 }

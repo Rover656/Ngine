@@ -20,7 +20,9 @@
 
 #include "ngine/graphics/platform/opengl_graphics_device.hpp"
 
-#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+// TODO: Implement GLES
+
+#if defined(NGINE_ENABLE_OPENGL)// || defined(NGINE_ENABLE_OPENGLES)
 
 #include "ngine/console.hpp"
 #include "ngine/window.hpp"

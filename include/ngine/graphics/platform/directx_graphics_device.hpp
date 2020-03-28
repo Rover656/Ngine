@@ -30,6 +30,8 @@
 #include <d3d11.h>
 #include <directxmath.h>
 
+#include <dxgi1_2.h>
+
 namespace ngine::graphics::platform {
     /**
      * Graphics device for DirectX platform.
@@ -47,7 +49,7 @@ namespace ngine::graphics::platform {
         /**
          * Swapchain
          */
-        IDXGISwapChain* m_swapchain;
+        IDXGISwapChain1* m_swapchain;
 
         /**
          * Device.

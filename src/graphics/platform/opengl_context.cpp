@@ -20,7 +20,7 @@
 
 #include "ngine/graphics/platform/opengl_context.hpp"
 
-#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+#if defined(NGINE_ENABLE_OPENGL)// || defined(NGINE_ENABLE_OPENGLES)
 
 #include "ngine/console.hpp"
 

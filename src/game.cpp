@@ -21,12 +21,6 @@
 #include "ngine/game.hpp"
 
 namespace ngine {
-    void Game::_updateThread() {
-        while (m_running) {
-            update();
-        }
-    }
-
     Game::Game(WindowConfig windowConfig) {
         m_windowConfig = windowConfig;
     }
@@ -52,17 +46,7 @@ namespace ngine {
 
         // Run draw thread
         while (m_running) {
-            m_window->pollEvents();
-
-            m_window->getGraphicsDevice()->clear(graphics::Color::Blue);
-
-            draw();
-
-            getGraphicsDevice()->present();
-
-            m_running = !m_window->pendingClose();
-
-            // TODO: Frame limiter
+            _performDraw();
         }
 
         // Finish update thread
@@ -88,5 +72,35 @@ namespace ngine {
 
     void Game::update() {
 
+    }
+
+    void Game::_updateThread() {
+        while (m_running) {
+            _performUpdate();
+        }
+    }
+
+    void Game::_performDraw() {
+        // Poll window events
+        m_window->pollEvents();
+
+        // Clear the screen
+        m_window->getGraphicsDevice()->clear(graphics::Color::Blue);
+
+        // Draw
+        draw();
+
+        // Push to screen
+        getGraphicsDevice()->present();
+
+        // Determine if we should close
+        m_running = !m_window->pendingClose();
+
+        // TODO: Frame limiter
+    }
+
+    void Game::_performUpdate() {
+        // TODO: "More advanced"
+        update();
     }
 }

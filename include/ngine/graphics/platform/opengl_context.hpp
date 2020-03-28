@@ -23,7 +23,7 @@
 
 #include "ngine/config.hpp"
 
-#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
+#if defined(NGINE_ENABLE_OPENGL)// || defined(NGINE_ENABLE_OPENGLES)
 
 #include "../../window.hpp"
 

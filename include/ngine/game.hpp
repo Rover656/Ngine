@@ -23,13 +23,21 @@
 
 #include "ngine/config.hpp"
 
-#include "app.hpp"
 #include "window.hpp"
+
+#if defined(PLATFORM_UWP)
+namespace ngine::platform::UWP {
+    ref class BootstrappedGame;
+}
+#endif
 
 #include <thread>
 
 namespace ngine {
-    class NEAPI Game : public App {
+    class NEAPI Game {
+#if defined(PLATFORM_UWP)
+        friend ref class ngine::platform::UWP::BootstrappedGame;
+#endif
     public:
         /**
          * Create a new game.
@@ -54,15 +62,15 @@ namespace ngine {
          * Run the game.
          * This will become the "main thread".
          */
-        void run() override final;
+        void run();
 
-        void init() override;
+        virtual void init();
 
-        void cleanup() override;
+        virtual void cleanup();
 
-        void draw() override;// final;
+        virtual void draw(); // virtual is temporary
 
-        void update() override final;
+        void update();
 
     private:
         /**
@@ -89,6 +97,10 @@ namespace ngine {
          * Internal update thread.
          */
         void _updateThread();
+
+        void _performDraw();
+
+        void _performUpdate();
     };
 }
 

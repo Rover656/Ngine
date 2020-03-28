@@ -25,10 +25,13 @@
 #include "ngine/console.hpp"
 #include "ngine/window.hpp"
 
+#if defined(PLATFORM_DESKTOP)
 #define GLFW_EXPOSE_NATIVE_WIN32
-
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
+#elif defined(PLATFORM_UWP)
+#include "ngine/platform/UWP/uwp_bootstrap.hpp"
+#endif
 
 #include <d3dcompiler.h>
 
@@ -93,69 +96,95 @@ namespace ngine::graphics::platform {
     }
 
     DirectXGraphicsDevice::DirectXGraphicsDevice(Window *window) : GraphicsDevice(window) {
-        // Get window handle
-        HWND win = glfwGetWin32Window((GLFWwindow *) m_window->getHandle());
+        // Define feature level
+        D3D_FEATURE_LEVEL FeatureLevels[] = {
+                D3D_FEATURE_LEVEL_12_1,
+                D3D_FEATURE_LEVEL_12_0,
+                D3D_FEATURE_LEVEL_11_1,
+                D3D_FEATURE_LEVEL_11_0
+        };
 
-        // Create swap chain
-        DXGI_SWAP_CHAIN_DESC sd;
+        // Setup device creation flags
+        unsigned int creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+
+#if defined(_DEBUG)
+        // Enable debug
+        creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+        // Create device
+        HRESULT hr = D3D11CreateDevice(nullptr,
+                               D3D_DRIVER_TYPE_HARDWARE,
+                               nullptr,
+                               creationFlags,
+                               FeatureLevels,
+                               sizeof(FeatureLevels) / sizeof(D3D_FEATURE_LEVEL),
+                               D3D11_SDK_VERSION,
+                               &m_device,
+                               nullptr,
+                               &m_deviceContext);
+
+        if (FAILED(hr)) {
+            // Attempt to create WARP device
+            hr = D3D11CreateDevice(nullptr,
+                                   D3D_DRIVER_TYPE_WARP,
+                                   nullptr,
+                                   creationFlags,
+                                   FeatureLevels,
+                                   sizeof(FeatureLevels) / sizeof(D3D_FEATURE_LEVEL),
+                                   D3D11_SDK_VERSION,
+                                   &m_device,
+                                   nullptr,
+                                   &m_deviceContext);
+
+            if (FAILED(hr))
+                Console::fail("DirectX", "Failed to create device!");
+        }
+
+        // Get DXGI device
+        IDXGIDevice2 * dxgiDevice;
+        hr = m_device->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice);
+        if (FAILED(hr)) {
+            Console::fail("DirectX", "Failed to get DXGI device!");
+        }
+
+        // Get DXGI adapter
+        IDXGIAdapter2 * dxgiAdapter;
+        hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&dxgiAdapter);
+        if (FAILED(hr)) {
+            Console::fail("DirectX", "Failed to get DXGI adapter!");
+        }
+
+        // Get DXGI factory
+        IDXGIFactory2 * dxgiFactory;
+        hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**) &dxgiFactory);
+        if (FAILED(hr)) {
+            Console::fail("DirectX", "Failed to get DXGI factory!");
+        }
+
+        // Create swap chain desc
+        DXGI_SWAP_CHAIN_DESC1 sd;
         ZeroMemory(&sd, sizeof(sd));
         sd.BufferCount = 2;
-        sd.BufferDesc.Width = m_window->getWidth();
-        sd.BufferDesc.Height = m_window->getHeight();
-        sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        sd.BufferDesc.RefreshRate.Numerator = 60;
-        sd.BufferDesc.RefreshRate.Denominator = 1;
+        sd.Width = m_window->getWidth();
+        sd.Height = m_window->getHeight();
+        sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        sd.OutputWindow = win;
         sd.SampleDesc.Count = 1;
         sd.SampleDesc.Quality = 0;
-        sd.Windowed = TRUE; // TODO: Window fullscreening
         sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
-        // Define feature level
-        D3D_FEATURE_LEVEL FeatureLevels = D3D_FEATURE_LEVEL_11_0;
-
-        HRESULT hr = S_OK;
-        D3D_FEATURE_LEVEL FeatureLevel;
-
-        unsigned int deviceFlags = 0;
-
-#if defined(_DEBUG)
-        deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+        // Create swapchain
+#if defined(PLATFORM_DESKTOP)
+        HWND win = glfwGetWin32Window((GLFWwindow *) m_window->getHandle());
+        hr = dxgiFactory->CreateSwapChainForHwnd(m_device, win, &sd, nullptr, nullptr, &m_swapchain);
+#elif defined(PLATFORM_UWP)
+        hr = dxgiFactory->CreateSwapChainForCoreWindow(m_device, reinterpret_cast<IUnknown*>(CoreWindow::GetForCurrentThread()), &sd, nullptr, &m_swapchain);
 #endif
+        if (FAILED(hr))
+            Console::fail("DirectX", "Failed to create swap chain!");
 
-        hr = D3D11CreateDeviceAndSwapChain(nullptr,
-                                           D3D_DRIVER_TYPE_HARDWARE,
-                                           nullptr,
-                                           deviceFlags,
-                                           &FeatureLevels,
-                                           1,
-                                           D3D11_SDK_VERSION,
-                                           &sd,
-                                           &m_swapchain,
-                                           &m_device,
-                                           &FeatureLevel,
-                                           &m_deviceContext);
-
-        if (FAILED (hr)) {
-            // Attempt to create a warp device
-            hr = D3D11CreateDeviceAndSwapChain(nullptr,
-                                               D3D_DRIVER_TYPE_WARP,
-                                               nullptr,
-                                               deviceFlags,
-                                               &FeatureLevels,
-                                               1,
-                                               D3D11_SDK_VERSION,
-                                               &sd,
-                                               &m_swapchain,
-                                               &m_device,
-                                               &FeatureLevel,
-                                               &m_deviceContext);
-
-            if (FAILED(hr))
-                Console::fail("DirectX", "Failed to create device and swap chain!");
-        }
         Console::notice("DirectX", "Successfully created DX11 device and swap chain.");
 
         // Get the address of the back buffer

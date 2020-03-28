@@ -10,7 +10,7 @@ All build instructions are compatible with the CMake config guides.
 Ngine primarily supports native Windows games and therefore Windows will have every feature (where applicable).
 
 ### Graphics APIs
-Windows supports both OpenGL and DirectX (via ANGLE) graphics APIs.
+Windows supports OpenGL, OpenGL ES (via ANGLE) and DirectX graphics APIs.
 
 ### Building
 To build, you must have at least Visual Studio 2017 installed with relevant workloads. Once installed, run the VS command line and run the following:
@@ -42,13 +42,13 @@ make
 ```
 
 ## Mac OS X
-Ngine does not currently support Mac OS X and it is not planned. Feel free to work on this and publish a PR if you decide to try!
+Ngine will be tested against Mac OS X in the near future.
 
 ## UWP (W10 Desktop, Xbox One)
 Ngine supports UWP across Desktop and Xbox One. No Mobile UWP features will be added as Windows 10 Mobile is discontinued.
 
 ### Graphics APIs
-Ngine on UWP uses DirectX (via ANGLE). There are plans to implement a DirectX renderer.
+Ngine on UWP uses DirectX and OpenGL ES (via ANGLE).
 
 ### Missing Features
 - Ngine does not support touch input currently.
@@ -68,10 +68,9 @@ It is planned to add easier platform porting in the future (allowing community p
 | BUILD_TEST         | Build the test program                           | ON      |
 | BUILD_DOCS         | Build the documentation (release only)           | ON      |
 | BUILD_EXAMPLES     | Build example code                               | OFF     |
+| BUILD_NGINE_STATIC | Build Ngine as a static library                  | ON      |
 | BUILD_NGINE_SHARED | Build Ngine as a shared library                  | OFF     |
-| PLATFORM           | The platform to build for (Desktop or UWP)       | Desktop |
+| PLATFORM           | The platform to build for (Desktop, UWP)         | Desktop |
 | ENABLE_OPENGL      | Enable use of OpenGL (On supported platforms)    | ON      |
 | ENABLE_OPENGLES    | Enable use of OpenGL ES (On suported platforms)  | ON      |
-
-
-
+| ENABLE_DIRECTX     | Enable use of DirectX (On suported platforms)    | ON      |

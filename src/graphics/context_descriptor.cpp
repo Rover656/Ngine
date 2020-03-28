@@ -30,9 +30,9 @@ namespace ngine::graphics {
             };
 #elif defined(PLATFORM_UWP)
             {
-                    CContextType::OpenGLES,
-                    2,
-                    1
+                    ContextType::DirectX,
+                    // Numbers below mean nothing for now
+                    0, 0
             };
 #endif
 

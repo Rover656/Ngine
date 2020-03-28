@@ -30,6 +30,15 @@ if (NGINE_ENABLE_DIRECTX)
     set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} d3d11.lib dxgi.lib d3dcompiler.lib)
 endif()
 
+# UWP
+if (PLATFORM_UWP)
+    # Include WindowsApp
+    set(_NGINE_LIBRARIES ${_NGINE_LIBRARIES} WindowsApp)
+
+    # No warnings
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 # Setup projects
 if (BUILD_NGINE_STATIC)
     # Add library
@@ -53,6 +62,15 @@ if (BUILD_NGINE_STATIC)
             "${Ngine_SOURCE_DIR}/src"
             "${Ngine_SOURCE_DIR}/vendor/stb"
             ${_NGINE_PRIVATE_INCLUDE_DIRS})
+
+    if (PLATFORM_UWP)
+        # Mark as WinRT Component
+        set_property(TARGET Ngine_static PROPERTY VS_WINRT_COMPONENT TRUE)
+    endif ()
+
+    if (WIN32 AND PLATFORM_DESKTOP)
+        target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000000)
+    endif ()
 endif()
 
 if (BUILD_NGINE_SHARED)
@@ -80,6 +98,15 @@ if (BUILD_NGINE_SHARED)
             "${Ngine_SOURCE_DIR}/src"
             "${Ngine_SOURCE_DIR}/vendor/stb"
             ${_NGINE_PRIVATE_INCLUDE_DIRS})
+
+    if (PLATFORM_UWP)
+        # Mark as WinRT Component
+        set_property(TARGET Ngine PROPERTY VS_WINRT_COMPONENT TRUE)
+    endif ()
+
+    if (WIN32 AND PLATFORM_DESKTOP)
+        target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000000)
+    endif ()
 endif()
 
 # TODO: Doxygen and UWP support
