@@ -123,18 +123,22 @@ namespace ngine {
 #if defined(NGINE_ENABLE_OPENGL)
                 m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
 #else
-                Console::fail("Window", "Cannot create OpenGL graphics device, OpenGL is not enabled.");
+                Console::fail("Window", "Cannot create OpenGL graphics device, OpenGL is not enabled or compatible.");
 #endif
                 break;
             case graphics::ContextType::OpenGLES:
 #if defined(NGINE_ENABLE_OPENGLES)
                 m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
 #else
-                Console::fail("Window", "Cannot create OpenGLES graphics device, OpenGL is not enabled.");
+                Console::fail("Window", "Cannot create OpenGL ES graphics device, OpenGL ES is not enabled or compatible.");
 #endif
                 break;
             case graphics::ContextType::DirectX:
+#if defined(NGINE_ENABLE_DIRECTX)
                 m_graphicsDevice = new graphics::platform::DirectXGraphicsDevice(this);
+#else
+                Console::fail("Window", "Cannot create DirectX graphics device, DirectX is not enabled or compatible.");
+#endif
                 break;
             case graphics::ContextType::Vulkan:
                 Console::fail("Window", "Vulkan is not implemented.");
