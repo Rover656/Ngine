@@ -114,14 +114,14 @@ if (BUILD_NGINE_SHARED)
     target_compile_definitions(Ngine PRIVATE NGINE_EXPORTS=1)
 
     # Setup language features
-    target_compile_features(Ngine_static PUBLIC cxx_std_17)
+    target_compile_features(Ngine PUBLIC cxx_std_17)
 
     # Include directories and linkages
-    target_link_libraries(Ngine_static
+    target_link_libraries(Ngine
             PRIVATE
             box2d
             ${_NGINE_LIBRARIES})
-    target_include_directories(Ngine_static
+    target_include_directories(Ngine
             PUBLIC
             "${Ngine_SOURCE_DIR}/include"
             "${Ngine_BINARY_DIR}/include" # Add the configured config.hpp
@@ -138,7 +138,7 @@ if (BUILD_NGINE_SHARED)
     endif ()
 
     if (WIN32 AND PLATFORM_DESKTOP)
-        target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000000)
+        target_compile_definitions(Ngine PRIVATE _WIN32_WINNT=0x0A000000)
     endif ()
 
     # ANGLE

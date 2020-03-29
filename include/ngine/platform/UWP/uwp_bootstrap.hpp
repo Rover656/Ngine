@@ -43,7 +43,12 @@ using namespace Microsoft::WRL;
 using namespace Platform;
 
 namespace ngine::platform::UWP {
+#if defined(DOXYGEN_SHOULD_SKIP_THIS)
+    // HACK: Make doxygen see the class name
+    ref class BootstrappedGame : public IFrameworkView {
+#else
     ref class BootstrappedGame sealed : public IFrameworkView {
+#endif
     public:
         /**
          * Initialize app
@@ -104,7 +109,12 @@ namespace ngine::platform::UWP {
         std::thread m_updateThread;
     };
 
+#if defined(DOXYGEN_SHOULD_SKIP_THIS)
+    // HACK: Make doxygen see the class name
+    ref class BootstrappedGameSource : IFrameworkViewSource {
+#else
     ref class BootstrappedGameSource sealed : IFrameworkViewSource {
+#endif
     public:
         /**
          * Create app view

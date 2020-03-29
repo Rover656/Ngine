@@ -201,7 +201,7 @@ public:
 
 NGINE_GAME_ENTRY {
     ngine::graphics::ContextDescriptor desc = {};
-    desc.Type = ngine::graphics::ContextType::OpenGLES;
+    desc.Type = ngine::graphics::ContextType::DirectX;
 
     // The below only apply to OGL
     desc.MajorVersion = 3;
