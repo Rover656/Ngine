@@ -40,7 +40,8 @@ namespace ngine::graphics {
         //UnsignedShort,
         Int,
         UnsignedInt,
-        Float
+        Float,
+        Matrix
     };
 
     /**
@@ -48,17 +49,47 @@ namespace ngine::graphics {
      * Helps systems to build vertex data for many layouts.
      */
     enum class ElementUse {
+        /**
+         * Vertex element represents the position.
+         */
         Position,
+
+        /**
+         * Vertex element represents the texture coordinates.
+         */
         Texcoords,
+
+        /**
+         * Vertex element represents the color.
+         */
         Color,
+
+        /**
+         * Uniform buffer element represents the model matrix.
+         */
+        ModelMatrix,
+
+        /**
+         * Uniform buffer element represents the view matrix.
+         */
+        ViewMatrix,
+
+        /**
+         * Uniform buffer element represents the projection matrix.
+         */
+        ProjectionMatrix,
+
+        /**
+         * Vertex element represents a custom field and will be set to 0 on automated uses.
+         */
         Custom
     };
 
     /**
-     * A vertex buffer element is an entry in a vertex layout.
-     * It details an element in the vertex data.
+     * A buffer element is an entry in a buffer layout.
+     * It details an element in the buffer.
      */
-    struct VertexBufferElement {
+    struct BufferElement {
         /**
          * Vertex element name.
          */
@@ -84,37 +115,44 @@ namespace ngine::graphics {
          */
         bool Normalized;
 
+        /**
+         * The size of the array.
+         * @warning Cannot be used for vertex buffers.
+         */
+        int ArraySize = 1;
+
         int getSize() const;
 
-        bool operator==(const VertexBufferElement &b) const {
+        bool operator==(const BufferElement &b) const {
             return Name == b.Name && Type == b.Type && Count == b.Count && Normalized == b.Normalized;
         }
 
-        bool operator!=(const VertexBufferElement &b) const {
+        bool operator!=(const BufferElement &b) const {
             return Name != b.Name || Type != b.Type || Count != b.Count || Normalized != b.Normalized;
         }
     };
 
     /**
-     * Vertex buffer layout.
+     * Buffer layout.
+     * Used to define both layouts for vertices and uniform buffers
      * @note Should match layout in the shader.
      */
-    struct VertexBufferLayout {
+    struct BufferLayout {
         /**
          * The vertex layouts elements.
          */
-        std::vector<VertexBufferElement> Elements;
+        std::vector<BufferElement> Elements;
 
         /**
          * Get the layout size.
          */
         int getSize() const;
 
-        bool operator==(const VertexBufferLayout &b) const {
+        bool operator==(const BufferLayout &b) const {
             return Elements == b.Elements;
         }
 
-        bool operator!=(const VertexBufferLayout &b) const {
+        bool operator!=(const BufferLayout &b) const {
             return Elements != b.Elements;
         }
     };
@@ -135,12 +173,17 @@ namespace ngine::graphics {
         /**
          * Create a shader program.
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice, VertexBufferLayout layout);
+        ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout, BufferLayout uniformBufferLayout);
 
         /**
          * Get this shaders vertex buffer layout.
          */
-        const VertexBufferLayout getLayout() const;
+        BufferLayout getVertexBufferLayout() const;
+
+        /**
+         * Get this shaders uniform buffer layout.
+         */
+        BufferLayout getUniformBufferLayout() const;
 
         /**
          * Attach a shader to the program.
@@ -172,7 +215,12 @@ namespace ngine::graphics {
         /**
          * The vertex buffer layout for this shader.
          */
-        VertexBufferLayout m_layout;
+        BufferLayout m_vertexBufferLayout;
+
+        /**
+         * The uniform buffer layout for this shader.
+         */
+        BufferLayout m_uniformBufferLayout;
     };
 }
 

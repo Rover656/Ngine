@@ -29,6 +29,7 @@
 #include "shader.hpp"
 #include "shader_program.hpp"
 #include "texture2d.hpp"
+#include "uniform_buffer.hpp"
 #include "vertex_array.hpp"
 
 namespace ngine {
@@ -49,6 +50,7 @@ namespace ngine {
             friend class ngine::graphics::Shader;
             friend class ngine::graphics::ShaderProgram;
             friend class ngine::graphics::Texture2D;
+            friend class ngine::graphics::UniformBuffer;
             friend class ngine::graphics::VertexArray;
         public:
             /**
@@ -113,6 +115,9 @@ namespace ngine {
             virtual void _initSamplerState(SamplerState *samplerState) = 0;
             virtual void _updateSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
             virtual void _bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
+
+            virtual void _initUniformBuffer(UniformBuffer *uniformBuffer) = 0;
+            virtual void _bindUniformBuffer(UniformBuffer *uniformBuffer) = 0;
 
             virtual void _present() = 0;
             virtual void _onResize() = 0;

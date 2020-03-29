@@ -83,10 +83,8 @@ namespace ngine {
         // Setup context
         switch (m_contextDescriptor.Type) {
             case graphics::ContextType::OpenGL:
-                // Use core on Gl 3.2 and later.
-                if (m_contextDescriptor.MajorVersion > 3 ||
-                    (m_contextDescriptor.MajorVersion == 3 && m_contextDescriptor.MinorVersion > 2))
-                    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+                // Use core context as we only support 3.3 or later and these were added in 3.2
+                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_contextDescriptor.MajorVersion);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
                 break;

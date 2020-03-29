@@ -24,7 +24,7 @@
 
 namespace ngine::graphics {
     VertexArray::VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer,
-                             const VertexBufferLayout &layout)
+                             const BufferLayout &layout)
             : GraphicsResource(graphicsDevice, ResourceType::VertexArray), m_vertexBuffer(vertexBuffer),
               m_indexBuffer(indexBuffer), m_vertexLayout(layout) {
         m_graphicsDevice->_initVertexArray(this);
@@ -38,7 +38,7 @@ namespace ngine::graphics {
         return m_indexBuffer;
     }
 
-    const VertexBufferLayout VertexArray::getLayout() const {
+    BufferLayout VertexArray::getLayout() const {
         return m_vertexLayout;
     }
 

@@ -89,8 +89,10 @@ namespace ngine::graphics::platform {
                 ((ID3D11Texture2D *) resource->Handle)->Release();
                 ((ID3D11ShaderResourceView *) resource->Handle1)->Release();
                 break;
-            case ResourceType::VertexArray:
+            case ResourceType::UniformBuffer:
+                ((ID3D11Buffer *) resource->Handle)->Release();
                 break;
+            case ResourceType::VertexArray: break; // We don't have these
         }
     }
 
@@ -248,6 +250,12 @@ namespace ngine::graphics::platform {
         m_backbuffer->Release();
         m_device->Release();
         m_deviceContext->Release();
+
+#if defined(_DEBUG)
+        ID3D11Debug* debug;
+        m_device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debug));
+        debug->ReportLiveDeviceObjects(D3D11_RLDO_IGNORE_INTERNAL | D3D11_RLDO_DETAIL);
+#endif
     }
 
     void DirectXGraphicsDevice::_initBuffer(Buffer *buffer, int size, int count) {
@@ -270,8 +278,8 @@ namespace ngine::graphics::platform {
         }
 
         // Create buffer
-        m_device->CreateBuffer(&bd, NULL, &handle);
-        buffer->Handle = (void *) handle;
+        m_device->CreateBuffer(&bd,NULL, &handle);
+        buffer->Handle = handle;
     }
 
     void DirectXGraphicsDevice::_bindBuffer(Buffer *buffer) {
@@ -296,7 +304,7 @@ namespace ngine::graphics::platform {
         // Map and write.
         D3D11_MAPPED_SUBRESOURCE ms;
         m_deviceContext->Map(handle, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-        memcpy(ms.pData, data, buffer->Size * count);
+        memcpy(ms.pData, data, count * buffer->Size);
         m_deviceContext->Unmap(handle, NULL);
     }
 
@@ -355,12 +363,15 @@ namespace ngine::graphics::platform {
         std::vector<D3D11_INPUT_ELEMENT_DESC> layoutTemplate;
 
         int offset = 0;
-        for (const auto &e : prog->getLayout().Elements) {
+        for (const auto &e : prog->getVertexBufferLayout().Elements) {
             D3D11_INPUT_ELEMENT_DESC desc;
             ZeroMemory(&desc, sizeof(D3D11_INPUT_ELEMENT_DESC));
             desc.SemanticName = e.Name;
             desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
             desc.AlignedByteOffset = offset;
+
+            if (e.Count > 4)
+                Console::fail("DirectX", "VertexBufferElement count cannot be greater than 4.");
 
             // Determine format
             switch (e.Type) {
@@ -412,6 +423,8 @@ namespace ngine::graphics::platform {
                             break;
                     }
                     break;
+                default:
+                    Console::fail("DirectX", "Invalid element type for vertex data!");
             }
 
             // Add to layout
@@ -546,6 +559,7 @@ namespace ngine::graphics::platform {
     }
 
     void DirectXGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
+        samplerState->Handle = nullptr;
         _updateSamplerState(0, samplerState);
     }
 
@@ -667,6 +681,10 @@ namespace ngine::graphics::platform {
         // We don't use this at the moment.
         samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 
+        // Release an existing sampler
+        if (samplerState->Handle != nullptr)
+            ((ID3D11SamplerState *) samplerState->Handle)->Release();
+
         // Create new state
         ID3D11SamplerState *state;
         HRESULT hr = m_device->CreateSamplerState(&samplerDesc, &state);
@@ -683,6 +701,43 @@ namespace ngine::graphics::platform {
 
         // Check for updates
         _updateSamplerState(0, samplerState); // Not passing unit as that is only for GL
+    }
+
+    void DirectXGraphicsDevice::_initUniformBuffer(UniformBuffer *uniformBuffer) {
+        // TODO: Maybe merge UniformBuffer capabilities into Buffer? Would take a bit of modifications to get it
+        //  to respond to being a separate class and the fact GL doesn't create a buffer for them.
+        // Create constant buffer description
+        D3D11_BUFFER_DESC bufDesc;
+        ZeroMemory(&bufDesc, sizeof(D3D11_BUFFER_DESC));
+        bufDesc.ByteWidth = uniformBuffer->getLayout().getSize();
+        bufDesc.Usage = D3D11_USAGE_DYNAMIC;
+        bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+        // Create constant buffer
+        ID3D11Buffer *constantBuffer;
+        HRESULT hr = m_device->CreateBuffer(&bufDesc, nullptr, &constantBuffer);
+        if (FAILED(hr))
+            Console::fail("DirectX", "Failed to create constant buffer!");
+        uniformBuffer->Handle = constantBuffer;
+    }
+
+    void DirectXGraphicsDevice::_bindUniformBuffer(UniformBuffer *uniformBuffer) {
+        // Write the data if dirty
+        if (uniformBuffer->isDirty()) {
+            // Write
+            //m_deviceContext->UpdateSubresource((ID3D11Buffer *) uniformBuffer->Handle, 0, 0, uniformBuffer->getData(), 0, 0);
+            // Map and write.
+            D3D11_MAPPED_SUBRESOURCE ms;
+            HRESULT hr = m_deviceContext->Map((ID3D11Buffer *) uniformBuffer->Handle, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+            if (FAILED(hr))
+                Console::fail("DirectX", "Failed to map constant buffer for writing!");
+            memcpy(ms.pData, uniformBuffer->getData(), uniformBuffer->getLayout().getSize());
+            m_deviceContext->Unmap((ID3D11Buffer *) uniformBuffer->Handle, NULL);
+        }
+
+        // Bind
+        m_deviceContext->VSSetConstantBuffers(0, 1, (ID3D11Buffer **) &uniformBuffer->Handle);
     }
 
     void DirectXGraphicsDevice::_present() {

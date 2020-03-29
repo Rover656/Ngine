@@ -78,7 +78,7 @@ if (BUILD_NGINE_STATIC)
     endif ()
 
     if (WIN32 AND PLATFORM_DESKTOP)
-        target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000000)
+        target_compile_definitions(Ngine_static PRIVATE _WIN32_WINNT=0x0A000006)
     endif ()
 
     # ANGLE
@@ -138,7 +138,7 @@ if (BUILD_NGINE_SHARED)
     endif ()
 
     if (WIN32 AND PLATFORM_DESKTOP)
-        target_compile_definitions(Ngine PRIVATE _WIN32_WINNT=0x0A000000)
+        target_compile_definitions(Ngine PRIVATE _WIN32_WINNT=0x0A000006)
     endif ()
 
     # ANGLE

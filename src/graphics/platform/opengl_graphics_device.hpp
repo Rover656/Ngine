@@ -52,29 +52,19 @@ namespace ngine::graphics::platform {
         OpenGLContext *m_context = nullptr;
 
         /**
-         * Whether or not the context is GLES2.
+         * Whether or not GL_CLAMP_TO_BORDER is available.
          */
-        bool m_isGLES2 = false;
+        bool m_supportClampToBorder = false;
 
         /**
-         * Whether or not the context is GLES3.
+         * The GLES clamp to border flag.
          */
-        bool m_isGLES3 = false;
+        int m_glesClampToBorder = 0;
 
         /**
-         * Have we warned about GLES2's lack of WRAP_BORDER.
+         * Whether or not we warned about the lack of support.
          */
-        bool m_haveWarnedWrapBorder = false;
-
-        /**
-         * Whether or not VAOs are supported.
-         */
-        bool m_supportVAOs = false;
-
-        /**
-         * Whether or not sampler objects are supported.
-         */
-        bool m_supportSamplerObject = false;
+        bool m_didWarnClampToBorder = false;
 
         /**
          * Whether or not anisotropic filtering is supported.
@@ -160,6 +150,9 @@ namespace ngine::graphics::platform {
         void _applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode);
         void _applySamplerFiltering(unsigned int unit, SamplerState *samplerState);
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
+
+        void _initUniformBuffer(UniformBuffer *uniformBuffer) override;
+        void _bindUniformBuffer(UniformBuffer *uniformBuffer) override;
 
         void _freeResource(GraphicsResource *resource);
 

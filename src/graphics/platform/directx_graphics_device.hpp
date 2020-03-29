@@ -96,6 +96,9 @@ namespace ngine::graphics::platform {
         void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
+        void _initUniformBuffer(UniformBuffer *uniformBuffer) override;
+        void _bindUniformBuffer(UniformBuffer *uniformBuffer) override;
+
         void _present() override;
         void _onResize() override;
     };

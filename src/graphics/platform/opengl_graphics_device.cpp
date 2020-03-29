@@ -23,7 +23,7 @@
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
 #include "ngine/console.hpp"
-#include "ngine/window.hpp"
+#include "ngine/math.hpp"
 
 #if !defined(PLATFORM_UWP)
 #define GLAD
@@ -67,11 +67,8 @@
 #define GL_TEXTURE_MAX_ANISOTROPY 0x84FE
 #endif
 
-// We do this here, as if we have two GLGraphicsDevices, these will be the same anyway.
-#if defined(GLAD)
-static PFNGLGENVERTEXARRAYSPROC glGenVertexArraysOES;
-static PFNGLBINDVERTEXARRAYPROC glBindVertexArrayOES;
-static PFNGLDELETEVERTEXARRAYSPROC glDeleteVertexArraysOES;
+#ifndef GL_CLAMP_TO_BORDER
+#define GL_CLAMP_TO_BORDER 0x812D
 #endif
 
 // TODO: Security checks and bind safety (rebinding things after modifiying another i.e. textures).
@@ -115,98 +112,53 @@ namespace ngine::graphics::platform {
         //  A thread should have only **one** context current, ever.
         m_context->makeCurrent();
 
-        // Determine if we're running GLES
-        auto contextDescriptor = window->getContextDescriptor();
-        if (contextDescriptor.Type == ContextType::OpenGLES) {
-            auto major = contextDescriptor.MajorVersion;
-            m_isGLES2 = major == 2;
-            m_isGLES3 = major == 3;
-        }
-
-        // GL 3.3 or GLES 3.0 for and guaranteed VAOs
-        if (m_isGLES3 || (contextDescriptor.Type == ContextType::OpenGL && (contextDescriptor.MajorVersion > 3 ||
-                                                                            (contextDescriptor.MajorVersion == 3 &&
-                                                                             contextDescriptor.MinorVersion ==
-                                                                             3)))) {
-            m_supportSamplerObject = true;
-            m_supportVAOs = true;
-        }
-
         // Setup viewport
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
+
+        // GL ES 3.0-3.1 don't support GL_CLAMP_TO_BORDER, so we will look for an extension
+        auto contextDescriptor = m_window->getContextDescriptor();
+        if (contextDescriptor.Type == ContextType::OpenGL ||
+            (contextDescriptor.Type == ContextType::OpenGLES && contextDescriptor.MajorVersion == 3 &&
+             contextDescriptor.MinorVersion >= 2)) {
+            m_supportClampToBorder = true;
+        }
 
         // Process extensions
         int numExt = 0;
         const char **extList = nullptr;
-        char *toDelete = nullptr;
-        if (m_isGLES2) {
-            // Create array
-            extList = new const char *[512];
 
-            const char *extensions = (const char *) glGetString(GL_EXTENSIONS);
+        // Get extension count
+        glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
 
-            int len = strlen(extensions) + 1;
-            toDelete = (char *) new char[len];
-            strcpy(toDelete, extensions);
-
-            extList[numExt] = toDelete;
-
-            for (int i = 0; i < len; i++) {
-                if (toDelete[i] == ' ') {
-                    toDelete[i] = '\0';
-                    numExt++;
-                    extList[numExt] = &toDelete[i + 1];
-                }
-            }
-        } else {
-#if defined(GLAD)
-            // Get extension count
-            glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
-
-            // Get extensions
-            extList = new const char *[numExt];
-            for (auto i = 0; i < numExt; i++)
-                extList[i] = (char *) glGetStringi(GL_EXTENSIONS, i);
-#endif
-        }
-
+        // Get extensions
+        extList = new const char *[numExt];
         for (auto i = 0; i < numExt; i++) {
-            // Check for VAO support
-            if (m_isGLES2) {
-#if defined(GLAD)
-#if defined(GLFW)
-                // GLFW does not provide the OES methods, try to find them.
-                glGenVertexArraysOES =
-                        (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress(
-                                "glGenVertexArraysOES");
-                glBindVertexArrayOES =
-                        (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress(
-                                "glBindVertexArrayOES");
-                glDeleteVertexArraysOES =
-                        (PFNGLDELETEVERTEXARRAYSPROC) glfwGetProcAddress(
-                                "glDeleteVertexArraysOES");
-#endif
-                if ((glGenVertexArraysOES != nullptr) &&
-                    (glBindVertexArrayOES != nullptr) &&
-                    (glDeleteVertexArraysOES != nullptr))
-                    m_supportVAOs = true;
-#else
-                // gl2ext.h provides the functions already.
-                m_supportVAOs = true;
-#endif
-            }
+            extList[i] = (char *) glGetStringi(GL_EXTENSIONS, i);
 
             // Anisotropic texture filter
-            if (strcmp(extList[i],
-                       (const char *) "GL_EXT_texture_filter_anisotropic") ==
-                0) {
+            if (strcmp(extList[i], (const char *) "GL_EXT_texture_filter_anisotropic") == 0) {
                 m_supportAnisotropicFiltering = true;
                 glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &m_maxAnisotropicLevel);
             }
+
+            if (contextDescriptor.Type == ContextType::OpenGLES && contextDescriptor.MajorVersion == 3 &&
+                contextDescriptor.MinorVersion < 2) {
+                if (!m_supportClampToBorder && strcmp(extList[i], (const char *) "GL_NV_texture_border_clamp") == 0) {
+                    Console::debug("OpenGL", "Found GL_NV_texture_border_clamp");
+                    m_supportClampToBorder = true;
+                } else if (!m_supportClampToBorder && strcmp(extList[i], (const char *) "GL_EXT_texture_border_clamp") == 0) {
+                    Console::debug("OpenGL", "Found GL_EXT_texture_border_clamp");
+                    m_supportClampToBorder = true;
+                } else if (!m_supportClampToBorder && strcmp(extList[i], (const char *) "GL_OES_texture_border_clamp") == 0) {
+                    Console::debug("OpenGL", "Found GL_OES_texture_border_clamp");
+                    m_supportClampToBorder = true;
+                }
+            }
+
+            // TODO: GLES v3.0/1 look for GL_NV_texture_border_clamp, GL_EXT_texture_border_clamp and GL_OES_texture_border_clamp
         }
 
         // Delete if needed
-        delete[] toDelete;
         Console::notice("OpenGL", "OpenGL context created and extensions processed.");
 
         // Set default nulls
@@ -363,24 +315,16 @@ namespace ngine::graphics::platform {
     }
 
     void OpenGLGraphicsDevice::_initVertexArray(VertexArray *array) {
-        if (m_supportVAOs) {
-            // Create VAO
-            array->GLID = 0;
-            if (m_isGLES2) glGenVertexArraysOES(1, &array->GLID);
-            else
-                glGenVertexArrays(1, &array->GLID);
-            _prepareVertexArray(array);
-            Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
-        }
+        // Create VAO
+        array->GLID = 0;
+        glGenVertexArrays(1, &array->GLID);
+        _prepareVertexArray(array);
+        Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
     }
 
     void OpenGLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
         // Bind
-        if (m_supportVAOs) {
-            if (m_isGLES2) glBindVertexArrayOES(array->GLID);
-            else
-                glBindVertexArray(array->GLID);
-        }
+        glBindVertexArray(array->GLID);
 
         // Bind buffers
         _bindBuffer(array->getVertexBuffer());
@@ -388,7 +332,7 @@ namespace ngine::graphics::platform {
             _bindBuffer(array->getIndexBuffer());
 
         // Add to cache if missing
-        if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end() && m_supportVAOs) {
+        if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {
             m_VAOShaderCache.insert({array, nullptr});
         }
 
@@ -409,7 +353,7 @@ namespace ngine::graphics::platform {
         }
 
         // Don't configure if mismatched
-        if (array->getLayout() != m_currentShaderProgram->getLayout()) {
+        if (array->getLayout() != m_currentShaderProgram->getVertexBufferLayout()) {
             // Only warn, as it may be an accident/they set the shader then the array.
             Console::warn("OpenGL",
                           "Cannot configure a vertex array to use a shader with a different layout. Not configuring.");
@@ -442,6 +386,8 @@ namespace ngine::graphics::platform {
                 case ElementType::Float:
                     type = GL_FLOAT;
                     break;
+                default:
+                    Console::fail("OpenGL", "Invalid element type for vertex data!");
             }
 
             GLint count = e.Count;
@@ -459,16 +405,11 @@ namespace ngine::graphics::platform {
         }
 
         // Register in cache
-        if (m_supportVAOs)
-            m_VAOShaderCache[array] = m_currentShaderProgram;
+        m_VAOShaderCache[array] = m_currentShaderProgram;
     }
 
     void OpenGLGraphicsDevice::_bindVertexArray(VertexArray *array) {
-        if (m_supportVAOs) {
-            if (m_isGLES2) glBindVertexArrayOES(array->GLID);
-            else
-                glBindVertexArray(array->GLID);
-        }
+        glBindVertexArray(array->GLID);
 
         // Check for changes (with shader attributes)
         _prepareVertexArray(array);
@@ -535,19 +476,12 @@ namespace ngine::graphics::platform {
         m_textures[unit] = texture;
 
         // Update filter
-        if (m_samplerStates[unit]) {
-            if (m_supportSamplerObject) {
-                _applySamplerFiltering(unit, m_samplerStates[unit]);
-            } else {
-                // We've got to do a full update because we're using fake samplers
-                _updateSamplerState(unit, m_samplerStates[unit]);
-            }
+        if (m_samplerStates[unit]) { // TODO: Make it so that there MUST be a texture bound
+            _applySamplerFiltering(unit, m_samplerStates[unit]);
         }
     }
 
     int OpenGLGraphicsDevice::_generateTextureMipmaps(Texture2D *texture) {
-        // TODO: Deal with lack of NPOT support (GL_OES_texture_npot)
-
         // Bind and generate
         _bindTexture(0, texture);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -558,12 +492,10 @@ namespace ngine::graphics::platform {
     }
 
     void OpenGLGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
-        if (m_supportSamplerObject) {
-            // Create sampler
-            samplerState->GLID = 0;
-            glGenSamplers(1, &samplerState->GLID);
-            Console::debug("OpenGL", "Created sampler %u.", samplerState->GLID);
-        } // We don't do anything if we're using fake samplers.
+        // Create sampler
+        samplerState->GLID = 0;
+        glGenSamplers(1, &samplerState->GLID);
+        Console::debug("OpenGL", "Created sampler %u.", samplerState->GLID);
     }
 
     void OpenGLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
@@ -575,40 +507,22 @@ namespace ngine::graphics::platform {
         _applySamplerFiltering(unit, samplerState);
 
         // Apply LOD options
-        if (m_supportSamplerObject) {
-            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
-            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
-#if defined(GLAD)
-            // GLES V2 does not support these features.
-            if (!m_isGLES2) {
-                // Apply border color
-                auto col = samplerState->BorderColor;
-                float c[4] = {col.R, col.G, col.B, col.A};
-                glSamplerParameterfv(samplerState->GLID, GL_TEXTURE_BORDER_COLOR, c);
+        glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
+        glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
 
-                glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
-            }
-#endif
-        } else {
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, samplerState->MaxLOD);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, samplerState->MinLOD);
+        // Apply border color and LOD Bias
+        if (m_window->getContextDescriptor().Type == ContextType::OpenGL) {
 #if defined(GLAD)
-            // GLES V2 does not support these features.
-            if (!m_isGLES2) {
-                // Apply border color
-                auto col = samplerState->BorderColor;
-                float c[4] = {col.R, col.G, col.B, col.A};
-                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, c);
+            auto col = samplerState->BorderColor;
+            float c[4] = {col.R, col.G, col.B, col.A};
+            glSamplerParameterfv(samplerState->GLID, GL_TEXTURE_BORDER_COLOR, c);
 
-                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
-            }
+            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
 #endif
         }
     }
 
     void OpenGLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
-        // TODO: Deal with lack of NPOT support (GL_OES_texture_npot)
-
         GLint param;
         switch (wrapMode) {
             case WrapMode::Wrap:
@@ -621,31 +535,18 @@ namespace ngine::graphics::platform {
                 param = GL_CLAMP_TO_EDGE;
                 break;
             case WrapMode::Border:
-#if defined(GLAD)
-                // GLES V2 does not support these features.
-                if (!m_isGLES2) {
+                if (m_supportClampToBorder)
                     param = GL_CLAMP_TO_BORDER;
-                } else {
-                    if (!m_haveWarnedWrapBorder) {
-                        Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
-                        m_haveWarnedWrapBorder = true;
+                else {
+                    if (!m_didWarnClampToBorder) {
+                        Console::warn("OpenGL", "OpenGL ES does not support WrapMode::Border!");
+                        m_didWarnClampToBorder = true;
                     }
-                    param = GL_CLAMP_TO_EDGE;
                 }
-#else
-                if (!m_haveWarnedWrapBorder) {
-                        Console::warn("OpenGL", "OpenGL ES 2.0 does not support WrapMode::Border!");
-                        m_haveWarnedWrapBorder = true;
-                    }
-                    param = GL_CLAMP_TO_EDGE;
-#endif
                 break;
         }
 
-        if (m_supportSamplerObject)
-            glSamplerParameteri(sampler, field, param);
-        else
-            glTexParameteri(GL_TEXTURE_2D, field, param);
+        glSamplerParameteri(sampler, field, param);
     }
 
     void OpenGLGraphicsDevice::_applySamplerFiltering(unsigned int unit, SamplerState *samplerState) {
@@ -696,13 +597,8 @@ namespace ngine::graphics::platform {
         }
 
         // Apply filtering
-        if (m_supportSamplerObject) {
-            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MAG_FILTER, paramMag);
-            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MIN_FILTER, paramMin);
-        } else {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, paramMag);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, paramMin);
-        }
+        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MAG_FILTER, paramMag);
+        glSamplerParameteri(samplerState->GLID, GL_TEXTURE_MIN_FILTER, paramMin);
 
         // Check anisotropic filtering
         if (!m_supportAnisotropicFiltering)
@@ -713,17 +609,11 @@ namespace ngine::graphics::platform {
             anisotropy = 1.0f;
 
         // Apply anisotropic filtering
-        if (m_supportSamplerObject)
-            glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
-        else
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+        glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
 
         // Apply filter mode
         if (samplerState->FilterMode == TextureFilterMode::Comparison) {
-            if (m_supportSamplerObject)
-                glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            else
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
             // Set comparison function
             GLint param;
@@ -756,10 +646,7 @@ namespace ngine::graphics::platform {
 
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, param);
         } else {
-            if (m_supportSamplerObject)
-                glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-            else
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+            glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
         }
 
         // TODO: Set GL_TEXTURE_MAX_LEVEL
@@ -770,13 +657,43 @@ namespace ngine::graphics::platform {
         if (unit >= 8)
             Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
 
-        if (m_supportSamplerObject) {
-            glBindSampler(unit, samplerState->GLID);
-        }
+        glBindSampler(unit, samplerState->GLID);
         m_samplerStates[unit] = samplerState;
 
         // Update (in case of changes)
         _updateSamplerState(unit, samplerState);
+    }
+
+    void OpenGLGraphicsDevice::_initUniformBuffer(UniformBuffer *uniformBuffer) {
+        // TODO: Use Uniform Buffer Objects
+    }
+
+    void OpenGLGraphicsDevice::_bindUniformBuffer(UniformBuffer *uniformBuffer) {
+        // Check the layout matches the current shader program
+        if (!m_currentShaderProgram)
+            Console::fail("OpenGL", "A shader must be bound before a uniform buffer!");
+
+        if (m_currentShaderProgram->getUniformBufferLayout() != uniformBuffer->getLayout())
+            Console::fail("OpenGL", "Uniform buffer must match the layout of the current shader program.");
+
+        // Just set each property in the current shader program.
+        for (auto e : uniformBuffer->getLayout().Elements) {
+            GLint loc = glGetUniformLocation(m_currentShaderProgram->GLID, e.Name);
+            switch (e.Type) {
+                case ElementType::Int:
+                    break;
+                case ElementType::UnsignedInt:
+                    break;
+                case ElementType::Float:
+                    break;
+                case ElementType::Matrix:
+                    if (e.Count != 1)
+                        Console::fail("OpenGL", "Matrix count must be 1!");
+                    auto val = uniformBuffer->getUniformArray<Matrix>(e.Name, e.Count);
+                    glUniformMatrix4fv(loc, e.Count, GL_FALSE, (GLfloat *) val);
+                    break;
+            }
+        }
     }
 
     void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
@@ -786,9 +703,7 @@ namespace ngine::graphics::platform {
                 glDeleteBuffers(1, &resource->GLID);
                 break;
             case ResourceType::SamplerState:
-                if (m_supportSamplerObject) {
-                    glDeleteSamplers(1, &resource->GLID);
-                }
+                glDeleteSamplers(1, &resource->GLID);
                 break;
             case ResourceType::Shader:
                 glDeleteShader(resource->GLID);
@@ -807,6 +722,9 @@ namespace ngine::graphics::platform {
                     }
                 }
                 glDeleteTextures(1, &resource->GLID);
+                break;
+            case ResourceType::UniformBuffer:
+                // Do nothing, we don't have these
                 break;
             case ResourceType::VertexArray:
                 glDeleteVertexArrays(1, &resource->GLID);

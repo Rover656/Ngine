@@ -24,7 +24,7 @@
 #include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    int VertexBufferElement::getSize() const {
+    int BufferElement::getSize() const {
         switch (Type) {
             //case ElementType::Byte:
             //case ElementType::UnsignedByte:
@@ -37,24 +37,34 @@ namespace ngine::graphics {
                 return sizeof(int) * Count;
             case ElementType::Float:
                 return sizeof(float) * Count;
+            case ElementType::Matrix:
+                // 4x4 matrices
+                return sizeof(float) * 16 * Count;
+                break;
         }
     }
 
-    int VertexBufferLayout::getSize() const {
+    int BufferLayout::getSize() const {
         int s = 0;
         for (const auto &e : Elements) {
             s += e.getSize();
         }
         return s;
     }
-    
-    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, VertexBufferLayout layout)
-            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_layout(layout) {
+
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout,
+                                 BufferLayout uniformBufferLayout)
+            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_vertexBufferLayout(vertexBufferLayout),
+              m_uniformBufferLayout(uniformBufferLayout) {
         m_graphicsDevice->_initShaderProgram(this);
     }
 
-    const VertexBufferLayout ShaderProgram::getLayout() const {
-        return m_layout;
+    BufferLayout ShaderProgram::getVertexBufferLayout() const {
+        return m_vertexBufferLayout;
+    }
+
+    BufferLayout ShaderProgram::getUniformBufferLayout() const {
+        return m_uniformBufferLayout;
     }
 
     void ShaderProgram::attachShader(Shader *shader) {

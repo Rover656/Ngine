@@ -32,6 +32,7 @@ namespace ngine::graphics {
         Shader,
         ShaderProgram,
         Texture2D,
+        UniformBuffer,
         VertexArray
     };
 

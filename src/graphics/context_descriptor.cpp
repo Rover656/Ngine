@@ -50,7 +50,8 @@ namespace ngine::graphics {
 #if !defined(NGINE_ENABLE_OPENGL)
                 return ContextDescriptorStatus::NotEnabledOrSupported;
 #else
-                if (MajorVersion < 3) return ContextDescriptorStatus::Outdated;
+                // We now require 3.3 for Uniform Buffer Objects and Sampler Objects.
+                if (MajorVersion < 3 || (MajorVersion == 3 && MinorVersion < 3)) return ContextDescriptorStatus::Outdated;
                 if (MajorVersion == 3 && MinorVersion > 3) return ContextDescriptorStatus::InvalidVersion;
                 if (MajorVersion == 4 && MinorVersion > 6) return ContextDescriptorStatus::InvalidVersion;
 #endif
@@ -59,8 +60,8 @@ namespace ngine::graphics {
 #if !defined(NGINE_ENABLE_OPENGLES)
                 return ContextDescriptorStatus::NotEnabledOrSupported;
 #else
-                if (MajorVersion < 2) return ContextDescriptorStatus::Outdated;
-                if (MajorVersion == 2 && MinorVersion != 0) return ContextDescriptorStatus::InvalidVersion;
+                // We now require GLES 3.0 or greater. This is to remove the masses of legacy code to support it.
+                if (MajorVersion < 3) return ContextDescriptorStatus::Outdated;
                 if (MajorVersion == 3 && MinorVersion > 1) return ContextDescriptorStatus::InvalidVersion; // 3.2 isn't available through ANGLE yet.
 #endif
                 break;

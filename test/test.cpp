@@ -12,6 +12,7 @@
 class TestGame : public ngine::Game {
     ngine::graphics::Buffer *vb;
     ngine::graphics::VertexArray *array;
+    ngine::graphics::UniformBuffer *ubuffer;
     ngine::graphics::Shader *vertShader;
     ngine::graphics::Shader *fragShader;
     ngine::graphics::ShaderProgram *prog;
@@ -37,12 +38,15 @@ public:
                                "in vec4 COLOR;\n"
                                "out vec2 fragTexCoord;\n"
                                "out vec4 fragColor;\n"
-                               "uniform mat4 NGINE_MATRIX_MVP;\n"
+                               "uniform mat4 Model;\n"
+                               "uniform mat4 View;\n"
+                               "uniform mat4 Projection;\n"
                                "void main()\n"
                                "{\n"
                                "    fragTexCoord = TEXCOORD;\n"
                                "    fragColor = COLOR;\n"
-                               "    gl_Position = vec4(POSITION, 1.0);//NGINE_MATRIX_MVP * vec4(POSITION, 1.0);\n"
+                               "    mat4 MVP = Model * View * Projection;\n"
+                               "    gl_Position = MVP * vec4(POSITION, 1.0);\n"
                                "}";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
                                                          ngine::graphics::ShaderType::Vertex);
@@ -70,12 +74,15 @@ public:
                                "attribute vec4 COLOR;\n"
                                "varying vec2 fragTexCoord;\n"
                                "varying vec4 fragColor;\n"
-                               "uniform mat4 NGINE_MATRIX_MVP;\n"
+                               "uniform mat4 Model;\n"
+                               "uniform mat4 View;\n"
+                               "uniform mat4 Projection;\n"
                                "void main()\n"
                                "{\n"
                                "    fragTexCoord = TEXCOORD;\n"
                                "    fragColor = COLOR;\n"
-                               "    gl_Position = vec4(POSITION, 1.0);//NGINE_MATRIX_MVP * vec4(POSITION, 1.0);\n"
+                               "    mat4 MVP = Model * View * Projection;\n"
+                               "    gl_Position = MVP * vec4(POSITION, 1.0);\n"
                                "}\n";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
                                                          ngine::graphics::ShaderType::Vertex);
@@ -102,9 +109,16 @@ public:
                              "    float2 texcoord : TEXCOORD;\n"
                              "};\n"
                              "\n"
+                             "cbuffer ConstantBuffer : register(b0) {\n"
+                             "    matrix Model;\n"
+                             "    matrix View;\n"
+                             "    matrix Projection;\n"
+                             "}\n"
+                             "\n"
                              "VOut VSMain(float4 pos : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) {\n"
                              "    VOut output;"
-                             "    output.position = pos;\n"
+                             "    matrix MVP = mul(mul(Model, View), Projection);\n"
+                             "    output.position = mul(MVP, pos);\n"
                              "    output.color = color;\n"
                              "    output.texcoord = texcoord;\n"
                              "    return output;\n"
@@ -114,7 +128,7 @@ public:
                              "SamplerState Samplers[2];\n"
                              "float4 PSMain(float4 pos : SV_POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) : SV_TARGET {\n"
                              "    float4 texelColor = Textures[1].Sample(Samplers[1], texcoord);"
-                             "    return texelColor;// * color;\n"
+                             "    return texelColor * color;\n"
                              "}";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
                                                          ngine::graphics::ShaderType::Vertex);
@@ -127,20 +141,38 @@ public:
         }
 
         // Setup shader layout
-        ngine::graphics::VertexBufferLayout shaderLayout;
-        shaderLayout.Elements.push_back(
+        ngine::graphics::BufferLayout shaderVertexLayout;
+        shaderVertexLayout.Elements.push_back(
                 {"POSITION", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Position, 3, false});
-        shaderLayout.Elements.push_back(
+        shaderVertexLayout.Elements.push_back(
                 {"COLOR", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Color, 4, false});
-        shaderLayout.Elements.push_back(
+        shaderVertexLayout.Elements.push_back(
                 {"TEXCOORD", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Texcoords, 2, false});
 
+        ngine::graphics::BufferLayout shaderUniformLayout;
+        shaderUniformLayout.Elements.push_back(
+                {"Model", ngine::graphics::ElementType::Matrix, ngine::graphics::ElementUse::ModelMatrix, 1,
+                 false});
+        shaderUniformLayout.Elements.push_back(
+                {"View", ngine::graphics::ElementType::Matrix, ngine::graphics::ElementUse::ViewMatrix, 1,
+                 false});
+        shaderUniformLayout.Elements.push_back(
+                {"Projection", ngine::graphics::ElementType::Matrix, ngine::graphics::ElementUse::ProjectionMatrix, 1,
+                 false});
+
         // Create shader program
-        prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderLayout);
+        prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderVertexLayout, shaderUniformLayout);
         prog->attachShader(vertShader);
         prog->attachShader(fragShader);
         prog->link();
         prog->ExpectedSamplerCount = 2;
+
+        // Create uniform buffer
+        ubuffer = new ngine::graphics::UniformBuffer(getGraphicsDevice(), shaderUniformLayout);
+        ngine::Matrix test = ngine::Matrix::Identity;
+        ubuffer->setUniform("Model", test);
+        ubuffer->setUniform("View", test);
+        ubuffer->setUniform("Projection", test);
 
         // Create vertex buffer
         vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
@@ -155,7 +187,7 @@ public:
         vb->write(dat, sizeof(float) * (3 + 4 + 2), 3);
 
         // Create vertex array
-        array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderLayout);
+        array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderVertexLayout);
 
         // Create image from array
         unsigned char imgdat[] = {
@@ -180,6 +212,7 @@ public:
         delete img;
         delete samplerState;
         delete vb;
+        delete ubuffer;
         delete array;
         delete vertShader;
         delete fragShader;
@@ -190,6 +223,7 @@ public:
 
     void draw() override {
         prog->use();
+        ubuffer->bind();
         array->bind();
         samplerState->bind(1);
         tex->bind(1);
@@ -201,13 +235,16 @@ public:
 
 NGINE_GAME_ENTRY {
     ngine::graphics::ContextDescriptor desc = {};
-    desc.Type = ngine::graphics::ContextType::DirectX;
+    desc.Type = ngine::graphics::ContextType::OpenGL;
 
     // The below only apply to OGL
-    desc.MajorVersion = 3;
-    desc.MinorVersion = 3;
-//    desc.MajorVersion = 3;
-//    desc.MinorVersion = 3;
+    if (desc.Type == ngine::graphics::ContextType::OpenGLES) {
+        desc.MajorVersion = 3;
+        desc.MinorVersion = 0;
+    } else if (desc.Type == ngine::graphics::ContextType::OpenGL) {
+        desc.MajorVersion = 3;
+        desc.MinorVersion = 3;
+    }
 
     ngine::WindowConfig conf;
     conf.Title = "Test";

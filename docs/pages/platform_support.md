@@ -12,6 +12,11 @@ Ngine primarily supports native Windows games and therefore Windows will have ev
 ### Graphics APIs
 Windows supports OpenGL, OpenGL ES (via ANGLE) and DirectX graphics APIs.
 
+### System Requirements
+| OS Version                        | GRAPHICS                    |
+| --------------------------------- | --------------------------- |
+| Windows 10 1809 (Version 17763.0) | DirectX 11 or OpenGL 3.3    |
+
 ### Building
 To build, you must have at least Visual Studio 2017 installed with relevant workloads. Once installed, run the VS command line and run the following:
 MinGW support is untested.
@@ -23,6 +28,11 @@ cmake --build . --config <Debug or Release>
 
 ## Linux
 All Ngine features are available on Linux.
+
+### System Requirements
+| OS Version                        | GRAPHICS                    |
+| --------------------------------- | --------------------------- |
+| Undetermined                      | OpenGL 3.3                  |
 
 ### Graphics APIs
 Linux only supports the OpenGL graphics API.
@@ -47,6 +57,11 @@ Ngine will be tested against Mac OS X in the near future.
 ## UWP (W10 Desktop, Xbox One)
 Ngine supports UWP across Desktop and Xbox One. No Mobile UWP features will be added as Windows 10 Mobile is discontinued.
 
+### System Requirements
+| OS Version                        | GRAPHICS      |
+| --------------------------------- | ------------- |
+| TBD (likely same as Desktop)      | DirectX 11    |
+
 ### Graphics APIs
 Ngine on UWP uses DirectX and OpenGL ES (via ANGLE).
 
@@ -57,6 +72,14 @@ Ngine on UWP uses DirectX and OpenGL ES (via ANGLE).
 Building for Ngine requires Visual Studio 2017 or 2019 with UWP workloads.
 Ngine includes a build script `BuildUWP.bat` which will generate a directory `build-uwp` with Visual Studio 2019 project files.
 It is recommended to implement this script for your own projects for ease.
+
+## Android
+Ngine for Android is planned.
+
+### Estimated System Requirements
+| OS Version (Projected)            | GRAPHICS                    |
+| --------------------------------- | --------------------------- |
+| Android 8.0 (Oreo)                | OpenGL ES 3.0               |
 
 ## Not listed?
 If a platform is not listed, it means it has not been considered yet, feel free to ask about this on the GitHub page.
