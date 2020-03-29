@@ -40,7 +40,7 @@ namespace ngine::graphics {
     /**
      * Context version information.
      */
-    struct ContextDescriptor {
+    struct NEAPI ContextDescriptor {
         /**
          * Default context version for the current platform.
          */

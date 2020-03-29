@@ -18,7 +18,7 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/platform/opengl_graphics_device.hpp"
+#include "opengl_graphics_device.hpp"
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
@@ -27,12 +27,16 @@
 
 #if !defined(PLATFORM_UWP)
 #define GLAD
+
 #include <glad/glad.h>
+
 #endif
 
 #if defined(PLATFORM_DESKTOP)
 #define GLFW
+
 #include <GLFW/glfw3.h>
+
 #endif
 
 #if defined(PLATFORM_UWP)
@@ -112,21 +116,22 @@ namespace ngine::graphics::platform {
         m_context->makeCurrent();
 
         // Determine if we're running GLES
-#if !defined(GLAD)
-        if (window->getContextDescriptor().Type == ContextType::OpenGLES) {
-            auto major = window->getContextDescriptor().MajorVersion;
+        auto contextDescriptor = window->getContextDescriptor();
+        if (contextDescriptor.Type == ContextType::OpenGLES) {
+            auto major = contextDescriptor.MajorVersion;
             m_isGLES2 = major == 2;
             m_isGLES3 = major == 3;
         }
-#else
-        m_isGLES2 = GLAD_GL_ES_VERSION_2_0 && !GLAD_GL_ES_VERSION_3_0 &&
-                    !GLAD_GL_ES_VERSION_3_1 && !GLAD_GL_ES_VERSION_3_2;
-        m_isGLES3 = GLAD_GL_ES_VERSION_3_0;
-#endif
 
-        // Determine if we can use sampler objects
-        if (!m_isGLES2) { // Only platform that can't is GLES2, we will have a workaround once I get to adding GLES2
-            m_supportSamplerObject = true;
+        // Manage feature flags
+        if (!m_isGLES2) {
+            // GL 3.3 or GLES 3.0 for sampler objects
+            if (m_isGLES3 || (contextDescriptor.Type == ContextType::OpenGL && (contextDescriptor.MajorVersion > 3 ||
+                                                                                (contextDescriptor.MajorVersion == 3 &&
+                                                                                 contextDescriptor.MinorVersion ==
+                                                                                 3)))) {
+                m_supportSamplerObject = true;
+            }
             m_supportVAOs = true;
         }
 
@@ -141,10 +146,10 @@ namespace ngine::graphics::platform {
             // Create array
             extList = new const char *[512];
 
-            const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
+            const char *extensions = (const char *) glGetString(GL_EXTENSIONS);
 
             int len = strlen(extensions) + 1;
-            toDelete = (char *)new char[len];
+            toDelete = (char *) new char[len];
             strcpy(toDelete, extensions);
 
             extList[numExt] = toDelete;
@@ -164,7 +169,7 @@ namespace ngine::graphics::platform {
             // Get extensions
             extList = new const char *[numExt];
             for (auto i = 0; i < numExt; i++)
-                extList[i] = (char *)glGetStringi(GL_EXTENSIONS, i);
+                extList[i] = (char *) glGetStringi(GL_EXTENSIONS, i);
 #endif
         }
 
@@ -175,13 +180,13 @@ namespace ngine::graphics::platform {
 #if defined(GLFW)
                 // GLFW does not provide the OES methods, try to find them.
                 glGenVertexArraysOES =
-                        (PFNGLGENVERTEXARRAYSPROC)glfwGetProcAddress(
+                        (PFNGLGENVERTEXARRAYSPROC) glfwGetProcAddress(
                                 "glGenVertexArraysOES");
                 glBindVertexArrayOES =
-                        (PFNGLBINDVERTEXARRAYPROC)glfwGetProcAddress(
+                        (PFNGLBINDVERTEXARRAYPROC) glfwGetProcAddress(
                                 "glBindVertexArrayOES");
                 glDeleteVertexArraysOES =
-                        (PFNGLDELETEVERTEXARRAYSPROC)glfwGetProcAddress(
+                        (PFNGLDELETEVERTEXARRAYSPROC) glfwGetProcAddress(
                                 "glDeleteVertexArraysOES");
 #endif
                 if ((glGenVertexArraysOES != nullptr) &&
@@ -196,7 +201,7 @@ namespace ngine::graphics::platform {
 
             // Anisotropic texture filter
             if (strcmp(extList[i],
-                       (const char *)"GL_EXT_texture_filter_anisotropic") ==
+                       (const char *) "GL_EXT_texture_filter_anisotropic") ==
                 0) {
                 m_supportAnisotropicFiltering = true;
                 glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &m_maxAnisotropicLevel);
@@ -365,7 +370,8 @@ namespace ngine::graphics::platform {
             // Create VAO
             array->GLID = 0;
             if (m_isGLES2) glGenVertexArraysOES(1, &array->GLID);
-            else glGenVertexArrays(1, &array->GLID);
+            else
+                glGenVertexArrays(1, &array->GLID);
             _prepareVertexArray(array);
             Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
         }
@@ -375,7 +381,8 @@ namespace ngine::graphics::platform {
         // Bind
         if (m_supportVAOs) {
             if (m_isGLES2) glBindVertexArrayOES(array->GLID);
-            else glBindVertexArray(array->GLID);
+            else
+                glBindVertexArray(array->GLID);
         }
 
         // Bind buffers
@@ -407,7 +414,8 @@ namespace ngine::graphics::platform {
         // Don't configure if mismatched
         if (array->getLayout() != m_currentShaderProgram->getLayout()) {
             // Only warn, as it may be an accident/they set the shader then the array.
-            Console::warn("OpenGL", "Cannot configure a vertex array to use a shader with a different layout. Not configuring.");
+            Console::warn("OpenGL",
+                          "Cannot configure a vertex array to use a shader with a different layout. Not configuring.");
             return;
         }
 
@@ -461,7 +469,8 @@ namespace ngine::graphics::platform {
     void OpenGLGraphicsDevice::_bindVertexArray(VertexArray *array) {
         if (m_supportVAOs) {
             if (m_isGLES2) glBindVertexArrayOES(array->GLID);
-            else glBindVertexArray(array->GLID);
+            else
+                glBindVertexArray(array->GLID);
         }
 
         // Check for changes (with shader attributes)
@@ -500,7 +509,8 @@ namespace ngine::graphics::platform {
             unsigned int mipSize = Image::getDataSize(mipWidth, mipHeight, format);
 
             // Write TODO: Compressed formats
-            glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, (unsigned char *) data + mipOffset);
+            glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType,
+                         (unsigned char *) data + mipOffset);
 
             // TODO: Greyscale swizzle
 
@@ -547,7 +557,7 @@ namespace ngine::graphics::platform {
 
         // Remove "max" macro
 #undef max
-        return 1 + (int)floor(log(std::max(texture->getWidth(), texture->getHeight()))/log(2));
+        return 1 + (int) floor(log(std::max(texture->getWidth(), texture->getHeight())) / log(2));
     }
 
     void OpenGLGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
@@ -576,7 +586,7 @@ namespace ngine::graphics::platform {
             if (!m_isGLES2) {
                 // Apply border color
                 auto col = samplerState->BorderColor;
-                float c[4] = { col.R, col.G, col.B, col.A };
+                float c[4] = {col.R, col.G, col.B, col.A};
                 glSamplerParameterfv(samplerState->GLID, GL_TEXTURE_BORDER_COLOR, c);
 
                 glSamplerParameterf(samplerState->GLID, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
@@ -590,7 +600,7 @@ namespace ngine::graphics::platform {
             if (!m_isGLES2) {
                 // Apply border color
                 auto col = samplerState->BorderColor;
-                float c[4] = { col.R, col.G, col.B, col.A };
+                float c[4] = {col.R, col.G, col.B, col.A};
                 glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, c);
 
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, samplerState->LODBias);
@@ -637,7 +647,8 @@ namespace ngine::graphics::platform {
 
         if (m_supportSamplerObject)
             glSamplerParameteri(sampler, field, param);
-        else glTexParameteri(GL_TEXTURE_2D, field, param);
+        else
+            glTexParameteri(GL_TEXTURE_2D, field, param);
     }
 
     void OpenGLGraphicsDevice::_applySamplerFiltering(unsigned int unit, SamplerState *samplerState) {
@@ -707,13 +718,15 @@ namespace ngine::graphics::platform {
         // Apply anisotropic filtering
         if (m_supportSamplerObject)
             glSamplerParameterf(samplerState->GLID, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
-        else glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
+        else
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, anisotropy);
 
         // Apply filter mode
         if (samplerState->FilterMode == TextureFilterMode::Comparison) {
             if (m_supportSamplerObject)
                 glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-            else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+            else
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
             // Set comparison function
             GLint param;
@@ -748,7 +761,8 @@ namespace ngine::graphics::platform {
         } else {
             if (m_supportSamplerObject)
                 glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
-            else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+            else
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
         }
 
         // TODO: Set GL_TEXTURE_MAX_LEVEL

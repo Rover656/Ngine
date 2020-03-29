@@ -154,7 +154,7 @@ if (BUILD_NGINE_SHARED)
                     $<TARGET_FILE_DIR:Ngine>
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
                     ${Ngine_SOURCE_DIR}/vendor/ANGLE/WindowsBinaries/x86/d3dcompiler_47.dll
-                    $<TARGET_FILE_DIR:Ngine_static>
+                    $<TARGET_FILE_DIR:Ngine>
                     COMMENT "Copying ANGLE binaries to output.")
         elseif(PLATFORM_UWP)
             # Install ANGLE with Nuget

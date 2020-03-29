@@ -25,7 +25,7 @@
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-#include "../../window.hpp"
+#include "ngine/window.hpp"
 
 #if !defined(PLATFORM_UWP)
 #define GLAD

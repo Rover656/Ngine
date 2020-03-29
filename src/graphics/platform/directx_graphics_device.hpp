@@ -25,7 +25,7 @@
 
 #if defined(NGINE_ENABLE_DIRECTX)
 
-#include "../graphics_device.hpp"
+#include "ngine/graphics/graphics_device.hpp"
 
 #include <d3d11.h>
 #include <directxmath.h>

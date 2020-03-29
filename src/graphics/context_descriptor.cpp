@@ -23,11 +23,19 @@
 namespace ngine::graphics {
     ContextDescriptor ContextDescriptor::Default =
 #if defined(PLATFORM_DESKTOP)
+#if defined(_WIN32)
+            {
+                    ContextType::DirectX,
+                    // Numbers below mean nothing for now
+                    0, 0
+            };
+#else
             {
                     ContextType::OpenGL,
                     3,
                     3
             };
+#endif
 #elif defined(PLATFORM_UWP)
             {
                     ContextType::DirectX,
@@ -43,7 +51,7 @@ namespace ngine::graphics {
                 return false;
 #else
                 if (MajorVersion < 3) return false;
-                if (MajorVersion == 3 && MinorVersion != 3) return false;
+                if (MajorVersion == 3 && MinorVersion > 3) return false;
                 if (MajorVersion == 4 && MinorVersion > 6) return false;
 #endif
                 break;

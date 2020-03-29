@@ -18,7 +18,7 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/platform/directx_graphics_device.hpp"
+#include "directx_graphics_device.hpp"
 
 #if defined(NGINE_ENABLE_DIRECTX)
 

@@ -20,16 +20,14 @@
 
 #include "ngine/window.hpp"
 
-// TODO: Init checks
-
 #include "ngine/console.hpp"
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
-#include "ngine/graphics/platform/opengl_graphics_device.hpp"
+#include "graphics/platform/opengl_graphics_device.hpp"
 #endif
 
 #if defined(NGINE_ENABLE_DIRECTX)
-#include "ngine/graphics/platform/directx_graphics_device.hpp"
+#include "graphics/platform/directx_graphics_device.hpp"
 #endif
 
 #if defined(PLATFORM_DESKTOP)
@@ -64,6 +62,7 @@ namespace ngine {
         // Setup context
         switch (m_contextDescriptor.Type) {
             case graphics::ContextType::OpenGL:
+                // Use core on Gl 3.2 and later.
                 if (m_contextDescriptor.MajorVersion > 3 ||
                     (m_contextDescriptor.MajorVersion == 3 && m_contextDescriptor.MinorVersion > 2))
                     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

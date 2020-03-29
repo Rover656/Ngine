@@ -25,7 +25,8 @@
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-#include "../graphics_device.hpp"
+#include "ngine/graphics/graphics_device.hpp"
+
 #include "opengl_context.hpp"
 
 #include <mutex>

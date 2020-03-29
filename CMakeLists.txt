@@ -8,6 +8,7 @@ project(Ngine
 
 # Add a version suffix
 set(PROJECT_VERSION_SUFFIX "rewrite")
+set(Ngine_VERSION_SUFFIX ${PROJECT_VERSION_SUFFIX})
 if (NOT PROJECT_VERSION_SUFFIX STREQUAL "")
     set(PROJECT_VERSION ${PROJECT_VERSION}-${PROJECT_VERSION_SUFFIX})
     set(Ngine_VERSION ${PROJECT_VERSION})
@@ -23,7 +24,7 @@ option(BUILD_DOCS "Build documentation." ON)
 option(BUILD_EXAMPLES "Build examples." OFF)
 
 option(BUILD_NGINE_STATIC "Build Ngine as a static library." ON)
-option(BUILD_NGINE_SHARED "Build Ngine as a shared library." OFF)
+option(BUILD_NGINE_SHARED "Build Ngine as a shared library." ON)
 
 enum_option(PLATFORM "Desktop;UWP" "The platform to build for.")
 
@@ -78,7 +79,7 @@ elseif (PLATFORM MATCHES "UWP")
 endif ()
 
 # Broadcast renderer
-message(STATUS "Building Ngine for the \"${PLATFORM}\" platform.")
+message(STATUS "Building Ngine ${Ngine_VERSION} for the \"${PLATFORM}\" platform.")
 message(STATUS "Ngine OpenGL support is ${NGINE_ENABLE_OPENGL}")
 message(STATUS "Ngine OpenGLES support is ${NGINE_ENABLE_OPENGLES}")
 message(STATUS "Ngine DirectX support is ${NGINE_ENABLE_DIRECTX}")
