@@ -20,6 +20,7 @@
 
 #include "ngine/window.hpp"
 
+#include "ngine/graphics/context_descriptor.hpp"
 #include "ngine/console.hpp"
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
@@ -44,9 +45,29 @@ namespace ngine {
     Window::Window(WindowConfig config)
             : m_contextDescriptor(config.ContextDescriptor) {
         // Verify context descriptor
-        if (!m_contextDescriptor.verify()) {
-            Console::fail("Window", "Invalid context descriptor.");
+        switch (m_contextDescriptor.verify()) {
+            case graphics::ContextDescriptorStatus::OK:
+                Console::debug("Window", "Context Descriptor status OK.");
+                goto pass;
+                break;
+            case graphics::ContextDescriptorStatus::Outdated:
+                Console::warn("Window", "The desired context version is too old for Ngine. Please raise the version number to a supported version.");
+                break;
+            case graphics::ContextDescriptorStatus::InvalidVersion:
+                Console::warn("Window", "The desired context version is invalid.");
+                break;
+            case graphics::ContextDescriptorStatus::NotEnabledOrSupported:
+                Console::warn("Window", "The desired context type is not enabled or is not supported on this platform.");
+                break;
+            case graphics::ContextDescriptorStatus::NotImplemented:
+                Console::warn("Window", "The desired context type has not been implemented into Ngine.");
+                break;
         }
+
+        // Use the default descriptor
+        m_contextDescriptor = graphics::ContextDescriptor::Default;
+        Console::warn("Window", "Creating a default context for the current platform!");
+        pass:
 
 #if defined(PLATFORM_DESKTOP)
         // Init GLFW (if required)

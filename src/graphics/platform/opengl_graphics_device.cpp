@@ -123,15 +123,12 @@ namespace ngine::graphics::platform {
             m_isGLES3 = major == 3;
         }
 
-        // Manage feature flags
-        if (!m_isGLES2) {
-            // GL 3.3 or GLES 3.0 for sampler objects
-            if (m_isGLES3 || (contextDescriptor.Type == ContextType::OpenGL && (contextDescriptor.MajorVersion > 3 ||
-                                                                                (contextDescriptor.MajorVersion == 3 &&
-                                                                                 contextDescriptor.MinorVersion ==
-                                                                                 3)))) {
-                m_supportSamplerObject = true;
-            }
+        // GL 3.3 or GLES 3.0 for and guaranteed VAOs
+        if (m_isGLES3 || (contextDescriptor.Type == ContextType::OpenGL && (contextDescriptor.MajorVersion > 3 ||
+                                                                            (contextDescriptor.MajorVersion == 3 &&
+                                                                             contextDescriptor.MinorVersion ==
+                                                                             3)))) {
+            m_supportSamplerObject = true;
             m_supportVAOs = true;
         }
 

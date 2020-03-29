@@ -201,11 +201,11 @@ public:
 
 NGINE_GAME_ENTRY {
     ngine::graphics::ContextDescriptor desc = {};
-    desc.Type = ngine::graphics::ContextType::OpenGL;
+    desc.Type = ngine::graphics::ContextType::DirectX;
 
     // The below only apply to OGL
     desc.MajorVersion = 3;
-    desc.MinorVersion = 1;
+    desc.MinorVersion = 3;
 //    desc.MajorVersion = 3;
 //    desc.MinorVersion = 3;
 

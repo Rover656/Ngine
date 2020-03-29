@@ -32,9 +32,59 @@ namespace ngine::graphics {
          * OpenGL context.
          */
         OpenGL,
+
+        /**
+         * OpenGL ES context.
+         */
         OpenGLES,
+
+        /**
+         * DirectX context.
+         */
         DirectX,
-        Vulkan
+
+        /**
+         * Vulkan context.
+         * @warning Not implemented, this is reserved for future support.
+         */
+        Vulkan,
+
+        /**
+         * Metal context.
+         * @warning Not implemented, this is reserved for future support.
+         */
+        Metal
+    };
+
+    /**
+     * Context descriptor validation status.
+     * Allows easier debugging
+     */
+    enum class ContextDescriptorStatus {
+        /**
+         * The Context Descriptor is valid.
+         */
+        OK = 0,
+
+        /**
+         * The version described is too old to run in Ngine.
+         */
+        Outdated = 1,
+
+        /**
+         * The target version does not exist.
+         */
+        InvalidVersion = 2,
+
+        /**
+         * The target context type is not enabled or is not supported on the current platform.
+         */
+        NotEnabledOrSupported = 3,
+
+        /**
+         * The target context type has not been implemented.
+         */
+        NotImplemented = 4
     };
 
     /**
@@ -64,7 +114,7 @@ namespace ngine::graphics {
         /**
          * Verify context descriptor options.
          */
-        bool verify() const;
+        ContextDescriptorStatus verify() const;
     };
 }
 

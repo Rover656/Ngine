@@ -30,39 +30,52 @@ namespace ngine::graphics {
                     0, 0
             };
 #else
-            {
-                    ContextType::OpenGL,
-                    3,
-                    3
-            };
+    {
+            ContextType::OpenGL,
+            3,
+            3
+    };
 #endif
 #elif defined(PLATFORM_UWP)
-            {
-                    ContextType::DirectX,
-                    // Numbers below mean nothing for now
-                    0, 0
-            };
+    {
+            ContextType::DirectX,
+            // Numbers below mean nothing for now
+            0, 0
+    };
 #endif
 
-    bool ContextDescriptor::verify() const {
+    ContextDescriptorStatus ContextDescriptor::verify() const {
         switch (Type) {
             case ContextType::OpenGL:
 #if !defined(NGINE_ENABLE_OPENGL)
-                return false;
+                return ContextDescriptorStatus::NotEnabledOrSupported;
 #else
-                if (MajorVersion < 3) return false;
-                if (MajorVersion == 3 && MinorVersion > 3) return false;
-                if (MajorVersion == 4 && MinorVersion > 6) return false;
+                if (MajorVersion < 3) return ContextDescriptorStatus::Outdated;
+                if (MajorVersion == 3 && MinorVersion > 3) return ContextDescriptorStatus::InvalidVersion;
+                if (MajorVersion == 4 && MinorVersion > 6) return ContextDescriptorStatus::InvalidVersion;
 #endif
                 break;
             case ContextType::OpenGLES:
-                if (MajorVersion < 2) return false;
-                if (MajorVersion == 2 && MinorVersion != 0) return false;
-                if (MajorVersion == 3 && MinorVersion > 1) return false; // 3.2 isn't available through ANGLE yet.
+#if !defined(NGINE_ENABLE_OPENGLES)
+                return ContextDescriptorStatus::NotEnabledOrSupported;
+#else
+                if (MajorVersion < 2) return ContextDescriptorStatus::Outdated;
+                if (MajorVersion == 2 && MinorVersion != 0) return ContextDescriptorStatus::InvalidVersion;
+                if (MajorVersion == 3 && MinorVersion > 1) return ContextDescriptorStatus::InvalidVersion; // 3.2 isn't available through ANGLE yet.
+#endif
                 break;
-            case ContextType::DirectX: break; // Doesnt use this parameter.
-            case ContextType::Vulkan: break; // Will add once we support it.
+            case ContextType::DirectX:
+#if !defined(NGINE_ENABLE_DIRECTX)
+                return ContextDescriptorStatus::NotEnabledOrSupported;
+#endif
+                break;
+            case ContextType::Vulkan:
+                return ContextDescriptorStatus::NotImplemented;
+                break;
+            case ContextType::Metal:
+                return ContextDescriptorStatus::NotImplemented;
+                break;
         }
-        return true;
+        return ContextDescriptorStatus::OK;
     }
 }
