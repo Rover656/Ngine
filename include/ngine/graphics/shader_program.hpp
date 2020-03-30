@@ -23,6 +23,7 @@
 
 #include "ngine/config.hpp"
 
+#include "buffer.hpp"
 #include "graphics_resource.hpp"
 #include "shader.hpp"
 
@@ -157,6 +158,7 @@ namespace ngine::graphics {
         }
     };
 
+    // TODO: Accept GLSL names for uniform block buffers (for binding because GLES v2 doesn't allow binding in a shader)
     class NEAPI ShaderProgram : public GraphicsResource {
     public:
         /**
@@ -173,17 +175,12 @@ namespace ngine::graphics {
         /**
          * Create a shader program.
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout, BufferLayout uniformBufferLayout);
+        ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout);
 
         /**
          * Get this shaders vertex buffer layout.
          */
         BufferLayout getVertexBufferLayout() const;
-
-        /**
-         * Get this shaders uniform buffer layout.
-         */
-        BufferLayout getUniformBufferLayout() const;
 
         /**
          * Attach a shader to the program.
@@ -194,7 +191,7 @@ namespace ngine::graphics {
          * Get a shader by its type.
          * @return The shader or null.
          */
-        Shader *getShaderByType(ShaderType type);
+        Shader *getShaderByType(ShaderStage type);
 
         /**
          * Link the shader for use.
@@ -216,11 +213,6 @@ namespace ngine::graphics {
          * The vertex buffer layout for this shader.
          */
         BufferLayout m_vertexBufferLayout;
-
-        /**
-         * The uniform buffer layout for this shader.
-         */
-        BufferLayout m_uniformBufferLayout;
     };
 }
 

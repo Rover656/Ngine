@@ -25,22 +25,15 @@
 #include "ngine/console.hpp"
 #include "ngine/math.hpp"
 
-#if !defined(PLATFORM_UWP)
-#define GLAD
-
+#if defined(GLAD)
 #include <glad/glad.h>
-
 #endif
 
-#if defined(PLATFORM_DESKTOP)
-#define GLFW
-
+#if defined(GLFW)
 #include <GLFW/glfw3.h>
-
 #endif
 
-#if defined(PLATFORM_UWP)
-#define EGL
+#if defined(EGL)
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #endif
@@ -77,6 +70,10 @@ namespace ngine::graphics::platform {
     void OpenGLGraphicsDevice::clear(Color color) {
         glClearColor(color.R, color.G, color.B, color.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void OpenGLGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
+        glBindBufferBase(GL_UNIFORM_BUFFER, location, buffer->GLID);
     }
 
     void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -144,13 +141,13 @@ namespace ngine::graphics::platform {
             if (contextDescriptor.Type == ContextType::OpenGLES && contextDescriptor.MajorVersion == 3 &&
                 contextDescriptor.MinorVersion < 2) {
                 if (!m_supportClampToBorder && strcmp(extList[i], (const char *) "GL_NV_texture_border_clamp") == 0) {
-                    Console::debug("OpenGL", "Found GL_NV_texture_border_clamp");
+                    Console::notice("OpenGL", "Found GL_NV_texture_border_clamp");
                     m_supportClampToBorder = true;
                 } else if (!m_supportClampToBorder && strcmp(extList[i], (const char *) "GL_EXT_texture_border_clamp") == 0) {
-                    Console::debug("OpenGL", "Found GL_EXT_texture_border_clamp");
+                    Console::notice("OpenGL", "Found GL_EXT_texture_border_clamp");
                     m_supportClampToBorder = true;
                 } else if (!m_supportClampToBorder && strcmp(extList[i], (const char *) "GL_OES_texture_border_clamp") == 0) {
-                    Console::debug("OpenGL", "Found GL_OES_texture_border_clamp");
+                    Console::notice("OpenGL", "Found GL_OES_texture_border_clamp");
                     m_supportClampToBorder = true;
                 }
             }
@@ -170,76 +167,71 @@ namespace ngine::graphics::platform {
 
     OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {}
 
-    void OpenGLGraphicsDevice::_initBuffer(Buffer *buffer, int size, int count) {
+    void OpenGLGraphicsDevice::_initBuffer(Buffer *buffer, void *initialData, unsigned int size) {
         // Create
         buffer->GLID = 0;
         glGenBuffers(1, &buffer->GLID);
 
-        // Write default size.
-        _bindBuffer(buffer);
-
+        // Convert enums to GL
         GLenum bufType, bufUsage;
-        switch (buffer->Type) {
+        switch (buffer->getType()) {
             case BufferType::Vertex:
                 bufType = GL_ARRAY_BUFFER;
                 break;
             case BufferType::Index:
                 bufType = GL_ELEMENT_ARRAY_BUFFER;
                 break;
+            case BufferType::Uniform:
+                bufType = GL_UNIFORM_BUFFER;
+                break;
         }
 
-        switch (buffer->Usage) {
+        switch (buffer->getUsage()) {
             case BufferUsage::Static:
                 bufUsage = GL_STATIC_DRAW;
                 break;
             case BufferUsage::Dynamic:
                 bufUsage = GL_DYNAMIC_DRAW;
                 break;
-            case BufferUsage::Stream:
-                bufUsage = GL_STREAM_DRAW;
-                break;
         }
-        glBufferData(bufType, size * count, nullptr, bufUsage);
+
+        // Write default data.
+        glBindBuffer(bufType, buffer->GLID);
+        glBufferData(bufType, size, initialData, bufUsage);
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Created buffer %u.", buffer->GLID);
     }
 
-    void OpenGLGraphicsDevice::_bindBuffer(Buffer *buffer) {
-        switch (buffer->Type) {
-            case BufferType::Vertex:
-                glBindBuffer(GL_ARRAY_BUFFER, buffer->GLID);
-                break;
-            case BufferType::Index:
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->GLID);
-                break;
-        }
-    }
-
-    void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, int count) {
-        // Bind
-        _bindBuffer(buffer);
-
+    void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, unsigned int size) {
         // Get type and usage
         GLenum bufType, bufUsage;
-        switch (buffer->Type) {
+        switch (buffer->getType()) {
             case BufferType::Vertex:
                 bufType = GL_ARRAY_BUFFER;
                 break;
             case BufferType::Index:
                 bufType = GL_ELEMENT_ARRAY_BUFFER;
                 break;
+            case BufferType::Uniform:
+                bufType = GL_UNIFORM_BUFFER;
+                break;
         }
 
+        // Bind
+        glBindBuffer(bufType, buffer->GLID);
+
         // Write (we don't use glBufferData as we want to restrict buffer size for parity with DX11).
-        glBufferSubData(bufType, 0, buffer->Size * count, data);
+        glBufferSubData(bufType, 0, buffer->getSize(), data);
     }
 
     void OpenGLGraphicsDevice::_initShader(Shader *shader, const std::string &source) {
         // Create shader
         GLenum type;
         switch (shader->Type) {
-            case ShaderType::Vertex:
+            case ShaderStage::Vertex:
                 type = GL_VERTEX_SHADER;
                 break;
-            case ShaderType::Fragment:
+            case ShaderStage::Fragment:
                 type = GL_FRAGMENT_SHADER;
                 break;
         }
@@ -263,12 +255,16 @@ namespace ngine::graphics::platform {
             Console::warn("OpenGL", "Shader info log for shader %u:\n%s", shader->GLID, shader_log);
             Console::fail("OpenGL", "Failed to compile shader %u.", shader->GLID);
         }
-        Console::debug("OpenGL", "Successfully created and compiled shader %u.", shader->GLID);
+
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Successfully created and compiled shader %u.", shader->GLID);
     }
 
     void OpenGLGraphicsDevice::_initShaderProgram(ShaderProgram *prog) {
         prog->GLID = glCreateProgram();
-        Console::debug("OpenGL", "Successfully created shader program %u.", prog->GLID);
+
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Successfully created shader program %u.", prog->GLID);
     }
 
     void OpenGLGraphicsDevice::_shaderProgramAttach(ShaderProgram *prog, Shader *shader) {
@@ -290,7 +286,9 @@ namespace ngine::graphics::platform {
             Console::warn("OpenGL", "Program info log for %u:\n%s", prog->GLID, program_log);
             Console::fail("OpenGL", "Failed to link shader program %u.", prog->GLID);
         }
-        Console::debug("OpenGL", "Successfully linked shader program %u.", prog->GLID);
+
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Successfully linked shader program %u.", prog->GLID);
     }
 
     void OpenGLGraphicsDevice::_useShaderProgram(ShaderProgram *prog) {
@@ -319,7 +317,9 @@ namespace ngine::graphics::platform {
         array->GLID = 0;
         glGenVertexArrays(1, &array->GLID);
         _prepareVertexArray(array);
-        Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
+
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
     }
 
     void OpenGLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
@@ -327,9 +327,9 @@ namespace ngine::graphics::platform {
         glBindVertexArray(array->GLID);
 
         // Bind buffers
-        _bindBuffer(array->getVertexBuffer());
+        glBindBuffer(GL_ARRAY_BUFFER, array->getVertexBuffer()->GLID);
         if (array->getIndexBuffer())
-            _bindBuffer(array->getIndexBuffer());
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, array->getIndexBuffer()->GLID);
 
         // Add to cache if missing
         if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {
@@ -365,18 +365,6 @@ namespace ngine::graphics::platform {
         for (const auto &e : elements) {
             GLenum type;
             switch (e.Type) {
-//                case ElementType::Byte:
-//                    type = GL_BYTE;
-//                    break;
-//                case ElementType::UnsignedByte:
-//                    type = GL_UNSIGNED_BYTE;
-//                    break;
-//                case ElementType::Short:
-//                    type = GL_SHORT;
-//                    break;
-//                case ElementType::UnsignedShort:
-//                    type = GL_UNSIGNED_SHORT;
-//                    break;
                 case ElementType::Int:
                     type = GL_INT;
                     break;
@@ -462,7 +450,8 @@ namespace ngine::graphics::platform {
             if (mipHeight < 1) mipHeight = 1;
         }
 
-        Console::debug("OpenGL", "Successfully created texture %u.", texture->GLID);
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Successfully created texture %u.", texture->GLID);
     }
 
     void OpenGLGraphicsDevice::_bindTexture(unsigned int unit, Texture2D *texture) {
@@ -495,7 +484,9 @@ namespace ngine::graphics::platform {
         // Create sampler
         samplerState->GLID = 0;
         glGenSamplers(1, &samplerState->GLID);
-        Console::debug("OpenGL", "Created sampler %u.", samplerState->GLID);
+
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Created sampler %u.", samplerState->GLID);
     }
 
     void OpenGLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
@@ -643,7 +634,6 @@ namespace ngine::graphics::platform {
                     param = GL_NOTEQUAL;
                     break;
             }
-
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_FUNC, param);
         } else {
             glSamplerParameteri(samplerState->GLID, GL_TEXTURE_COMPARE_MODE, GL_NONE);
@@ -662,38 +652,6 @@ namespace ngine::graphics::platform {
 
         // Update (in case of changes)
         _updateSamplerState(unit, samplerState);
-    }
-
-    void OpenGLGraphicsDevice::_initUniformBuffer(UniformBuffer *uniformBuffer) {
-        // TODO: Use Uniform Buffer Objects
-    }
-
-    void OpenGLGraphicsDevice::_bindUniformBuffer(UniformBuffer *uniformBuffer) {
-        // Check the layout matches the current shader program
-        if (!m_currentShaderProgram)
-            Console::fail("OpenGL", "A shader must be bound before a uniform buffer!");
-
-        if (m_currentShaderProgram->getUniformBufferLayout() != uniformBuffer->getLayout())
-            Console::fail("OpenGL", "Uniform buffer must match the layout of the current shader program.");
-
-        // Just set each property in the current shader program.
-        for (auto e : uniformBuffer->getLayout().Elements) {
-            GLint loc = glGetUniformLocation(m_currentShaderProgram->GLID, e.Name);
-            switch (e.Type) {
-                case ElementType::Int:
-                    break;
-                case ElementType::UnsignedInt:
-                    break;
-                case ElementType::Float:
-                    break;
-                case ElementType::Matrix:
-                    if (e.Count != 1)
-                        Console::fail("OpenGL", "Matrix count must be 1!");
-                    auto val = uniformBuffer->getUniformArray<Matrix>(e.Name, e.Count);
-                    glUniformMatrix4fv(loc, e.Count, GL_FALSE, (GLfloat *) val);
-                    break;
-            }
-        }
     }
 
     void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
@@ -723,8 +681,10 @@ namespace ngine::graphics::platform {
                 }
                 glDeleteTextures(1, &resource->GLID);
                 break;
-            case ResourceType::UniformBuffer:
-                // Do nothing, we don't have these
+            case ResourceType::UniformData:
+                // Free the data
+                ::free(resource->Handle);
+                resource->Handle = nullptr;
                 break;
             case ResourceType::VertexArray:
                 glDeleteVertexArrays(1, &resource->GLID);
@@ -755,6 +715,24 @@ namespace ngine::graphics::platform {
 
     void OpenGLGraphicsDevice::_onResize() {
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
+    }
+
+    void OpenGLGraphicsDevice::_allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
+                                                    unsigned int *size) {
+        // Here, we configure the offsets to adhere to std140 layout and allocate enough memory for this.
+        auto l = uniformData->getLayout();
+        for (auto u : l) {
+            offsets->push_back(*size);
+
+            // Ensure the size is a multiple of 16
+            *size += (u.getSize()-1|15)+1;
+        }
+
+        // Allocate memory
+        uniformData->Handle = calloc(1, *size);
+
+        if (DoDebugOutput)
+            Console::debug("OpenGL", "Allocated %u bytes of memory for std140 conformant uniform data.", *size);
     }
 }
 

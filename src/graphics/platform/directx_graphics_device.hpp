@@ -41,6 +41,8 @@ namespace ngine::graphics::platform {
     public:
         void clear(Color color) override;
 
+        void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
@@ -71,12 +73,26 @@ namespace ngine::graphics::platform {
          */
         ID3D11RasterizerState* m_rasterizerState;
 
+        /**
+         * The DXGI device.
+         */
+        IDXGIDevice2 *m_dxgiDevice;
+
+        /**
+         * The DXGI adapter.
+         */
+        IDXGIAdapter2 *m_dxgiAdapter;
+
+        /**
+         * The DXGI factory.
+         */
+        IDXGIFactory2* m_dxgiFactory;
+
         DirectXGraphicsDevice(Window *window);
         ~DirectXGraphicsDevice();
 
-        void _initBuffer(Buffer *buffer, int size, int count) override;
-        void _bindBuffer(Buffer *buffer) override;
-        void _writeBuffer(Buffer *buffer, void *data, int count) override;
+        void _initBuffer(Buffer *buffer, void *initialData, unsigned int size) override;
+        void _writeBuffer(Buffer *buffer, void *data, unsigned int size) override;
 
         void _initShader(Shader *shader, const std::string &source) override;
 
@@ -96,8 +112,8 @@ namespace ngine::graphics::platform {
         void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
-        void _initUniformBuffer(UniformBuffer *uniformBuffer) override;
-        void _bindUniformBuffer(UniformBuffer *uniformBuffer) override;
+        void _allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
+                                  unsigned int *size) override;
 
         void _present() override;
         void _onResize() override;

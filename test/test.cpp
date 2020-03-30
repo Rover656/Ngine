@@ -11,8 +11,9 @@
 
 class TestGame : public ngine::Game {
     ngine::graphics::Buffer *vb;
+    ngine::graphics::Buffer *uniformBuffer;
+    ngine::graphics::UniformData *uniformData;
     ngine::graphics::VertexArray *array;
-    ngine::graphics::UniformBuffer *ubuffer;
     ngine::graphics::Shader *vertShader;
     ngine::graphics::Shader *fragShader;
     ngine::graphics::ShaderProgram *prog;
@@ -23,6 +24,7 @@ public:
     TestGame(ngine::WindowConfig conf) : Game(conf) {}
 
     void init() override {
+        // Init game
         Game::init();
 
         // Get graphics API
@@ -32,74 +34,83 @@ public:
         switch (api) {
             case ngine::graphics::ContextType::OpenGL: {
                 // Create vertex shader
-                auto vertSrc = "#version 130\n"
+                auto vertSrc = "#version 330 core\n"
                                "in vec3 POSITION;\n"
                                "in vec2 TEXCOORD;\n"
                                "in vec4 COLOR;\n"
                                "out vec2 fragTexCoord;\n"
                                "out vec4 fragColor;\n"
-                               "uniform mat4 Model;\n"
-                               "uniform mat4 View;\n"
-                               "uniform mat4 Projection;\n"
+                               "\n"
+                               "layout (binding = 0, std140) uniform Matrices {\n"
+                               "    mat4 Model;\n"
+                               "    mat4 View;\n"
+                               "    mat4 Projection;\n"
+                               "    vec3 Test;\n"
+                               "};\n"
+                               "\n"
                                "void main()\n"
                                "{\n"
                                "    fragTexCoord = TEXCOORD;\n"
                                "    fragColor = COLOR;\n"
                                "    mat4 MVP = Model * View * Projection;\n"
-                               "    gl_Position = MVP * vec4(POSITION, 1.0);\n"
+                               "    gl_Position = MVP * vec4(POSITION, 1.0) + vec4(Test, 0.0);\n"
                                "}";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
-                                                         ngine::graphics::ShaderType::Vertex);
+                                                         ngine::graphics::ShaderStage::Vertex);
 
                 // Create fragment shader
-                auto fragSrc = "#version 130\n"
+                auto fragSrc = "#version 330 core\n"
                                "in vec2 fragTexCoord;\n"
                                "in vec4 fragColor;\n"
-                               "out vec4 finalColor;\n"
+                               "out vec4 outColor;\n"
                                "uniform sampler2D Textures[2];\n"
                                "void main()\n"
                                "{\n"
                                "    vec4 texelColor = texture(Textures[1], fragTexCoord);\n"
-                               "    finalColor = texelColor*fragColor;\n"
+                               "    outColor = texelColor*fragColor;\n"
                                "}";
                 fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc,
-                                                         ngine::graphics::ShaderType::Fragment);
+                                                         ngine::graphics::ShaderStage::Fragment);
                 break;
             }
             case ngine::graphics::ContextType::OpenGLES: {
                 // Create vertex shader
-                auto vertSrc = "#version 100\n"
-                               "attribute vec3 POSITION;\n"
-                               "attribute vec2 TEXCOORD;\n"
-                               "attribute vec4 COLOR;\n"
-                               "varying vec2 fragTexCoord;\n"
-                               "varying vec4 fragColor;\n"
-                               "uniform mat4 Model;\n"
-                               "uniform mat4 View;\n"
-                               "uniform mat4 Projection;\n"
+                auto vertSrc = "#version 300 es\n"
+                               "in vec3 POSITION;\n"
+                               "in vec2 TEXCOORD;\n"
+                               "in vec4 COLOR;\n"
+                               "out vec2 fragTexCoord;\n"
+                               "out vec4 fragColor;\n"
+                               "layout (std140) uniform Matrices {\n"
+                               "    mat4 Model;\n"
+                               "    mat4 View;\n"
+                               "    mat4 Projection;\n"
+                               "    vec3 Test;\n"
+                               "};\n"
                                "void main()\n"
                                "{\n"
                                "    fragTexCoord = TEXCOORD;\n"
                                "    fragColor = COLOR;\n"
                                "    mat4 MVP = Model * View * Projection;\n"
-                               "    gl_Position = MVP * vec4(POSITION, 1.0);\n"
+                               "    gl_Position = MVP * vec4(POSITION, 1.0) + vec4(Test, 0.0);\n"
                                "}\n";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
-                                                         ngine::graphics::ShaderType::Vertex);
+                                                         ngine::graphics::ShaderStage::Vertex);
 
                 // Create fragment shader
-                auto fragSrc = "#version 100\n"
+                auto fragSrc = "#version 300 es\n"
                                "precision mediump float;\n"
-                               "varying vec2 fragTexCoord;\n"
-                               "varying vec4 fragColor;\n"
+                               "in vec2 fragTexCoord;\n"
+                               "in vec4 fragColor;\n"
                                "uniform sampler2D Textures[2];\n"
+                               "out vec4 outColor;\n"
                                "void main()\n"
                                "{\n"
-                               "    vec4 texelColor = texture2D(Textures[1], fragTexCoord);\n"
-                               "    gl_FragColor = texelColor*fragColor;\n"
+                               "    vec4 texelColor = texture(Textures[1], fragTexCoord);\n"
+                               "    outColor = texelColor*fragColor;\n"
                                "}\n";
                 fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc,
-                                                         ngine::graphics::ShaderType::Fragment);
+                                                         ngine::graphics::ShaderStage::Fragment);
                 break;
             }
             case ngine::graphics::ContextType::DirectX: {
@@ -113,12 +124,13 @@ public:
                              "    matrix Model;\n"
                              "    matrix View;\n"
                              "    matrix Projection;\n"
+                             "    float3 Test;\n"
                              "}\n"
                              "\n"
                              "VOut VSMain(float4 pos : POSITION, float4 color : COLOR, float2 texcoord : TEXCOORD) {\n"
                              "    VOut output;"
                              "    matrix MVP = mul(mul(Model, View), Projection);\n"
-                             "    output.position = mul(MVP, pos);\n"
+                             "    output.position = mul(MVP, pos) + float4(Test, 0.0);\n"
                              "    output.color = color;\n"
                              "    output.texcoord = texcoord;\n"
                              "    return output;\n"
@@ -131,9 +143,9 @@ public:
                              "    return texelColor * color;\n"
                              "}";
                 vertShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
-                                                         ngine::graphics::ShaderType::Vertex);
+                                                         ngine::graphics::ShaderStage::Vertex);
                 fragShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
-                                                         ngine::graphics::ShaderType::Fragment);
+                                                         ngine::graphics::ShaderStage::Fragment);
                 break;
             }
             case ngine::graphics::ContextType::Vulkan:
@@ -149,42 +161,42 @@ public:
         shaderVertexLayout.Elements.push_back(
                 {"TEXCOORD", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Texcoords, 2, false});
 
-        ngine::graphics::BufferLayout shaderUniformLayout;
-        shaderUniformLayout.Elements.push_back(
-                {"Model", ngine::graphics::ElementType::Matrix, ngine::graphics::ElementUse::ModelMatrix, 1,
-                 false});
-        shaderUniformLayout.Elements.push_back(
-                {"View", ngine::graphics::ElementType::Matrix, ngine::graphics::ElementUse::ViewMatrix, 1,
-                 false});
-        shaderUniformLayout.Elements.push_back(
-                {"Projection", ngine::graphics::ElementType::Matrix, ngine::graphics::ElementUse::ProjectionMatrix, 1,
-                 false});
-
         // Create shader program
-        prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderVertexLayout, shaderUniformLayout);
+        prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderVertexLayout);
         prog->attachShader(vertShader);
         prog->attachShader(fragShader);
         prog->link();
         prog->ExpectedSamplerCount = 2;
 
-        // Create uniform buffer
-        ubuffer = new ngine::graphics::UniformBuffer(getGraphicsDevice(), shaderUniformLayout);
+        // Create uniform data
+        std::vector<ngine::graphics::Uniform> uniforms;
+        uniforms.push_back({"Model", ngine::graphics::ElementType::Matrix, 1});
+        uniforms.push_back({"View", ngine::graphics::ElementType::Matrix, 1});
+        uniforms.push_back({"Projection", ngine::graphics::ElementType::Matrix, 1});
+        uniforms.push_back({"Test", ngine::graphics::ElementType::Float, 3});
+
+        uniformData = new ngine::graphics::UniformData(getGraphicsDevice(), uniforms);
+
+        // Set uniform data
         ngine::Matrix test = ngine::Matrix::Identity;
-        ubuffer->setUniform("Model", test);
-        ubuffer->setUniform("View", test);
-        ubuffer->setUniform("Projection", test);
+        uniformData->setUniform("Model", test);
+        uniformData->setUniform("View", test);
+        uniformData->setUniform("Projection", test);
+        uniformData->setUniform("Test", ngine::Vector3(0.2f, 0.2f, 0.0f));
 
-        // Create vertex buffer
-        vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
-                                         ngine::graphics::BufferUsage::Static, sizeof(float) * (3 + 4 + 2), 3);
+        // Create uniform buffer
+        uniformBuffer = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Uniform,
+                                                    ngine::graphics::BufferUsage::Dynamic, uniformData->getData(),
+                                                    uniformData->getDataSize(), 1);
 
-        // Write vertex buffer data
+        // Create vertex buffer from data
         float dat[] = {
                 -0.5f, -0.5f, 0, 1, 1, 1, 1, 0, 0,
                 0.5f, -0.5f, 0, 1, 1, 1, 1, 1.0f, 0,
                 0.0f, 0.5f, 0, 1, 1, 1, 1, 0.5f, 1
         };
-        vb->write(dat, sizeof(float) * (3 + 4 + 2), 3);
+        vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
+                                         ngine::graphics::BufferUsage::Static, &dat[0], sizeof(float) * (3 + 4 + 2), 3);
 
         // Create vertex array
         array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderVertexLayout);
@@ -212,8 +224,9 @@ public:
         delete img;
         delete samplerState;
         delete vb;
-        delete ubuffer;
         delete array;
+        delete uniformData;
+        delete uniformBuffer;
         delete vertShader;
         delete fragShader;
         delete prog;
@@ -223,11 +236,13 @@ public:
 
     void draw() override {
         prog->use();
-        ubuffer->bind();
         array->bind();
         samplerState->bind(1);
         tex->bind(1);
-        getGraphicsDevice()->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
+
+        auto gd = getGraphicsDevice();
+        gd->bindUniformBuffer(0, uniformBuffer);
+        gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
 
         Game::draw();
     }
@@ -235,7 +250,7 @@ public:
 
 NGINE_GAME_ENTRY {
     ngine::graphics::ContextDescriptor desc = {};
-    desc.Type = ngine::graphics::ContextType::OpenGL;
+    desc.Type = ngine::graphics::ContextType::DirectX;
 
     // The below only apply to OGL
     if (desc.Type == ngine::graphics::ContextType::OpenGLES) {

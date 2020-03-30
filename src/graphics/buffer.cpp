@@ -24,18 +24,31 @@
 #include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    Buffer::Buffer(graphics::GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize,
-                   int dataCount) : GraphicsResource(graphicsDevice, ResourceType::Buffer), Type(type), Usage(usage),
-                                    Size(dataSize), Count(dataCount) {
-        m_graphicsDevice->_initBuffer(this, dataSize, dataCount);
+    Buffer::Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size,
+                   unsigned int count)
+            : GraphicsResource(graphicsDevice, ResourceType::Buffer), m_type(type), m_usage(usage), m_size(size),
+              m_count(count) {
+        m_graphicsDevice->_initBuffer(this, data, m_size * m_count);
     }
 
-    void Buffer::write(void *data, int size, int count) {
-        if (size != Size)
-            Console::fail("Buffer", "Cannot write data with different size to buffer!");
-        if (count > Count)
-            Console::fail("Buffer", "Attempt to write too many elements to buffer!");
+    BufferType Buffer::getType() const {
+        return m_type;
+    }
 
-        m_graphicsDevice->_writeBuffer(this, data, count);
+    BufferUsage Buffer::getUsage() const {
+        return m_usage;
+    }
+
+    unsigned int Buffer::getSize() const {
+        return m_size;
+    }
+
+    void Buffer::write(void *data, unsigned int count) {
+        if (m_usage == BufferUsage::Static)
+            Console::fail("Buffer",
+                          "Cannot write to a static buffer! Create a dynamic buffer if you need this ability!");
+        if (count > m_count)
+            Console::fail("Buffer", "Cannot write more elements than the buffer can store!");
+        m_graphicsDevice->_writeBuffer(this, data, m_size * count);
     }
 }

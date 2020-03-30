@@ -26,12 +26,6 @@
 namespace ngine::graphics {
     int BufferElement::getSize() const {
         switch (Type) {
-            //case ElementType::Byte:
-            //case ElementType::UnsignedByte:
-            //    return sizeof(char) * Count;
-            //case ElementType::Short:
-            //case ElementType::UnsignedShort:
-            //    return sizeof(short) * Count;
             case ElementType::Int:
             case ElementType::UnsignedInt:
                 return sizeof(int) * Count;
@@ -40,7 +34,6 @@ namespace ngine::graphics {
             case ElementType::Matrix:
                 // 4x4 matrices
                 return sizeof(float) * 16 * Count;
-                break;
         }
     }
 
@@ -52,19 +45,13 @@ namespace ngine::graphics {
         return s;
     }
 
-    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout,
-                                 BufferLayout uniformBufferLayout)
-            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_vertexBufferLayout(vertexBufferLayout),
-              m_uniformBufferLayout(uniformBufferLayout) {
+    ShaderProgram::ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout)
+            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_vertexBufferLayout(vertexBufferLayout) {
         m_graphicsDevice->_initShaderProgram(this);
     }
 
     BufferLayout ShaderProgram::getVertexBufferLayout() const {
         return m_vertexBufferLayout;
-    }
-
-    BufferLayout ShaderProgram::getUniformBufferLayout() const {
-        return m_uniformBufferLayout;
     }
 
     void ShaderProgram::attachShader(Shader *shader) {
@@ -78,7 +65,7 @@ namespace ngine::graphics {
         m_shaders.push_back(shader);
     }
 
-    Shader *ShaderProgram::getShaderByType(ShaderType type) {
+    Shader *ShaderProgram::getShaderByType(ShaderStage type) {
         for (auto s : m_shaders) {
             if (s->Type == type)
                 return s;

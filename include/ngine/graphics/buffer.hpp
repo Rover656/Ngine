@@ -31,60 +31,82 @@ namespace ngine::graphics {
      */
     enum class BufferUsage {
         Static,
-        Dynamic,
-        Stream
+        Dynamic
     };
 
     enum class BufferType {
         Vertex,
-        Index
-        // TODO: Instanced, we want to allow instancing on capable hardware.
+        Index,
+        Uniform,
+        // TODO: Instanced, after the removal of ES 2.0, we can confirm instancing support.
     };
 
     /**
-     * Base buffer class.
+     * A buffer stores data on the GPU.
      */
     class NEAPI Buffer : public GraphicsResource {
         friend class ngine::graphics::GraphicsDevice;
     public:
         /**
-         * The buffer type
-         */
-        BufferType Type;
-
-        /**
-         * Buffer usage mode.
-         */
-        BufferUsage Usage;
-
-        /**
-         * Size of each element in the buffer.
-         */
-        const int Size;
-
-        /**
-         * Number of elements in the buffer.
-         */
-        const int Count;
-
-        /**
          * Create a new buffer.
          * @param graphicsDevice Graphics device to create with.
          * @param type Buffer type.
          * @param usage Buffer usage.
-         * @param dataSize The size of each buffer entry.
-         * @param dataCount The number of entries in the buffer.
+         * @param size The size of each data entry.
+         * @param count The number of data entries.
+         * @param data The data to be written initially or null. Cannot be null for a static buffer.
          */
-        Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, int dataSize, int dataCount);
+        Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count);
+
+        /**
+         * Get the buffer type.
+         */
+        BufferType getType() const;
+
+        /**
+         * Get the buffer usage mode.
+         */
+        BufferUsage getUsage() const;
+
+        /**
+         * Get the size of a single entry.
+         */
+        unsigned int getSize() const;
+
+        /**
+         * Get the number of entries in the buffer.
+         */
+        unsigned int getCount() const;
 
         /**
          * Write the given data to the buffer.
-         * @warning Cannot exceed size set in constructor.
+         * @warning The data provided is expected to be the correct size!
+         * @warning Count may not exceed the buffer's count value.
+         * @warning Static buffers cannot be written to in this way.
          * @param data Data to write.
-         * @param size Size of each data entry (must match constructor).
-         * @param count Number of data entries to write (must not exceed constructor value).
+         * @param count The number of data entries.
          */
-        void write(void *data, int size, int count);
+        void write(void *data, unsigned int count);
+    private:
+        /**
+         * The buffer type
+         */
+        const BufferType m_type;
+
+        /**
+         * Buffer usage mode.
+         */
+        const BufferUsage m_usage;
+
+        /**
+         * The size of the data
+         */
+        const unsigned int m_size;
+
+        /**
+         * The number of data entries in the buffer.
+         */
+        const unsigned int m_count;
     };
 }
 

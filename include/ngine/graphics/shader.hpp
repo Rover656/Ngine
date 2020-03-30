@@ -28,7 +28,7 @@
 #include <string>
 
 namespace ngine::graphics {
-    enum class ShaderType {
+    enum class ShaderStage {
         Vertex,
         Fragment
     };
@@ -38,9 +38,9 @@ namespace ngine::graphics {
         /**
          * The shader type.
          */
-        ShaderType Type;
+        ShaderStage Type;
 
-        Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderType type);
+        Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderStage stage);
     };
 }
 

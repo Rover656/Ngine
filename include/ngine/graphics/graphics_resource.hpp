@@ -26,13 +26,44 @@
 namespace ngine::graphics {
     class GraphicsDevice;
 
+    /**
+     * Graphics resource type.
+     * Assists with type casting.
+     */
     enum class ResourceType {
+        /**
+         * A buffer stored on the GPU.
+         */
         Buffer,
+
+        /**
+         * A sampler state, detailing how textures are sampled.
+         */
         SamplerState,
+
+        /**
+         * A shader.
+         */
         Shader,
+
+        /**
+         * A shader program.
+         */
         ShaderProgram,
+
+        /**
+         * A texture.
+         */
         Texture2D,
-        UniformBuffer,
+
+        /**
+         * Uniform data, generated for a Buffer.
+         */
+        UniformData,
+
+        /**
+         * A vertex array.
+         */
         VertexArray
     };
 

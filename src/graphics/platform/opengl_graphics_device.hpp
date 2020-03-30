@@ -41,6 +41,8 @@ namespace ngine::graphics::platform {
     public:
         void clear(Color color) override;
 
+        void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
+
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(GraphicsResource *resource) override;
@@ -126,9 +128,8 @@ namespace ngine::graphics::platform {
         OpenGLGraphicsDevice(Window *window);
         ~OpenGLGraphicsDevice();
 
-        void _initBuffer(Buffer *buffer, int size, int count) override;
-        void _bindBuffer(Buffer *buffer) override;
-        void _writeBuffer(Buffer *buffer, void *data, int count) override;
+        void _initBuffer(Buffer *buffer, void *initialData, unsigned int size) override;
+        void _writeBuffer(Buffer *buffer, void *data, unsigned int size) override;
 
         void _initShader(Shader *shader, const std::string &source) override;
 
@@ -151,8 +152,8 @@ namespace ngine::graphics::platform {
         void _applySamplerFiltering(unsigned int unit, SamplerState *samplerState);
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
-        void _initUniformBuffer(UniformBuffer *uniformBuffer) override;
-        void _bindUniformBuffer(UniformBuffer *uniformBuffer) override;
+        void _allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
+                                  unsigned int *size) override;
 
         void _freeResource(GraphicsResource *resource);
 
