@@ -6,7 +6,7 @@
 #include <ngine/math.hpp>
 
 #if defined(PLATFORM_UWP)
-#include <ngine/platform/UWP/uwp_bootstrap.hpp>
+#include <ngine/utils/UWP/uwp_bootstrap.hpp>
 #endif
 
 class TestGame : public ngine::Game {
@@ -270,7 +270,7 @@ NGINE_GAME_ENTRY {
     TestGame game(conf);
 
 #if defined(PLATFORM_UWP)
-    CoreApplication::Run(ref new ngine::platform::UWP::BootstrappedGameSource(&game));
+    CoreApplication::Run(ref new ngine::utils::UWP::BootstrappedGameSource(&game));
 #else
     game.run();
 #endif

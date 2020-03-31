@@ -65,7 +65,7 @@ namespace ngine::graphics {
          * Create a uniform data manager
          * @warning layout MUST match the layout in the shader. Failure to do so may lead to unexpected results!
          */
-        UniformData(GraphicsDevice *graphicsDevice, std::vector<Uniform> layout);
+        UniformData(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout);
 
         std::vector<Uniform> getLayout() const;
 

@@ -18,7 +18,7 @@
  *
  **********************************************************************************************/
 
-#include "opengl_context.hpp"
+#include "gl_context.hpp"
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
@@ -52,8 +52,8 @@
 #include <angle_windowsstore.h>
 #endif
 
-namespace ngine::graphics::platform {
-    OpenGLContext::OpenGLContext(Window *window) : m_window(window) {
+namespace ngine::platform::graphics::gl {
+    GLContext::GLContext(IWindow *window) : m_window(window) {
         // Init EGL
 #if defined(EGL)
         // Init EGL
@@ -331,7 +331,7 @@ namespace ngine::graphics::platform {
         Console::notice("OpenGL", "Successfully opened graphics device with OpenGL version: %s", glGetString(GL_VERSION));
     }
 
-    OpenGLContext::~OpenGLContext() {
+    GLContext::~GLContext() {
 #if defined(EGL)
         // Close surface, context and Display
         if (m_display != EGL_NO_DISPLAY) {
@@ -354,7 +354,7 @@ namespace ngine::graphics::platform {
 #endif
     }
 
-    void OpenGLContext::makeCurrent() {
+    void GLContext::makeCurrent() {
 #if defined(GLFW)
         glfwMakeContextCurrent((GLFWwindow *) m_window->getHandle());
 #elif defined(EGL)
@@ -362,7 +362,7 @@ namespace ngine::graphics::platform {
 #endif
     }
 
-    void OpenGLContext::swapBuffers() {
+    void GLContext::swapBuffers() {
 #if defined(GLFW)
         glfwSwapBuffers((GLFWwindow *) m_window->getHandle());
 #elif defined(EGL)
@@ -370,8 +370,8 @@ namespace ngine::graphics::platform {
 #endif
     }
 
-    bool OpenGLContext::m_gladInit = false;
-    ContextType OpenGLContext::m_gladInitContextType;
+    bool GLContext::m_gladInit = false;
+    ContextType GLContext::m_gladInitContextType;
 }
 
 #endif

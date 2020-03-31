@@ -32,7 +32,7 @@ namespace ngine::graphics {
         /**
          * Create a texture with existing pixel data.
          */
-        Texture2D(GraphicsDevice *graphicsDevice, Image *image);
+        Texture2D(IGraphicsDevice *graphicsDevice, Image *image);
 
         PixelFormat getPixelFormat() const;
         int getWidth() const;

@@ -42,7 +42,7 @@ using namespace Windows::Graphics::Display;
 using namespace Microsoft::WRL;
 using namespace Platform;
 
-namespace ngine::platform::UWP {
+namespace ngine::utils::UWP {
 #if defined(DOXYGEN_SHOULD_SKIP_THIS)
     // HACK: Make doxygen see the class name
     ref class BootstrappedGame : public IFrameworkView {

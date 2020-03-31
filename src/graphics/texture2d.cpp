@@ -23,7 +23,7 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    Texture2D::Texture2D(GraphicsDevice *graphicsDevice, Image *image)
+    Texture2D::Texture2D(IGraphicsDevice *graphicsDevice, Image *image)
             : GraphicsResource(graphicsDevice, ResourceType::Texture2D) {
         // Get image data and save it
         m_width = image->getWidth();

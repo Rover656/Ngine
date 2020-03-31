@@ -11,7 +11,7 @@ namespace ngine::graphics {
         return m_type;
     }
 
-    GraphicsResource::GraphicsResource(GraphicsDevice *graphicsDevice, ResourceType type)
+    GraphicsResource::GraphicsResource(IGraphicsDevice *graphicsDevice, ResourceType type)
             : m_graphicsDevice(graphicsDevice), m_type(type) {}
 
     GraphicsResource::~GraphicsResource() {

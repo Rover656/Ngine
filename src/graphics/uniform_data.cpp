@@ -46,7 +46,7 @@ namespace ngine::graphics {
         }
     }
 
-    UniformData::UniformData(GraphicsDevice *graphicsDevice, std::vector<Uniform> layout)
+    UniformData::UniformData(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout)
             : GraphicsResource(graphicsDevice, ResourceType::UniformData), m_uniforms(std::move(layout)) {
         m_graphicsDevice->_allocateUniformData(this, &m_offsets, &m_internalDataSize);
     }

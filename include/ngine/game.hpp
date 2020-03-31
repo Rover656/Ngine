@@ -26,7 +26,7 @@
 #include "window.hpp"
 
 #if defined(PLATFORM_UWP)
-namespace ngine::platform::UWP {
+namespace ngine::utils::UWP {
     ref class BootstrappedGame;
 }
 #endif
@@ -36,7 +36,7 @@ namespace ngine::platform::UWP {
 namespace ngine {
     class NEAPI Game {
 #if defined(PLATFORM_UWP)
-        friend ref class ngine::platform::UWP::BootstrappedGame;
+        friend ref class ngine::utils::UWP::BootstrappedGame;
 #endif
     public:
         /**
@@ -51,12 +51,12 @@ namespace ngine {
         /**
          * Get the game window.
          */
-        Window *getWindow();
+        IWindow *getWindow();
 
         /**
          * Get the window graphics device.
          */
-        graphics::GraphicsDevice *getGraphicsDevice();
+        graphics::IGraphicsDevice *getGraphicsDevice();
 
         /**
          * Run the game.
@@ -86,7 +86,7 @@ namespace ngine {
         /**
          * The game window.
          */
-        Window *m_window = nullptr;
+        IWindow *m_window = nullptr;
 
         /**
          * Config to create the game window with.

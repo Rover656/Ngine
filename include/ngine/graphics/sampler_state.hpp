@@ -194,7 +194,7 @@ namespace ngine::graphics {
         /**
          * Create a new sampler state.
          */
-        SamplerState(GraphicsDevice *graphicsDevice);
+        SamplerState(IGraphicsDevice *graphicsDevice);
 
         /**
          * Bind this sampler state.

@@ -33,7 +33,7 @@
 #include "vertex_array.hpp"
 
 namespace ngine {
-    class Window;
+    class IWindow;
 
     namespace graphics {
         enum class PrimitiveType {
@@ -43,8 +43,8 @@ namespace ngine {
             LineStrip
         };
 
-        class NEAPI GraphicsDevice {
-            friend class ngine::Window;
+        class NEAPI IGraphicsDevice {
+            friend class ngine::IWindow;
             friend class ngine::graphics::Buffer;
             friend class ngine::graphics::SamplerState;
             friend class ngine::graphics::Shader;
@@ -94,17 +94,17 @@ namespace ngine {
              * Create a new graphics device.
              * @param window Window whose context we will use.
              */
-            GraphicsDevice(Window *window);
+            IGraphicsDevice(IWindow *window);
 
             /**
              * Destroy the graphics device.
              */
-            virtual ~GraphicsDevice();
+            virtual ~IGraphicsDevice();
 
             /**
              * The window who owns the context.
              */
-            Window *m_window;
+            IWindow *m_window;
         private:
             /**
              * Initialize a buffer on the GPU.

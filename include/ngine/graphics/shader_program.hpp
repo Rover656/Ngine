@@ -175,7 +175,7 @@ namespace ngine::graphics {
         /**
          * Create a shader program.
          */
-        ShaderProgram(GraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout);
+        ShaderProgram(IGraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout);
 
         /**
          * Get this shaders vertex buffer layout.

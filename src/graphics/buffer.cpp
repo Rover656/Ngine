@@ -24,7 +24,7 @@
 #include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    Buffer::Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size,
+    Buffer::Buffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size,
                    unsigned int count)
             : GraphicsResource(graphicsDevice, ResourceType::Buffer), m_type(type), m_usage(usage), m_size(size),
               m_count(count) {

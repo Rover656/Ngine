@@ -40,7 +40,7 @@
 #include <cstring>
 #include <cstdlib>
 
-namespace ngine::graphics::platform {
+namespace ngine::platform::graphics::directx {
     void DirectXGraphicsDevice::clear(Color color) {
         float c[4] = {color.R, color.G, color.B, color.A};
         m_deviceContext->ClearRenderTargetView(m_backbuffer, c);
@@ -105,7 +105,7 @@ namespace ngine::graphics::platform {
         }
     }
 
-    DirectXGraphicsDevice::DirectXGraphicsDevice(Window *window) : GraphicsDevice(window) {
+    DirectXGraphicsDevice::DirectXGraphicsDevice(IWindow *window) : IGraphicsDevice(window) {
         // Define feature level
         D3D_FEATURE_LEVEL FeatureLevels[] = {
                 D3D_FEATURE_LEVEL_12_1,

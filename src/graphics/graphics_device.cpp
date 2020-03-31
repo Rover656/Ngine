@@ -21,11 +21,11 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    GraphicsDevice::GraphicsDevice(Window *window) : m_window(window) {}
+    IGraphicsDevice::IGraphicsDevice(IWindow *window) : m_window(window) {}
 
-    GraphicsDevice::~GraphicsDevice() {}
+    IGraphicsDevice::~IGraphicsDevice() {}
 
-    void GraphicsDevice::present() {
+    void IGraphicsDevice::present() {
         _present();
     }
 }

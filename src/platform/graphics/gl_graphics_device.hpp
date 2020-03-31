@@ -18,26 +18,30 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_DIRECTX_GRAPHICS_DEVICE_HPP
-#define NGINE_DIRECTX_GRAPHICS_DEVICE_HPP
+#ifndef NGINE_GL_GRAPHICS_DEVICE_HPP
+#define NGINE_GL_GRAPHICS_DEVICE_HPP
 
 #include "ngine/config.hpp"
 
-#if defined(NGINE_ENABLE_DIRECTX)
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
 #include "ngine/graphics/graphics_device.hpp"
 
-#include <d3d11.h>
-#include <directxmath.h>
+#include "gl_context.hpp"
 
-#include <dxgi1_2.h>
+#include <mutex>
+#include <unordered_map>
 
-namespace ngine::graphics::platform {
+namespace ngine::platform::graphics::gl {
+    // Do this for the sake of cleaner code
+    using namespace ngine;
+    using namespace ngine::graphics;
+    
     /**
-     * Graphics device for DirectX platform.
+     * Graphics device for OpenGL(ES) platform.
      */
-    class NEAPI DirectXGraphicsDevice : public GraphicsDevice {
-        friend class ngine::Window;
+    class NEAPI GLGraphicsDevice : public IGraphicsDevice {
+        friend class ngine::IWindow;
     public:
         void clear(Color color) override;
 
@@ -49,47 +53,84 @@ namespace ngine::graphics::platform {
 
     private:
         /**
-         * Swapchain
+         * The OpenGL context.
          */
-        IDXGISwapChain1* m_swapchain;
+        GLContext *m_context = nullptr;
 
         /**
-         * Device.
+         * Whether or not GL_CLAMP_TO_BORDER is available.
          */
-        ID3D11Device* m_device;
+        bool m_supportClampToBorder = false;
 
         /**
-         * Device context.
+         * The GLES clamp to border flag.
          */
-        ID3D11DeviceContext* m_deviceContext;
+        int m_glesClampToBorder = 0;
 
         /**
-         * Back buffer render target.
+         * Whether or not we warned about the lack of support.
          */
-        ID3D11RenderTargetView* m_backbuffer;
+        bool m_didWarnClampToBorder = false;
 
         /**
-         * Rasterizer state.
+         * Whether or not anisotropic filtering is supported.
          */
-        ID3D11RasterizerState* m_rasterizerState;
+        bool m_supportAnisotropicFiltering = false;
 
         /**
-         * The DXGI device.
+         * The maximum anisotropy level.
          */
-        IDXGIDevice2 *m_dxgiDevice;
+        float m_maxAnisotropicLevel = 1.0f;
 
         /**
-         * The DXGI adapter.
+         * The list of currently bound textures.
          */
-        IDXGIAdapter2 *m_dxgiAdapter;
+        Texture2D *m_textures[8];
 
         /**
-         * The DXGI factory.
+         * The currently active sampler states (or null).
+         * For adding non-samplerobject based samplers.
+         * Tracks one sampler for each texture unit and applies its properties to a given texture when bound.
          */
-        IDXGIFactory2* m_dxgiFactory;
+        SamplerState *m_samplerStates[8];
 
-        DirectXGraphicsDevice(Window *window);
-        ~DirectXGraphicsDevice();
+        /**
+         * The current VAO.
+         */
+        VertexArray *m_currentVAO = nullptr;
+
+        /**
+         * The last applied shader program.
+         */
+        ShaderProgram *m_lastShaderProgram = nullptr;
+
+        /**
+         * The current applied shader program.
+         */
+        ShaderProgram *m_currentShaderProgram = nullptr;
+
+        /**
+         * Resources to be freed this frame.
+         */
+        std::vector<GraphicsResource *> m_freeThisFrame;
+
+        /**
+         * Resources to be freed next frame.
+         */
+        std::vector<GraphicsResource *> m_freeNextFrame;
+
+        /**
+         * Resource free lock.
+         */
+        std::mutex m_freeLock;
+
+        /**
+         * VAO Shader cache.
+         */
+        std::unordered_map<VertexArray *, ShaderProgram *> m_VAOShaderCache;
+
+        GLGraphicsDevice(IWindow *window);
+        ~GLGraphicsDevice();
 
         void _initBuffer(Buffer *buffer, void *initialData, unsigned int size) override;
         void _writeBuffer(Buffer *buffer, void *data, unsigned int size) override;
@@ -102,6 +143,7 @@ namespace ngine::graphics::platform {
         void _useShaderProgram(ShaderProgram *prog) override;
 
         void _initVertexArray(VertexArray *array) override;
+        void _prepareVertexArray(VertexArray *array);
         void _bindVertexArray(VertexArray *array) override;
 
         void _initTexture(Texture2D *texture, const void *data) override;
@@ -110,16 +152,20 @@ namespace ngine::graphics::platform {
 
         void _initSamplerState(SamplerState *samplerState) override;
         void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
+        void _applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode);
+        void _applySamplerFiltering(unsigned int unit, SamplerState *samplerState);
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
         void _allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
                                   unsigned int *size) override;
+
+        void _freeResource(GraphicsResource *resource);
 
         void _present() override;
         void _onResize() override;
     };
 }
 
-#endif // defined(NGINE_ENABLE_DIRECTX)
+#endif // defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-#endif //NGINE_DIRECTX_GRAPHICS_DEVICE_HPP
+#endif //NGINE_GL_GRAPHICS_DEVICE_HPP

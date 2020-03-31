@@ -20,6 +20,9 @@
 
 #include "ngine/game.hpp"
 
+#include "ngine/console.hpp"
+#include "ngine/window.hpp"
+
 namespace ngine {
     Game::Game(WindowConfig windowConfig) {
         m_windowConfig = windowConfig;
@@ -29,11 +32,11 @@ namespace ngine {
 
     }
 
-    Window *Game::getWindow() {
+    IWindow *Game::getWindow() {
         return m_window;
     }
 
-    graphics::GraphicsDevice *Game::getGraphicsDevice() {
+    graphics::IGraphicsDevice *Game::getGraphicsDevice() {
         return m_window->getGraphicsDevice();
     }
 
@@ -58,7 +61,7 @@ namespace ngine {
 
     void Game::init() {
         // Create window
-        m_window = new Window(m_windowConfig);
+        m_window = IWindow::CreateWindow(m_windowConfig);
     }
 
     void Game::cleanup() {
@@ -94,7 +97,7 @@ namespace ngine {
         getGraphicsDevice()->present();
 
         // Determine if we should close
-        m_running = !m_window->pendingClose();
+        m_running = !m_window->shouldClose();
 
         // TODO: Frame limiter
     }

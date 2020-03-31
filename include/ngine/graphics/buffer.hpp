@@ -45,7 +45,7 @@ namespace ngine::graphics {
      * A buffer stores data on the GPU.
      */
     class NEAPI Buffer : public GraphicsResource {
-        friend class ngine::graphics::GraphicsDevice;
+        friend class ngine::graphics::IGraphicsDevice;
     public:
         /**
          * Create a new buffer.
@@ -56,7 +56,7 @@ namespace ngine::graphics {
          * @param count The number of data entries.
          * @param data The data to be written initially or null. Cannot be null for a static buffer.
          */
-        Buffer(GraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count);
+        Buffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count);
 
         /**
          * Get the buffer type.

@@ -3,10 +3,6 @@
 
 #include "ngine/config.hpp"
 
-#if defined(_WIN32)
-#include <Windows.h>
-#endif
-
 // Game entrypoint
 #if defined(PLATFORM_DESKTOP)
 #if defined(_WIN32)

@@ -46,6 +46,16 @@
 // Vulkan
 #cmakedefine NGINE_ENABLE_VULKAN
 
+// Windows
+#if defined(_WIN32)
+#include <Windows.h>
+#endif
+
+// Remove stupid macros
+#if defined(CreateWindow)
+#undef CreateWindow
+#endif
+
 // DLL imports
 #if defined(_WIN32) && defined(NGINE_EXPORTS)
 #define NEAPI __declspec(dllexport) // Windows DLL Export

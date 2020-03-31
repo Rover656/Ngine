@@ -40,7 +40,7 @@ namespace ngine::graphics {
          */
         ShaderStage Type;
 
-        Shader(GraphicsDevice *graphicsDevice, const std::string &src, ShaderStage stage);
+        Shader(IGraphicsDevice *graphicsDevice, const std::string &src, ShaderStage stage);
     };
 }
 

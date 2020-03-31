@@ -45,7 +45,7 @@ namespace ngine::graphics {
          * @param indexBuffer The index buffer for the array. Can be null.
          * @param layout The layout to follow. Must match target shader.
          */
-        VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, const BufferLayout &layout);
+        VertexArray(graphics::IGraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, const BufferLayout &layout);
 
         Buffer *getVertexBuffer();
 

@@ -18,7 +18,7 @@
  *
  **********************************************************************************************/
 
-#include "opengl_graphics_device.hpp"
+#include "gl_graphics_device.hpp"
 
 #if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
@@ -66,17 +66,17 @@
 
 // TODO: Security checks and bind safety (rebinding things after modifiying another i.e. textures).
 
-namespace ngine::graphics::platform {
-    void OpenGLGraphicsDevice::clear(Color color) {
+namespace ngine::platform::graphics::gl {
+    void GLGraphicsDevice::clear(Color color) {
         glClearColor(color.R, color.G, color.B, color.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGLGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
+    void GLGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
         glBindBufferBase(GL_UNIFORM_BUFFER, location, buffer->GLID);
     }
 
-    void OpenGLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
+    void GLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
         GLenum prim;
         switch (primitiveType) {
             case PrimitiveType::TriangleList:
@@ -95,15 +95,15 @@ namespace ngine::graphics::platform {
         glDrawArrays(prim, start, count);
     }
 
-    void OpenGLGraphicsDevice::free(GraphicsResource *resource) {
+    void GLGraphicsDevice::free(GraphicsResource *resource) {
         m_freeLock.lock();
         m_freeNextFrame.push_back(resource);
         m_freeLock.unlock();
     }
 
-    OpenGLGraphicsDevice::OpenGLGraphicsDevice(Window *window) : GraphicsDevice(window) {
+    GLGraphicsDevice::GLGraphicsDevice(IWindow *window) : IGraphicsDevice(window) {
         // Create context
-        m_context = new OpenGLContext(m_window);
+        m_context = new GLContext(m_window);
 
         // Make context current on this thread (if it changes then developer isn't using one thread per context)
         //  A thread should have only **one** context current, ever.
@@ -165,9 +165,9 @@ namespace ngine::graphics::platform {
         }
     }
 
-    OpenGLGraphicsDevice::~OpenGLGraphicsDevice() {}
+    GLGraphicsDevice::~GLGraphicsDevice() {}
 
-    void OpenGLGraphicsDevice::_initBuffer(Buffer *buffer, void *initialData, unsigned int size) {
+    void GLGraphicsDevice::_initBuffer(Buffer *buffer, void *initialData, unsigned int size) {
         // Create
         buffer->GLID = 0;
         glGenBuffers(1, &buffer->GLID);
@@ -202,7 +202,7 @@ namespace ngine::graphics::platform {
             Console::debug("OpenGL", "Created buffer %u.", buffer->GLID);
     }
 
-    void OpenGLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, unsigned int size) {
+    void GLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, unsigned int size) {
         // Get type and usage
         GLenum bufType, bufUsage;
         switch (buffer->getType()) {
@@ -224,7 +224,7 @@ namespace ngine::graphics::platform {
         glBufferSubData(bufType, 0, buffer->getSize(), data);
     }
 
-    void OpenGLGraphicsDevice::_initShader(Shader *shader, const std::string &source) {
+    void GLGraphicsDevice::_initShader(Shader *shader, const std::string &source) {
         // Create shader
         GLenum type;
         switch (shader->Type) {
@@ -260,18 +260,18 @@ namespace ngine::graphics::platform {
             Console::debug("OpenGL", "Successfully created and compiled shader %u.", shader->GLID);
     }
 
-    void OpenGLGraphicsDevice::_initShaderProgram(ShaderProgram *prog) {
+    void GLGraphicsDevice::_initShaderProgram(ShaderProgram *prog) {
         prog->GLID = glCreateProgram();
 
         if (DoDebugOutput)
             Console::debug("OpenGL", "Successfully created shader program %u.", prog->GLID);
     }
 
-    void OpenGLGraphicsDevice::_shaderProgramAttach(ShaderProgram *prog, Shader *shader) {
+    void GLGraphicsDevice::_shaderProgramAttach(ShaderProgram *prog, Shader *shader) {
         glAttachShader(prog->GLID, shader->GLID);
     }
 
-    void OpenGLGraphicsDevice::_linkShaderProgram(ShaderProgram *prog) {
+    void GLGraphicsDevice::_linkShaderProgram(ShaderProgram *prog) {
         // Link
         glLinkProgram(prog->GLID);
 
@@ -291,7 +291,7 @@ namespace ngine::graphics::platform {
             Console::debug("OpenGL", "Successfully linked shader program %u.", prog->GLID);
     }
 
-    void OpenGLGraphicsDevice::_useShaderProgram(ShaderProgram *prog) {
+    void GLGraphicsDevice::_useShaderProgram(ShaderProgram *prog) {
         // Use the program
         glUseProgram(prog->GLID);
 
@@ -312,7 +312,7 @@ namespace ngine::graphics::platform {
         delete[] samplers;
     }
 
-    void OpenGLGraphicsDevice::_initVertexArray(VertexArray *array) {
+    void GLGraphicsDevice::_initVertexArray(VertexArray *array) {
         // Create VAO
         array->GLID = 0;
         glGenVertexArrays(1, &array->GLID);
@@ -322,7 +322,7 @@ namespace ngine::graphics::platform {
             Console::debug("OpenGL", "Created and prepared vertex array %u.", array->GLID);
     }
 
-    void OpenGLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
+    void GLGraphicsDevice::_prepareVertexArray(VertexArray *array) {
         // Bind
         glBindVertexArray(array->GLID);
 
@@ -396,7 +396,7 @@ namespace ngine::graphics::platform {
         m_VAOShaderCache[array] = m_currentShaderProgram;
     }
 
-    void OpenGLGraphicsDevice::_bindVertexArray(VertexArray *array) {
+    void GLGraphicsDevice::_bindVertexArray(VertexArray *array) {
         glBindVertexArray(array->GLID);
 
         // Check for changes (with shader attributes)
@@ -404,7 +404,7 @@ namespace ngine::graphics::platform {
         m_currentVAO = array;
     }
 
-    void OpenGLGraphicsDevice::_initTexture(Texture2D *texture, const void *data) {
+    void GLGraphicsDevice::_initTexture(Texture2D *texture, const void *data) {
         // Create texture
         texture->GLID = 0;
         glGenTextures(1, &texture->GLID);
@@ -454,7 +454,7 @@ namespace ngine::graphics::platform {
             Console::debug("OpenGL", "Successfully created texture %u.", texture->GLID);
     }
 
-    void OpenGLGraphicsDevice::_bindTexture(unsigned int unit, Texture2D *texture) {
+    void GLGraphicsDevice::_bindTexture(unsigned int unit, Texture2D *texture) {
         // Check unit limit
         if (unit >= 8)
             Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
@@ -470,7 +470,7 @@ namespace ngine::graphics::platform {
         }
     }
 
-    int OpenGLGraphicsDevice::_generateTextureMipmaps(Texture2D *texture) {
+    int GLGraphicsDevice::_generateTextureMipmaps(Texture2D *texture) {
         // Bind and generate
         _bindTexture(0, texture);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -480,7 +480,7 @@ namespace ngine::graphics::platform {
         return 1 + (int) floor(log(std::max(texture->getWidth(), texture->getHeight())) / log(2));
     }
 
-    void OpenGLGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
+    void GLGraphicsDevice::_initSamplerState(SamplerState *samplerState) {
         // Create sampler
         samplerState->GLID = 0;
         glGenSamplers(1, &samplerState->GLID);
@@ -489,7 +489,7 @@ namespace ngine::graphics::platform {
             Console::debug("OpenGL", "Created sampler %u.", samplerState->GLID);
     }
 
-    void OpenGLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
+    void GLGraphicsDevice::_updateSamplerState(unsigned int unit, SamplerState *samplerState) {
         // Apply wrap modes
         _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_R, samplerState->WrapModeU);
         _applySamplerWrap(samplerState->GLID, GL_TEXTURE_WRAP_S, samplerState->WrapModeV);
@@ -513,7 +513,7 @@ namespace ngine::graphics::platform {
         }
     }
 
-    void OpenGLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
+    void GLGraphicsDevice::_applySamplerWrap(unsigned int sampler, unsigned int field, WrapMode wrapMode) {
         GLint param;
         switch (wrapMode) {
             case WrapMode::Wrap:
@@ -540,7 +540,7 @@ namespace ngine::graphics::platform {
         glSamplerParameteri(sampler, field, param);
     }
 
-    void OpenGLGraphicsDevice::_applySamplerFiltering(unsigned int unit, SamplerState *samplerState) {
+    void GLGraphicsDevice::_applySamplerFiltering(unsigned int unit, SamplerState *samplerState) {
         // No point if we have no texture yet
         if (!m_textures[unit])
             return;
@@ -642,7 +642,7 @@ namespace ngine::graphics::platform {
         // TODO: Set GL_TEXTURE_MAX_LEVEL
     }
 
-    void OpenGLGraphicsDevice::_bindSamplerState(unsigned int unit, SamplerState *samplerState) {
+    void GLGraphicsDevice::_bindSamplerState(unsigned int unit, SamplerState *samplerState) {
         // Check unit limit
         if (unit >= 8)
             Console::fail("OpenGL", "Ngine limits the number of texture units to 8.");
@@ -654,7 +654,7 @@ namespace ngine::graphics::platform {
         _updateSamplerState(unit, samplerState);
     }
 
-    void OpenGLGraphicsDevice::_freeResource(GraphicsResource *resource) {
+    void GLGraphicsDevice::_freeResource(GraphicsResource *resource) {
         // Free resource.
         switch (resource->getResourceType()) {
             case ResourceType::Buffer:
@@ -695,7 +695,7 @@ namespace ngine::graphics::platform {
         resource->GLID = 0;
     }
 
-    void OpenGLGraphicsDevice::_present() {
+    void GLGraphicsDevice::_present() {
         // SwapBuffers
         m_context->swapBuffers();
 
@@ -713,12 +713,12 @@ namespace ngine::graphics::platform {
         m_freeLock.unlock();
     }
 
-    void OpenGLGraphicsDevice::_onResize() {
+    void GLGraphicsDevice::_onResize() {
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
     }
 
-    void OpenGLGraphicsDevice::_allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
-                                                    unsigned int *size) {
+    void GLGraphicsDevice::_allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
+                                                unsigned int *size) {
         // Here, we configure the offsets to adhere to std140 layout and allocate enough memory for this.
         auto l = uniformData->getLayout();
         for (auto u : l) {

@@ -23,12 +23,6 @@
 
 #include "ngine/config.hpp"
 
-#if defined(_WIN32)
-
-#include <Windows.h>
-
-#endif
-
 #if defined(PLATFORM_UWP)
 #include <ppltasks.h>
 #endif

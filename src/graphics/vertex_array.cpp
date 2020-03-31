@@ -23,7 +23,7 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    VertexArray::VertexArray(graphics::GraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer,
+    VertexArray::VertexArray(graphics::IGraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer,
                              const BufferLayout &layout)
             : GraphicsResource(graphicsDevice, ResourceType::VertexArray), m_vertexBuffer(vertexBuffer),
               m_indexBuffer(indexBuffer), m_vertexLayout(layout) {

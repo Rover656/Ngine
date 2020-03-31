@@ -24,7 +24,7 @@
 #include "ngine/config.hpp"
 
 namespace ngine::graphics {
-    class GraphicsDevice;
+    class IGraphicsDevice;
 
     /**
      * Graphics resource type.
@@ -104,7 +104,7 @@ namespace ngine::graphics {
         /**
          * The graphics device
          */
-        GraphicsDevice *m_graphicsDevice;
+        IGraphicsDevice *m_graphicsDevice;
 
         /**
          * My resource type.
@@ -114,7 +114,7 @@ namespace ngine::graphics {
         /**
          * Create a new graphics resource.
          */
-        GraphicsResource(GraphicsDevice *graphicsDevice, ResourceType type);
+        GraphicsResource(IGraphicsDevice *graphicsDevice, ResourceType type);
         virtual ~GraphicsResource();
     };
 }

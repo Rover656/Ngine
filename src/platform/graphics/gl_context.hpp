@@ -18,8 +18,8 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_OPENGL_CONTEXT_HPP
-#define NGINE_OPENGL_CONTEXT_HPP
+#ifndef NGINE_GL_CONTEXT_HPP
+#define NGINE_GL_CONTEXT_HPP
 
 #include "ngine/config.hpp"
 
@@ -45,15 +45,20 @@ typedef void* EGLSurface;
 typedef void* EGLContext;
 #endif
 
-namespace ngine::graphics::platform {
-    class OpenGLGraphicsDevice;
+namespace ngine::platform::graphics::gl {
+    // Do this for the sake of cleaner code
+    using namespace ngine;
+    using namespace ngine::graphics;
+
+    // Forward declare
+    class GLGraphicsDevice;
 
     /**
      * OpenGL context manager.
      * Handles utilisation of the GLFW and EGL contexts.
      */
-    class NEAPI OpenGLContext {
-        friend class OpenGLGraphicsDevice;
+    class NEAPI GLContext {
+        friend class GLGraphicsDevice;
     public:
         /**
          * Make this context current.
@@ -84,13 +89,13 @@ namespace ngine::graphics::platform {
         /**
          * Create an OpenGL Context
          */
-        OpenGLContext(Window *window);
-        ~OpenGLContext();
+        GLContext(IWindow *window);
+        ~GLContext();
 
         /**
          * The window the OpenGL context is owned by.
          */
-        Window *m_window = nullptr;
+        IWindow *m_window = nullptr;
 
         /**
          * Whether or not GLAD has been initialized once.
@@ -107,4 +112,4 @@ namespace ngine::graphics::platform {
 
 #endif // defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-#endif //NGINE_OPENGL_CONTEXT_HPP
+#endif //NGINE_GL_CONTEXT_HPP

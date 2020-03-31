@@ -58,17 +58,18 @@ namespace ngine {
     /**
      * A window.
      */
-    class NEAPI Window {
+    class NEAPI IWindow {
     public:
-        /**
-         * Create a new window.
-         */
-        Window(WindowConfig config);
-
         /**
          * Destroy window.
          */
-        ~Window();
+        virtual ~IWindow();
+
+        /**
+         * Create a new window.
+         * @param config The window config.
+         */
+        static IWindow *CreateWindow(WindowConfig config);
 
         /**
          * Get the window's context descriptor.
@@ -78,12 +79,12 @@ namespace ngine {
         /**
          * Get the window graphics device.
          */
-        graphics::GraphicsDevice *getGraphicsDevice();
+        graphics::IGraphicsDevice *getGraphicsDevice();
 
         /**
          * Get the window graphics device.
          */
-        const graphics::GraphicsDevice *getGraphicsDevice() const;
+        const graphics::IGraphicsDevice *getGraphicsDevice() const;
 
         /**
          * Get window width.
@@ -98,29 +99,30 @@ namespace ngine {
         /**
          * Poll window lifecycle events.
          */
-        void pollEvents();
+        virtual void pollEvents() = 0;
 
         /**
          * Whether or not the window is pending closure.
          */
-        bool pendingClose();
+        virtual bool shouldClose() const = 0;
 
         /**
          * Get the window handle.
+         * @warning Will return null on platforms that don't have a window handle (e.g. UWP). Use the platform's way instead.
          */
-        void *getHandle() const;
+        virtual void *getHandle() const = 0;
 
-    private:
+    protected:
+        /**
+         * Create a new window.
+         */
+        IWindow(WindowConfig config);
+
         /**
          * Window count.
          * For managing GLFW initialization and UWP restrictions.
          */
         static int m_windowCount;
-
-        /**
-         * Window handle.
-         */
-        void *m_handle = nullptr;
 
         /**
          * The window's context descriptor.
@@ -130,7 +132,7 @@ namespace ngine {
         /**
          * The graphics device which control's the window context.
          */
-        graphics::GraphicsDevice *m_graphicsDevice;
+        graphics::IGraphicsDevice *m_graphicsDevice;
 
         /**
          * Window title.
@@ -139,18 +141,30 @@ namespace ngine {
 
         /**
          * Window width.
+         * @note Should be updated by implementation in pollEvents() stage.
          */
         int m_windowWidth = 0;
 
         /**
          * Window height.
+         * @note Should be updated by implementation in pollEvents() stage.
          */
         int m_windowHeight = 0;
 
         /**
-         * Whether or not the window is ready.
+         * Verify the context descriptor.
          */
-        bool m_initialized = false;
+        void _verifyContextDescriptor();
+
+        /**
+         * Create the graphics device for this window.
+         */
+        void _createGraphicsDevice();
+
+        /**
+         * Check if the window changed size, if it did, we tell the graphics device.
+         */
+        void _checkResized(int oldWidth, int oldHeight);
     };
 };
 

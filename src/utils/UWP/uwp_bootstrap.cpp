@@ -18,11 +18,11 @@
  *
  **********************************************************************************************/
 
-#include "ngine/platform/UWP/uwp_bootstrap.hpp"
+#include "ngine/utils/UWP/uwp_bootstrap.hpp"
 
 #if defined(PLATFORM_UWP)
 
-namespace ngine::platform::UWP {
+namespace ngine::utils::UWP {
     void BootstrappedGame::Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView) {
         applicationView->Activated +=
             ref new Windows::Foundation::TypedEventHandler<
@@ -35,15 +35,7 @@ namespace ngine::platform::UWP {
 
     void BootstrappedGame::Run() {
         while (m_game->m_running) {
-            m_game->m_window->pollEvents();
-
-            m_game->m_window->getGraphicsDevice()->clear(graphics::Color::Blue);
-
-            m_game->draw();
-
-            m_game->getGraphicsDevice()->present();
-
-            m_game->m_running = !m_game->m_window->pendingClose();
+            m_game->_performDraw();
         }
         m_game->m_running = false;
     }

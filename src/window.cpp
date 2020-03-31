@@ -23,41 +23,70 @@
 #include "ngine/graphics/context_descriptor.hpp"
 #include "ngine/console.hpp"
 
-#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
-#include "graphics/platform/opengl_graphics_device.hpp"
-#endif
+// Include them all, they won't implement anything if they're not enabled.
+#include "platform/graphics/directx_graphics_device.hpp"
+#include "platform/graphics/gl_graphics_device.hpp"
 
-#if defined(NGINE_ENABLE_DIRECTX)
-#include "graphics/platform/directx_graphics_device.hpp"
-#endif
-
-#if defined(PLATFORM_DESKTOP)
-#include <GLFW/glfw3.h>
-#endif
-
-#if defined(PLATFORM_UWP)
-#include "ngine/platform/UWP/uwp_bootstrap.hpp"
-#endif
+// Include our sub-types so we can create them
+#include "platform/glfw_window.hpp"
+#include "platform/uwp_window.hpp"
 
 namespace ngine {
-    int Window::m_windowCount = 0;
+    IWindow::~IWindow() {
+        delete m_graphicsDevice;
+        Console::notice("Window", "Successfully closed window.");
+    }
 
-    Window::Window(WindowConfig config)
-            : m_contextDescriptor(config.ContextDescriptor) {
-        // Verify context descriptor
+    IWindow *IWindow::CreateWindow(WindowConfig config) {
+#if defined(PLATFORM_DESKTOP)
+        return new platform::GLFWWindow(config);
+#elif defined(PLATFORM_UWP)
+        return new platform::UWPWindow(config);
+#else
+        Console::fail("Game", "Could not determine which window manager to use!");
+#endif
+    }
+
+    const graphics::ContextDescriptor IWindow::getContextDescriptor() const {
+        return m_contextDescriptor;
+    }
+
+    graphics::IGraphicsDevice *IWindow::getGraphicsDevice() {
+        return m_graphicsDevice;
+    }
+
+    const graphics::IGraphicsDevice *IWindow::getGraphicsDevice() const {
+        return m_graphicsDevice;
+    }
+
+    float IWindow::getWidth() const {
+        return m_windowWidth;
+    }
+
+    float IWindow::getHeight() const {
+        return m_windowHeight;
+    }
+
+    IWindow::IWindow(WindowConfig config)
+            : m_contextDescriptor(config.ContextDescriptor) {}
+
+    int IWindow::m_windowCount = 0;
+
+    void IWindow::_verifyContextDescriptor() {
         switch (m_contextDescriptor.verify()) {
             case graphics::ContextDescriptorStatus::OK:
                 Console::debug("Window", "Context Descriptor status OK.");
-                goto pass;
-                break;
+                return;
             case graphics::ContextDescriptorStatus::Outdated:
-                Console::warn("Window", "The desired context version is too old for Ngine. Please raise the version number to a supported version.");
+                Console::warn("Window",
+                              "The desired context version is too old for Ngine. Please raise the version number to a supported version.");
                 break;
             case graphics::ContextDescriptorStatus::InvalidVersion:
                 Console::warn("Window", "The desired context version is invalid.");
                 break;
             case graphics::ContextDescriptorStatus::NotEnabledOrSupported:
-                Console::warn("Window", "The desired context type is not enabled or is not supported on this platform.");
+                Console::warn("Window",
+                              "The desired context type is not enabled or is not supported on this platform.");
                 break;
             case graphics::ContextDescriptorStatus::NotImplemented:
                 Console::warn("Window", "The desired context type has not been implemented into Ngine.");
@@ -67,93 +96,27 @@ namespace ngine {
         // Use the default descriptor
         m_contextDescriptor = graphics::ContextDescriptor::Default;
         Console::warn("Window", "Creating a default context for the current platform!");
-        pass:
+    }
 
-#if defined(PLATFORM_DESKTOP)
-        // Init GLFW (if required)
-        if (m_windowCount <= 0) {
-            if (!glfwInit()) {
-                Console::fail("Window", "Failed to initialize GLFW.");
-            }
-        }
-
-        // Setup window hints
-        glfwDefaultWindowHints();
-
-        // Setup context
-        switch (m_contextDescriptor.Type) {
-            case graphics::ContextType::OpenGL:
-                // Use core context as we only support 3.3 or later and these were added in 3.2
-                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_contextDescriptor.MajorVersion);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
-                break;
-            case graphics::ContextType::OpenGLES:
-                // Setup for GLES
-                glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-                glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_contextDescriptor.MajorVersion);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
-                break;
-            case graphics::ContextType::DirectX:
-                // Ask GLFW to not init OGL.
-                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-                break;
-            case graphics::ContextType::Vulkan:
-                // TODO One day we might
-                Console::fail("Window", "Vulkan is not implemented.");
-                break;
-        }
-
-        // Set error callback
-        glfwSetErrorCallback(
-                [](int, const char *msg) { Console::error("GLFW", "%s", msg); });
-
-        // Create window
-        m_handle = glfwCreateWindow(config.Width, config.Height, config.Title.c_str(), nullptr, nullptr);
-
-        // Check window was created
-        if (!m_handle) {
-            if (m_windowCount <= 0) {
-                Console::notice("Window", "Last window closed, terminating GLFW.");
-                glfwTerminate();
-            }
-            Console::fail("Window", "Failed to create GLFW window.");
-        }
-        Console::notice("Window", "Successfully created window.");
-
-        // Gather remaining information
-        m_windowCount++;
-        m_title = config.Title;
-        glfwGetWindowSize((GLFWwindow*)m_handle, &m_windowWidth, &m_windowHeight);
-#elif defined(PLATFORM_UWP)
-        auto bounds = CoreWindow::GetForCurrentThread()->Bounds;
-        m_windowWidth = bounds.Width;
-        m_windowHeight = bounds.Height;
-#endif
-
-        // Finish setup
-        m_initialized = true;
-
-        // Create graphics device
+    void IWindow::_createGraphicsDevice() {
         switch (m_contextDescriptor.Type) {
             case graphics::ContextType::OpenGL:
 #if defined(NGINE_ENABLE_OPENGL)
-                m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
+                m_graphicsDevice = new platform::graphics::GLGraphicsDevice(this);
 #else
                 Console::fail("Window", "Cannot create OpenGL graphics device, OpenGL is not enabled or compatible.");
 #endif
                 break;
             case graphics::ContextType::OpenGLES:
 #if defined(NGINE_ENABLE_OPENGLES)
-                m_graphicsDevice = new graphics::platform::OpenGLGraphicsDevice(this);
+                m_graphicsDevice = new platform::graphics::GLGraphicsDevice(this);
 #else
                 Console::fail("Window", "Cannot create OpenGL ES graphics device, OpenGL ES is not enabled or compatible.");
 #endif
                 break;
             case graphics::ContextType::DirectX:
 #if defined(NGINE_ENABLE_DIRECTX)
-                m_graphicsDevice = new graphics::platform::DirectXGraphicsDevice(this);
+                m_graphicsDevice = new platform::graphics::DirectXGraphicsDevice(this);
 #else
                 Console::fail("Window", "Cannot create DirectX graphics device, DirectX is not enabled or compatible.");
 #endif
@@ -161,89 +124,14 @@ namespace ngine {
             case graphics::ContextType::Vulkan:
                 Console::fail("Window", "Vulkan is not implemented.");
                 break;
+            case graphics::ContextType::Metal:
+                Console::fail("Window", "Metal is not implemented.");
+                break;
         }
-
-        // TODO: Create viewport.
-        // TODO: Create input APIs.
     }
 
-    Window::~Window() {
-        // Delete
-        m_initialized = false;
-        delete m_graphicsDevice;
-
-#if defined(PLATFORM_DESKTOP)
-        // Destroy
-        glfwDestroyWindow((GLFWwindow *) m_handle);
-        m_windowCount--;
-        if (m_windowCount <= 0) {
-            Console::notice("Window", "Last window closed, terminating GLFW.");
-            glfwTerminate();
-        }
-#endif
-        Console::notice("Window", "Successfully closed window.");
-    }
-
-    const graphics::ContextDescriptor Window::getContextDescriptor() const {
-        return m_contextDescriptor;
-    }
-
-    graphics::GraphicsDevice *Window::getGraphicsDevice() {
-        return m_graphicsDevice;
-    }
-
-    const graphics::GraphicsDevice *Window::getGraphicsDevice() const {
-        return m_graphicsDevice;
-    }
-
-    float Window::getWidth() const {
-        return m_windowWidth;
-    }
-
-    float Window::getHeight() const {
-        return m_windowHeight;
-    }
-
-    void Window::pollEvents() {
-        if (!m_initialized)
-            Console::fail("Window", "Window not initialized.");
-#if defined(PLATFORM_DESKTOP)
-        // Poll window events
-        glfwPollEvents();
-
-        // Collect window size.
-        auto w = m_windowWidth;
-        auto h = m_windowHeight;
-        glfwGetWindowSize((GLFWwindow *) m_handle, &m_windowWidth, &m_windowHeight);
-
-        // Tell graphics device to resize if we did.
-        if (m_windowWidth != w || m_windowHeight != h)
+    void IWindow::_checkResized(int oldWidth, int oldHeight) {
+        if (m_windowWidth != oldWidth || m_windowHeight != oldHeight)
             m_graphicsDevice->_onResize();
-#elif defined(PLATFORM_UWP)
-        // Poll window events
-        if (CoreWindow::GetForCurrentThread()->Visible == true) // TODO: Visible field
-            CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(
-                CoreProcessEventsOption::ProcessAllIfPresent);
-        else
-            CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(
-                CoreProcessEventsOption::ProcessOneAndAllPending);
-
-        auto bounds = CoreWindow::GetForCurrentThread()->Bounds;
-        m_windowWidth = bounds.Width;
-        m_windowHeight = bounds.Height;
-#endif
-    }
-
-    bool Window::pendingClose() {
-        if (!m_initialized)
-            Console::fail("Window", "Window not initialized.");
-#if defined(PLATFORM_DESKTOP)
-        return glfwWindowShouldClose((GLFWwindow *) m_handle);
-#endif
-        return false;
-    }
-
-    void *Window::getHandle() const {
-        return m_handle;
     }
 }

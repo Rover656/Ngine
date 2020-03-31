@@ -18,13 +18,38 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/shader.hpp"
+#ifndef NGINE_UWP_WINDOW_HPP
+#define NGINE_UWP_WINDOW_HPP
 
-#include "ngine/graphics/graphics_device.hpp"
+#include "ngine/config.hpp"
 
-namespace ngine::graphics {
-    Shader::Shader(IGraphicsDevice *graphicsDevice, const std::string &src, ShaderStage type)
-            : GraphicsResource(graphicsDevice, ResourceType::Shader), Type(type) {
-        m_graphicsDevice->_initShader(this, src);
-    }
+#if defined(PLATFORM_UWP)
+
+#include "ngine/utils/UWP/uwp_bootstrap.hpp"
+#include "ngine/window.hpp"
+
+namespace ngine::platform {
+    using namespace ngine;
+
+    class UWPWindow : public IWindow {
+    public:
+        /**
+         * Create a UWP window.
+         */
+        explicit UWPWindow(WindowConfig config);
+
+        void pollEvents() override;
+        bool shouldClose() const override;
+        void* getHandle() const override;
+
+    private:
+        /**
+         * The UWP window.
+         */
+        CoreWindow ^m_window;
+    };
 }
+
+#endif // defined(PLATFORM_UWP)
+
+#endif //NGINE_UWP_WINDOW_HPP

@@ -23,7 +23,7 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    SamplerState::SamplerState(GraphicsDevice *graphicsDevice) : GraphicsResource(graphicsDevice, ResourceType::SamplerState) {
+    SamplerState::SamplerState(IGraphicsDevice *graphicsDevice) : GraphicsResource(graphicsDevice, ResourceType::SamplerState) {
         m_graphicsDevice->_initSamplerState(this);
     }
 
