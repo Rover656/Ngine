@@ -10,18 +10,9 @@
 #endif
 
 class TestGame : public ngine::Game {
-    ngine::graphics::IBuffer *vb;
-    ngine::graphics::IBuffer *uniformBuffer;
-    ngine::graphics::IUniformDataManager *uniformData;
-    ngine::graphics::VertexArray *array;
-    ngine::graphics::Shader *vertShader;
-    ngine::graphics::Shader *fragShader;
-    ngine::graphics::ShaderProgram *prog;
-    ngine::graphics::Image *img;
-    ngine::graphics::Texture2D *tex;
-    ngine::graphics::SamplerState *samplerState;
+    ngine::graphics::Buffer vertexBuffer;
 public:
-    TestGame(ngine::WindowConfig conf) : Game(conf) {}
+    TestGame(ngine::WindowDesc conf) : Game(conf) {}
 
     void init() override {
         // Init game
@@ -58,8 +49,7 @@ public:
                                "    mat4 MVP = Model * View * Projection;\n"
                                "    gl_Position = MVP * vec4(POSITION, 1.0) + vec4(Test, 0.0);\n"
                                "}";
-                vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
-                                                         ngine::graphics::ShaderStage::Vertex);
+                //vertShader = graphicsDevice->createShader(vertSrc, ngine::graphics::ShaderStage::Vertex);
 
                 // Create fragment shader
                 auto fragSrc = "#version 330 core\n"
@@ -72,8 +62,7 @@ public:
                                "    vec4 texelColor = texture(Textures[1], fragTexCoord);\n"
                                "    outColor = texelColor*fragColor;\n"
                                "}";
-                fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc,
-                                                         ngine::graphics::ShaderStage::Fragment);
+                //fragShader = graphicsDevice->createShader(fragSrc, ngine::graphics::ShaderStage::Fragment);
                 break;
             }
             case ngine::graphics::ContextType::OpenGLES: {
@@ -97,8 +86,7 @@ public:
                                "    mat4 MVP = Model * View * Projection;\n"
                                "    gl_Position = MVP * vec4(POSITION, 1.0) + vec4(Test, 0.0);\n"
                                "}\n";
-                vertShader = new ngine::graphics::Shader(getGraphicsDevice(), vertSrc,
-                                                         ngine::graphics::ShaderStage::Vertex);
+                //vertShader = graphicsDevice->createShader(vertSrc, ngine::graphics::ShaderStage::Vertex);
 
                 // Create fragment shader
                 auto fragSrc = "#version 300 es\n"
@@ -112,8 +100,7 @@ public:
                                "    vec4 texelColor = texture(Textures[1], fragTexCoord);\n"
                                "    outColor = texelColor*fragColor;\n"
                                "}\n";
-                fragShader = new ngine::graphics::Shader(getGraphicsDevice(), fragSrc,
-                                                         ngine::graphics::ShaderStage::Fragment);
+                //fragShader = graphicsDevice->createShader(fragSrc, ngine::graphics::ShaderStage::Fragment);
                 break;
             }
             case ngine::graphics::ContextType::DirectX: {
@@ -145,52 +132,13 @@ public:
                              "    float4 texelColor = Textures[1].Sample(Samplers[1], texcoord);"
                              "    return texelColor * color;\n"
                              "}";
-                vertShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
-                                                         ngine::graphics::ShaderStage::Vertex);
-                fragShader = new ngine::graphics::Shader(getGraphicsDevice(), dxSrc,
-                                                         ngine::graphics::ShaderStage::Fragment);
+                //vertShader = graphicsDevice->createShader(dxSrc, ngine::graphics::ShaderStage::Vertex);
+                //fragShader = graphicsDevice->createShader(dxSrc, ngine::graphics::ShaderStage::Fragment);
                 break;
             }
             case ngine::graphics::ContextType::Vulkan:
                 break;
         }
-
-        // Setup shader layout
-        ngine::graphics::BufferLayout shaderVertexLayout;
-        shaderVertexLayout.Elements.push_back(
-                {"POSITION", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Position, 3, false});
-        shaderVertexLayout.Elements.push_back(
-                {"COLOR", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Color, 4, false});
-        shaderVertexLayout.Elements.push_back(
-                {"TEXCOORD", ngine::graphics::ElementType::Float, ngine::graphics::ElementUse::Texcoords, 2, false});
-
-        // Create shader program
-        prog = new ngine::graphics::ShaderProgram(getGraphicsDevice(), shaderVertexLayout);
-        prog->attachShader(vertShader);
-        prog->attachShader(fragShader);
-        prog->link();
-        prog->ExpectedSamplerCount = 2;
-
-        // Create uniform data
-        std::vector<ngine::graphics::Uniform> uniforms;
-        uniforms.push_back({"Model", ngine::graphics::ElementType::Matrix, 1});
-        uniforms.push_back({"View", ngine::graphics::ElementType::Matrix, 1});
-        uniforms.push_back({"Projection", ngine::graphics::ElementType::Matrix, 1});
-        uniforms.push_back({"Test", ngine::graphics::ElementType::Float, 3});
-
-        uniformData = graphicsDevice->createUniformDataManager(uniforms);
-
-        // Set uniform data
-        ngine::Matrix test = ngine::Matrix::Identity;
-        uniformData->setUniform("Model", test);
-        uniformData->setUniform("View", test);
-        uniformData->setUniform("Projection", test);
-        uniformData->setUniform("Test", ngine::Vector3(0.2f, 0.2f, 0.0f));
-
-        // Create uniform buffer
-        uniformBuffer = graphicsDevice->createBuffer(ngine::graphics::BufferType::Uniform,
-                                                     ngine::graphics::BufferUsage::Dynamic,
-                                                     uniformData->getData(), uniformData->getDataSize(), 1);
 
         // Create vertex buffer from data
         float dat[] = {
@@ -199,62 +147,30 @@ public:
                 0.0f, 0.5f, 0, 1, 1, 1, 1, 0.5f, 1
         };
 
-        vb = graphicsDevice->createBuffer(ngine::graphics::BufferType::Vertex, ngine::graphics::BufferUsage::Static,
-                                          &dat[0], sizeof(float) * (3 + 4 + 2), 3);
+        ngine::graphics::BufferDesc vertexBufferDesc;
+        vertexBufferDesc.InitialData = dat;
+        vertexBufferDesc.Usage = ngine::graphics::BufferUsage::Static;
+        vertexBufferDesc.Size = sizeof(dat);
 
-        // Create vertex array
-        array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderVertexLayout);
-
-        // Create image from array
-        unsigned char imgdat[] = {
-                255, 255, 255, 255,
-                0, 255, 255, 255,
-                255, 0, 255, 255,
-                255, 255, 0, 255
-        };
-
-        img = new ngine::graphics::Image(2, 2, imgdat, ngine::graphics::PixelFormat::R8G8B8A8);
-
-        // Create texture from image
-        tex = new ngine::graphics::Texture2D(getGraphicsDevice(), img);
-
-        // Create sampler state
-        samplerState = new ngine::graphics::SamplerState(getGraphicsDevice());
-        samplerState->Filter = ngine::graphics::TextureFilter::Point;
+        vertexBuffer = graphicsDevice->createBuffer(vertexBufferDesc);
     }
 
     void cleanup() override {
-        delete tex;
-        delete img;
-        delete samplerState;
-        delete vb;
-        delete array;
-        delete uniformData;
-        delete uniformBuffer;
-        delete vertShader;
-        delete fragShader;
-        delete prog;
+        auto graphicsDevice = getGraphicsDevice();
+
+        graphicsDevice->releaseBuffer(vertexBuffer);
 
         Game::cleanup();
     }
 
     void draw() override {
-        prog->use();
-        array->bind();
-        samplerState->bind(1);
-        tex->bind(1);
-
-        auto gd = getGraphicsDevice();
-        uniformBuffer->bind(0);
-        gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
-
         Game::draw();
     }
 };
 
 NGINE_GAME_ENTRY {
     ngine::graphics::ContextDescriptor desc = {};
-    desc.Type = ngine::graphics::ContextType::DirectX;
+    desc.Type = ngine::graphics::ContextType::DirectX; // OGL not implemented yet.
 
     // The below only apply to OGL
     if (desc.Type == ngine::graphics::ContextType::OpenGLES) {
@@ -265,11 +181,14 @@ NGINE_GAME_ENTRY {
         desc.MinorVersion = 3;
     }
 
-    ngine::WindowConfig conf;
+    ngine::graphics::GraphicsDeviceDesc gdDesc;
+    gdDesc.ContextDescriptor = desc;
+
+    ngine::WindowDesc conf;
     conf.Title = "Test";
     conf.Width = 1280;
     conf.Height = 768;
-    conf.ContextDescriptor = desc;
+    conf.GraphicsDeviceDesc = gdDesc;
 
     TestGame game(conf);
 

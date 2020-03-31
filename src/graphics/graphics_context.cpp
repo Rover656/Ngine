@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -18,7 +18,7 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/context_descriptor.hpp"
+#include "ngine/graphics/graphics_context.hpp"
 
 namespace ngine::graphics {
     ContextDescriptor ContextDescriptor::Default =
@@ -30,18 +30,18 @@ namespace ngine::graphics {
                     0, 0
             };
 #else
-    {
-            ContextType::OpenGL,
-            3,
-            3
-    };
+            {
+                    ContextType::OpenGL,
+                    3,
+                    3
+            };
 #endif
 #elif defined(PLATFORM_UWP)
-    {
-            ContextType::DirectX,
-            // Numbers below mean nothing for now
-            0, 0
-    };
+            {
+                    ContextType::DirectX,
+                    // Numbers below mean nothing for now
+                    0, 0
+            };
 #endif
 
     ContextDescriptorStatus ContextDescriptor::verify() const {

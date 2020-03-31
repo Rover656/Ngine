@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *

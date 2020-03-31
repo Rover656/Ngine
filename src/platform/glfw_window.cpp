@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -25,7 +25,7 @@
 #include "ngine/console.hpp"
 
 namespace ngine::platform {
-    GLFWWindow::GLFWWindow(WindowConfig config) : IWindow(config) {
+    GLFWWindow::GLFWWindow(WindowDesc config) : IWindow(config) {
         // Verify context descriptor
         _verifyContextDescriptor();
 
@@ -40,19 +40,20 @@ namespace ngine::platform {
         glfwDefaultWindowHints();
 
         // Setup context
-        switch (m_contextDescriptor.Type) {
+        auto cDesc = m_desc.GraphicsDeviceDesc.ContextDescriptor;
+        switch (cDesc.Type) {
             case graphics::ContextType::OpenGL:
                 // Use core context as we only support 3.3 or later and these were added in 3.2
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_contextDescriptor.MajorVersion);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, cDesc.MajorVersion);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, cDesc.MinorVersion);
                 break;
             case graphics::ContextType::OpenGLES:
                 // Setup for GLES
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
                 glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, m_contextDescriptor.MajorVersion);
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, m_contextDescriptor.MinorVersion);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, cDesc.MajorVersion);
+                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, cDesc.MinorVersion);
                 break;
             case graphics::ContextType::DirectX:
                 // Ask GLFW to not init OGL.

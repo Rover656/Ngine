@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -23,19 +23,22 @@
 
 #include "ngine/config.hpp"
 
-#include "buffer.hpp"
-#include "color.hpp"
-#include "sampler_state.hpp"
-#include "shader.hpp"
-#include "shader_program.hpp"
-#include "texture2d.hpp"
-#include "uniform_data_manager.hpp"
-#include "vertex_array.hpp"
+#include "graphics_context.hpp"
+#include "types.hpp"
 
 namespace ngine {
     class IWindow;
 
     namespace graphics {
+        struct GraphicsDeviceDesc {
+            IWindow *Window;
+            ContextDescriptor ContextDescriptor;
+            uint16_t MaxBuffers = 1024;
+            uint16_t MaxSamplerStates = 64;
+            uint16_t MaxShaders = 128;
+            uint16_t MaxPipelineStates = 64;
+        };
+
         enum class PrimitiveType {
             TriangleList,
             TriangleStrip,
@@ -44,122 +47,41 @@ namespace ngine {
         };
 
         class NEAPI IGraphicsDevice {
-            friend class ngine::IWindow;
-            friend class ngine::graphics::IBuffer;
-            friend class ngine::graphics::SamplerState;
-            friend class ngine::graphics::Shader;
-            friend class ngine::graphics::ShaderProgram;
-            friend class ngine::graphics::Texture2D;
-            friend class ngine::graphics::IUniformDataManager;
-            friend class ngine::graphics::VertexArray;
-
         public:
-            /**
-             * Whether or not debug output should be displayed in the game logs.
-             */
-            bool DoDebugOutput = false;
+            virtual ~IGraphicsDevice() = default;
 
-            /**
-             * Clear the current framebuffer.
-             *
-             * @param color Color to clear with.
-             */
-            virtual void clear(Color color) = 0;
+            static IGraphicsDevice *createGraphicsDevice(GraphicsDeviceDesc desc);
 
-            /**
-             * Create a buffer.
-             * @param type Buffer type.
-             * @param usage Buffer usage.
-             * @param data Initial buffer data (cannot be null if this is a static buffer)
-             * @param size
-             * @param count
-             * @return
-             */
-            virtual IBuffer *createBuffer(BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count) = 0;
+            IGraphicsContext *getContext() const { return m_context; }
 
-            /**
-             * Create a uniform data manager.
-             */
-            virtual IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) = 0;
+            virtual Buffer createBuffer(BufferDesc bufferDesc) = 0;
 
-            /**
-             * Draw primitives from the currently bound buffer.
-             */
-            virtual void drawPrimitives(PrimitiveType primitiveType, int start, int count) = 0;
+            virtual void releaseBuffer(Buffer buffer) = 0;
 
-            /**
-             * Schedule a graphics resource to be freed.
-             */
-            virtual void free(IGraphicsResource *resource) = 0;
+            virtual SamplerState createSamplerState(SamplerDesc samplerDesc) = 0;
 
-            /**
-             * Present backbuffer to screen.
-             */
-            void present();
+            virtual void releaseSamplerState(SamplerState samplerState) = 0;
 
+            virtual Shader createShader(const char *source, ShaderStage stage) = 0;
+
+            virtual void releaseShader(Shader shader) = 0;
+
+            virtual PipelineState createPipelineState(PipelineStateDesc pipelineStateDesc) = 0;
+
+            virtual void releasePipelineState(PipelineState pipelineState) = 0;
         protected:
-            /**
-             * Create a new graphics device.
-             * @param window Window whose context we will use.
-             */
-            IGraphicsDevice(IWindow *window);
+            IGraphicsDevice(GraphicsDeviceDesc desc) : m_desc(desc) {}
 
             /**
-             * Destroy the graphics device.
+             * The graphics device configuration.
              */
-            virtual ~IGraphicsDevice();
+            GraphicsDeviceDesc m_desc;
 
             /**
-             * The window who owns the context.
+             * The graphics context.
+             * @warning Must be created by the implementation of IGraphicsDevice.
              */
-            IWindow *m_window;
-        private:
-            /**
-             * Create a shader
-             * @param shader Shader to create.
-             * @param source The shader source
-             * @todo Another one with support for bytecode.
-             */
-            virtual void _initShader(Shader *shader, const std::string &source) = 0;
-
-            /**
-             * Create a shader program.
-             * @param prog Program to create
-             */
-            virtual void _initShaderProgram(ShaderProgram *prog) = 0;
-
-            /**
-             * Attach a shader to the shader program
-             * @param prog The program to attach to.
-             * @param shader The shader to attach.
-             */
-            virtual void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) = 0;
-
-            /**
-             * Link a shader program
-             * @param prog Program to link.
-             */
-            virtual void _linkShaderProgram(ShaderProgram *prog) = 0;
-
-            /**
-             * Start using a shader program.
-             * @param prog Program to use.
-             */
-            virtual void _useShaderProgram(ShaderProgram *prog) = 0;
-
-            virtual void _initVertexArray(VertexArray *array) = 0;
-            virtual void _bindVertexArray(VertexArray *array) = 0;
-
-            virtual void _initTexture(Texture2D *texture, const void *data) = 0;
-            virtual void _bindTexture(unsigned int unit, Texture2D *texture) = 0;
-            virtual int _generateTextureMipmaps(Texture2D *texture) = 0;
-
-            virtual void _initSamplerState(SamplerState *samplerState) = 0;
-            virtual void _updateSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
-            virtual void _bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
-
-            virtual void _present() = 0;
-            virtual void _onResize() = 0;
+            IGraphicsContext *m_context;
         };
     }
 }

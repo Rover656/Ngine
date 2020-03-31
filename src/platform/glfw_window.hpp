@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -38,7 +38,7 @@ namespace ngine::platform {
         /**
          * Create a GLFW window.
          */
-        explicit GLFWWindow(WindowConfig config);
+        explicit GLFWWindow(WindowDesc config);
 
         /**
          * Destroy GLFW window.

@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -24,7 +24,7 @@
 #include "ngine/window.hpp"
 
 namespace ngine {
-    Game::Game(WindowConfig windowConfig) {
+    Game::Game(WindowDesc windowConfig) {
         m_windowConfig = windowConfig;
     }
 
@@ -88,13 +88,13 @@ namespace ngine {
         m_window->pollEvents();
 
         // Clear the screen
-        m_window->getGraphicsDevice()->clear(graphics::Color::Blue);
+        //m_window->getGraphicsDevice()->clear(graphics::Color::Blue);
 
         // Draw
-        draw();
+        //draw();
 
         // Push to screen
-        getGraphicsDevice()->present();
+        //getGraphicsDevice()->present();
 
         // Determine if we should close
         m_running = !m_window->shouldClose();

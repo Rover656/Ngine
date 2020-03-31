@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -18,28 +18,57 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_DIRECTX_UNIFORM_DATA_MANAGER_HPP
-#define NGINE_DIRECTX_UNIFORM_DATA_MANAGER_HPP
+#ifndef NGINE_D3D11_TYPES_HPP
+#define NGINE_D3D11_TYPES_HPP
 
 #include "ngine/config.hpp"
 
 #if defined(NGINE_ENABLE_DIRECTX)
 
-#include "ngine/graphics/uniform_data_manager.hpp"
+#include "ngine/graphics/types.hpp"
 
-namespace ngine::platform::graphics {
-    using namespace ngine;
-    using namespace ngine::graphics;
+#include <cstdint>
+#include <d3d11.h>
+#include <wrl.h>
 
-    class DirectXUniformDataManager : public IUniformDataManager {
-    public:
+namespace ngine::graphics::d3d11 {
+    using namespace Microsoft::WRL;
+
+    struct D3D11Buffer {
         /**
-         * Create a uniform data manager.
+         * The buffer
          */
-        DirectXUniformDataManager(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout);
+        ComPtr<ID3D11Buffer> Buffer;
+
+        /**
+         * The buffer description
+         */
+        BufferDesc Desc;
+
+        /**
+         * This slot's generation
+         */
+        uint16_t Generation = 0;
+    };
+
+    struct D3D11SamplerState {
+        /**
+         * The sampler state.
+         */
+        ComPtr<ID3D11SamplerState> SamplerState;
+
+        /**
+         * The sampler description.
+         */
+        SamplerDesc Desc;
+
+        /**
+         * This slot's generation
+         */
+        uint16_t Generation = 0;
     };
 }
 
-#endif // defined(NGINE_ENABLE_DIRECTX)
+#endif
 
-#endif //NGINE_DIRECTX_UNIFORM_DATA_MANAGER_HPP
+#endif //NGINE_D3D11_TYPES_HPP

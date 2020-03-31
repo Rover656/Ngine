@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -20,12 +20,10 @@
 
 #include "ngine/window.hpp"
 
-#include "ngine/graphics/context_descriptor.hpp"
 #include "ngine/console.hpp"
 
 // Include them all, they won't implement anything if they're not enabled.
-#include "platform/graphics/directx_graphics_device.hpp"
-#include "platform/graphics/gl_graphics_device.hpp"
+#include "graphics/d3d11/d3d11_graphics_device.hpp"
 
 // Include our sub-types so we can create them
 #include "platform/glfw_window.hpp"
@@ -37,9 +35,9 @@ namespace ngine {
         Console::notice("Window", "Successfully closed window.");
     }
 
-    IWindow *IWindow::createWindow(WindowConfig config) {
+    IWindow *IWindow::createWindow(WindowDesc windowDesc) {
 #if defined(PLATFORM_DESKTOP)
-        return new platform::GLFWWindow(config);
+        return new platform::GLFWWindow(windowDesc);
 #elif defined(PLATFORM_UWP)
         return new platform::UWPWindow(config);
 #else
@@ -48,7 +46,7 @@ namespace ngine {
     }
 
     const graphics::ContextDescriptor IWindow::getContextDescriptor() const {
-        return m_contextDescriptor;
+        return m_desc.GraphicsDeviceDesc.ContextDescriptor;
     }
 
     graphics::IGraphicsDevice *IWindow::getGraphicsDevice() {
@@ -67,13 +65,15 @@ namespace ngine {
         return m_windowHeight;
     }
 
-    IWindow::IWindow(WindowConfig config)
-            : m_contextDescriptor(config.ContextDescriptor) {}
+    IWindow::IWindow(WindowDesc windowDesc)
+            : m_desc(std::move(windowDesc)) {
+        m_desc.GraphicsDeviceDesc.Window = this;
+    }
 
     int IWindow::m_windowCount = 0;
 
     void IWindow::_verifyContextDescriptor() {
-        switch (m_contextDescriptor.verify()) {
+        switch (m_desc.GraphicsDeviceDesc.ContextDescriptor.verify()) {
             case graphics::ContextDescriptorStatus::OK:
                 Console::debug("Window", "Context Descriptor status OK.");
                 return;
@@ -94,44 +94,17 @@ namespace ngine {
         }
 
         // Use the default descriptor
-        m_contextDescriptor = graphics::ContextDescriptor::Default;
+        m_desc.GraphicsDeviceDesc.ContextDescriptor = graphics::ContextDescriptor::Default;
         Console::warn("Window", "Creating a default context for the current platform!");
     }
 
     void IWindow::_createGraphicsDevice() {
-        switch (m_contextDescriptor.Type) {
-            case graphics::ContextType::OpenGL:
-#if defined(NGINE_ENABLE_OPENGL)
-                m_graphicsDevice = new platform::graphics::GLGraphicsDevice(this);
-#else
-                Console::fail("Window", "Cannot create OpenGL graphics device, OpenGL is not enabled or compatible.");
-#endif
-                break;
-            case graphics::ContextType::OpenGLES:
-#if defined(NGINE_ENABLE_OPENGLES)
-                m_graphicsDevice = new platform::graphics::GLGraphicsDevice(this);
-#else
-                Console::fail("Window", "Cannot create OpenGL ES graphics device, OpenGL ES is not enabled or compatible.");
-#endif
-                break;
-            case graphics::ContextType::DirectX:
-#if defined(NGINE_ENABLE_DIRECTX)
-                m_graphicsDevice = new platform::graphics::DirectXGraphicsDevice(this);
-#else
-                Console::fail("Window", "Cannot create DirectX graphics device, DirectX is not enabled or compatible.");
-#endif
-                break;
-            case graphics::ContextType::Vulkan:
-                Console::fail("Window", "Vulkan is not implemented.");
-                break;
-            case graphics::ContextType::Metal:
-                Console::fail("Window", "Metal is not implemented.");
-                break;
-        }
+        m_graphicsDevice = graphics::IGraphicsDevice::createGraphicsDevice(m_desc.GraphicsDeviceDesc);
     }
 
     void IWindow::_checkResized(int oldWidth, int oldHeight) {
-        if (m_windowWidth != oldWidth || m_windowHeight != oldHeight)
-            m_graphicsDevice->_onResize();
+        // TODO, resize event handling etc. or maybe leave it up to dev
+        //if (m_windowWidth != oldWidth || m_windowHeight != oldHeight)
+        //    m_graphicsDevice->_onResize();
     }
 }

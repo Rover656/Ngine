@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -18,15 +18,56 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_SAMPLERSTATE_HPP
-#define NGINE_SAMPLERSTATE_HPP
+#ifndef NGINE_TYPES_HPP
+#define NGINE_TYPES_HPP
 
 #include "ngine/config.hpp"
 
-#include "color.hpp"
-#include "graphics_resource.hpp"
+#include "color.hpp" // TODO: merge
+
+#include <cstdint>
 
 namespace ngine::graphics {
+    enum class BufferUsage {
+        Static,
+        Dynamic
+    };
+
+    enum class BufferType {
+        Vertex,
+        Index,
+        Uniform,
+        // Instanced
+    };
+
+    struct BufferDesc {
+        /**
+         * The size in bytes.
+         */
+        unsigned int Size;
+
+        /**
+         * Buffer usage
+         */
+        BufferUsage Usage;
+
+        /**
+         * The buffer type.
+         */
+        BufferType Type;
+
+        /**
+         * The initial data.
+         * @note Set this if you are creating a static buffer as it cannot be changed!
+         */
+        void *InitialData = nullptr;
+    };
+
+    struct Buffer {
+        uint16_t Index;
+        uint16_t Generation;
+    };
+
     /**
      * Texture filter types.
      */
@@ -138,8 +179,7 @@ namespace ngine::graphics {
         // TODO: MirrorOnce see if this is supported on OGL.
     };
 
-    class NEAPI SamplerState : public IGraphicsResource {
-    public:
+    struct SamplerDesc {
         /**
          * Texture filtering mode.
          */
@@ -190,18 +230,66 @@ namespace ngine::graphics {
          * The level of detail bias.
          */
         float LODBias = 0.0f;
+    };
+
+    struct SamplerState {
+        uint16_t Index;
+        uint16_t Generation;
+    };
+
+    /**
+     * Defines which stage a shader manages.
+     */
+    enum class ShaderStage {
+        /**
+         * The vertex shader stage.
+         */
+        Vertex,
 
         /**
-         * Create a new sampler state.
+         * The fragment or pixel shader stage.
          */
-        SamplerState(IGraphicsDevice *graphicsDevice);
+        Fragment
+    };
 
-        /**
-         * Bind this sampler state.
-         * @param unit Texture/Sampler unit to bind to.
-         */
-        void bind(unsigned int unit);
+    struct ShaderDesc {
+        ShaderStage Stage;
+        const char *GLSLSource;
+        const char *HLSLSource; // TODO: HLSL bytecode instead!!
+    };
+
+    // TODO: Implement ResourceBinder that deals with shaders
+
+    struct Shader {
+        uint16_t Index;
+        uint16_t Generation;
+    };
+
+    struct PipelineStateDesc {
+        Shader VertexShader;
+        Shader FragmentShader;
+        // TODO: Depth state, blend state, raster state, primitive type, input layout
+    };
+
+    struct PipelineState {
+        uint16_t index;
+        uint16_t generation;
+    };
+
+    struct Texture2DDesc {
+        unsigned int Width;
+        unsigned int Height;
+    };
+
+    struct Texture2D {
+        uint16_t Index;
+        uint16_t Generation;
+    };
+
+    struct VertexArray {
+        uint16_t Index;
+        uint16_t Generation;
     };
 }
 
-#endif //NGINE_SAMPLERSTATE_HPP
+#endif //NGINE_TYPES_HPP

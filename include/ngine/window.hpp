@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -23,7 +23,7 @@
 
 #include "ngine/config.hpp"
 
-#include "graphics/context_descriptor.hpp"
+#include "graphics/graphics_context.hpp"
 #include "graphics/graphics_device.hpp"
 
 #include <string>
@@ -32,11 +32,11 @@ namespace ngine {
     /**
      * Window creation config.
      */
-    struct WindowConfig {
+    struct WindowDesc {
         /**
-         * Window context descriptor.
+         * Graphics device description.
          */
-        graphics::ContextDescriptor ContextDescriptor = graphics::ContextDescriptor::Default;
+        graphics::GraphicsDeviceDesc GraphicsDeviceDesc;
 
         /**
          * Window initial width.
@@ -67,9 +67,9 @@ namespace ngine {
 
         /**
          * Create a new window.
-         * @param config The window config.
+         * @param windowDesc The window config.
          */
-        static IWindow *createWindow(WindowConfig config);
+        static IWindow *createWindow(WindowDesc windowDesc);
 
         /**
          * Get the window's context descriptor.
@@ -116,18 +116,18 @@ namespace ngine {
         /**
          * Create a new window.
          */
-        IWindow(WindowConfig config);
+        IWindow(WindowDesc windowDesc);
+
+        /**
+         * The window desc we were created with.
+         */
+        WindowDesc m_desc;
 
         /**
          * Window count.
          * For managing GLFW initialization and UWP restrictions.
          */
         static int m_windowCount;
-
-        /**
-         * The window's context descriptor.
-         */
-        graphics::ContextDescriptor m_contextDescriptor;
 
         /**
          * The graphics device which control's the window context.

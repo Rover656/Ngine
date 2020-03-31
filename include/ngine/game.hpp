@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -44,7 +44,7 @@ namespace ngine {
          *
          * @param windowConfig Window creation config.
          */
-        Game(WindowConfig windowConfig);
+        Game(WindowDesc windowConfig);
 
         ~Game();
 
@@ -91,7 +91,7 @@ namespace ngine {
         /**
          * Config to create the game window with.
          */
-        WindowConfig m_windowConfig;
+        WindowDesc m_windowConfig;
 
         /**
          * Internal update thread.

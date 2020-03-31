@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -18,10 +18,12 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_CONTEXT_DESCRIPTOR_HPP
-#define NGINE_CONTEXT_DESCRIPTOR_HPP
+#ifndef NGINE_GRAPHICS_CONTEXT_HPP
+#define NGINE_GRAPHICS_CONTEXT_HPP
 
 #include "ngine/config.hpp"
+
+#include "types.hpp"
 
 namespace ngine::graphics {
     /**
@@ -116,6 +118,11 @@ namespace ngine::graphics {
          */
         ContextDescriptorStatus verify() const;
     };
+    
+    class NEAPI IGraphicsContext {
+    public:
+        virtual void Clear(Color color) = 0;
+    };
 }
 
-#endif //NGINE_CONTEXT_DESCRIPTOR_HPP
+#endif //NGINE_GRAPHICS_CONTEXT_HPP

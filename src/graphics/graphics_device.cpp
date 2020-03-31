@@ -1,6 +1,6 @@
 /**********************************************************************************************
  *
- *   Ngine - A 2D game engine.
+ *   Ngine - A game framework.
  *
  *   Copyright 2020 NerdThings (Reece Mackie)
  *
@@ -20,12 +20,41 @@
 
 #include "ngine/graphics/graphics_device.hpp"
 
+#include "ngine/console.hpp"
+
+#include "d3d11/d3d11_graphics_device.hpp"
+
 namespace ngine::graphics {
-    IGraphicsDevice::IGraphicsDevice(IWindow *window) : m_window(window) {}
-
-    IGraphicsDevice::~IGraphicsDevice() {}
-
-    void IGraphicsDevice::present() {
-        _present();
+    IGraphicsDevice *IGraphicsDevice::createGraphicsDevice(GraphicsDeviceDesc desc) {
+        switch (desc.ContextDescriptor.Type) {
+            case graphics::ContextType::OpenGL:
+#if defined(NGINE_ENABLE_OPENGL)
+                //m_graphicsDevice = new platform::graphics::GLGraphicsDevice(this);
+#else
+                Console::fail("Window", "Cannot create OpenGL graphics device, OpenGL is not enabled or compatible.");
+#endif
+                break;
+            case graphics::ContextType::OpenGLES:
+#if defined(NGINE_ENABLE_OPENGLES)
+                //m_graphicsDevice = new platform::graphics::GLGraphicsDevice(this);
+#else
+                Console::fail("Window", "Cannot create OpenGL ES graphics device, OpenGL ES is not enabled or compatible.");
+#endif
+                break;
+            case graphics::ContextType::DirectX:
+#if defined(NGINE_ENABLE_DIRECTX)
+                return new d3d11::D3D11GraphicsDevice(desc);
+#else
+                Console::fail("Window", "Cannot create DirectX graphics device, DirectX is not enabled or compatible.");
+#endif
+                break;
+            case graphics::ContextType::Vulkan:
+                Console::fail("Window", "Vulkan is not implemented.");
+                break;
+            case graphics::ContextType::Metal:
+                Console::fail("Window", "Metal is not implemented.");
+                break;
+        }
+        Console::fail("IGraphicsDevice", "Failed to create a graphics device!");
     }
 }
