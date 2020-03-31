@@ -41,47 +41,45 @@
 #include <cstdlib>
 
 // Include our implementation
+#include "directx_buffer.hpp"
 #include "directx_uniform_data_manager.hpp"
 
 namespace ngine::platform::graphics {
     void DirectXGraphicsDevice::clear(Color color) {
         float c[4] = {color.R, color.G, color.B, color.A};
-        m_deviceContext->ClearRenderTargetView(m_backbuffer, c);
+        DeviceContext->ClearRenderTargetView(Backbuffer, c);
+    }
+
+    IBuffer *DirectXGraphicsDevice::createBuffer(BufferType type, BufferUsage usage, void *data, unsigned int size,
+                                                 unsigned int count) {
+        return new DirectXBuffer(this, type, usage, data, size, count);
     }
 
     IUniformDataManager *DirectXGraphicsDevice::createUniformDataManager(std::vector<Uniform> layout) {
         return new DirectXUniformDataManager(this, layout);
     }
 
-    void DirectXGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
-        m_deviceContext->VSSetConstantBuffers(location, 1, (ID3D11Buffer **) &buffer->Handle);
-        m_deviceContext->PSSetConstantBuffers(location, 1, (ID3D11Buffer **) &buffer->Handle);
-    }
-
     void DirectXGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
         switch (primitiveType) {
             case PrimitiveType::TriangleList:
-                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
                 break;
             case PrimitiveType::TriangleStrip:
-                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+                DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
                 break;
             case PrimitiveType::LineList:
-                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+                DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
                 break;
             case PrimitiveType::LineStrip:
-                m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+                DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
                 break;
         }
-        m_deviceContext->Draw(count, start);
+        DeviceContext->Draw(count, start);
     }
 
     void DirectXGraphicsDevice::free(IGraphicsResource *resource) {
         // Release references a resource
         switch (resource->getResourceType()) {
-            case ResourceType::Buffer:
-                ((ID3D11Buffer *) resource->Handle)->Release();
-                break;
             case ResourceType::SamplerState:
                 ((ID3D11SamplerState *) resource->Handle)->Release();
                 break;
@@ -132,9 +130,9 @@ namespace ngine::platform::graphics {
                                FeatureLevels,
                                sizeof(FeatureLevels) / sizeof(D3D_FEATURE_LEVEL),
                                D3D11_SDK_VERSION,
-                               &m_device,
+                               &Device,
                                nullptr,
-                               &m_deviceContext);
+                               &DeviceContext);
 
         if (FAILED(hr)) {
             // Attempt to create WARP device
@@ -145,28 +143,28 @@ namespace ngine::platform::graphics {
                                    FeatureLevels,
                                    sizeof(FeatureLevels) / sizeof(D3D_FEATURE_LEVEL),
                                    D3D11_SDK_VERSION,
-                                   &m_device,
+                                   &Device,
                                    nullptr,
-                                   &m_deviceContext);
+                                   &DeviceContext);
 
             if (FAILED(hr))
                 Console::fail("DirectX", "Failed to create device!");
         }
 
         // Get DXGI device
-        hr = m_device->QueryInterface(__uuidof(IDXGIDevice), (void **)&m_dxgiDevice);
+        hr = Device->QueryInterface(__uuidof(IDXGIDevice), (void **)&DxgiDevice);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to get DXGI device!");
         }
 
         // Get DXGI adapter
-        hr = m_dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgiAdapter);
+        hr = DxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&DxgiAdapter);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to get DXGI adapter!");
         }
 
         // Get DXGI factory
-        hr = m_dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**) &m_dxgiFactory);
+        hr = DxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**) &DxgiFactory);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to get DXGI factory!");
         }
@@ -187,7 +185,7 @@ namespace ngine::platform::graphics {
         // Create swapchain
 #if defined(PLATFORM_DESKTOP)
         HWND win = glfwGetWin32Window((GLFWwindow *) m_window->getHandle());
-        hr = m_dxgiFactory->CreateSwapChainForHwnd(m_device, win, &sd, nullptr, nullptr, &m_swapchain);
+        hr = DxgiFactory->CreateSwapChainForHwnd(Device, win, &sd, nullptr, nullptr, &Swapchain);
 #elif defined(PLATFORM_UWP)
         hr = m_dxgiFactory->CreateSwapChainForCoreWindow(m_device, reinterpret_cast<IUnknown*>(CoreWindow::GetForCurrentThread()), &sd, nullptr, &m_swapchain);
 #endif
@@ -198,7 +196,7 @@ namespace ngine::platform::graphics {
 
         // Get the address of the back buffer
         ID3D11Texture2D *backBuffer;
-        hr = m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *) &backBuffer);
+        hr = Swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *) &backBuffer);
 
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to get back buffer texture!");
@@ -209,7 +207,7 @@ namespace ngine::platform::graphics {
         ZeroMemory(&rtvDesc, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
         rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
         rtvDesc.Texture2D.MipSlice = 0;
-        hr = m_device->CreateRenderTargetView(backBuffer, &rtvDesc, &m_backbuffer);
+        hr = Device->CreateRenderTargetView(backBuffer, &rtvDesc, &Backbuffer);
 
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create render target view!");
@@ -219,7 +217,7 @@ namespace ngine::platform::graphics {
         backBuffer->Release();
 
         // Set the render target as the back buffer
-        m_deviceContext->OMSetRenderTargets(1, &m_backbuffer, nullptr);
+        DeviceContext->OMSetRenderTargets(1, &Backbuffer, nullptr);
 
         // Set viewport
         D3D11_VIEWPORT viewport;
@@ -229,7 +227,7 @@ namespace ngine::platform::graphics {
         viewport.Width = m_window->getWidth();
         viewport.Height = m_window->getHeight();
 
-        m_deviceContext->RSSetViewports(1, &viewport);
+        DeviceContext->RSSetViewports(1, &viewport);
 
         // Setup rasterizer state
         D3D11_RASTERIZER_DESC rasterizerDesc;
@@ -239,71 +237,28 @@ namespace ngine::platform::graphics {
         rasterizerDesc.FrontCounterClockwise = true;
 
         // Create state
-        hr = m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
+        hr = Device->CreateRasterizerState(&rasterizerDesc, &RasterizerState);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create rasterizer state!");
         }
 
         // Set state
-        m_deviceContext->RSSetState(m_rasterizerState);
+        DeviceContext->RSSetState(RasterizerState);
     }
 
     DirectXGraphicsDevice::~DirectXGraphicsDevice() {
         // Return to windowed mode
-        m_swapchain->SetFullscreenState(false, nullptr);
+        Swapchain->SetFullscreenState(false, nullptr);
 
         // Release swapchain, device and device context
-        m_rasterizerState->Release();
-        m_backbuffer->Release();
-        m_swapchain->Release();
-        m_dxgiDevice->Release();
-        m_dxgiAdapter->Release();
-        m_dxgiFactory->Release();
-        m_device->Release();
-        m_deviceContext->Release();
-    }
-
-    void DirectXGraphicsDevice::_initBuffer(Buffer *buffer, void *initialData, unsigned int size) {
-        // Setup buffer
-        ID3D11Buffer *handle;
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-        bd.Usage = buffer->getUsage() == BufferUsage::Static ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DYNAMIC;
-        bd.ByteWidth = size;
-        bd.CPUAccessFlags = buffer->getUsage() == BufferUsage::Static ? 0 : D3D11_CPU_ACCESS_WRITE;
-
-        // Set buffer type.
-        switch (buffer->getType()) {
-            case BufferType::Vertex:
-                bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-                break;
-            case BufferType::Index:
-                bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-                break;
-            case BufferType::Uniform:
-                bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-                break;
-        }
-
-        // Create buffer
-        if (initialData != nullptr) {
-            // Pass initial data
-            D3D11_SUBRESOURCE_DATA iData;
-            ZeroMemory(&iData, sizeof(D3D11_SUBRESOURCE_DATA));
-            iData.pSysMem = initialData;
-            m_device->CreateBuffer(&bd, &iData, &handle);
-        } else m_device->CreateBuffer(&bd, nullptr, &handle);
-
-        // Create buffer
-        buffer->Handle = handle;
-    }
-
-    void DirectXGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, unsigned int size) {
-        // We write dynamically as only dynamic buffers can be written to
-        D3D11_MAPPED_SUBRESOURCE ms;
-        m_deviceContext->Map((ID3D11Buffer *) buffer->Handle, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-        memcpy(ms.pData, data, size);
-        m_deviceContext->Unmap((ID3D11Buffer *) buffer->Handle, NULL);
+        RasterizerState->Release();
+        Backbuffer->Release();
+        Swapchain->Release();
+        DxgiDevice->Release();
+        DxgiAdapter->Release();
+        DxgiFactory->Release();
+        Device->Release();
+        DeviceContext->Release();
     }
 
     void DirectXGraphicsDevice::_initShader(Shader *shader, const std::string &source) {
@@ -329,7 +284,7 @@ namespace ngine::platform::graphics {
                 }
                 Console::notice("DirectX", "Successfully compiled vertex shader blob.");
 
-                m_device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vshdr);
+                Device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vshdr);
                 shader->Handle = vshdr;
                 shader->Handle1 = blob;
                 break;
@@ -345,7 +300,7 @@ namespace ngine::platform::graphics {
                 }
                 Console::notice("DirectX", "Successfully compiled fragment/pixel shader blob.");
 
-                m_device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pshdr);
+                Device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pshdr);
                 shader->Handle = pshdr;
                 shader->Handle1 = blob;
                 break;
@@ -435,8 +390,8 @@ namespace ngine::platform::graphics {
 
         // Create layout
         ID3D11InputLayout *layout;
-        HRESULT hr = m_device->CreateInputLayout(layoutTemplate.data(), layoutTemplate.size(), vs->GetBufferPointer(),
-                                                 vs->GetBufferSize(), &layout);
+        HRESULT hr = Device->CreateInputLayout(layoutTemplate.data(), layoutTemplate.size(), vs->GetBufferPointer(),
+                                               vs->GetBufferSize(), &layout);
 
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create input layout!");
@@ -447,25 +402,20 @@ namespace ngine::platform::graphics {
 
     void DirectXGraphicsDevice::_useShaderProgram(ShaderProgram *prog) {
         // Enable the shaders
-        m_deviceContext->VSSetShader((ID3D11VertexShader *) prog->getShaderByType(ShaderStage::Vertex)->Handle, nullptr,
-                                     0);
-        m_deviceContext->PSSetShader((ID3D11PixelShader *) prog->getShaderByType(ShaderStage::Fragment)->Handle, nullptr,
-                                     0);
-        m_deviceContext->IASetInputLayout((ID3D11InputLayout *) prog->Handle);
+        DeviceContext->VSSetShader((ID3D11VertexShader *) prog->getShaderByType(ShaderStage::Vertex)->Handle, nullptr,
+                                   0);
+        DeviceContext->PSSetShader((ID3D11PixelShader *) prog->getShaderByType(ShaderStage::Fragment)->Handle, nullptr,
+                                   0);
+        DeviceContext->IASetInputLayout((ID3D11InputLayout *) prog->Handle);
     }
 
     void DirectXGraphicsDevice::_initVertexArray(VertexArray *array) {}
 
     void DirectXGraphicsDevice::_bindVertexArray(VertexArray *array) {
         // Bind vertex array and index buffer (if present)
-        auto vBuf = array->getVertexBuffer();
-        auto iBuf = array->getIndexBuffer();
-
-        unsigned int stride = vBuf->getSize();
-        unsigned int offset = 0;
-        m_deviceContext->IASetVertexBuffers(0, 1, (ID3D11Buffer **) &vBuf->Handle, &stride, &offset);
-        //if (iBuf)
-        //    TODO
+        array->getVertexBuffer()->bind();
+        //if (array->getIndexBuffer())
+        //    array->getIndexBuffer->bind(); TODO: Implement
     }
 
     void DirectXGraphicsDevice::_initTexture(Texture2D *texture, const void *data) {
@@ -517,7 +467,7 @@ namespace ngine::platform::graphics {
 
         // Create
         ID3D11Texture2D *tex;
-        HRESULT hr = m_device->CreateTexture2D(&desc, subdata, &tex);
+        HRESULT hr = Device->CreateTexture2D(&desc, subdata, &tex);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Could not create texture!");
         }
@@ -534,7 +484,7 @@ namespace ngine::platform::graphics {
         resourceViewDesc.Texture2D.MipLevels = desc.MipLevels;
 
         ID3D11ShaderResourceView *resourceView;
-        hr = m_device->CreateShaderResourceView(tex, &resourceViewDesc, &resourceView);
+        hr = Device->CreateShaderResourceView(tex, &resourceViewDesc, &resourceView);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Failed to create shader resource view!");
         }
@@ -549,12 +499,12 @@ namespace ngine::platform::graphics {
 
         // Set texture
         auto resView = (ID3D11ShaderResourceView *) texture->Handle1;
-        m_deviceContext->PSSetShaderResources(unit, 1, &resView);
+        DeviceContext->PSSetShaderResources(unit, 1, &resView);
     }
 
     int DirectXGraphicsDevice::_generateTextureMipmaps(Texture2D *texture) {
         // Generate mips
-        m_deviceContext->GenerateMips((ID3D11ShaderResourceView *) texture->Handle1);
+        DeviceContext->GenerateMips((ID3D11ShaderResourceView *) texture->Handle1);
 
         // Remove "max" macro
 #undef max
@@ -690,7 +640,7 @@ namespace ngine::platform::graphics {
 
         // Create new state
         ID3D11SamplerState *state;
-        HRESULT hr = m_device->CreateSamplerState(&samplerDesc, &state);
+        HRESULT hr = Device->CreateSamplerState(&samplerDesc, &state);
         if (FAILED(hr)) {
             Console::fail("DirectX", "Could not create sampler state!");
         }
@@ -700,7 +650,7 @@ namespace ngine::platform::graphics {
     void DirectXGraphicsDevice::_bindSamplerState(unsigned int unit, SamplerState *samplerState) {
         // Set sampler
         auto sampler = (ID3D11SamplerState *) samplerState->Handle;
-        m_deviceContext->PSSetSamplers(unit, 1, &sampler);
+        DeviceContext->PSSetSamplers(unit, 1, &sampler);
 
         // Check for updates
         _updateSamplerState(0, samplerState); // Not passing unit as that is only for GL
@@ -708,21 +658,21 @@ namespace ngine::platform::graphics {
 
     void DirectXGraphicsDevice::_present() {
         // Present to swapchain
-        m_swapchain->Present(0, 0);
+        Swapchain->Present(0, 0);
 
         // Bring backbuffer render target back.
-        m_deviceContext->OMSetRenderTargets(1, &m_backbuffer, nullptr);
+        DeviceContext->OMSetRenderTargets(1, &Backbuffer, nullptr);
     }
 
     void DirectXGraphicsDevice::_onResize() {
-        if (m_swapchain) {
-            m_deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+        if (Swapchain) {
+            DeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 
             // Release references to backbuffer
-            m_backbuffer->Release();
+            Backbuffer->Release();
 
             // Resize buffers
-            HRESULT hr = m_swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+            HRESULT hr = Swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
             if (FAILED(hr)) {
                 Console::fail("DirectX", "Failed to resize buffers!");
@@ -730,14 +680,14 @@ namespace ngine::platform::graphics {
 
             // Get the address of the back buffer
             ID3D11Texture2D *backBuffer;
-            hr = m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *) &backBuffer);
+            hr = Swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *) &backBuffer);
 
             if (FAILED(hr)) {
                 Console::fail("DirectX", "Failed to get back buffer texture!");
             }
 
             // Create the render target
-            hr = m_device->CreateRenderTargetView(backBuffer, nullptr, &m_backbuffer);
+            hr = Device->CreateRenderTargetView(backBuffer, nullptr, &Backbuffer);
 
             if (FAILED(hr)) {
                 Console::fail("DirectX", "Failed to create render target view!");
@@ -746,7 +696,7 @@ namespace ngine::platform::graphics {
             backBuffer->Release();
 
             // Set the render target as the back buffer
-            m_deviceContext->OMSetRenderTargets(1, &m_backbuffer, nullptr);
+            DeviceContext->OMSetRenderTargets(1, &Backbuffer, nullptr);
 
             // Set viewport
             D3D11_VIEWPORT viewport;
@@ -756,7 +706,7 @@ namespace ngine::platform::graphics {
             viewport.Width = m_window->getWidth();
             viewport.Height = m_window->getHeight();
 
-            m_deviceContext->RSSetViewports(1, &viewport);
+            DeviceContext->RSSetViewports(1, &viewport);
         }
     }
 }

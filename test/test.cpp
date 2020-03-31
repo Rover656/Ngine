@@ -10,8 +10,8 @@
 #endif
 
 class TestGame : public ngine::Game {
-    ngine::graphics::Buffer *vb;
-    ngine::graphics::Buffer *uniformBuffer;
+    ngine::graphics::IBuffer *vb;
+    ngine::graphics::IBuffer *uniformBuffer;
     ngine::graphics::IUniformDataManager *uniformData;
     ngine::graphics::VertexArray *array;
     ngine::graphics::Shader *vertShader;
@@ -188,9 +188,9 @@ public:
         uniformData->setUniform("Test", ngine::Vector3(0.2f, 0.2f, 0.0f));
 
         // Create uniform buffer
-        uniformBuffer = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Uniform,
-                                                    ngine::graphics::BufferUsage::Dynamic, uniformData->getData(),
-                                                    uniformData->getDataSize(), 1);
+        uniformBuffer = graphicsDevice->createBuffer(ngine::graphics::BufferType::Uniform,
+                                                     ngine::graphics::BufferUsage::Dynamic,
+                                                     uniformData->getData(), uniformData->getDataSize(), 1);
 
         // Create vertex buffer from data
         float dat[] = {
@@ -198,8 +198,9 @@ public:
                 0.5f, -0.5f, 0, 1, 1, 1, 1, 1.0f, 0,
                 0.0f, 0.5f, 0, 1, 1, 1, 1, 0.5f, 1
         };
-        vb = new ngine::graphics::Buffer(getGraphicsDevice(), ngine::graphics::BufferType::Vertex,
-                                         ngine::graphics::BufferUsage::Static, &dat[0], sizeof(float) * (3 + 4 + 2), 3);
+
+        vb = graphicsDevice->createBuffer(ngine::graphics::BufferType::Vertex, ngine::graphics::BufferUsage::Static,
+                                          &dat[0], sizeof(float) * (3 + 4 + 2), 3);
 
         // Create vertex array
         array = new ngine::graphics::VertexArray(getGraphicsDevice(), vb, nullptr, shaderVertexLayout);
@@ -244,7 +245,7 @@ public:
         tex->bind(1);
 
         auto gd = getGraphicsDevice();
-        gd->bindUniformBuffer(0, uniformBuffer);
+        uniformBuffer->bind(0);
         gd->drawPrimitives(ngine::graphics::PrimitiveType::TriangleList, 0, 3);
 
         Game::draw();

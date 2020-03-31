@@ -45,9 +45,10 @@ namespace ngine::platform::graphics {
     public:
         void clear(Color color) override;
 
-        IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) override;
+        IBuffer *
+        createBuffer(BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count) override;
 
-        void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
+        IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) override;
 
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
@@ -133,9 +134,6 @@ namespace ngine::platform::graphics {
 
         GLGraphicsDevice(IWindow *window);
         ~GLGraphicsDevice();
-
-        void _initBuffer(Buffer *buffer, void *initialData, unsigned int size) override;
-        void _writeBuffer(Buffer *buffer, void *data, unsigned int size) override;
 
         void _initShader(Shader *shader, const std::string &source) override;
 

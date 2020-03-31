@@ -57,9 +57,7 @@ namespace ngine::graphics {
     }
 
     IUniformDataManager::IUniformDataManager(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout)
-            : IGraphicsResource(graphicsDevice, ResourceType::UniformDataManager), m_uniforms(std::move(layout)) {
-        m_graphicsDevice->_allocateUniformData(this, &m_offsets, &m_internalDataSize);
-    }
+            : IGraphicsResource(graphicsDevice, ResourceType::UniformDataManager), m_uniforms(std::move(layout)) {}
 
     void IUniformDataManager::_write(const char *name, void *value, int size, int count) {
         // Find the uniform
@@ -81,7 +79,7 @@ namespace ngine::graphics {
         Console::fail("UniformData", "Failed to find uniform named %s.", name);
     }
 
-    void IUniformDataManager::writeTo(Buffer *buffer) const {
+    void IUniformDataManager::writeTo(IBuffer *buffer) const {
         buffer->write(getData(), 1);
     }
 

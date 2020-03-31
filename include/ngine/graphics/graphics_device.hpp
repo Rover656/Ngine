@@ -45,7 +45,7 @@ namespace ngine {
 
         class NEAPI IGraphicsDevice {
             friend class ngine::IWindow;
-            friend class ngine::graphics::Buffer;
+            friend class ngine::graphics::IBuffer;
             friend class ngine::graphics::SamplerState;
             friend class ngine::graphics::Shader;
             friend class ngine::graphics::ShaderProgram;
@@ -67,17 +67,20 @@ namespace ngine {
             virtual void clear(Color color) = 0;
 
             /**
+             * Create a buffer.
+             * @param type Buffer type.
+             * @param usage Buffer usage.
+             * @param data Initial buffer data (cannot be null if this is a static buffer)
+             * @param size
+             * @param count
+             * @return
+             */
+            virtual IBuffer *createBuffer(BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count) = 0;
+
+            /**
              * Create a uniform data manager.
              */
             virtual IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) = 0;
-
-            /**
-             * Bind a uniform buffer to a specified location.
-             * @warning This does not check the data format. Ensure your buffer follows the correct format. Do this by using the UniformData class.
-             * @param location Buffer destination location.
-             * @param buffer Buffer to bind.
-             */
-            virtual void bindUniformBuffer(unsigned int location, Buffer *buffer) = 0;
 
             /**
              * Draw primitives from the currently bound buffer.
@@ -111,22 +114,6 @@ namespace ngine {
              */
             IWindow *m_window;
         private:
-            /**
-             * Initialize a buffer on the GPU.
-             * @param buffer The buffer to initialize.
-             * @param initialData The initial data for the buffer.
-             * @param size The size of the buffer (taking into account count).
-             */
-            virtual void _initBuffer(Buffer *buffer, void *initialData, unsigned int size) = 0;
-
-            /**
-             * Write data to a buffer.
-             * @param buffer Buffer to write.
-             * @param data Data to write to the buffer.
-             * @param size The size of the data.
-             */
-            virtual void _writeBuffer(Buffer *buffer, void *data, unsigned int size) = 0;
-
             /**
              * Create a shader
              * @param shader Shader to create.
@@ -170,9 +157,6 @@ namespace ngine {
             virtual void _initSamplerState(SamplerState *samplerState) = 0;
             virtual void _updateSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
             virtual void _bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
-
-            virtual void _allocateUniformData(IUniformDataManager *uniformData, std::vector<unsigned int> *offsets,
-                                              unsigned int *size) = 0;
 
             virtual void _present() = 0;
             virtual void _onResize() = 0;

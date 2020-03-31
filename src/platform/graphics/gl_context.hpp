@@ -39,10 +39,35 @@
 #define EGL
 #endif
 
+#if defined(GLAD)
+#include <glad/glad.h>
+#endif
+
 #if defined(EGL)
-typedef void* EGLDisplay;
-typedef void* EGLSurface;
-typedef void* EGLContext;
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#endif
+
+#if defined(NGINE_ENABLE_OPENGLES) && !defined(GLAD)
+#define GL_KHR_debug 0
+#define GL_GLEXT_PROTOTYPES 1
+
+// Include latest GLES header
+#include <GLES3/gl31.h>
+// Add GLES2 extensions
+#include <GLES2/gl2ext.h>
+#endif
+
+#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY 0x84FF
+#endif
+
+#ifndef GL_TEXTURE_MAX_ANISOTROPY
+#define GL_TEXTURE_MAX_ANISOTROPY 0x84FE
+#endif
+
+#ifndef GL_CLAMP_TO_BORDER
+#define GL_CLAMP_TO_BORDER 0x812D
 #endif
 
 namespace ngine::platform::graphics {

@@ -45,11 +45,11 @@ namespace ngine::graphics {
          * @param indexBuffer The index buffer for the array. Can be null.
          * @param layout The layout to follow. Must match target shader.
          */
-        VertexArray(graphics::IGraphicsDevice *graphicsDevice, Buffer *vertexBuffer, Buffer *indexBuffer, const BufferLayout &layout);
+        VertexArray(graphics::IGraphicsDevice *graphicsDevice, IBuffer *vertexBuffer, IBuffer *indexBuffer, const BufferLayout &layout);
 
-        Buffer *getVertexBuffer();
+        IBuffer *getVertexBuffer();
 
-        Buffer *getIndexBuffer();
+        IBuffer *getIndexBuffer();
 
         BufferLayout getLayout() const;
 
@@ -66,12 +66,12 @@ namespace ngine::graphics {
         /**
          * Attached vertex buffer.
          */
-        Buffer *m_vertexBuffer;
+        IBuffer *m_vertexBuffer;
 
         /**
          * Attached index buffer.
          */
-        Buffer *m_indexBuffer;
+        IBuffer *m_indexBuffer;
     };
 }
 

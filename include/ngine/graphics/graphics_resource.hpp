@@ -59,7 +59,8 @@ namespace ngine::graphics {
         /**
          * A vertex array.
          */
-        VertexArray
+        VertexArray,
+        UniformDataManager // oops, we need this while this enum still exists.
     };
 
     class NEAPI IGraphicsResource {

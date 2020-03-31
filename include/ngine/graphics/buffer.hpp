@@ -44,20 +44,9 @@ namespace ngine::graphics {
     /**
      * A buffer stores data on the GPU.
      */
-    class NEAPI Buffer : public IGraphicsResource {
+    class NEAPI IBuffer : public IGraphicsResource {
         friend class ngine::graphics::IGraphicsDevice;
     public:
-        /**
-         * Create a new buffer.
-         * @param graphicsDevice Graphics device to create with.
-         * @param type Buffer type.
-         * @param usage Buffer usage.
-         * @param size The size of each data entry.
-         * @param count The number of data entries.
-         * @param data The data to be written initially or null. Cannot be null for a static buffer.
-         */
-        Buffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count);
-
         /**
          * Get the buffer type.
          */
@@ -81,13 +70,32 @@ namespace ngine::graphics {
         /**
          * Write the given data to the buffer.
          * @warning The data provided is expected to be the correct size!
-         * @warning Count may not exceed the buffer's count value.
-         * @warning Static buffers cannot be written to in this way.
+         * @warning This will bind the buffer.
+         * @note Static buffers cannot be written to in this way.
+         * @note Count may not exceed the buffer's count value.
          * @param data Data to write.
          * @param count The number of data entries.
          */
         void write(void *data, unsigned int count);
-    private:
+
+        /**
+         * Bind the buffer.
+         * @warning This is for advanced users only.
+         * @param slot The slot to bind (for UniformBuffer only)
+         */
+        virtual void bind(int slot = 0) = 0;
+    protected:
+        /**
+         * Create a new buffer.
+         * @param graphicsDevice Graphics device to create with.
+         * @param type Buffer type.
+         * @param usage Buffer usage.
+         * @param size The size of each data entry.
+         * @param count The number of data entries.
+         * @param data The data to be written initially or null. Cannot be null for a static buffer.
+         */
+        IBuffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count);
+
         /**
          * The buffer type
          */
@@ -107,6 +115,11 @@ namespace ngine::graphics {
          * The number of data entries in the buffer.
          */
         const unsigned int m_count;
+
+        /**
+         * Write the buffer data.
+         */
+        virtual void _write(void *data, unsigned int count) = 0;
     };
 }
 

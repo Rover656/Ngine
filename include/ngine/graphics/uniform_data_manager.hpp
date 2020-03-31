@@ -74,7 +74,7 @@ namespace ngine::graphics {
 
         unsigned int getDataSize() const;
 
-        void writeTo(Buffer *buffer) const;
+        void writeTo(IBuffer *buffer) const;
 
         void free() override final;
 

@@ -40,85 +40,95 @@ namespace ngine::platform::graphics {
     /**
      * Graphics device for DirectX platform.
      */
-class NEAPI DirectXGraphicsDevice : public IGraphicsDevice {
+    class NEAPI DirectXGraphicsDevice : public IGraphicsDevice {
         friend class ngine::IWindow;
+
     public:
+
+        /**
+         * Swapchain
+         */
+        IDXGISwapChain1* Swapchain;
+
+        /**
+         * Device.
+         */
+        ID3D11Device* Device;
+
+        /**
+         * Device context.
+         */
+        ID3D11DeviceContext* DeviceContext;
+
+        /**
+         * Back buffer render target.
+         */
+        ID3D11RenderTargetView* Backbuffer;
+
+        /**
+         * Rasterizer state.
+         * @todo Abstract
+         */
+        ID3D11RasterizerState* RasterizerState;
+
+        /**
+         * The DXGI device.
+         */
+        IDXGIDevice2 *DxgiDevice;
+
+        /**
+         * The DXGI adapter.
+         */
+        IDXGIAdapter2 *DxgiAdapter;
+
+        /**
+         * The DXGI factory.
+         */
+        IDXGIFactory2* DxgiFactory;
+
         void clear(Color color) override;
 
-    IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) override;
+        IBuffer *
+        createBuffer(BufferType type, BufferUsage usage, void *data, unsigned int size, unsigned int count) override;
 
-    void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
+        IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) override;
 
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
         void free(IGraphicsResource *resource) override;
 
     private:
-        /**
-         * Swapchain
-         */
-        IDXGISwapChain1* m_swapchain;
-
-        /**
-         * Device.
-         */
-        ID3D11Device* m_device;
-
-        /**
-         * Device context.
-         */
-        ID3D11DeviceContext* m_deviceContext;
-
-        /**
-         * Back buffer render target.
-         */
-        ID3D11RenderTargetView* m_backbuffer;
-
-        /**
-         * Rasterizer state.
-         */
-        ID3D11RasterizerState* m_rasterizerState;
-
-        /**
-         * The DXGI device.
-         */
-        IDXGIDevice2 *m_dxgiDevice;
-
-        /**
-         * The DXGI adapter.
-         */
-        IDXGIAdapter2 *m_dxgiAdapter;
-
-        /**
-         * The DXGI factory.
-         */
-        IDXGIFactory2* m_dxgiFactory;
-
         DirectXGraphicsDevice(IWindow *window);
+
         ~DirectXGraphicsDevice();
-
-        void _initBuffer(Buffer *buffer, void *initialData, unsigned int size) override;
-        void _writeBuffer(Buffer *buffer, void *data, unsigned int size) override;
-
         void _initShader(Shader *shader, const std::string &source) override;
 
         void _initShaderProgram(ShaderProgram *prog) override;
+
         void _shaderProgramAttach(ShaderProgram *prog, Shader *shader) override;
+
         void _linkShaderProgram(ShaderProgram *prog) override;
+
         void _useShaderProgram(ShaderProgram *prog) override;
 
         void _initVertexArray(VertexArray *array) override;
+
         void _bindVertexArray(VertexArray *array) override;
 
         void _initTexture(Texture2D *texture, const void *data) override;
+
         void _bindTexture(unsigned int unit, Texture2D *texture) override;
+
         int _generateTextureMipmaps(Texture2D *texture) override;
 
         void _initSamplerState(SamplerState *samplerState) override;
+
         void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
+
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
         void _present() override;
+
         void _onResize() override;
     };
 }

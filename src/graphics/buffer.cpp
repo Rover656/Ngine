@@ -24,31 +24,37 @@
 #include "ngine/console.hpp"
 
 namespace ngine::graphics {
-    Buffer::Buffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size,
-                   unsigned int count)
-            : IGraphicsResource(graphicsDevice, ResourceType::Buffer), m_type(type), m_usage(usage), m_size(size),
-              m_count(count) {
-        m_graphicsDevice->_initBuffer(this, data, m_size * m_count);
-    }
-
-    BufferType Buffer::getType() const {
+    BufferType IBuffer::getType() const {
         return m_type;
     }
 
-    BufferUsage Buffer::getUsage() const {
+    BufferUsage IBuffer::getUsage() const {
         return m_usage;
     }
 
-    unsigned int Buffer::getSize() const {
+    unsigned int IBuffer::getSize() const {
         return m_size;
     }
 
-    void Buffer::write(void *data, unsigned int count) {
+    unsigned int IBuffer::getCount() const {
+        return m_count;
+    }
+
+    void IBuffer::write(void *data, unsigned int count) {
         if (m_usage == BufferUsage::Static)
             Console::fail("Buffer",
                           "Cannot write to a static buffer! Create a dynamic buffer if you need this ability!");
         if (count > m_count)
             Console::fail("Buffer", "Cannot write more elements than the buffer can store!");
-        m_graphicsDevice->_writeBuffer(this, data, m_size * count);
+        _write(data, m_size * count);
+    }
+
+    IBuffer::IBuffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size,
+                     unsigned int count)
+            : IGraphicsResource(graphicsDevice, ResourceType::Buffer), m_type(type), m_usage(usage), m_size(size),
+              m_count(count) {
+        // Check data isn't null for static buffer
+        if (data == nullptr && usage == BufferUsage::Static)
+            Console::fail("Buffer", "Static buffers must be written to when they are created!");
     }
 }

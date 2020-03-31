@@ -25,42 +25,12 @@
 #include "ngine/console.hpp"
 #include "ngine/math.hpp"
 
-#if defined(GLAD)
-#include <glad/glad.h>
-#endif
-
-#if defined(EGL)
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
-
-#if defined(NGINE_ENABLE_OPENGLES) && !defined(GLAD)
-#define GL_KHR_debug 0
-#define GL_GLEXT_PROTOTYPES 1
-
-// Include latest GLES header
-#include <GLES3/gl31.h>
-// Add GLES2 extensions
-#include <GLES2/gl2ext.h>
-#endif
-
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 
-#ifndef GL_MAX_TEXTURE_MAX_ANISOTROPY
-#define GL_MAX_TEXTURE_MAX_ANISOTROPY 0x84FF
-#endif
-
-#ifndef GL_TEXTURE_MAX_ANISOTROPY
-#define GL_TEXTURE_MAX_ANISOTROPY 0x84FE
-#endif
-
-#ifndef GL_CLAMP_TO_BORDER
-#define GL_CLAMP_TO_BORDER 0x812D
-#endif
-
 // Include our implementations
+#include "gl_buffer.hpp"
 #include "gl_uniform_data_manager.hpp"
 
 // TODO: Security checks and bind safety (rebinding things after modifiying another i.e. textures).
@@ -71,12 +41,13 @@ namespace ngine::platform::graphics {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    IUniformDataManager *GLGraphicsDevice::createUniformDataManager(std::vector<Uniform> layout) {
-        return new GLUniformDataManager(this, layout);
+    IBuffer *GLGraphicsDevice::createBuffer(BufferType type, BufferUsage usage, void *data, unsigned int size,
+                                            unsigned int count) {
+        return new GLBuffer(this, type, usage, data, size, count);
     }
 
-    void GLGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
-        glBindBufferBase(GL_UNIFORM_BUFFER, location, buffer->GLID);
+    IUniformDataManager *GLGraphicsDevice::createUniformDataManager(std::vector<Uniform> layout) {
+        return new GLUniformDataManager(this, layout);
     }
 
     void GLGraphicsDevice::drawPrimitives(PrimitiveType primitiveType, int start, int count) {
@@ -169,63 +140,6 @@ namespace ngine::platform::graphics {
     }
 
     GLGraphicsDevice::~GLGraphicsDevice() {}
-
-    void GLGraphicsDevice::_initBuffer(Buffer *buffer, void *initialData, unsigned int size) {
-        // Create
-        buffer->GLID = 0;
-        glGenBuffers(1, &buffer->GLID);
-
-        // Convert enums to GL
-        GLenum bufType, bufUsage;
-        switch (buffer->getType()) {
-            case BufferType::Vertex:
-                bufType = GL_ARRAY_BUFFER;
-                break;
-            case BufferType::Index:
-                bufType = GL_ELEMENT_ARRAY_BUFFER;
-                break;
-            case BufferType::Uniform:
-                bufType = GL_UNIFORM_BUFFER;
-                break;
-        }
-
-        switch (buffer->getUsage()) {
-            case BufferUsage::Static:
-                bufUsage = GL_STATIC_DRAW;
-                break;
-            case BufferUsage::Dynamic:
-                bufUsage = GL_DYNAMIC_DRAW;
-                break;
-        }
-
-        // Write default data.
-        glBindBuffer(bufType, buffer->GLID);
-        glBufferData(bufType, size, initialData, bufUsage);
-        if (DoDebugOutput)
-            Console::debug("OpenGL", "Created buffer %u.", buffer->GLID);
-    }
-
-    void GLGraphicsDevice::_writeBuffer(Buffer *buffer, void *data, unsigned int size) {
-        // Get type and usage
-        GLenum bufType, bufUsage;
-        switch (buffer->getType()) {
-            case BufferType::Vertex:
-                bufType = GL_ARRAY_BUFFER;
-                break;
-            case BufferType::Index:
-                bufType = GL_ELEMENT_ARRAY_BUFFER;
-                break;
-            case BufferType::Uniform:
-                bufType = GL_UNIFORM_BUFFER;
-                break;
-        }
-
-        // Bind
-        glBindBuffer(bufType, buffer->GLID);
-
-        // Write (we don't use glBufferData as we want to restrict buffer size for parity with DX11).
-        glBufferSubData(bufType, 0, buffer->getSize(), data);
-    }
 
     void GLGraphicsDevice::_initShader(Shader *shader, const std::string &source) {
         // Create shader
@@ -330,9 +244,9 @@ namespace ngine::platform::graphics {
         glBindVertexArray(array->GLID);
 
         // Bind buffers
-        glBindBuffer(GL_ARRAY_BUFFER, array->getVertexBuffer()->GLID);
+        array->getVertexBuffer()->bind();
         if (array->getIndexBuffer())
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, array->getIndexBuffer()->GLID);
+            array->getIndexBuffer()->bind();
 
         // Add to cache if missing
         if (m_VAOShaderCache.find(array) == m_VAOShaderCache.end()) {
@@ -660,9 +574,6 @@ namespace ngine::platform::graphics {
     void GLGraphicsDevice::_freeResource(IGraphicsResource *resource) {
         // Free resource.
         switch (resource->getResourceType()) {
-            case ResourceType::Buffer:
-                glDeleteBuffers(1, &resource->GLID);
-                break;
             case ResourceType::SamplerState:
                 glDeleteSamplers(1, &resource->GLID);
                 break;
@@ -713,11 +624,6 @@ namespace ngine::platform::graphics {
 
     void GLGraphicsDevice::_onResize() {
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
-    }
-
-    void GLGraphicsDevice::_allocateUniformData(IUniformDataManager *uniformData, std::vector<unsigned int> *offsets,
-                                                unsigned int *size) {
-
     }
 }
 
