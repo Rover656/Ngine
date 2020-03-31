@@ -18,13 +18,24 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/shader.hpp"
+#include "gl_uniform_data_manager.hpp"
 
-#include "ngine/graphics/graphics_device.hpp"
+#if defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)
 
-namespace ngine::graphics {
-    Shader::Shader(IGraphicsDevice *graphicsDevice, const std::string &src, ShaderStage type)
-            : IGraphicsResource(graphicsDevice, ResourceType::Shader), Type(type) {
-        m_graphicsDevice->_initShader(this, src);
+namespace ngine::platform::graphics {
+    GLUniformDataManager::GLUniformDataManager(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout)
+            : IUniformDataManager(graphicsDevice, layout) {
+        // Here, we configure the offsets to adhere to std140 layout and allocate enough memory for this.
+        for (auto u : m_uniforms) {
+            m_offsets.push_back(m_internalDataSize);
+
+            // Ensure the size is a multiple of 16
+            m_internalDataSize += (u.getSize()-1|15)+1;
+        }
+
+        // Allocate memory
+        m_data = calloc(1, m_internalDataSize);
     }
 }
+
+#endif // defined(NGINE_ENABLE_OPENGL) || defined(NGINE_ENABLE_OPENGLES)

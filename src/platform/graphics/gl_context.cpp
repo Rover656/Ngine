@@ -48,11 +48,11 @@
 #endif
 
 #if defined(PLATFORM_UWP)
-#include "ngine/platform/UWP/uwp_bootstrap.hpp"
+#include "ngine/utils/UWP/uwp_bootstrap.hpp"
 #include <angle_windowsstore.h>
 #endif
 
-namespace ngine::platform::graphics::gl {
+namespace ngine::platform::graphics {
     GLContext::GLContext(IWindow *window) : m_window(window) {
         // Init EGL
 #if defined(EGL)

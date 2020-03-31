@@ -35,7 +35,7 @@ namespace ngine::graphics {
      * A vertex array defines a buffer filled with vertices and a buffer with the indices.
      * This controls both the array and the layout.
      */
-    class NEAPI VertexArray : public GraphicsResource {
+    class NEAPI VertexArray : public IGraphicsResource {
     public:
         /**
          * Create a vertex array.

@@ -33,7 +33,7 @@ namespace ngine::graphics {
         Fragment
     };
 
-    class NEAPI Shader : public GraphicsResource {
+    class NEAPI Shader : public IGraphicsResource {
     public:
         /**
          * The shader type.

@@ -32,11 +32,11 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace ngine::platform::graphics::gl {
+namespace ngine::platform::graphics {
     // Do this for the sake of cleaner code
     using namespace ngine;
     using namespace ngine::graphics;
-    
+
     /**
      * Graphics device for OpenGL(ES) platform.
      */
@@ -45,11 +45,13 @@ namespace ngine::platform::graphics::gl {
     public:
         void clear(Color color) override;
 
+        IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) override;
+
         void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
 
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
-        void free(GraphicsResource *resource) override;
+        void free(IGraphicsResource *resource) override;
 
     private:
         /**
@@ -112,12 +114,12 @@ namespace ngine::platform::graphics::gl {
         /**
          * Resources to be freed this frame.
          */
-        std::vector<GraphicsResource *> m_freeThisFrame;
+        std::vector<IGraphicsResource *> m_freeThisFrame;
 
         /**
          * Resources to be freed next frame.
          */
-        std::vector<GraphicsResource *> m_freeNextFrame;
+        std::vector<IGraphicsResource *> m_freeNextFrame;
 
         /**
          * Resource free lock.
@@ -156,10 +158,7 @@ namespace ngine::platform::graphics::gl {
         void _applySamplerFiltering(unsigned int unit, SamplerState *samplerState);
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
 
-        void _allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
-                                  unsigned int *size) override;
-
-        void _freeResource(GraphicsResource *resource);
+        void _freeResource(IGraphicsResource *resource);
 
         void _present() override;
         void _onResize() override;

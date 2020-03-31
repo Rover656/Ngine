@@ -46,7 +46,7 @@ namespace ngine::graphics {
     }
 
     ShaderProgram::ShaderProgram(IGraphicsDevice *graphicsDevice, BufferLayout vertexBufferLayout)
-            : GraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_vertexBufferLayout(vertexBufferLayout) {
+            : IGraphicsResource(graphicsDevice, ResourceType::ShaderProgram), m_vertexBufferLayout(vertexBufferLayout) {
         m_graphicsDevice->_initShaderProgram(this);
     }
 

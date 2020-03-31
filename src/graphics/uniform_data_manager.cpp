@@ -18,7 +18,7 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/uniform_data.hpp"
+#include "ngine/graphics/uniform_data_manager.hpp"
 
 #include "ngine/graphics/graphics_device.hpp"
 #include "ngine/console.hpp"
@@ -29,12 +29,6 @@
 namespace ngine::graphics {
     unsigned int Uniform::getSize() const {
         switch (Type) {
-            //case ElementType::Byte:
-            //case ElementType::UnsignedByte:
-            //    return sizeof(char) * Count;
-            //case ElementType::Short:
-            //case ElementType::UnsignedShort:
-            //    return sizeof(short) * Count;
             case ElementType::Int:
             case ElementType::UnsignedInt:
                 return sizeof(int) * Count;
@@ -46,24 +40,28 @@ namespace ngine::graphics {
         }
     }
 
-    UniformData::UniformData(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout)
-            : GraphicsResource(graphicsDevice, ResourceType::UniformData), m_uniforms(std::move(layout)) {
-        m_graphicsDevice->_allocateUniformData(this, &m_offsets, &m_internalDataSize);
+    IUniformDataManager::~IUniformDataManager() {
+        free();
     }
 
-    std::vector<Uniform> UniformData::getLayout() const {
+    std::vector<Uniform> IUniformDataManager::getLayout() const {
         return m_uniforms;
     }
 
-    void *UniformData::getData() const {
-        return Handle;
+    void *IUniformDataManager::getData() const {
+        return m_data;
     }
 
-    unsigned int UniformData::getDataSize() const {
+    unsigned int IUniformDataManager::getDataSize() const {
         return m_internalDataSize;
     }
 
-    void UniformData::_write(const char *name, void *value, int size, int count) {
+    IUniformDataManager::IUniformDataManager(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout)
+            : IGraphicsResource(graphicsDevice, ResourceType::UniformDataManager), m_uniforms(std::move(layout)) {
+        m_graphicsDevice->_allocateUniformData(this, &m_offsets, &m_internalDataSize);
+    }
+
+    void IUniformDataManager::_write(const char *name, void *value, int size, int count) {
         // Find the uniform
         for (auto i = 0; i < m_uniforms.size(); i++) {
             auto u = m_uniforms[i];
@@ -75,7 +73,7 @@ namespace ngine::graphics {
                 auto off = m_offsets[i];
 
                 // Write to buffer
-                memcpy((unsigned char*) Handle + off, value, size * count);
+                memcpy((unsigned char*) m_data + off, value, size * count);
                 return;
             }
         }
@@ -83,7 +81,12 @@ namespace ngine::graphics {
         Console::fail("UniformData", "Failed to find uniform named %s.", name);
     }
 
-    void UniformData::writeTo(Buffer *buffer) const {
+    void IUniformDataManager::writeTo(Buffer *buffer) const {
         buffer->write(getData(), 1);
+    }
+
+    void IUniformDataManager::free() {
+        ::free(m_data);
+        m_data = nullptr;
     }
 }

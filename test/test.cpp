@@ -12,7 +12,7 @@
 class TestGame : public ngine::Game {
     ngine::graphics::Buffer *vb;
     ngine::graphics::Buffer *uniformBuffer;
-    ngine::graphics::UniformData *uniformData;
+    ngine::graphics::IUniformDataManager *uniformData;
     ngine::graphics::VertexArray *array;
     ngine::graphics::Shader *vertShader;
     ngine::graphics::Shader *fragShader;
@@ -29,6 +29,9 @@ public:
 
         // Get graphics API
         auto api = getWindow()->getContextDescriptor().Type;
+
+        // Get graphics device
+        auto graphicsDevice = getGraphicsDevice();
 
         // Create shaders
         switch (api) {
@@ -175,7 +178,7 @@ public:
         uniforms.push_back({"Projection", ngine::graphics::ElementType::Matrix, 1});
         uniforms.push_back({"Test", ngine::graphics::ElementType::Float, 3});
 
-        uniformData = new ngine::graphics::UniformData(getGraphicsDevice(), uniforms);
+        uniformData = graphicsDevice->createUniformDataManager(uniforms);
 
         // Set uniform data
         ngine::Matrix test = ngine::Matrix::Identity;

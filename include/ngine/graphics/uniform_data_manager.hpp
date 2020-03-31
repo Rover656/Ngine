@@ -18,8 +18,8 @@
  *
  **********************************************************************************************/
 
-#ifndef NGINE_UNIFORM_DATA_HPP
-#define NGINE_UNIFORM_DATA_HPP
+#ifndef NGINE_UNIFORM_DATA_MANAGER_HPP
+#define NGINE_UNIFORM_DATA_MANAGER_HPP
 
 #include "ngine/config.hpp"
 
@@ -59,13 +59,9 @@ namespace ngine::graphics {
      * Write this to a buffer using the UniformData::writeTo() method or by passing the value returned by getData() to the Buffer::write() method.
      * @note In GLSL, all consumers of this buffer data *must* follow the std140 layout.
      */
-    class NEAPI UniformData : public GraphicsResource {
+    class NEAPI IUniformDataManager : public IGraphicsResource {
     public:
-        /**
-         * Create a uniform data manager
-         * @warning layout MUST match the layout in the shader. Failure to do so may lead to unexpected results!
-         */
-        UniformData(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout);
+        virtual ~IUniformDataManager();
 
         std::vector<Uniform> getLayout() const;
 
@@ -79,7 +75,21 @@ namespace ngine::graphics {
         unsigned int getDataSize() const;
 
         void writeTo(Buffer *buffer) const;
-    private:
+
+        void free() override final;
+
+    protected:
+        /**
+         * Create a uniform data manager
+         * @warning layout MUST match the layout in the shader. Failure to do so may lead to unexpected results!
+         */
+        IUniformDataManager(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout);
+
+        /**
+         * The internal data.
+         */
+        void *m_data;
+
         /**
          * The size of the internal data structure.
          */
@@ -102,4 +112,4 @@ namespace ngine::graphics {
     };
 }
 
-#endif //NGINE_UNIFORM_DATA_HPP
+#endif //NGINE_UNIFORM_DATA_MANAGER_HPP

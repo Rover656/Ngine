@@ -24,7 +24,7 @@
 
 namespace ngine::graphics {
     Texture2D::Texture2D(IGraphicsDevice *graphicsDevice, Image *image)
-            : GraphicsResource(graphicsDevice, ResourceType::Texture2D) {
+            : IGraphicsResource(graphicsDevice, ResourceType::Texture2D) {
         // Get image data and save it
         m_width = image->getWidth();
         m_height = image->getHeight();

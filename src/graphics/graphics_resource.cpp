@@ -3,18 +3,18 @@
 #include "ngine/graphics/graphics_device.hpp"
 
 namespace ngine::graphics {
-    void GraphicsResource::free() {
+    void IGraphicsResource::free() {
         m_graphicsDevice->free(this);
     }
 
-    ResourceType GraphicsResource::getResourceType() const {
+    ResourceType IGraphicsResource::getResourceType() const {
         return m_type;
     }
 
-    GraphicsResource::GraphicsResource(IGraphicsDevice *graphicsDevice, ResourceType type)
+    IGraphicsResource::IGraphicsResource(IGraphicsDevice *graphicsDevice, ResourceType type)
             : m_graphicsDevice(graphicsDevice), m_type(type) {}
 
-    GraphicsResource::~GraphicsResource() {
+    IGraphicsResource::~IGraphicsResource() {
         // Free the resource.
         free();
     }

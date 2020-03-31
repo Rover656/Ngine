@@ -61,7 +61,7 @@ namespace ngine {
 
     void Game::init() {
         // Create window
-        m_window = IWindow::CreateWindow(m_windowConfig);
+        m_window = IWindow::createWindow(m_windowConfig);
     }
 
     void Game::cleanup() {

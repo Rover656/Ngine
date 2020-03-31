@@ -57,17 +57,12 @@ namespace ngine::graphics {
         Texture2D,
 
         /**
-         * Uniform data, generated for a Buffer.
-         */
-        UniformData,
-
-        /**
          * A vertex array.
          */
         VertexArray
     };
 
-    class NEAPI GraphicsResource {
+    class NEAPI IGraphicsResource {
     public:
         union {
             /**
@@ -92,9 +87,14 @@ namespace ngine::graphics {
         };
 
         /**
+         * Destroy/Free this graphics resource.
+         */
+        virtual ~IGraphicsResource();
+
+        /**
          * Free the resource.
          */
-        void free();
+        virtual void free(); // TODO: = 0
 
         /**
          * Get the resource type.
@@ -114,8 +114,7 @@ namespace ngine::graphics {
         /**
          * Create a new graphics resource.
          */
-        GraphicsResource(IGraphicsDevice *graphicsDevice, ResourceType type);
-        virtual ~GraphicsResource();
+        IGraphicsResource(IGraphicsDevice *graphicsDevice, ResourceType type);
     };
 }
 

@@ -32,7 +32,7 @@
 
 #include <dxgi1_2.h>
 
-namespace ngine::platform::graphics::directx {
+namespace ngine::platform::graphics {
     // Do this for the sake of cleaner code
     using namespace ngine;
     using namespace ngine::graphics;
@@ -45,11 +45,13 @@ class NEAPI DirectXGraphicsDevice : public IGraphicsDevice {
     public:
         void clear(Color color) override;
 
-        void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
+    IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) override;
+
+    void bindUniformBuffer(unsigned int location, Buffer *buffer) override;
 
         void drawPrimitives(PrimitiveType primitiveType, int start, int count) override;
 
-        void free(GraphicsResource *resource) override;
+        void free(IGraphicsResource *resource) override;
 
     private:
         /**
@@ -115,9 +117,6 @@ class NEAPI DirectXGraphicsDevice : public IGraphicsDevice {
         void _initSamplerState(SamplerState *samplerState) override;
         void _updateSamplerState(unsigned int unit, SamplerState *samplerState) override;
         void _bindSamplerState(unsigned int unit, SamplerState *samplerState) override;
-
-        void _allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
-                                  unsigned int *size) override;
 
         void _present() override;
         void _onResize() override;

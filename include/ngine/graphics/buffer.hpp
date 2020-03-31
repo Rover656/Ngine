@@ -44,7 +44,7 @@ namespace ngine::graphics {
     /**
      * A buffer stores data on the GPU.
      */
-    class NEAPI Buffer : public GraphicsResource {
+    class NEAPI Buffer : public IGraphicsResource {
         friend class ngine::graphics::IGraphicsDevice;
     public:
         /**

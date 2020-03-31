@@ -37,7 +37,7 @@ namespace ngine {
         Console::notice("Window", "Successfully closed window.");
     }
 
-    IWindow *IWindow::CreateWindow(WindowConfig config) {
+    IWindow *IWindow::createWindow(WindowConfig config) {
 #if defined(PLATFORM_DESKTOP)
         return new platform::GLFWWindow(config);
 #elif defined(PLATFORM_UWP)

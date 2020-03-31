@@ -45,7 +45,7 @@ typedef void* EGLSurface;
 typedef void* EGLContext;
 #endif
 
-namespace ngine::platform::graphics::gl {
+namespace ngine::platform::graphics {
     // Do this for the sake of cleaner code
     using namespace ngine;
     using namespace ngine::graphics;

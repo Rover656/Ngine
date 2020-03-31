@@ -69,7 +69,7 @@ namespace ngine {
          * Create a new window.
          * @param config The window config.
          */
-        static IWindow *CreateWindow(WindowConfig config);
+        static IWindow *createWindow(WindowConfig config);
 
         /**
          * Get the window's context descriptor.

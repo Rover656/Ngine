@@ -159,7 +159,7 @@ namespace ngine::graphics {
     };
 
     // TODO: Accept GLSL names for uniform block buffers (for binding because GLES v2 doesn't allow binding in a shader)
-    class NEAPI ShaderProgram : public GraphicsResource {
+    class NEAPI ShaderProgram : public IGraphicsResource {
     public:
         /**
          * The name of the uniform which holds an array of samplers.

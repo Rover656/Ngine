@@ -138,7 +138,7 @@ namespace ngine::graphics {
         // TODO: MirrorOnce see if this is supported on OGL.
     };
 
-    class NEAPI SamplerState : public GraphicsResource {
+    class NEAPI SamplerState : public IGraphicsResource {
     public:
         /**
          * Texture filtering mode.

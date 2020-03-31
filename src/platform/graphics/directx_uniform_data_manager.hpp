@@ -18,13 +18,28 @@
  *
  **********************************************************************************************/
 
-#include "ngine/graphics/shader.hpp"
+#ifndef NGINE_DIRECTX_UNIFORM_DATA_MANAGER_HPP
+#define NGINE_DIRECTX_UNIFORM_DATA_MANAGER_HPP
 
-#include "ngine/graphics/graphics_device.hpp"
+#include "ngine/config.hpp"
 
-namespace ngine::graphics {
-    Shader::Shader(IGraphicsDevice *graphicsDevice, const std::string &src, ShaderStage type)
-            : IGraphicsResource(graphicsDevice, ResourceType::Shader), Type(type) {
-        m_graphicsDevice->_initShader(this, src);
-    }
+#if defined(NGINE_ENABLE_DIRECTX)
+
+#include "ngine/graphics/uniform_data_manager.hpp"
+
+namespace ngine::platform::graphics {
+    using namespace ngine;
+    using namespace ngine::graphics;
+
+    class DirectXUniformDataManager : public IUniformDataManager {
+    public:
+        /**
+         * Create a uniform data manager.
+         */
+        DirectXUniformDataManager(IGraphicsDevice *graphicsDevice, std::vector<Uniform> layout);
+    };
 }
+
+#endif // defined(NGINE_ENABLE_DIRECTX)
+
+#endif //NGINE_DIRECTX_UNIFORM_DATA_MANAGER_HPP

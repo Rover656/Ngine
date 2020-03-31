@@ -26,7 +26,7 @@
 namespace ngine::graphics {
     Buffer::Buffer(IGraphicsDevice *graphicsDevice, BufferType type, BufferUsage usage, void *data, unsigned int size,
                    unsigned int count)
-            : GraphicsResource(graphicsDevice, ResourceType::Buffer), m_type(type), m_usage(usage), m_size(size),
+            : IGraphicsResource(graphicsDevice, ResourceType::Buffer), m_type(type), m_usage(usage), m_size(size),
               m_count(count) {
         m_graphicsDevice->_initBuffer(this, data, m_size * m_count);
     }

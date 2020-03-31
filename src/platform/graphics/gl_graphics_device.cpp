@@ -29,10 +29,6 @@
 #include <glad/glad.h>
 #endif
 
-#if defined(GLFW)
-#include <GLFW/glfw3.h>
-#endif
-
 #if defined(EGL)
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -64,12 +60,19 @@
 #define GL_CLAMP_TO_BORDER 0x812D
 #endif
 
+// Include our implementations
+#include "gl_uniform_data_manager.hpp"
+
 // TODO: Security checks and bind safety (rebinding things after modifiying another i.e. textures).
 
-namespace ngine::platform::graphics::gl {
+namespace ngine::platform::graphics {
     void GLGraphicsDevice::clear(Color color) {
         glClearColor(color.R, color.G, color.B, color.A);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    IUniformDataManager *GLGraphicsDevice::createUniformDataManager(std::vector<Uniform> layout) {
+        return new GLUniformDataManager(this, layout);
     }
 
     void GLGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
@@ -95,7 +98,7 @@ namespace ngine::platform::graphics::gl {
         glDrawArrays(prim, start, count);
     }
 
-    void GLGraphicsDevice::free(GraphicsResource *resource) {
+    void GLGraphicsDevice::free(IGraphicsResource *resource) {
         m_freeLock.lock();
         m_freeNextFrame.push_back(resource);
         m_freeLock.unlock();
@@ -654,7 +657,7 @@ namespace ngine::platform::graphics::gl {
         _updateSamplerState(unit, samplerState);
     }
 
-    void GLGraphicsDevice::_freeResource(GraphicsResource *resource) {
+    void GLGraphicsDevice::_freeResource(IGraphicsResource *resource) {
         // Free resource.
         switch (resource->getResourceType()) {
             case ResourceType::Buffer:
@@ -680,11 +683,6 @@ namespace ngine::platform::graphics::gl {
                     }
                 }
                 glDeleteTextures(1, &resource->GLID);
-                break;
-            case ResourceType::UniformData:
-                // Free the data
-                ::free(resource->Handle);
-                resource->Handle = nullptr;
                 break;
             case ResourceType::VertexArray:
                 glDeleteVertexArrays(1, &resource->GLID);
@@ -717,22 +715,9 @@ namespace ngine::platform::graphics::gl {
         glViewport(0, 0, m_window->getWidth(), m_window->getHeight());
     }
 
-    void GLGraphicsDevice::_allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
+    void GLGraphicsDevice::_allocateUniformData(IUniformDataManager *uniformData, std::vector<unsigned int> *offsets,
                                                 unsigned int *size) {
-        // Here, we configure the offsets to adhere to std140 layout and allocate enough memory for this.
-        auto l = uniformData->getLayout();
-        for (auto u : l) {
-            offsets->push_back(*size);
 
-            // Ensure the size is a multiple of 16
-            *size += (u.getSize()-1|15)+1;
-        }
-
-        // Allocate memory
-        uniformData->Handle = calloc(1, *size);
-
-        if (DoDebugOutput)
-            Console::debug("OpenGL", "Allocated %u bytes of memory for std140 conformant uniform data.", *size);
     }
 }
 

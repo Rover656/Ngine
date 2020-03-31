@@ -30,7 +30,7 @@
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
 #elif defined(PLATFORM_UWP)
-#include "ngine/platform/UWP/uwp_bootstrap.hpp"
+#include "ngine/utils/UWP/uwp_bootstrap.hpp"
 #endif
 
 #include <d3dcompiler.h>
@@ -40,10 +40,17 @@
 #include <cstring>
 #include <cstdlib>
 
-namespace ngine::platform::graphics::directx {
+// Include our implementation
+#include "directx_uniform_data_manager.hpp"
+
+namespace ngine::platform::graphics {
     void DirectXGraphicsDevice::clear(Color color) {
         float c[4] = {color.R, color.G, color.B, color.A};
         m_deviceContext->ClearRenderTargetView(m_backbuffer, c);
+    }
+
+    IUniformDataManager *DirectXGraphicsDevice::createUniformDataManager(std::vector<Uniform> layout) {
+        return new DirectXUniformDataManager(this, layout);
     }
 
     void DirectXGraphicsDevice::bindUniformBuffer(unsigned int location, Buffer *buffer) {
@@ -69,7 +76,7 @@ namespace ngine::platform::graphics::directx {
         m_deviceContext->Draw(count, start);
     }
 
-    void DirectXGraphicsDevice::free(GraphicsResource *resource) {
+    void DirectXGraphicsDevice::free(IGraphicsResource *resource) {
         // Release references a resource
         switch (resource->getResourceType()) {
             case ResourceType::Buffer:
@@ -95,11 +102,6 @@ namespace ngine::platform::graphics::directx {
             case ResourceType::Texture2D:
                 ((ID3D11Texture2D *) resource->Handle)->Release();
                 ((ID3D11ShaderResourceView *) resource->Handle1)->Release();
-                break;
-            case ResourceType::UniformData:
-                // Free the data
-                ::free(resource->Handle);
-                resource->Handle = nullptr;
                 break;
             case ResourceType::VertexArray: break; // We don't have these
         }
@@ -702,22 +704,6 @@ namespace ngine::platform::graphics::directx {
 
         // Check for updates
         _updateSamplerState(0, samplerState); // Not passing unit as that is only for GL
-    }
-
-    void DirectXGraphicsDevice::_allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
-                                                     unsigned int *size) {
-        // This is easy for DirectX, its the same size as the data!
-        auto l = uniformData->getLayout();
-        for (auto u : l) {
-            offsets->push_back(*size);
-            *size += u.getSize();
-        }
-
-        // Ensure this is a multiple of 16 (DirectX wills it)
-        *size = ((*size-1)|15)+1;
-
-        // Allocate memory
-        uniformData->Handle = calloc(1, *size);
     }
 
     void DirectXGraphicsDevice::_present() {

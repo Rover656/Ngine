@@ -29,7 +29,7 @@
 #include "shader.hpp"
 #include "shader_program.hpp"
 #include "texture2d.hpp"
-#include "uniform_data.hpp"
+#include "uniform_data_manager.hpp"
 #include "vertex_array.hpp"
 
 namespace ngine {
@@ -50,7 +50,7 @@ namespace ngine {
             friend class ngine::graphics::Shader;
             friend class ngine::graphics::ShaderProgram;
             friend class ngine::graphics::Texture2D;
-            friend class ngine::graphics::UniformData;
+            friend class ngine::graphics::IUniformDataManager;
             friend class ngine::graphics::VertexArray;
 
         public:
@@ -65,6 +65,11 @@ namespace ngine {
              * @param color Color to clear with.
              */
             virtual void clear(Color color) = 0;
+
+            /**
+             * Create a uniform data manager.
+             */
+            virtual IUniformDataManager *createUniformDataManager(std::vector<Uniform> layout) = 0;
 
             /**
              * Bind a uniform buffer to a specified location.
@@ -82,7 +87,7 @@ namespace ngine {
             /**
              * Schedule a graphics resource to be freed.
              */
-            virtual void free(GraphicsResource *resource) = 0;
+            virtual void free(IGraphicsResource *resource) = 0;
 
             /**
              * Present backbuffer to screen.
@@ -166,7 +171,7 @@ namespace ngine {
             virtual void _updateSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
             virtual void _bindSamplerState(unsigned int unit, SamplerState *samplerState) = 0;
 
-            virtual void _allocateUniformData(UniformData *uniformData, std::vector<unsigned int> *offsets,
+            virtual void _allocateUniformData(IUniformDataManager *uniformData, std::vector<unsigned int> *offsets,
                                               unsigned int *size) = 0;
 
             virtual void _present() = 0;

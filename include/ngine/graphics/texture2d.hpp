@@ -27,7 +27,7 @@
 #include "image.hpp"
 
 namespace ngine::graphics {
-    class NEAPI Texture2D : public GraphicsResource {
+    class NEAPI Texture2D : public IGraphicsResource {
     public:
         /**
          * Create a texture with existing pixel data.
